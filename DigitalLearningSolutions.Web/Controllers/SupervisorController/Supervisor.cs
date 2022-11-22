@@ -810,6 +810,21 @@
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
 
+        public IActionResult QuickAddSupervisor(int selfAssessmentId, int supervisorDelegateId, int candidateAssessmentId)
+        {
+            var roles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId).ToArray();
+
+            int? supervisorRoleId = roles.First().ID;
+            supervisorService.InsertCandidateAssessmentSupervisor(
+                candidateAssessmentId,
+                supervisorDelegateId,
+                selfAssessmentId,
+                supervisorRoleId
+            );
+            return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
+        }
+
+
         public IActionResult RemoveDelegateSelfAssessment(int candidateAssessmentId, int supervisorDelegateId)
         {
             supervisorService.RemoveCandidateAssessment(candidateAssessmentId);
