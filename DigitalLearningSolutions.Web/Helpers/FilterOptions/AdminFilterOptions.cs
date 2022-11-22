@@ -43,7 +43,7 @@
 
         public static readonly FilterOptionModel ContentCreatorLicense =
             new FilterOptionModel(
-                "Content Creator license",
+                "Content creator license",
                 FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsContentCreator), "true"),
                 FilterStatus.Default
             );

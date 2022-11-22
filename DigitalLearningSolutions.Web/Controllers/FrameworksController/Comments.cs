@@ -7,7 +7,7 @@
         [Route("/Framework/{frameworkId}/Comments/")]
         public IActionResult InsertComment(int frameworkId, string comment)
         {
-            if (comment == "") return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
+            if (string.IsNullOrWhiteSpace(comment)) return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
             var adminId = GetAdminId();
             var newCommentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             frameworkNotificationService.SendCommentNotifications(adminId, frameworkId, newCommentId, comment, null, null);
@@ -30,7 +30,7 @@
         [Route("/Framework/{frameworkId}/Comments/{commentId}")]
         public IActionResult InsertReply(int frameworkId, int commentId, string comment, string parentComment)
         {
-            if (comment == "") return RedirectToAction("ViewThread", new { frameworkId, commentId });
+            if (string.IsNullOrWhiteSpace(comment)) return RedirectToAction("ViewThread", new { frameworkId, commentId });
             var adminId = GetAdminId();
             var newCommentId = frameworkService.InsertComment(frameworkId, adminId, comment, commentId);
             frameworkNotificationService.SendCommentNotifications(adminId, frameworkId, newCommentId, comment, commentId, parentComment);

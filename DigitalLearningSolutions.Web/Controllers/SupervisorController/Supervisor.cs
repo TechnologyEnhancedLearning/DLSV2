@@ -97,11 +97,16 @@
             var adminId = GetAdminID();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
-            AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
-            if (ModelState.IsValid)
+
+            ModelState.Remove("Page");
+            if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
+            {
+                AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
+            }
             else
             {
+                if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
@@ -121,19 +126,27 @@
             var adminId = GetAdminID();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
-            var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
-            foreach (var delegateEmail in delegateEmailsList)
+
+            if (ModelState.IsValid)
             {
-                if (delegateEmail.Length > 0)
+                var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
+                foreach (var delegateEmail in delegateEmailsList)
                 {
-                    if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
+                    if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
                     {
-                        AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
+                        if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
+                        {
+                            AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
+                        }
                     }
                 }
+                return RedirectToAction("MyStaffList");
             }
-
-            return RedirectToAction("MyStaffList");
+            else
+            {
+                ModelState.ClearErrorsForAllFieldsExcept("DelegateEmails");
+                return View("AddMultipleSupervisorDelegates", model);
+            }
         }
 
         private void AddSupervisorDelegateAndReturnId(
@@ -166,6 +179,10 @@
 
             return RedirectToAction("MyStaffList");
         }
+        public IActionResult RemoveSupervisorDelegate()
+        {
+            return RedirectToAction("MyStaffList");
+        }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
@@ -190,7 +207,12 @@
             }
             else
             {
-                ModelState.ClearErrorsOnField("ActionConfirmed");
+
+                if (supervisorDelegate.ConfirmedRemove)
+                {
+                    supervisorDelegate.ConfirmedRemove = false;
+                    ModelState.ClearErrorsOnField("ActionConfirmed");
+                }
                 return View("RemoveConfirm", supervisorDelegate);
             }
         }
@@ -905,6 +927,14 @@
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
             var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
+            if (TempData["NominateSupervisorError"] != null)
+            {
+                if (Convert.ToBoolean(TempData["NominateSupervisorError"].ToString()))
+                {
+                    ModelState.AddModelError("ActionConfirmed", "Please tick the checkbox to confirm you wish to perform this action");
+
+                }
+            }
             return View("NominateSupervisor", model);
         }
         [HttpPost]
@@ -912,22 +942,23 @@
         {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
-                var userAdminId = User.GetAdminId();
-                var userDelegateId = User.GetCandidateId();
-                var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
-
-                var categoryId = User.GetAdminCourseCategoryFilter();
+                var currentAdminUserId = User.GetAdminId();
+                var (currentAdminUser, delegateUser) = userService.GetUsersById(currentAdminUserId, null);
+                var categoryId = User.GetAdminCourseCategoryFilter() ?? 0;
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminID(), 0);
+                var delegateIdToPromote = supervisorDelegateDetail.CandidateID ?? 0;
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
-                if (supervisorDelegateDetail.CandidateID != null)
-                {
-                    registrationService.PromoteDelegateToAdmin(adminRoles, (categoryId ?? 0), (int)supervisorDelegateDetail.CandidateID, adminUser, delegateUser);
-                }
+
+                registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, delegateIdToPromote, currentAdminUser);
+                supervisorService.UpdateNotificationSent(supervisorDelegate.Id);
+
                 return RedirectToAction("MyStaffList");
             }
             else
             {
-                return View("NominateSupervisor", supervisorDelegate);
+                TempData["NominateSupervisorError"] = true;
+                return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
+
             }
         }
     }

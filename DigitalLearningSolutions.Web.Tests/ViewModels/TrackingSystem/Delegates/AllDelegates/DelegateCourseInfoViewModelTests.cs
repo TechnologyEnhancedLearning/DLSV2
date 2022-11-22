@@ -36,7 +36,7 @@
                 Completed = completedDate,
                 Evaluated = evaluatedDate,
             };
-            
+
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
@@ -67,7 +67,9 @@
             // Given
             var info = new DelegateCourseInfo
             {
-                EnrolmentMethodId = enrollmentMethodId, EnrolledByForename = "Test", EnrolledBySurname = "Admin",
+                EnrolmentMethodId = enrollmentMethodId,
+                EnrolledByForename = "Test",
+                EnrolledBySurname = "Admin",
                 EnrolledByAdminActive = true,
             };
 
@@ -88,7 +90,8 @@
             // Given
             var info = new DelegateCourseInfo
             {
-                ApplicationName = "my application", CustomisationName = "",
+                ApplicationName = "my application",
+                CustomisationName = "",
             };
 
             // When
@@ -186,6 +189,105 @@
 
             // Then
             model.Supervisor.Should().Be("firstname surname");
+        }
+
+        [Test]
+        public void DelegateCourseInfoViewModel_with_archived_course_returns_archived_status_tag_style()
+        {
+            // Given
+            var archivedDate = new DateTime(2022, 11, 3, 09, 00, 00);
+            var info = new DelegateCourseInfo
+            {
+                CourseArchivedDate = archivedDate,
+            };
+
+            var model = new DelegateCourseInfoViewModel(
+                info,
+                DelegateAccessRoute.CourseDelegates,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
+
+            // When
+            var statusTagStyle = model.StatusTagStyle();
+
+            // Then
+            statusTagStyle.Should().Be("nhsuk-tag--grey");
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DelegateCourseInfoViewModel_with_active_status_course_returns_active_status_tag_style(bool isActive)
+        {
+            // Given
+            var info = new DelegateCourseInfo
+            {
+                IsCourseActive = isActive,
+            };
+
+            var model = new DelegateCourseInfoViewModel(
+                info,
+                DelegateAccessRoute.CourseDelegates,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
+
+            // When
+            var statusTagStyle = model.StatusTagStyle();
+
+            // Then
+            if (isActive)
+            {
+                statusTagStyle.Should().Be("nhsuk-tag--green");
+            }
+            else
+            {
+                statusTagStyle.Should().Be("nhsuk-tag--red");
+            }
+        }
+
+        [Test]
+        public void DelegateCourseInfoViewModel_with_completed_course_returns_completed_status_tag_style()
+        {
+            // Given
+            var completedDate = new DateTime(2022, 11, 3, 09, 00, 00);
+            var info = new DelegateCourseInfo
+            {
+                Completed = completedDate,
+            };
+
+            var model = new DelegateCourseInfoViewModel(
+                info,
+                DelegateAccessRoute.CourseDelegates,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
+
+            // When
+            var statusTagStyle = model.StatusTagStyle();
+
+            // Then
+            statusTagStyle.Should().Be("nhsuk-tag--red");
+        }
+
+        [Test]
+        public void DelegateCourseInfoViewModel_with_removed_course_returns_removed_status_tag_style()
+        {
+            // Given
+            var removedDate = new DateTime(2022, 11, 3, 09, 00, 00);
+            var info = new DelegateCourseInfo
+            {
+                RemovedDate = removedDate,
+            };
+
+            var model = new DelegateCourseInfoViewModel(
+                info,
+                DelegateAccessRoute.CourseDelegates,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
+
+            // When
+            var statusTagStyle = model.StatusTagStyle();
+
+            // Then
+            statusTagStyle.Should().Be("nhsuk-tag--grey");
         }
     }
 }

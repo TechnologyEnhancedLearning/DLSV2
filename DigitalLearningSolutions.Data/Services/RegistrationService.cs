@@ -36,8 +36,7 @@ namespace DigitalLearningSolutions.Data.Services
             AdminRoles adminRoles,
             int categoryId,
             int delegateId,
-            AdminUser? supervisorAdminUser,
-            DelegateUser supervisorDelegateUser);
+            AdminUser currentAdminUser);
     }
 
     public class RegistrationService : IRegistrationService
@@ -148,16 +147,29 @@ namespace DigitalLearningSolutions.Data.Services
                         emailService.SendEmail(approvalEmail);
                     }
                 }
+
+                var notificationEmailForCentre = centresDataService.GetCentreDetailsById(delegateRegistrationModel.Centre).NotifyEmail;
+                if (notificationEmailForCentre != null)
+                {
+                    var approvalEmail = GenerateApprovalEmail(
+                       notificationEmailForCentre,
+                       notificationEmailForCentre,
+                       delegateRegistrationModel.FirstName,
+                       delegateRegistrationModel.LastName,
+                       refactoredTrackingSystemEnabled);
+                    emailService.SendEmail(approvalEmail);
+                }
             }
 
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
-
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser? supervisorAdminUser, DelegateUser supervisorDelegateUser)
+        
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser currentAdminUser)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
 
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
+            if (delegateUser == null ||
+                string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
                 string.IsNullOrWhiteSpace(delegateUser.FirstName) ||
                 string.IsNullOrWhiteSpace(delegateUser.Password))
             {
@@ -167,21 +179,21 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
+            var delegateAdminAccount = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
 
-            if (adminUser?.Active == false && adminUser.CentreId == delegateUser.CentreId)
+            if (delegateAdminAccount?.Active == false && delegateAdminAccount.CentreId == delegateUser.CentreId)
             {
-                userDataService.ReactivateAdmin(adminUser.Id);
+                userDataService.ReactivateAdmin(delegateAdminAccount.Id);
                 userDataService.UpdateAdminUser(
                     delegateUser.FirstName,
                     delegateUser.LastName,
                     delegateUser.EmailAddress,
                     delegateUser.ProfileImage,
-                    adminUser.Id
+                    delegateAdminAccount.Id
                 );
-                passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password);
+                passwordDataService.SetPasswordByAdminId(delegateAdminAccount.Id, delegateUser.Password);
                 userDataService.UpdateAdminUserPermissions(
-                    adminUser.Id,
+                    delegateAdminAccount.Id,
                     adminRoles.IsCentreAdmin,
                     adminRoles.IsSupervisor,
                     adminRoles.IsNominatedSupervisor,
@@ -193,22 +205,22 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsCentreManager
                 );
             }
-            else if (adminUser?.Active == true && adminUser.CentreId == delegateUser.CentreId)
+            else if (delegateAdminAccount?.Active == true && delegateAdminAccount.CentreId == delegateUser.CentreId)
             {
                 userDataService.UpdateAdminUserPermissions(
-                    adminUser.Id,
-                    adminRoles.IsCentreAdmin || adminUser.IsCentreAdmin,
-                    adminRoles.IsSupervisor || adminUser.IsSupervisor,
-                    adminRoles.IsNominatedSupervisor || adminUser.IsNominatedSupervisor,
-                    adminRoles.IsTrainer = adminRoles.IsTrainer || adminUser.IsTrainer,
-                    adminRoles.IsContentCreator || adminUser.IsContentCreator,
-                    adminRoles.IsContentManager || adminUser.IsContentManager,
-                    adminRoles.ImportOnly = adminRoles.ImportOnly || adminUser.ImportOnly,
-                    adminUser.CategoryId,
-                    adminRoles.IsCentreManager || adminUser.IsCentreManager
+                    delegateAdminAccount.Id,
+                    adminRoles.IsCentreAdmin || delegateAdminAccount.IsCentreAdmin,
+                    adminRoles.IsSupervisor || delegateAdminAccount.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor || delegateAdminAccount.IsNominatedSupervisor,
+                    adminRoles.IsTrainer = adminRoles.IsTrainer || delegateAdminAccount.IsTrainer,
+                    adminRoles.IsContentCreator || delegateAdminAccount.IsContentCreator,
+                    adminRoles.IsContentManager || delegateAdminAccount.IsContentManager,
+                    adminRoles.ImportOnly = adminRoles.ImportOnly || delegateAdminAccount.ImportOnly,
+                    delegateAdminAccount.CategoryId,
+                    adminRoles.IsCentreManager || delegateAdminAccount.IsCentreManager
                 );
             }
-            else if (adminUser == null)
+            else if (delegateAdminAccount == null)
             {
                 var adminRegistrationModel = new AdminRegistrationModel(
                     delegateUser.FirstName,
@@ -228,10 +240,10 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
                     adminRoles.IsCmsManager,
-                    supervisorDelegateUser.Id,
-                    supervisorDelegateUser.EmailAddress ?? string.Empty,
-                    supervisorDelegateUser.FirstName ?? string.Empty,
-                    supervisorDelegateUser.LastName,
+                    delegateId,
+                    currentAdminUser.EmailAddress ?? string.Empty,
+                    currentAdminUser.FirstName ?? string.Empty,
+                    currentAdminUser.LastName,
                     delegateUser.ProfileImage
                 );
 
@@ -263,13 +275,13 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (adminRegistrationModel.IsCentreAdmin)
             {
-                builder.TextBody += " Centre Admin";
-                builder.HtmlBody += "<li>Centre Admin</li>";
+                builder.TextBody += " Centre admin";
+                builder.HtmlBody += "<li>Centre admin</li>";
             }
             if (adminRegistrationModel.IsCentreManager)
             {
-                builder.TextBody += " Centre Manager";
-                builder.HtmlBody += "<li>Centre Manager</li>";
+                builder.TextBody += " Centre manager";
+                builder.HtmlBody += "<li>Centre manager</li>";
             }
             if (adminRegistrationModel.IsSupervisor)
             {
@@ -278,8 +290,8 @@ namespace DigitalLearningSolutions.Data.Services
             }
             if (adminRegistrationModel.IsNominatedSupervisor)
             {
-                builder.TextBody += " Nominated Supervisor";
-                builder.HtmlBody += "<li>Nominated Supervisor</li>";
+                builder.TextBody += " Nominated supervisor";
+                builder.HtmlBody += "<li>Nominated supervisor</li>";
             }
             if (adminRegistrationModel.IsTrainer)
             {
@@ -288,27 +300,25 @@ namespace DigitalLearningSolutions.Data.Services
             }
             if (adminRegistrationModel.IsContentCreator)
             {
-                builder.TextBody += " Content Creator";
-                builder.HtmlBody += "<li>Content Creator</li>";
+                builder.TextBody += " Content creator license";
+                builder.HtmlBody += "<li>Content creator license</li>";
             }
             if (adminRegistrationModel.IsCmsAdmin)
             {
-                builder.TextBody += " Cms Administrator";
-                builder.HtmlBody += "<li>Cms Administrator</li>";
+                builder.TextBody += " Cms administrator";
+                builder.HtmlBody += "<li>Cms administrator</li>";
             }
 
             if (adminRegistrationModel.IsCmsManager)
             {
-                builder.TextBody += " Cms Manager";
-                builder.HtmlBody += "<li>Cms Manager</li>";
+                builder.TextBody += " Cms manager";
+                builder.HtmlBody += "<li>Cms manager</li>";
             }
 
             builder.HtmlBody += "</ul>";
 
             builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
             builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
-
-            supervisorService.UpdateNotificationSent(adminRegistrationModel.SupervisorDelegateId);
 
             emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email, adminRegistrationModel.SupervisorEmail));
         }

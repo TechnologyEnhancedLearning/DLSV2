@@ -124,6 +124,8 @@
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
+        IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
+
         int InsertCompetency(string name, string? description, int adminId);
 
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
@@ -297,7 +299,7 @@
 
         private const string FrameworkTables =
             @"Frameworks AS FW LEFT OUTER JOIN
-             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
+             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId 
             LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
 
         private const string AssessmentQuestionFields =
@@ -428,7 +430,7 @@
              (@adminId IN
                  (SELECT AdminID
                  FROM    FrameworkCollaborators
-                 WHERE (FrameworkID = FW.ID)))",
+                 WHERE (FrameworkID = FW.ID) AND (IsDeleted=0) ))",
                 new { adminId }
             );
         }
@@ -439,6 +441,14 @@
                 $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields}
                       FROM {FrameworkTables}",
                 new { adminId }
+            );
+        }
+
+        public IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId)
+        {
+            return connection.Query<FrameworkCompetency>(
+                $@"SELECT * FROM Competencies WHERE [Name] = @name AND [UpdatedByAdminID] = @adminId",
+                new { name, adminId }
             );
         }
 
@@ -624,54 +634,13 @@
                 return -2;
             }
             description = (description?.Trim() == "" ? null : description);
-            var existingId = 0;
-            if (description == null)
-            {
-                existingId = (int)connection.ExecuteScalar(
-                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] IS NULL), 0) AS CompetencyID",
-                    new { name, description }
-                );
-            }
-            else
-            {
-                existingId = (int)connection.ExecuteScalar(
-                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] = @description), 0) AS CompetencyID",
-                    new { name, description }
-                );
-            }
 
-            if (existingId > 0)
-            {
-                return existingId;
-            }
-
-            var numberOfAffectedRows = connection.Execute(
+            var existingId = connection.QuerySingle<int>(
                 @"INSERT INTO Competencies ([Name], [Description], UpdatedByAdminID)
+                    OUTPUT INSERTED.Id
                     VALUES (@name, @description, @adminId)",
                 new { name, description, adminId }
             );
-            if (numberOfAffectedRows < 1)
-            {
-                logger.LogWarning(
-                    $"Not inserting competency as db insert failed. AdminId: {adminId}, name: {name}, description:{description}"
-                );
-                return -1;
-            }
-
-            if (description == null)
-            {
-                existingId = (int)connection.ExecuteScalar(
-                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] IS NULL), 0) AS CompetencyID",
-                    new { name, description }
-                );
-            }
-            else
-            {
-                existingId = (int)connection.ExecuteScalar(
-                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] = @description), 0) AS CompetencyID",
-                    new { name, description }
-                );
-            }
 
             return existingId;
         }
@@ -772,6 +741,7 @@
                         CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
                     FROM FrameworkCollaborators fc
                     INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
+                    AND fc.IsDeleted = 0
                     WHERE (FrameworkID = @FrameworkID)",
                 new { frameworkId }
             );
@@ -791,7 +761,7 @@
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    FrameworkCollaborators
-                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail)), 0) AS ID",
+                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail) AND (IsDeleted=0)), 0) AS ID",
                 new { frameworkId, userEmail }
             );
             if (existingId > 0)
@@ -806,6 +776,14 @@
             if (adminId is null)
             {
                 return -4;
+            }
+
+            var ownerEmail = (string?)connection.ExecuteScalar(@"SELECT AU.Email FROM Frameworks F
+                INNER JOIN AdminUsers AU ON AU.AdminID=F.OwnerAdminID
+                WHERE F.ID=@frameworkId", new { frameworkId });
+            if (ownerEmail == userEmail)
+            {
+                return -5;
             }
 
             var numberOfAffectedRows = connection.Execute(
@@ -833,7 +811,7 @@
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    FrameworkCollaborators
-                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail)), 0) AS AdminID",
+                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail) AND (IsDeleted=0)), 0) AS AdminID",
                 new { frameworkId, adminId, userEmail }
             );
             return existingId;
@@ -846,7 +824,7 @@
                 new { frameworkId, id }
             );
             connection.Execute(
-                @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (ID = @id);UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM FrameworkCollaborators);",
+                @"UPDATE FrameworkCollaborators SET IsDeleted=1 WHERE (FrameworkID = @frameworkId) AND (ID = @id);UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM FrameworkCollaborators);",
                 new { frameworkId, id, adminId }
             );
         }
@@ -1817,8 +1795,8 @@ WHERE (FrameworkID = @frameworkId)",
                                                   AQ.CommentsPrompt,
                                                   AQ.CommentsHint
                                                   FROM   Competencies AS C INNER JOIN
-             FrameworkCompetencies AS FC ON C.ID = FC.CompetencyID INNER JOIN
-             FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
+             FrameworkCompetencies AS FC ON C.ID = FC.CompetencyID LEFT JOIN
+             FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID LEFT JOIN
              CompetencyGroups AS CG ON FCG.CompetencyGroupID = CG.ID INNER JOIN
              CompetencyAssessmentQuestions AS CAQ ON C.ID = CAQ.CompetencyID INNER JOIN
              AssessmentQuestions AS AQ ON CAQ.AssessmentQuestionID = AQ.ID
@@ -1961,7 +1939,7 @@ WHERE (FrameworkID = @frameworkId)",
                     FROM FrameworkCollaborators AS fc
                     INNER JOIN Frameworks AS f ON fc.FrameworkID = f.ID
                     INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
-                    WHERE (fc.ID = @id)",
+                    WHERE (fc.ID = @id) AND (fc.IsDeleted=0)",
                 new { invitedByAdminId, id }
             ).FirstOrDefault();
         }
@@ -2013,8 +1991,8 @@ WHERE (ID = @commentId)",
                     FROM FrameworkCollaborators fc
                     INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
                     LEFT OUTER JOIN FrameworkReviews ON fc.ID = FrameworkReviews.FrameworkCollaboratorID
-                    WHERE (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) OR
-                            (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL)",
+                    WHERE (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) AND (fc.IsDeleted=0) OR
+                            (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL) AND (fc.IsDeleted=0)",
                 new { frameworkId }
             );
         }
@@ -2058,7 +2036,7 @@ WHERE (ID = @commentId)",
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
-                    WHERE FR.FrameworkID = @frameworkId AND FR.Archived IS NULL",
+                    WHERE FR.FrameworkID = @frameworkId AND FR.Archived IS NULL  AND (FC.IsDeleted = 0)",
                 new { frameworkId }
             );
         }
@@ -2070,7 +2048,7 @@ WHERE (ID = @commentId)",
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
-                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId AND FR.Archived IS NULL",
+                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId AND FR.Archived IS NULL AND IsDeleted = 0",
                 new { frameworkId, adminId, reviewId }
             ).FirstOrDefault();
         }
@@ -2114,7 +2092,7 @@ WHERE (ID = @commentId)",
                         AU1.Email AS OwnerEmail,
                         FW.FrameworkName
                     FROM FrameworkReviews AS FR
-                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID
+                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID  AND FWC.IsDeleted = 0
                     INNER JOIN AdminUsers AS AU ON FC.AdminID = AU.AdminID
                     INNER JOIN Frameworks AS FW ON FR.FrameworkID = FW.ID
                     INNER JOIN AdminUsers AS AU1 ON FW.OwnerAdminID = AU1.AdminID
@@ -2191,7 +2169,7 @@ WHERE (OwnerAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
                  FROM    FrameworkCollaborators
-                 WHERE (FrameworkID = FW.ID)))) AS MyFrameworksCount,
+                 WHERE (FrameworkID = FW.ID) AND (IsDeleted=0)))) AS MyFrameworksCount,
 
                  (SELECT COUNT(*) FROM SelfAssessments) AS RoleProfileCount,
 
@@ -2218,7 +2196,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                         FWR.ReviewRequested AS Requested
                     FROM FrameworkReviews AS FWR
                     INNER JOIN Frameworks AS FW ON FWR.FrameworkID = FW.ID
-                    INNER JOIN FrameworkCollaborators AS FWC ON FWR.FrameworkCollaboratorID = FWC.ID
+                    INNER JOIN FrameworkCollaborators AS FWC ON FWR.FrameworkCollaboratorID = FWC.ID AND FWC.IsDeleted = 0
                     INNER JOIN AdminUsers AS AU ON FW.OwnerAdminID = AU.AdminID
                     WHERE (FWC.AdminID = @adminId) AND (FWR.ReviewComplete IS NULL) AND (FWR.Archived IS NULL)
                     UNION ALL
