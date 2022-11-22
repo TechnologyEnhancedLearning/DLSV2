@@ -6,15 +6,15 @@
 
     public abstract class EditAccountDetailsFormDataBase
     {
-        [Required(ErrorMessage = "Enter your first name")]
+        [Required(ErrorMessage = "Enter a first name")]
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongFirstName)]
         public string? FirstName { get; set; }
 
-        [Required(ErrorMessage = "Enter your last name")]
+        [Required(ErrorMessage = "Enter a last name")]
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Enter your email")]
+        [Required(ErrorMessage = "Enter an email address")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
