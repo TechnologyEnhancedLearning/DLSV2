@@ -814,7 +814,8 @@
         {
             var roles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId).ToArray();
 
-            int? supervisorRoleId = roles.First().ID;
+            int? supervisorRoleId = null;
+            if(roles.Any()) supervisorRoleId = roles.First().ID;
             supervisorService.InsertCandidateAssessmentSupervisor(
                 candidateAssessmentId,
                 supervisorDelegateId,
