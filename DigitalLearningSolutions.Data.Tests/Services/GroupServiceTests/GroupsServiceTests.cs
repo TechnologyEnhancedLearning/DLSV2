@@ -5,7 +5,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -39,7 +38,8 @@
             UserTestHelper.GetDefaultAccountDetailsData();
 
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
-        private readonly DateTime testDate = new DateTime(2021, 12, 11);
+        private static DateTime todayDate= DateTime.Now;
+        private readonly DateTime testDate = new DateTime(todayDate.Year, todayDate.Month, todayDate.Day);
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private IClockService clockService = null!;
         private IConfiguration configuration = null!;

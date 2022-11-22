@@ -24,6 +24,14 @@ namespace DigitalLearningSolutions.Data.Services
             string? delegateName = null,
             string? delegateEmail = null
        );
+
+        public Email BuildEnrolmentEmail(
+            string emailAddress,
+            string fullName,
+            CourseNameInfo course,
+            int customisationId,
+            DateTime? completeByDate
+        );
     }
     public class EnrolService : IEnrolService
     {
@@ -54,7 +62,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.configuration = configuration;
             this.emailService = emailService;
         }
-        public void EnrolDelegateOnCourse(int delegateId, int customisationId, int customisationVersion, int enrollmentMethodId, int? enrolledByAdminId, DateTime? completeByDate, int? supervisorAdminId, string addedByProcess, string? delegateName, string? delegateEmail )
+        public void EnrolDelegateOnCourse(int delegateId, int customisationId, int customisationVersion, int enrollmentMethodId, int? enrolledByAdminId, DateTime? completeByDate, int? supervisorAdminId, string addedByProcess, string? delegateName, string? delegateEmail)
         {
             var course = courseService.GetCourseNameAndApplication(customisationId);
             if (delegateName == null || delegateEmail == null)
@@ -64,7 +72,7 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateEmail = delegateUser.EmailAddress;
                 delegateName = delegateUser.FirstName + " " + delegateUser.LastName;
             }
-            
+
             var candidateProgressOnCourse =
                progressDataService.GetDelegateProgressForCourse(
                    delegateId,
@@ -118,7 +126,7 @@ namespace DigitalLearningSolutions.Data.Services
                 emailService.ScheduleEmail(email, addedByProcess);
             }
         }
-        private Email BuildEnrolmentEmail(
+        public Email BuildEnrolmentEmail(
             string emailAddress,
             string fullName,
         CourseNameInfo course,
