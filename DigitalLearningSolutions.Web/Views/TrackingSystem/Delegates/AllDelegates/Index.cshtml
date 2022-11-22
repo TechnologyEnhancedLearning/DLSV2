@@ -1,5 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
+@using DigitalLearningSolutions.Web.Helpers
 @model AllDelegatesViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/allDelegates.css")" asp-append-version="true">
@@ -61,6 +62,7 @@
 
         <div id="searchable-elements">
           @foreach (var delegateModel in Model.Delegates) {
+            if (DisplayStringHelper.IsGuid(delegateModel.DelegateInfo.Email)) delegateModel.DelegateInfo.Email = null;
             <partial name="_SearchableDelegateCard" model="delegateModel" />
           }
         </div>
