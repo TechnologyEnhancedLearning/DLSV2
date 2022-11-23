@@ -9,6 +9,7 @@ using System;
 using DigitalLearningSolutions.Data.Models.User;
 using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.Email;
+using DigitalLearningSolutions.Data.DataServices.UserDataService;
 
 namespace DigitalLearningSolutions.Data.Tests.Services
 {
@@ -18,8 +19,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private IEnrolService enrolService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
         private IProgressDataService progressDataService = null!;
-        private IUserService userService = null!;
-        private ICourseService courseService = null!;
+        private IUserDataService userDataService = null!;
+        private ICourseDataService courseDataService = null!;
         private IConfiguration configuration = null!;
         private IEmailService emailService = null!;
 
@@ -38,26 +39,20 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             clockService = A.Fake<IClockService>();
             tutorialContentDataService = A.Fake<ITutorialContentDataService>();
             progressDataService = A.Fake<IProgressDataService>();
-            userService = A.Fake<IUserService>();
-            courseService = A.Fake<ICourseService>();
+            userDataService = A.Fake<IUserDataService>();
+            courseDataService = A.Fake<ICourseDataService>();
             emailService = A.Fake<IEmailService>();
             enrolService = new EnrolService(
                clockService,
                tutorialContentDataService,
                progressDataService,
-               userService,
-               courseService,
+               userDataService,
+               courseDataService,
                configuration,
                emailService
                );
             A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
-            // DatabaseModificationsDoNothing();
         }
-
-        //private void DatabaseModificationsDoNothing()
-        //{
-        //    A.CallTo(() => emailService.ScheduleEmail(A<Email>._, A<string>._)).DoesNothing();
-        //}
 
         [Test]
         public void EnrolDelegateOnCourse_With_All_Details()

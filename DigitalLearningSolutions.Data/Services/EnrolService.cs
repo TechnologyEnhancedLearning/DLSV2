@@ -1,4 +1,5 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Data.DataServices.UserDataService;
 using DigitalLearningSolutions.Data.Extensions;
 using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -39,8 +40,8 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IClockService clockService;
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
-        private readonly IUserService userService;
-        private readonly ICourseService courseService;
+        private readonly IUserDataService userDataService;
+        private readonly ICourseDataService courseDataService;
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
 
@@ -48,8 +49,8 @@ namespace DigitalLearningSolutions.Data.Services
             IClockService clockService,
             ITutorialContentDataService tutorialContentDataService,
             IProgressDataService progressDataService,
-            IUserService userService,
-            ICourseService courseService,
+            IUserDataService userDataService,
+            ICourseDataService courseDataService,
             IConfiguration configuration,
             IEmailService emailService
         )
@@ -57,17 +58,17 @@ namespace DigitalLearningSolutions.Data.Services
             this.clockService = clockService;
             this.tutorialContentDataService = tutorialContentDataService;
             this.progressDataService = progressDataService;
-            this.userService = userService;
-            this.courseService = courseService;
+            this.userDataService = userDataService;
+            this.courseDataService = courseDataService;
             this.configuration = configuration;
             this.emailService = emailService;
         }
         public void EnrolDelegateOnCourse(int delegateId, int customisationId, int customisationVersion, int enrollmentMethodId, int? enrolledByAdminId, DateTime? completeByDate, int? supervisorAdminId, string addedByProcess, string? delegateName, string? delegateEmail)
         {
-            var course = courseService.GetCourseNameAndApplication(customisationId);
+            var course = courseDataService.GetCourseNameAndApplication(customisationId);
             if (delegateName == null || delegateEmail == null)
             {
-                var delegateUser = userService.GetDelegateUserById(delegateId);
+                var delegateUser = userDataService.GetDelegateUserById(delegateId);
                 if (delegateUser == null || course == null) return;
                 delegateEmail = delegateUser.EmailAddress;
                 delegateName = delegateUser.FirstName + " " + delegateUser.LastName;

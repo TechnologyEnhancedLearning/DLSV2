@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -51,8 +52,8 @@
         private ILogger<IGroupsService> logger = null!;
         private IProgressDataService progressDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
-        private IUserService userService = null!;
-        private ICourseService courseService = null!;
+        private IUserDataService userDataService = null!;
+        private ICourseDataService courseDataService = null!;
         [SetUp]
         public void Setup()
         {
@@ -65,14 +66,14 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
-            userService = A.Fake<IUserService>();
-            courseService = A.Fake<ICourseService>();
+            userDataService = A.Fake<IUserDataService>();
+            courseDataService = A.Fake<ICourseDataService>();
             enrolService = new EnrolService(
                 clockService,
-                tutorialContentDataService,
+            tutorialContentDataService,
                 progressDataService,
-                userService,
-                courseService,
+                userDataService,
+                courseDataService,
                 configuration,
                 emailService
                 );
@@ -80,7 +81,6 @@
                 groupsDataService,
                 clockService,
                 jobGroupsDataService,
-                configuration,
                 centreRegistrationPromptsService,
                 enrolService,
                 logger
