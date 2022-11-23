@@ -98,7 +98,6 @@
         private const string AddCourseToGroupAddedByProcess = "AddCourseToDelegateGroup_Refactor";
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IClockService clockService;
-        private readonly IConfiguration configuration;
         private readonly IGroupsDataService groupsDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly ILogger<IGroupsService> logger;
@@ -108,7 +107,6 @@
             IGroupsDataService groupsDataService,
             IClockService clockService,
             IJobGroupsDataService jobGroupsDataService,
-            IConfiguration configuration,
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IEnrolService enrolService,
             ILogger<IGroupsService> logger
@@ -117,7 +115,6 @@
             this.groupsDataService = groupsDataService;
             this.clockService = clockService;
             this.jobGroupsDataService = jobGroupsDataService;
-            this.configuration = configuration;
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.enrolService = enrolService;
             this.logger = logger;
