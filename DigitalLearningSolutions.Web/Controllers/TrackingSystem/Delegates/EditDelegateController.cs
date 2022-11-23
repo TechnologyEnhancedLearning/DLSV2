@@ -58,6 +58,9 @@
                 promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateEntity, centreId);
             var model = new EditDelegateViewModel(delegateEntity, jobGroups, customPrompts);
 
+            if (DisplayStringHelper.IsGuid(model.CentreSpecificEmail))
+                model.CentreSpecificEmail = null;
+
             return View(model);
         }
 
