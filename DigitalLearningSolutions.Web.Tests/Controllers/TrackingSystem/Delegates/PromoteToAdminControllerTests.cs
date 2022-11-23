@@ -28,7 +28,7 @@
         private IUserService userService = null!;
         private IEmailGenerationService emailGenerationService = null!;
         private IEmailService emailService = null!;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -87,11 +87,11 @@
             };
 
             DelegateUser returnedDelegateUser = new DelegateUser() { };
-            
+
             A.CallTo(() => userService.GetUsersById(A<int?>._, A<int?>._)).Returns((returnedAdminUser, returnedDelegateUser));
 
             var emailBody = A.Fake<MimeKit.BodyBuilder>();
-            
+
             Email adminRolesEmail = new Email(string.Empty, emailBody, string.Empty, string.Empty);
 
             A.CallTo(() => emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(

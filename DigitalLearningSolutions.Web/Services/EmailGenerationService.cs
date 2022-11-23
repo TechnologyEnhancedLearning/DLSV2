@@ -103,7 +103,7 @@
 
             builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
             builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
-            
+
             return new Email(emailSubjectLine, builder, primaryEmail, supervisorEmail);
         }
     }
