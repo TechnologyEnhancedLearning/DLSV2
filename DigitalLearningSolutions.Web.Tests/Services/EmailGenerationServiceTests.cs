@@ -46,6 +46,8 @@
             const string supervisorLastName = "TestAdminFirstName";
             const string supervisorEmail = "admin@example.com";
 
+            const string centreName = "Test Centre Name";
+
             const string emailHeader = "New Digital Learning Solutions permissions granted";
 
             // When
@@ -62,13 +64,17 @@
                 isContentCreator,
                 isCmsAdministrator,
                 isCmsManager,
-                delegateEmail
+                delegateEmail,
+                centreName
             );
 
             // Then
             returnedEmail.Subject.Should().Be(emailHeader);
             returnedEmail.To.Should().BeEquivalentTo(delegateEmail);
             returnedEmail.Cc.Should().BeEquivalentTo(supervisorEmail);
+
+            returnedEmail.Body.HtmlBody.Should().Contain("has granted you new access permissions for the centre " + centreName + " in the Digital Learning Solutions system.");
+            returnedEmail.Body.TextBody.Should().Contain("has granted you new access permissions for the centre " + centreName + " in the Digital Learning Solutions system.");
 
             if (isCentreAdmin)
             {

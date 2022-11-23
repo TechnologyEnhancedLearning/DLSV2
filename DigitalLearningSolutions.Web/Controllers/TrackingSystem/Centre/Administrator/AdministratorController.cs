@@ -167,6 +167,8 @@
         {
             var (adminUser, _) = userService.GetUsersById(User.GetUserId(), null);
 
+            var centreName = adminUser.CentreName;
+
             var (delegateUserEmailDetails, _) = userService.GetUsersById(adminIdToPromote, null);
 
             if (delegateUserEmailDetails != null && adminUser != null)
@@ -184,7 +186,8 @@
                     isContentCreator: adminRoles.IsContentCreator,
                     isCmsAdmin: adminRoles.IsCmsAdministrator,
                     isCmsManager: adminRoles.IsCmsManager,
-                    primaryEmail: delegateUserEmailDetails.EmailAddress
+                    primaryEmail: delegateUserEmailDetails.EmailAddress,
+                    centreName: centreName
                 );
 
                 emailService.SendEmail(adminRolesEmail);

@@ -18,7 +18,8 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
-            string primaryEmail
+            string primaryEmail,
+            string centreName
         );
     }
 
@@ -37,7 +38,8 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
-            string primaryEmail
+            string primaryEmail,
+            string centreName
         )
         {
             const string emailSubjectLine = "New Digital Learning Solutions permissions granted";
@@ -45,11 +47,11 @@
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear {firstName},
-                                The user {supervisorFirstName} {supervisorLastName} has granted you new access permissions in the Digital Learning Solutions system.
+                                The user {supervisorFirstName} {supervisorLastName} has granted you new access permissions for the centre {centreName} in the Digital Learning Solutions system.
                                 You have been granted the following permissions:",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {firstName},</p>
-                                <p>The user <a href = 'mailto:{supervisorEmail}'>{supervisorFirstName} {supervisorLastName}</a> has granted you new access permissions in the Digital Learning Solutions system.</p>
+                                <p>The user <a href = 'mailto:{supervisorEmail}'>{supervisorFirstName} {supervisorLastName}</a> has granted you new access permissions for the centre {centreName} in the Digital Learning Solutions system.</p>
                                 <p>You have been granted the following permissions:</p>",
             };
 

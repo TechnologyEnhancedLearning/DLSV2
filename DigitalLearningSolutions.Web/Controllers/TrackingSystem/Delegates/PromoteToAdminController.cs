@@ -96,6 +96,8 @@
 
             var adminRoles = formData.GetAdminRoles();
 
+            var centreName = currentAdminUser.CentreName;
+
             try
             {
                 registrationService.PromoteDelegateToAdmin(
@@ -122,7 +124,8 @@
                         isContentCreator: adminRoles.IsContentCreator,
                         isCmsAdmin: adminRoles.IsCmsAdministrator,
                         isCmsManager: adminRoles.IsCmsManager,
-                        primaryEmail: delegateUserEmailDetails.UserAccount.PrimaryEmail
+                        primaryEmail: delegateUserEmailDetails.UserAccount.PrimaryEmail,
+                        centreName: centreName
                     );
 
                     emailService.SendEmail(adminRolesEmail);
