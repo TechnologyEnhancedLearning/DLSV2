@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -39,7 +39,8 @@
             UserTestHelper.GetDefaultAccountDetailsData();
 
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
-        private readonly DateTime testDate = new DateTime(2021, 12, 11);
+        private static DateTime todayDate= DateTime.Now;
+        private readonly DateTime testDate = new DateTime(todayDate.Year, todayDate.Month, todayDate.Day);
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private IClockService clockService = null!;
         private IConfiguration configuration = null!;
@@ -47,10 +48,12 @@
         private IGroupsDataService groupsDataService = null!;
         private IGroupsService groupsService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IEnrolService enrolService = null!;
         private ILogger<IGroupsService> logger = null!;
         private IProgressDataService progressDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
-
+        private IUserDataService userDataService = null!;
+        private ICourseDataService courseDataService = null!;
         [SetUp]
         public void Setup()
         {
@@ -63,25 +66,31 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
-
-            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
-                JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
-            );
-            A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
-
-            DatabaseModificationsDoNothing();
-
+            userDataService = A.Fake<IUserDataService>();
+            courseDataService = A.Fake<ICourseDataService>();
+            enrolService = new EnrolService(
+                clockService,
+            tutorialContentDataService,
+                progressDataService,
+                userDataService,
+                courseDataService,
+                configuration,
+                emailService
+                );
             groupsService = new GroupsService(
                 groupsDataService,
                 clockService,
-                tutorialContentDataService,
-                emailService,
                 jobGroupsDataService,
-                progressDataService,
-                configuration,
                 centreRegistrationPromptsService,
+                enrolService,
                 logger
             );
+            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
+               JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
+           );
+            A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
+
+            DatabaseModificationsDoNothing();
         }
 
         [Test]

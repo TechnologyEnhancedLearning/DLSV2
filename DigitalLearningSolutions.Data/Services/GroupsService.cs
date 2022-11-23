@@ -10,12 +10,10 @@
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-    using MimeKit;
 
     public interface IGroupsService
     {
@@ -98,37 +96,27 @@
     {
         private const string AddDelegateToGroupAddedByProcess = "AddDelegateToGroup_Refactor";
         private const string AddCourseToGroupAddedByProcess = "AddCourseToDelegateGroup_Refactor";
-        private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IClockService clockService;
-        private readonly IConfiguration configuration;
-        private readonly IEmailService emailService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly ILogger<IGroupsService> logger;
-        private readonly IProgressDataService progressDataService;
-        private readonly ITutorialContentDataService tutorialContentDataService;
+        private readonly IEnrolService enrolService;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
             IClockService clockService,
-            ITutorialContentDataService tutorialContentDataService,
-            IEmailService emailService,
             IJobGroupsDataService jobGroupsDataService,
-            IProgressDataService progressDataService,
-            IConfiguration configuration,
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
+            IEnrolService enrolService,
             ILogger<IGroupsService> logger
         )
         {
             this.groupsDataService = groupsDataService;
             this.clockService = clockService;
-            this.tutorialContentDataService = tutorialContentDataService;
-            this.emailService = emailService;
             this.jobGroupsDataService = jobGroupsDataService;
-            this.progressDataService = progressDataService;
-            this.configuration = configuration;
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
+            this.enrolService = enrolService;
             this.logger = logger;
         }
 
@@ -227,11 +215,11 @@
             {
                 EnrolDelegateOnGroupCourse(
                     delegateAccountWithOldDetails.Id,
-                    newDetails.Email,
-                    fullName,
                     addedByAdminId,
                     groupCourse,
-                    false
+                    false,
+                    fullName,
+                    delegateAccountWithOldDetails.EmailAddress
                 );
             }
         }
@@ -418,12 +406,12 @@
             {
                 var fullName = groupDelegate.FirstName + " " + groupDelegate.LastName;
                 EnrolDelegateOnGroupCourse(
-                    groupDelegate.DelegateId,
-                    groupDelegate.EmailAddress,
-                    fullName,
+                    groupDelegate.GroupDelegateId,
                     addedByAdminId,
                     groupCourse,
-                    true
+                    true,
+                    fullName,
+                    groupDelegate.EmailAddress
                 );
             }
 
@@ -481,76 +469,20 @@
         }
 
         private void EnrolDelegateOnGroupCourse(
-            int delegateUserId,
-            string? delegateUserEmailAddress,
-            string delegateUserFullName,
+            int delegateId,
             int? addedByAdminId,
             GroupCourse groupCourse,
-            bool isAddCourseToGroup
+            bool isAddCourseToGroup,
+            string? fullName,
+            string? emailAddress
         )
         {
+            var addedByProcess =
+                    isAddCourseToGroup ? AddCourseToGroupAddedByProcess : AddDelegateToGroupAddedByProcess;
             var completeByDate = groupCourse.CompleteWithinMonths != 0
                 ? (DateTime?)clockService.UtcNow.AddMonths(groupCourse.CompleteWithinMonths)
                 : null;
-
-            var candidateProgressOnCourse =
-                progressDataService.GetDelegateProgressForCourse(
-                    delegateUserId,
-                    groupCourse.CustomisationId
-                );
-            var existingRecordsToUpdate =
-                candidateProgressOnCourse.Where(
-                    p => ProgressShouldBeUpdatedOnEnrolment(p, isAddCourseToGroup)
-                ).ToList();
-
-            if (existingRecordsToUpdate.Any())
-            {
-                foreach (var progressRecord in existingRecordsToUpdate)
-                {
-                    var updatedSupervisorAdminId = groupCourse.SupervisorAdminId > 0 && !isAddCourseToGroup
-                        ? groupCourse.SupervisorAdminId.Value
-                        : progressRecord.SupervisorAdminId;
-                    progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                        progressRecord.ProgressId,
-                        updatedSupervisorAdminId,
-                        completeByDate
-                    );
-                }
-            }
-            else
-            {
-                var newProgressId = progressDataService.CreateNewDelegateProgress(
-                    delegateUserId,
-                    groupCourse.CustomisationId,
-                    groupCourse.CurrentVersion,
-                    clockService.UtcNow,
-                    3,
-                    addedByAdminId,
-                    completeByDate,
-                    groupCourse.SupervisorAdminId ?? 0
-                );
-
-                var tutorialsForCourse =
-                    tutorialContentDataService.GetTutorialIdsForCourse(groupCourse.CustomisationId);
-
-                foreach (var tutorial in tutorialsForCourse)
-                {
-                    progressDataService.CreateNewAspProgress(tutorial, newProgressId);
-                }
-            }
-
-            if (delegateUserEmailAddress != null)
-            {
-                var email = BuildEnrolmentEmail(
-                    delegateUserEmailAddress,
-                    delegateUserFullName,
-                    groupCourse,
-                    completeByDate
-                );
-                var addedByProcess =
-                    isAddCourseToGroup ? AddCourseToGroupAddedByProcess : AddDelegateToGroupAddedByProcess;
-                emailService.ScheduleEmail(email, addedByProcess);
-            }
+            enrolService.EnrolDelegateOnCourse(delegateId, groupCourse.CustomisationId, groupCourse.CurrentVersion, 3, addedByAdminId, completeByDate, groupCourse.SupervisorAdminId ?? 0, addedByProcess, fullName, emailAddress );
         }
 
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
@@ -591,49 +523,6 @@
                 clockService.UtcNow
             );
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
-        }
-
-        private Email BuildEnrolmentEmail(
-            string emailAddress,
-            string fullName,
-            GroupCourse course,
-            DateTime? completeByDate
-        )
-        {
-            var baseUrl = configuration.GetAppRootPath();
-            var linkToLearningPortal = baseUrl + "/LearningPortal/Current";
-            var linkToCourse = baseUrl + "/LearningMenu/" + course.CustomisationId;
-            string emailBodyText = $@"
-                Dear {fullName}
-                This is an automated message to notify you that you have been enrolled on the course
-                {course.CourseName}
-                by the system because a previous course completion has expired.
-                To login to the course directly click here:{linkToCourse}.
-                To login to the Learning Portal to access and complete your course click here:
-                {linkToLearningPortal}.";
-            string emailBodyHtml = $@"
-                <p>Dear {fullName}</p>
-                <p>This is an automated message to notify you that you have been enrolled on the course
-                <b>{course.CourseName}</b>
-                by the system because a previous course completion has expired.</p>
-                <p>To login to the course directly <a href=""{linkToCourse}"">click here</a>.</p>
-                <p>To login to the Learning Portal to access and complete your course
-                <a href=""{linkToLearningPortal}"">click here</a>.</p>";
-
-            if (completeByDate != null)
-            {
-                emailBodyText += $"The date the course should be completed by is {completeByDate.Value:dd/MM/yyyy}";
-                emailBodyHtml +=
-                    $"<p>The date the course should be completed by is {completeByDate.Value:dd/MM/yyyy}</p>";
-            }
-
-            var body = new BodyBuilder
-            {
-                TextBody = emailBodyText,
-                HtmlBody = emailBodyHtml,
-            };
-
-            return new Email(EnrolEmailSubject, body, emailAddress);
         }
 
         private (List<(int id, string name)>, string groupNamePrefix) GetJobGroupsAndPrefix()

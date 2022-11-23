@@ -19,7 +19,7 @@
         private ICourseDataService courseDataService = null!;
         private IMultiPageFormService multiPageFormService = null!;
         private ISupervisorService supervisorService = null!;
-        private IProgressDataService progressDataService = null!;
+        private IEnrolService enrolService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private HttpContext httpContext = null!;
@@ -32,7 +32,7 @@
             courseDataService = A.Fake<ICourseDataService>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
             supervisorService = A.Fake<ISupervisorService>();
-            progressDataService = A.Fake<IProgressDataService>();
+            enrolService = A.Fake<IEnrolService>();
             sessionEnrolDelegate = A.Fake<SessionEnrolDelegate>();
 
             httpRequest = A.Fake<HttpRequest>();
@@ -44,7 +44,7 @@
                 courseDataService,
                 multiPageFormService,
                 supervisorService,
-                progressDataService)
+                enrolService)
                 .WithMockHttpContext(httpRequest, null, null, httpResponse)
                 .WithMockTempData()
                 .WithDefaultContext()
