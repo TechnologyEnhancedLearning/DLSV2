@@ -12,7 +12,6 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -403,6 +402,10 @@ namespace DigitalLearningSolutions.Web.Services
                 false,
                 false,
                 false,
+                null,
+                null,
+                null,
+                null,
                 userAccount.ProfileImage
             );
 
@@ -445,7 +448,7 @@ namespace DigitalLearningSolutions.Web.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsContentManager,
                     adminRoles.ImportOnly,
-                    (int)categoryId,
+                    categoryId,
                     adminRoles.IsCentreManager
                 );
             }
@@ -457,7 +460,7 @@ namespace DigitalLearningSolutions.Web.Services
                     centreId,
                     categoryId,
                     adminRoles.IsCentreAdmin,
-                    false,
+                    adminRoles.IsCentreManager,
                     adminRoles.IsContentManager,
                     adminRoles.IsContentCreator,
                     adminRoles.IsTrainer,

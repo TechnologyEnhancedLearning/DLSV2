@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
@@ -32,13 +33,17 @@
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly IEmailService emailService;
+        private readonly IEmailGenerationService emailGenerationService;
 
         public AdministratorController(
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
             IUserService userService,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IEmailService emailService,
+            IEmailGenerationService emailGenerationService
         )
         {
             this.userDataService = userDataService;
@@ -46,17 +51,19 @@
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.userService = userService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.emailService = emailService;
+            this.emailGenerationService = emailGenerationService;
         }
 
         [Route("{page=1:int}")]
         public IActionResult Index(
-            string? searchString = null,
-            string? existingFilterString = null,
-            string? newFilterToAdd = null,
-            bool clearFilters = false,
-            int page = 1,
-            int? itemsPerPage = null
-        )
+                string? searchString = null,
+                string? existingFilterString = null,
+                string? newFilterToAdd = null,
+                bool clearFilters = false,
+                int page = 1,
+                int? itemsPerPage = null
+            )
         {
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
@@ -135,11 +142,15 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult EditAdminRoles(AdminRolesFormData model, int adminId)
         {
+            AdminRoles adminRoles = model.GetAdminRoles();
+
             userService.UpdateAdminUserPermissions(
                 adminId,
-                model.GetAdminRoles(),
+                adminRoles,
                 AdminCategoryHelper.AdminCategoryToCategoryId(model.LearningCategory)
             );
+
+            SendNotificationEmail(adminId, adminRoles);
 
             return RedirectToAction(
                 "Index",
@@ -147,6 +158,40 @@
                 model.ReturnPageQuery.ToRouteDataDictionary(),
                 model.ReturnPageQuery.ItemIdToReturnTo
             );
+        }
+
+        private void SendNotificationEmail(
+            int adminIdToPromote,
+            AdminRoles adminRoles
+        )
+        {
+            var (adminUser, _) = userService.GetUsersById(User.GetUserId(), null);
+
+            var centreName = adminUser.CentreName;
+
+            var (delegateUserEmailDetails, _) = userService.GetUsersById(adminIdToPromote, null);
+
+            if (delegateUserEmailDetails != null && adminUser != null)
+            {
+                var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
+                    firstName: delegateUserEmailDetails.FirstName,
+                    supervisorFirstName: adminUser.FirstName!,
+                    supervisorLastName: adminUser.LastName,
+                    supervisorEmail: adminUser.EmailAddress!,
+                    isCentreAdmin: adminRoles.IsCentreAdmin,
+                    isCentreManager: adminRoles.IsCentreManager,
+                    isSupervisor: adminRoles.IsSupervisor,
+                    isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
+                    isTrainer: adminRoles.IsTrainer,
+                    isContentCreator: adminRoles.IsContentCreator,
+                    isCmsAdmin: adminRoles.IsCmsAdministrator,
+                    isCmsManager: adminRoles.IsCmsManager,
+                    primaryEmail: delegateUserEmailDetails.EmailAddress,
+                    centreName: centreName
+                );
+
+                emailService.SendEmail(adminRolesEmail);
+            }
         }
 
         [Route("{adminId:int}/UnlockAccount")]

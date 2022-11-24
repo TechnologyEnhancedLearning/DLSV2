@@ -6,6 +6,8 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -32,6 +34,8 @@
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly IEmailGenerationService emailGenerationService;
+        private readonly IEmailService emailService;
 
         public PromoteToAdminController(
             IUserDataService userDataService,
@@ -39,7 +43,9 @@
             ICentreContractAdminUsageService centreContractAdminUsageService,
             IRegistrationService registrationService,
             ILogger<PromoteToAdminController> logger,
-            IUserService userService
+            IUserService userService,
+            IEmailGenerationService emailGenerationService,
+            IEmailService emailService
         )
         {
             this.userDataService = userDataService;
@@ -48,6 +54,8 @@
             this.registrationService = registrationService;
             this.logger = logger;
             this.userService = userService;
+            this.emailGenerationService = emailGenerationService;
+            this.emailService = emailService;
         }
 
         [HttpGet]
@@ -84,16 +92,44 @@
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
-            var (supervisorAdminUser, supervisorDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var (currentAdminUser, _) = userService.GetUsersById(userAdminId, userDelegateId);
+
+            var adminRoles = formData.GetAdminRoles();
+
+            var centreName = currentAdminUser.CentreName;
 
             try
             {
                 registrationService.PromoteDelegateToAdmin(
-                    formData.GetAdminRoles(),
+                    adminRoles,
                     AdminCategoryHelper.AdminCategoryToCategoryId(formData.LearningCategory),
                     formData.UserId,
                     formData.CentreId
                 );
+
+                var delegateUserEmailDetails = userDataService.GetDelegateById(delegateId);
+
+                if (delegateUserEmailDetails != null)
+                {
+                    var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
+                        firstName: delegateUserEmailDetails.UserAccount.FirstName,
+                        supervisorFirstName: currentAdminUser.FirstName!,
+                        supervisorLastName: currentAdminUser.LastName,
+                        supervisorEmail: currentAdminUser.EmailAddress!,
+                        isCentreAdmin: adminRoles.IsCentreAdmin,
+                        isCentreManager: adminRoles.IsCentreManager,
+                        isSupervisor: adminRoles.IsSupervisor,
+                        isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
+                        isTrainer: adminRoles.IsTrainer,
+                        isContentCreator: adminRoles.IsContentCreator,
+                        isCmsAdmin: adminRoles.IsCmsAdministrator,
+                        isCmsManager: adminRoles.IsCmsManager,
+                        primaryEmail: delegateUserEmailDetails.UserAccount.PrimaryEmail,
+                        centreName: centreName
+                    );
+
+                    emailService.SendEmail(adminRolesEmail);
+                }
             }
             catch (AdminCreationFailedException e)
             {
