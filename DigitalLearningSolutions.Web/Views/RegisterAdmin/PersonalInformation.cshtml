@@ -51,7 +51,8 @@
                      spell-check="false"
                      hint-text="This will be used for logging into the system. All communications will be sent to this email by default."
                      autocomplete="email"
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
 
       <vc:text-input asp-for="CentreSpecificEmail"
                      label="Centre email (optional)"
@@ -61,7 +62,7 @@
                      hint-text="If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address. Your primary email address will still be used for logging in and notifications for managing your account."
                      autocomplete="email"
                      css-class="nhsuk-u-width-one-half"
-                     required="true" />
+                     required="false" />
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
