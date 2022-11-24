@@ -143,9 +143,11 @@
           populate-with-current-value="true"
           type="text"
           spell-check="false"
-          autocomplete="email"
           hint-text="@centreEmailHintText"
-          css-class="nhsuk-u-width-one-half" />
+          autocomplete="email"
+          css-class="nhsuk-u-width-one-half"
+          required="false"
+          />
       } else {
         const string centreEmailHintText = @"If you supply a centre email for an account, all notifications relating to your activity at that centre will be sent to this email address.
                                               Your primary email address will still be used for logging in and notifications for managing your account.";
@@ -167,20 +169,23 @@
             <vc:select-list asp-for="@("Answer" + customField.PromptNumber)"
                             label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
                             value="@customField.Answer"
-                            hint-text=""
-                            deselectable="@(!customField.Mandatory)"
-                            css-class="nhsuk-u-width-one-half"
                             default-option="Select a @customField.Prompt.ToLower()"
-                            select-list-options="@customField.Options" />
+                            select-list-options="@customField.Options"
+                            hint-text=""
+                            css-class="nhsuk-u-width-one-half"
+                            required="@customField.Mandatory"
+            />
           } else {
             <vc:text-input asp-for="@("Answer" + customField.PromptNumber)"
                            label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
                            populate-with-current-value="true"
                            type="text"
                            spell-check="false"
-                           autocomplete=""
                            hint-text=""
-                           css-class="nhsuk-u-width-one-half" />
+                           autocomplete=""
+                           css-class="nhsuk-u-width-one-half"
+                           required="@customField.Mandatory"
+                           />
           }
         }
       }
