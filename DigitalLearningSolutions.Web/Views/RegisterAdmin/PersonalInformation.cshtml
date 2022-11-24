@@ -2,84 +2,85 @@
 @model PersonalInformationViewModel
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register admin" : "Register admin";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Register admin" : "Register admin";
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
+    <div class="nhsuk-grid-column-full">
+        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
 
-      @if (errorHasOccurred) {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.CentreSpecificEmail) })" />
-      }
+            @if (errorHasOccurred)
+            {
+                <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.CentreSpecificEmail) })" />
+            }
 
-      <div class="nhsuk-u-margin-bottom-8">
-        <h1 class="nhsuk-heading-xl">Register</h1>
+            <div class="nhsuk-u-margin-bottom-8">
+                <h1 class="nhsuk-heading-xl">Register</h1>
 
-        <p class="nhsuk-body-l">
-          Please enter your personal details to start the registration process
-          for an admin account at <b>@Model.CentreName</b>.
+                <p class="nhsuk-body-l">
+                    Please enter your personal details to start the registration process
+                    for an admin account at <b>@Model.CentreName</b>.
+                </p>
+                <input type="hidden" asp-for="Centre" />
+            </div>
+
+            <vc:text-input asp-for="FirstName"
+                           label="First name"
+                           populate-with-current-value="true"
+                           type=""
+                           spell-check="false"
+                           hint-text=""
+                           autocomplete="given-name"
+                           css-class="nhsuk-u-width-one-half"
+                           required="true" />
+
+            <vc:text-input asp-for="LastName"
+                           label="Last name"
+                           populate-with-current-value="true"
+                           type=""
+                           spell-check="false"
+                           hint-text=""
+                           autocomplete="family-name"
+                           css-class="nhsuk-u-width-one-half"
+                           required="true" />
+
+            <vc:text-input asp-for="PrimaryEmail"
+                           label="Primary email"
+                           populate-with-current-value="true"
+                           type="text"
+                           spell-check="false"
+                           hint-text="This will be used for logging into the system. All communications will be sent to this email by default."
+                           autocomplete="email"
+                           css-class="nhsuk-u-width-one-half"
+                           required="true" />
+
+            <vc:text-input asp-for="CentreSpecificEmail"
+                           label="Centre email (optional)"
+                           populate-with-current-value="true"
+                           type="text"
+                           spell-check="false"
+                           hint-text="If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address. Your primary email address will still be used for logging in and notifications for managing your account."
+                           autocomplete="email"
+                           css-class="nhsuk-u-width-one-half"
+                           required="false" />
+
+            <button class="nhsuk-button" type="submit">Next</button>
+        </form>
+
+        <p class="nhsuk-u-font-size-24 nhsuk-u-margin-top-7">
+            Alternatively, if you already have an account but would like to register at this centre as well, please log in.
         </p>
-        <input type="hidden" asp-for="Centre" />
-      </div>
+        <a class="nhsuk-button nhsuk-button--secondary"
+           asp-controller="RegisterInternalAdmin"
+           asp-action="Index"
+           asp-route-centreId="@Model.Centre"
+           role="button">
+            Log in
+        </a>
 
-      <vc:text-input asp-for="FirstName"
-                     label="First name"
-                     populate-with-current-value="true"
-                     type=""
-                     spell-check="false"
-                     hint-text=""
-                     autocomplete="given-name"
-                     css-class="nhsuk-u-width-one-half"
-                     required="true" />
-
-      <vc:text-input asp-for="LastName"
-                     label="Last name"
-                     populate-with-current-value="true"
-                     type=""
-                     spell-check="false"
-                     hint-text=""
-                     autocomplete="family-name"
-                     css-class="nhsuk-u-width-one-half"
-                     required="true" />
-
-      <vc:text-input asp-for="PrimaryEmail"
-                     label="Primary email"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     hint-text="This will be used for logging into the system. All communications will be sent to this email by default."
-                     autocomplete="email"
-                     css-class="nhsuk-u-width-one-half"
-                     required="true" />
-
-      <vc:text-input asp-for="CentreSpecificEmail"
-                     label="Centre email (optional)"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     hint-text="If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address. Your primary email address will still be used for logging in and notifications for managing your account."
-                     autocomplete="email"
-                     css-class="nhsuk-u-width-one-half"
-                     required="false" />
-
-      <button class="nhsuk-button" type="submit">Next</button>
-    </form>
-
-    <p class="nhsuk-u-font-size-24 nhsuk-u-margin-top-7">
-      Alternatively, if you already have an account but would like to register at this centre as well, please log in.
-    </p>
-    <a class="nhsuk-button nhsuk-button--secondary"
-       asp-controller="RegisterInternalAdmin"
-       asp-action="Index"
-       asp-route-centreId="@Model.Centre"
-       role="button">
-      Log in
-    </a>
-
-    <div class="nhsuk-u-margin-top-3">
-      <vc:cancel-link asp-controller="Home" asp-action="Index" />
+        <div class="nhsuk-u-margin-top-3">
+            <vc:cancel-link asp-controller="Home" asp-action="Index" />
+        </div>
     </div>
-  </div>
 </div>
