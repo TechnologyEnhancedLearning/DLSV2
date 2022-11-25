@@ -117,7 +117,6 @@
                 dlsSubApplication.HeaderExtension.Should().Be(headerExtension);
                 dlsSubApplication.UrlSegment.Should().Be(urlSegment);
                 dlsSubApplication.FaqTargetGroupId.Should().Be(faqTargetGroupId);
-                dlsSubApplication.DisplayHelpMenuItem.Should().Be(displayHelpMenuItem);
 
                 if (hasNullHeaderData)
                 {
