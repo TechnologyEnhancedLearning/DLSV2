@@ -58,8 +58,8 @@
         populate-with-current-value="true"
         type="text"
         spell-check="false"
-        autocomplete="given-name"
         hint-text=""
+        autocomplete="given-name"
         css-class="nhsuk-u-width-one-half"
         required="true"/>
 
@@ -69,8 +69,8 @@
         populate-with-current-value="true"
         type="text"
         spell-check="false"
-        autocomplete="family-name"
         hint-text=""
+        autocomplete="family-name"
         css-class="nhsuk-u-width-one-half"
         required="true" />
 
@@ -82,9 +82,9 @@
         populate-with-current-value="true"
         type="text"
         spell-check="false"
-        autocomplete="email"
-        hint-text=""
+        hint-text="@primaryEmailHintText"
         deselectable="false"
+        autocomplete="email"
         css-class="nhsuk-u-width-one-half"
         required="true" />
       <vc:select-list
@@ -134,8 +134,8 @@
     <div class="nhsuk-grid-column-full">
 
       @if (Model.IsLoggedInToCentre) {
-        const string centreEmailHintText = @"If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.
-                                              Your primary email address will still be used for logging in and notifications for managing your account.";
+        const string centreEmailHintText = @"<div>If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.</div>
+                                              <div>Your primary email address will still be used for logging in and notifications for managing your account.</div>";
 
         <vc:text-input
           asp-for="@nameof(Model.CentreSpecificEmail)"
@@ -149,8 +149,8 @@
           required="false"
           />
       } else {
-        const string centreEmailHintText = @"If you supply a centre email for an account, all notifications relating to your activity at that centre will be sent to this email address.
-                                              Your primary email address will still be used for logging in and notifications for managing your account.";
+        const string centreEmailHintText = @"<div>If you supply a centre email for an account, all notifications relating to your activity at that centre will be sent to this email address.</div>
+                                              <div>Your primary email address will still be used for logging in and notifications for managing your account.</div>";
 
         <h2>Centre emails</h2>
 
