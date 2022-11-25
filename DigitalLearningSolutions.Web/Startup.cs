@@ -249,6 +249,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISelfAssessmentReportService, SelfAssessmentReportService>();
             services.AddScoped<IClaimAccountService, ClaimAccountService>();
             services.AddScoped<IEmailVerificationService, EmailVerificationService>();
+            services.AddScoped<IEmailGenerationService, EmailGenerationService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)

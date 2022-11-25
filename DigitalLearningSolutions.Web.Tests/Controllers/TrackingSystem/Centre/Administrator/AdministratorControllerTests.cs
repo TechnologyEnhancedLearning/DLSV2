@@ -29,6 +29,8 @@
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private IEmailService emailService = null!;
+        private IEmailGenerationService emailGenerationService = null!;
 
         [SetUp]
         public void Setup()
@@ -38,6 +40,8 @@
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             userService = A.Fake<IUserService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            emailService = A.Fake<IEmailService>();
+            emailGenerationService = A.Fake<IEmailGenerationService>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
@@ -48,7 +52,9 @@
                     courseCategoriesDataService,
                     centreContractAdminUsageService,
                     userService,
-                    searchSortFilterPaginateService
+                    searchSortFilterPaginateService,
+                    emailService,
+                    emailGenerationService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)

@@ -23,7 +23,9 @@
         private readonly IRegistrationService registrationService;
         private readonly ICentresDataService centresDataService;
         private readonly IUserService userService;
-        
+        private readonly IEmailGenerationService emailGenerationService;
+        private readonly IEmailService emailService;
+
         public SupervisorController(
            ISupervisorService supervisorService,
            ICommonService commonService,
@@ -39,8 +41,10 @@
            IMultiPageFormService multiPageFormService,
            IRegistrationService registrationService,
            ICentresDataService centresDataService,
-           IUserService userService
-        )
+           IUserService userService,
+            IEmailGenerationService emailGenerationService,
+            IEmailService emailService
+            )
         {
             this.supervisorService = supervisorService;
             this.frameworkNotificationService = frameworkNotificationService;
@@ -53,6 +57,8 @@
             this.registrationService = registrationService;
             this.centresDataService = centresDataService;
             this.userService = userService;
+            this.emailGenerationService = emailGenerationService;
+            this.emailService = emailService;
         }
 
         private int GetCentreId()

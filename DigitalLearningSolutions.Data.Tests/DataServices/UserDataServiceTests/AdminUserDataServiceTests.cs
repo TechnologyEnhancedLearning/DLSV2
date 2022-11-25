@@ -203,6 +203,32 @@
         }
 
         [Test]
+        public void UpdateAdminUserPermissions_with_unknown_categoryid_updates_user()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                userDataService.UpdateAdminUserPermissions(7, true, true, true, true, true, true, true, null, false);
+                var updatedUser = userDataService.GetAdminUserById(7)!;
+
+                // Then
+                updatedUser.IsCentreAdmin.Should().BeTrue();
+                updatedUser.IsSupervisor.Should().BeTrue();
+                updatedUser.IsNominatedSupervisor.Should().BeTrue();
+                updatedUser.IsTrainer.Should().BeTrue();
+                updatedUser.IsContentCreator.Should().BeTrue();
+                updatedUser.IsContentManager.Should().BeTrue();
+                updatedUser.ImportOnly.Should().BeTrue();
+                updatedUser.CategoryId.Should().Be(null);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
         public void UpdateUserFailedLoginCount_updates_user()
         {
             using var transaction = new TransactionScope();
