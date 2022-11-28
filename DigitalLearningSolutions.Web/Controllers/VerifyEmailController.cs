@@ -35,7 +35,7 @@
 
             if (emailVerificationData == null)
             {
-                return NotFound();
+                return View("VerificationLinkError");
             }
 
             if (emailVerificationData.HashCreationDate + EmailVerificationHashLifetime < clockUtility.UtcNow)
