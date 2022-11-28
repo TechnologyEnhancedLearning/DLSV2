@@ -98,6 +98,26 @@
                         loginResult.CentreToLogInto!.Value
                     );
                 case LoginAttemptResult.ChooseACentre:
+                    var idsOfCentresWithUnverifiedEmails = userService.GetUnverifiedEmailsForUser(loginResult.UserEntity!.UserAccount.Id).centreEmails
+                                        .Select(uce => uce.centreId).ToList();
+                    var activeCentres = loginResult.UserEntity!.CentreAccountSetsByCentreId.Values.Where(
+                                            centreAccountSet => (centreAccountSet.AdminAccount?.Active == true ||
+                                            centreAccountSet.DelegateAccount != null) &&
+                                            centreAccountSet.IsCentreActive == true &&
+                                            centreAccountSet.DelegateAccount?.Active == true &&
+                                            centreAccountSet.DelegateAccount?.Approved == true &&
+                                            !idsOfCentresWithUnverifiedEmails.Contains(centreAccountSet.CentreId)).ToList();
+
+                    if (activeCentres.Count() == 1)
+                    {
+                        return await LogIntoCentreAsync(
+                        loginResult.UserEntity!,
+                        model.RememberMe,
+                        model.ReturnUrl,
+                        activeCentres.Select(x => x.CentreId).FirstOrDefault()
+                        );
+                    }
+
                     await this.CentrelessLogInAsync(loginResult.UserEntity!.UserAccount, model.RememberMe);
                     return RedirectToAction("ChooseACentre", "Login", new { returnUrl = model.ReturnUrl });
                 default:
