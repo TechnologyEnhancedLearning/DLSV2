@@ -291,7 +291,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
         public async Task Multiple_available_centres_should_redirect_to_ChooseACentre_page()
         {
             // Given
-            var userEntity = GetUserEntity(true, true);
+            var userEntity = GetUserEntityWithTwoDelegateAccounts(true, true);
 
             A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
                 new LoginResult(LoginAttemptResult.ChooseACentre, userEntity, 2)
@@ -734,6 +734,43 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                 UserTestHelper.GetDefaultUserAccount(),
                 withAdminAccount ? new List<AdminAccount> { adminAccount } : new List<AdminAccount>(),
                 withDelegateAccount ? new List<DelegateAccount> { delegateAccount } : new List<DelegateAccount>()
+            );
+        }
+
+        private UserEntity GetUserEntityWithTwoDelegateAccounts(
+            bool withAdminAccount,
+            bool withDelegateAccount,
+            bool isAdminAccountActive = true,
+            bool isDelegateAccountActive = true,
+            bool isDelegateAccountApproved = true,
+            int centreId = 2,
+            bool isCentreActive = true
+        )
+        {
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(
+                centreId: centreId,
+                centreActive: isCentreActive,
+                active: isAdminAccountActive
+            );
+
+            var delegateAccount1 = UserTestHelper.GetDefaultDelegateAccount(
+                centreId: centreId,
+                centreActive: isCentreActive,
+                active: isDelegateAccountActive,
+                approved: isDelegateAccountApproved
+            );
+
+            var delegateAccount2 = UserTestHelper.GetDefaultDelegateAccount(
+                centreId: 3,
+                centreActive: isCentreActive,
+                active: isDelegateAccountActive,
+                approved: isDelegateAccountApproved
+            );
+
+            return new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                withAdminAccount ? new List<AdminAccount> { adminAccount } : new List<AdminAccount>(),
+                withDelegateAccount ? new List<DelegateAccount> { delegateAccount1, delegateAccount2 } : new List<DelegateAccount>()
             );
         }
 
