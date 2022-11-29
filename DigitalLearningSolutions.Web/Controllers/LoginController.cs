@@ -190,11 +190,6 @@
 
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            if (centreIdToLogInto <= 0)
-            {
-                return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction("Index", "MyAccount");
-            }
-
             if (!userService.ShouldForceDetailsCheck(userEntity, centreIdToLogInto))
             {
                 return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction("Index", "Home");
