@@ -26,7 +26,6 @@
             Assessed = courseStatistics.IsAssessed;
             AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
             LaunchCourseLink = $"{config.GetAppRootPath()}/LearningMenu/{CustomisationId}";
-            //Status = DeriveCourseStatus(courseStatistics);
         }
 
         private string LaunchCourseLink { get; set; }
@@ -65,23 +64,5 @@
 
             return $"mailto:?subject={subject}&body={content}";
         }
-
-        //private static string DeriveCourseStatus(Course courseStatistics)
-        //{
-        //    string status;
-        //    if (courseStatistics.Archived)
-        //    {
-        //        status = "archived";
-        //    }
-        //    else if (courseStatistics.Active)
-        //    {
-        //        status = "active";
-        //    }
-        //    else
-        //    {
-        //        status = "inactive";
-        //    }
-        //    return status;
-        //}
     }
 }
