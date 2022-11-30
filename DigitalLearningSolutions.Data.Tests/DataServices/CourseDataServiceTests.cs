@@ -346,6 +346,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CategoryName = "Office 2007",
                 CourseTopic = "Microsoft Office",
                 LearningMinutes = "N/A",
+                Archived = false,
             };
 
             result.Should().HaveCount(259);
