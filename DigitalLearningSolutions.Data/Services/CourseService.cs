@@ -351,7 +351,7 @@
         public CentreCourseDetails GetCentreCourseDetails(int centreId, int? categoryId)
         {
             var (courses, categories, topics) = (
-                GetNonArchivedCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId),
+                GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId),
                 courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                     .Select(c => c.CategoryName),
                 courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));

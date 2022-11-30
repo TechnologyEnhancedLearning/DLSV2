@@ -22,6 +22,17 @@
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "true"),
             FilterStatus.Success
         );
+
+
+
+        public static readonly FilterOptionModel IsArchived = new FilterOptionModel(
+            "Archived",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Status), "Archived"),
+            FilterStatus.Success
+        );
+
+
+
     }
 
     public static class CourseVisibilityFilterOptions

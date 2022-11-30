@@ -22,10 +22,15 @@
             CategoryName = courseStatistics.CategoryName;
             CourseTopic = courseStatistics.CourseTopic;
             LearningMinutes = courseStatistics.LearningMinutes;
+
+
             Tags = FilterableTagHelper.GetCurrentTagsForCourseStatistics(courseStatistics);
+
+
             Assessed = courseStatistics.IsAssessed;
             AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
             LaunchCourseLink = $"{config.GetAppRootPath()}/LearningMenu/{CustomisationId}";
+            Status = courseStatistics.Status;
         }
 
         private string LaunchCourseLink { get; set; }
@@ -38,6 +43,7 @@
         public string CourseTopic { get; set; }
         public string LearningMinutes { get; set; }
         public bool Assessed { get; set; }
+        public string? Status { get; set; }
         public IEnumerable<CourseAdminFieldWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
         public bool HasAdminFields => AdminFieldWithResponseCounts.Any();
 

@@ -71,7 +71,13 @@
         {
             var tags = new List<SearchableTagViewModel>();
 
-            if (courseStatistics.Active)
+
+
+            if (courseStatistics.Status == "archived")
+            {
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsArchived));
+            }
+            else if (courseStatistics.Active)
             {
                 tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsActive));
             }
