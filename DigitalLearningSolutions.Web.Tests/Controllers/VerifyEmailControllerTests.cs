@@ -58,7 +58,7 @@
         }
 
         [Test]
-        public void Index_with_non_matching_email_and_code_returns_NotFound()
+        public void Index_with_non_matching_email_and_code_returns_ErrorView()
         {
             // Given
             A.CallTo(() => userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(Email, Code)).Returns(
@@ -69,7 +69,7 @@
             var result = controller.Index(Email, Code);
 
             // Then
-            result.Should().BeNotFoundResult();
+            result.Should().BeViewResult().WithViewName("VerificationLinkError");
         }
 
         [Test]
