@@ -22,11 +22,7 @@
             CategoryName = courseStatistics.CategoryName;
             CourseTopic = courseStatistics.CourseTopic;
             LearningMinutes = courseStatistics.LearningMinutes;
-
-
             Tags = FilterableTagHelper.GetCurrentTagsForCourseStatistics(courseStatistics);
-
-
             Assessed = courseStatistics.IsAssessed;
             AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
             LaunchCourseLink = $"{config.GetAppRootPath()}/LearningMenu/{CustomisationId}";
