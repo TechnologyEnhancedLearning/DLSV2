@@ -2,7 +2,6 @@
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Models.Enums;
 
     public class SearchableTagViewModel : FilterOptionModel
     {

@@ -4,8 +4,6 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class CourseStatusFilterOptions
     {
@@ -23,16 +21,11 @@
             FilterStatus.Success
         );
 
-
-
         public static readonly FilterOptionModel IsArchived = new FilterOptionModel(
             "Archived",
-            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Status), "Archived"),
-            FilterStatus.Success
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Archived), "true"),
+            FilterStatus.Default
         );
-
-
-
     }
 
     public static class CourseVisibilityFilterOptions

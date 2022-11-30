@@ -30,7 +30,7 @@
             Active = courseStatistics.Active;
             CustomisationName = courseStatistics.CustomisationName;
             ApplicationName = courseStatistics.ApplicationName;
-            Status = courseStatistics.Status;
+            Archived = courseStatistics.Archived;
         }
 
         public IEnumerable<CourseAdminFieldWithResponseCounts> AdminFieldsWithResponses { get; set; }

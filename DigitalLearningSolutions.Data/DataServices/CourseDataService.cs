@@ -168,12 +168,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                 WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID
                     AND a.ArchivedDate IS NULL AND a.DefaultContentTypeID <> 4";
 
-        private const string CourseStatus =
-            @"CASE WHEN ap.ArchivedDate IS NOT NULL THEN 'archived'
-		        WHEN cu.Active = 1 THEN 'active'
-		        WHEN cu.Active = 0 THEN 'inactive'
-	            END AS Status";
-
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
@@ -195,7 +189,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         ct.CourseTopic,
                         cu.LearningTimeMins AS LearningMinutes,
                         cu.IsAssessed,
-                        {CourseStatus}
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 1 ELSE 0 END AS Archived
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
