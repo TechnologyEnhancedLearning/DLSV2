@@ -22,6 +22,7 @@
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateCourses(courseStatistics);
             Assessed = courseStatistics.IsAssessed;
             AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
+            Status = DeriveCourseStatus(courseStatistics);
         }
 
         public int CustomisationId { get; set; }
@@ -32,6 +33,7 @@
         public string CourseTopic { get; set; }
         public string LearningMinutes { get; set; }
         public bool Assessed { get; set; }
+        public string? Status { get; set; }
 
         public IEnumerable<CourseAdminFieldWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
 
@@ -49,5 +51,22 @@
                                               FilteringHelper.Separator +
                                               nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields) +
                                               FilteringHelper.Separator + HasAdminFields.ToString().ToLowerInvariant();
+        private static string DeriveCourseStatus(Course courseStatistics)
+        {
+            string status;
+            if (courseStatistics.Archived)
+            {
+                status = "archived";
+            }
+            else if (courseStatistics.Active)
+            {
+                status = "active";
+            }
+            else
+            {
+                status = "inactive";
+            }
+            return status;
+        }
     }
 }

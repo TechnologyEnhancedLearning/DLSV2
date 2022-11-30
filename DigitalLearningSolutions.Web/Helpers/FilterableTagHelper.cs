@@ -71,11 +71,7 @@
         {
             var tags = new List<SearchableTagViewModel>();
 
-            if (courseStatistics.Archived)
-            {
-                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsArchived));
-            }
-            else if (courseStatistics.Active)
+            if (courseStatistics.Active)
             {
                 tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsActive));
             }
@@ -100,12 +96,22 @@
             CourseStatistics courseStatistics
         )
         {
-            return new List<SearchableTagViewModel>
+            var tags = new List<SearchableTagViewModel>();
+
+            if (courseStatistics.Archived)
             {
-                courseStatistics.Active
-                    ? new SearchableTagViewModel(CourseStatusFilterOptions.IsActive)
-                    : new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive),
-            };
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsArchived));
+            }
+            else if (courseStatistics.Active)
+            {
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsActive));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive));
+            }
+
+            return tags;
         }
 
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForCourseDelegate(CourseDelegate courseDelegate)
