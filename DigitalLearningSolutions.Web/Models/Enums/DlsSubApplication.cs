@@ -58,7 +58,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "SuperAdmin"
         );
 
-
+        public readonly bool DisplayHelpMenuItem;
         public readonly int? FaqTargetGroupId;
 
         public readonly string HeaderExtension;
@@ -73,7 +73,8 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             string? headerPath,
             string? headerPathName,
             string? urlSegment,
-            int? faqTargetGroupId = null
+            int? faqTargetGroupId = null,
+            bool displayHelpMenuItem = true
         ) : base(id, name)
         {
             HeaderExtension = headerExtension;
@@ -87,6 +88,8 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             HeaderPathName = headerPathName;
 
             UrlSegment = urlSegment;
+
+            DisplayHelpMenuItem = displayHelpMenuItem;
         }
 
         public static DlsSubApplication Default => Main;

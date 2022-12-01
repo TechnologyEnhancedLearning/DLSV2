@@ -1,5 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Common
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ViewDelegateViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/viewDelegate.css")" asp-append-version="true">
@@ -101,13 +103,13 @@
                 <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.CandidateNumber" />
             </div>
 
-            <div class="nhsuk-summary-list__row details-list-with-button__row">
+@*            <div class="nhsuk-summary-list__row details-list-with-button__row">
                 <dt class="nhsuk-summary-list__key">
                     Alias
                 </dt>
                 <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.AliasId" />
             </div>
-
+*@
             <div class="nhsuk-summary-list__row details-list-with-button__row">
                 <dt class="nhsuk-summary-list__key">
                     Registration date
