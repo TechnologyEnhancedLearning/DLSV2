@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -9,6 +10,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
     using Microsoft.AspNetCore.Authorization;
@@ -17,19 +19,27 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class ClaimAccountController : Controller
     {
+        private static readonly TimeSpan EmailVerificationHashLifetime = TimeSpan.FromDays(14);
+
+        private readonly IClockUtility clockUtility;
         private readonly IUserService userService;
         private readonly IUserDataService userDataService;
         private readonly IClaimAccountService claimAccountService;
+        private readonly IEmailService emailService;
 
         public ClaimAccountController(
             IUserService userService,
             IUserDataService userDataService,
-            IClaimAccountService claimAccountService
+            IClaimAccountService claimAccountService,
+            IEmailService emailService,
+            IClockUtility clockUtility
         )
         {
             this.userService = userService;
             this.userDataService = userDataService;
             this.claimAccountService = claimAccountService;
+            this.emailService = emailService;
+            this.clockUtility = clockUtility;
         }
 
         [HttpGet]
@@ -269,6 +279,15 @@
             }
 
             var delegateAccounts = userService.GetUserById(loggedInUserId)!.DelegateAccounts;
+
+            var emailOutData = emailService.GetEmailOutUsingEmail(model.Email);
+
+            if (emailOutData != null && (emailOutData.DeliverAfter + EmailVerificationHashLifetime < clockUtility.UtcNow))
+            {
+                return View("VerificationLinkExpired");
+                
+            }
+
 
             if (delegateAccounts.Any(account => account.CentreId == model.CentreId))
             {

@@ -5,6 +5,7 @@
     using System.Text;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Utilities;
     using MailKit.Net.Smtp;
@@ -18,6 +19,7 @@
         void SendEmails(IEnumerable<Email> emails);
         void ScheduleEmail(Email email, string addedByProcess, DateTime? deliveryDate = null);
         void ScheduleEmails(IEnumerable<Email> emails, string addedByProcess, DateTime? deliveryDate = null);
+        EmailOutDetails GetEmailOutUsingEmail(string email);
     }
 
     public class EmailService : IEmailService
@@ -82,6 +84,11 @@
             var senderAddress = GetMailConfig().MailSenderAddress;
             var urgent = deliveryDate?.Date.Equals(clockUtility.UtcToday) ?? false;
             emailDataService.ScheduleEmails(emails, senderAddress, addedByProcess, urgent, deliveryDate);
+        }
+
+        public EmailOutDetails GetEmailOutUsingEmail(string email)
+        {
+            return emailDataService.GetEmailOutDetails(email);
         }
 
         private void SendSingleEmailFromClient(

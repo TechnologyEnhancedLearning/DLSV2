@@ -13,7 +13,7 @@ namespace DigitalLearningSolutions.Data.Helpers
 
         public static bool IsStillValidAt(this ResetPassword passwordReset, DateTime dateTime, TimeSpan expiryTime)
         {
-            return passwordReset.PasswordResetDateTime + expiryTime > dateTime;
+            return passwordReset.PasswordResetDateTime > dateTime;
         }
 
         public static IEnumerable<int> GetDistinctResetPasswordIds(this (AdminUser?, List<DelegateUser>) userAccounts)

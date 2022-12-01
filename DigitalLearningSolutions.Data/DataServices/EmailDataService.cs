@@ -5,6 +5,7 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
 
     public interface IEmailDataService
@@ -16,6 +17,8 @@
             bool urgent,
             DateTime? deliverAfter = null
         );
+
+        public EmailOutDetails? GetEmailOutDetails(string email);
     }
 
     public class EmailDataService : IEmailDataService
@@ -25,6 +28,21 @@
         public EmailDataService(IDbConnection connection)
         {
             this.connection = connection;
+        }
+
+        public EmailOutDetails? GetEmailOutDetails(string email)
+        {
+            return connection.Query<EmailOutDetails>(
+                @"SELECT TOP 1
+                    eo.EmailID as EmailID,
+                    eo.EmailTo as EmailTo,
+                    eo.Added as Added,
+                    eo.Sent as Sent,
+                    eo.DeliverAfter as DeliverAfter
+                    FROM EmailOut eo
+                    WHERE eo.EmailTo = @email Order by 1 ASC",
+                new { email }
+            ).SingleOrDefault();
         }
 
         public void ScheduleEmails(

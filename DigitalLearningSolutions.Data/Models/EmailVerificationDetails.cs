@@ -16,7 +16,7 @@
 
         public bool HasVerificationExpired(IClockUtility clockUtility)
         {
-            return EmailVerificationHashCreatedDate <= clockUtility.UtcNow - TimeSpan.FromDays(3);
+            return EmailVerificationHashCreatedDate <= clockUtility.UtcNow - TimeSpan.FromDays(14);
         }
     }
 }

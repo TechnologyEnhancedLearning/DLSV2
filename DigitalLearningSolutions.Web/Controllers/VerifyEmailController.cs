@@ -12,15 +12,17 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class VerifyEmailController : Controller
     {
-        private static readonly TimeSpan EmailVerificationHashLifetime = TimeSpan.FromDays(3);
+        private static readonly TimeSpan EmailVerificationHashLifetime = TimeSpan.FromDays(14);
 
         private readonly IClockUtility clockUtility;
         private readonly IUserService userService;
+        private readonly IEmailService emailService;
 
-        public VerifyEmailController(IUserService userService, IClockUtility clockUtility)
+        public VerifyEmailController(IUserService userService, IClockUtility clockUtility,IEmailService emailService)
         {
             this.userService = userService;
             this.clockUtility = clockUtility;
+            this.emailService = emailService;
         }
 
         public IActionResult Index(string? email, string? code)
@@ -33,13 +35,20 @@
             var emailVerificationData =
                 userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(email, code);
 
+           
             if (emailVerificationData == null)
             {
                 return NotFound();
             }
 
-            if (emailVerificationData.HashCreationDate + EmailVerificationHashLifetime < clockUtility.UtcNow)
+            var emailOutData = emailService.GetEmailOutUsingEmail(email);
+
+            if (emailVerificationData.HashCreationDate + EmailVerificationHashLifetime < clockUtility.UtcNow
+                && emailOutData == null)
             {
+                return View("VerificationLinkExpired");
+            }
+            else if (emailOutData != null && (emailOutData.DeliverAfter + EmailVerificationHashLifetime < clockUtility.UtcNow)) {
                 return View("VerificationLinkExpired");
             }
 

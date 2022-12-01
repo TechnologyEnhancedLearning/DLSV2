@@ -193,7 +193,7 @@
             var hash = Guid.NewGuid().ToString();
 
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
-                clockUtility.UtcNow,
+                clockUtility.UtcNow.AddHours(2),
                 hash,
                 userId
             );
