@@ -4,15 +4,16 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc;
@@ -22,44 +23,66 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [SetSelectedTab(nameof(NavMenuTab.Register))]
     public class RegisterController : Controller
     {
-        private readonly PromptsService promptsService;
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IFeatureManager featureManager;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
-        private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public RegisterController(
             ICentresDataService centresDataService,
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             ICryptoService cryptoService,
-            IUserService userService,
             PromptsService promptsService,
             IFeatureManager featureManager,
-            ISupervisorDelegateService supervisorDelegateService
+            ISupervisorDelegateService supervisorDelegateService,
+            IUserDataService userDataService
         )
         {
             this.centresDataService = centresDataService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
-            this.userService = userService;
             this.promptsService = promptsService;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;
+            this.userDataService = userDataService;
         }
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "RegisterAtNewCentre", new { centreId, inviteId });
             }
 
-            if (!CheckCentreIdValid(centreId))
+            var centreName = GetCentreName(centreId);
+
+            if (centreId != null && centreName == null)
+            {
+                return NotFound();
+            }
+
+            var model = new RegisterViewModel(centreId, centreName, inviteId);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Start(int? centreId = null, string? inviteId = null)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "RegisterAtNewCentre", new { centreId, inviteId });
+            }
+
+            var centreName = GetCentreName(centreId);
+
+            if (centreId != null && centreName == null)
             {
                 return NotFound();
             }
@@ -74,11 +97,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 supervisorDelegateRecord = null;
             }
 
-            SetDelegateRegistrationData(
+            var delegateRegistrationData = new DelegateRegistrationData(
                 centreId,
                 supervisorDelegateRecord?.ID,
                 supervisorDelegateRecord?.DelegateEmail
             );
+
+            TempData.Set(delegateRegistrationData);
 
             return RedirectToAction("PersonalInformation");
         }
@@ -94,7 +119,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
-            ValidateEmailAddress(model);
+            ValidateEmailAddresses(model);
 
             return View(model);
         }
@@ -103,7 +128,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
-            ValidateEmailAddress(model);
+            ValidateEmailAddresses(model);
 
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
@@ -221,9 +246,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public async Task<IActionResult> Summary(SummaryViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationData>()!;
+            var data = TempData.Peek<DelegateRegistrationData>();
 
-            if (data.Centre == null || data.JobGroup == null)
+            if (data!.Centre == null || data.JobGroup == null)
             {
                 return RedirectToAction("Index");
             }
@@ -245,18 +270,27 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             try
             {
                 var (candidateNumber, approved) =
-                    registrationService.RegisterDelegate(
+                    registrationService.RegisterDelegateForNewUser(
                         RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
                         userIp,
                         refactoredTrackingSystemEnabled,
+                        true,
                         data.SupervisorDelegateId
                     );
 
                 TempData.Clear();
-                TempData.Add("candidateNumber", candidateNumber);
-                TempData.Add("approved", approved);
-                TempData.Add("centreId", centreId);
-                return RedirectToAction("Confirmation");
+
+                return RedirectToAction(
+                    "Confirmation",
+                    new
+                    {
+                        centreId,
+                        candidateNumber,
+                        approved,
+                        unverifiedPrimaryEmail = data.PrimaryEmail,
+                        data.CentreSpecificEmail,
+                    }
+                );
             }
             catch (DelegateCreationFailedException e)
             {
@@ -277,58 +311,43 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(
+            int? centreId,
+            string candidateNumber,
+            bool approved,
+            string? unverifiedPrimaryEmail,
+            string? centreSpecificEmail
+        )
         {
-            var candidateNumber = (string?)TempData.Peek("candidateNumber");
-            var approvedNullable = (bool?)TempData.Peek("approved");
-            var centreIdNullable = (int?)TempData.Peek("centreId");
-            TempData.Clear();
-
-            if (candidateNumber == null || approvedNullable == null || centreIdNullable == null)
+            if (centreId == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var approved = (bool)approvedNullable;
-            var centreId = (int)centreIdNullable;
+            var centreName = GetCentreName(centreId);
 
-            var centreIdForContactInformation = approved ? null : (int?)centreId;
-            var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreIdForContactInformation);
-            return View(viewModel);
+            var model = new ConfirmationViewModel(
+                candidateNumber,
+                approved,
+                centreId,
+                unverifiedPrimaryEmail,
+                centreSpecificEmail,
+                centreName!
+            );
+
+            return View(model);
         }
 
-        private void SetDelegateRegistrationData(int? centreId, int? supervisorDelegateId, string? email)
+        private string? GetCentreName(int? centreId)
         {
-            var delegateRegistrationData = new DelegateRegistrationData(centreId, supervisorDelegateId, email);
-            TempData.Set(delegateRegistrationData);
+            return centreId == null ? null : centresDataService.GetCentreName(centreId.Value);
         }
 
-        private bool CheckCentreIdValid(int? centreId)
-        {
-            return centreId == null
-                   || centresDataService.GetCentreName(centreId.Value) != null;
-        }
-
-        private void ValidateEmailAddress(PersonalInformationViewModel model)
-        {
-            if (model.Email == null || !model.Centre.HasValue)
-            {
-                return;
-            }
-
-            if (!userService.IsDelegateEmailValidForCentre(model.Email, model.Centre!.Value))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
-                    "A user with this email is already registered at this centre"
-                );
-            }
-        }
-
-        private IEnumerable<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsFromModel(
-            LearnerInformationViewModel model,
-            int centreId
-        )
+        private IEnumerable<EditDelegateRegistrationPromptViewModel>
+            GetEditDelegateRegistrationPromptViewModelsFromModel(
+                LearnerInformationViewModel model,
+                int centreId
+            )
         {
             return promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
@@ -341,7 +360,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             );
         }
 
-        private IEnumerable<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsFromData(DelegateRegistrationData data)
+        private IEnumerable<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsFromData(
+            DelegateRegistrationData data
+        )
         {
             return promptsService.GetDelegateRegistrationPromptsForCentre(
                 data.Centre!.Value,
@@ -368,7 +389,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             DelegateRegistrationData data
         )
         {
-            model.DelegateRegistrationPrompts = GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
+            model.DelegateRegistrationPrompts =
+                GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
@@ -380,6 +402,25 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             model.Centre = centresDataService.GetCentreName((int)data.Centre!);
             model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
             model.DelegateRegistrationPrompts = GetDelegateRegistrationPromptsFromData(data);
+        }
+
+        private void ValidateEmailAddresses(PersonalInformationViewModel model)
+        {
+            RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
+                model.PrimaryEmail,
+                nameof(PersonalInformationViewModel.PrimaryEmail),
+                ModelState,
+                userDataService,
+                CommonValidationErrorMessages.EmailInUseDuringDelegateRegistration
+            );
+
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                model.CentreSpecificEmail,
+                model.Centre,
+                nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                ModelState,
+                userDataService
+            );
         }
     }
 }

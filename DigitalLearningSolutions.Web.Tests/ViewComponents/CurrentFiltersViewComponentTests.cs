@@ -48,15 +48,15 @@
 
             var inputViewModel = new CentreAdministratorsViewModel(
                 1,
-                new SearchSortFilterPaginationResult<AdminUser>(
-                    new PaginationResult<AdminUser>(new List<AdminUser>(), 1, 1, itemsPerPage, 0, true),
+                new SearchSortFilterPaginationResult<AdminEntity>(
+                    new PaginationResult<AdminEntity>(new List<AdminEntity>(), 1, 1, itemsPerPage, 0, true),
                     searchString,
                     sortBy,
                     sortDirection,
                     "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true"
                 ),
                 availableFilters,
-                UserTestHelper.GetDefaultAdminUser()
+                UserTestHelper.GetDefaultAdminAccount()
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
             {

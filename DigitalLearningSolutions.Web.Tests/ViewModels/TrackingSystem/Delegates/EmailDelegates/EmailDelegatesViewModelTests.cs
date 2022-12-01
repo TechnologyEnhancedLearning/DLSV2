@@ -39,8 +39,11 @@
         };
 
         [Test]
-        public void EmailDelegatesViewModel_sets_delivery_date_today_by_default()
+        public void EmailDelegatesViewModel_sets_delivery_date()
         {
+            // Given
+            var date = new DateTime(2022, 1, 1);
+
             // When
             var model = new EmailDelegatesViewModel(
                 new SearchSortFilterPaginationResult<DelegateUserCard>(
@@ -50,13 +53,14 @@
                     null,
                     null
                 ),
-                availableFilters
+                availableFilters,
+                emailDate: date
             );
 
             // Then
-            model.Day.Should().Be(DateTime.Today.Day);
-            model.Month.Should().Be(DateTime.Today.Month);
-            model.Year.Should().Be(DateTime.Today.Year);
+            model.Day.Should().Be(date.Day);
+            model.Month.Should().Be(date.Month);
+            model.Year.Should().Be(date.Year);
         }
 
         [Test]
@@ -74,7 +78,8 @@
                         null,
                         null
                     ),
-                    availableFilters
+                    availableFilters,
+                    new DateTime(2022, 1, 1)
                 )
                 { SelectedDelegateIds = selectedDelegateIds };
 
@@ -98,6 +103,7 @@
                     null
                 ),
                 availableFilters,
+                new DateTime(2022, 1, 1),
                 true
             );
 

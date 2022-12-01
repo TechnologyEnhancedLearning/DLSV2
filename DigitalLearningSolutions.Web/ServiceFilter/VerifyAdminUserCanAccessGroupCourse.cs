@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -23,7 +23,7 @@
                 return;
             }
 
-            var centreId = controller.User.GetCentreId();
+            var centreId = controller.User.GetCentreIdKnownNotNull();
             var groupId = int.Parse(context.RouteData.Values["groupId"].ToString()!);
             var groupCustomisationId = int.Parse(context.RouteData.Values["groupCustomisationId"].ToString()!);
 

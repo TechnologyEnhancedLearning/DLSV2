@@ -113,6 +113,7 @@
             var centre = connection.QueryFirstOrDefault<Centre>(
                 @"SELECT c.CentreID,
                             c.CentreName,
+                            c.Active,
                             c.RegionID,
                             r.RegionName,
                             c.NotifyEmail,

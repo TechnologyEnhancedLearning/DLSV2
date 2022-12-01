@@ -5,9 +5,9 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using FakeItEasy;
@@ -29,6 +29,8 @@
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private IEmailService emailService = null!;
+        private IEmailGenerationService emailGenerationService = null!;
 
         [SetUp]
         public void Setup()
@@ -38,6 +40,8 @@
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             userService = A.Fake<IUserService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            emailService = A.Fake<IEmailService>();
+            emailGenerationService = A.Fake<IEmailGenerationService>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
@@ -48,7 +52,9 @@
                     courseCategoriesDataService,
                     centreContractAdminUsageService,
                     userService,
-                    searchSortFilterPaginateService
+                    searchSortFilterPaginateService,
+                    emailService,
+                    emailGenerationService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -65,13 +71,13 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).MustHaveHappened();
+                A.CallTo(() => userDataService.GetActiveAdminsByCentreId(A<int>._)).MustHaveHappened();
                 A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                     .MustHaveHappened();
-                A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).MustHaveHappened();
+                A.CallTo(() => userDataService.GetActiveAdminsByCentreId(A<int>._)).MustHaveHappened();
                 A.CallTo(
                     () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
-                        A<IEnumerable<AdminUser>>._,
+                        A<IEnumerable<AdminEntity>>._,
                         A<SearchSortFilterAndPaginateOptions>._
                     )
                 ).MustHaveHappened();
@@ -91,16 +97,17 @@
         public void UnlockAccount_unlocks_account_and_returns_to_page()
         {
             // Given
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(A<int>._, A<int>._)).DoesNothing();
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount();
+            A.CallTo(() => userService.ResetFailedLoginCountByUserId(A<int>._)).DoesNothing();
+            A.CallTo(() => userDataService.GetUserIdByAdminId(adminAccount.Id)).Returns(adminAccount.UserId);
 
             // When
-            var result = administratorController.UnlockAccount(1);
+            var result = administratorController.UnlockAccount(adminAccount.Id);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
+                A.CallTo(() => userService.ResetFailedLoginCountByUserId(adminAccount.UserId)).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
         }
@@ -113,7 +120,10 @@
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
 
             // When
-            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var result = administratorController.DeactivateOrDeleteAdmin(
+                adminUser.Id,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             result.Should().BeNotFoundResult();
@@ -124,11 +134,11 @@
         {
             // Given
             const string expectedErrorMessage = "You must confirm before deactivating this account";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(8);
-            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser();
+            var admin = UserTestHelper.GetDefaultAdminEntity(8);
+            var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
 
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetAdminUserById(loggedInAdminUser.Id)).Returns(loggedInAdminUser);
+            A.CallTo(() => userDataService.GetAdminById(admin.AdminAccount.Id)).Returns(admin);
+            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
 
             var deactivateViewModel =
                 Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = false).Build();
@@ -138,7 +148,7 @@
             );
 
             // When
-            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, deactivateViewModel);
+            var result = administratorController.DeactivateOrDeleteAdmin(admin.AdminAccount.Id, deactivateViewModel);
 
             // Then
             using (new AssertionScope())
@@ -147,7 +157,7 @@
                 administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)].Errors[0].ErrorMessage
                     .Should()
                     .BeEquivalentTo(expectedErrorMessage);
-                A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).MustNotHaveHappened();
+                A.CallTo(() => userDataService.DeactivateAdmin(admin.AdminAccount.Id)).MustNotHaveHappened();
             }
         }
 
@@ -155,23 +165,23 @@
         public void DeactivateOrDeleteAdmin_deactivates_admin_user_with_confirmation()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(8);
-            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser();
+            var admin = UserTestHelper.GetDefaultAdminEntity(8);
+            var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
 
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetAdminUserById(loggedInAdminUser.Id)).Returns(loggedInAdminUser);
+            A.CallTo(() => userDataService.GetAdminById(admin.AdminAccount.Id)).Returns(admin);
+            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
 
-            A.CallTo(() => userService.DeactivateOrDeleteAdmin(adminUser.Id)).DoesNothing();
+            A.CallTo(() => userService.DeactivateOrDeleteAdmin(admin.AdminAccount.Id)).DoesNothing();
             var deactivateViewModel =
                 Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = true).Build();
 
             // When
-            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, deactivateViewModel);
+            var result = administratorController.DeactivateOrDeleteAdmin(admin.AdminAccount.Id, deactivateViewModel);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userService.DeactivateOrDeleteAdmin(adminUser.Id)).MustHaveHappened();
+                A.CallTo(() => userService.DeactivateOrDeleteAdmin(admin.AdminAccount.Id)).MustHaveHappened();
                 result.Should().BeViewResult().WithViewName("DeactivateOrDeleteAdminConfirmation");
             }
         }

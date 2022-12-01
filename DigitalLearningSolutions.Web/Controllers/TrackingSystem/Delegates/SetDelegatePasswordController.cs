@@ -4,11 +4,11 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -40,11 +40,6 @@
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
-            {
-                return View("NoEmail");
-            }
-
             var model = new SetDelegatePasswordViewModel(
                 DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName),
                 delegateId,
@@ -68,14 +63,9 @@
                 return View(model);
             }
 
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var delegateAccount = userDataService.GetDelegateAccountById(delegateId)!;
 
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
-            {
-                return View("NoEmail");
-            }
-
-            await passwordService.ChangePasswordAsync(delegateUser!.EmailAddress!, model.Password!);
+            await passwordService.ChangePasswordAsync(delegateAccount.UserId, model.Password!);
 
             return View("Confirmation");
         }

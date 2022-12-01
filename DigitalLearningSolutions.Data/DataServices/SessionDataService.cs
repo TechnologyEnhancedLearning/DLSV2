@@ -17,6 +17,8 @@
 
         bool HasAdminGotSessions(int adminId);
 
+        bool HasDelegateGotSessions(int delegateId);
+
         Session? GetSessionById(int sessionId);
 
         void AddTutorialTimeToSessionDuration(int sessionId, int tutorialTime);
@@ -77,6 +79,14 @@
             return connection.ExecuteScalar<bool>(
                 "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
                 new { adminId }
+            );
+        }
+
+        public bool HasDelegateGotSessions(int delegateId)
+        {
+            return connection.ExecuteScalar<bool>(
+                "SELECT 1 WHERE EXISTS (SELECT CandidateID FROM Sessions WHERE CandidateID = @delegateId)",
+                new { delegateId }
             );
         }
 

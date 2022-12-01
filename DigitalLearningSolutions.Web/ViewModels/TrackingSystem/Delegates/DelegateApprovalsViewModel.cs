@@ -22,23 +22,24 @@
     public class UnapprovedDelegate
     {
         public UnapprovedDelegate(
-            DelegateUser delegateUser,
+            DelegateEntity delegateEntity,
             List<CentreRegistrationPromptWithAnswer> registrationPrompts
         )
         {
-            Id = delegateUser.Id;
-            CandidateNumber = delegateUser.CandidateNumber;
+            Id = delegateEntity.DelegateAccount.Id;
+            CandidateNumber = delegateEntity.DelegateAccount.CandidateNumber;
             TitleName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                delegateUser.FirstName,
-                delegateUser.LastName
+                delegateEntity.UserAccount.FirstName,
+                delegateEntity.UserAccount.LastName
             );
-            Email = delegateUser.EmailAddress;
-            DateRegistered = delegateUser.DateRegistered;
-            JobGroup = delegateUser.JobGroupName;
-            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
-                delegateUser.HasBeenPromptedForPrn,
-                delegateUser.ProfessionalRegistrationNumber
+            Email = delegateEntity.EmailForCentreNotifications;
+            DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
+            JobGroup = delegateEntity.UserAccount.JobGroupName;
+            ProfessionalRegistrationNumber = PrnHelper.GetPrnDisplayString(
+                delegateEntity.UserAccount.HasBeenPromptedForPrn,
+                delegateEntity.UserAccount.ProfessionalRegistrationNumber
             );
+
             DelegateRegistrationPrompts = registrationPrompts
                 .Select(
                     cp => new DelegateRegistrationPrompt(

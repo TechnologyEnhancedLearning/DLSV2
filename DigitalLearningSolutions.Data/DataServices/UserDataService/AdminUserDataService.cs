@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Dapper;
@@ -26,7 +27,7 @@
                 au.PublishToAll,
                 au.SummaryReports,
                 au.UserAdmin AS IsUserAdmin,
-                au.CategoryID,
+                CASE WHEN au.CategoryID = 0 THEN NULL ELSE au.CategoryID END AS CategoryId,
                 CASE
                     WHEN au.CategoryID = 0 THEN 'All'
                     ELSE cc.CategoryName
@@ -47,6 +48,129 @@
             INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
             LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID";
 
+        private const string BaseSelectAdminAccountQuery =
+            @"SELECT aa.ID,
+                        aa.CentreID,
+                        ce.CentreName,
+                        ce.Active AS CentreActive,
+                        aa.IsCentreAdmin,
+                        aa.IsReportsViewer,
+                        aa.IsSuperAdmin,
+                        aa.IsCentreManager,
+                        aa.Active,
+                        aa.IsContentManager,
+                        aa.PublishToAll,
+                        aa.ImportOnly,
+                        aa.IsContentCreator,
+                        aa.IsSupervisor,
+                        aa.IsTrainer,
+                        aa.CategoryID,
+                        CASE
+                            WHEN aa.CategoryID IS NULL THEN 'All'
+                            ELSE cc.CategoryName
+                        END AS CategoryName,
+                        aa.IsFrameworkDeveloper,
+                        aa.IsFrameworkContributor,
+                        aa.IsWorkforceManager,
+                        aa.IsWorkforceContributor,
+                        aa.IsLocalWorkforceManager,
+                        aa.IsNominatedSupervisor,
+                        aa.UserID
+                    FROM AdminAccounts AS aa
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
+                    INNER JOIN Centres AS ce ON ce.CentreId = aa.CentreId";
+
+        private const string BaseAdminEntitySelectQuery =
+            @"SELECT
+                aa.ID,
+                aa.CentreID,
+                ce.CentreName,
+                ce.Active AS CentreActive,
+                aa.IsCentreAdmin,
+                aa.IsReportsViewer,
+                aa.IsSuperAdmin,
+                aa.IsCentreManager,
+                aa.Active,
+                aa.IsContentManager,
+                aa.PublishToAll,
+                aa.ImportOnly,
+                aa.IsContentCreator,
+                aa.IsSupervisor,
+                aa.IsTrainer,
+                aa.CategoryID,
+                CASE
+                    WHEN aa.CategoryID IS NULL THEN 'All'
+                    ELSE cc.CategoryName
+                END AS CategoryName,
+                aa.IsFrameworkDeveloper,
+                aa.IsFrameworkContributor,
+                aa.IsWorkforceManager,
+                aa.IsWorkforceContributor,
+                aa.IsLocalWorkforceManager,
+                aa.IsNominatedSupervisor,
+                aa.UserID,
+                u.ID,
+                u.PrimaryEmail,
+                u.PasswordHash,
+                u.FirstName,
+                u.LastName,
+                u.JobGroupID,
+                jg.JobGroupName,
+                u.ProfessionalRegistrationNumber,
+                u.ProfileImage,
+                u.Active,
+                u.ResetPasswordID,
+                u.TermsAgreed,
+                u.FailedLoginCount,
+                u.HasBeenPromptedForPrn,
+                u.LearningHubAuthID,
+                u.HasDismissedLhLoginWarning,
+                u.EmailVerified,
+                u.DetailsLastChecked,
+                ucd.ID,
+                ucd.UserID,
+                ucd.CentreID,
+                ucd.Email,
+                ucd.EmailVerified
+            FROM AdminAccounts AS aa
+            LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
+            INNER JOIN Centres AS ce ON ce.CentreId = aa.CentreID
+            INNER JOIN Users AS u ON u.ID = aa.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreId = aa.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+
+        public AdminEntity? GetAdminById(int id)
+        {
+            var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.ID = @id";
+
+            return connection.Query<AdminAccount, UserAccount, UserCentreDetails, AdminEntity>(
+                sql,
+                (adminAccount, userAccount, userCentreDetails) => new AdminEntity(
+                    adminAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { id },
+                splitOn: "ID,ID"
+            ).SingleOrDefault();
+        }
+
+        public IEnumerable<AdminEntity> GetActiveAdminsByCentreId(int centreId)
+        {
+            var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.centreID = @centreId AND aa.Active = 1 AND u.Active = 1";
+
+            return connection.Query<AdminAccount, UserAccount, UserCentreDetails, AdminEntity>(
+                sql,
+                (adminAccount, userAccount, userCentreDetails) => new AdminEntity(
+                    adminAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { centreId }
+            );
+        }
+
+        [Obsolete("New code should use GetAdminById instead")]
         public AdminUser? GetAdminUserById(int id)
         {
             var user = connection.Query<AdminUser>(
@@ -58,15 +182,6 @@
             return user;
         }
 
-        public AdminUser? GetAdminUserByUsername(string username)
-        {
-            return connection.Query<AdminUser>(
-                @$"{BaseSelectAdminQuery}
-                    WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
-                new { username }
-            ).SingleOrDefault();
-        }
-
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
         {
             return connection.Query<AdminUser>(
@@ -76,6 +191,7 @@
             ).SingleOrDefault();
         }
 
+        [Obsolete("New code should use GetAdminsByCentreId instead")]
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             var users = connection.Query<AdminUser>(
@@ -85,20 +201,6 @@
             ).ToList();
 
             return users;
-        }
-
-        public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id)
-        {
-            connection.Execute(
-                @"UPDATE AdminUsers
-                        SET
-                            Forename = @firstName,
-                            Surname = @surname,
-                            Email = @email,
-                            ProfileImage = @profileImage
-                        WHERE AdminID = @id",
-                new { firstName, surname, email, profileImage, id }
-            );
         }
 
         public int GetNumberOfActiveAdminsAtCentre(int centreId)
@@ -118,23 +220,23 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int categoryId,
+            int? categoryId,
             bool isCentreManager
         )
         {
             connection.Execute(
-                @"UPDATE AdminUsers
+                @"UPDATE AdminAccounts
                         SET
-                            CentreAdmin = @isCentreAdmin,
-                            Supervisor = @isSupervisor,
-                            NominatedSupervisor = @isNominatedSupervisor,
-                            Trainer = @isTrainer,
-                            ContentCreator = @isContentCreator,
-                            ContentManager = @isContentManager,
+                            IsCentreAdmin = @isCentreAdmin,
+                            IsSupervisor = @isSupervisor,
+                            IsNominatedSupervisor = @isNominatedSupervisor,
+                            IsTrainer = @isTrainer,
+                            IsContentCreator = @isContentCreator,
+                            IsContentManager = @isContentManager,
                             ImportOnly = @importOnly,
                             CategoryID = @categoryId,
                             IsCentreManager = @isCentreManager
-                        WHERE AdminID = @adminId",
+                        WHERE ID = @adminId",
                 new
                 {
                     isCentreAdmin,
@@ -151,17 +253,6 @@
             );
         }
 
-        public void UpdateAdminUserFailedLoginCount(int adminId, int updatedCount)
-        {
-            connection.Execute(
-                @"UPDATE AdminUsers
-                        SET
-                            FailedLoginCount = @updatedCount
-                        WHERE AdminID = @adminId",
-                new { adminId, updatedCount }
-            );
-        }
-
         public void DeactivateAdmin(int adminId)
         {
             connection.Execute(
@@ -173,29 +264,38 @@
             );
         }
 
-        /// <summary>
-        /// When we reactivate an admin, we must ensure the admin permissions are not
-        /// greater than basic levels. Otherwise, a basic admin would be able to
-        /// "create" admins with more permissions than themselves.
-        /// </summary>
-        public void ReactivateAdmin(int adminId)
+        public void DeleteAdminAccount(int adminId)
         {
             connection.Execute(
-                @"UPDATE AdminUsers SET
-                        Active = 1,
-                        IsCentreManager = 0,
-                        UserAdmin = 0
-                    WHERE AdminID = @adminId",
+                @"DELETE AdminAccounts
+                    WHERE ID = @adminId",
                 new { adminId }
             );
         }
 
-        public void DeleteAdminUser(int adminId)
+        /// <summary>
+        ///     When we reactivate an admin, we must ensure the admin permissions are not
+        ///     greater than basic levels. Otherwise, a basic admin would be able to
+        ///     "create" admins with more permissions than themselves.
+        /// </summary>
+        public void ReactivateAdmin(int adminId)
         {
             connection.Execute(
-                @"DELETE AdminUsers
-                    WHERE AdminID = @adminId",
+                @"UPDATE AdminAccounts SET
+                        Active = 1,
+                        IsCentreManager = 0,
+                        IsSuperAdmin = 0
+                    WHERE ID = @adminId",
                 new { adminId }
+            );
+        }
+
+        public IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId)
+        {
+            return connection.Query<AdminAccount>(
+                @$"{BaseSelectAdminAccountQuery}
+                    WHERE aa.UserID = @userId",
+                new { userId }
             );
         }
     }

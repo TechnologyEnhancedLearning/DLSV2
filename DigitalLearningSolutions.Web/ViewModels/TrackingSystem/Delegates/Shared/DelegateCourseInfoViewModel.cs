@@ -49,7 +49,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
                 NameQueryHelper.GetSortableFullName(info.DelegateFirstName, info.DelegateLastName);
             Email = info.DelegateEmail;
             DelegateNumber = info.CandidateNumber;
-            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnHelper.GetPrnDisplayString(
                 info.HasBeenPromptedForPrn,
                 info.ProfessionalRegistrationNumber
             );

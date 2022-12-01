@@ -50,6 +50,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             var model = new TermsViewModel(termsText);
             return View(model);
         }
+
         public IActionResult Contact()
         {
             var contactText = configDataService.GetConfigValue(ConfigDataService.ContactText);
@@ -98,6 +99,13 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             return View("Error/AccessDenied");
         }
 
+        [Route("/PleaseLogout")]
+        [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
+        public IActionResult PleaseLogout()
+        {
+            return View();
+        }
+
         private ErrorViewModel GetErrorModel()
         {
             try
@@ -113,7 +121,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         private string? GetBannerText()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var bannerText = centresDataService.GetBannerText(centreId);
             return bannerText;
         }

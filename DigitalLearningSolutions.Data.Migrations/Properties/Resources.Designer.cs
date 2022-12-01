@@ -699,5 +699,71 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
                 return ResourceManager.GetString("HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DROP VIEW AdminUsers
+        ///    GO
+        ///DROP VIEW Candidates
+        ///    GO
+        ///.
+        /// </summary>
+        internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_DOWN {
+            get {
+                return ResourceManager.GetString("UAR-831-CreateViewsForAdminUsersAndCandidatesTables-DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CREATE VIEW AdminUsers AS
+        ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
+        ///       null                                    AS Login,
+        ///       dbo.Users.PasswordHash                  AS Password,
+        ///       dbo.AdminAccounts.CentreID,
+        ///       dbo.AdminAccounts.IsCentreAdmin         AS CentreAdmin,
+        ///       0                                       AS ConfigAdmin,
+        ///       dbo.AdminAccounts.IsReportsViewer       AS SummaryReports,
+        ///       dbo.AdminAccounts.IsSuperAdmin          AS UserAdmin,
+        ///       dbo.Us [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_UP {
+            get {
+                return ResourceManager.GetString("UAR-831-CreateViewsForAdminUsersAndCandidatesTables-UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @dbName NVARCHAR(128) = DB_NAME()
+        ///DECLARE @defaultPath NVARCHAR(500) = CONVERT(NVARCHAR(500), SERVERPROPERTY(&apos;InstanceDefaultDataPath&apos;))
+        ///DECLARE @snapshotTime NVARCHAR(12) = FORMAT(GETDATE(), &apos;yyyyMMddHHmm&apos;)
+        ///
+        ///DECLARE @snapSql NVARCHAR(4000) = &apos;CREATE DATABASE &apos; + @dbName + &apos;_&apos; + @snapshotTime + &apos; ON 
+        ///( NAME = mbdbx101, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_&apos; + @snapshotTime + &apos;&apos;&apos;),
+        ///( NAME = mbdbx101files, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_filestream1_&apos; + @snapshotTime + &apos;&apos;&apos;)
+        ///A [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string UAR_858_SnapshotData_UP {
+            get {
+                return ResourceManager.GetString("UAR_858_SnapshotData_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @dbName NVARCHAR(128) = DB_NAME()
+        ///DECLARE @snapshotName NVARCHAR(128) = CONVERT(NVARCHAR(128), (SELECT TOP 1 name FROM sys.databases WHERE NAME LIKE @dbName + &apos;_2%&apos; ORDER BY create_date DESC))
+        ///
+        ///DECLARE @adminSql NVARCHAR(4000) = &apos;UPDATE AdminAccounts
+        ///SET 
+        ///    Login_deprecated = snapAA.Login_deprecated,
+        ///    Password_deprecated = snapAA.Password_deprecated,
+        ///    CentreID = snapAA.CentreID,
+        ///    IsCentreAdmin = snapAA.IsCentreAdmin,
+        ///    ConfigAdmin_deprecated = snapAA.ConfigAdmin_deprecated,
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string UAR_859_PopulateUsersTableFromAccountsTables_DOWN {
+            get {
+                return ResourceManager.GetString("UAR_859_PopulateUsersTableFromAccountsTables_DOWN", resourceCulture);
+            }
+        }
     }
 }

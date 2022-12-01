@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -25,8 +25,8 @@
                 return;
             }
 
-            var centreId = controller.User.GetCentreId();
-            var categoryId = controller.User.GetAdminCourseCategoryFilter();
+            var centreId = controller.User.GetCentreIdKnownNotNull();
+            var categoryId = controller.User.GetAdminCategoryId();
             var customisationId = int.Parse(context.RouteData.Values["customisationId"].ToString()!);
 
             var validationResult =

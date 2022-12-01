@@ -13,6 +13,150 @@
     public partial class UserDataServiceTests
     {
         [Test]
+        public void GetDelegateById_returns_delegate_with_null_user_centre_details()
+        {
+            // Given
+            var expectedDelegateEntity = UserTestHelper.GetDefaultDelegateEntity();
+
+            // When
+            var returnedDelegateEntity = userDataService.GetDelegateById(2);
+            returnedDelegateEntity!.DelegateAccount.CentreSpecificDetailsLastChecked = expectedDelegateEntity.DelegateAccount.CentreSpecificDetailsLastChecked;
+            returnedDelegateEntity!.UserAccount.EmailVerified = expectedDelegateEntity.UserAccount.EmailVerified;
+            returnedDelegateEntity!.UserAccount.DetailsLastChecked = expectedDelegateEntity.UserAccount.DetailsLastChecked;
+
+            // Then
+            returnedDelegateEntity.Should().BeEquivalentTo(expectedDelegateEntity);
+        }
+
+        [Test]
+        public void GetDelegateById_returns_delegate_with_correct_user_centre_details()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                    VALUES (61188, 2, 'centre@email.com')"
+            );
+            // We set userCentreDetailsId here so that UserTestHelper.GetDefaultDelegateEntity returns an
+            // DelegateEntity with a non-null UserCentreDetails
+            var expectedUserCentreDetails = UserTestHelper.GetDefaultDelegateEntity(
+                userCentreDetailsId: 1,
+                centreSpecificEmail: "centre@email.com",
+                centreSpecificEmailVerified: null
+            ).UserCentreDetails;
+
+            // When
+            var returnedDelegateEntity = userDataService.GetDelegateById(2);
+
+            // Then
+            returnedDelegateEntity!.UserCentreDetails.Should().NotBeNull();
+            returnedDelegateEntity.UserCentreDetails!.UserId.Should().Be(expectedUserCentreDetails!.UserId);
+            returnedDelegateEntity.UserCentreDetails.CentreId.Should().Be(expectedUserCentreDetails.CentreId);
+            returnedDelegateEntity.UserCentreDetails.Email.Should().Be(expectedUserCentreDetails.Email);
+            returnedDelegateEntity.UserCentreDetails.EmailVerified.Should().Be(expectedUserCentreDetails.EmailVerified);
+        }
+
+        [Test]
+        public void GetDelegateById_returns_delegate_with_correct_adminId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            var adminId = connection.QuerySingle<int>(
+                @"INSERT INTO AdminAccounts (
+                           UserID,
+                           CentreID,
+                           Active)
+                    OUTPUT Inserted.ID
+                    VALUES (61188, 2, 1)"
+            );
+
+            // When
+            var returnedDelegateEntity = userDataService.GetDelegateById(2);
+
+            // Then
+            returnedDelegateEntity!.AdminId.Should().Be(adminId);
+        }
+
+        [Test]
+        public void GetDelegateById_does_not_return_id_for_inactive_admin()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            var adminId = connection.QuerySingle<int>(
+                @"INSERT INTO AdminAccounts (
+                           UserID,
+                           CentreID,
+                           Active)
+                    OUTPUT Inserted.ID
+                    VALUES (61188, 2, 0)"
+            );
+
+            // When
+            var returnedDelegateEntity = userDataService.GetDelegateById(2);
+
+            // Then
+            returnedDelegateEntity!.AdminId.Should().BeNull();
+        }
+
+        [Test]
+        public void GetDelegateByCandidateNumber_returns_delegate_with_null_user_centre_details()
+        {
+            // Given
+            var expectedDelegateEntity = UserTestHelper.GetDefaultDelegateEntity();
+
+            // When
+            var returnedDelegateEntity = userDataService.GetDelegateByCandidateNumber("SV1234");
+            returnedDelegateEntity!.DelegateAccount.CentreSpecificDetailsLastChecked = expectedDelegateEntity.DelegateAccount.CentreSpecificDetailsLastChecked;
+            returnedDelegateEntity!.UserAccount.EmailVerified = expectedDelegateEntity.UserAccount.EmailVerified;
+            returnedDelegateEntity!.UserAccount.DetailsLastChecked = expectedDelegateEntity.UserAccount.DetailsLastChecked;
+
+            // Then
+            returnedDelegateEntity.Should().BeEquivalentTo(expectedDelegateEntity);
+        }
+
+        [Test]
+        public void GetDelegateByCandidateNumber_returns_delegate_with_correct_user_centre_details()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                    VALUES (61188, 2, 'centre@email.com')"
+            );
+            var expectedUserCentreDetails = UserTestHelper.GetDefaultDelegateEntity(
+                userCentreDetailsId: 1,
+                centreSpecificEmail: "centre@email.com",
+                centreSpecificEmailVerified: null
+            ).UserCentreDetails;
+
+            // When
+            var returnedDelegateEntity = userDataService.GetDelegateByCandidateNumber("SV1234");
+
+            // Then
+            returnedDelegateEntity!.UserCentreDetails.Should().NotBeNull();
+            returnedDelegateEntity.UserCentreDetails!.UserId.Should().Be(expectedUserCentreDetails!.UserId);
+            returnedDelegateEntity.UserCentreDetails.CentreId.Should().Be(expectedUserCentreDetails.CentreId);
+            returnedDelegateEntity.UserCentreDetails.Email.Should().Be(expectedUserCentreDetails.Email);
+            returnedDelegateEntity.UserCentreDetails.EmailVerified.Should().Be(expectedUserCentreDetails.EmailVerified);
+        }
+
+        [Test]
+        public void GetUnapprovedDelegatesByCentreId_returns_correct_delegate_users()
+        {
+            // When
+            var returnedDelegateEntities = userDataService.GetUnapprovedDelegatesByCentreId(101).ToList();
+
+            // Then
+            returnedDelegateEntities.Count.Should().Be(4);
+            returnedDelegateEntities.Select(d => d.DelegateAccount.Id).Should()
+                .BeEquivalentTo(new[] { 28, 16, 115768, 297514 });
+        }
+
+        [Test]
         public void GetDelegateUserById_Returns_delegate_users()
         {
             // Given
@@ -23,105 +167,6 @@
 
             // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);
-        }
-
-        [Test]
-        public void GetDelegateUsersByUsername_Returns_delegate_user()
-        {
-            // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-
-            // When
-            var returnedDelegateUsers = userDataService.GetDelegateUsersByUsername("SV1234");
-
-            // Then
-            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUser);
-        }
-
-        [Test]
-        public void GetAllDelegateUsersByUsername_Returns_delegate_user()
-        {
-            // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-
-            // When
-            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("SV1234");
-
-            // Then
-            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUser);
-        }
-
-        [Test]
-        public void GetAllDelegateUsersByUsername_includes_inactive_users()
-        {
-            // When
-            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("OS35");
-
-            // Then
-            returnedDelegateUsers.FirstOrDefault()!.Id.Should().Be(89094);
-        }
-
-        [Test]
-        public void GetAllDelegateUsersByUsername_search_includes_CandidateNumber()
-        {
-            // When
-            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("ND107");
-
-            // Then
-            returnedDelegateUsers.FirstOrDefault()!.Id.Should().Be(78051);
-        }
-
-        [Test]
-        public void GetAllDelegateUsersByUsername_search_includes_EmailAddress()
-        {
-            // When
-            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("saudnhb@.5lpyk");
-
-            // Then
-            returnedDelegateUsers.FirstOrDefault()!.Id.Should().Be(78051);
-        }
-
-        [Test]
-        public void GetAllDelegateUsersByUsername_searches_AliasID()
-        {
-            // When
-            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("aldn y");
-
-            // Then
-            returnedDelegateUsers.FirstOrDefault()!.Id.Should().Be(78051);
-        }
-
-        [Test]
-        public void GetDelegateUsersByEmailAddress_Returns_delegate_user()
-        {
-            using (new TransactionScope())
-            {
-                using (new AssertionScope())
-                {
-                    // Given
-                    var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(resetPasswordId: 1);
-                    connection.Execute("UPDATE Candidates SET ResetPasswordID = 1 WHERE CandidateID = 2");
-
-                    // When
-                    var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
-
-                    // Then
-                    returnedDelegateUsers.FirstOrDefault().Should().NotBeNull();
-                    returnedDelegateUsers.First().Id.Should().Be(expectedDelegateUser.Id);
-                    returnedDelegateUsers.First().CandidateNumber.Should().BeEquivalentTo
-                        (expectedDelegateUser.CandidateNumber);
-                    returnedDelegateUsers.First().CentreId.Should().Be(expectedDelegateUser.CentreId);
-                    returnedDelegateUsers.First().CentreName.Should().BeEquivalentTo(expectedDelegateUser.CentreName);
-                    returnedDelegateUsers.First().CentreActive.Should().Be(expectedDelegateUser.CentreActive);
-                    returnedDelegateUsers.First().EmailAddress.Should()
-                        .BeEquivalentTo(expectedDelegateUser.EmailAddress);
-                    returnedDelegateUsers.First().FirstName.Should().BeEquivalentTo(expectedDelegateUser.FirstName);
-                    returnedDelegateUsers.First().LastName.Should().BeEquivalentTo(expectedDelegateUser.LastName);
-                    returnedDelegateUsers.First().Password.Should().BeEquivalentTo(expectedDelegateUser.Password);
-                    returnedDelegateUsers.First().Approved.Should().Be(expectedDelegateUser.Approved);
-                    returnedDelegateUsers.First().ResetPasswordId.Should().Be(expectedDelegateUser.ResetPasswordId);
-                }
-            }
         }
 
         [Test]
@@ -136,7 +181,7 @@
         }
 
         [Test]
-        public void UpdateDelegateUsers_updates_users()
+        public void UpdateUser_updates_user()
         {
             using var transaction = new TransactionScope();
             try
@@ -144,22 +189,36 @@
                 // Given
                 const string firstName = "TestFirstName";
                 const string lastName = "TestLastName";
-                const string email = "test@email.com";
+                const string email = "update.test@email.com";
                 const string professionalRegNumber = "test-1234";
+                const int jobGroupId = 1;
 
                 // When
-                userDataService.UpdateDelegateUsers(firstName, lastName, email, null, professionalRegNumber, true, new[] { 2, 3 });
+                userDataService.UpdateUser(
+                    firstName,
+                    lastName,
+                    email,
+                    null,
+                    professionalRegNumber,
+                    true,
+                    jobGroupId,
+                    DateTime.Now,
+                    null,
+                    61188,
+                    true
+                );
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
-                var secondUpdatedUser = userDataService.GetDelegateUserById(3)!;
 
                 // Then
-                updatedUser.FirstName.Should().BeEquivalentTo(firstName);
-                updatedUser.LastName.Should().BeEquivalentTo(lastName);
-                updatedUser.EmailAddress.Should().BeEquivalentTo(email);
-
-                secondUpdatedUser.FirstName.Should().BeEquivalentTo(firstName);
-                secondUpdatedUser.LastName.Should().BeEquivalentTo(lastName);
-                secondUpdatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                using (new AssertionScope())
+                {
+                    updatedUser.FirstName.Should().BeEquivalentTo(firstName);
+                    updatedUser.LastName.Should().BeEquivalentTo(lastName);
+                    updatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                    updatedUser.ProfessionalRegistrationNumber.Should().BeEquivalentTo(professionalRegNumber);
+                    updatedUser.HasBeenPromptedForPrn.Should().BeTrue();
+                    updatedUser.JobGroupId.Should().Be(jobGroupId);
+                }
             }
             finally
             {
@@ -198,7 +257,7 @@
         }
 
         [Test]
-        public void RemoveDelegateUser_deletes_delegate_user()
+        public void RemoveDelegateAccount_deletes_delegate_account()
         {
             using var transaction = new TransactionScope();
 
@@ -207,14 +266,14 @@
             userDataService.GetDelegateUserById(id).Should().NotBeNull();
 
             // When
-            userDataService.RemoveDelegateUser(id);
+            userDataService.RemoveDelegateAccount(id);
 
             // Then
             userDataService.GetDelegateUserById(id).Should().BeNull();
         }
 
         [Test]
-        public void RemoveDelegateUser_cannot_remove_delegate_user_with_started_session()
+        public void RemoveDelegateAccount_cannot_remove_delegate_account_with_started_session()
         {
             using var transaction = new TransactionScope();
 
@@ -223,7 +282,7 @@
             userDataService.GetDelegateUserById(id).Should().NotBeNull();
 
             // When
-            Action action = () => userDataService.RemoveDelegateUser(id);
+            Action action = () => userDataService.RemoveDelegateAccount(id);
 
             // Then
             action.Should().Throw<SqlException>();
@@ -237,32 +296,6 @@
 
             // Then
             count.Should().Be(3420);
-        }
-
-        [Test]
-        public void GetDelegateUserByAliasId_Returns_delegate_users()
-        {
-            // Given
-            var expectedDelegateUser = userDataService.GetDelegateUserById(1);
-
-            // When
-            var returnedDelegateUser = userDataService.GetDelegateUserByAliasId("ohi@lt.vgmwekac", 101);
-
-            // Then
-            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
-        }
-
-        [Test]
-        public void GetDelegateUserByCandidateNumber_Returns_delegate_user()
-        {
-            // Given
-            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
-
-            // When
-            var returnedDelegateUser = userDataService.GetDelegateUserByCandidateNumber("SV1234", 2);
-
-            // Then
-            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);
         }
 
         [Test]
@@ -281,46 +314,13 @@
         }
 
         [Test]
-        public void GetDelegateUsersByAliasId_returns_expected_delegates()
-        {
-            // Given
-            const string alias = "1086";
-            var expectedIds = new[]
-            {
-                17867,
-                19258,
-                202870,
-                203415,
-                165982,
-                166032,
-                166033,
-                166052,
-                169397,
-                170540,
-                170562,
-                170737,
-            };
-
-            // When
-            var result = userDataService.GetDelegateUsersByAliasId(alias).ToList();
-
-            // Then
-            result.Count.Should().Be(12);
-            result.Select(d => d.Id).Should().BeEquivalentTo(expectedIds);
-        }
-
-        [Test]
-        public void UpdateDelegate_updates_delegate()
+        public void UpdateDelegateAccount_updates_delegate()
         {
             using var transaction = new TransactionScope();
             try
             {
                 // Given
                 const int delegateId = 11;
-                const string firstName = "TestFirstName";
-                const string lastName = "TestLastName";
-                const string email = "test@email.com";
-                const int jobGroupId = 1;
                 const bool active = true;
                 const string answer1 = "answer1";
                 const string answer2 = "answer2";
@@ -328,33 +328,23 @@
                 const string answer4 = "answer4";
                 const string answer5 = "answer5";
                 const string answer6 = "answer6";
-                const string alias = "alias";
 
                 // When
-                userDataService.UpdateDelegate(
+                userDataService.UpdateDelegateAccount(
                     delegateId,
-                    firstName,
-                    lastName,
-                    jobGroupId,
                     active,
                     answer1,
                     answer2,
                     answer3,
                     answer4,
                     answer5,
-                    answer6,
-                    alias,
-                    email
+                    answer6
                 );
                 var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
                 // Then
                 using (new AssertionScope())
                 {
-                    delegateUser.FirstName.Should().Be(firstName);
-                    delegateUser.LastName.Should().Be(lastName);
-                    delegateUser.EmailAddress.Should().Be(email);
-                    delegateUser.JobGroupId.Should().Be(jobGroupId);
                     delegateUser.Active.Should().Be(active);
                     delegateUser.Answer1.Should().Be(answer1);
                     delegateUser.Answer2.Should().Be(answer2);
@@ -362,7 +352,6 @@
                     delegateUser.Answer4.Should().Be(answer4);
                     delegateUser.Answer5.Should().Be(answer5);
                     delegateUser.Answer6.Should().Be(answer6);
-                    delegateUser.AliasId.Should().Be(alias);
                 }
             }
             finally
@@ -372,7 +361,7 @@
         }
 
         [Test]
-        public void UpdateDelegateAccountDetails_updates_users()
+        public void UpdateUserDetails_updates_user()
         {
             using var transaction = new TransactionScope();
             try
@@ -380,12 +369,12 @@
                 // Given
                 const string firstName = "TestFirstName";
                 const string lastName = "TestLastName";
-                const string email = "test@email.com";
+                const string email = "update.test@email.com";
+                const int jobGroupId = 1;
 
                 // When
-                userDataService.UpdateDelegateAccountDetails(firstName, lastName, email, new[] { 2, 3 });
+                userDataService.UpdateUserDetails(firstName, lastName, email, jobGroupId, 61188);
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
-                var secondUpdatedUser = userDataService.GetDelegateUserById(3)!;
 
                 // Then
                 using (new AssertionScope())
@@ -393,10 +382,7 @@
                     updatedUser.FirstName.Should().BeEquivalentTo(firstName);
                     updatedUser.LastName.Should().BeEquivalentTo(lastName);
                     updatedUser.EmailAddress.Should().BeEquivalentTo(email);
-
-                    secondUpdatedUser.FirstName.Should().BeEquivalentTo(firstName);
-                    secondUpdatedUser.LastName.Should().BeEquivalentTo(lastName);
-                    secondUpdatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                    updatedUser.JobGroupId.Should().Be(jobGroupId);
                 }
             }
             finally
@@ -421,7 +407,6 @@
         }
 
         [Test]
-
         public void GetDelegatesNotRegisteredForGroupByGroupId_returns_expected_number_of_delegates()
         {
             // When
@@ -494,6 +479,93 @@
             var updatedUser = userDataService.GetDelegateUserById(delegateId)!;
             updatedUser.ProfessionalRegistrationNumber.Should().Be(prn);
             updatedUser.HasBeenPromptedForPrn.Should().BeTrue();
+        }
+
+        [Test]
+        public void GetDelegateAccountsByUserId_returns_expected_accounts()
+        {
+            // When
+            var result = userDataService.GetDelegateAccountsByUserId(61188).ToList();
+         
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(1);
+                result.Single().Should().BeEquivalentTo(UserTestHelper.GetDefaultDelegateAccount());
+            }
+        }
+
+        [Test]
+        public void GetDelegateAccountById_returns_expected_account()
+        {
+            // Given
+            var expectedResult = UserTestHelper.GetDefaultDelegateAccount();
+            expectedResult.UserId = 61188;
+
+            // When
+            var result = userDataService.GetDelegateAccountById(2);
+            result!.CentreSpecificDetailsLastChecked = expectedResult.CentreSpecificDetailsLastChecked;
+
+            // Then
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        [TestCase(null)]
+        [TestCase("hash")]
+        public void SetRegistrationConfirmationHash_sets_hash(string? hash)
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int centreId = 101;
+
+            // When
+            userDataService.SetRegistrationConfirmationHash(userId, centreId, hash);
+
+            // Then
+            var result = connection.Query<string>(
+                @"SELECT RegistrationConfirmationHash
+                    FROM DelegateAccounts
+                    WHERE UserID = @userId AND CentreID = @centreId",
+                new { userId, centreId }
+            ).SingleOrDefault();
+            result.Should().Be(hash);
+        }
+
+        [Test]
+        public void LinkDelegateAccountToNewUser_updates_UserId_and_sets_RegistrationConfirmationHash_to_null()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userIdForDelegateAccountAfterUpdate = 2;
+
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber("KW969")!;
+
+            var currentUserIdForDelegateAccount = delegateEntity.UserAccount.Id;
+            var delegateId = delegateEntity.DelegateAccount.Id;
+            var centreId = delegateEntity.DelegateAccount.CentreId;
+
+            var newUserDelegateAccountsBeforeUpdate =
+                userDataService.GetDelegateAccountsByUserId(userIdForDelegateAccountAfterUpdate);
+
+            // When
+            userDataService.LinkDelegateAccountToNewUser(
+                currentUserIdForDelegateAccount,
+                userIdForDelegateAccountAfterUpdate,
+                centreId
+            );
+
+            // Then
+            newUserDelegateAccountsBeforeUpdate.Should()
+                .NotContain(delegateAccount => delegateAccount.CentreId == centreId);
+
+            var updatedDelegateEntity = userDataService.GetDelegateById(delegateId)!;
+
+            updatedDelegateEntity.UserAccount.Id.Should().Be(userIdForDelegateAccountAfterUpdate);
+            updatedDelegateEntity.DelegateAccount.RegistrationConfirmationHash.Should().Be(null);
         }
     }
 }

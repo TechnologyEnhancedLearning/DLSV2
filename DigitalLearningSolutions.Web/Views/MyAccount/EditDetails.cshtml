@@ -1,5 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+﻿@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model MyAccountEditDetailsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
@@ -14,163 +15,213 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] {
-                                                   nameof(Model.FirstName),
-                                                   nameof(Model.LastName),
-                                                   nameof(Model.Email),
-                                                   nameof(Model.HasProfessionalRegistrationNumber),
-                                                   nameof(Model.ProfessionalRegistrationNumber),
-                                                   nameof(Model.Password),
-                                                   nameof(Model.JobGroupId),
-                                                   nameof(Model.Answer1),
-                                                   nameof(Model.Answer2),
-                                                   nameof(Model.Answer3),
-                                                   nameof(Model.Answer4),
-                                                   nameof(Model.Answer5),
-                                                   nameof(Model.Answer6)
-                                                 })" />
+    @if (errorHasOccurred)
+    {
+      var orderOfPropertyNames = new[] {
+    nameof(Model.FirstName),
+    nameof(Model.LastName),
+    nameof(Model.Email),
+    nameof(Model.JobGroupId),
+    nameof(Model.HasProfessionalRegistrationNumber),
+    nameof(Model.ProfessionalRegistrationNumber),
+    nameof(Model.CentreSpecificEmail),
+    nameof(Model.Answer1),
+    nameof(Model.Answer2),
+    nameof(Model.Answer3),
+    nameof(Model.Answer4),
+    nameof(Model.Answer5),
+    nameof(Model.Answer6),
+    };
+
+      <vc:error-summary order-of-property-names="@orderOfPropertyNames" />
     }
 
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Edit details</h1>
   </div>
 </div>
 
+@if (Model.IsCheckDetailRedirect)
+{
+  <vc:inset-text text="You should check that your details are up to date and accurate. Once you are confident that your details are up to date, please hit 'Save'." css-class="nhsuk-u-margin-top-0" />
+}
+
 <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" enctype="multipart/form-data">
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="save" aria-hidden="true" tabindex="-1">Save</button>
   </div>
 
+  <input type="hidden" asp-for="ReturnUrl" />
+  <input type="hidden" asp-for="IsCheckDetailRedirect" />
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input
-        asp-for="@nameof(Model.FirstName)"
-        label="First name"
-        populate-with-current-value="true"
-        type="text"
-        spell-check="false"
-        autocomplete="given-name"
-        hint-text=""
-        css-class="nhsuk-u-width-one-half"
-        required="true"/>
+      <vc:text-input asp-for="@nameof(Model.FirstName)"
+                     label="First name"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="given-name"
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
 
-      <vc:text-input
-        asp-for="@nameof(Model.LastName)"
-        label="Last name"
-        populate-with-current-value="true"
-        type="text"
-        spell-check="false"
-        autocomplete="family-name"
-        hint-text=""
-        css-class="nhsuk-u-width-one-half"
-        required="true" />
+      <vc:text-input asp-for="@nameof(Model.LastName)"
+                     label="Last name"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="family-name"
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
 
-      <vc:text-input
-        asp-for="@nameof(Model.Email)"
-        label="Email"
-        populate-with-current-value="true"
-        type="text"
-        spell-check="false"
-        autocomplete="email"
-        hint-text=""
-        css-class="nhsuk-u-width-one-half"
-        required="true" />
-
-      @if (Model.IsDelegateUser) {
-        <partial name="_EditRegistrationNumber" model="@Model" />
+      @{
+        var primaryEmailHintText = @"This will be used for logging into the system.
+      All communications will be sent to this email by default.";
       }
-    </div>
-  </div>
+      <vc:text-input asp-for="@nameof(Model.Email)"
+                     label="Primary email"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text="@primaryEmailHintText"
+                     deselectable="false"
+                     autocomplete="email"
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
+      <vc:select-list asp-for="@nameof(Model.JobGroupId)"
+                      label="Job group"
+                      value="@Model.JobGroupId.ToString()"
+                      hint-text=""
+                      required="true"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a job group"
+                      select-list-options="@Model.JobGroups" />
 
-  @if (Model.IsDelegateUser) {
-    <input type="hidden" asp-for="IsDelegateUser" />
-    <div class="nhsuk-grid-row divider">
-      <div class="nhsuk-grid-column-full">
-        <vc:select-list
-          asp-for="@nameof(Model.JobGroupId)"
-          label="Job group"
-          value="@Model.JobGroupId.ToString()"
-          hint-text=""
-          required="true"
-          css-class="nhsuk-u-width-one-half"
-          default-option="Select a job group"
-          select-list-options="@Model.JobGroups" />
+      <partial name="_EditRegistrationNumber" model="@Model" />
 
-        @foreach (EditDelegateRegistrationPromptViewModel customField in Model.DelegateRegistrationPrompts) {
-          @if (customField.Options.Any()) {
-            <vc:select-list
-              asp-for="@("Answer" + customField.PromptNumber)"
-              label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
-              value="@customField.Answer"
-              hint-text=""
-              required="@(customField.Mandatory)"
-              css-class="nhsuk-u-width-one-half"
-              default-option="Select a @customField.Prompt.ToLower()"
-              select-list-options="@customField.Options" />
-          } else {
-            <vc:text-input
-              asp-for="@("Answer" + customField.PromptNumber)"
-              label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
-              populate-with-current-value="true"
-              type="text"
-              spell-check="false"
-              autocomplete=""
-              hint-text=""
-              css-class="nhsuk-u-width-one-half"
-              required="@customField.Mandatory" />
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-half">
+          @{
+            var profilePictureHintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
+          To remove your profile picture click the remove button.
+          Changes will not be made until the Save button below is clicked.";
           }
-        }
+          <input type="hidden" asp-for="ProfileImage" />
+          <vc:file-input asp-for="@nameof(Model.ProfileImageFile)"
+                         label="Profile picture (optional)"
+                         hint-text="@profilePictureHintText"
+                         css-class="nhsuk-u-width-full" />
+        </div>
+        <div class="nhsuk-grid-column-one-half">
+          @if (Model.ProfileImage != null)
+          {
+            <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture" />
+          }
+          else
+          {
+            <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
+          }
+        </div>
+      </div>
+
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-half">
+          <button name="action" class="nhsuk-button" value="previewImage">Preview</button>
+          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeImage">Remove</button>
+        </div>
       </div>
     </div>
-  }
-
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-one-half">
-      @{ var hintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
-                                To remove your profile picture click the remove button.
-                                Changes will not be made until the Save button below is clicked."; }
-      <input type="hidden" asp-for="ProfileImage" />
-      <vc:file-input
-        asp-for="@nameof(Model.ProfileImageFile)"
-        label="Profile picture (optional)"
-        hint-text="@hintText"
-        css-class="nhsuk-u-width-full" />
-    </div>
-    <div class="nhsuk-grid-column-one-half">
-      @if (Model.ProfileImage != null) {
-        <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture" />
-      } else {
-        <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
-      }
-    </div>
   </div>
 
+  <input type="hidden" asp-for="IsDelegateUser" />
   <div class="nhsuk-grid-row divider">
-    <div class="nhsuk-grid-column-one-half">
-      <button name="action" class="nhsuk-button" value="previewImage">Preview</button>
-      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeImage">Remove</button>
+    <div class="nhsuk-grid-column-full">
+
+      @if (Model.IsLoggedInToCentre)
+      {
+        const string centreEmailHintText = @"<div>If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.</div>
+      <div>Your primary email address will still be used for logging in and notifications for managing your account.</div>";
+
+        <vc:text-input asp-for="@nameof(Model.CentreSpecificEmail)"
+                     label="Centre email (optional)"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text="@centreEmailHintText"
+                     autocomplete="email"
+                     css-class="nhsuk-u-width-one-half"
+                     required="false" />
+      }
+      else
+      {
+        const string centreEmailHintText = @"If you supply a centre email for an account, all notifications relating to your activity at that centre will be sent to this email address.
+      Your primary email address will still be used for logging in and notifications for managing your account.";
+
+        <h2>Centre emails</h2>
+
+        <vc:dictionary-text-input asp-for="AllCentreSpecificEmailsDictionary"
+                                spell-check="false"
+                                autocomplete="email"
+                                hint-text="@centreEmailHintText"
+                                css-class="nhsuk-u-width-one-half" />
+      }
+
+
+      @if (Model.IsDelegateUser)
+      {
+        @foreach (var customField in Model.DelegateRegistrationPrompts)
+        {
+          @if (customField.Options.Any())
+          {
+            <vc:select-list asp-for="@("Answer" + customField.PromptNumber)"
+                      label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
+                      value="@customField.Answer"
+                      default-option="Select a @customField.Prompt.ToLower()"
+                      select-list-options="@customField.Options"
+                      hint-text=""
+                      css-class="nhsuk-u-width-one-half"
+                      required="@customField.Mandatory" />
+          }
+          else
+          {
+            <vc:text-input asp-for="@("Answer" + customField.PromptNumber)"
+                     label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete=""
+                     css-class="nhsuk-u-width-one-half"
+                     required="@customField.Mandatory" />
+          }
+        }
+      }
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input
-        asp-for="@nameof(Model.Password)"
-        label="Confirm password to save changes"
-        populate-with-current-value="false"
-        type="password"
-        spell-check="false"
-        autocomplete=""
-        hint-text=""
-        css-class="nhsuk-u-width-one-half"
-        required="true"/>
-
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>
   </div>
 </form>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@routeParamsForIndexLink" />
+    @if (Url.IsLocalUrl(Model.ReturnUrl))
+    {
+      <link rel="stylesheet" href="@Url.Content("~/css/shared/components/cancelLink.css")" asp-append-version="true">
+      <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" href="@Model.ReturnUrl">
+          <svg class="nhsuk-icon nhsuk-icon__close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+          </svg>
+          Cancel
+        </a>
+      </div>
+    }
+    else
+    {
+      <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@routeParamsForIndexLink" />
+    }
   </div>
 </div>

@@ -2,21 +2,25 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
-    [Authorize(Policy = CustomPolicies.UserOnly)]
+    [Authorize(Policy = CustomPolicies.UserDelegateOnly)]
     public partial class LearningPortalController : Controller
     {
         private readonly IActionPlanService actionPlanService;
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
         private readonly ICourseDataService courseDataService;
+        private readonly IUserDataService userDataService;
 
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ILogger<LearningPortalController> logger;
@@ -27,10 +31,12 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IMultiPageFormService multiPageFormService;
+        private readonly IClockUtility clockUtility;
 
         public LearningPortalController(
             ICentresDataService centresDataService,
             ICourseDataService courseDataService,
+            IUserDataService userDataService,
             ISelfAssessmentService selfAssessmentService,
             ISupervisorService supervisorService,
             IFrameworkService frameworkService,
@@ -41,11 +47,13 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IActionPlanService actionPlanService,
             ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IMultiPageFormService multiPageFormService
+            IMultiPageFormService multiPageFormService,
+            IClockUtility clockUtility
         )
         {
             this.centresDataService = centresDataService;
             this.courseDataService = courseDataService;
+            this.userDataService = userDataService;
             this.selfAssessmentService = selfAssessmentService;
             this.supervisorService = supervisorService;
             this.frameworkService = frameworkService;
@@ -57,6 +65,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.multiPageFormService = multiPageFormService;
+            this.clockUtility = clockUtility;
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
@@ -72,7 +81,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 
         private string? GetBannerText()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var bannerText = centresDataService.GetBannerText(centreId);
             return bannerText;
         }

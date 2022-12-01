@@ -15,21 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="TestData\ActivityDataDownloadTest.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\CourseDelegateExportAllDataDownloadTest.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\CourseDelegateExportCurrentDataDownloadTest.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\DelegateUploadTest.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FluentMigrator" Version="3.2.9" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.9" />
@@ -50,12 +35,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="TestData\AllDelegatesExportTest.xlsx">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="TestData\EvaluationSummaryDownloadTest.xlsx">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      <Folder Include="Services\" />
     </ItemGroup>
 
 </Project>

@@ -1,0 +1,31 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount
+@model ClaimAccountViewModel
+
+@{
+  ViewData["Title"] = "Link delegate record";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Link delegate record</h1>
+
+    <p class="nhsuk-body-m">
+      A delegate record has been created for you by an administrator at a new centre.
+    </p>
+
+    <partial name="_DelegateRecordSummary" model="@Model" />
+
+    <p class="nhsuk-body-m">
+      You already have a DLS login.<br />
+      Would you like to link this delegate record to your existing login?
+    </p>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="LinkDlsAccountPost">
+      <input type="hidden" asp-for="Email" />
+      <input type="hidden" name="code" value="@Model.RegistrationConfirmationHash" />
+      <button class="nhsuk-button" type="submit">Link delegate record</button>
+    </form>
+
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
+  </div>
+</div>

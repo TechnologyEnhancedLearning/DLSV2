@@ -17,6 +17,15 @@
             return await GetClient(factory).GetAsyncAndSetCookie($"/SetDelegateTestSession?delegateId={delegateId}");
         }
 
+        public static async Task<HttpClient> SetDelegateSessionWithoutUserIdClaimAndGetClient(
+            AuthenticationWebApplicationFactory<Startup> factory,
+            int delegateId
+        )
+        {
+            return await GetClient(factory)
+                .GetAsyncAndSetCookie($"/SetDelegateTestSession?delegateId={delegateId}&withoutUserIdClaim=1");
+        }
+
         private static HttpClient GetClient(AuthenticationWebApplicationFactory<Startup> factory)
         {
             var client = factory.CreateClient(

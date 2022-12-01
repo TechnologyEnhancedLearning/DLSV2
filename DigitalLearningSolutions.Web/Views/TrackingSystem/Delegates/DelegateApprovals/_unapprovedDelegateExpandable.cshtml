@@ -43,7 +43,7 @@
           <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
         </div>
         @foreach (var delegateRegistrationPrompt in Model.DelegateRegistrationPrompts) {
-          <partial name="../Shared/_CustomPromptSummaryListRow" model="delegateRegistrationPrompt" />
+          <partial name="../Shared/_CustomPromptSummaryListWithButtonRow" model="delegateRegistrationPrompt" />
         }
       </dl>
     </div>

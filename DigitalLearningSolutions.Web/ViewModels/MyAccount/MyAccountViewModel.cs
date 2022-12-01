@@ -11,26 +11,32 @@
     public class MyAccountViewModel
     {
         public MyAccountViewModel(
-            AdminUser? adminUser,
-            DelegateUser? delegateUser,
+            UserAccount userAccount,
+            DelegateAccount? delegateAccount,
+            int? centreId,
+            string? centreName,
+            string? centreSpecificEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
-            DlsSubApplication dlsSubApplication
+            List<(int centreId, string centreName, string? centreSpecificEmail)> allCentreSpecificEmails,
+            List<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails,
+            DlsSubApplication dlsSubApplication,
+            string switchCentreReturnUrl
         )
         {
-            FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
-            Surname = adminUser?.LastName ?? delegateUser?.LastName;
-            User = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
-            ProfilePicture = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
-            Centre = adminUser?.CentreName ?? delegateUser?.CentreName;
-            DelegateNumber = delegateUser?.CandidateNumber;
-            AliasId = delegateUser?.AliasId;
-            JobGroup = delegateUser?.JobGroupName;
-            ProfessionalRegistrationNumber = delegateUser == null
-                ? null
-                : PrnStringHelper.GetPrnDisplayString(
-                    delegateUser.HasBeenPromptedForPrn,
-                    delegateUser.ProfessionalRegistrationNumber
-                );
+            CentreId = centreId;
+            FirstName = userAccount.FirstName;
+            Surname = userAccount.LastName;
+            PrimaryEmail = userAccount.PrimaryEmail;
+            ProfilePicture = userAccount.ProfileImage;
+            CentreName = centreName;
+            DelegateNumber = delegateAccount?.CandidateNumber;
+            JobGroup = userAccount.JobGroupName;
+            CentreSpecificEmail = centreSpecificEmail;
+            DateRegistered = delegateAccount?.DateRegistered.ToString(DateHelper.StandardDateFormat);
+            ProfessionalRegistrationNumber = PrnHelper.GetPrnDisplayString(
+                userAccount.HasBeenPromptedForPrn,
+                userAccount.ProfessionalRegistrationNumber
+            );
 
             DelegateRegistrationPrompts = new List<DelegateRegistrationPrompt>();
             if (customPrompts != null)
@@ -47,29 +53,52 @@
                     .ToList();
             }
 
+            AllCentreSpecificEmails = allCentreSpecificEmails;
             DlsSubApplication = dlsSubApplication;
+            SwitchCentreReturnUrl = switchCentreReturnUrl;
+            PrimaryEmailIsVerified = userAccount.EmailVerified != null;
+            UnverifiedCentreEmails = unverifiedCentreEmails;
+            NumberOfUnverifiedEmails = (PrimaryEmailIsVerified ? 0 : 1) + UnverifiedCentreEmails.Count;
         }
 
-        public string? Centre { get; set; }
+        public int? CentreId { get; set; }
 
-        public string? User { get; set; }
+        public string? CentreName { get; set; }
+
+        public string PrimaryEmail { get; set; }
+
+        public bool PrimaryEmailIsVerified { get; }
 
         public string? DelegateNumber { get; set; }
 
-        public string? AliasId { get; set; }
+        public string FirstName { get; set; }
 
-        public string? FirstName { get; set; }
-
-        public string? Surname { get; set; }
+        public string Surname { get; set; }
 
         public byte[]? ProfilePicture { get; set; }
 
-        public string? JobGroup { get; set; }
+        public string JobGroup { get; set; }
 
-        public string? ProfessionalRegistrationNumber { get; set; }
+        public string ProfessionalRegistrationNumber { get; set; }
+
+        public string? CentreSpecificEmail { get; set; }
+
+        public string? DateRegistered { get; set; }
 
         public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
 
+        public List<(int centreId, string centreName, string? centreSpecificEmail)> AllCentreSpecificEmails
+        {
+            get;
+            set;
+        }
+
+        public List<(int centreId, string centreName, string? centreSpecificEmail)> UnverifiedCentreEmails { get; set; }
+
+        public int NumberOfUnverifiedEmails { get; set; }
+
         public DlsSubApplication DlsSubApplication { get; set; }
+
+        public string SwitchCentreReturnUrl { get; set; }
     }
 }

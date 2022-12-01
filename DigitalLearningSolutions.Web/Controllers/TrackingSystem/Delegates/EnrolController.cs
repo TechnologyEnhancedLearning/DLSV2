@@ -2,7 +2,7 @@
 using DigitalLearningSolutions.Data.Enums;
 using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
-using DigitalLearningSolutions.Data.Services;
+using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models.Enums;
@@ -16,6 +16,8 @@ using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.Utilities;
+
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
@@ -25,19 +27,22 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private readonly ICourseDataService courseDataService;
         private readonly IMultiPageFormService multiPageFormService;
         private readonly ISupervisorService supervisorService;
-        private readonly IEnrolService enrolService;
+        //private readonly IEnrolService enrolService;
+        private readonly IProgressDataService progressDataService;
 
         public EnrolController(
             ICourseDataService courseDataService,
             IMultiPageFormService multiPageFormService,
             ISupervisorService supervisorService,
-            IEnrolService enrolService
+            //IEnrolService enrolService
+            IProgressDataService progressDataService
         )
         {
             this.courseDataService = courseDataService;
             this.multiPageFormService = multiPageFormService;
             this.supervisorService = supervisorService;
-            this.enrolService = enrolService;
+            //this.enrolService = enrolService;
+            this.progressDataService = progressDataService;
         }
 
         public IActionResult StartEnrolProcess(int delegateId, string delegateName)
@@ -60,7 +65,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         [HttpGet]
         public IActionResult Index(int delegateId, string delegateName)
         {
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
@@ -79,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         [HttpPost]
         public IActionResult Index(int delegateId, EnrolCurrentLearningViewModel enrolCurrentLearningViewModel)
         {
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
@@ -185,7 +190,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             {
                 var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
                 var model = new EnrolSupervisorViewModel(delegateId, delegateName, sessionEnrol.IsSelfAssessment,
-                   supervisorList, sessionEnrol.SupervisorID.GetValueOrDefault(), roles,sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
+                   supervisorList, sessionEnrol.SupervisorID.GetValueOrDefault(), roles, sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
                 return View(model);
             }
         }
@@ -222,10 +227,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                MultiPageFormDataFeature.EnrolDelegateInActivity,
                TempData);
 
+            var clockUtility = new ClockUtility();
             var monthDiffrence = "";
             if (sessionEnrol.CompleteByDate.HasValue)
             {
-                monthDiffrence = (((sessionEnrol.CompleteByDate.Value.Year - DateTime.Now.Year) * 12) + sessionEnrol.CompleteByDate.Value.Month - DateTime.Now.Month).ToString();
+                monthDiffrence = (((sessionEnrol.CompleteByDate.Value.Year - clockUtility.UtcNow.Year) * 12) + sessionEnrol.CompleteByDate.Value.Month - clockUtility.UtcNow.Month).ToString();
             }
 
             var model = new EnrolSummaryViewModel();
@@ -243,16 +249,22 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         [HttpPost]
         public IActionResult EnrolDelegateSummary(int delegateId)
         {
+            var clockUtility = new ClockUtility();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
                TempData);
             if (!sessionEnrol.IsSelfAssessment)
             {
-                enrolService.EnrolDelegateOnCourse(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault(), "AdminEnrolDelegateOnCourse");
+//<<<<<<< HEAD
+//                enrolService.EnrolDelegateOnCourse(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault(), "AdminEnrolDelegateOnCourse");
+//=======
+                progressDataService.CreateNewDelegateProgress(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion,
+                    clockUtility.UtcNow, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
+//>>>>>>> uar-test
             }
             else
             {
-                var adminEmail = User.GetUserEmail();
+                var adminEmail = User.GetUserPrimaryEmailKnownNotNull();
                 var selfAssessmentId = courseDataService.EnrolOnActivitySelfAssessment(
                     sessionEnrol.AssessmentID.GetValueOrDefault(),
                     delegateId,

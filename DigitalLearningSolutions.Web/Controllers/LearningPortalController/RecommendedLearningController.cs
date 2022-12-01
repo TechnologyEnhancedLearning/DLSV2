@@ -10,11 +10,12 @@
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.RecommendedLearning;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments.FilteredMgp;
     using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
-    [Authorize(Policy = CustomPolicies.UserOnly)]
+    [Authorize(Policy = CustomPolicies.UserDelegateOnly)]
     [ServiceFilter(typeof(VerifyDelegateUserCanAccessSelfAssessment))]
     public class RecommendedLearningController : Controller
     {
@@ -33,6 +34,7 @@
         private readonly IRecommendedLearningService recommendedLearningService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly IClockUtility clockUtility;
 
         public RecommendedLearningController(
             IFilteredApiHelperService filteredApiHelperService,
@@ -40,7 +42,8 @@
             IConfiguration configuration,
             IRecommendedLearningService recommendedLearningService,
             IActionPlanService actionPlanService,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IClockUtility clockUtility
         )
         {
             this.filteredApiHelperService = filteredApiHelperService;
@@ -49,6 +52,7 @@
             this.recommendedLearningService = recommendedLearningService;
             this.actionPlanService = actionPlanService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.clockUtility = clockUtility;
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Results")]
@@ -258,7 +262,7 @@
                 var accessToken = await filteredApiHelperService.GetUserAccessToken<AccessToken>(candidateNum);
                 filteredToken = accessToken.Jwt_access_token;
                 var cookieOptions = new CookieOptions();
-                cookieOptions.Expires = new DateTimeOffset(DateTime.Now.AddMinutes(15));
+                cookieOptions.Expires = new DateTimeOffset(clockUtility.UtcNow.AddMinutes(15));
                 Response.Cookies.Append("filtered-" + candidateNum, filteredToken, cookieOptions);
             }
 

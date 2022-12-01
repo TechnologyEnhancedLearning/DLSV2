@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -262,14 +263,17 @@
 
             foreach (var assessmentQuestion in assessmentQuestions)
             {
-                selfAssessmentService.SetResultForCompetency(
-                    competencyId,
-                    assessment.Id,
-                    candidateId,
-                    assessmentQuestion.Id,
-                    assessmentQuestion.Result,
-                    assessmentQuestion.SupportingComments
-                );
+                if (assessmentQuestion.Result != null || assessmentQuestion.SupportingComments != null)
+                {
+                    selfAssessmentService.SetResultForCompetency(
+                        competencyId,
+                        assessment.Id,
+                        candidateId,
+                        assessmentQuestion.Id,
+                        assessmentQuestion.Result,
+                        assessmentQuestion.SupportingComments
+                    );
+                }
             }
 
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, true);
@@ -455,8 +459,6 @@
                 SupervisorSignOffs = supervisorSignOffs,
                 SearchViewModel = searchViewModel
             };
-            model.Initialise(recentResults);
-
             if (searchModel != null)
             {
                 searchModel.IsSupervisorResultsReviewed = assessment.IsSupervisorResultsReviewed;
@@ -625,7 +627,7 @@
                 TempData
             );
             var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetCandidateIdKnownNotNull()
             );
@@ -650,7 +652,7 @@
             if (!ModelState.IsValid)
             {
                 var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-               User.GetCentreId(),
+               User.GetCentreIdKnownNotNull(),
                sessionAddSupervisor.SelfAssessmentID,
                User.GetCandidateIdKnownNotNull()
            );
@@ -859,12 +861,13 @@
                 TempData
             );
             var candidateId = User.GetCandidateIdKnownNotNull();
+            var delegateEntity = userDataService.GetDelegateById(candidateId);
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(
                 sessionAddSupervisor.SupervisorAdminId,
                 candidateId,
-                User.GetUserEmail() ?? throw new InvalidOperationException(),
+                delegateEntity!.EmailForCentreNotifications,
                 sessionAddSupervisor.SupervisorEmail ?? throw new InvalidOperationException(),
-                User.GetCentreId()
+                User.GetCentreIdKnownNotNull()
             );
             supervisorService.InsertCandidateAssessmentSupervisor(
                 candidateId,
@@ -1356,7 +1359,7 @@
         public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary)
         {
             var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, GetCandidateId(), true);
-            var fileName = $"DLS {vocabulary} Assessment Export {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var fileName = $"DLS {vocabulary} Assessment Export {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),

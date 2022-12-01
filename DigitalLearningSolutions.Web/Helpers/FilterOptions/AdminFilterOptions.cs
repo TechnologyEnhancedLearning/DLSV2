@@ -4,8 +4,6 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class AdminRoleFilterOptions
     {
@@ -19,45 +17,50 @@
 
         public static readonly FilterOptionModel CentreAdministrator = new FilterOptionModel(
             "Centre administrator",
-            FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsCentreAdmin), "true"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsCentreAdmin), "true"),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionModel Supervisor = new FilterOptionModel(
             "Supervisor",
-            FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsSupervisor), "true"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsSupervisor), "true"),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionModel NominatedSupervisor = new FilterOptionModel(
             "Nominated supervisor",
-            FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsNominatedSupervisor), "true"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsNominatedSupervisor), "true"),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionModel Trainer = new FilterOptionModel(
             "Trainer",
-            FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsTrainer), "true"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsTrainer), "true"),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionModel ContentCreatorLicense =
             new FilterOptionModel(
-                "Content creator license",
-                FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsContentCreator), "true"),
+//<<<<<<< HEAD
+                //"Content creator license",
+                //FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsContentCreator), "true"),
+//=======
+                "Content Creator license",
+                FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsContentCreator), "true"),
+//>>>>>>> uar-test
                 FilterStatus.Default
             );
 
         public static readonly FilterOptionModel CmsAdministrator =
             new FilterOptionModel(
                 "CMS administrator",
-                FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsCmsAdministrator), "true"),
+                FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsCmsAdministrator), "true"),
                 FilterStatus.Default
             );
 
         public static readonly FilterOptionModel CmsManager = new FilterOptionModel(
             "CMS manager",
-            FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsCmsManager), "true"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsCmsManager), "true"),
             FilterStatus.Default
         );
     }
@@ -68,13 +71,13 @@
 
         public static readonly FilterOptionModel IsLocked = new FilterOptionModel(
             "Locked",
-            FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsLocked), "true"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsLocked), "true"),
             FilterStatus.Warning
         );
 
         public static readonly FilterOptionModel IsNotLocked = new FilterOptionModel(
             "Not locked",
-            FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsLocked), "false"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsLocked), "false"),
             FilterStatus.Default
         );
     }

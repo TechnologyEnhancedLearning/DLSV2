@@ -1,12 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using FizzWare.NBuilder;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
     using NUnit.Framework;
@@ -27,7 +26,7 @@
         }
 
         [Test]
-        public void Set_password_by_candidate_number_should_set_password_correctly()
+        public void SetPasswordByCandidateNumber_should_set_password_correctly()
         {
             using var transaction = new TransactionScope();
             try
@@ -48,161 +47,66 @@
         }
 
         [Test]
-        public void SetPasswordByAdminId_should_set_password_correctly()
-        {
-            using var transaction = new TransactionScope();
-            // Given
-            const string? password = "hashedPassword";
-            const int adminId = 1;
-
-            // When
-            passwordDataService.SetPasswordByAdminId(adminId, password);
-            var result = userDataService.GetAdminUserById(1)!.Password;
-
-            // Then
-            result.Should().Be(password);
-        }
-
-        [Test]
-        public async Task Setting_password_by_email_sets_password_for_matching_admins()
+        public async Task SetPasswordByUserIdAsync_sets_password_for_matching_user()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingAdminUser = UserTestHelper.GetDefaultAdminUser();
+            var existingUser = UserTestHelper.GetDefaultUserAccount();
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await passwordDataService.SetPasswordByEmailAsync(existingAdminUser.EmailAddress!, newPasswordHash);
+            await passwordDataService.SetPasswordByUserIdAsync(existingUser.Id, newPasswordHash);
 
             // Then
-            userDataService.GetAdminUserById(existingAdminUser.Id)?.Password.Should()
+            userDataService.GetUserAccountById(existingUser.Id)!.PasswordHash.Should()
                 .Be(PasswordHashNotYetInDb);
         }
 
         [Test]
-        public async Task Setting_password_by_email_does_not_set_password_for_all_admins()
+        public async Task SetPasswordByUserIdAsync_does_not_set_password_for_all_users()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingAdminUser = UserTestHelper.GetDefaultAdminUser();
-            var existingAdminUserPassword = existingAdminUser.Password;
+            var existingUser = UserTestHelper.GetDefaultUserAccount();
+            var existingUserPassword = existingUser.PasswordHash;
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await passwordDataService.SetPasswordByEmailAsync("random.email@address.com", newPasswordHash);
+            await passwordDataService.SetPasswordByUserIdAsync(-1, newPasswordHash);
 
             // Then
-            userDataService.GetAdminUserById(existingAdminUser.Id)?.Password.Should()
-                .Be(existingAdminUserPassword);
+            userDataService.GetUserAccountById(existingUser.Id)!.PasswordHash.Should()
+                .Be(existingUserPassword);
         }
 
         [Test]
-        public async Task Setting_password_by_email_sets_password_for_matching_candidate()
+        public async Task SetOldPasswordsToNullByUserIdAsync_nullifies_old_passwords_for_matching_user()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingDelegate = UserTestHelper.GetDefaultDelegateUser();
-            var newPasswordHash = PasswordHashNotYetInDb;
+            var userWithMultipleDelegateAccounts = await connection.GetUserWithMultipleDelegateAccountsAsync();
+            await connection.SetDelegateAccountOldPasswordsForUserAsync(userWithMultipleDelegateAccounts);
+
+            foreach (var delegateAccount in userDataService.GetDelegateAccountsByUserId(
+                userWithMultipleDelegateAccounts.Id
+            ))
+            {
+                delegateAccount.OldPassword.Should().NotBe(null);
+            }
 
             // When
-            await passwordDataService.SetPasswordByEmailAsync(existingDelegate.EmailAddress!, newPasswordHash);
+            await passwordDataService.SetOldPasswordsToNullByUserIdAsync(userWithMultipleDelegateAccounts.Id);
 
             // Then
-            userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
-                .Be(PasswordHashNotYetInDb);
-        }
-
-        [Test]
-        public async Task SetPasswordForUsers_can_set_password_for_multiple_delegates()
-        {
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var existingDelegate = UserTestHelper.GetDefaultDelegateUser();
-            var newDelegate = Builder<DelegateUser>.CreateNew()
-                .With(d => d.EmailAddress = existingDelegate.EmailAddress)
-                .With(d => d.CentreId = existingDelegate.CentreId)
-                .Build();
-            UserTestHelper.GivenDelegateUserIsInDatabase(newDelegate, connection);
-
-            var newPasswordHash = PasswordHashNotYetInDb;
-
-            // When
-            await passwordDataService.SetPasswordForUsersAsync(
-                new[] { existingDelegate.ToUserReference(), newDelegate.ToUserReference() },
-                newPasswordHash
-            );
-
-            // Then
-            userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
-                .Be(PasswordHashNotYetInDb);
-            userDataService.GetDelegateUserById(newDelegate.Id)?.Password.Should()
-                .Be(PasswordHashNotYetInDb);
-        }
-
-        [Test]
-        public async Task Setting_password_by_email_does_not_set_password_for_all_delegates()
-        {
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var existingDelegate = UserTestHelper.GetDefaultDelegateUser();
-            var existingDelegatePassword = existingDelegate.Password;
-            var newPasswordHash = PasswordHashNotYetInDb;
-
-            // When
-            await passwordDataService.SetPasswordByEmailAsync("random.email@address.com", newPasswordHash);
-
-            // Then
-            userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
-                .Be(existingDelegatePassword);
-        }
-
-        [Test]
-        public async Task Setting_password_for_user_account_set_changes_password()
-        {
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var existingDelegateRef = UserTestHelper.GetDefaultDelegateUser().ToUserReference();
-            var existingAdminRef = UserTestHelper.GetDefaultAdminUser().ToUserReference();
-            var newPasswordHash = PasswordHashNotYetInDb;
-
-            // When
-            await passwordDataService.SetPasswordForUsersAsync(
-                new[] { existingDelegateRef, existingAdminRef },
-                newPasswordHash
-            );
-
-            // Then
-            userDataService.GetAdminUserById(existingAdminRef.Id)?.Password.Should().Be(newPasswordHash);
-            userDataService.GetDelegateUserById(existingDelegateRef.Id)?.Password.Should()
-                .Be(newPasswordHash);
-        }
-
-        [Test]
-        public async Task Can_set_password_for_delegate_only()
-        {
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var existingDelegateRef = UserTestHelper.GetDefaultDelegateUser().ToUserReference();
-            var newPasswordHash = PasswordHashNotYetInDb;
-
-            // When
-            await passwordDataService.SetPasswordForUsersAsync(
-                new[] { existingDelegateRef },
-                newPasswordHash
-            );
-
-            // Then
-            userDataService.GetDelegateUserById(UserTestHelper.GetDefaultDelegateUser().Id)?.Password.Should()
-                .Be(newPasswordHash);
-            userDataService.GetAdminUserById(UserTestHelper.GetDefaultAdminUser().Id)?.Password.Should()
-                .NotBe(newPasswordHash);
+            foreach (var delegateAccount in userDataService.GetDelegateAccountsByUserId(
+                userWithMultipleDelegateAccounts.Id
+            ))
+            {
+                delegateAccount.OldPassword.Should().Be(null);
+            }
         }
     }
 }

@@ -10,13 +10,13 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
@@ -81,8 +81,8 @@
                 CourseStatusFilterOptions.IsActive.FilterValue
             );
 
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
 
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
@@ -119,8 +119,8 @@
         [Route("AllCourseStatistics")]
         public IActionResult AllCourseStatistics()
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
             var model = new AllCourseStatisticsViewModel(details, config);
@@ -168,8 +168,8 @@
         [Route("AddCourse/SelectCourseAllCourses")]
         public IActionResult SelectCourseAllCourses()
         {
-            var centreId = User.GetCentreId();
-            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var adminCategoryFilter = User.GetAdminCategoryId();
 
             var applications = courseService
                 .GetApplicationOptionsAlphabeticalListForCentre(centreId, adminCategoryFilter);
@@ -208,8 +208,8 @@
                 );
             }
 
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
 
             var selectedApplication =
                 courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId)
@@ -258,7 +258,7 @@
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             CourseDetailsValidator.ValidateCustomisationName(
                 model,
@@ -522,8 +522,8 @@
             int? selectedApplicationId = null
         )
         {
-            var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter()!;
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryIdFilter = User.GetAdminCategoryId()!;
 
             var applications = courseService
                 .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter).ToList();
@@ -652,7 +652,7 @@
         private Customisation GetCustomisationFromTempData(AddNewCentreCourseTempData tempData)
         {
             return new Customisation(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 tempData!.Application!.ApplicationId,
                 tempData.CourseDetailsData!.CustomisationName ?? string.Empty,
                 tempData.CourseDetailsData.Password,

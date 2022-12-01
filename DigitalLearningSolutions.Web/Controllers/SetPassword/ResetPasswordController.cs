@@ -2,28 +2,22 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc;
 
     public class ResetPasswordController : Controller
     {
         private readonly IPasswordResetService passwordResetService;
-        private readonly IPasswordService passwordService;
-        private readonly IUserService userService;
 
         public ResetPasswordController(
-            IPasswordResetService passwordResetService,
-            IPasswordService passwordService,
-            IUserService userService
+            IPasswordResetService passwordResetService
         )
         {
             this.passwordResetService = passwordResetService;
-            this.passwordService = passwordService;
-            this.userService = userService;
         }
 
         [HttpGet]
@@ -61,13 +55,13 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
         {
             var resetPasswordData = TempData.Peek<ResetPasswordData>()!;
 
-            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+            var passwordReset = await passwordResetService.GetValidPasswordResetEntityAsync(
                 resetPasswordData.Email,
                 resetPasswordData.ResetPasswordHash,
                 ResetPasswordHelpers.ResetPasswordHashExpiryTime
             );
 
-            if (!hashIsValid)
+            if (passwordReset == null)
             {
                 TempData.Clear();
                 return RedirectToAction("Error");
@@ -78,14 +72,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
                 return View(viewModel);
             }
 
-            await passwordResetService.InvalidateResetPasswordForEmailAsync(resetPasswordData.Email);
-            await passwordService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
-            var adminUser = userService.GetUsersByEmailAddress(resetPasswordData.Email).adminUser;
-
-            if (adminUser != null)
-            {
-                userService.ResetFailedLoginCount(adminUser);
-            }
+            await passwordResetService.ResetPasswordAsync(passwordReset, viewModel.Password!);
 
             TempData.Clear();
 

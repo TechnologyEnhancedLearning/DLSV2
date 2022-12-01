@@ -1,9 +1,11 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
+@inject IClockUtility ClockUtility
 
 @{
   var dlsSubApplication = (DlsSubApplication?)ViewData[LayoutViewDataKeys.DlsSubApplication];
@@ -13,6 +15,8 @@
     ViewData[LayoutViewDataKeys.HeaderPathName] ??= dlsSubApplication.HeaderPathName;
   }
   var headerExtension = (string)ViewData[LayoutViewDataKeys.Application];
+  var shouldDisplayHelpMenuItem = dlsSubApplication?.DisplayHelpMenuItem ?? headerExtension != DlsSubApplication.TrackingSystem.HeaderExtension;
+
 }
 
 <!DOCTYPE html>
@@ -103,7 +107,23 @@
             } else if (dlsSubApplication != null) {
               <partial name="_AutoNavMenuItems.cshtml" model="@dlsSubApplication" />
             }
-            @if (User.Identity.IsAuthenticated && User.GetAdminId() != null) {
+            @if (shouldDisplayHelpMenuItem) {
+              string helpPage;
+              if (User.HasClaim(c => c.Type == CustomClaimTypes.UserAdminId)) {
+                helpPage = "/help/Introduction.html";
+              } else if (User.Identity.IsAuthenticated) {
+                helpPage = "/learningportal/help/LearningPortal.html";
+              } else {
+                helpPage = "/help/Introduction.html";
+              }
+              <li class="nhsuk-header__navigation-item">
+                <a class="nhsuk-header__navigation-link" href="@(Configuration["CurrentSystemBaseUrl"] + helpPage)" target="_blank">
+                  Help
+                  <partial name="_NhsChevronRight" />
+                </a>
+              </li>
+            }
+            @if (User.IsAdminAccount()) {
               <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
                 <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
                   Switch application
@@ -147,7 +167,7 @@
             <a class="nhsuk-footer__list-item-link" href="https://www.hee.nhs.uk/about/privacy-notice">Privacy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
           </li>
         </ul>
-        <p class="nhsuk-footer__copyright">&copy; Digital Learning Solutions, Health Education England @DateTime.Now.Year</p>
+        <p class="nhsuk-footer__copyright">&copy; Digital Learning Solutions, Health Education England @ClockUtility.UtcNow.Year</p>
       </div>
     </div>
   </footer>

@@ -27,6 +27,7 @@
         public const string ContactText = "ContactUsHtml";
         public const string AppBaseUrl = "V2AppBaseUrl";
         public const string MaxSignpostedResources = "MaxSignpostedResources";
+        public const string SupportEmail = "SupportEmail";
 
         private readonly IDbConnection connection;
 

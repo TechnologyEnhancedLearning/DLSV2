@@ -44,13 +44,11 @@
                 BulkUploadResult.ErrorReason.UnexpectedErrorForUpdate =>
                     "Unexpected error when updating delegate details",
                 BulkUploadResult.ErrorReason.ParameterError => "Parameter error when updating delegate details",
-                BulkUploadResult.ErrorReason.AliasIdInUse => "The AliasID is already in use by another delegate",
                 BulkUploadResult.ErrorReason.EmailAddressInUse =>
                     "The EmailAddress is already in use by another delegate",
                 BulkUploadResult.ErrorReason.TooLongFirstName => "FirstName must be 250 characters or fewer",
                 BulkUploadResult.ErrorReason.TooLongLastName => "LastName must be 250 characters or fewer",
                 BulkUploadResult.ErrorReason.TooLongEmail => "EmailAddress must be 250 characters or fewer",
-                BulkUploadResult.ErrorReason.TooLongAliasId => "AliasID must be 250 characters or fewer",
                 BulkUploadResult.ErrorReason.TooLongAnswer1 => "Answer1 must be 100 characters or fewer",
                 BulkUploadResult.ErrorReason.TooLongAnswer2 => "Answer2 must be 100 characters or fewer",
                 BulkUploadResult.ErrorReason.TooLongAnswer3 => "Answer3 must be 100 characters or fewer",

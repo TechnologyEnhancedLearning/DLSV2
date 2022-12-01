@@ -2,12 +2,13 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
     using Microsoft.AspNetCore.Authorization;
@@ -22,17 +23,20 @@
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     public class EditDelegateController : Controller
     {
-        private readonly PromptsService promptsService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly PromptsService promptsService;
         private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public EditDelegateController(
             IUserService userService,
+            IUserDataService userDataService,
             IJobGroupsDataService jobGroupsDataService,
             PromptsService registrationPromptsService
         )
         {
             this.userService = userService;
+            this.userDataService = userDataService;
             this.jobGroupsDataService = jobGroupsDataService;
             promptsService = registrationPromptsService;
         }
@@ -40,10 +44,10 @@
         [HttpGet]
         public IActionResult Index(int delegateId)
         {
-            var centreId = User.GetCentreId();
-            var delegateUser = userService.GetUsersById(null, delegateId).delegateUser;
+            var centreId = User.GetCentreIdKnownNotNull();
+            var delegateEntity = userService.GetDelegateById(delegateId);
 
-            if (delegateUser == null || delegateUser.CentreId != centreId)
+            if (delegateEntity == null || delegateEntity.DelegateAccount.CentreId != centreId)
             {
                 return NotFound();
             }
@@ -51,8 +55,11 @@
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
 
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, centreId);
-            var model = new EditDelegateViewModel(delegateUser, jobGroups, customPrompts);
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateEntity, centreId);
+            var model = new EditDelegateViewModel(delegateEntity, jobGroups, customPrompts);
+
+            if (DisplayStringHelper.IsGuid(model.CentreSpecificEmail))
+                model.CentreSpecificEmail = null;
 
             return View(model);
         }
@@ -60,17 +67,9 @@
         [HttpPost]
         public IActionResult Index(EditDelegateFormData formData, int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             promptsService.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
-
-            if (!userService.NewAliasIsValid(formData.AliasId, delegateId, centreId))
-            {
-                ModelState.AddModelError(
-                    nameof(EditDelegateFormData.AliasId),
-                    "A user with this alias is already registered at this centre"
-                );
-            }
 
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
                 ModelState,
@@ -83,21 +82,50 @@
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, null, delegateId, centreId))
+            var delegateEntity = userService.GetDelegateById(delegateId);
+
+            var centreEmailDefaultsToPrimary =
+                formData.CentreSpecificEmail == delegateEntity!.UserAccount.PrimaryEmail &&
+                delegateEntity.UserCentreDetails?.Email == null;
+
+            if (centreEmailDefaultsToPrimary || string.IsNullOrWhiteSpace(formData.CentreSpecificEmail))
+            {
+                formData.CentreSpecificEmail = null;
+            }
+
+            if (
+                formData.CentreSpecificEmail != null &&
+                formData.CentreSpecificEmail != delegateEntity.UserCentreDetails?.Email &&
+                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    formData.CentreSpecificEmail,
+                    delegateEntity.DelegateAccount.CentreId,
+                    delegateEntity.UserAccount.Id
+                )
+            )
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsFormData.Email),
-                    "A user with this email is already registered at this centre"
+                    nameof(EditDetailsFormData.CentreSpecificEmail),
+                    CommonValidationErrorMessages.EmailInUseAtCentre
                 );
+
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+            var (editDelegateDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
-                delegateId,
-                User.GetCentreId()
+                delegateEntity.UserAccount.Id,
+                delegateId
             );
-            userService.UpdateUserAccountDetailsViaDelegateAccount(accountDetailsData, centreAnswersData);
+
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                editDelegateDetailsData,
+                delegateDetailsData,
+                formData.CentreSpecificEmail,
+                centreId,
+                false,
+                !string.Equals(delegateEntity.UserCentreDetails?.Email, formData.CentreSpecificEmail),
+                false
+            );
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }

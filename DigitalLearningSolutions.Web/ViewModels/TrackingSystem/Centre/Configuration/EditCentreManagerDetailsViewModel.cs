@@ -27,7 +27,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
         [Required(ErrorMessage = "Enter an email")]
         [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
-        [NoWhitespace("Email must not contain any whitespace characters")]
+        [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? Email { get; set; }
 
         [MaxLength(250, ErrorMessage = "Telephone number must be 250 characters or fewer")]

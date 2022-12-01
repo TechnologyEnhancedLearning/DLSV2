@@ -1,11 +1,11 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.RoleProfiles
-{
+﻿namespace DigitalLearningSolutions.Web.ViewModels.RoleProfiles {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
+
     public abstract class BaseRoleProfilesPageViewModel
     {
         [BindProperty] public string SortDirection { get; set; }
@@ -55,15 +55,16 @@
         private int OffsetFromPageNumber(int pageNumber) =>
             (pageNumber - 1) * ItemsPerPage;
     }
-}
-public static class RoleProfileSortByOptionTexts
-{
-    public const string
-        RoleProfileName = "Profile Name",
-        RoleProfileOwner = "Owner",
-        RoleProfileCreatedDate = "Created Date",
-        RoleProfilePublishStatus = "Publish Status",
-        RoleProfileBrand = "Brand",
-        RoleProfileNationalRoleGroup = "National Job Group",
-        RoleProfileNationalRoleProfile = "National Job Profile";
+
+    public static class RoleProfileSortByOptionTexts
+    {
+        public const string
+            RoleProfileName = "Profile Name",
+            RoleProfileOwner = "Owner",
+            RoleProfileCreatedDate = "Created Date",
+            RoleProfilePublishStatus = "Publish Status",
+            RoleProfileBrand = "Brand",
+            RoleProfileNationalRoleGroup = "National Job Group",
+            RoleProfileNationalRoleProfile = "National Job Profile";
+    }
 }

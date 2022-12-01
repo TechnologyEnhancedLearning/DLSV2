@@ -3,17 +3,17 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class RecommendedLearningControllerTests
     {
@@ -27,6 +27,7 @@
         private IRecommendedLearningService recommendedLearningService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
@@ -37,6 +38,7 @@
             recommendedLearningService = A.Fake<IRecommendedLearningService>();
             actionPlanService = A.Fake<IActionPlanService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            clockUtility = A.Fake<IClockUtility>();
 
             controller = new RecommendedLearningController(
                     filteredApiHelperService,
@@ -44,7 +46,8 @@
                     configuration,
                     recommendedLearningService,
                     actionPlanService,
-                    searchSortFilterPaginateService
+                    searchSortFilterPaginateService,
+                    clockUtility
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, delegateId: DelegateId);
@@ -55,7 +58,7 @@
             SelfAssessmentResults_redirect_to_expected_action_does_not_call_filtered_api_when_using_signposting()
         {
             // Given
-            A.CallTo(() => configuration[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => configuration["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
             var result = await controller.SelfAssessmentResults(SelfAssessmentId);
@@ -76,7 +79,7 @@
         {
             // Given
             var expectedBookmarkString = $"/LearningPortal/SelfAssessment/{SelfAssessmentId}/RecommendedLearning";
-            A.CallTo(() => configuration[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => configuration["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
             var result = await controller.RecommendedLearning(SelfAssessmentId);

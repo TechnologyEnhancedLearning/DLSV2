@@ -2,9 +2,9 @@
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword;
     using FakeItEasy;
@@ -30,20 +30,6 @@
             setDelegatePasswordController = new SetDelegatePasswordController(passwordService, userDataService)
                 .WithDefaultContext()
                 .WithMockUser(true);
-        }
-
-        [Test]
-        public void Index_should_show_error_view_for_delegate_user_with_no_email()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
-                .Returns(UserTestHelper.GetDefaultDelegateUser(emailAddress: null));
-
-            // When
-            var result = setDelegatePasswordController.Index(DelegateId, true, null);
-
-            // Then
-            result.Should().BeViewResult().WithViewName("NoEmail");
         }
 
         [Test]
@@ -97,17 +83,17 @@
         public async Task IndexAsync_with_valid_model_calls_password_service_and_returns_confirmation_view_async()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var model = new SetDelegatePasswordViewModel { Password = Password };
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
-                .Returns(delegateUser);
-            A.CallTo(() => passwordService.ChangePasswordAsync(A<string>._, A<string>._)).Returns(Task.CompletedTask);
+            A.CallTo(() => userDataService.GetDelegateAccountById(DelegateId))
+                .Returns(delegateAccount);
+            A.CallTo(() => passwordService.ChangePasswordAsync(A<int>._, A<string>._)).Returns(Task.CompletedTask);
 
             // When
             var result = await setDelegatePasswordController.IndexAsync(model, DelegateId, true);
 
             // Then
-            A.CallTo(() => passwordService.ChangePasswordAsync(delegateUser.EmailAddress!, Password))
+            A.CallTo(() => passwordService.ChangePasswordAsync(delegateAccount.UserId, Password))
                 .MustHaveHappened();
             result.Should().BeViewResult().WithViewName("Confirmation");
         }

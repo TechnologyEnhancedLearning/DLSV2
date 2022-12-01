@@ -305,7 +305,7 @@
                 PreviousCompetencyNumber = 2,
                 SupervisorSignOffs = supervisorSignOffs,
                 SearchViewModel = new SearchSelfAssessmentOvervieviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, false, false, null),
-                AllQuestionsVerifiedOrNotRequired = true
+                AllQuestionsVerifiedOrNotRequired = false
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);
@@ -368,7 +368,7 @@
                 PreviousCompetencyNumber = 1,
                 SupervisorSignOffs = supervisorSignOffs,
                 SearchViewModel = new SearchSelfAssessmentOvervieviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, false, false, null),
-                AllQuestionsVerifiedOrNotRequired = true
+                AllQuestionsVerifiedOrNotRequired = false
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);

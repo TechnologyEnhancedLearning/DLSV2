@@ -1,5 +1,7 @@
-﻿namespace DigitalLearningSolutions.Data.Models.Supervisor
+﻿namespace DigitalLearningSolutions.Data.Models.SelfAssessments
 {
+    using DigitalLearningSolutions.Data.Models.Supervisor;
+
     public class SelfAssessmentResultSummary : DelegateSelfAssessment
     {
         public int CandidateAssessmentSupervisorVerificationId { get; set; }

@@ -9,10 +9,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private readonly IUserService userService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IConfiguration config;
+        private readonly IClockUtility clockUtility;
 
         public EmailDelegatesController(
             PromptsService promptsService,
@@ -40,7 +42,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             IPasswordResetService passwordResetService,
             IUserService userService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IConfiguration config
+            IConfiguration config,
+            IClockUtility clockUtility
         )
         {
             this.promptsService = promptsService;
@@ -49,6 +52,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             this.userService = userService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.config = config;
+            this.clockUtility = clockUtility;
         }
 
         [HttpGet]
@@ -67,7 +71,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 EmailDelegateFilterCookieName
             );
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreId());
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
             var delegateUsers = GetDelegateUserCards();
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
@@ -91,6 +95,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var model = new EmailDelegatesViewModel(
                 result,
                 availableFilters,
+                clockUtility.UtcToday,
                 selectAll
             );
 
@@ -119,7 +124,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     EmailDelegateFilterCookieName
                 );
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-                var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreId());
+                var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
 
                 var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
                 var availableFilters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterModels(
@@ -143,20 +148,19 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return View(viewModel);
             }
 
-            var selectedUsers = delegateUsers.Where(user => formData.SelectedDelegateIds!.Contains(user.Id)).ToList();
             var emailDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
             var baseUrl = config.GetAppRootPath();
 
-            passwordResetService.SendWelcomeEmailsToDelegates(selectedUsers, emailDate, baseUrl);
+            passwordResetService.SendWelcomeEmailsToDelegates(formData.SelectedDelegateIds!, emailDate, baseUrl);
 
-            return View("Confirmation", selectedUsers.Count);
+            return View("Confirmation", formData.SelectedDelegateIds!.Count());
         }
 
         [Route("AllEmailDelegateItems")]
         public IActionResult AllEmailDelegateItems(IEnumerable<int> selectedIds)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreId());
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
             var delegateUsers = GetDelegateUserCards();
 
             var model = new AllEmailDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts, selectedIds);
@@ -166,7 +170,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
         private IEnumerable<DelegateUserCard> GetDelegateUserCards()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             return userService.GetDelegateUserCardsForWelcomeEmail(centreId)
                 .OrderByDescending(card => card.DateRegistered);
         }
