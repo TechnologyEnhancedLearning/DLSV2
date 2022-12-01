@@ -80,14 +80,15 @@
             );
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
-                new SearchOptions(searchString, 90, scorer: FuzzySharp.SimilarityRatio.ScorerCache.Get<FuzzySharp.SimilarityRatio.Scorer.StrategySensitive.PartialTokenAbbreviationScorer>()),
+                new SearchOptions(searchString),
                 new SortOptions(sortBy, sortDirection),
                 new FilterOptions(
                     existingFilterString,
                     availableFilters,
                     DelegateActiveStatusFilterOptions.IsActive.FilterValue
                 ),
-                new PaginationOptions(page, itemsPerPage)
+                new PaginationOptions(page, itemsPerPage),
+                true
             );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
