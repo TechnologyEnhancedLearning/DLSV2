@@ -21,11 +21,17 @@
 }
 
 <div class="nhsuk-grid-row">
+
     @if (Model.CentreId == null || Model.CentreId == 0)
     {
-        <div class="account-switch-warning">
-            <h2 class="account-switch-warning-msg"><span>You are not logged into a centre</span></h2>
-            <h6 class="account-switch-warning-msg-description"><span>You can manage your account, but you must log into a centre before you can access any other areas of DLS.</span></h6>
+        <div class="nhsuk-warning-callout">
+            <h3 class="nhsuk-warning-callout__label">
+                <span role="text">
+                    <span class="nhsuk-u-visually-hidden">Important: </span>
+                    You are not logged into a centre
+                </span>
+            </h3>
+            <p>You can manage your account, but you must log into a centre before you can access any other areas of DLS.</p>
         </div>
     }
     <div class="nhsuk-grid-column-full">
