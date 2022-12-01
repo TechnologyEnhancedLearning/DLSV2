@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
+    using DigitalLearningSolutions.Data.Utilities;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -29,6 +30,8 @@
         private IUserService userService = null!;
         private IUserDataService userDataService = null!;
         private IClaimAccountService claimAccountService = null!;
+        private IEmailService emailService = null!;
+        private IClockUtility clockUtility=null!;
         private ClaimAccountController controller = null!;
         private ClaimAccountController controllerWithLoggedInUser = null!;
 
@@ -38,6 +41,8 @@
             userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
             claimAccountService = A.Fake<IClaimAccountService>();
+            emailService = A.Fake<IEmailService>();
+            clockUtility = A.Fake<IClockUtility>();
             controller = GetClaimAccountController();
             controllerWithLoggedInUser = GetClaimAccountController().WithMockUser(
                 true,
@@ -858,7 +863,7 @@
 
         private ClaimAccountController GetClaimAccountController()
         {
-            return new ClaimAccountController(userService, userDataService, claimAccountService)
+            return new ClaimAccountController(userService, userDataService, claimAccountService,emailService,clockUtility)
                 .WithDefaultContext()
                 .WithMockTempData();
         }

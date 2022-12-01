@@ -21,11 +21,11 @@
     {
         private static readonly TimeSpan EmailVerificationHashLifetime = TimeSpan.FromDays(14);
 
-        private readonly IClockUtility clockUtility;
         private readonly IUserService userService;
         private readonly IUserDataService userDataService;
         private readonly IClaimAccountService claimAccountService;
         private readonly IEmailService emailService;
+        private readonly IClockUtility clockUtility;
 
         public ClaimAccountController(
             IUserService userService,

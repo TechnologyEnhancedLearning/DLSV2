@@ -20,6 +20,7 @@
         private IClockUtility clockUtility = null!;
         private VerifyEmailController controller = null!;
         private IUserService userService = null!;
+        private IEmailService emailService = null!;
 
         [SetUp]
         public void SetUp()
@@ -27,7 +28,7 @@
             userService = A.Fake<IUserService>();
             clockUtility = A.Fake<IClockUtility>();
 
-            controller = new VerifyEmailController(userService, clockUtility)
+            controller = new VerifyEmailController(userService, clockUtility, emailService)
                 .WithDefaultContext();
         }
 
