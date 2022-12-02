@@ -207,12 +207,12 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();
             services.AddScoped<IDelegateUploadFileService, DelegateUploadFileService>();
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
-            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<Services.IEmailService, Services.EmailService>();
             services.AddScoped<IEvaluationSummaryService, EvaluationSummaryService>();
             services.AddScoped<IFaqsService, FaqsService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IFrameworkService, FrameworkService>();
-            //services.AddScoped<IGroupsService, GroupsService>();
+            services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
             services.AddScoped<IJobGroupsService, JobGroupsService>();
@@ -247,7 +247,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IBrandsService, BrandsService>();
             services.AddScoped<ISelfAssessmentReportService, SelfAssessmentReportService>();
-            //services.AddScoped<IEnrolService, EnrolService>();
+            services.AddScoped<IEnrolService, EnrolService>();
             services.AddScoped<IClaimAccountService, ClaimAccountService>();
             services.AddScoped<IEmailVerificationService, EmailVerificationService>();
             services.AddScoped<IEmailGenerationService, EmailGenerationService>();

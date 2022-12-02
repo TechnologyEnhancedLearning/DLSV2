@@ -41,13 +41,8 @@
 
         public static readonly FilterOptionModel ContentCreatorLicense =
             new FilterOptionModel(
-//<<<<<<< HEAD
-                //"Content creator license",
-                //FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsContentCreator), "true"),
-//=======
                 "Content Creator license",
                 FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsContentCreator), "true"),
-//>>>>>>> uar-test
                 FilterStatus.Default
             );
 

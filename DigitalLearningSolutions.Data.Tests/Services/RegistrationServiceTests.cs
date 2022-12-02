@@ -1,4 +1,3 @@
-//<<<<<<< HEAD
 //namespace DigitalLearningSolutions.Data.Tests.Services
 //{
 //    using System;
@@ -13,14 +12,15 @@
 //    using DigitalLearningSolutions.Data.Models.Register;
 //    using DigitalLearningSolutions.Data.Models.Supervisor;
 //    using DigitalLearningSolutions.Data.Models.User;
-//    using DigitalLearningSolutions.Data.Services;
 //    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+//    using DigitalLearningSolutions.Web.Services;
 //    using FakeItEasy;
 //    using FluentAssertions;
 //    using FluentAssertions.Execution;
 //    using Microsoft.Extensions.Configuration;
 //    using Microsoft.Extensions.Logging.Abstractions;
 //    using NUnit.Framework;
+//    using IEmailService = DigitalLearningSolutions.Data.Services.IEmailService;
 
 //    public class RegistrationServiceTests
 //    {
@@ -854,5 +854,3 @@
 //        }
 //    }
 //}
-//=======
-//>>>>>>> uar-test

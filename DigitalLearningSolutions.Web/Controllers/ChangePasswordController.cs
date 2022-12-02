@@ -45,23 +45,13 @@
             var userId = User.GetUserId();
             var password = formData.CurrentPassword;
 
-//<<<<<<< HEAD
+            if (!ModelState.IsValid)
+            {
+                var model = new ChangePasswordViewModel(formData, dlsSubApplication);
+                return View(model);
+            }
 
-
-            //var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(formData.CurrentPassword)
-            //    ? new UserAccountSet()
-            //    : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, formData.CurrentPassword!);
-
-            //if (!ModelState.IsValid)
-            //{
-            //    var model = new ChangePasswordViewModel(formData, dlsSubApplication);
-            //    return View(model);
-            //}
-
-            //if (!verifiedLinkedUsersAccounts.Any())
-//=======
             if (!userVerificationService.IsPasswordValid(password, userId))
-//>>>>>>> uar-test
             {
                 ModelState.AddModelError(
                     nameof(ChangePasswordFormData.CurrentPassword),

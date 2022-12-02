@@ -84,11 +84,7 @@
         public bool IsCmsManager { get; set; }
         public int? CategoryId { get; set; }
         public byte[]? ProfileImage { get; set; }
-//<<<<<<< HEAD
-        public int DelegateIdToPromote { get; set; }
-//=======
         public int? SupervisorDelegateId { get; set; }
-//>>>>>>> uar-test
         public string? SupervisorEmail { get; set; }
         public string SupervisorFirstName { get; set; }
         public string SupervisorLastName { get; set; }

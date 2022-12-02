@@ -16,6 +16,7 @@ using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Utilities;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -27,21 +28,21 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private readonly ICourseDataService courseDataService;
         private readonly IMultiPageFormService multiPageFormService;
         private readonly ISupervisorService supervisorService;
-        //private readonly IEnrolService enrolService;
+        private readonly IEnrolService enrolService;
         private readonly IProgressDataService progressDataService;
 
         public EnrolController(
             ICourseDataService courseDataService,
             IMultiPageFormService multiPageFormService,
             ISupervisorService supervisorService,
-            //IEnrolService enrolService
+            IEnrolService enrolService,
             IProgressDataService progressDataService
         )
         {
             this.courseDataService = courseDataService;
             this.multiPageFormService = multiPageFormService;
             this.supervisorService = supervisorService;
-            //this.enrolService = enrolService;
+            this.enrolService = enrolService;
             this.progressDataService = progressDataService;
         }
 
@@ -255,12 +256,9 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                TempData);
             if (!sessionEnrol.IsSelfAssessment)
             {
-//<<<<<<< HEAD
-//                enrolService.EnrolDelegateOnCourse(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault(), "AdminEnrolDelegateOnCourse");
-//=======
+                enrolService.EnrolDelegateOnCourse(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault(), "AdminEnrolDelegateOnCourse");
                 progressDataService.CreateNewDelegateProgress(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion,
                     clockUtility.UtcNow, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
-//>>>>>>> uar-test
             }
             else
             {

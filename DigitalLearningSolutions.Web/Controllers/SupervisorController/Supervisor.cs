@@ -946,18 +946,6 @@
         {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
-//<<<<<<< HEAD
-                //var currentAdminUserId = User.GetAdminId();
-                //var (currentAdminUser, delegateUser) = userService.GetUsersById(currentAdminUserId, null);
-                //var categoryId = User.GetAdminCourseCategoryFilter() ?? 0;
-                //var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminID(), 0);
-                //var delegateIdToPromote = supervisorDelegateDetail.CandidateID ?? 0;
-                //var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
-
-                //registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, delegateIdToPromote, currentAdminUser);
-                //supervisorService.UpdateNotificationSent(supervisorDelegate.Id);
-
-//=======
                 var categoryId = User.GetAdminCategoryId();
 
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
@@ -1001,7 +989,6 @@
                         supervisorService.UpdateNotificationSent(supervisorDelegate.Id);
                     }
                 }
-//>>>>>>> uar-test
                 return RedirectToAction("MyStaffList");
             }
             else

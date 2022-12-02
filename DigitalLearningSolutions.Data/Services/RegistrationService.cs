@@ -1,4 +1,3 @@
-////<<<<<<< HEAD
 //namespace DigitalLearningSolutions.Data.Services
 //{
 //    using System.Collections.Generic;
@@ -164,7 +163,7 @@
 
 //            return (candidateNumber, delegateRegistrationModel.Approved);
 //        }
-        
+
 //        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser currentAdminUser)
 //        {
 //            var delegateUser = userDataService.GetDelegateUserById(delegateId);
@@ -497,5 +496,3 @@
 //        }
 //    }
 //}
-////=======
-////>>>>>>> uar-test

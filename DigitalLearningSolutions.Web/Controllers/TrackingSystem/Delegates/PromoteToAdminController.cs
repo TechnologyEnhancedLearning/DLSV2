@@ -6,8 +6,6 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -19,6 +17,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement.Mvc;
+    using IEmailService = DigitalLearningSolutions.Web.Services.IEmailService;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
@@ -34,12 +33,9 @@
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
-//<<<<<<< HEAD
-//=======
         private readonly IEmailGenerationService emailGenerationService;
         private readonly IEmailService emailService;
-//>>>>>>> uar-test
-
+        
         public PromoteToAdminController(
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
@@ -94,31 +90,20 @@
         public IActionResult Index(AdminRolesFormData formData, int delegateId)
         {
             var userAdminId = User.GetAdminId();
-//<<<<<<< HEAD
-            //var (currentAdminUser, delegateUser) = userService.GetUsersById(userAdminId, null);
-//=======
             var userDelegateId = User.GetCandidateId();
             var (currentAdminUser, _) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var adminRoles = formData.GetAdminRoles();
 
             var centreName = currentAdminUser.CentreName;
-//>>>>>>> uar-test
 
             try
             {
                 registrationService.PromoteDelegateToAdmin(
-//<<<<<<< HEAD
-                    //formData.GetAdminRoles(),
-                    //formData.LearningCategory,
-                    //delegateId,
-                    //currentAdminUser,
-//=======
                     adminRoles,
                     AdminCategoryHelper.AdminCategoryToCategoryId(formData.LearningCategory),
                     formData.UserId,
                     formData.CentreId
-//>>>>>>> uar-test
                 );
 
                 var delegateUserEmailDetails = userDataService.GetDelegateById(delegateId);

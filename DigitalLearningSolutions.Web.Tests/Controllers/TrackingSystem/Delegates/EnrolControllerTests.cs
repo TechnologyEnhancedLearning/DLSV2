@@ -13,12 +13,15 @@ using NUnit.Framework;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.Services;
+
     public class EnrolControllerTests
     {
         private EnrolController enrolController = null!;
         private ICourseDataService courseDataService = null!;
         private IMultiPageFormService multiPageFormService = null!;
         private ISupervisorService supervisorService = null!;
+        private IProgressDataService progressDataService = null!;
         private IEnrolService enrolService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -33,6 +36,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             multiPageFormService = A.Fake<IMultiPageFormService>();
             supervisorService = A.Fake<ISupervisorService>();
             enrolService = A.Fake<IEnrolService>();
+            progressDataService = A.Fake<IProgressDataService>();
             sessionEnrolDelegate = A.Fake<SessionEnrolDelegate>();
 
             httpRequest = A.Fake<HttpRequest>();
@@ -44,7 +48,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
                 courseDataService,
                 multiPageFormService,
                 supervisorService,
-                enrolService)
+                enrolService,
+                progressDataService)
                 .WithMockHttpContext(httpRequest, null, null, httpResponse)
                 .WithMockTempData()
                 .WithDefaultContext()

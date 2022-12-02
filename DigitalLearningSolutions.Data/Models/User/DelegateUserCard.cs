@@ -40,11 +40,7 @@
         public bool SelfReg { get; set; }
         public bool ExternalReg { get; set; }
         public int? AdminId { get; set; }
-//<<<<<<< HEAD
         public bool IsPasswordSet => !string.IsNullOrWhiteSpace(Password);
-//=======
-        //public bool IsPasswordSet => !string.IsNullOrEmpty(Password);
-//>>>>>>> uar-test
         public bool IsAdmin => AdminId.HasValue;
 
         public RegistrationType RegistrationType => (SelfReg, ExternalReg) switch
