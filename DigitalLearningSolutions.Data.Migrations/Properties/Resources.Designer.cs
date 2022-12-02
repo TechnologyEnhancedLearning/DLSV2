@@ -701,6 +701,30 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to --TD-788 Add ResetExpiryDateTime column in ResetPassword(UP)
+        ///ALTER TABLE ResetPassword
+        ///ADD ResetExpiryDateTime DateTime NULL;
+        ///.
+        /// </summary>
+        internal static string TD_788_AddResetExpiryDateTime {
+            get {
+                return ResourceManager.GetString("TD-788_AddResetExpiryDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --TD-788 Drop ResetExpiryDateTime column in ResetPassword(DOWN)
+        ///ALTER TABLE ResetPassword
+        ///DROP COLUMN ResetExpiryDateTime;
+        ///.
+        /// </summary>
+        internal static string TD_788_RemoveResetExpiryDateTime {
+            get {
+                return ResourceManager.GetString("TD-788_RemoveResetExpiryDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DROP VIEW AdminUsers
         ///    GO
         ///DROP VIEW Candidates

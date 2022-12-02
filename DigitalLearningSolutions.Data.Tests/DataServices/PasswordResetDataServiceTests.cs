@@ -35,12 +35,13 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // Given
             var createTime = new DateTime(2021, 1, 1);
+            var expiryTime = new DateTime(2021, 1, 1);
             var testUser = UserTestHelper.GetDefaultUserAccount();
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 createTime,
                 "ResetPasswordHash",
-                testUser.Id
-            );
+                testUser.Id,
+                expiryTime            );
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
@@ -70,11 +71,13 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var emailToCheck = "EmailThat.DoesNotExist@InTheDatabase.com";
 
             var createTime = new DateTime(2021, 1, 1);
+            var expiryTime = new DateTime(2021, 1, 1);
             var testUser = UserTestHelper.GetDefaultUserAccount();
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 createTime,
                 "ResetPasswordHash",
-                testUser.Id
+                testUser.Id,
+                expiryTime
             );
 
             // When
@@ -96,11 +99,13 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
 
             var createTime = new DateTime(2021, 1, 1);
+            var expiryTime = new DateTime(2021, 1, 1);
             var testUser = UserTestHelper.GetDefaultUserAccount();
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 createTime,
                 "NormalHash",
-                testUser.Id
+                testUser.Id,
+                expiryTime
             );
 
             // When
@@ -160,7 +165,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             UserAccount user
         )
         {
-            service.CreatePasswordReset(new ResetPasswordCreateModel(DateTime.UtcNow, hash, user.Id));
+            service.CreatePasswordReset(new ResetPasswordCreateModel(DateTime.UtcNow, hash, user.Id, DateTime.UtcNow.AddHours(2)));
 
             var resetPasswordId = await connection.GetResetPasswordIdByHashAsync(hash);
 

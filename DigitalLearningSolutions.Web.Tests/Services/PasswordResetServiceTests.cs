@@ -299,7 +299,8 @@
             var hash = "hash";
             var resetPasswordWithUserDetails = new ResetPasswordWithUserDetails
             {
-                PasswordResetDateTime = passwordResetDateTime
+                PasswordResetDateTime = passwordResetDateTime,
+                ResetExpiryDateTime = passwordResetDateTime.AddHours(2)
             };
 
             GivenCurrentTimeIs(passwordResetDateTime + expiryTime - TimeSpan.FromMinutes(1));

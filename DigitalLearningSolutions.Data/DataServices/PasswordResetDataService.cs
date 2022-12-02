@@ -45,7 +45,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.PrimaryEmail AS Email,
                         rp.ID          AS Id,
                         rp.ResetPasswordHash,
-                        rp.PasswordResetDateTime
+                        rp.PasswordResetDateTime,
+                        rp.ResetExpiryDateTime
                     FROM Users u
                     JOIN ResetPassword rp ON u.ResetPasswordID = rp.ID
                     WHERE u.PrimaryEmail = @userEmail
@@ -63,8 +64,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     BEGIN TRANSACTION
                         INSERT INTO dbo.ResetPassword
                             ([ResetPasswordHash]
-                            ,[PasswordResetDateTime])
-                        VALUES(@ResetPasswordHash, @CreateTime)
+                            ,[PasswordResetDateTime],[ResetExpiryDateTime])
+                        VALUES(@ResetPasswordHash, @CreateTime,@ExpiryTime)
 
                         SET @ResetPasswordID = SCOPE_IDENTITY()
 
@@ -82,6 +83,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     ResetPasswordHash = createModel.Hash,
                     CreateTime = createModel.CreateTime,
                     UserID = createModel.UserId,
+                    ExpiryTime = createModel.ExpiryTime
                 }
             );
             if (numberOfAffectedRows < 2)
