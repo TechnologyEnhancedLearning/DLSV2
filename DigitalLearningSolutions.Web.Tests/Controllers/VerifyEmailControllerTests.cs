@@ -27,6 +27,7 @@
         {
             userService = A.Fake<IUserService>();
             clockUtility = A.Fake<IClockUtility>();
+            emailService = A.Fake<IEmailService>();
 
             controller = new VerifyEmailController(userService, clockUtility, emailService)
                 .WithDefaultContext();
@@ -110,6 +111,7 @@
             A.CallTo(() => userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(Email, Code))
                 .Returns(verificationData);
             A.CallTo(() => userService.SetEmailVerified(userId, Email, now)).DoesNothing();
+            A.CallTo(() => emailService.GetEmailOutUsingEmail(Email)).Returns(new EmailOutDetails { DeliverAfter = DateTime.Now });
 
             // When
             var result = controller.Index(Email, Code);
@@ -127,6 +129,7 @@
             const int userId = 1;
             const int centreIdForUnapprovedDelegate = 2;
             var now = new DateTime(2022, 1, 1);
+            //var now = DateTime.Now;
 
             var verificationData = new EmailVerificationTransactionData(
                 Email,
@@ -139,6 +142,7 @@
             A.CallTo(() => userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(Email, Code))
                 .Returns(verificationData);
             A.CallTo(() => userService.SetEmailVerified(userId, Email, now)).DoesNothing();
+            A.CallTo(() => emailService.GetEmailOutUsingEmail(Email)).Returns(new EmailOutDetails { DeliverAfter = DateTime.Now});
 
             // When
             var result = controller.Index(Email, Code);
