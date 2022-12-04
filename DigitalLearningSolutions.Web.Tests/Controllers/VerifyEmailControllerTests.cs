@@ -129,7 +129,6 @@
             const int userId = 1;
             const int centreIdForUnapprovedDelegate = 2;
             var now = new DateTime(2022, 1, 1);
-            //var now = DateTime.Now;
 
             var verificationData = new EmailVerificationTransactionData(
                 Email,

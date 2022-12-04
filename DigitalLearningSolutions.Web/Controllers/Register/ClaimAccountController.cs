@@ -283,11 +283,7 @@
             var emailOutData = emailService.GetEmailOutUsingEmail(model.Email);
 
             if (emailOutData != null && (emailOutData.DeliverAfter + EmailVerificationHashLifetime < clockUtility.UtcNow))
-            {
                 return View("VerificationLinkExpired");
-                
-            }
-
 
             if (delegateAccounts.Any(account => account.CentreId == model.CentreId))
             {
