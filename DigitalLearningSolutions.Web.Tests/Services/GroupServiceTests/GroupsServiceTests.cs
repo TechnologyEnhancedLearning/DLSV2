@@ -23,7 +23,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
-    using IEmailService = DigitalLearningSolutions.Web.Services.IEmailService;
 
     public partial class GroupsServiceTests
     {
@@ -49,6 +48,7 @@
         private IClockUtility clockUtility = null!;
         private IConfiguration configuration = null!;
         private IEmailService emailService = null!;
+        private IEmailSchedulerService emailSchedulerService = null!;
         private IGroupsDataService groupsDataService = null!;
         private IGroupsService groupsService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
@@ -67,6 +67,7 @@
             clockUtility = A.Fake<IClockUtility>();
             tutorialContentDataService = A.Fake<ITutorialContentDataService>();
             emailService = A.Fake<IEmailService>();
+            emailSchedulerService = A.Fake<IEmailSchedulerService>();
             progressDataService = A.Fake<IProgressDataService>();
             configuration = A.Fake<IConfiguration>();
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
@@ -84,16 +85,16 @@
 
             DatabaseModificationsDoNothing();
 
-            //courseDataService = A.Fake<ICourseDataService>();
-            //enrolService = new EnrolService(
-            //    clockService,
-            //    tutorialContentDataService,
-            //    progressDataService,
-            //    userDataService,
-            //    courseDataService,
-            //    configuration,
-            //    emailService
-            //);
+            courseDataService = A.Fake<ICourseDataService>();
+            enrolService = new EnrolService(
+                clockUtility,
+                tutorialContentDataService,
+                progressDataService,
+                userDataService,
+                courseDataService,
+                configuration,
+                emailSchedulerService
+            );
 
             groupsService = new GroupsService(
                 groupsDataService,
@@ -108,7 +109,6 @@
                 userDataService,
                 notificationPreferencesDataService
             );
-            //enrolService,
 
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
                JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
