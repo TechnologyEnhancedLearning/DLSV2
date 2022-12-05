@@ -1,14 +1,14 @@
-﻿namespace DigitalLearningSolutions.Data.Services
-{
-    using System;
+﻿//namespace DigitalLearningSolutions.Data.Services
+//{
+//    using System;
 
-    public interface IClockService
-    {
-        public DateTime UtcNow { get; }
-    }
+//    public interface IClockService
+//    {
+//        public DateTime UtcNow { get; }
+//    }
 
-    public class ClockService : IClockService
-    {
-        public DateTime UtcNow => DateTime.UtcNow;
-    }
-}
+//    public class ClockService : IClockService
+//    {
+//        public DateTime UtcNow => DateTime.UtcNow;
+//    }
+//}

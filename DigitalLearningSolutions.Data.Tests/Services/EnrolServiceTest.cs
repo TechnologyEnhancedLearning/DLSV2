@@ -13,9 +13,11 @@ using DigitalLearningSolutions.Data.DataServices.UserDataService;
 
 namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using DigitalLearningSolutions.Data.Utilities;
+
     public partial class EnrolServiceTest
     {
-        private IClockService clockService = null!;
+        private IClockUtility clockUtility = null!;
         private IEnrolService enrolService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
         private IProgressDataService progressDataService = null!;
@@ -36,14 +38,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void Setup()
         {
             configuration = A.Fake<IConfiguration>();
-            clockService = A.Fake<IClockService>();
+            clockUtility = A.Fake<IClockUtility>();
             tutorialContentDataService = A.Fake<ITutorialContentDataService>();
             progressDataService = A.Fake<IProgressDataService>();
             userDataService = A.Fake<IUserDataService>();
             courseDataService = A.Fake<ICourseDataService>();
             emailService = A.Fake<IEmailService>();
             enrolService = new EnrolService(
-               clockService,
+               clockUtility,
                tutorialContentDataService,
                progressDataService,
                userDataService,

@@ -11,6 +11,8 @@ using System.Linq;
 
 namespace DigitalLearningSolutions.Data.Services
 {
+    using DigitalLearningSolutions.Data.Utilities;
+
     public interface IEnrolService
     {
         void EnrolDelegateOnCourse(
@@ -37,7 +39,7 @@ namespace DigitalLearningSolutions.Data.Services
     public class EnrolService : IEnrolService
     {
         private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
-        private readonly IClockService clockService;
+        private readonly IClockUtility clockUtility;
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
         private readonly IUserDataService userDataService;
@@ -46,7 +48,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IEmailService emailService;
 
         public EnrolService(
-            IClockService clockService,
+            IClockUtility clockUtility,
             ITutorialContentDataService tutorialContentDataService,
             IProgressDataService progressDataService,
             IUserDataService userDataService,
@@ -55,7 +57,7 @@ namespace DigitalLearningSolutions.Data.Services
             IEmailService emailService
         )
         {
-            this.clockService = clockService;
+            this.clockUtility = clockUtility;
             this.tutorialContentDataService = tutorialContentDataService;
             this.progressDataService = progressDataService;
             this.userDataService = userDataService;
@@ -101,7 +103,7 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateId,
                     customisationId,
                     customisationVersion,
-                    clockService.UtcNow,
+                    clockUtility.UtcNow,
                     3,
                     enrolledByAdminId,
                 completeByDate,
