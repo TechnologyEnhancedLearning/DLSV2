@@ -20,7 +20,9 @@
             List<(int centreId, string centreName, string? centreSpecificEmail)> allCentreSpecificEmails,
             List<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails,
             DlsSubApplication dlsSubApplication,
-            string switchCentreReturnUrl
+            string switchCentreReturnUrl,
+            bool isAdminUser = false,
+            bool isDelegateUser = false
         )
         {
             CentreId = centreId;
@@ -59,6 +61,8 @@
             PrimaryEmailIsVerified = userAccount.EmailVerified != null;
             UnverifiedCentreEmails = unverifiedCentreEmails;
             NumberOfUnverifiedEmails = (PrimaryEmailIsVerified ? 0 : 1) + UnverifiedCentreEmails.Count;
+            IsAdminUser = isAdminUser;
+            IsDelegateUser = isDelegateUser;
         }
 
         public int? CentreId { get; set; }
@@ -100,5 +104,7 @@
         public DlsSubApplication DlsSubApplication { get; set; }
 
         public string SwitchCentreReturnUrl { get; set; }
+        public bool IsAdminUser { get; set; }
+        public bool IsDelegateUser { get; set; }
     }
 }

@@ -101,7 +101,9 @@
                 allCentreSpecificEmails,
                 unverifiedCentreEmails,
                 dlsSubApplication,
-                switchCentreReturnUrl
+                switchCentreReturnUrl,
+                adminAccount != null,
+                delegateAccount != null
             );
 
             return View(model);

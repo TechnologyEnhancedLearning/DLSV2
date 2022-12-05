@@ -41,6 +41,19 @@
             <partial name="_SummaryFieldValue" model="@Model.DateRegistered" />
           </div>
         }
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+	        Roles
+          </dt>
+	        <div class="centre-role-tags nhsuk-summary-list__key">
+	          @if (Model.IsAdminUser) {
+		        <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
+	          }
+	          @if (Model.IsDelegateUser) {
+		        <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
+	          }
+	        </div>
+        </div>
 
         @foreach (var customField in Model.DelegateRegistrationPrompts) {
           <partial name="../Shared/_CustomPromptBasicSummaryListRow" model="@customField" />
