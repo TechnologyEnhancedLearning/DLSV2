@@ -11,7 +11,7 @@
     using MimeKit;
     using MimeKit.Text;
 
-    public interface IEmailService
+    public interface IEmailSchedulerService
     {
         void SendEmail(Email email);
         void SendEmails(IEnumerable<Email> emails);
@@ -19,18 +19,18 @@
         void ScheduleEmails(IEnumerable<Email> emails, string addedByProcess, DateTime? deliveryDate = null);
     }
 
-    public class EmailService : IEmailService
+    public class EmailSchedulerService : IEmailSchedulerService
     {
         private readonly IConfigDataService configDataService;
         private readonly IEmailDataService emailDataService;
-        private readonly ILogger<EmailService> logger;
+        private readonly ILogger<EmailSchedulerService> logger;
         private readonly ISmtpClientFactory smtpClientFactory;
 
-        public EmailService(
+        public EmailSchedulerService(
             IEmailDataService emailDataService,
             IConfigDataService configDataService,
             ISmtpClientFactory smtpClientFactory,
-            ILogger<EmailService> logger
+            ILogger<EmailSchedulerService> logger
         )
         {
             this.emailDataService = emailDataService;

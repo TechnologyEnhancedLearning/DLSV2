@@ -45,7 +45,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IUserDataService userDataService;
         private readonly ICourseDataService courseDataService;
         private readonly IConfiguration configuration;
-        private readonly IEmailService emailService;
+        private readonly IEmailSchedulerService emailSchedulerService;
 
         public EnrolService(
             IClockUtility clockUtility,
@@ -54,7 +54,7 @@ namespace DigitalLearningSolutions.Data.Services
             IUserDataService userDataService,
             ICourseDataService courseDataService,
             IConfiguration configuration,
-            IEmailService emailService
+            IEmailSchedulerService emailSchedulerService
         )
         {
             this.clockUtility = clockUtility;
@@ -63,7 +63,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.userDataService = userDataService;
             this.courseDataService = courseDataService;
             this.configuration = configuration;
-            this.emailService = emailService;
+            this.emailSchedulerService = emailSchedulerService;
         }
         public void EnrolDelegateOnCourse(int delegateId, int customisationId, int customisationVersion, int enrollmentMethodId, int? enrolledByAdminId, DateTime? completeByDate, int? supervisorAdminId, string addedByProcess, string? delegateName, string? delegateEmail)
         {
@@ -126,7 +126,7 @@ namespace DigitalLearningSolutions.Data.Services
                     customisationId,
                     completeByDate
                 );
-                emailService.ScheduleEmail(email, addedByProcess);
+                emailSchedulerService.ScheduleEmail(email, addedByProcess);
             }
         }
         public Email BuildEnrolmentEmail(

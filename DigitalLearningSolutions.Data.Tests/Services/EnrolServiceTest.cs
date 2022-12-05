@@ -24,7 +24,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private IUserDataService userDataService = null!;
         private ICourseDataService courseDataService = null!;
         private IConfiguration configuration = null!;
-        private IEmailService emailService = null!;
+        private IEmailSchedulerService emailService = null!;
 
         private readonly GroupCourse reusableGroupCourse = GroupTestHelper.GetDefaultGroupCourse();
 
@@ -43,7 +43,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             progressDataService = A.Fake<IProgressDataService>();
             userDataService = A.Fake<IUserDataService>();
             courseDataService = A.Fake<ICourseDataService>();
-            emailService = A.Fake<IEmailService>();
+            emailService = A.Fake<IEmailSchedulerService>();
             enrolService = new EnrolService(
                clockUtility,
                tutorialContentDataService,
