@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model FrameworkCompetencyViewModel;
 @{
-  ViewData["Title"] = "Competency";
-  ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = !string.IsNullOrWhiteSpace(Model.VocabSingular()) ? Model.VocabSingular(): "Competency";
+    ViewData["Application"] = "Framework Service";
   ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -16,7 +16,7 @@
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
-        <li class="nhsuk-breadcrumb__item">Competency</li>
+        <li class="nhsuk-breadcrumb__item">@Model.VocabSingular()</li>
       </ol>
       <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Back to framework structure</a></p>
     </div>

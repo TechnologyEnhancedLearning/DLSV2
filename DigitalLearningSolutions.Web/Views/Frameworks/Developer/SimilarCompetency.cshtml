@@ -27,6 +27,9 @@
     <thead role="rowgroup" class="nhsuk-table__head">
         <tr role="row">
             <th role="columnheader" class="" scope="col">
+                Framework
+            </th>
+            <th role="columnheader" class="" scope="col">
                 Name
             </th>
             <th role="columnheader" class="" scope="col">
@@ -38,6 +41,12 @@
         @foreach (var competency in Model.SameCompetency)
         {
             <tr role="row" class="nhsuk-table__row framework-row">
+               <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-19">
+                    <span class="nhsuk-table-responsive__heading">Framework </span>
+                    <span class="framework-brand">
+                       @competency.FrameworkName
+                    </span>
+                </td>
                 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-19">
                     <span class="nhsuk-table-responsive__heading">Name </span>
                     <span class="framework-brand">
