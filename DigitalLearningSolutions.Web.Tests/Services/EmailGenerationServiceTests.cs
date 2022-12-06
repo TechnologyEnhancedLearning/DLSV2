@@ -164,6 +164,9 @@
                 returnedEmail.Body.HtmlBody.Should().NotContain("<li>Cms Manager</li>");
                 returnedEmail.Body.TextBody.Should().NotContain("Cms Manager");
             }
+
+            returnedEmail.Body.HtmlBody.Should().NotContain("the next time you login to " + centreName + ".</body>");
+            returnedEmail.Body.TextBody.Should().NotContain("the next time you login to " + centreName + ".");
         }
     }
 }
