@@ -404,8 +404,8 @@ namespace DigitalLearningSolutions.Web.Services
                 false,
                 null,
                 null,
-                null,
-                null,
+                null!,
+                null!,
                 userAccount.ProfileImage
             );
 
