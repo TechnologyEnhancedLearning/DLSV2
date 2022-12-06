@@ -112,6 +112,7 @@
                      AND Customisations.Active = 1
                      AND Sections.ArchivedDate IS NULL
                      AND Tutorials.ArchivedDate IS NULL
+                     AND Applications.ArchivedDate IS NULL
                      AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
                      AND Applications.DefaultContentTypeID <> 4
                    GROUP BY
