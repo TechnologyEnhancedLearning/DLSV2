@@ -101,8 +101,8 @@
 
             builder.HtmlBody += "</ul>";
 
-            builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login to {centreName}.";
-            builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login to {centreName}.</body>";
+            builder.TextBody += $@"You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login to {centreName}.";
+            builder.HtmlBody += $@"You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login to {centreName}.</body>";
 
             return new Email(emailSubjectLine, builder, primaryEmail, supervisorEmail);
         }
