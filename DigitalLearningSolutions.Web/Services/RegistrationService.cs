@@ -433,11 +433,6 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (adminAtCentre != null)
             {
-                if (adminAtCentre.Active)
-                {
-                    throw new AdminCreationFailedException("Active admin already exists for this user at this centre");
-                }
-
                 userDataService.ReactivateAdmin(adminAtCentre.Id);
                 userDataService.UpdateAdminUserPermissions(
                     adminAtCentre.Id,

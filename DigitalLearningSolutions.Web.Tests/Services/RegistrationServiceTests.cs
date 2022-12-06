@@ -1086,32 +1086,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         }
 
         [Test]
-        public void
-            PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_active_admin_already_exists()
-        {
-            // Given
-            const int userId = 2;
-            var adminAccount = UserTestHelper.GetDefaultAdminAccount(userId: userId);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
-
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
-
-            // When
-            Action action = () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, userId, 2);
-
-            // Then
-            action.Should().Throw<AdminCreationFailedException>();
-            UpdateToExistingAdminAccountMustNotHaveHappened();
-            A.CallTo(
-                    () => registrationDataService.RegisterAdmin(
-                        A<AdminAccountRegistrationModel>._,
-                        A<PossibleEmailUpdate>._
-                    )
-                )
-                .MustNotHaveHappened();
-        }
-
-        [Test]
         public void PromoteDelegateToAdmin_updates_existing_admin_if_inactive_admin_at_same_centre_already_exists()
         {
             // Given
