@@ -165,8 +165,8 @@
                 returnedEmail.Body.TextBody.Should().NotContain("Cms Manager");
             }
 
-            returnedEmail.Body.HtmlBody.Should().NotContain("the next time you login to " + centreName + ".</body>");
-            returnedEmail.Body.TextBody.Should().NotContain("the next time you login to " + centreName + ".");
+            returnedEmail.Body.HtmlBody.Should().Contain("the next time you login to " + centreName + ".</body>");
+            returnedEmail.Body.TextBody.Should().Contain("the next time you login to " + centreName + ".");
         }
     }
 }
