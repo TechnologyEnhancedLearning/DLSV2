@@ -36,7 +36,20 @@
             var javascriptSearchSortFilterPaginateShouldBeEnabled =
                 allItems.Count <= configuration.GetJavascriptSearchSortFilterPaginateItemLimit();
 
-            if (searchSortFilterAndPaginateOptions.SearchOptions != null)
+            if (searchSortFilterAndPaginateOptions.ExactMatchSearch == true)
+            {
+                if (searchSortFilterAndPaginateOptions.SearchOptions.SearchString != null)
+                {
+                    var searchList = new List<string>(searchSortFilterAndPaginateOptions.SearchOptions.SearchString.ToLower().Replace(",", "").Split(" "));
+
+                    var delegateUsersfilterd = (from delegateItem in allItems
+                                                where string.Join(" ", delegateItem.SearchableContent.Where(s => s != null)).ToLower().Replace(",", "").ContainsAllStartWith(searchList)
+                                                select delegateItem).ToList();
+
+                    itemsToReturn = delegateUsersfilterd;
+                }
+            }
+            else if (searchSortFilterAndPaginateOptions.SearchOptions != null)
             {
                 itemsToReturn = (searchSortFilterAndPaginateOptions.SearchOptions.UseTokeniseScorer
                     ? GenericSearchHelper.SearchItemsUsingTokeniseScorer(

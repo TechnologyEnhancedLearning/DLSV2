@@ -15,18 +15,21 @@
             SearchOptions? searchOptions,
             SortOptions? sortOptions,
             FilterOptions? filterOptions,
-            PaginationOptions? paginationOptions
+            PaginationOptions? paginationOptions,
+            bool exactMactchSearch = false
         )
         {
             SearchOptions = searchOptions;
             SortOptions = sortOptions;
             FilterOptions = filterOptions;
             PaginationOptions = paginationOptions;
+            ExactMatchSearch = exactMactchSearch;
         }
 
         public SearchOptions? SearchOptions { get; set; }
         public SortOptions? SortOptions { get; set; }
         public FilterOptions? FilterOptions { get; set; }
         public PaginationOptions? PaginationOptions { get; set; }
+        public bool ExactMatchSearch { get; set; }
     }
 }
