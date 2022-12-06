@@ -77,6 +77,11 @@
                 formData.ProfessionalRegistrationNumber
             );
 
+            if (string.IsNullOrEmpty(formData.CentreSpecificEmail))
+            {
+                ModelState.AddModelError(nameof(formData.CentreSpecificEmail), "Enter an email address");
+            }
+
             if (!ModelState.IsValid)
             {
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
