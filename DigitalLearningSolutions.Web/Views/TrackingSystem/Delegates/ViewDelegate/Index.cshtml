@@ -25,56 +25,6 @@
       </a>
     </div>
   }
-
-  <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-5">
-    <div class="nhsuk-u-margin-bottom-5">
-      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
-    </div>
-
-    <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Details</h2>
-    <dl class="nhsuk-summary-list details-list-with-button word-break">
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Name
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Name" />
-      </div>
-
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Email
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Email" />
-      </div>
-
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          ID
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.CandidateNumber" />
-      </div>
-
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Registration date
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.RegistrationDate" />
-      </div>
-
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Job group
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.JobGroup" />
-      </div>
-
-      @foreach (var delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts) {
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
-          <dt class="nhsuk-summary-list__key">@delegateRegistrationPrompt.Prompt</dt>
-          <partial name="_SummaryFieldValue" model="@delegateRegistrationPrompt.Answer" />
-        </div>
-    }
-
     <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-5">
         <div class="nhsuk-u-margin-bottom-5">
             <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
@@ -103,13 +53,6 @@
                 <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.CandidateNumber" />
             </div>
 
-@*            <div class="nhsuk-summary-list__row details-list-with-button__row">
-                <dt class="nhsuk-summary-list__key">
-                    Alias
-                </dt>
-                <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.AliasId" />
-            </div>
-*@
             <div class="nhsuk-summary-list__row details-list-with-button__row">
                 <dt class="nhsuk-summary-list__key">
                     Registration date
