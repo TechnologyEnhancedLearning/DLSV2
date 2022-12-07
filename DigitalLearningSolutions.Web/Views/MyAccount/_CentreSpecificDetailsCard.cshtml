@@ -45,14 +45,14 @@
           <dt class="nhsuk-summary-list__key">
 	        Roles
           </dt>
-	        <div class="centre-role-tags nhsuk-summary-list__key">
-	          @if (Model.IsAdminUser) {
-		        <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
-	          }
-	          @if (Model.IsDelegateUser) {
-		        <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
-	          }
-	        </div>
+	        <dd class="nhsuk-summary-list__value">
+            <ul>
+              @foreach (var role in Model.Roles)
+              {
+                <li>@role</li>
+              }
+            </ul>
+	        </dd>
         </div>
 
         @foreach (var customField in Model.DelegateRegistrationPrompts) {

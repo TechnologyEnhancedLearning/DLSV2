@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
@@ -102,8 +103,7 @@
                 unverifiedCentreEmails,
                 dlsSubApplication,
                 switchCentreReturnUrl,
-                adminAccount != null,
-                delegateAccount != null
+                GetRoles(adminAccount, delegateAccount, userEntity)
             );
 
             return View(model);
@@ -580,6 +580,24 @@
             var delegateAccount = user?.GetCentreAccountSet(centreId)?.DelegateAccount;
 
             return delegateAccount is { Active: true } ? delegateAccount : null;
+        }
+
+        private List<string>? GetRoles(AdminAccount? adminAccount, DelegateAccount? delegateAccount, UserEntity userEntity )
+        {
+            var roles = new List<string>();
+            
+            if (adminAccount != null)
+            {
+                var adminentity = new AdminEntity(adminAccount, userEntity.UserAccount, null);
+                CultureInfo currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+                roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false)
+                                                .Select(d => currentCulture.TextInfo.ToTitleCase(d.DisplayText.ToLower())).ToList<string>();
+            }
+            if (delegateAccount != null)
+            {
+                roles.Add("Delegate");
+            }
+            return roles;
         }
     }
 }
