@@ -209,7 +209,6 @@
             }
             else
             {
-                //ModelState.ClearErrorsOnField("ActionConfirmed");
                 return View("RemoveConfirm", supervisorDelegate);
             }
         }
