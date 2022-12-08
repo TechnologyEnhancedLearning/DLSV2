@@ -183,6 +183,7 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetDelegateUserCardsByCentreId(centreId).Where(
                 user => user.Approved && !user.SelfReg && string.IsNullOrEmpty(user.Password) &&
                         !string.IsNullOrEmpty(user.EmailAddress)
+                        && !Guid.TryParse(user.EmailAddress, out _)
             );
         }
 
