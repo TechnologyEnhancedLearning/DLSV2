@@ -207,7 +207,6 @@
             }
             else
             {
-
                 if (supervisorDelegate.ConfirmedRemove)
                 {
                     supervisorDelegate.ConfirmedRemove = false;
