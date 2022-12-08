@@ -2,17 +2,15 @@
 using DigitalLearningSolutions.Data.DataServices.UserDataService;
 using DigitalLearningSolutions.Data.Extensions;
 using DigitalLearningSolutions.Data.Models.Courses;
-using DigitalLearningSolutions.Data.Models.DelegateGroups;
 using DigitalLearningSolutions.Data.Models.Email;
 using Microsoft.Extensions.Configuration;
+using DigitalLearningSolutions.Data.Utilities;
 using MimeKit;
 using System;
 using System.Linq;
 
-namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Web.Services
 {
-    using DigitalLearningSolutions.Data.Utilities;
-
     public interface IEnrolService
     {
         void EnrolDelegateOnCourse(

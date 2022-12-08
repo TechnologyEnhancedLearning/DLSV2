@@ -1,25 +1,23 @@
 ﻿using System.Runtime.CompilerServices;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using ClosedXML.Excel;
+using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Data.DataServices.UserDataService;
+using DigitalLearningSolutions.Data.Exceptions;
+using DigitalLearningSolutions.Data.Extensions;
+using DigitalLearningSolutions.Data.Models.DelegateUpload;
+using DigitalLearningSolutions.Data.Models.User;
+using DigitalLearningSolutions.Data.Utilities;
+using DigitalLearningSolutions.Web.Helpers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 [assembly: InternalsVisibleTo("DigitalLearningSolutions.Web.Tests")]
 
 namespace DigitalLearningSolutions.Web.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using ClosedXML.Excel;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Models.DelegateUpload;
-    using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Utilities;
-    using DigitalLearningSolutions.Web.Helpers;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Configuration;
-
     public interface IDelegateUploadFileService
     {
         public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime welcomeEmailDate);

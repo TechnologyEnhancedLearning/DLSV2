@@ -1,17 +1,17 @@
-﻿namespace DigitalLearningSolutions.Data.Services
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Factories;
-    using DigitalLearningSolutions.Data.Models.Email;
-    using DigitalLearningSolutions.Data.Utilities;
-    using MailKit.Net.Smtp;
-    using Microsoft.Extensions.Logging;
-    using MimeKit;
-    using MimeKit.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Data.Factories;
+using DigitalLearningSolutions.Data.Models.Email;
+using DigitalLearningSolutions.Data.Utilities;
+using MailKit.Net.Smtp;
+using Microsoft.Extensions.Logging;
+using MimeKit;
+using MimeKit.Text;
 
+namespace DigitalLearningSolutions.Web.Services
+{
     public interface IEmailSchedulerService
     {
         void SendEmail(Email email);
