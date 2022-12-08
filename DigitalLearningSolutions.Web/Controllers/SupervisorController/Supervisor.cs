@@ -200,6 +200,13 @@
         [HttpPost]
         public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
+          ModelState.ClearErrorsOnField("ActionConfirmed");
+          return View("RemoveConfirm", supervisorDelegate);
+        }
+
+        [HttpPost]
+        public IActionResult RemoveSupervisorDelegateConfirmed(SupervisorDelegateViewModel supervisorDelegate)
+        {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
                 supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.Id, 0, GetAdminId());
