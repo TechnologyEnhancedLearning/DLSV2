@@ -242,7 +242,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 da.Active AS IsDelegateActive,
                 u.HasBeenPromptedForPrn,
                 u.ProfessionalRegistrationNumber,
-                da.CentreID AS DelegateCentreId
+                da.CentreID AS DelegateCentreId,
+                ap.ArchivedDate AS CourseArchivedDate
             FROM Customisations cu
             INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
             INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID

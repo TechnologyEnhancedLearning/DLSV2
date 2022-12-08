@@ -1,5 +1,5 @@
-﻿using DigitalLearningSolutions.Data.Models.Frameworks;
-using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+﻿using DigitalLearningSolutions.Data.Helpers;
+using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System.Linq;
-using System.Web;
 using System.Net;
+using System.Web;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -170,6 +170,50 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 frameworkService.UpdateCompetencyFlags(frameworkId, frameworkCompetency.CompetencyID, selectedFlagIds);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + frameworkCompetencyId.ToString());
             }
+            var allCompetenciesWithSimilarName = frameworkService.GetAllCompetenciesForAdminId(frameworkCompetency.Name, adminId);
+
+            var sortedItems = GenericSortingHelper.SortAllItems(
+               allCompetenciesWithSimilarName.AsQueryable(),
+               GenericSortingHelper.DefaultSortOption,
+               GenericSortingHelper.Ascending
+           );
+
+            var similarItems = GenericSearchHelper.SearchItems(sortedItems, frameworkCompetency.Name, 55, true);
+            var matchingSearchResults = similarItems.ToList();
+            if (matchingSearchResults.Count > 0)
+            {
+                var model = new SimilarCompetencyViewModel()
+                {
+                    FrameworkId = frameworkId,
+                    FrameworkGroupId = frameworkCompetencyGroupId,
+                    FrameworkCompetencyId = frameworkCompetencyId,
+                    Competency = new FrameworkCompetency()
+                    {
+                        Name = frameworkCompetency.Name,
+                        Description = frameworkCompetency.Description
+                    },
+                    MatchingSearchResults = matchingSearchResults.Count,
+                    SameCompetency = similarItems
+                };
+                return View("Developer/SimilarCompetency", model);
+            }
+            return SaveCompetency(adminId, frameworkId, frameworkCompetency, frameworkCompetencyId, frameworkCompetencyGroupId, selectedFlagIds);
+        }
+
+        [HttpPost]
+        public IActionResult AddDuplicateCompetency(int frameworkId, string competencyName, string competencyDescription, int frameworkCompetencyId, int frameworkGroupId)
+        {
+            FrameworkCompetency competency = new FrameworkCompetency()
+            {
+                Name = competencyName,
+                Description = competencyDescription,
+            };
+            var adminId = GetAdminId();
+            return SaveCompetency(adminId, frameworkId, competency, frameworkCompetencyId, frameworkGroupId, null);
+        }
+
+        private IActionResult SaveCompetency(int adminId, int frameworkId, FrameworkCompetency frameworkCompetency, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int[]? selectedFlagIds)
+        {
             var newCompetencyId = frameworkService.InsertCompetency(frameworkCompetency.Name, frameworkCompetency.Description, adminId);
             if (newCompetencyId > 0)
             {
@@ -194,7 +238,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkService.DeleteFrameworkCompetency(frameworkCompetencyId, GetAdminId());
             return frameworkCompetencyGroupId != null ? new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString()) : new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-ungrouped");
         }
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}/Preview/")]
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId:int=0}/{frameworkCompetencyId}/Preview/")]
         public IActionResult PreviewCompetency(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
         {
             var adminId = GetAdminId();

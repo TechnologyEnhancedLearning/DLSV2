@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -44,19 +45,21 @@
             var userId = User.GetUserId();
             var password = formData.CurrentPassword;
 
+            if (!ModelState.IsValid)
+            {
+                var model = new ChangePasswordViewModel(formData, dlsSubApplication);
+                return View(model);
+            }
+
             if (!userVerificationService.IsPasswordValid(password, userId))
             {
                 ModelState.AddModelError(
                     nameof(ChangePasswordFormData.CurrentPassword),
                     CommonValidationErrorMessages.IncorrectPassword
                 );
+                return View(new ChangePasswordViewModel(formData, dlsSubApplication));
             }
 
-            if (!ModelState.IsValid)
-            {
-                var model = new ChangePasswordViewModel(formData, dlsSubApplication);
-                return View(model);
-            }
 
             var newPassword = formData.Password!;
 

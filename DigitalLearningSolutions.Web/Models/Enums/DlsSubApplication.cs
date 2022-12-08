@@ -16,8 +16,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "/TrackingSystem/Centre/Dashboard",
             "Tracking System",
             "TrackingSystem",
-            0,
-            false
+            0
         );
 
         public static readonly DlsSubApplication Frameworks = new DlsSubApplication(
@@ -56,8 +55,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "Super Admin",
             "/SuperAdmin/Admins",
             "Super Admin - System Configuration",
-            "SuperAdmin",
-            displayHelpMenuItem: false
+            "SuperAdmin"
         );
 
         public readonly bool DisplayHelpMenuItem;

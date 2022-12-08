@@ -15,18 +15,6 @@
                      link-text="Support"
                      is-current-page="@(Model.CurrentPage == SupportPage.Support)" />
 
-  @if (Model.CurrentPage == SupportPage.HelpDocumentation) {
-    <li class="side-nav__item side-nav__item--selected" aria-current="page">
-      <span class="nhsuk-contents-list__current">Help documentation</span>
-    </li>
-  } else {
-    <li class="side-nav__item">
-      <a class="side-nav__link" href="@SupportLinksHelper.GetHelpUrl(Model.CurrentSystemBaseUrl)" target="_blank">
-        Help documentation
-      </a>
-    </li>
-  }
-
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Faqs"
                      asp-all-route-data="@routeData"

@@ -64,12 +64,14 @@
             {
               <a asp-action="ViewFramework" asp-route-frameworkId="@framework.ID" asp-route-tabname="Structure">
                 View/Edit
+                <span class="visually-hidden">@framework.FrameworkName</span>
               </a>
             }
             else
             {
               <a asp-action="ViewFramework" asp-route-frameworkId="@framework.ID" asp-route-tabname="Structure">
                 View
+                <span class="visually-hidden">@framework.FrameworkName</span>
               </a>
             }
           </td>

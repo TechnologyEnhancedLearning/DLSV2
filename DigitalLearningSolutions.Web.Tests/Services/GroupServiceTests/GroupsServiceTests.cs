@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
@@ -41,18 +42,22 @@
             UserTestHelper.GetDefaultAccountDetailsData();
 
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
-        private readonly DateTime testDate = new DateTime(2021, 12, 11);
+        private static DateTime todayDate = DateTime.Now;
+        private readonly DateTime testDate = new DateTime(todayDate.Year, todayDate.Month, todayDate.Day);
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private IClockUtility clockUtility = null!;
         private IConfiguration configuration = null!;
         private IEmailService emailService = null!;
+        private IEmailSchedulerService emailSchedulerService = null!;
         private IGroupsDataService groupsDataService = null!;
         private IGroupsService groupsService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IEnrolService enrolService = null!;
         private ILogger<IGroupsService> logger = null!;
         private IProgressDataService progressDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
         private IUserDataService userDataService = null!;
+        private ICourseDataService courseDataService = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
 
         [SetUp]
@@ -62,6 +67,7 @@
             clockUtility = A.Fake<IClockUtility>();
             tutorialContentDataService = A.Fake<ITutorialContentDataService>();
             emailService = A.Fake<IEmailService>();
+            emailSchedulerService = A.Fake<IEmailSchedulerService>();
             progressDataService = A.Fake<IProgressDataService>();
             configuration = A.Fake<IConfiguration>();
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
@@ -79,6 +85,17 @@
 
             DatabaseModificationsDoNothing();
 
+            courseDataService = A.Fake<ICourseDataService>();
+            enrolService = new EnrolService(
+                clockUtility,
+                tutorialContentDataService,
+                progressDataService,
+                userDataService,
+                courseDataService,
+                configuration,
+                emailSchedulerService
+            );
+
             groupsService = new GroupsService(
                 groupsDataService,
                 clockUtility,
@@ -92,6 +109,13 @@
                 userDataService,
                 notificationPreferencesDataService
             );
+
+            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
+               JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
+           );
+            A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
+
+            DatabaseModificationsDoNothing();
         }
 
         [Test]

@@ -193,6 +193,7 @@
             const int minValue = 0;
             const int maxValue = 10;
             const int assessmentQuestionInputTypeID = 2;
+            const int candidateId = 1;
             var assessmentQuestions = new Collection<AssessmentQuestion>
             {
                 new AssessmentQuestion
@@ -206,9 +207,11 @@
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);
-
-            // When
-            controller.SelfAssessmentCompetency(
+            var competency = selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, candidateId);
+            if (!competency.AssessmentQuestions.Any(x => x.SignedOff == true))
+            {
+                // When
+                controller.SelfAssessmentCompetency(
                 SelfAssessmentId,
                 assessmentQuestions,
                 competencyNumber,
@@ -216,17 +219,18 @@
                 competencyGroupId
             );
 
-            // Then
-            A.CallTo(
-                () => selfAssessmentService.SetResultForCompetency(
-                    competencyId,
-                    selfAssessment.Id,
-                    CandidateId,
-                    assessmentQuestionId,
-                    assessmentQuestionResult,
-                    null
-                )
-            ).MustHaveHappened();
+                // Then
+                A.CallTo(
+                    () => selfAssessmentService.SetResultForCompetency(
+                        competencyId,
+                        selfAssessment.Id,
+                        CandidateId,
+                        assessmentQuestionId,
+                        assessmentQuestionResult,
+                        null
+                    )
+                ).MustHaveHappened();
+            }
         }
 
         [Test]

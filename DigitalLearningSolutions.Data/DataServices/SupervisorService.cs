@@ -625,9 +625,9 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         public void UpdateNotificationSent(int supervisorDelegateId)
         {
             connection.Execute(
-        @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
+                @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
             WHERE ID = @supervisorDelegateId",
-       new { supervisorDelegateId });
+                new { supervisorDelegateId });
         }
 
         public bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId)
