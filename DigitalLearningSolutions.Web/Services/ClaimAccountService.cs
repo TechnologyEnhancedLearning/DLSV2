@@ -53,7 +53,12 @@
             var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userIdForRegistration).ToList();
             var adminAccounts = userDataService.GetAdminAccountsByUserId(userIdForRegistration).ToList();
 
-            if (
+            //TD-812 Condition for checking whether delegate is promoted to admin or not
+            if (adminAccounts.Count == 1)
+            {
+
+            }
+            else if (
                 delegateAccounts.Count != 1 ||
                 adminAccounts.Count != 0 ||
                 delegateAccounts.Any(da => da.CentreId != centreId)
