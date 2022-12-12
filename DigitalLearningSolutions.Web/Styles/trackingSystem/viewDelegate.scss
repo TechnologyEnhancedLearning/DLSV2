@@ -25,6 +25,10 @@
   }
 }
 
+.capitalise {
+  text-transform: capitalize;
+}
+
 /* Give some of the 'value' space to 'actions' when displayed side-by-side */
 @include mq($from: tablet) {
   .nhsuk-summary-list__value {
@@ -45,5 +49,15 @@
   &.removed {
     background-color: #fff;
     border-left: 6px solid $color_nhsuk-red;
+  }
+
+  &.inactive {
+    background-color: #fff;
+    border-left: 6px solid tint($color_nhsuk-red, 80);
+  }
+
+  &.archived {
+    background-color: #fff;
+    border-left: 6px solid $color_nhsuk-grey-2;
   }
 }

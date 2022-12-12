@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
@@ -91,6 +92,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
             AttemptsPassed = info.AttemptsPassed;
             PassRate = info.PassRate;
             CourseName = info.CourseName;
+            IsCourseActive = info.IsCourseActive;
+            CourseArchivedDate = info.CourseArchivedDate;
         }
 
         public DelegateAccessRoute AccessedVia { get; set; }
@@ -122,20 +125,46 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         public bool IsProgressLocked { get; set; }
         public string? CourseName { get; set; }
         public string CourseDelegatesDisplayName { get; set; }
+        public DateTime? CourseArchivedDate { get; set; }
+        public bool IsCourseActive { get; set; }
 
         public string? PassRateDisplayString =>
             TotalAttempts != 0 ? PassRate + "%" : null;
+        
         public string Status()
         {
-            if (Completed != null)
+            if (CourseArchivedDate != null)
             {
-                return "completed";
+                return "archived";
             }
             if (RemovedDate != null)
             {
                 return "removed";
             }
-            return "";
+            if (IsCourseActive != true)
+            {
+                return "inactive";
+            }
+            if (Completed != null)
+            {
+                return "completed";
+            }
+            return "active";
+        }
+
+        public string StatusTagStyle()
+        {
+            var status = Status();
+
+            return status switch
+            {
+                "active" => "nhsuk-tag--green",
+                "inactive" => "nhsuk-tag--red",
+                "archived" => "nhsuk-tag--grey",
+                "completed" => "nhsuk-tag--green",
+                "removed" => "nhsuk-tag--grey",
+                _ => string.Empty,
+            };
         }
     }
 }

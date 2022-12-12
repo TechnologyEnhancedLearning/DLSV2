@@ -6,8 +6,6 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -19,6 +17,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement.Mvc;
+    using IEmailService = DigitalLearningSolutions.Web.Services.IEmailService;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
@@ -36,7 +35,7 @@
         private readonly IUserService userService;
         private readonly IEmailGenerationService emailGenerationService;
         private readonly IEmailService emailService;
-
+        
         public PromoteToAdminController(
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,

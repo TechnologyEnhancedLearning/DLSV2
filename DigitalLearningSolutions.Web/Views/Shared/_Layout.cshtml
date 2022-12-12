@@ -16,6 +16,7 @@
   }
   var headerExtension = (string)ViewData[LayoutViewDataKeys.Application];
   var shouldDisplayHelpMenuItem = dlsSubApplication?.DisplayHelpMenuItem ?? headerExtension != DlsSubApplication.TrackingSystem.HeaderExtension;
+
 }
 
 <!DOCTYPE html>
@@ -106,7 +107,6 @@
             } else if (dlsSubApplication != null) {
               <partial name="_AutoNavMenuItems.cshtml" model="@dlsSubApplication" />
             }
-
             @if (shouldDisplayHelpMenuItem) {
               string helpPage;
               if (User.HasClaim(c => c.Type == CustomClaimTypes.UserAdminId)) {

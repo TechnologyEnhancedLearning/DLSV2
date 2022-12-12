@@ -5,7 +5,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Application"] = "Supervisor";
-    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Confirm Nominated supervisor";
+    ViewData["Title"] = "Confirm Nominated supervisor";
     ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor/MyStaff";
     ViewData["HeaderPathName"] = "My Staff";
 }

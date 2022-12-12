@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Web.Attributes;
+    using System.ComponentModel;
 
     public class SupervisorDelegateViewModel
     {
@@ -25,5 +26,7 @@
 
         [BooleanMustBeTrue(ErrorMessage = "Please tick the checkbox to confirm you wish to perform this action")]
         public bool ActionConfirmed { get; set; }
+        [DefaultValue(false)]
+        public bool ConfirmedRemove { get; set; }
     }
 }

@@ -51,6 +51,7 @@
             ProfessionalRegistrationNumber = delegateCourseInfo.ProfessionalRegistrationNumber;
             DelegateCentreId = delegateCourseInfo.DelegateCentreId;
             CourseAdminFields = delegateCourseInfo.CourseAdminFields;
+            CourseArchivedDate = delegateCourseInfo.CourseArchivedDate;
         }
 
         public DelegateCourseInfo(
@@ -175,6 +176,7 @@
         public bool HasBeenPromptedForPrn { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
         public int DelegateCentreId { get; set; }
+        public DateTime? CourseArchivedDate { get; set; }
 
         public List<CourseAdminFieldWithAnswer> CourseAdminFields { get; set; } =
             new List<CourseAdminFieldWithAnswer>();

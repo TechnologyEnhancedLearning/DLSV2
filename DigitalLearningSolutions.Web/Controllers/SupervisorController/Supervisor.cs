@@ -99,7 +99,7 @@
             var supervisorEmail = GetUserEmail();
 
             ModelState.Remove("Page");
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             {
                 //delegateuserdataservice.GetCandidateNumberByDelegateId(int userId)
 
@@ -109,6 +109,7 @@
             }
             else
             {
+                if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
@@ -134,7 +135,7 @@
                 var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
                 foreach (var delegateEmail in delegateEmailsList)
                 {
-                    if (delegateEmail.Length > 0)
+                    if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
                     {
                         if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
                         {
@@ -183,6 +184,10 @@
 
             return RedirectToAction("MyStaffList");
         }
+        public IActionResult RemoveSupervisorDelegate()
+        {
+            return RedirectToAction("MyStaffList");
+        }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
@@ -200,6 +205,13 @@
         [HttpPost]
         public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
+          ModelState.ClearErrorsOnField("ActionConfirmed");
+          return View("RemoveConfirm", supervisorDelegate);
+        }
+
+        [HttpPost]
+        public IActionResult RemoveSupervisorDelegateConfirmed(SupervisorDelegateViewModel supervisorDelegate)
+        {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
                 supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.Id, 0, GetAdminId());
@@ -207,7 +219,11 @@
             }
             else
             {
-                ModelState.ClearErrorsOnField("ActionConfirmed");
+                if (supervisorDelegate.ConfirmedRemove)
+                {
+                    supervisorDelegate.ConfirmedRemove = false;
+                    ModelState.ClearErrorsOnField("ActionConfirmed");
+                }
                 return View("RemoveConfirm", supervisorDelegate);
             }
         }
@@ -926,6 +942,14 @@
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
+            if (TempData["NominateSupervisorError"] != null)
+            {
+                if (Convert.ToBoolean(TempData["NominateSupervisorError"].ToString()))
+                {
+                    ModelState.AddModelError("ActionConfirmed", "Please tick the checkbox to confirm you wish to perform this action");
+
+                }
+            }
             return View("NominateSupervisor", model);
         }
         [HttpPost]
@@ -980,7 +1004,9 @@
             }
             else
             {
-                return View("NominateSupervisor", supervisorDelegate);
+                TempData["NominateSupervisorError"] = true;
+                return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
+
             }
         }
     }
