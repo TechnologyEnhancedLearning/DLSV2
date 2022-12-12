@@ -446,10 +446,14 @@
 
         public IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId)
         {
-            return connection.Query<FrameworkCompetency>(
-                $@"SELECT * FROM Competencies WHERE [Name] = @name AND [UpdatedByAdminID] = @adminId",
-                new { name, adminId }
-            );
+          return connection.Query<FrameworkCompetency>(
+               $@"SELECT f.FrameworkName,c.Description,c.UpdatedByAdminID,c.Name from Competencies as c
+                    INNER JOIN FrameworkCompetencies AS fc ON c.ID = fc.CompetencyID
+                    INNER JOIN Frameworks AS f ON fc.FrameworkID = f.ID
+                    WHERE fc.FrameworkID = f.ID AND c.Name = @name AND c.UpdatedByAdminID = @adminId",
+               new { name, adminId }
+           );
+
         }
 
         public BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId)
