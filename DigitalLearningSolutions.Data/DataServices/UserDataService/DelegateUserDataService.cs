@@ -156,6 +156,17 @@
             ).SingleOrDefault();
         }
 
+        public string? GetCandidateNumberByDelegateId(int userId)
+        {
+            return connection.QueryFirstOrDefault<string?>(
+                @"SELECT CandidateNumber
+                            FROM DelegateAccounts da
+                            WHERE Active = 1
+                            AND UserId = @userId",
+                new { @userId }
+            );
+        }
+
         public IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId)
         {
             var sql =
