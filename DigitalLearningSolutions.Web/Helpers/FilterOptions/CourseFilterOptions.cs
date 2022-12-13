@@ -10,22 +10,75 @@
         private const string Group = "Status";
 
         public static readonly FilterOptionModel IsInactive = new FilterOptionModel(
-            "Inactive",
+            "Inactive/archived",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "false"),
             FilterStatus.Warning
         );
 
-        public static readonly FilterOptionModel IsActive = new FilterOptionModel(
-            "Active",
-            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "true"),
-            FilterStatus.Success
-        );
+        //public static readonly FilterOptionModel IsActive = new FilterOptionModel(
+        //    "Active",
+        //    FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "true"),
+        //    FilterStatus.Success
+        //);
 
-        public static readonly FilterOptionModel IsArchived = new FilterOptionModel(
-            "Archived",
-            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Archived), "true"),
-            FilterStatus.Default
-        );
+        public const char FilterSeparator = '╡';
+        
+        public static FilterOptionModel IsActive
+        {
+            get
+            {
+                var activeFilterValue = FilteringHelper.BuildFilterValueString(
+                    "Active",
+                    nameof(CourseStatistics.Active),
+                    "true"
+                );
+
+                var notArchivedFilterValue = FilteringHelper.BuildFilterValueString(
+                    "Archived",
+                    nameof(CourseStatistics.Archived),
+                    "false"
+                );
+
+                var filterValue = activeFilterValue + FilterSeparator + notArchivedFilterValue;
+
+                return new FilterOptionModel(
+                    "Active",
+                    filterValue,
+                    FilterStatus.Success
+                );
+            }
+        }
+
+        //public static readonly FilterOptionModel IsArchived = new FilterOptionModel(
+        //    "Archived",
+        //    FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Archived), "true"),
+        //    FilterStatus.Default
+        //);
+
+        public static FilterOptionModel IsArchived
+        {
+            get
+            {
+                var filterValue = FilteringHelper.BuildFilterValueString(
+                    "Archived",
+                    nameof(CourseStatistics.Archived),
+                    "true"
+                );
+
+                //TODO: Also need to OR with .Active=false
+                //var filterValue = FilteringHelper.BuildFilterValueString(
+                //    "Archived",
+                //    nameof(CourseStatistics.Archived),
+                //    "true"
+                //);
+
+                return new FilterOptionModel(
+                    Group,
+                    filterValue,
+                    FilterStatus.Success
+                );
+            }
+        }
     }
 
     public static class CourseVisibilityFilterOptions
