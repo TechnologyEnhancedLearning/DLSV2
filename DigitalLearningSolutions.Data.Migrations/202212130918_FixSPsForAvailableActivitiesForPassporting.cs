@@ -1,10 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Migrations
+﻿using FluentMigrator;
+namespace DigitalLearningSolutions.Data.Migrations
 {
-    using FluentMigrator;
-    using FluentMigrator.SqlServer;
-
-    [Migration(20221208786)]
-    public class ChangesForAvailableActivity : Migration
+    [Migration(202212130918)]
+    public class FixSPsForAvailableActivitiesForPassporting : Migration
     {
         public override void Up()
         {
