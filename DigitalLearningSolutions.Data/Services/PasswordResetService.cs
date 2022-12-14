@@ -248,14 +248,16 @@
                             An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.
                             You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.
                             To complete your registration and access your Digital Learning Solutions content, please click: {setPasswordUrl.Uri}
-                            Note that this link can only be used once and it will expire in three days.
+                            Note that this link can only be used once and it will expire in 14 days.
+                            After this link has expired, you can still get access to your account by following the 'Forgot password' link on the DLS login page.
                             Please don't reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {delegateUser.FullName},</p>
                                 <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.</p>
                                 <p>You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.</p>
                                 <p><a href=""{setPasswordUrl.Uri}"">Click here to complete your registration and access your Digital Learning Solutions content</a></p>
-                                <p>Note that this link can only be used once and it will expire in three days.</p>
+                                <p>Note that this link can only be used once and it will expire in 14 days.</p>
+                                <p>After this link has expired, you can still get access to your account by following the 'Forgot password' link on the DLS login page.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
                             </body>",
             };
