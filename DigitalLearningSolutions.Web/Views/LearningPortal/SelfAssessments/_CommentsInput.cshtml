@@ -1,7 +1,9 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
 @model AssessmentQuestion
 <div class="nhsuk-form-group">
-  <label class="nhsuk-label" for="tb-supportingComments-@Model.Id"><span class="nhsuk-u-visually-hidden">@Model.Question</span>
+  <label class="nhsuk-label" for="tb-supportingComments-@Model.Id">
+    <span class="nhsuk-u-visually-hidden">@Model.Question @if (!Model.Required)
+    {<span>(Optional)</span>}</span>
     @(Model.CommentsPrompt == null ? "Supporting comments" : Model.CommentsPrompt)
   </label>
   @if (Model.CommentsHint != null)

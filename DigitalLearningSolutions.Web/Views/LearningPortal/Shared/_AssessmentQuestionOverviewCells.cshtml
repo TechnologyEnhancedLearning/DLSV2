@@ -10,10 +10,11 @@
 
 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
   <span class="nhsuk-table-responsive__heading">@ViewData["QuestionLabel"]</span>
-  @Model.Question
+  @Model.Question @if (!Model.Required)
+  {<span>(Optional)</span>}
 </td>
 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
-  <span class="nhsuk-table-responsive__heading">Self-assessment status </span>
+  <span class="nhsuk-table-responsive__heading">Self-assessment status</span>
   <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="Model" />
 </td>
 @if (((CurrentSelfAssessment)ViewData["selfAssessment"])?.IsSupervisorResultsReviewed ?? true)

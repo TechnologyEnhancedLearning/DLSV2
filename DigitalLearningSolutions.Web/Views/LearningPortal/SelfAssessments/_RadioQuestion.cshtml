@@ -5,7 +5,8 @@
   <fieldset class="nhsuk-fieldset">
     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
       <h3 class="nhsuk-fieldset__heading">
-        @Model.Question
+        @Model.Question @if (!Model.Required)
+        {<span>(Optional)</span>}
       </h3>
       <div class="nhsuk-hint">
         @if (Model.ScoringInstructions != null)
@@ -22,10 +23,10 @@
       {
         <div class="nhsuk-radios__item">
           <input class="nhsuk-radios__input select-all-checkbox"
-               name="[@ViewData["index"]].Result" id="radio-@Model.Id-@levelDescriptor.LevelValue"
-               data-group="group@(Model.Id)"
-               checked="@(Model.Result == @levelDescriptor.LevelValue)" type="radio" value="@levelDescriptor.LevelValue"
-               aria-describedby="radio-@Model.Id-@levelDescriptor.LevelValue-item-hint">
+                 name="[@ViewData["index"]].Result" id="radio-@Model.Id-@levelDescriptor.LevelValue"
+                 data-group="group@(Model.Id)"
+                 checked="@(Model.Result == @levelDescriptor.LevelValue)" type="radio" value="@levelDescriptor.LevelValue"
+                 aria-describedby="radio-@Model.Id-@levelDescriptor.LevelValue-item-hint">
           <label class="nhsuk-label nhsuk-radios__label" for="radio-@Model.Id-@levelDescriptor.LevelValue">
             @levelDescriptor.LevelLabel
           </label>
