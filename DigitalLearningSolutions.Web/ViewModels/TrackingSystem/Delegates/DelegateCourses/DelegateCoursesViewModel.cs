@@ -19,7 +19,34 @@
             "Search courses"
         )
         {
+            UpdateCourseActiveFlags(result);
+
             Courses = result.ItemsToDisplay.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
+        }
+
+        private static void UpdateCourseActiveFlags(SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result)
+        {
+            foreach (var course in result.ItemsToDisplay)
+            {
+                if (course.Active && !course.Archived)
+                {
+                    course.Active = true;
+                }
+                else
+                {
+                    course.Active = false;
+                }
+
+
+                if (course.Archived)
+                {
+                    course.Archived = true;
+                }
+                else
+                {
+                    course.Archived = false;
+                }
+            }
         }
 
         public IEnumerable<SearchableDelegateCourseStatisticsViewModel> Courses { get; set; }

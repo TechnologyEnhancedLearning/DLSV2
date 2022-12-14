@@ -10,75 +10,76 @@
         private const string Group = "Status";
 
         public static readonly FilterOptionModel IsInactive = new FilterOptionModel(
-            "Inactive/archived",
+            "Inactive/Archived",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "false"),
             FilterStatus.Warning
         );
 
-        //public static readonly FilterOptionModel IsActive = new FilterOptionModel(
-        //    "Active",
-        //    FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "true"),
-        //    FilterStatus.Success
-        //);
+        public static readonly FilterOptionModel IsActive = new FilterOptionModel(
+            "Active",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "true"),
+            FilterStatus.Success
+        );
 
-        public const char FilterSeparator = '╡';
-        
-        public static FilterOptionModel IsActive
-        {
-            get
-            {
-                var activeFilterValue = FilteringHelper.BuildFilterValueString(
-                    "Active",
-                    nameof(CourseStatistics.Active),
-                    "true"
-                );
+        //public const char FilterSeparator = '╡';
 
-                var notArchivedFilterValue = FilteringHelper.BuildFilterValueString(
-                    "Archived",
-                    nameof(CourseStatistics.Archived),
-                    "false"
-                );
+        //public static FilterOptionModel IsActive
+        //{
+        //    get
+        //    {
+        //        var activeFilterValue = FilteringHelper.BuildFilterValueString(
+        //            "Active",
+        //            nameof(CourseStatistics.Active),
+        //            "true"
+        //        );
 
-                var filterValue = activeFilterValue + FilterSeparator + notArchivedFilterValue;
+        //        //var notArchivedFilterValue = FilteringHelper.BuildFilterValueString(
+        //        //    "Archived",
+        //        //    nameof(CourseStatistics.Archived),
+        //        //    "false"
+        //        //);
 
-                return new FilterOptionModel(
-                    "Active",
-                    filterValue,
-                    FilterStatus.Success
-                );
-            }
-        }
+        //        //var filterValue = activeFilterValue + FilterSeparator + notArchivedFilterValue;
+        //        var filterValue = activeFilterValue;
 
-        //public static readonly FilterOptionModel IsArchived = new FilterOptionModel(
-        //    "Archived",
-        //    FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Archived), "true"),
-        //    FilterStatus.Default
-        //);
+        //        return new FilterOptionModel(
+        //            "Active",
+        //            filterValue,
+        //            FilterStatus.Success
+        //        );
+        //    }
+        //}
 
-        public static FilterOptionModel IsArchived
-        {
-            get
-            {
-                var filterValue = FilteringHelper.BuildFilterValueString(
-                    "Archived",
-                    nameof(CourseStatistics.Archived),
-                    "true"
-                );
+        public static readonly FilterOptionModel IsArchived = new FilterOptionModel(
+            "Inactive_Archived",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Archived), "true"),
+            FilterStatus.Default
+        );
 
-                //TODO: Also need to OR with .Active=false
-                //var filterValue = FilteringHelper.BuildFilterValueString(
-                //    "Archived",
-                //    nameof(CourseStatistics.Archived),
-                //    "true"
-                //);
+        //public static FilterOptionModel IsArchived
+        //{
+        //    get
+        //    {
+        //        var filterValue = FilteringHelper.BuildFilterValueString(
+        //            "Archived",
+        //            nameof(CourseStatistics.Archived),
+        //            "true"
+        //        );
 
-                return new FilterOptionModel(
-                    Group,
-                    filterValue,
-                    FilterStatus.Success
-                );
-            }
-        }
+        //        //TODO: Also need to OR with .Active=false
+        //        //var filterValue = FilteringHelper.BuildFilterValueString(
+        //        //    "Archived",
+        //        //    nameof(CourseStatistics.Archived),
+        //        //    "true"
+        //        //);
+
+        //        return new FilterOptionModel(
+        //            Group,
+        //            filterValue,
+        //            FilterStatus.Success
+        //        );
+        //    }
+        //}
     }
 
     public static class CourseVisibilityFilterOptions

@@ -53,20 +53,18 @@
                                               FilteringHelper.Separator + HasAdminFields.ToString().ToLowerInvariant();
         private static string DeriveCourseStatus(Course courseStatistics)
         {
-            string status;
             if (courseStatistics.Archived)
             {
-                status = "archived";
+                return "inactive/archived";
             }
-            else if (courseStatistics.Active)
+            else switch (courseStatistics.Active)
             {
-                status = "active";
+                case true:
+                    return "active";
+                case false:
+                    return "inactive";
+                default:
             }
-            else
-            {
-                status = "inactive";
-            }
-            return status;
         }
     }
 }
