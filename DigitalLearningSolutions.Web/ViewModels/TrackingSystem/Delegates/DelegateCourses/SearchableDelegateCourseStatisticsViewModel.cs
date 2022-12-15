@@ -19,10 +19,7 @@
             CategoryName = courseStatistics.CategoryName;
             CourseTopic = courseStatistics.CourseTopic;
             LearningMinutes = courseStatistics.LearningMinutes;
-
-            //Tags = FilterableTagHelper.GetCurrentTagsForDelegateCourses(courseStatistics);
             Tags = FilterableTagHelper.GetCurrentStatusTagsForDelegateCourses(courseStatistics);
-
             Assessed = courseStatistics.IsAssessed;
             AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
             Status = DeriveCourseStatus(courseStatistics);
@@ -66,7 +63,6 @@
                     return "active";
                 case false:
                     return "inactive";
-                default:
             }
         }
     }

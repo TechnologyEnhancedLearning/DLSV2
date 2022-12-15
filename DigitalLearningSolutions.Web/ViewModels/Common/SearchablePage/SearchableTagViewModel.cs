@@ -14,7 +14,7 @@
         {
             Hidden = hidden;
         }
-        
+
         public SearchableTagViewModel(string displayText, string filterValue, FilterStatus tagStatus, bool hidden = false)
             : base(
                 displayText,

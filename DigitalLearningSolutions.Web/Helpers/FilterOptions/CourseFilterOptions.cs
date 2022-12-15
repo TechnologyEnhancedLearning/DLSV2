@@ -9,11 +9,6 @@
     {
         private const string Group = "Status";
 
-        //public static readonly FilterOptionModel IsInactive = new FilterOptionModel(
-        //    "Inactive#Archived",
-        //    FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "false"),
-        //    FilterStatus.Warning
-        //);
         public static readonly FilterOptionModel IsInactive = new FilterOptionModel(
             "Inactive/archived",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "false"),
@@ -26,11 +21,6 @@
             FilterStatus.Success
         );
 
-        //public static readonly FilterOptionModel IsArchived = new FilterOptionModel(
-        //    "Inactive_Archived",
-        //    FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Archived), "true"),
-        //    FilterStatus.Default
-        //);
         public static readonly FilterOptionModel IsArchived = new FilterOptionModel(
             "Archived",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Archived), "true"),
