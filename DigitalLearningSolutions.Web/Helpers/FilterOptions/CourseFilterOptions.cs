@@ -15,7 +15,7 @@
         //    FilterStatus.Warning
         //);
         public static readonly FilterOptionModel IsInactive = new FilterOptionModel(
-            "Inactive/Archived",
+            "Inactive/archived",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "false"),
             FilterStatus.Warning
         );
