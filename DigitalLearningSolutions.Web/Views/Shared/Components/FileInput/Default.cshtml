@@ -1,0 +1,25 @@
+﻿@using NHSUKViewComponents.Web.ViewModels
+@using NHSUKViewComponents.Web.Helpers
+@model FileInputViewModel
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
+  <label class="nhsuk-label" for="@Model.Name">
+    @Model.Label
+  </label>
+  @if (Model.HintText != null) {
+    <div class="nhsuk-hint" id="@Model.Name-hint">
+      @Model.HintText
+    </div>
+  }
+  @if (Model.HasError)
+  {
+    <span class="nhsuk-error-message" id="@Model.Name-error">
+      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
+    </span>
+  }
+  <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")" 
+         id="@Model.Id"
+         name="@Model.Name"
+         type="file"
+         aria-invalid="@(Model.HasError ? "true" : null)"
+         aria-describedby="@ViewComponentDynamicAttributeHelper.GetAriaDescribedByAttribute(Model.Name, Model.HasError, Model.HintText)" />
+</div>

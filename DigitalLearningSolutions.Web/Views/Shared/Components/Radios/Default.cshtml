@@ -1,0 +1,48 @@
+﻿@using NHSUKViewComponents.Web.Extensions
+@using NHSUKViewComponents.Web.ViewModels
+@model RadiosViewModel
+
+<div class="nhsuk-form-group">
+
+  <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Label.RemoveWhitespace()-hint">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+      <label class="nhsuk-fieldset__heading">
+        @Model.Label
+      </label>
+    </legend>
+
+    @if (Model.HintText != null)
+    {
+      <div class="nhsuk-hint" id="@Model.Label.RemoveWhitespace()-hint">
+        @Html.Raw(Model.HintText)
+      </div>
+    }
+
+    <div class="nhsuk-radios" aria-required="@(Model.Required ? "true" : "false" )">
+      @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i)))
+      {
+        var radioId = $"{radio.Value}-{index}";
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input"
+               id="@radioId"
+               name="@Model.AspFor"
+               type="radio"
+               value="@radio.Value"
+               aria-describedby="@radio.Value-item-hint"
+               @(radio.Selected ? "checked" : string.Empty) />
+          <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
+            @radio.Label
+          </label>
+          @if (radio.HintText != null)
+          {
+            <div class="nhsuk-hint nhsuk-radios__hint" id="@radio.Value-item-hint">
+              @radio.HintText
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  </fieldset>
+
+</div>

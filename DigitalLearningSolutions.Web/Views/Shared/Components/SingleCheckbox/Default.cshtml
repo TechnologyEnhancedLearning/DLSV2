@@ -1,0 +1,16 @@
+﻿@using NHSUKViewComponents.Web.ViewModels
+@model CheckboxItemViewModel
+
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
+    <fieldset class="nhsuk-fieldset"
+              aria-describedyby="@(Model.HasError? @Model.Id + "-error" : null)">
+        @if (Model.HasError)
+        {
+            <span class="nhsuk-error-message" id="@Model.Id-error">
+                <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
+            </span>
+        }
+
+        <partial name="_CheckboxItem" model="Model" />
+    </fieldset>
+</div>

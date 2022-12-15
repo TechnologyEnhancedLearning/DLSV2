@@ -1,0 +1,71 @@
+﻿@using NHSUKViewComponents.Web.ViewModels
+@model DateInputViewModel
+
+@{
+  var errorCss = Model.HasError ? "nhsuk-form-group--error" : "";
+  var dayErrorCss = Model.HasDayError ? "nhsuk-input--error" : "";
+  var monthErrorCss = Model.HasMonthError ? "nhsuk-input--error" : "";
+  var yearErrorCss = Model.HasYearError ? "nhsuk-input--error" : "";
+}
+
+<div class="@Model.CssClass @errorCss" id="@Model.Id">
+  <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-hint" role="group">
+    <legend class="nhsuk-fieldset__legend nhsuk-label">
+      @Model.Label
+    </legend>
+    @if (Model.HintTextLines != null) {
+      @foreach (var hintText in Model.HintTextLines) {
+        <div class="nhsuk-hint">
+          @hintText
+        </div>
+      }
+    }
+
+    @if (Model.HasError) {
+      @foreach (var message in Model.ErrorMessages) {
+        <span class="error-message--margin-bottom-1 nhsuk-error-message">
+          <span class="nhsuk-u-visually-hidden">Error:</span> @message
+        </span>
+      }
+    }
+
+    <div class="nhsuk-date-input">
+      <div class="nhsuk-date-input__item">
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="@Model.DayId">Day</label>
+          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @dayErrorCss"
+                 id="@Model.DayId"
+                 name="@Model.DayId"
+                 value="@Model.DayValue"
+                 type="text"
+                 pattern="[0-9]*"
+                 inputmode="numeric" />
+        </div>
+      </div>
+      <div class="nhsuk-date-input__item">
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="@Model.MonthId">Month</label>
+          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @monthErrorCss"
+                 id="@Model.MonthId"
+                 name="@Model.MonthId"
+                 value="@Model.MonthValue"
+                 type="text"
+                 pattern="[0-9]*"
+                 inputmode="numeric" />
+        </div>
+      </div>
+      <div class="nhsuk-date-input__item">
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="@Model.YearId">Year</label>
+          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-3 @yearErrorCss"
+                 id="@Model.YearId"
+                 name="@Model.YearId"
+                 value="@Model.YearValue"
+                 type="text"
+                 pattern="[0-9]*"
+                 inputmode="numeric" />
+        </div>
+      </div>
+    </div>
+  </fieldset>
+</div>

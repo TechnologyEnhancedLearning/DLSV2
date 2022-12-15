@@ -1,0 +1,34 @@
+@using NHSUKViewComponents.Web.ViewModels
+@using NHSUKViewComponents.Web.Helpers
+@model SelectListViewModel
+
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
+  <label class="nhsuk-label" for="@Model.Id">
+    @Model.Label
+  </label>
+  @if (Model.HintText != null)
+  {
+    <div class="nhsuk-hint" id="@Model.Name-hint">
+      @Html.Raw(Model.HintText)
+    </div>
+  }
+  @if (Model.HasError)
+  {
+    <span class="nhsuk-error-message" id="@Model.Name-error">
+      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
+    </span>
+  }
+  <select class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+          id="@Model.Id"
+          name="@Model.Name"
+          value="@(Model.Value != null ? Model.Value : null)"
+          asp-items="Model.SelectListOptions"
+          aria-describedby="@ViewComponentDynamicAttributeHelper.GetAriaDescribedByAttribute(Model.Name, Model.HasError, Model.HintText)"
+          aria-invalid="@(Model.HasError ? "true" : null)"
+          aria-required="@(Model.Required ? "true" : "false" )">
+    @if (Model.DefaultOption != null)
+    {
+      <option value="" disabled="@(Model.Required)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
+    }
+  </select>
+</div>

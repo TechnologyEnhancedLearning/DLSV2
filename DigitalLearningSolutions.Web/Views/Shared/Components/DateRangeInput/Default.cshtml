@@ -1,0 +1,43 @@
+@using NHSUKViewComponents.Web.ViewModels
+@model DateRangeInputViewModel
+
+<div id="@Model.Id">
+  <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-hint" role="group">
+    <legend class="nhsuk-fieldset__legend nhsuk-label nhsuk-heading-m">
+      @Model.Label
+    </legend>
+    @if (Model.HintText != null)
+    {
+      <div class="nhsuk-hint" id="@Model.Id-hint">
+        @Html.Raw(Model.HintText)
+      </div>
+    }
+
+    <partial name="Components/DateInput/Default" model="Model.StartDateModel" />
+    <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional">
+      <div class="nhsuk-checkboxes__item">
+        <input class="nhsuk-checkboxes__input"
+               type="checkbox"
+               id="@Model.EndDateCheckbox.Id"
+               name="@Model.EndDateCheckbox.Name"
+               aria-describedby="@Model.EndDateCheckbox.Id-item-hint"
+               value="true"
+               aria-controls="conditional-end-date"
+               aria-expanded="@(Model.EndDateCheckbox.Value ? "true" : "false")"
+               @(Model.EndDateCheckbox.Value ? "checked" : string.Empty) />
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.EndDateCheckbox.Id">
+          Set end date
+        </label>
+        @if (Model.EndDateCheckbox.HintText != null)
+        {
+          <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.EndDateCheckbox.Id-item-hint">
+            @Model.EndDateCheckbox.HintText
+          </div>
+        }
+      </div>
+
+      <partial name="Components/DateInput/Default" model="Model.EndDateModel" />
+    </div>
+
+  </fieldset>
+</div>
