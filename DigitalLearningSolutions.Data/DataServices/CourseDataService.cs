@@ -175,7 +175,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         private readonly string CourseStatisticsQuery = @$"SELECT
                         cu.CustomisationID,
                         cu.CentreID,
-                        cu.Active,
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 0 ELSE cu.Active END AS Active,
                         cu.AllCentres,
                         ap.ApplicationId,
                         ap.ApplicationName,

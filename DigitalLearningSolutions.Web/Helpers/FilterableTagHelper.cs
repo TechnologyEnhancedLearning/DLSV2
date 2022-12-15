@@ -114,6 +114,28 @@
             return tags;
         }
 
+        public static IEnumerable<SearchableTagViewModel> GetCurrentStatusTagsForDelegateCourses(
+            CourseStatistics courseStatistics
+        )
+        {
+            var tags = new List<SearchableTagViewModel>();
+
+            if (courseStatistics.Archived)
+            {
+                tags.Add(new SearchableTagViewModel("Archived", string.Empty, CourseStatusFilterOptions.IsArchived.TagStatus));
+            }
+            else if (courseStatistics.Active)
+            {
+                tags.Add(new SearchableTagViewModel("Active", string.Empty, CourseStatusFilterOptions.IsActive.TagStatus));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel("Inactive", string.Empty, CourseStatusFilterOptions.IsInactive.TagStatus));
+            }
+
+            return tags;
+        }
+
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForCourseDelegate(CourseDelegate courseDelegate)
         {
             var tags = new List<SearchableTagViewModel>();

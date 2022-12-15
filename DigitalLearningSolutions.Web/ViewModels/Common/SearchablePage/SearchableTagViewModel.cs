@@ -14,6 +14,16 @@
         {
             Hidden = hidden;
         }
+        
+        public SearchableTagViewModel(string displayText, string filterValue, FilterStatus tagStatus, bool hidden = false)
+            : base(
+                displayText,
+                filterValue,
+                tagStatus
+            )
+        {
+            Hidden = hidden;
+        }
 
         public bool Hidden { get; set; }
 

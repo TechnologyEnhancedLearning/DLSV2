@@ -19,7 +19,10 @@
             CategoryName = courseStatistics.CategoryName;
             CourseTopic = courseStatistics.CourseTopic;
             LearningMinutes = courseStatistics.LearningMinutes;
-            Tags = FilterableTagHelper.GetCurrentTagsForDelegateCourses(courseStatistics);
+
+            //Tags = FilterableTagHelper.GetCurrentTagsForDelegateCourses(courseStatistics);
+            Tags = FilterableTagHelper.GetCurrentStatusTagsForDelegateCourses(courseStatistics);
+
             Assessed = courseStatistics.IsAssessed;
             AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
             Status = DeriveCourseStatus(courseStatistics);
@@ -55,7 +58,7 @@
         {
             if (courseStatistics.Archived)
             {
-                return "inactive/archived";
+                return "archived";
             }
             else switch (courseStatistics.Active)
             {
