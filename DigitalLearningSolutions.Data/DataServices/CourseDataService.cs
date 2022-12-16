@@ -175,7 +175,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         private readonly string CourseStatisticsQuery = @$"SELECT
                         cu.CustomisationID,
                         cu.CentreID,
-                        cu.Active,
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 0 ELSE cu.Active END AS Active,
                         cu.AllCentres,
                         ap.ApplicationId,
                         ap.ApplicationName,
@@ -188,7 +188,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cc.CategoryName,
                         ct.CourseTopic,
                         cu.LearningTimeMins AS LearningMinutes,
-                        cu.IsAssessed
+                        cu.IsAssessed,
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 1 ELSE 0 END AS Archived
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID

@@ -38,6 +38,7 @@
         public string CourseTopic { get; set; }
         public string LearningMinutes { get; set; }
         public bool Assessed { get; set; }
+        public string? Status { get; set; }
         public IEnumerable<CourseAdminFieldWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
         public bool HasAdminFields => AdminFieldWithResponseCounts.Any();
 

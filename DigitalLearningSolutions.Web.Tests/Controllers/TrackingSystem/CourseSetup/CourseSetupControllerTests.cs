@@ -81,6 +81,7 @@
                         HideInLearnerPortal = true,
                         DelegateCount = 1,
                         CompletedCount = 1,
+                        Archived = false,
                     },
                 }
             )

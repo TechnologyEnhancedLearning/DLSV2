@@ -2,7 +2,6 @@
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Models.Enums;
 
     public class SearchableTagViewModel : FilterOptionModel
     {
@@ -11,6 +10,16 @@
                 filterOption.DisplayText,
                 filterOption.FilterValue,
                 filterOption.TagStatus
+            )
+        {
+            Hidden = hidden;
+        }
+
+        public SearchableTagViewModel(string displayText, string filterValue, FilterStatus tagStatus, bool hidden = false)
+            : base(
+                displayText,
+                filterValue,
+                tagStatus
             )
         {
             Hidden = hidden;
