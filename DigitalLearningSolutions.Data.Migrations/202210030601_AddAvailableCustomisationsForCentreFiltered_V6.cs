@@ -3,7 +3,7 @@
     using FluentMigrator;
     using FluentMigrator.SqlServer;
 
-    [Migration(202210030601)]
+    [Migration(202210030615)]
     public class AddAvailableCustomisationsForCentreFiltered_V6 : Migration
     {
         public override void Up()
