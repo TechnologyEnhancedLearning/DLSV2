@@ -101,9 +101,6 @@
             ModelState.Remove("Page");
             if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             {
-                //delegateuserdataservice.GetCandidateNumberByDelegateId(int userId)
-
-
                 AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);//, "");
                 return RedirectToAction("MyStaffList", model.Page);
             }
@@ -139,7 +136,7 @@
                     {
                         if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
                         {
-                            AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);//, "");
+                            AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
                         }
                     }
                 }
@@ -156,8 +153,7 @@
             int adminId,
             string delegateEmail,
             string supervisorEmail,
-            int centreId//,
-            //string candidateNumber
+            int centreId
         )
         {
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(
@@ -165,8 +161,7 @@
                 null,
                 delegateEmail,
                 supervisorEmail,
-                centreId//,
-                //candidateNumber
+                centreId
             );
             if (supervisorDelegateId > 0)
             {

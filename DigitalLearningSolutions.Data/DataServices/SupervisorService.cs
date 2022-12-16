@@ -42,7 +42,7 @@
         void UpdateNotificationSent(int supervisorDelegateId);
         void UpdateCandidateAssessmentSupervisorVerificationById(int? candidateAssessmentSupervisorVerificationId, string? supervisorComments, bool signedOff);
         //INSERT DATA
-        int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);//, string candidateId);
+        int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
         int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
@@ -135,7 +135,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     ORDER BY c.LastName, COALESCE(c.FirstName, sd.DelegateEmail)", new { adminId }
                 );
         }
-        public int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId)//, string candidateNumber)
+        public int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId)
         {
             var addedByDelegate = (delegateId != null);
             if (delegateEmail.Length == 0 | supervisorEmail.Length == 0)
@@ -160,26 +160,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             {
                 if (delegateId == null)
                 {
-
-
-
-
-
-                    // TODO: Fix this for already registered (but never logged on) users
                     delegateId = (int?)connection.ExecuteScalar(
                         @"SELECT CandidateID FROM Candidates WHERE EmailAddress = @delegateEmail AND Active = 1 AND CentreID = @centreId", new { delegateEmail, centreId }
-
-
-
-
-
-                        //@"SELECT u.ID
-                        //        FROM dbo.Users u
-                        //        INNER JOIN dbo.DelegateAccounts da
-                        //        ON u.ID = da.UserID
-                        //        WHERE CandidateNumber = @candidateNumber
-                        //        AND u.Active = 1
-                        //        AND da.CenterId = @centreId", new { candidateNumber, centreId }
                         );
                 }
                 if (supervisorAdminId == null)
