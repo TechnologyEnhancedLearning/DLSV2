@@ -101,7 +101,7 @@
             ModelState.Remove("Page");
             if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             {
-                AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);//, "");
+                AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else
