@@ -591,7 +591,7 @@
                 var adminentity = new AdminEntity(adminAccount, userEntity.UserAccount, null);
                 CultureInfo currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
                 roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false)
-                                                .Select(d => currentCulture.TextInfo.ToTitleCase(d.DisplayText.ToLower())).ToList<string>();
+                                                .Select(d => d.DisplayText).ToList<string>();
             }
             if (delegateAccount != null)
             {

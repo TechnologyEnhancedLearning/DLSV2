@@ -10,6 +10,7 @@
         public bool HasLearning { get; set; }
         public bool IsAssessed { get; set; }
         public bool IsSelfAssessment { get; set; }
+        public bool SelfRegister { get; set; }
         public bool IncludesSignposting { get; set; }
         public int? CurrentVersion { get; set; }
         public override string SearchableName
