@@ -426,7 +426,7 @@
                 SupervisorComments = assessmentQuestion.SupervisorComments,
                 SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false,
                 Verified = assessmentQuestion.Verified,
-                SupervisorName = supervisorDelegate.SupervisorName
+                SupervisorName = assessmentQuestion.SupervisorName
             };
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             return model;
