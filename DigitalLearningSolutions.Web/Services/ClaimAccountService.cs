@@ -51,23 +51,6 @@
             var userMatchingEmail = userDataService.GetUserAccountByPrimaryEmail(email);
             var userAccountToBeClaimed = userDataService.GetUserAccountById(userIdForRegistration);
             var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userIdForRegistration).ToList();
-            var adminAccounts = userDataService.GetAdminAccountsByUserId(userIdForRegistration).ToList();
-
-            //TD-812 Condition for checking whether delegate is promoted to admin or not
-            if (adminAccounts.Count == 1)
-            {
-
-            }
-            else if (
-                delegateAccounts.Count != 1 ||
-                adminAccounts.Count != 0 ||
-                delegateAccounts.Any(da => da.CentreId != centreId)
-            )
-            {
-                throw new Exception(
-                    "Expected user account being claimed to only have one delegate account at the correct centre"
-                );
-            }
 
             var delegateAccountToBeClaimed = delegateAccounts.First();
 

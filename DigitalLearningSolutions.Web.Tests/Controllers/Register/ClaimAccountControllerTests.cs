@@ -607,6 +607,21 @@
 
         [Test]
         public void
+    LinkDlsAccountGet_when_the_logged_in_user_already_has_a_admin_account_at_the_centre_redirects_to_AdminAccountAlreadyExists()
+        {
+            // Given
+            var model = GivenClaimAccountViewModel(loggedInUserId: DefaultLoggedInUserId, centreId: DefaultCentreId);
+            GivenLoggedInUserWithAdminAccountAtCentre(DefaultLoggedInUserId, DefaultCentreId);
+
+            // When
+            var result = controllerWithLoggedInUser.LinkDlsAccount(model.Email, model.RegistrationConfirmationHash);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("AdminAccountAlreadyExists");
+        }
+
+        [Test]
+        public void
             LinkDlsAccountGet_when_the_claim_email_address_matches_the_primary_email_of_another_user_redirects_to_WrongUser()
         {
             // Given
@@ -820,6 +835,19 @@
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
                     { UserTestHelper.GetDefaultDelegateAccount(centreId: centreIdForDelegateAccount) }
+            );
+
+            A.CallTo(
+                () => userService.GetUserById(userId)
+            ).Returns(userEntity);
+        }
+
+        private void GivenLoggedInUserWithAdminAccountAtCentre(int userId, int centreIdForAdminAccount)
+        {
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount(centreId: centreIdForAdminAccount) },
+                new List<DelegateAccount>()
             );
 
             A.CallTo(
