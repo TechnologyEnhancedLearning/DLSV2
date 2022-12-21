@@ -234,7 +234,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.ID = @supervisorDelegateId) AND (sd.DelegateUserID = @delegateUserId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateUserId }
-                    //WHERE(sd.ID = @supervisorDelegateId) AND(sd.CandidateID = @delegateId OR sd.SupervisorAdminID = @adminId) AND(Removed IS NULL)", new { supervisorDelegateId, adminId, delegateId }
                ).FirstOrDefault();
         }
 
@@ -486,7 +485,7 @@ FROM   SelfAssessments AS rp INNER JOIN
 WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                  (SELECT SelfAssessmentID
                  FROM    CandidateAssessments AS CA
-                 WHERE (DelegateUserID = @delegatreUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))", new { delegateUserId, centreId }
+                 WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))", new { delegateUserId, centreId }
                 );
         }
 
@@ -554,7 +553,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @delegateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
                new { selfAssessmentId, delegateUserId });
 
             if (existingId > 0)
