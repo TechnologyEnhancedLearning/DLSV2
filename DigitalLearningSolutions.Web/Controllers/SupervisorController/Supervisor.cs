@@ -266,11 +266,11 @@
                 competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
             };
 
-            if (superviseDelegate.CandidateID != null)
+            if (superviseDelegate.DelegateUserID != null)
             {
-                model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
+                    model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
-                    (int)superviseDelegate.CandidateID
+                    (int)superviseDelegate.DelegateUserID
                 );
             }
 
@@ -518,8 +518,9 @@
 
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
+
             var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
-                (int)supervisorDelegate.CandidateID,
+                (int)supervisorDelegate.DelegateUserID,
                 GetCentreId()
             );
             var model = new EnrolDelegateOnProfileAssessmentViewModel()
@@ -551,7 +552,7 @@
                 var supervisorDelegate =
                     supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
-                    (int)supervisorDelegate.CandidateID,
+                    (int)supervisorDelegate.DelegateUserID,
                     GetCentreId()
                 );
                 var model = new EnrolDelegateOnProfileAssessmentViewModel()
@@ -773,7 +774,7 @@
             return View("EnrolDelegateSummary", model);
         }
 
-        public IActionResult EnrolDelegateConfirm(int delegateId, int supervisorDelegateId)
+        public IActionResult EnrolDelegateConfirm(int delegateUserId, int supervisorDelegateId)
         {
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
@@ -783,7 +784,7 @@
             var completeByDate = sessionEnrolOnRoleProfile.CompleteByDate;
             var selfAssessmentSupervisorRoleId = sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId;
             var candidateAssessmentId = supervisorService.EnrolDelegateOnAssessment(
-                delegateId,
+                delegateUserId,
                 supervisorDelegateId,
                 selfAssessmentId.Value,
                 completeByDate,
@@ -904,12 +905,12 @@
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegateDetail = superviseDelegate
             };
-            if (superviseDelegate.CandidateID != null)
+            if(superviseDelegate.DelegateUserID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
-                    (int)superviseDelegate.CandidateID
-                );
+                    (int)superviseDelegate.DelegateUserID
+                    );
             }
 
             return View("SignOffHistory", model);
@@ -936,16 +937,17 @@
 
                 var centreName = adminUser.CentreName;
 
-                var delegateAccount = userDataService.GetDelegateAccountById(supervisorDelegateDetail.CandidateID ?? 0)!;
+                var delegateAccount = userDataService.GetDelegateAccountById(supervisorDelegateDetail.DelegateUserID ?? 0)!;
 
                 var delegateToPromoteUserId = delegateAccount.UserId;
 
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
-                if (supervisorDelegateDetail.CandidateID != null)
+
+                if (supervisorDelegateDetail.DelegateUserID != null)
                 {
                     registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, delegateToPromoteUserId, (int)User.GetCentreId());
 
-                    var delegateUserEmailDetails = userDataService.GetDelegateById(supervisorDelegateDetail.CandidateID ?? 0);
+                    var delegateUserEmailDetails = userDataService.GetDelegateById(supervisorDelegateDetail.DelegateUserID ?? 0);
 
                     if (delegateUserEmailDetails != null && adminUser != null)
                     {
