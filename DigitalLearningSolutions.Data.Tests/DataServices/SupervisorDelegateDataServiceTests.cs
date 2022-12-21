@@ -40,7 +40,7 @@
                 ID = 8,
                 SupervisorAdminID = 1,
                 DelegateEmail = "kevin.whittaker@hee.nhs.uk",
-                DelegateUserID = 254480,
+                DelegateUserID = 281054,
                 Added = DateTime.Parse("2021-06-28 16:40:35.507"),
                 NotificationSent = DateTime.Parse("2021-06-28 16:40:35.507"),
                 Removed = null,
