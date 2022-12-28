@@ -11,6 +11,7 @@
     {
         private const int SelfAssessmentId = 1;
         private const int CandidateId = 11;
+        private const int UserId = 1;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
         private SqlConnection connection = null!;
         private CompetencyTestHelper competencyTestHelper = null!;

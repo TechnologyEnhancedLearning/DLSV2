@@ -22,7 +22,7 @@
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var supervisors = new List<SelfAssessmentSupervisor>();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
             var expectedModel = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
 
@@ -40,14 +40,14 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
             controller.SelfAssessment(SelfAssessmentId);
 
             // Then
-            A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
+            A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, UserId)).MustHaveHappened();
         }
 
         [Test]
@@ -55,14 +55,14 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
             controller.SelfAssessment(SelfAssessmentId);
 
             // Then
-            A.CallTo(() => selfAssessmentService.IncrementLaunchCount(selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.IncrementLaunchCount(selfAssessment.Id, UserId))
                 .MustHaveHappened();
         }
 
@@ -70,7 +70,7 @@
         public void SelfAssessment_action_without_self_assessment_should_return_403()
         {
             // Given
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(null);
 
             // When
@@ -91,9 +91,9 @@
             const int competencyNumber = 1;
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var competency = new Competency();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, UserId))
                 .Returns(competency);
             A.CallTo(() => frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id))
                 .Returns(new List<Data.Models.Frameworks.CompetencyFlag>() { });
@@ -118,14 +118,14 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
             controller.SelfAssessmentCompetency(SelfAssessmentId, 1);
 
             // Then
-            A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
+            A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, UserId)).MustHaveHappened();
         }
 
         [Test]
@@ -133,14 +133,14 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessment.Id + "/1";
             // When
             controller.SelfAssessmentCompetency(SelfAssessmentId, 1);
 
             // Then
-            A.CallTo(() => selfAssessmentService.SetBookmark(selfAssessment.Id, CandidateId, destUrl))
+            A.CallTo(() => selfAssessmentService.SetBookmark(selfAssessment.Id, UserId, destUrl))
                 .MustHaveHappened();
         }
 
@@ -150,9 +150,9 @@
             // Given
             const int competencyNumber = 3;
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, UserId))
                 .Returns(null);
 
             // When
@@ -166,7 +166,7 @@
         public void SelfAssessmentCompetency_action_without_self_assessment_should_return_403()
         {
             // Given
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(null);
 
             // When
@@ -204,7 +204,7 @@
                     AssessmentQuestionInputTypeID = assessmentQuestionInputTypeID,
                 },
             };
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
@@ -247,7 +247,7 @@
                     Result = assessmentQuestionResult,
                 },
             };
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
@@ -269,7 +269,7 @@
         public void SelfAssessmentCompetency_Post_without_self_assessment_should_return_403()
         {
             // Given
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(null);
 
             // When
@@ -303,9 +303,9 @@
                 SearchViewModel = new SearchSelfAssessmentOvervieviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, false, false, null),
                 AllQuestionsVerifiedOrNotRequired = false
             };
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, UserId))
                 .Returns(competencies);
 
             // When
@@ -322,16 +322,16 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(SelfAssessmentId, UserId))
                 .Returns(new List<Competency>() { });
 
             // When
             controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
-            A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
+            A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, UserId)).MustHaveHappened();
         }
 
         [Test]
@@ -339,14 +339,14 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
             string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessment.Id}/{selfAssessment.Vocabulary}";
             // When
             controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
-            A.CallTo(() => selfAssessmentService.SetBookmark(selfAssessment.Id, CandidateId, destUrl))
+            A.CallTo(() => selfAssessmentService.SetBookmark(selfAssessment.Id, UserId, destUrl))
                 .MustHaveHappened();
         }
 
@@ -366,9 +366,9 @@
                 SearchViewModel = new SearchSelfAssessmentOvervieviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, false, false, null),
                 AllQuestionsVerifiedOrNotRequired = false
             };
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, UserId))
                 .Returns(competencies);
 
             // When
@@ -384,7 +384,7 @@
         public void SelfAssessmentOverview_action_without_self_assessment_should_return_403()
         {
             // Given
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(null);
 
             // When
@@ -409,7 +409,7 @@
             var newDate = new DateTime(newYear, newMonth, newDay);
             var formData = new EditCompleteByDateFormData { Day = newDay, Month = newMonth, Year = newYear };
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
@@ -417,7 +417,7 @@
 
             // Then
             A.CallTo(
-                () => selfAssessmentService.SetCompleteByDate(selfAssessmentId, CandidateId, newDate)
+                () => selfAssessmentService.SetCompleteByDate(selfAssessmentId, UserId, newDate)
             ).MustHaveHappened();
         }
 
@@ -428,7 +428,7 @@
             const int selfAssessmentId = 1;
             var formData = new EditCompleteByDateFormData { Day = null, Month = null, Year = null };
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
@@ -436,7 +436,7 @@
 
             // Then
             A.CallTo(
-                () => selfAssessmentService.SetCompleteByDate(selfAssessmentId, CandidateId, null)
+                () => selfAssessmentService.SetCompleteByDate(selfAssessmentId, UserId, null)
             ).MustHaveHappened();
         }
 
@@ -451,7 +451,7 @@
             const int year = 3020;
             var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
@@ -473,7 +473,7 @@
             var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
             controller.ModelState.AddModelError("year", "message");
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
@@ -481,7 +481,7 @@
 
             // Then
             A.CallTo(
-                () => selfAssessmentService.SetCompleteByDate(selfAssessmentId, CandidateId, A<DateTime>._)
+                () => selfAssessmentService.SetCompleteByDate(selfAssessmentId, UserId, A<DateTime>._)
             ).MustNotHaveHappened();
         }
 
@@ -493,7 +493,7 @@
             const int month = 2;
             const int year = 2020;
             var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId))
                 .Returns(null);
 
             // When

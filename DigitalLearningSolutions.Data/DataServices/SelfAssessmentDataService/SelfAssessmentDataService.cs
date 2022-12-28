@@ -15,16 +15,16 @@
         // CompetencyDataService
         IEnumerable<int> GetCompetencyIdsForSelfAssessment(int selfAssessmentId);
 
-        Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
+        Competency? GetNthCompetency(int n, int selfAssessmentId, int userId); // 1 indexed
 
-        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int userId);
 
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null);
 
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
 
-        IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId);
-        IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int userId);
+        IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int userId);
 
         Competency? GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
 
@@ -37,11 +37,11 @@
             string? supportingComments
         );
 
-        IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int userId);
 
-        void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int candidateId);
+        void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int userId);
 
-        void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int candidateId);
+        void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int userId);
 
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(
             int assessmentQuestionId,
@@ -50,7 +50,7 @@
             bool zeroBased
         );
 
-        List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int candidateId);
+        List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int userId);
 
         CompetencyAssessmentQuestionRoleRequirement? GetCompetencyAssessmentQuestionRoleRequirements(
             int competencyId,
@@ -66,44 +66,44 @@
         );
 
         // CandidateAssessmentsDataService
-        IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
+        IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForUser(int userId);
 
-        CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
+        CurrentSelfAssessment? GetSelfAssessmentForUserById(int userId, int selfAssessmentId);
 
-        void UpdateLastAccessed(int selfAssessmentId, int candidateId);
+        void UpdateLastAccessed(int selfAssessmentId, int userId);
 
-        void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate);
+        void SetCompleteByDate(int selfAssessmentId, int userId, DateTime? completeByDate);
 
-        void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
+        void SetSubmittedDateNow(int selfAssessmentId, int userId);
 
-        void IncrementLaunchCount(int selfAssessmentId, int candidateId);
+        void IncrementLaunchCount(int selfAssessmentId, int userId);
 
-        void SetUpdatedFlag(int selfAssessmentId, int candidateId, bool status);
+        void SetUpdatedFlag(int selfAssessmentId, int userId, bool status);
 
-        void SetBookmark(int selfAssessmentId, int candidateId, string bookmark);
+        void SetBookmark(int selfAssessmentId, int userId, string bookmark);
 
-        IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateId, int selfAssessmentId);
+        IEnumerable<CandidateAssessment> GetCandidateAssessments(int userId, int selfAssessmentId);
 
         // SelfAssessmentSupervisorDataService
         SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId);
 
-        IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
+        IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int userId);
 
-        IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId);
+        IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int userId);
 
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int userId
         );
 
         IEnumerable<SelfAssessmentSupervisor> GetResultReviewSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int userId
         );
 
         IEnumerable<SelfAssessmentSupervisor> GetSignOffSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int userId
         );
 
         SelfAssessmentSupervisor? GetSelfAssessmentSupervisorByCandidateAssessmentSupervisorId(
@@ -114,15 +114,15 @@
 
         void UpdateCandidateAssessmentSupervisorVerificationEmailSent(int candidateAssessmentSupervisorVerificationId);
 
-        SupervisorComment? GetSupervisorComments(int candidateId, int resultId);
+        SupervisorComment? GetSupervisorComments(int userId, int resultId);
 
-        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int candidateId);
+        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int userId);
 
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
 
         IEnumerable<SupervisorSignOff> GetSupervisorSignOffsForCandidateAssessment(
             int selfAssessmentId,
-            int candidateId
+            int userId
         );
 
         // FilteredDataService
@@ -135,12 +135,12 @@
         //Export Candidate Assessment
         CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(
             int candidateAssessmentId,
-            int candidateId
+            int userId
         );
 
         List<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(
             int candidateAssessmentId,
-            int candidateId
+            int userId
         );
     }
 

@@ -19,6 +19,7 @@
     {
         private const int DelegateId = 2;
         private const int SelfAssessmentId = 1;
+        private const int UserId = 2;
 
         private IActionPlanService actionPlanService = null!;
         private IConfiguration configuration = null!;
@@ -87,9 +88,9 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => selfAssessmentService.SetBookmark(SelfAssessmentId, DelegateId, expectedBookmarkString))
+                A.CallTo(() => selfAssessmentService.SetBookmark(SelfAssessmentId, UserId, expectedBookmarkString))
                     .MustHaveHappenedOnceExactly();
-                A.CallTo(() => selfAssessmentService.UpdateLastAccessed(SelfAssessmentId, DelegateId))
+                A.CallTo(() => selfAssessmentService.UpdateLastAccessed(SelfAssessmentId, UserId))
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(() => filteredApiHelperService.GetUserAccessToken<AccessToken>(A<string>._))
                     .MustNotHaveHappened();

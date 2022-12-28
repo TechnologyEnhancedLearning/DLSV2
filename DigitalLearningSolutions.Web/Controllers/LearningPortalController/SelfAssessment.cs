@@ -46,21 +46,21 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}")]
         public IActionResult SelfAssessment(int selfAssessmentId)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            var userId = User.GetUserIdKnownNotNull();
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
             if (selfAssessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment description for candidate {candidateId} with no self assessment"
+                    $"Attempt to display self assessment description for user {userId} with no self assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            selfAssessmentService.IncrementLaunchCount(selfAssessmentId, candidateId);
-            selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
+            selfAssessmentService.IncrementLaunchCount(selfAssessmentId, userId);
+            selfAssessmentService.UpdateLastAccessed(selfAssessmentId, userId);
             var supervisors = selfAssessmentService.GetSupervisorsForSelfAssessmentId(
                 selfAssessmentId,
-                candidateId
+                userId
             ).ToList();
             var model = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
             return View("SelfAssessments/SelfAssessmentDescription", model);
@@ -69,22 +69,22 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
         public IActionResult SelfAssessmentCompetency(int selfAssessmentId, int competencyNumber)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
+            var userId = User.GetUserIdKnownNotNull();
             var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/" + competencyNumber;
-            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
-                candidateId,
+            selfAssessmentService.SetBookmark(selfAssessmentId, userId, destUrl);
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(
+                userId,
                 selfAssessmentId
             );
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment competency for candidate {candidateId} with no self assessment"
+                    $"Attempt to display self assessment competency for user {userId} with no self assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, candidateId);
+            var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, userId);
             if (competency == null)
             {
                 return RedirectToAction(
@@ -103,7 +103,7 @@
                 ).ToList();
             }
 
-            selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
+            selfAssessmentService.UpdateLastAccessed(assessment.Id, userId);
             competency.CompetencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id);
             var model = new SelfAssessmentCompetencyViewModel(
                 assessment,
@@ -144,11 +144,12 @@
         )
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            var userId = User.GetUserIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to set self assessment competency for candidate {candidateId} with no self assessment"
+                    $"Attempt to set self assessment competency for user {userId} with no self assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -176,7 +177,7 @@
                 }
             }
 
-            selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, true);
+            selfAssessmentService.SetUpdatedFlag(selfAssessmentId, userId, true);
             if (assessment.LinearNavigation)
             {
                 return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
@@ -200,23 +201,23 @@
         )]
         public IActionResult SupervisorComments(int selfAssessmentId, int competencyNumber, int resultId)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
+            var userId = User.GetUserIdKnownNotNull();
             var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Proficiencies/" + competencyNumber +
                           "/Viewnotes";
 
-            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
+            selfAssessmentService.SetBookmark(selfAssessmentId, userId, destUrl);
 
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
 
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment overview for candidate {candidateId} with no self assessment"
+                    $"Attempt to display self assessment overview for user {userId} with no self assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var supervisorComment = selfAssessmentService.GetSupervisorComments(candidateId, resultId);
+            var supervisorComment = selfAssessmentService.GetSupervisorComments(userId, resultId);
 
             if (supervisorComment == null)
             {
@@ -308,23 +309,23 @@
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}")]
         public IActionResult SelfAssessmentOverview(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, SearchSelfAssessmentOvervieviewViewModel searchModel = null)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
+            var userId = User.GetUserIdKnownNotNull();
             var destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}";
-            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            selfAssessmentService.SetBookmark(selfAssessmentId, userId, destUrl);
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment overview for candidate {candidateId} with no self assessment"
+                    $"Attempt to display self assessment overview for user {userId} with no self assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
-            selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
-            var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
+            var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, userId);
+            selfAssessmentService.UpdateLastAccessed(assessment.Id, userId);
+            var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, userId);
 
-            var recentResults = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
+            var recentResults = selfAssessmentService.GetMostRecentResults(assessment.Id, userId).ToList();
             var competencyIds = recentResults.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
             var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, searchModel);
@@ -371,16 +372,16 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, EditCompleteByDateFormData formData)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
-                candidateId,
+            var userId = User.GetUserIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(
+                userId,
                 selfAssessmentId
             );
 
             if (assessment is { Id: 0 })
             {
                 logger.LogWarning(
-                    $"Attempt to set complete by date for candidate {candidateId} with no self assessment"
+                    $"Attempt to set complete by date for user {userId} with no self assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -397,7 +398,7 @@
 
             selfAssessmentService.SetCompleteByDate(
                 selfAssessmentId,
-                candidateId,
+                userId,
                 completeByDate
             );
             return RedirectToAction("Current");
@@ -407,15 +408,15 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, ReturnPageQuery returnPageQuery)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
-                candidateId,
+            var userId = User.GetUserIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(
+                userId,
                 selfAssessmentId
             );
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to view self assessment complete by date edit page for candidate {candidateId} with no self assessment"
+                    $"Attempt to view self assessment complete by date edit page for user {userId} with no self assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -434,24 +435,24 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors")]
         public IActionResult ManageSupervisors(int selfAssessmentId)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
-                candidateId,
+            var userId = User.GetUserIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(
+                userId,
                 selfAssessmentId
             );
             if (assessment == null)
             {
-                logger.LogWarning($"Attempt to manage supervisors for candidate {candidateId} with no self assessment");
+                logger.LogWarning($"Attempt to manage supervisors for user {userId} with no self assessment");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(selfAssessmentId, candidateId)
+            var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(selfAssessmentId, userId)
                 .ToList();
             var suggestedSupervisors = new List<SelfAssessmentSupervisor>();
             if (assessment.HasDelegateNominatedRoles)
             {
                 suggestedSupervisors = selfAssessmentService
-                    .GetOtherSupervisorsForCandidate(selfAssessmentId, candidateId)
+                    .GetOtherSupervisorsForCandidate(selfAssessmentId, userId)
                     .Where(item => supervisors.All(s => !item.SupervisorAdminID.Equals(s.SupervisorAdminID)))
                     .ToList();
             }
@@ -475,7 +476,7 @@
 
             int? supervisorRoleId = roles.First().ID;
             supervisorService.InsertCandidateAssessmentSupervisor(
-                User.GetCandidateIdKnownNotNull(),
+                User.GetUserIdKnownNotNull(),
                 supervisorDelegateId,
                 selfAssessmentId,
                 supervisorRoleId
@@ -486,8 +487,8 @@
         public IActionResult StartAddNewSupervisor(int selfAssessmentId)
         {
             TempData.Clear();
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
-                User.GetCandidateIdKnownNotNull(),
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForUserById(
+                User.GetUserIdKnownNotNull(),
                 selfAssessmentId
             );
             if (selfAssessment == null)
@@ -529,7 +530,7 @@
             var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
                 User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
-                User.GetCandidateIdKnownNotNull()
+                User.GetUserIdKnownNotNull()
             );
             var model = new AddSupervisorViewModel
             {
@@ -554,7 +555,7 @@
                 var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
                User.GetCentreIdKnownNotNull(),
                sessionAddSupervisor.SelfAssessmentID,
-               User.GetCandidateIdKnownNotNull()
+               User.GetUserIdKnownNotNull()
            );
                 model.Supervisors = supervisors;
                 return View("SelfAssessments/AddSupervisor", model);
@@ -601,6 +602,7 @@
             int? selfAssessmentSupervisorRoleId = null;
             string selfAssessmentName;
             var supervisorAdminId = 0;
+            var userId = User.GetUserIdKnownNotNull();
             if (supervisorDelegateId == null)
             {
                 var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
@@ -624,7 +626,7 @@
             else
             {
                 var selfAssessment =
-                    selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
+                    selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
                 if (selfAssessment == null)
                 {
                     return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -634,7 +636,7 @@
                 var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(
                     (int)supervisorDelegateId,
                     0,
-                    GetCandidateId()
+                    userId
                 );
                 if (supervisorDelegate.SupervisorAdminID != null)
                 {
@@ -767,7 +769,7 @@
                 User.GetCentreIdKnownNotNull()
             );
             supervisorService.InsertCandidateAssessmentSupervisor(
-                candidateId,
+                 User.GetUserIdKnownNotNull(),
                 supervisorDelegateId,
                 sessionAddSupervisor.SelfAssessmentID,
                 sessionAddSupervisor.SelfAssessmentSupervisorRoleId
@@ -799,8 +801,8 @@
         public IActionResult StartRequestVerification(int selfAssessmentId)
         {
             TempData.Clear();
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
-                User.GetCandidateIdKnownNotNull(),
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForUserById(
+                User.GetUserIdKnownNotNull(),
                 selfAssessmentId
             );
             if (selfAssessment == null)
@@ -826,15 +828,15 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests")]
         public IActionResult ReviewConfirmationRequests(int selfAssessmentId)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            var userId = User.GetUserIdKnownNotNull();
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
             if (selfAssessment == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)(HttpStatusCode.NotFound) });
             }
 
             var competencies = PopulateCompetencyLevelDescriptors(
-                selfAssessmentService.GetResultSupervisorVerifications(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList()
+                selfAssessmentService.GetResultSupervisorVerifications(selfAssessmentId, userId).ToList()
             );
             var model = new ReviewConfirmationRequestsViewModel
             {
@@ -867,10 +869,10 @@
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
             );
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            var userId = User.GetUserIdKnownNotNull();
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
             var supervisors = selfAssessmentService
-                .GetResultReviewSupervisorsForSelfAssessmentId(selfAssessmentId, candidateId).ToList();
+                .GetResultReviewSupervisorsForSelfAssessmentId(selfAssessmentId, userId).ToList();
             var model = new VerificationPickSupervisorViewModel
             {
                 SelfAssessment = selfAssessment,
@@ -899,17 +901,17 @@
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
             );
-            var candidateId = User.GetCandidateIdKnownNotNull();
+            var userId = User.GetUserIdKnownNotNull();
             if (!ModelState.IsValid)
             {
-                var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
-                    candidateId,
+                var selfAssessment = selfAssessmentService.GetSelfAssessmentForUserById(
+                    userId,
                     sessionRequestVerification.SelfAssessmentID
                 );
                 model.SelfAssessment = selfAssessment;
                 model.Supervisors = selfAssessmentService.GetResultReviewSupervisorsForSelfAssessmentId(
                     sessionRequestVerification.SelfAssessmentID,
-                    candidateId
+                    userId
                 ).ToList();
                 ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification.SupervisorSelfAssessmentReview;
                 return View("SelfAssessments/VerificationPickSupervisor", model);
@@ -948,7 +950,7 @@
             var competencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
                     selfAssessmentId,
-                    User.GetCandidateIdKnownNotNull()
+                    User.GetUserIdKnownNotNull()
                 ).ToList()
             );
             var model = new VerificationPickResultsViewModel
@@ -981,7 +983,7 @@
                 var competencies = PopulateCompetencyLevelDescriptors(
                     selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
                         selfAssessmentId,
-                        User.GetCandidateIdKnownNotNull()
+                        User.GetUserIdKnownNotNull()
                     ).ToList()
                 );
                 model.CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
@@ -1031,8 +1033,8 @@
             }
 
             var supervisorString = $"{supervisor.SupervisorName} ({supervisor.SupervisorEmail})";
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
-                User.GetCandidateIdKnownNotNull(),
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForUserById(
+                User.GetUserIdKnownNotNull(),
                 sessionRequestVerification.SelfAssessmentID
             );
             if (sessionRequestVerification.ResultIds == null)
@@ -1132,14 +1134,14 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Optional")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            var userId = User.GetUserIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
             var optionalCompetencies =
-                selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
+                selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, userId);
             var includedSelfAssessmentStructureIds =
                 selfAssessmentService.GetCandidateAssessmentIncludedSelfAssessmentStructureIds(
                     selfAssessmentId,
-                    candidateId
+                    userId
                 );
             var model = new ManageOptionalCompetenciesViewModel
             {
@@ -1158,10 +1160,10 @@
             ManageOptionalCompetenciesViewModel model
         )
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
+            var userId = User.GetUserIdKnownNotNull();
             selfAssessmentService.InsertCandidateAssessmentOptionalCompetenciesIfNotExist(
                 selfAssessmentId,
-                candidateId
+                userId
             );
             if (model.IncludedSelfAssessmentStructureIds != null)
             {
@@ -1169,7 +1171,7 @@
                 {
                     selfAssessmentService.UpdateCandidateAssessmentOptionalCompetencies(
                         selfAssessmentStructureId,
-                        candidateId
+                        userId
                     );
                 }
             }
@@ -1180,10 +1182,10 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
         public IActionResult RequestSignOff(int selfAssessmentId)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            var userId = User.GetUserIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
             var supervisors =
-                selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, candidateId);
+                selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, userId);
             var model = new RequestSignOffViewModel
             {
                 SelfAssessment = assessment,
@@ -1197,11 +1199,12 @@
         public IActionResult RequestSignOff(int selfAssessmentId, string vocabulary, RequestSignOffViewModel model)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
+            var userId = User.GetUserIdKnownNotNull();
             if (!ModelState.IsValid)
             {
-                var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+                var assessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
                 var supervisors =
-                    selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, candidateId);
+                    selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, userId);
                 var newModel = new RequestSignOffViewModel
                 {
                     SelfAssessment = assessment,
@@ -1242,10 +1245,10 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/SignOffHistory")]
         public IActionResult SignOffHistory(int selfAssessmentId, string vocabulary)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            var userId = User.GetUserIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForUserById(userId, selfAssessmentId);
             var supervisorSignOffs =
-                selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
+                selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, userId);
             var model = new SignOffHistoryViewModel
             {
                 SelfAssessment = assessment,
@@ -1255,7 +1258,7 @@
         }
         public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary)
         {
-            var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, GetCandidateId(), true);
+            var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, User.GetUserIdKnownNotNull(), true);
             var fileName = $"DLS {vocabulary} Assessment Export {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
             return File(
                 content,

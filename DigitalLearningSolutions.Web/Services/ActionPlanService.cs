@@ -7,6 +7,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Utilities;
@@ -51,6 +52,7 @@
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
         private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
+        private readonly IUserDataService userDataService;
 
         public ActionPlanService(
             ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,
@@ -59,7 +61,8 @@
             ILearningHubResourceService learningHubResourceService,
             ISelfAssessmentDataService selfAssessmentDataService,
             IConfiguration config,
-            ILearningResourceReferenceDataService learningResourceReferenceDataService
+            ILearningResourceReferenceDataService learningResourceReferenceDataService,
+            IUserDataService userDataService
         )
         {
             this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
@@ -69,6 +72,7 @@
             this.selfAssessmentDataService = selfAssessmentDataService;
             this.config = config;
             this.learningResourceReferenceDataService = learningResourceReferenceDataService;
+            this.userDataService = userDataService;
         }
 
         public async Task AddResourceToActionPlan(int learningResourceReferenceId, int delegateId, int selfAssessmentId)
@@ -114,14 +118,15 @@
 
             // We can assume a single Candidate Assessment because we'll be adding a uniqueness constraint
             // on CandidateAssessments (candidateId, selfAssessmentId) before releasing (see HEEDLS-932)
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
             var candidateAssessmentIdIfAny = selfAssessmentDataService
-                .GetCandidateAssessments(delegateId, selfAssessmentId)
+                .GetCandidateAssessments(userId, selfAssessmentId)
                 .SingleOrDefault()?.Id;
 
             if (candidateAssessmentIdIfAny == null)
             {
                 throw new InvalidOperationException(
-                    $"Cannot add resource to action plan as user {delegateId} is not enrolled on self assessment {selfAssessmentId}"
+                    $"Cannot add resource to action plan as user {userId} is not enrolled on self assessment {selfAssessmentId}"
                 );
             }
 

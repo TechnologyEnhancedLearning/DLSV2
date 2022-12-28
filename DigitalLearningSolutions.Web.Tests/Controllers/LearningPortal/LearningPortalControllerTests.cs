@@ -19,6 +19,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     {
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 11;
+        private const int UserId = 1;
         private const int SelfAssessmentId = 1;
         private const string Vocabulary = "Capabilities";
         private const int CentreId = 2;
@@ -64,6 +65,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                     {
                         new Claim("learnCandidateID", CandidateId.ToString()),
                         new Claim("UserCentreID", CentreId.ToString()),
+                        new Claim("UserId", UserId.ToString()),
                     },
                     "mock"
                 )

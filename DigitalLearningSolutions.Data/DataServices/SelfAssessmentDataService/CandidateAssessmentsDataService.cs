@@ -8,7 +8,7 @@
 
     public partial class SelfAssessmentDataService
     {
-        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId)
+        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForUser(int userId)
         {
             return connection.Query<CurrentSelfAssessment>(
                 @"SELECT
@@ -37,18 +37,18 @@
                         ON CA.SelfAssessmentID = SAS.SelfAssessmentID
                     INNER JOIN Competencies AS C
                         ON SAS.CompetencyID = C.ID
-                    WHERE CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
+                    WHERE CA.DelegateUserID = @userId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
-                new { candidateId }
+                new { userId }
             );
         }
 
-        public CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId)
+        public CurrentSelfAssessment? GetSelfAssessmentForUserById(int userId, int selfAssessmentId)
         {
             return connection.QueryFirstOrDefault<CurrentSelfAssessment>(
                 @"SELECT
@@ -108,7 +108,7 @@
                             ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID = @selfAssessmentId
                     LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                             ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
-                    WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL
+                    WHERE CA.DelegateUserID = @userId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL
                         AND CA.CompletedDate IS NULL AND ((SAS.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description,
@@ -119,119 +119,119 @@
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription",
-                new { candidateId, selfAssessmentId }
+                new { userId, selfAssessmentId }
             );
         }
 
-        public void UpdateLastAccessed(int selfAssessmentId, int candidateId)
+        public void UpdateLastAccessed(int selfAssessmentId, int userId)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE CandidateAssessments SET LastAccessed = GETUTCDATE()
-                      WHERE SelfAssessmentID = @selfAssessmentId AND CandidateID = @candidateId",
-                new { selfAssessmentId, candidateId }
+                      WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @userId",
+                new { selfAssessmentId, userId }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not updating self assessment last accessed date as db update failed. " +
-                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
+                    $"Self assessment id: {selfAssessmentId}, user id: {userId}"
                 );
             }
         }
 
-        public void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate)
+        public void SetCompleteByDate(int selfAssessmentId, int userId, DateTime? completeByDate)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE CandidateAssessments
                         SET CompleteByDate = @date
                         WHERE SelfAssessmentID = @selfAssessmentId
-                          AND CandidateID = @candidateId",
-                new { date = completeByDate, selfAssessmentId, candidateId }
+                          AND DelegateUserID = @userId",
+                new { date = completeByDate, selfAssessmentId, userId }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not setting self assessment complete by date as db update failed. " +
-                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}, complete by date: {completeByDate}"
+                    $"Self assessment id: {selfAssessmentId}, user id: {userId}, complete by date: {completeByDate}"
                 );
             }
         }
 
-        public void SetUpdatedFlag(int selfAssessmentId, int candidateId, bool status)
+        public void SetUpdatedFlag(int selfAssessmentId, int userId, bool status)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE CandidateAssessments
                         SET UnprocessedUpdates = @status
                         WHERE SelfAssessmentID = @selfAssessmentId
-                          AND CandidateID = @candidateId",
-                new { status, selfAssessmentId, candidateId }
+                          AND DelegateUserID = @userId",
+                new { status, selfAssessmentId, userId }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not setting self assessment updated flag as db update failed. " +
-                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}, status: {status}"
+                    $"Self assessment id: {selfAssessmentId}, user id: {userId}, status: {status}"
                 );
             }
         }
 
-        public void SetBookmark(int selfAssessmentId, int candidateId, string bookmark)
+        public void SetBookmark(int selfAssessmentId, int userId, string bookmark)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE CandidateAssessments
                         SET UserBookmark = @bookmark
                         WHERE SelfAssessmentID = @selfAssessmentId
-                          AND CandidateID = @candidateId",
-                new { bookmark, selfAssessmentId, candidateId }
+                          AND DelegateUserID = @userId",
+                new { bookmark, selfAssessmentId, userId }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not setting self assessment bookmark as db update failed. " +
-                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}, bookmark: {bookmark}"
+                    $"Self assessment id: {selfAssessmentId}, user id: {userId}, bookmark: {bookmark}"
                 );
             }
         }
 
-        public void IncrementLaunchCount(int selfAssessmentId, int candidateId)
+        public void IncrementLaunchCount(int selfAssessmentId, int userId)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE CandidateAssessments SET LaunchCount = LaunchCount+1
-                      WHERE SelfAssessmentID = @selfAssessmentId AND CandidateID = @candidateId",
-                new { selfAssessmentId, candidateId }
+                      WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @userId",
+                new { selfAssessmentId, userId }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not updating self assessment launch count as db update failed. " +
-                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
+                    $"Self assessment id: {selfAssessmentId}, user id: {userId}"
                 );
             }
         }
 
-        public void SetSubmittedDateNow(int selfAssessmentId, int candidateId)
+        public void SetSubmittedDateNow(int selfAssessmentId, int userId)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE CandidateAssessments SET SubmittedDate = GETUTCDATE()
-                      WHERE SelfAssessmentID = @selfAssessmentId AND CandidateID = @candidateId AND SubmittedDate IS NULL",
-                new { selfAssessmentId, candidateId }
+                      WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @userId AND SubmittedDate IS NULL",
+                new { selfAssessmentId, userId }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not setting self assessment submitted date as db update failed. " +
-                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
+                    $"Self assessment id: {selfAssessmentId}, user id: {userId}"
                 );
             }
         }
 
-        public IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateId, int selfAssessmentId)
+        public IEnumerable<CandidateAssessment> GetCandidateAssessments(int userId, int selfAssessmentId)
         {
             return connection.Query<CandidateAssessment>(
                 @"SELECT
@@ -242,8 +242,8 @@
                         RemovedDate
                     FROM CandidateAssessments
                     WHERE SelfAssessmentID = @selfAssessmentId
-                        AND CandidateId = @delegateId",
-                new { selfAssessmentId, delegateId }
+                        AND DelegateUserID = @userId",
+                new { selfAssessmentId, userId }
             );
         }
     }

@@ -12,7 +12,7 @@
 
     public interface ICandidateAssessmentDownloadFileService
     {
-        public byte[] GetCandidateAssessmentDownloadFileForCentre(int candidateAssessmentId, int candidateId, bool isProtected);
+        public byte[] GetCandidateAssessmentDownloadFileForCentre(int candidateAssessmentId, int userId, bool isProtected);
     }
 
     public class CandidateAssessmentDownloadFileService : ICandidateAssessmentDownloadFileService
@@ -28,10 +28,10 @@
             this.selfAssessmentDataService = selfAssessmentDataService;
             this.config = config;
         }
-        public byte[] GetCandidateAssessmentDownloadFileForCentre(int candidateAssessmentId, int candidateId, bool isProtected)
+        public byte[] GetCandidateAssessmentDownloadFileForCentre(int candidateAssessmentId, int userId, bool isProtected)
         {
-            var summaryData = selfAssessmentDataService.GetCandidateAssessmentExportSummary(candidateAssessmentId, candidateId);
-            var detailData = selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId, candidateId);
+            var summaryData = selfAssessmentDataService.GetCandidateAssessmentExportSummary(candidateAssessmentId, userId);
+            var detailData = selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId, userId);
             var details = detailData.Select(
                 x => new
                 {

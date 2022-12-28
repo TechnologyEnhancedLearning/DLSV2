@@ -22,7 +22,7 @@
                "to build up a picture of digital capability across the workforce to help with service design and learning provision.";
 
             // When
-            var result = selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId);
+            var result = selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId);
 
             // Then
             var expectedSelfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(
@@ -45,7 +45,7 @@
         public void GetSelfAssessmentForCandidateById_should_return_null_when_there_are_no_matching_assessments()
         {
             // When
-            var result = selfAssessmentDataService.GetSelfAssessmentForCandidateById(2, SelfAssessmentId);
+            var result = selfAssessmentDataService.GetSelfAssessmentForUserById(1, SelfAssessmentId);
 
             // Then
             result.Should().BeNull();
@@ -57,9 +57,9 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.UpdateLastAccessed(SelfAssessmentId, CandidateId);
+                selfAssessmentDataService.UpdateLastAccessed(SelfAssessmentId, UserId);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.LastAccessed.Should().NotBeNull();
@@ -76,8 +76,8 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.UpdateLastAccessed(invalidSelfAssessmentId, CandidateId);
-                var updatedSelfAssessment =  selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                selfAssessmentDataService.UpdateLastAccessed(invalidSelfAssessmentId, UserId);
+                var updatedSelfAssessment =  selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.LastAccessed.Should().BeNull();
@@ -93,9 +93,9 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetCompleteByDate(SelfAssessmentId, CandidateId, expectedCompleteByDate);
+                selfAssessmentDataService.SetCompleteByDate(SelfAssessmentId, UserId, expectedCompleteByDate);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.CompleteByDate.Should().Be(expectedCompleteByDate);
@@ -108,9 +108,9 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetCompleteByDate(SelfAssessmentId, CandidateId, null);
+                selfAssessmentDataService.SetCompleteByDate(SelfAssessmentId, UserId, null);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.CompleteByDate.Should().BeNull();
@@ -126,9 +126,9 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetCompleteByDate(invalidSelfAssessmentId, CandidateId, DateTime.UtcNow);
+                selfAssessmentDataService.SetCompleteByDate(invalidSelfAssessmentId, UserId, DateTime.UtcNow);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.CompleteByDate.Should().BeNull();
@@ -141,9 +141,9 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetUpdatedFlag(SelfAssessmentId, CandidateId, true);
+                selfAssessmentDataService.SetUpdatedFlag(SelfAssessmentId, UserId, true);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.UnprocessedUpdates.Should().BeTrue();
@@ -159,10 +159,10 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetUpdatedFlag(SelfAssessmentId, CandidateId, false);
-                selfAssessmentDataService.SetUpdatedFlag(invalidSelfAssessmentId, CandidateId, true);
+                selfAssessmentDataService.SetUpdatedFlag(SelfAssessmentId, UserId, false);
+                selfAssessmentDataService.SetUpdatedFlag(invalidSelfAssessmentId, UserId, true);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.UnprocessedUpdates.Should().BeFalse();
@@ -175,9 +175,9 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetBookmark(SelfAssessmentId, CandidateId, "");
+                selfAssessmentDataService.SetBookmark(SelfAssessmentId, UserId, "");
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.UserBookmark.Should().Be("");
@@ -193,9 +193,9 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetBookmark(invalidSelfAssessmentId, CandidateId, "test");
+                selfAssessmentDataService.SetBookmark(invalidSelfAssessmentId, UserId, "test");
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.UserBookmark.Should().NotBe("test");
@@ -209,11 +209,11 @@
             {
                 // When
                 var originalSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
                 var originalLaunchCount = originalSelfAssessment.LaunchCount;
-                selfAssessmentDataService.IncrementLaunchCount(SelfAssessmentId, CandidateId);
+                selfAssessmentDataService.IncrementLaunchCount(SelfAssessmentId, UserId);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.LaunchCount.Should().BeGreaterThan(originalLaunchCount);
@@ -230,11 +230,11 @@
             {
                 // When
                 var originalSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
                 var originalLaunchCount = originalSelfAssessment.LaunchCount;
-                selfAssessmentDataService.IncrementLaunchCount(invalidSelfAssessmentId, CandidateId);
+                selfAssessmentDataService.IncrementLaunchCount(invalidSelfAssessmentId, UserId);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.LaunchCount.Should().Be(originalLaunchCount);
@@ -248,11 +248,11 @@
             {
                 // When
                 var originalSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
                 var originalSubmittedDate = originalSelfAssessment.SubmittedDate;
-                selfAssessmentDataService.SetSubmittedDateNow(SelfAssessmentId, CandidateId);
+                selfAssessmentDataService.SetSubmittedDateNow(SelfAssessmentId, UserId);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 originalSubmittedDate.Should().BeNull();
@@ -270,11 +270,11 @@
             {
                 // When
                 var originalSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
                 var originalSubmittedDate = originalSelfAssessment.SubmittedDate;
-                selfAssessmentDataService.SetSubmittedDateNow(invalidSelfAssessmentId, CandidateId);
+                selfAssessmentDataService.SetSubmittedDateNow(invalidSelfAssessmentId, UserId);
                 var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                    selfAssessmentDataService.GetSelfAssessmentForUserById(UserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.SubmittedDate.Should().Be(originalSubmittedDate);
@@ -292,11 +292,12 @@
                 DelegateId = delegateId,
                 SelfAssessmentId = SelfAssessmentId,
                 CompletedDate = null,
-                RemovedDate = null
+                RemovedDate = null,
+                
             };
 
             // When
-            var result = selfAssessmentDataService.GetCandidateAssessments(delegateId, SelfAssessmentId).ToList();
+            var result = selfAssessmentDataService.GetCandidateAssessments(UserId, SelfAssessmentId).ToList();
 
             // Then
             using (new AssertionScope())

@@ -65,46 +65,46 @@
 
         public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int userId
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{BaseGetSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.CandidateID = @candidateId)
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @userId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId)",
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, userId }
             );
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int userId
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)",
-                new { selfAssessmentId, candidateId }
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @userId) AND (ca.SelfAssessmentID = @selfAssessmentId)",
+                new { selfAssessmentId, userId }
             );
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetResultReviewSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int userId
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.CandidateID = @candidateId)
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @userId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL)
                         AND (coalesce(sasr.ResultsReview, 1) = 1)",
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, userId }
             );
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(
             int selfAssessmentId,
-            int candidateId
+            int userId
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
@@ -121,10 +121,10 @@
                 INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
                 INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
                 INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID AND au.Active = 1 
-                WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (ca.DelegateUserID = @userId)
 		            AND (au.Supervisor = 1 OR au.NominatedSupervisor = 1) AND (au.Active = 1)
 		            AND (ca.SelfAssessmentID <> @selfAssessmentId)",
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, userId }
             );
         }
 
@@ -141,15 +141,15 @@
 
         public IEnumerable<SelfAssessmentSupervisor> GetSignOffSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int userId
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @userId) AND (ca.SelfAssessmentID = @selfAssessmentId)
                         AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1)
                         AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))",
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, userId }
             );
         }
 
@@ -183,7 +183,7 @@
             );
         }
 
-        public SupervisorComment? GetSupervisorComments(int candidateId, int resultId)
+        public SupervisorComment? GetSupervisorComments(int userId, int resultId)
         {
             return connection.Query<SupervisorComment>(
                 @"SELECT
@@ -213,15 +213,16 @@
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
                     AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID INNER JOIN
                     SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE (sar.CandidateID = @candidateId) AND (sasv.SelfAssessmentResultId = @resultId)",
-                new { candidateId, resultId }
+                    INNER JOIN DelegateAccounts AS da ON sar.CandidateID = da.ID
+                    WHERE (da.UserID = @userId) AND (sasv.SelfAssessmentResultId = @resultId)",
+                new { userId, resultId }
             ).FirstOrDefault();
         }
 
         public IEnumerable<Administrator> GetValidSupervisorsForActivity(
             int centreId,
             int selfAssessmentId,
-            int candidateId
+            int userId
         )
         {
             return connection.Query<Administrator>(
@@ -247,12 +248,12 @@
                             INNER JOIN CandidateAssessments AS ca
                                 ON cas.CandidateAssessmentID = ca.ID
                             WHERE (ca.SelfAssessmentID = @selfAssessmentId)
-                                AND (ca.CandidateID = @candidateId)
+                                AND (ca.DelegateUserID = @userId)
                                 AND (sd.SupervisorAdminID = AdminUsers.AdminID)
                                 AND (cas.Removed IS NULL)
                                 AND (sd.Removed IS NULL)
                          ) ",
-                new { centreId, selfAssessmentId, candidateId }
+                new { centreId, selfAssessmentId, userId }
             );
         }
 
@@ -268,7 +269,7 @@
 
         public IEnumerable<SupervisorSignOff> GetSupervisorSignOffsForCandidateAssessment(
             int selfAssessmentId,
-            int candidateId
+            int userId
         )
         {
             return connection.Query<SupervisorSignOff>(
@@ -294,10 +295,10 @@
                         ON sd.SupervisorAdminID = au.AdminID
                     LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
                         ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE (ca.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1)
-                        OR (ca.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL)
+                    WHERE (ca.DelegateUserID = @userId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1)
+                        OR (ca.DelegateUserID = @userId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL)
                     ORDER BY casv.Requested DESC",
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, userId }
             );
         }
     }
