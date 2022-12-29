@@ -789,7 +789,8 @@
                 selfAssessmentId.Value,
                 completeByDate,
                 selfAssessmentSupervisorRoleId,
-                GetAdminId()
+                GetAdminId(),
+                GetCentreId()
             );
             if (candidateAssessmentId > 0)
             {
