@@ -18,9 +18,7 @@
 
     <partial name="_ContractDetailsList" model="Model" />
 
-    <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="Pricing" asp-action="Index" role="button">
-      View pricing plans
-    </a>
+   
     @if (User.HasCentreManagerPermissions())
     {
       <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Administrator" asp-action="Index" role="button">
