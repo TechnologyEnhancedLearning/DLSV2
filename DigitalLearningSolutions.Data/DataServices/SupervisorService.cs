@@ -43,7 +43,7 @@
         void UpdateCandidateAssessmentSupervisorVerificationById(int? candidateAssessmentSupervisorVerificationId, string? supervisorComments, bool signedOff);
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateUserId, string delegateEmail, string supervisorEmail, int centreId);
-        int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
+        int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId);
         int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
@@ -515,7 +515,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                ).FirstOrDefault();
         }
 
-        public int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId)
+        public int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId)
         {
             if (delegateUserId == 0 | supervisorDelegateId == 0 | selfAssessmentId == 0)
             {
@@ -542,9 +542,9 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
             else
             {
                 var numberOfAffectedRows = connection.Execute(
-                @"INSERT INTO CandidateAssessments (DelegateUserID, SelfAssessmentID, CompleteByDate, EnrolmentMethodId, EnrolledByAdminId)
-                    VALUES (@delegateUserId, @selfAssessmentId, @completeByDate, 2, @adminId)",
-        new { delegateUserId, selfAssessmentId, completeByDate, adminId });
+                @"INSERT INTO CandidateAssessments (DelegateUserID, SelfAssessmentID, CompleteByDate, EnrolmentMethodId, EnrolledByAdminId, CentreID)
+                    VALUES (@delegateUserId, @selfAssessmentId, @completeByDate, 2, @adminId, @centreId)",
+        new { delegateUserId, selfAssessmentId, completeByDate, adminId, centreId});
                 if (numberOfAffectedRows < 1)
                 {
                     logger.LogWarning(
