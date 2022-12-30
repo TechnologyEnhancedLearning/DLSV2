@@ -133,7 +133,7 @@
             using var transaction = new TransactionScope();
 
             // Given
-            const int delegateUserId = 281054;
+            const int delegateUserId = 1;
             var oldRecord =
                 supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(
                     inviteHashForFirstSupervisorDelegateRecord
