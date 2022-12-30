@@ -268,10 +268,10 @@
 
             if (superviseDelegate.DelegateUserID != null)
             {
-                    model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
-                    delegateSelfAssessment.SelfAssessmentID,
-                    (int)superviseDelegate.DelegateUserID
-                );
+                model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
+                delegateSelfAssessment.SelfAssessmentID,
+                (int)superviseDelegate.DelegateUserID
+            );
             }
 
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
@@ -906,7 +906,7 @@
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegateDetail = superviseDelegate
             };
-            if(superviseDelegate.DelegateUserID != null)
+            if (superviseDelegate.DelegateUserID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
