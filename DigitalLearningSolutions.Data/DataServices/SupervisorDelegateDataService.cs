@@ -80,7 +80,7 @@
                     INNER JOIN AdminUsers au ON sd.SupervisorAdminID = au.AdminID
                     WHERE au.CentreID = @centreId
                       AND sd.DelegateEmail IN @emails
-                      AND sd.CandidateID IS NULL
+                      AND sd.DelegateUserID IS NULL
                       AND sd.Removed IS NULL",
                 new { centreId, emails }
             );
