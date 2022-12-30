@@ -583,7 +583,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var flag = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, flagId).FirstOrDefault();
             if (flag == null)
             {
-                return StatusCode((int)HttpStatusCode.NotFound);
+                return StatusCode((int)HttpStatusCode.Gone);
             }
 
             var model = new RemoveCustomFlagConfirmationViewModel()
