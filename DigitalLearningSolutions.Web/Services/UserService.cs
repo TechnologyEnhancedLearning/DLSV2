@@ -84,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Services
         string? GetCentreEmail(int userId, int centreId);
 
         IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
-            int userId
+            int userId,bool isAll=false
         );
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
@@ -334,9 +334,9 @@ namespace DigitalLearningSolutions.Web.Services
         }
 
         public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)>
-            GetAllActiveCentreEmailsForUser(int userId)
+            GetAllActiveCentreEmailsForUser(int userId,bool isAll = false)
         {
-            return userDataService.GetAllActiveCentreEmailsForUser(userId);
+            return userDataService.GetAllActiveCentreEmailsForUser(userId,isAll);
         }
 
         public (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)
