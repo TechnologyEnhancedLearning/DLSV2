@@ -39,7 +39,7 @@
                         sd.ID,
                         sd.SupervisorAdminID,
                         sd.SupervisorEmail,
-                        sd.CandidateID,
+                        sd.DelegateUserID,
                         sd.DelegateEmail,
                         sd.Added,
                         sd.AddedByDelegate,
@@ -87,13 +87,13 @@
         }
 
         // TODO: HEEDLS-1014 - Change CandidateID to UserID
-        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId)
+        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int delegateUserId)
         {
             connection.Execute(
                 @"UPDATE SupervisorDelegates
-                    SET CandidateID = @candidateId
+                    SET DelegateUserID = @delegateUserId
                     WHERE ID IN @supervisorDelegateIds",
-                new { supervisorDelegateIds, candidateId }
+                new { supervisorDelegateIds, delegateUserId }
             );
         }
     }

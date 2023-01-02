@@ -428,7 +428,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
             }
             return numberOfAffectedRows;
         }
-        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId)
+        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int delegateUserId, int centreId)
         {
             return connection.Query<RoleProfile>(
                 $@"SELECT rp.ID, rp.Name AS RoleProfileName, rp.Description, rp.BrandID, rp.ParentSelfAssessmentID, rp.[National], rp.[Public], rp.CreatedByAdminID AS OwnerAdminID, rp.NRPProfessionalGroupID, rp.NRPSubGroupID, rp.NRPRoleID, rp.PublishStatusID, 0 AS UserRole, rp.CreatedDate,
@@ -451,7 +451,7 @@ FROM   SelfAssessments AS rp INNER JOIN
 WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                  (SELECT SelfAssessmentID
                  FROM    CandidateAssessments AS CA
-                 WHERE (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))", new { candidateId, centreId }
+                 WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))", new { delegateUserId, centreId }
                 );
         }
 
