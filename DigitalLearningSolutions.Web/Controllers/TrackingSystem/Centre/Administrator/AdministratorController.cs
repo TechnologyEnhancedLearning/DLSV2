@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
     using System.Linq;
+    using System.Net;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -213,7 +214,7 @@
 
             if (!CurrentUserCanDeactivateAdmin(admin!.AdminAccount))
             {
-                return NotFound();
+                return StatusCode((int)HttpStatusCode.Gone);
             }
 
             var model = new DeactivateAdminViewModel(admin, returnPageQuery);
@@ -229,7 +230,7 @@
 
             if (!CurrentUserCanDeactivateAdmin(admin!.AdminAccount))
             {
-                return NotFound();
+                return StatusCode((int)HttpStatusCode.Gone);
             }
 
             if (!ModelState.IsValid)
