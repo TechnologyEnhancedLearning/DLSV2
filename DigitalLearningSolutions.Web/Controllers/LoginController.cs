@@ -150,7 +150,11 @@
                 userEntity.UserAccount.EmailVerified.HasValue,
                 unverifiedCentreEmails.Count
             );
-
+            //For By pass choose while return url is of my account page
+            if (!string.IsNullOrEmpty(returnUrl) && returnUrl.IndexOf("MyAccount") > -1)
+            {
+                return this.RedirectToReturnUrl(returnUrl, logger) ?? View("ChooseACentre", model);
+            }
             return View("ChooseACentre", model);
         }
 
@@ -209,6 +213,11 @@
             }
 
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
+
+            if (centreIdToLogInto <= 0)
+            {
+                return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction("Index", "MyAccount");
+            }
 
             if (!userService.ShouldForceDetailsCheck(userEntity, centreIdToLogInto))
             {

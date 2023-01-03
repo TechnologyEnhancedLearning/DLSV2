@@ -87,7 +87,8 @@
                     availableFilters,
                     DelegateActiveStatusFilterOptions.IsActive.FilterValue
                 ),
-                new PaginationOptions(page, itemsPerPage)
+                new PaginationOptions(page, itemsPerPage),
+                true
             );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(

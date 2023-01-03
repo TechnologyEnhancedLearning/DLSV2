@@ -158,6 +158,7 @@
                 JobGroupId = 1,
                 HasProfessionalRegistrationNumber = true,
                 ProfessionalRegistrationNumber = "!&^£%&*^!%£",
+                CentreSpecificEmail = "email@test.com"
             };
 
             // When

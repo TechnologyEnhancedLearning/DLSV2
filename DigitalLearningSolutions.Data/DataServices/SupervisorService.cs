@@ -75,16 +75,16 @@
 
         private const string supervisorDelegateDetailTables = @"
                 SupervisorDelegates AS sd
-            LEFT OUTER JOIN Users u
-	           ON u.ID = sd.DelegateUserID
-            LEFT OUTER JOIN DelegateAccounts da
-	           ON u.ID = da.UserID
+            INNER JOIN Users u
+	            ON u.ID = sd.DelegateUserID
+            INNER JOIN DelegateAccounts da
+	            ON u.ID = da.UserID
             LEFT OUTER JOIN AdminUsers AS au
-               ON sd.SupervisorAdminID = au.AdminID
-            LEFT OUTER JOIN Centres AS ct
-	           ON ct.CentreID = da.CentreID
-            LEFT OUTER JOIN CustomPrompts AS cp1
-               ON cp1.CustomPromptID = ct.CustomField1PromptID
+                ON sd.SupervisorAdminID = au.AdminID
+            RIGHT OUTER JOIN Centres AS ct
+	            ON ct.CentreID = da.CentreID
+            RIGHT OUTER JOIN CustomPrompts AS cp1
+                ON cp1.CustomPromptID = ct.CustomField1PromptID
             LEFT OUTER JOIN CustomPrompts AS cp2
                 ON ct.CustomField2PromptID = cp2.CustomPromptID
             LEFT OUTER JOIN CustomPrompts AS cp3
@@ -665,9 +665,9 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         public void UpdateNotificationSent(int supervisorDelegateId)
         {
             connection.Execute(
-        @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
+                @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
             WHERE ID = @supervisorDelegateId",
-       new { supervisorDelegateId });
+                new { supervisorDelegateId });
         }
 
         public bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId)

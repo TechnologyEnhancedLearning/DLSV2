@@ -147,5 +147,28 @@
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
+
+        //[Test]
+        //public void Summary_post_returns_redirect_to_index_with_email_in_use_register_error()
+        //{
+        //    // Given
+        //    var formData = new AdminRolesFormData
+        //    {
+        //        IsCentreAdmin = true,
+        //        IsSupervisor = false,
+        //        IsTrainer = false,
+        //        IsContentCreator = false,
+        //        ContentManagementRole = ContentManagementRole.NoContentManagementRole,
+        //        LearningCategory = 0
+        //    };
+        //    A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._, A<int>._))
+        //        .Throws(new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse));
+
+        //    // When
+        //    var result = controller.Index(formData, 1);
+
+        //    // Then
+        //    result.Should().BeViewResult().WithViewName("EmailInUse");
+        //}
     }
 }

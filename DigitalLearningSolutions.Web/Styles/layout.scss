@@ -335,3 +335,11 @@ nav, .nhsuk-header__navigation, #header-navigation {
     color: $color_nhsuk-dark-pink;
   }
 }
+.nhsuk-width-container {
+  max-width: 1144px !important;
+}
+@media only screen and (max-width: 767px) {
+  .section-card-result {
+    margin-top: 10px;
+  }
+}
