@@ -240,12 +240,20 @@
         {
             var resultIdFilter = selfAssessmentResultId.HasValue ? $"ResultID = {selfAssessmentResultId.Value}" : "1=1";
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
+
+
+
+                //TODO: Fix this...
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields},
                     LAR.SupervisorName
                     FROM {SpecificCompetencyTables}
                     WHERE (CAOC.IncludedInSelfAssessment = 1 OR SAS.Optional = 0) AND {resultIdFilter}
                     ORDER BY SAS.Ordering, CAQ.Ordering",
+
+
+
+
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
