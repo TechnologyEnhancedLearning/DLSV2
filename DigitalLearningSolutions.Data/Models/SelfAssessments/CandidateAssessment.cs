@@ -6,7 +6,7 @@
     {
         public int Id { get; set; }
 
-        public int DelegateId { get; set; }
+        public int DelegateUserID { get; set; }
 
         public int SelfAssessmentId { get; set; }
 

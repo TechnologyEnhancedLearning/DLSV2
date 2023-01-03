@@ -922,12 +922,12 @@
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegateDetail = superviseDelegate
             };
-            if (superviseDelegate.DelegateUserID != null)
+            if (superviseDelegate.DelegateUserId != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
                     (int)superviseDelegate.DelegateUserID
-                    );
+                );
             }
 
             return View("SignOffHistory", model);
