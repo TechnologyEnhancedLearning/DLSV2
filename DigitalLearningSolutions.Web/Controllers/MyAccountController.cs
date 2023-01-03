@@ -133,7 +133,7 @@
                     : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId,true).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             var model = new MyAccountEditDetailsViewModel(
