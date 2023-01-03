@@ -13,21 +13,21 @@
     public interface ISelfAssessmentService
     {
         // Candidate Assessments
-        IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
+        IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId);
 
-        CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
+        CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int delegateUserId, int selfAssessmentId);
 
-        void SetBookmark(int selfAssessmentId, int candidateId, string bookmark);
+        void SetBookmark(int selfAssessmentId, int delegateUserId, string bookmark);
 
-        void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
+        void SetSubmittedDateNow(int selfAssessmentId, int delegateUserId);
 
-        void SetUpdatedFlag(int selfAssessmentId, int candidateId, bool status);
+        void SetUpdatedFlag(int selfAssessmentId, int delegateUserId, bool status);
 
-        void UpdateLastAccessed(int selfAssessmentId, int candidateId);
+        void UpdateLastAccessed(int selfAssessmentId, int delegateUserId);
 
-        void IncrementLaunchCount(int selfAssessmentId, int candidateId);
+        void IncrementLaunchCount(int selfAssessmentId, int delegateUserId);
 
-        void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate);
+        void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
 
         bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId);
 
@@ -36,8 +36,8 @@
 
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
 
-        IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId);
-        IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int delegateUserId);
+        IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateUserId);
 
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(
             int assessmentQuestionId,
@@ -48,51 +48,52 @@
 
         Competency? GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
 
-        Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
+        Competency? GetNthCompetency(int n, int selfAssessmentId,int candidateId, int delegateUserId); // 1 indexed
 
         void SetResultForCompetency(
             int competencyId,
             int selfAssessmentId,
             int candidateId,
+            int delegateUserId,
             int assessmentQuestionId,
             int? result,
             string? supportingComments
         );
 
-        IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int delegateUserId);
 
-        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId,int candidateId, int delegateUserId);
 
-        List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int candidateId);
+        List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int delegateUserId);
 
-        void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int candidateId);
+        void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int delegateUserId);
 
-        void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int candidateId);
+        void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int delegateUserId);
 
         // Supervisor
-        IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
+        IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int delegateUserId);
 
         IEnumerable<SupervisorSignOff> GetSupervisorSignOffsForCandidateAssessment(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         );
 
-        SupervisorComment? GetSupervisorComments(int candidateId, int resultId);
+        SupervisorComment? GetSupervisorComments(int delegateUserId, int resultId);
 
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         );
 
-        IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId);
+        IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int delegateUserId);
 
-        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int candidateId);
+        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int delegateUserId);
 
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
 
         IEnumerable<SelfAssessmentSupervisor> GetResultReviewSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         );
 
         SelfAssessmentSupervisor? GetSelfAssessmentSupervisorByCandidateAssessmentSupervisorId(
@@ -101,7 +102,7 @@
 
         IEnumerable<SelfAssessmentSupervisor> GetSignOffSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         );
 
         void InsertCandidateAssessmentSupervisorVerification(int candidateAssessmentSupervisorId);
@@ -109,21 +110,21 @@
         void UpdateCandidateAssessmentSupervisorVerificationEmailSent(int candidateAssessmentSupervisorVerificationId);
 
         // Filtered
-        Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
+        Profile? GetFilteredProfileForCandidateById(int delegateUserId, int selfAssessmentId);
 
-        IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
+        IEnumerable<Goal> GetFilteredGoalsForCandidateId(int delegateUserId, int selfAssessmentId);
 
         void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset);
 
         // Export Self Assessment
         CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(
             int candidateAssessmentId,
-            int candidateId
+            int delegateUserId
         );
 
         IEnumerable<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(
             int candidateAssessmentId,
-            int candidateId
+            int delegateUserId
         );
     }
 
@@ -136,39 +137,39 @@
             this.selfAssessmentDataService = selfAssessmentDataService;
         }
 
-        public CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId)
+        public CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int delegateUserId, int selfAssessmentId)
         {
-            return selfAssessmentDataService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            return selfAssessmentDataService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
         }
 
-        public void SetBookmark(int selfAssessmentId, int candidateId, string bookmark)
+        public void SetBookmark(int selfAssessmentId, int delegateUserId, string bookmark)
         {
-            selfAssessmentDataService.SetBookmark(selfAssessmentId, candidateId, bookmark);
+            selfAssessmentDataService.SetBookmark(selfAssessmentId, delegateUserId, bookmark);
         }
 
-        public void SetSubmittedDateNow(int selfAssessmentId, int candidateId)
+        public void SetSubmittedDateNow(int selfAssessmentId, int delegateUserId)
         {
-            selfAssessmentDataService.SetSubmittedDateNow(selfAssessmentId, candidateId);
+            selfAssessmentDataService.SetSubmittedDateNow(selfAssessmentId, delegateUserId);
         }
 
-        public void SetUpdatedFlag(int selfAssessmentId, int candidateId, bool status)
+        public void SetUpdatedFlag(int selfAssessmentId, int delegateUserId, bool status)
         {
-            selfAssessmentDataService.SetUpdatedFlag(selfAssessmentId, candidateId, status);
+            selfAssessmentDataService.SetUpdatedFlag(selfAssessmentId, delegateUserId, status);
         }
 
-        public void UpdateLastAccessed(int selfAssessmentId, int candidateId)
+        public void UpdateLastAccessed(int selfAssessmentId, int delegateUserId)
         {
-            selfAssessmentDataService.UpdateLastAccessed(selfAssessmentId, candidateId);
+            selfAssessmentDataService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
         }
 
-        public void IncrementLaunchCount(int selfAssessmentId, int candidateId)
+        public void IncrementLaunchCount(int selfAssessmentId, int delegateUserId)
         {
-            selfAssessmentDataService.IncrementLaunchCount(selfAssessmentId, candidateId);
+            selfAssessmentDataService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
         }
 
-        public void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate)
+        public void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate)
         {
-            selfAssessmentDataService.SetCompleteByDate(selfAssessmentId, candidateId, completeByDate);
+            selfAssessmentDataService.SetCompleteByDate(selfAssessmentId, delegateUserId, completeByDate);
         }
 
         public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null)
@@ -184,60 +185,60 @@
             return selfAssessmentDataService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int delegateUserId)
         {
-            return selfAssessmentDataService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, delegateUserId);
         }
 
-        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateUserId)
         {
-            return selfAssessmentDataService.GetResultSupervisorVerifications(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetResultSupervisorVerifications(selfAssessmentId, delegateUserId);
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetSupervisorsForSelfAssessmentId(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetSupervisorsForSelfAssessmentId(selfAssessmentId, delegateUserId);
         }
 
         public IEnumerable<SupervisorSignOff> GetSupervisorSignOffsForCandidateAssessment(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, delegateUserId);
         }
 
-        public SupervisorComment? GetSupervisorComments(int candidateId, int resultId)
+        public SupervisorComment? GetSupervisorComments(int delegateUserId, int resultId)
         {
-            return selfAssessmentDataService.GetSupervisorComments(candidateId, resultId);
+            return selfAssessmentDataService.GetSupervisorComments(delegateUserId, resultId);
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetAllSupervisorsForSelfAssessmentId(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetAllSupervisorsForSelfAssessmentId(selfAssessmentId, delegateUserId);
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetOtherSupervisorsForCandidate(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetOtherSupervisorsForCandidate(selfAssessmentId, delegateUserId);
         }
 
         public IEnumerable<Administrator> GetValidSupervisorsForActivity(
             int centreId,
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetValidSupervisorsForActivity(centreId, selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetValidSupervisorsForActivity(centreId, selfAssessmentId, delegateUserId);
         }
 
         public Administrator GetSupervisorByAdminId(int supervisorAdminId)
@@ -247,12 +248,12 @@
 
         public IEnumerable<SelfAssessmentSupervisor> GetResultReviewSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         )
         {
             return selfAssessmentDataService.GetResultReviewSupervisorsForSelfAssessmentId(
                 selfAssessmentId,
-                candidateId
+                delegateUserId
             );
         }
 
@@ -267,10 +268,10 @@
 
         public IEnumerable<SelfAssessmentSupervisor> GetSignOffSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
-            int candidateId
+            int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, delegateUserId);
         }
 
         public void InsertCandidateAssessmentSupervisorVerification(int candidateAssessmentSupervisorId)
@@ -287,35 +288,35 @@
             );
         }
 
-        public Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId)
+        public Profile? GetFilteredProfileForCandidateById(int delegateUserId, int selfAssessmentId)
         {
-            return selfAssessmentDataService.GetFilteredProfileForCandidateById(candidateId, selfAssessmentId);
+            return selfAssessmentDataService.GetFilteredProfileForCandidateById(delegateUserId, selfAssessmentId);
         }
 
-        public IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId)
+        public IEnumerable<Goal> GetFilteredGoalsForCandidateId(int delegateUserId, int selfAssessmentId)
         {
-            return selfAssessmentDataService.GetFilteredGoalsForCandidateId(candidateId, selfAssessmentId);
+            return selfAssessmentDataService.GetFilteredGoalsForCandidateId(delegateUserId, selfAssessmentId);
         }
 
-        public void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset)
+        public void LogAssetLaunch(int delegateUserId, int selfAssessmentId, LearningAsset learningAsset)
         {
-            selfAssessmentDataService.LogAssetLaunch(candidateId, selfAssessmentId, learningAsset);
+            selfAssessmentDataService.LogAssetLaunch(delegateUserId, selfAssessmentId, learningAsset);
         }
 
         public CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(
             int candidateAssessmentId,
-            int candidateId
+            int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetCandidateAssessmentExportSummary(candidateAssessmentId, candidateId);
+            return selfAssessmentDataService.GetCandidateAssessmentExportSummary(candidateAssessmentId, delegateUserId);
         }
 
         public IEnumerable<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(
             int candidateAssessmentId,
-            int candidateId
+            int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId, candidateId);
+            return selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId, delegateUserId);
         }
 
         public bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId)
@@ -353,15 +354,16 @@
             );
         }
 
-        public Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId)
+        public Competency? GetNthCompetency(int n, int selfAssessmentId,int candidateId, int delegateUserId)
         {
-            return selfAssessmentDataService.GetNthCompetency(n, selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetNthCompetency(n, selfAssessmentId, candidateId,delegateUserId);
         }
 
         public void SetResultForCompetency(
             int competencyId,
             int selfAssessmentId,
             int candidateId,
+            int delegateUserId,
             int assessmentQuestionId,
             int? result,
             string? supportingComments
@@ -371,48 +373,49 @@
                 competencyId,
                 selfAssessmentId,
                 candidateId,
+                delegateUserId,
                 assessmentQuestionId,
                 result,
                 supportingComments
             );
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int delegateUserId)
         {
-            return selfAssessmentDataService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
         }
 
-        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId)
+        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId)
         {
-            return selfAssessmentDataService.GetSelfAssessmentsForCandidate(candidateId);
+            return selfAssessmentDataService.GetSelfAssessmentsForCandidate(delegateUserId);
         }
 
-        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId,int candidateId, int delegateUserId)
         {
-            return selfAssessmentDataService.GetMostRecentResults(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetMostRecentResults(selfAssessmentId, candidateId,delegateUserId);
         }
 
-        public List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int candidateId)
+        public List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int delegateUserId)
         {
             return selfAssessmentDataService.GetCandidateAssessmentIncludedSelfAssessmentStructureIds(
                 selfAssessmentId,
-                candidateId
+                delegateUserId
             );
         }
 
-        public void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int candidateId)
+        public void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int delegateUserId)
         {
             selfAssessmentDataService.InsertCandidateAssessmentOptionalCompetenciesIfNotExist(
                 selfAssessmentId,
-                candidateId
+                delegateUserId
             );
         }
 
-        public void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int candidateId)
+        public void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int delegateUserId)
         {
             selfAssessmentDataService.UpdateCandidateAssessmentOptionalCompetencies(
                 selfAssessmentStructureId,
-                candidateId
+                delegateUserId
             );
         }
     }
