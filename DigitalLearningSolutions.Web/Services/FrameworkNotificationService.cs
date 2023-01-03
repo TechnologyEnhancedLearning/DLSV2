@@ -201,7 +201,16 @@
 
         public void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId)
         {
+
+
+            // TODO: Fix this (supervisorDelegate returns NULL)
+
+
+
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
+
+
+            
             string emailSubjectLine = "Invite from Supervisor - Digital Learning Solutions";
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
