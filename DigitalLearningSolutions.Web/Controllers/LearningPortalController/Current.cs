@@ -31,10 +31,11 @@
         {
             sortBy ??= CourseSortByOptions.LastAccessed.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var bannerText = GetBannerText();
             var selfAssessments =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId);
             var (learningResources, apiIsAccessible) =
                 await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
 
@@ -65,9 +66,10 @@
         public async Task<IActionResult> AllCurrentItems()
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var selfAssessment =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId);
             var (learningResources, _) = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
             return View("Current/AllCurrentItems", model);
