@@ -53,7 +53,7 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
-        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID,
+        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateUserID,
         sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed,
         sd.InviteHash, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5,
         c.Answer6, c.CandidateNumber, c.ProfessionalRegistrationNumber, c.EmailAddress AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2,
@@ -141,7 +141,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             if (delegateEmail.Length == 0 | supervisorEmail.Length == 0)
             {
                 logger.LogWarning(
-                    $"Not adding delegate to SupervisorDelegates as it failed server side valiidation. supervisorAdminId: {supervisorAdminId}, delegateEmail: {delegateEmail}"
+                    $"Not adding delegate to SupervisorDelegates as it failed server side validation. supervisorAdminId: {supervisorAdminId}, delegateEmail: {delegateEmail}"
                 );
                 return -3;
             }
@@ -161,8 +161,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 if (delegateId == null)
                 {
                     delegateId = (int?)connection.ExecuteScalar(
-                                       @"SELECT CandidateID FROM Candidates WHERE EmailAddress = @delegateEmail AND Active = 1 AND CentreID = @centreId", new { delegateEmail, centreId }
-                                       );
+                        @"SELECT CandidateID FROM Candidates WHERE EmailAddress = @delegateEmail AND Active = 1 AND CentreID = @centreId", new { delegateEmail, centreId }
+                        );
                 }
                 if (supervisorAdminId == null)
                 {
@@ -428,7 +428,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
             }
             return numberOfAffectedRows;
         }
-        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId)
+        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int delegateUserId, int centreId)
         {
             return connection.Query<RoleProfile>(
                 $@"SELECT rp.ID, rp.Name AS RoleProfileName, rp.Description, rp.BrandID, rp.ParentSelfAssessmentID, rp.[National], rp.[Public], rp.CreatedByAdminID AS OwnerAdminID, rp.NRPProfessionalGroupID, rp.NRPSubGroupID, rp.NRPRoleID, rp.PublishStatusID, 0 AS UserRole, rp.CreatedDate,
@@ -451,7 +451,7 @@ FROM   SelfAssessments AS rp INNER JOIN
 WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                  (SELECT SelfAssessmentID
                  FROM    CandidateAssessments AS CA
-                 WHERE (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))", new { candidateId, centreId }
+                 WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))", new { delegateUserId, centreId }
                 );
         }
 
@@ -625,9 +625,9 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         public void UpdateNotificationSent(int supervisorDelegateId)
         {
             connection.Execute(
-        @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
+                @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
             WHERE ID = @supervisorDelegateId",
-       new { supervisorDelegateId });
+                new { supervisorDelegateId });
         }
 
         public bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId)

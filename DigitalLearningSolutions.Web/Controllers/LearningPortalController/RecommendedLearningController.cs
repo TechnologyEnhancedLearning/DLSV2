@@ -59,9 +59,9 @@
         public async Task<IActionResult> SelfAssessmentResults(int selfAssessmentId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-
+            var userId = User.GetUserIdKnownNotNull();
             selfAssessmentService.SetSubmittedDateNow(selfAssessmentId, candidateId);
-            selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, false);
+            selfAssessmentService.SetUpdatedFlag(selfAssessmentId, userId, false);
 
             if (!configuration.IsSignpostingUsed())
             {
@@ -86,9 +86,10 @@
             }
 
             var candidateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetCandidateIdKnownNotNull();
             var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/RecommendedLearning";
-            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
-            selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
+            selfAssessmentService.SetBookmark(selfAssessmentId, delegateUserId, destUrl);
+            selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
 
             return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId, page, searchString);
         }
@@ -154,9 +155,10 @@
             }
 
             var candidateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Filtered/Dashboard";
-            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
-            selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
+            selfAssessmentService.SetBookmark(selfAssessmentId, delegateUserId, destUrl);
+            selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
 
             return await ReturnFilteredResultsView(selfAssessmentId, candidateId);
         }
@@ -170,7 +172,7 @@
             }
 
             var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/PlayList/" + playListId;
-            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
+            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetUserIdKnownNotNull(), destUrl);
             var filteredToken = await GetFilteredToken();
             var model = await filteredApiHelperService.GetPlayList<PlayList>(
                 filteredToken,
@@ -190,7 +192,7 @@
 
             var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/LearningAsset/" +
                           assetId;
-            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
+            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetUserIdKnownNotNull(), destUrl);
             var filteredToken = await GetFilteredToken();
             var asset = await filteredApiHelperService.GetLearningAsset<LearningAsset>(
                 filteredToken,

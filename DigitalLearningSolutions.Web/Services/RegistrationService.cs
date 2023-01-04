@@ -1,22 +1,22 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Transactions;
+using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Data.DataServices.UserDataService;
+using DigitalLearningSolutions.Data.Enums;
+using DigitalLearningSolutions.Data.Exceptions;
+using DigitalLearningSolutions.Data.Extensions;
+using DigitalLearningSolutions.Data.Models;
+using DigitalLearningSolutions.Data.Models.Email;
+using DigitalLearningSolutions.Data.Models.Register;
+using DigitalLearningSolutions.Data.Utilities;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using MimeKit;
+
 namespace DigitalLearningSolutions.Web.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Transactions;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.Email;
-    using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Utilities;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
-    using MimeKit;
-
     public interface IRegistrationService
     {
         (string candidateNumber, bool approved) RegisterDelegateForNewUser(

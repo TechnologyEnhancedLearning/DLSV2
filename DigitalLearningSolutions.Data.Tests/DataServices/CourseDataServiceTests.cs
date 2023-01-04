@@ -165,6 +165,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 HasDiagnostic = true,
                 IsAssessed = true,
                 CurrentVersion = 1,
+                SelfRegister = true,
             };
             result.Should().HaveCountGreaterOrEqualTo(1);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);

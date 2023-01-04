@@ -78,24 +78,24 @@
 
             if (isCentreAdmin)
             {
-                returnedEmail.Body.HtmlBody.Should().Contain("<li>Centre Admin</li>");
-                returnedEmail.Body.TextBody.Should().Contain("Centre Admin");
+                returnedEmail.Body.HtmlBody.Should().Contain("<li>Centre administrator</li>");
+                returnedEmail.Body.TextBody.Should().Contain("Centre administrator");
             }
             else
             {
-                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Centre Administrator</li>");
-                returnedEmail.Body.TextBody.Should().NotContain("Centre Administrator");
+                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Centre administrator</li>");
+                returnedEmail.Body.TextBody.Should().NotContain("Centre administrator");
             }
 
             if (isCentreManager)
             {
-                returnedEmail.Body.HtmlBody.Should().Contain("<li>Centre Manager</li>");
-                returnedEmail.Body.TextBody.Should().Contain("Centre Manager");
+                returnedEmail.Body.HtmlBody.Should().Contain("<li>Centre manager</li>");
+                returnedEmail.Body.TextBody.Should().Contain("Centre manager");
             }
             else
             {
-                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Centre Manager</li>");
-                returnedEmail.Body.TextBody.Should().NotContain("Centre Manager");
+                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Centre manager</li>");
+                returnedEmail.Body.TextBody.Should().NotContain("Centre manager");
             }
 
             if (isSupervisor)
@@ -111,13 +111,13 @@
 
             if (isNominatedSupervisor)
             {
-                returnedEmail.Body.HtmlBody.Should().Contain("<li>Nominated Supervisor</li>");
-                returnedEmail.Body.TextBody.Should().Contain("Nominated Supervisor");
+                returnedEmail.Body.HtmlBody.Should().Contain("<li>Nominated supervisor</li>");
+                returnedEmail.Body.TextBody.Should().Contain("Nominated supervisor");
             }
             else
             {
-                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Nominated Supervisor</li>");
-                returnedEmail.Body.TextBody.Should().NotContain("Nominated Supervisor");
+                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Nominated supervisor</li>");
+                returnedEmail.Body.TextBody.Should().NotContain("Nominated supervisor");
             }
 
             if (isTrainer)
@@ -134,35 +134,35 @@
 
             if (isContentCreator)
             {
-                returnedEmail.Body.HtmlBody.Should().Contain("<li>Content Creator</li>");
-                returnedEmail.Body.TextBody.Should().Contain("Content Creator");
+                returnedEmail.Body.HtmlBody.Should().Contain("<li>Content Creator licence</li>");
+                returnedEmail.Body.TextBody.Should().Contain("Content Creator licence");
             }
             else
             {
-                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Content Creator</li>");
-                returnedEmail.Body.TextBody.Should().NotContain("Content Creator");
+                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Content Creator licence</li>");
+                returnedEmail.Body.TextBody.Should().NotContain("Content Creator licence");
             }
 
             if (isCmsAdministrator)
             {
-                returnedEmail.Body.HtmlBody.Should().Contain("<li>Cms Administrator</li>");
-                returnedEmail.Body.TextBody.Should().Contain("Cms Administrator");
+                returnedEmail.Body.HtmlBody.Should().Contain("<li>CMS administrator</li>");
+                returnedEmail.Body.TextBody.Should().Contain("CMS administrator");
             }
             else
             {
-                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Cms Administrator</li>");
-                returnedEmail.Body.TextBody.Should().NotContain("Cms Administrator");
+                returnedEmail.Body.HtmlBody.Should().NotContain("<li>CMS administrator</li>");
+                returnedEmail.Body.TextBody.Should().NotContain("CMS administrator");
             }
 
             if (isCmsManager)
             {
-                returnedEmail.Body.HtmlBody.Should().Contain("<li>Cms Manager</li>");
-                returnedEmail.Body.TextBody.Should().Contain("Cms Manager");
+                returnedEmail.Body.HtmlBody.Should().Contain("<li>CMS manager</li>");
+                returnedEmail.Body.TextBody.Should().Contain("CMS manager");
             }
             else
             {
-                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Cms Manager</li>");
-                returnedEmail.Body.TextBody.Should().NotContain("Cms Manager");
+                returnedEmail.Body.HtmlBody.Should().NotContain("<li>CMS manager</li>");
+                returnedEmail.Body.TextBody.Should().NotContain("CMS manager");
             }
         }
     }

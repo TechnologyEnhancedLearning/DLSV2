@@ -202,7 +202,7 @@
                             c.kbSelfRegister AS SelfRegister
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
-                        WHERE c.Active = 1 AND c.Lat IS NOT NULL AND c.Long IS NOT NULL AND c.ShowOnMap = 1"
+                        WHERE c.Active = 1 AND c.ShowOnMap = 1"
             );
         }
 

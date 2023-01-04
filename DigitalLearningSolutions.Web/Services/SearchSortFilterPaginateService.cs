@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using Microsoft.Extensions.Configuration;
@@ -36,7 +37,20 @@
             var javascriptSearchSortFilterPaginateShouldBeEnabled =
                 allItems.Count <= ConfigurationExtensions.GetJavascriptSearchSortFilterPaginateItemLimit(configuration);
 
-            if (searchSortFilterAndPaginateOptions.SearchOptions != null)
+            if (searchSortFilterAndPaginateOptions.ExactMatchSearch == true)
+            {
+                if (searchSortFilterAndPaginateOptions.SearchOptions.SearchString != null)
+                {
+                    var searchList = new List<string>(searchSortFilterAndPaginateOptions.SearchOptions.SearchString.ToLower().Replace(",", "").Split(" "));
+
+                    var delegateUsersfilterd = (from delegateItem in allItems
+                                                where string.Join(" ", delegateItem.SearchableContent.Where(s => s != null)).ToLower().Replace(",", "").ContainsAllStartWith(searchList)
+                                                select delegateItem).ToList();
+
+                    itemsToReturn = delegateUsersfilterd;
+                }
+            }
+            else if (searchSortFilterAndPaginateOptions.SearchOptions != null)
             {
                 itemsToReturn = (searchSortFilterAndPaginateOptions.SearchOptions.UseTokeniseScorer
                     ? GenericSearchHelper.SearchItemsUsingTokeniseScorer(
@@ -47,7 +61,8 @@
                     : GenericSearchHelper.SearchItems(
                         itemsToReturn,
                         searchSortFilterAndPaginateOptions.SearchOptions.SearchString,
-                        searchSortFilterAndPaginateOptions.SearchOptions.SearchMatchCutoff
+                        searchSortFilterAndPaginateOptions.SearchOptions.SearchMatchCutoff,
+                        scorer: searchSortFilterAndPaginateOptions.SearchOptions.Scorer
                     )).ToList();
             }
 

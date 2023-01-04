@@ -21,20 +21,19 @@
 }
 
 <div class="nhsuk-grid-row">
-
-    @if (Model.CentreId == null || Model.CentreId == 0)
-    {
-        <div class="nhsuk-warning-callout">
-            <h3 class="nhsuk-warning-callout__label">
-                <span role="text">
-                    <span class="nhsuk-u-visually-hidden">Important: </span>
-                    You are not logged into a centre
-                </span>
-            </h3>
-            <p>You can manage your account, but you must log into a centre before you can access any other areas of DLS.</p>
-        </div>
-    }
     <div class="nhsuk-grid-column-full">
+        @if (Model.CentreId == null || Model.CentreId == 0)
+        {
+            <div class="nhsuk-warning-callout">
+                <h3 class="nhsuk-warning-callout__label">
+                    <span role="text">
+                        <span class="nhsuk-u-visually-hidden">Important: </span>
+                        You are not logged into a centre
+                    </span>
+                </h3>
+                <p>You can manage your account, but you must log into a centre before you can access any other areas of DLS.</p>
+            </div>
+        }
         <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-one-half">
                 <h1 class="nhsuk-heading-xl" id="app-page-heading">

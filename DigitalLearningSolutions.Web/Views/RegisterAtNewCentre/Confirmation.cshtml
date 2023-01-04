@@ -35,6 +35,7 @@
       <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
     } else {
       <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
+      <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
     }
   </div>
 </div>

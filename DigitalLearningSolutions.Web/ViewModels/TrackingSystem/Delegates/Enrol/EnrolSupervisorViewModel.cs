@@ -56,7 +56,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
         IEnumerable<SupervisorForEnrolDelegate> supervisorList, int selected
     )
         {
-            var LearningItemIdNames = supervisorList.Select(s => (s.AdminId, s.Name));
+            var LearningItemIdNames = supervisorList.Select(s => (s.AdminId, s.Name)).OrderBy(s => s.Name);
             return SelectListHelper.MapOptionsToSelectListItems(
                 LearningItemIdNames, selected
            );

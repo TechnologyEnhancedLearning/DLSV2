@@ -81,7 +81,7 @@
         {
             var adminId = GetAdminId();
             int? commentId = null;
-            if(comment != null) commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
+            if(!string.IsNullOrWhiteSpace(comment)) commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             frameworkService.SubmitFrameworkReview(frameworkId, reviewId, signedOff, commentId);
             frameworkNotificationService.SendReviewOutcomeNotification(reviewId);
             return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId , tabname = "Structure"});
