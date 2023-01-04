@@ -917,7 +917,9 @@
         {
             TempData.Clear();
             var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
-                User.GetCandidateIdKnownNotNull(),
+
+                User.GetUserIdKnownNotNull(),
+
                 selfAssessmentId
             );
             if (selfAssessment == null)

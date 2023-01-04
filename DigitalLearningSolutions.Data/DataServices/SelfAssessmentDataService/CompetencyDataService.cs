@@ -12,7 +12,7 @@
     {
         private const string LatestAssessmentResults =
             @"LatestAssessmentResults AS
-            (
+                (
                 SELECT
                     s.CompetencyID,
                     s.AssessmentQuestionID,
@@ -32,10 +32,12 @@
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM SelfAssessmentResults s
                 INNER JOIN (
-                    SELECT MAX(ID) as ID
-                    FROM SelfAssessmentResults
-                    WHERE CandidateID = @candidateId
-                        AND SelfAssessmentID = @selfAssessmentId
+                    SELECT MAX(sar.ID) as ID
+                    FROM SelfAssessmentResults sar
+						inner join CandidateAssessments ca
+						on ca.CandidateID_deprecated = sar.CandidateID
+                    WHERE ca.DelegateUserID = @delegateUserID
+                        AND sar.SelfAssessmentID = @selfAssessmentId
                     GROUP BY CompetencyID, AssessmentQuestionID
                 ) t
                     ON s.ID = t.ID
@@ -44,13 +46,14 @@
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
                     ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
                         AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
-                WHERE CandidateID = @candidateId
+				INNER JOIN CandidateAssessments ca
+				ON ca.CandidateID_deprecated = s.CandidateID 
+                WHERE ca.DelegateUserID = @delegateUserID
                 AND s.SelfAssessmentID = @selfAssessmentId
-            )";
+            ) ";
 
         private const string SpecificAssessmentResults =
             @"LatestAssessmentResults AS
-            (
                 SELECT
                     s.CompetencyID,
                     s.AssessmentQuestionID,
@@ -183,7 +186,7 @@
             );
         }
 
-        public Competency? GetNthCompetency(int n, int selfAssessmentId,int candidateId, int delegateUserId)
+        public Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId, int delegateUserId)
         {
             Competency? competencyResult = null;
             return connection.Query<Competency, AssessmentQuestion, Competency>(
@@ -214,11 +217,11 @@
                     competencyResult.AssessmentQuestions.Add(assessmentQuestion);
                     return competencyResult;
                 },
-                new { n, selfAssessmentId,candidateId, delegateUserId }
+                new { n, selfAssessmentId, candidateId, delegateUserId }
             ).FirstOrDefault();
         }
 
-        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId,int candidateId, int delegateUserId)
+        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId, int delegateUserId)
         {
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
@@ -385,7 +388,7 @@
             {
                 logger.LogWarning(
                     "Not saving self assessment result as assessment question Id is invalid. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId,assessmentQuestionId, result)}"
+                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId, assessmentQuestionId, result)}"
                 );
                 return;
             }
@@ -396,7 +399,7 @@
             {
                 logger.LogWarning(
                     "Not saving self assessment result as result is invalid. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId,assessmentQuestionId, result)}"
+                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId, assessmentQuestionId, result)}"
                 );
                 return;
             }
@@ -447,7 +450,7 @@
             {
                 logger.LogWarning(
                     "Not saving self assessment result as db insert failed. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId,assessmentQuestionId, result)}"
+                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId, assessmentQuestionId, result)}"
                 );
             }
         }
