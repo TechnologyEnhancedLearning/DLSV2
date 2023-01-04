@@ -27,7 +27,6 @@
         public bool DelegateIsNominatedSupervisor { get; set; }
         public bool DelegateIsSupervisor { get; set; }
         public string ProfessionalRegistrationNumber { get; set; }
-        public string? DelegateUserId { get; set; }
 
         public DlsRole DlsRole
         {
