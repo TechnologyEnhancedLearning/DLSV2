@@ -6,8 +6,6 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -19,6 +17,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement.Mvc;
+    using IEmailService = DigitalLearningSolutions.Web.Services.IEmailService;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
@@ -90,11 +89,41 @@
         [HttpPost]
         public IActionResult Index(AdminRolesFormData formData, int delegateId)
         {
+            var adminRoles = formData.GetAdminRoles();
+            if (!(adminRoles.IsCentreAdmin ||
+                adminRoles.IsSupervisor ||
+                adminRoles.IsNominatedSupervisor ||
+                adminRoles.IsContentCreator ||
+                adminRoles.IsTrainer ||
+                adminRoles.IsContentManager ||
+                adminRoles.ImportOnly ||
+                adminRoles.IsCentreManager))
+            {
+                var centreId = User.GetCentreIdKnownNotNull();
+                var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+                var userEntity = userService.GetUserById(userId);
+
+                var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+                categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+                var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
+
+                var model = new PromoteToAdminViewModel(
+                                userEntity.UserAccount.FirstName,
+                                userEntity.UserAccount.LastName,
+                                delegateId,
+                                userId,
+                                centreId,
+                                categories,
+                                numberOfAdmins
+                            );
+
+                ModelState.Clear();
+                ModelState.AddModelError("IsCenterManager", $"Delegate must have one role to be promoted to Admin.");
+                return View(model);
+            }
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
             var (currentAdminUser, _) = userService.GetUsersById(userAdminId, userDelegateId);
-
-            var adminRoles = formData.GetAdminRoles();
 
             var centreName = currentAdminUser.CentreName;
 

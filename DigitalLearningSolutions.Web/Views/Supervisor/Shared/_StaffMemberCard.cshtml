@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.ViewModels.Supervisor
 @inject IClockUtility ClockUtility
@@ -7,8 +7,7 @@
 <div class="searchable-element nhsuk-panel" id="@Model.SupervisorDelegateDetail.ID-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary">
-
-      @if (Model.SupervisorDelegateDetail.CandidateID == null)
+      @if (Model.SupervisorDelegateDetail.DelegateUserId == null)
       {
         <div class="nhsuk-grid-row searchable-element-title">
           <div class="nhsuk-grid-column-three-quarters">

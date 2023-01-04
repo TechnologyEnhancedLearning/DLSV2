@@ -40,7 +40,7 @@
         public bool SelfReg { get; set; }
         public bool ExternalReg { get; set; }
         public int? AdminId { get; set; }
-        public bool IsPasswordSet => !string.IsNullOrEmpty(Password);
+        public bool IsPasswordSet => !string.IsNullOrWhiteSpace(Password);
         public bool IsAdmin => AdminId.HasValue;
 
         public RegistrationType RegistrationType => (SelfReg, ExternalReg) switch

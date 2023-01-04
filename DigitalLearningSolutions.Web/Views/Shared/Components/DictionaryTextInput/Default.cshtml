@@ -1,7 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model DictionaryTextInputViewModel
 
-@if (Model.HintText != null) {
+@if (Model.HintText != null)
+{
   <div class="nhsuk-hint" id="@Model.Name-hint">
     @Model.HintText
   </div>
@@ -10,7 +11,7 @@
 @foreach (var (key, (label, value)) in Model.LabelsAndValuesById) {
   var textInputViewModel = new TextInputViewModel(
     Model.IdAttributes[key],
-    Model.NameAttributes[key],
+    Model.IdAttributes[key],
     label,
     value,
     "text",

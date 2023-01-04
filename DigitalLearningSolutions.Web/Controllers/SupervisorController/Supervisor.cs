@@ -99,13 +99,14 @@
             var supervisorEmail = GetUserEmail();
 
             ModelState.Remove("Page");
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             {
                 AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else
             {
+                if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
@@ -131,7 +132,7 @@
                 var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
                 foreach (var delegateEmail in delegateEmailsList)
                 {
-                    if (delegateEmail.Length > 0)
+                    if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
                     {
                         if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
                         {
@@ -178,6 +179,10 @@
 
             return RedirectToAction("MyStaffList");
         }
+        public IActionResult RemoveSupervisorDelegate()
+        {
+            return RedirectToAction("MyStaffList");
+        }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
@@ -195,6 +200,13 @@
         [HttpPost]
         public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
+          ModelState.ClearErrorsOnField("ActionConfirmed");
+          return View("RemoveConfirm", supervisorDelegate);
+        }
+
+        [HttpPost]
+        public IActionResult RemoveSupervisorDelegateConfirmed(SupervisorDelegateViewModel supervisorDelegate)
+        {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
                 supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.Id, 0, GetAdminId());
@@ -202,7 +214,11 @@
             }
             else
             {
-                ModelState.ClearErrorsOnField("ActionConfirmed");
+                if (supervisorDelegate.ConfirmedRemove)
+                {
+                    supervisorDelegate.ConfirmedRemove = false;
+                    ModelState.ClearErrorsOnField("ActionConfirmed");
+                }
                 return View("RemoveConfirm", supervisorDelegate);
             }
         }
@@ -266,11 +282,11 @@
                 competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
             };
 
-            if (superviseDelegate.CandidateID != null)
+            if (superviseDelegate.DelegateUserID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
-                    (int)superviseDelegate.CandidateID
+                    (int)superviseDelegate.DelegateUserID
                 );
             }
 
@@ -410,7 +426,7 @@
                 SupervisorComments = assessmentQuestion.SupervisorComments,
                 SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false,
                 Verified = assessmentQuestion.Verified,
-                SupervisorName = supervisorDelegate.SupervisorName
+                SupervisorName = assessmentQuestion.SupervisorName
             };
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             return model;
@@ -519,7 +535,7 @@
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
-                (int)supervisorDelegate.CandidateID,
+                (int)supervisorDelegate.DelegateUserID,
                 GetCentreId()
             );
             var model = new EnrolDelegateOnProfileAssessmentViewModel()
@@ -551,7 +567,7 @@
                 var supervisorDelegate =
                     supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
-                    (int)supervisorDelegate.CandidateID,
+                    (int)supervisorDelegate.DelegateUserID,
                     GetCentreId()
                 );
                 var model = new EnrolDelegateOnProfileAssessmentViewModel()
@@ -904,11 +920,11 @@
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegateDetail = superviseDelegate
             };
-            if (superviseDelegate.CandidateID != null)
+            if (superviseDelegate.DelegateUserId != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
-                    (int)superviseDelegate.CandidateID
+                    (int)superviseDelegate.DelegateUserID
                 );
             }
 
@@ -921,6 +937,14 @@
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
+            if (TempData["NominateSupervisorError"] != null)
+            {
+                if (Convert.ToBoolean(TempData["NominateSupervisorError"].ToString()))
+                {
+                    ModelState.AddModelError("ActionConfirmed", "Please tick the checkbox to confirm you wish to perform this action");
+
+                }
+            }
             return View("NominateSupervisor", model);
         }
         [HttpPost]
@@ -975,7 +999,9 @@
             }
             else
             {
-                return View("NominateSupervisor", supervisorDelegate);
+                TempData["NominateSupervisorError"] = true;
+                return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
+
             }
         }
     }

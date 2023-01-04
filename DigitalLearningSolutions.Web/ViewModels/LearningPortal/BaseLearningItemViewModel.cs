@@ -12,6 +12,7 @@
             HasLearningContent = course.HasLearning;
             HasLearningAssessmentAndCertification = course.IsAssessed;
             IsSelfAssessment = course.IsSelfAssessment;
+            SelfRegister = course.SelfRegister;
             IncludesSignposting = course.IncludesSignposting;
         }
 
@@ -21,6 +22,7 @@
         public bool HasLearningContent { get; }
         public bool HasLearningAssessmentAndCertification { get; }
         public bool IsSelfAssessment { get; }
+        public bool SelfRegister { get; }
         public bool IncludesSignposting { get; }
     }
 }

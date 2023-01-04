@@ -59,13 +59,13 @@
 
             if (isCentreAdmin)
             {
-                builder.TextBody += " Centre Admin";
-                builder.HtmlBody += "<li>Centre Admin</li>";
+                builder.TextBody += " Centre administrator";
+                builder.HtmlBody += "<li>Centre administrator</li>";
             }
             if (isCentreManager)
             {
-                builder.TextBody += " Centre Manager";
-                builder.HtmlBody += "<li>Centre Manager</li>";
+                builder.TextBody += " Centre manager";
+                builder.HtmlBody += "<li>Centre manager</li>";
             }
             if (isSupervisor)
             {
@@ -74,8 +74,8 @@
             }
             if (isNominatedSupervisor)
             {
-                builder.TextBody += " Nominated Supervisor";
-                builder.HtmlBody += "<li>Nominated Supervisor</li>";
+                builder.TextBody += " Nominated supervisor";
+                builder.HtmlBody += "<li>Nominated supervisor</li>";
             }
             if (isTrainer)
             {
@@ -84,19 +84,19 @@
             }
             if (isContentCreator)
             {
-                builder.TextBody += " Content Creator";
-                builder.HtmlBody += "<li>Content Creator</li>";
+                builder.TextBody += " Content Creator licence";
+                builder.HtmlBody += "<li>Content Creator licence</li>";
             }
             if (isCmsAdmin)
             {
-                builder.TextBody += " Cms Administrator";
-                builder.HtmlBody += "<li>Cms Administrator</li>";
+                builder.TextBody += " CMS administrator";
+                builder.HtmlBody += "<li>CMS administrator</li>";
             }
 
             if (isCmsManager)
             {
-                builder.TextBody += " Cms Manager";
-                builder.HtmlBody += "<li>Cms Manager</li>";
+                builder.TextBody += " CMS manager";
+                builder.HtmlBody += "<li>CMS manager</li>";
             }
 
             builder.HtmlBody += "</ul>";

@@ -2,19 +2,20 @@
 @model AssessmentQuestion
 
 <label for="@Model.Id-input">
-  <h3 class="nhsuk-u-margin-bottom-1">@Model.Question</h3>
+  <h3 class="nhsuk-u-margin-bottom-1">@Model.Question @if (!Model.Required)
+  {<span>(optional)</span>}</h3>
 </label>
-  @if (Model.ScoringInstructions != null)
-  {
-    <div class="nhsuk-hint">
-      @(Html.Raw(Model.ScoringInstructions))
-    </div>
-  }
+@if (Model.ScoringInstructions != null)
+{
+  <div class="nhsuk-hint">
+    @(Html.Raw(Model.ScoringInstructions))
+  </div>
+}
 
-  <div class="nhsuk-grid-row">
-    <div class="grid-column-85">
-      <span class="left-label">@Model.MinValueDescription</span>
-      <span class="right-label">@Model.MaxValueDescription</span>
+<div class="nhsuk-grid-row">
+  <div class="grid-column-85">
+    <span class="left-label">@Model.MinValueDescription</span>
+    <span class="right-label">@Model.MaxValueDescription</span>
   </div>
 </div>
 <div class="nhsuk-grid-row range-input-row nhsuk-u-margin-bottom-5">

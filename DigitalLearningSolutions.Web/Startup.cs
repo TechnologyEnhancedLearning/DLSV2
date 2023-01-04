@@ -1,9 +1,11 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
+    using System.Transactions;
     using System.Web;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
@@ -247,6 +249,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IBrandsService, BrandsService>();
             services.AddScoped<ISelfAssessmentReportService, SelfAssessmentReportService>();
+            services.AddScoped<IEnrolService, EnrolService>();
             services.AddScoped<IClaimAccountService, ClaimAccountService>();
             services.AddScoped<IEmailVerificationService, EmailVerificationService>();
             services.AddScoped<IEmailGenerationService, EmailGenerationService>();
@@ -264,6 +267,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IEmailDataService, EmailDataService>();
+            services.AddScoped<IEmailSchedulerService, EmailSchedulerService>();
             services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
             services.AddScoped<IFaqsDataService, FaqsDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
@@ -349,6 +353,24 @@ namespace DigitalLearningSolutions.Web
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
             }
+
+            app.Use(
+                async (context, next) =>
+                {
+                    if (this.config.GetSection("IsTransactionScope")?.Value == "True")
+                    {
+                        using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                        {
+                            await next.Invoke();
+                            scope.Complete();
+                        }
+                    }
+                    else
+                    {
+                        await next.Invoke();
+                    }
+                }
+            );
 
             app.UseExceptionHandler("/LearningSolutions/Error");
             app.UseStatusCodePagesWithReExecute("/LearningSolutions/StatusCode/{0}");

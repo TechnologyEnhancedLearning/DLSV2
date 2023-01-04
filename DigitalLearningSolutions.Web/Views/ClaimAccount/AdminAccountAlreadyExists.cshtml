@@ -1,0 +1,20 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount
+@model ClaimAccountViewModel
+
+@{
+  ViewData["Title"] = "Link delegate record - Admin Account already exists";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Link delegate record</h1>
+
+    <partial name="_DelegateRecordSummary" model="@Model" />
+
+    <p class="nhsuk-body-m">
+      You already have an Admin record at this centre, so you cannot link this Admin record to your login.
+    </p>
+
+    <vc:action-link asp-controller="Home" asp-action="Index" link-text="Return to the Digital Learning Solutions homepage" />
+  </div>
+</div>

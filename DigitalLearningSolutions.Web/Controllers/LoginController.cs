@@ -150,7 +150,11 @@
                 userEntity.UserAccount.EmailVerified.HasValue,
                 unverifiedCentreEmails.Count
             );
-
+            //For By pass choose while return url is of my account page
+            if (!string.IsNullOrEmpty(returnUrl) && returnUrl.IndexOf("MyAccount") > -1)
+            {
+                return this.RedirectToReturnUrl(returnUrl, logger) ?? View("ChooseACentre", model);
+            }
             return View("ChooseACentre", model);
         }
 

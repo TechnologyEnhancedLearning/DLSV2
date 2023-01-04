@@ -40,7 +40,7 @@
                 ID = 8,
                 SupervisorAdminID = 1,
                 DelegateEmail = "kevin.whittaker@hee.nhs.uk",
-                CandidateID = 254480,
+                DelegateUserID = 281054,
                 Added = DateTime.Parse("2021-06-28 16:40:35.507"),
                 NotificationSent = DateTime.Parse("2021-06-28 16:40:35.507"),
                 Removed = null,
@@ -68,7 +68,7 @@
             var currentTime = DateTime.UtcNow;
 
             connection.Execute(
-                @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, Added,
+                @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, DelegateUserID, Added,
                                  NotificationSent, Removed, SupervisorEmail, AddedByDelegate, InviteHash)
                     OUTPUT INSERTED.ID
                     VALUES (1, 'delegate@email.com', null, @currentTime, @currentTime, null,
@@ -99,7 +99,7 @@
             var currentTime = DateTime.UtcNow;
 
             connection.Execute(
-                @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, Added,
+                @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, DelegateUserID, Added,
                                  NotificationSent, Removed, SupervisorEmail, AddedByDelegate, InviteHash)
                     OUTPUT INSERTED.ID
                     VALUES (1, @delegateEmailForValidRecord, null, @currentTime, @currentTime, null,
@@ -133,7 +133,7 @@
             using var transaction = new TransactionScope();
 
             // Given
-            const int candidateId = 1;
+            const int delegateUserId = 1;
             var oldRecord =
                 supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(
                     inviteHashForFirstSupervisorDelegateRecord
@@ -152,9 +152,9 @@
                     supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(
                         inviteHashForFirstSupervisorDelegateRecord
                     );
-                updatedRecord!.CandidateID.Should().Be(candidateId);
+                updatedRecord!.DelegateUserID.Should().Be(delegateUserId);
                 updatedRecord.ID.Should().Be(8);
-                oldRecord!.CandidateID.Should().NotBe(candidateId);
+                oldRecord!.DelegateUserID.Should().NotBe(delegateUserId);
             }
         }
     }

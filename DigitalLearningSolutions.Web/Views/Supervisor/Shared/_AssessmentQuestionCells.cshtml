@@ -2,8 +2,9 @@
 @model AssessmentQuestion
 
 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-  <span class="nhsuk-table-responsive__heading">Questions </span>
-  @Model.Question
+  <span class="nhsuk-table-responsive__heading">Question </span>
+  @Model.Question @if (!Model.Required)
+  {<span>(optional)</span>}
 </td>
 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
   <span class="nhsuk-table-responsive__heading">Self-assessment </span>

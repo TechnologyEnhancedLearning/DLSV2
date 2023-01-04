@@ -141,24 +141,24 @@
         }
 
         public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
-            int userId
+            int userId, bool isAll = false
         )
         {
+            string delegateAccount = "SELECT c.CentreId, c.CentreName, ucd.Email FROM DelegateAccounts AS da INNER JOIN Centres AS c ON c.CentreID = da.CentreID LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = c.CentreID WHERE da.UserID = ";
+            string adminAccount = " SELECT c.CentreId, c.CentreName, ucd.Email FROM AdminAccounts AS aa INNER JOIN Centres AS c ON c.centreID = aa.CentreID LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = aa.UserID AND ucd.CentreID = c.CentreID WHERE aa.UserID = ";
+
+            if (!isAll)
+            {
+                delegateAccount += userId + " AND da.Active = 1";
+                adminAccount += userId + " AND aa.Active = 1 ";
+            }
+            else
+            {
+                delegateAccount += userId;
+                adminAccount += userId;
+            }
             return connection.Query<(int, string, string?)>(
-                @"SELECT c.CentreId, c.CentreName, ucd.Email
-                    FROM DelegateAccounts AS da
-                    INNER JOIN Centres AS c ON c.CentreID = da.CentreID
-                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = c.CentreID
-                    WHERE da.UserID = @userId AND da.Active = 1
-
-                    UNION
-
-                    SELECT c.CentreId, c.CentreName, ucd.Email
-                    FROM AdminAccounts AS aa
-                    INNER JOIN Centres AS c ON c.centreID = aa.CentreID
-                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = aa.UserID AND ucd.CentreID = c.CentreID
-                    WHERE aa.UserID = @userId AND aa.Active = 1",
-                new { userId }
+                $"{delegateAccount} UNION {adminAccount}"
             );
         }
 

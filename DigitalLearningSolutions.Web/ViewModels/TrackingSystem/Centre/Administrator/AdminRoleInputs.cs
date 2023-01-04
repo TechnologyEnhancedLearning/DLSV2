@@ -25,7 +25,7 @@
 
         public static CheckboxListItemViewModel NominatedSupervisorCheckbox = new CheckboxListItemViewModel(
             nameof(EditRolesViewModel.IsNominatedSupervisor),
-            "Nominated Supervisor",
+            "Nominated supervisor",
             "Confirms self-assessment results for learners."
         );
 

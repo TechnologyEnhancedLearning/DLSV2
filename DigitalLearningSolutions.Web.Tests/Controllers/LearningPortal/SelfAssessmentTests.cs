@@ -55,14 +55,14 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
             // When
             controller.SelfAssessment(SelfAssessmentId);
 
             // Then
-            A.CallTo(() => selfAssessmentService.IncrementLaunchCount(selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.IncrementLaunchCount(selfAssessment.Id, DelegateUserId))
                 .MustHaveHappened();
         }
 
@@ -93,7 +93,7 @@
             var competency = new Competency();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId,DelegateUserId))
                 .Returns(competency);
             A.CallTo(() => frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id))
                 .Returns(new List<Data.Models.Frameworks.CompetencyFlag>() { });
@@ -152,7 +152,7 @@
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId, DelegateUserId))
                 .Returns(null);
 
             // When
@@ -193,6 +193,7 @@
             const int minValue = 0;
             const int maxValue = 10;
             const int assessmentQuestionInputTypeID = 2;
+            const int candidateId = 1;
             var assessmentQuestions = new Collection<AssessmentQuestion>
             {
                 new AssessmentQuestion
@@ -204,11 +205,13 @@
                     AssessmentQuestionInputTypeID = assessmentQuestionInputTypeID,
                 },
             };
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
-
-            // When
-            controller.SelfAssessmentCompetency(
+            var competency = selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id,candidateId, DelegateUserId);
+            if (!competency.AssessmentQuestions.Any(x => x.SignedOff == true))
+            {
+                // When
+                controller.SelfAssessmentCompetency(
                 SelfAssessmentId,
                 assessmentQuestions,
                 competencyNumber,
@@ -216,17 +219,19 @@
                 competencyGroupId
             );
 
-            // Then
-            A.CallTo(
-                () => selfAssessmentService.SetResultForCompetency(
-                    competencyId,
-                    selfAssessment.Id,
-                    CandidateId,
-                    assessmentQuestionId,
-                    assessmentQuestionResult,
-                    null
-                )
-            ).MustHaveHappened();
+                // Then
+                A.CallTo(
+                    () => selfAssessmentService.SetResultForCompetency(
+                        competencyId,
+                        selfAssessment.Id,
+                        CandidateId,
+                        DelegateUserId,
+                        assessmentQuestionId,
+                        assessmentQuestionResult,
+                        null
+                    )
+                ).MustHaveHappened();
+            }
         }
 
         [Test]
@@ -305,7 +310,7 @@
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId,DelegateUserId))
                 .Returns(competencies);
 
             // When
@@ -324,7 +329,7 @@
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId, DelegateUserId))
                 .Returns(new List<Competency>() { });
 
             // When
@@ -368,7 +373,7 @@
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId))
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId, DelegateUserId))
                 .Returns(competencies);
 
             // When
