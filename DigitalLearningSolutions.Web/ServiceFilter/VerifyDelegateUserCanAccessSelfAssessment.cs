@@ -30,14 +30,14 @@
             }
 
             var selfAssessmentId = int.Parse(context.RouteData.Values["selfAssessmentId"].ToString()!);
-            var delegateId = controller.User.GetCandidateIdKnownNotNull();
+            var delegateUserId = controller.User.GetUserIdKnownNotNull();
             var canAccessSelfAssessment =
-                selfAssessmentService.CanDelegateAccessSelfAssessment(delegateId, selfAssessmentId);
+                selfAssessmentService.CanDelegateAccessSelfAssessment(delegateUserId, selfAssessmentId);
 
             if (!canAccessSelfAssessment)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment results for candidate {delegateId} with no self assessment"
+                    $"Attempt to display self assessment results for user {delegateUserId} with no self assessment"
                 );
                 context.Result = new RedirectToActionResult("AccessDenied", "LearningSolutions", new { });
             }

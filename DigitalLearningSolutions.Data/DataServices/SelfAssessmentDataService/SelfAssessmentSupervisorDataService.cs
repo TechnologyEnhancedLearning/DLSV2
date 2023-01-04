@@ -83,7 +83,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)",
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)",
                 new { selfAssessmentId, delegateUserId }
             );
         }
@@ -183,7 +183,7 @@
             );
         }
 
-        public SupervisorComment? GetSupervisorComments(int candidateId, int resultId)
+        public SupervisorComment? GetSupervisorComments(int delegateUserId, int resultId)
         {
             return connection.Query<SupervisorComment>(
                 @"SELECT
@@ -213,8 +213,9 @@
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
                     AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID INNER JOIN
                     SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE (sar.CandidateID = @candidateId) AND (sasv.SelfAssessmentResultId = @resultId)",
-                new { candidateId, resultId }
+                    INNER JOIN DelegateAccounts AS da ON sar.CandidateID = da.ID
+                    WHERE (da.UserID = @delegateUserId) AND (sasv.SelfAssessmentResultId = @resultId)",
+                new { delegateUserId, resultId }
             ).FirstOrDefault();
         }
 
