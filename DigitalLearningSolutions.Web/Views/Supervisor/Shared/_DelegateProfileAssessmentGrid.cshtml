@@ -2,60 +2,72 @@
 @model IEnumerable<DelegateSelfAssessment>;
 
 <table role="table" class="nhsuk-table-responsive">
-  <caption class="nhsuk-table__caption"><h2>Self assessments</h2></caption>
-  <thead role="rowgroup" class="nhsuk-table__head">
-    <tr role="row">
-      <th role="columnheader" class="" scope="col">
-        Self Assessment
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Role links
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Last activity
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Status
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Actions
-      </th>
-    </tr>
-  </thead>
-  <tbody class="nhsuk-table__body">
-    @foreach (var delegateSelfAssessment in Model)
-    {
-    <tr role="row" class="nhsuk-table__row">
-      <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-        <span class="nhsuk-table-responsive__heading">Self Assessment </span>@delegateSelfAssessment.RoleName
-      </td>
-      <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-        <span class="nhsuk-table-responsive__heading">Role links </span>@(delegateSelfAssessment.ProfessionalGroup != null ? delegateSelfAssessment.ProfessionalGroup : "None/Generic")
-        @(delegateSelfAssessment.SubGroup != null ? " / " + delegateSelfAssessment.SubGroup : "")
-        @(delegateSelfAssessment.RoleProfile != null ? " / " + delegateSelfAssessment.RoleProfile : "")
-      </td>
-      <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-        <span class="nhsuk-table-responsive__heading">Last activity </span>@delegateSelfAssessment.LastAccessed.ToShortDateString()<br/> (@delegateSelfAssessment.LaunchCount launches)
-      </td>
-      <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-        <span class="nhsuk-table-responsive__heading">Status </span> <partial name="Shared/_ProfileAssessmentStatusTag" model="delegateSelfAssessment" />
-      </td>
-      <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-        <span class="nhsuk-table-responsive__heading">Actions </span>
-        @if (delegateSelfAssessment.SignOffRequested == 0 && delegateSelfAssessment.LastAccessed < DateTime.Now.AddDays(-7))
+    <caption class="nhsuk-table__caption"><h2>Self assessments</h2></caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+            <th role="columnheader" class="" scope="col">
+                Self Assessment
+            </th>
+            <th role="columnheader" class="" scope="col">
+                Role links
+            </th>
+            <th role="columnheader" class="" scope="col">
+                Last activity
+            </th>
+            <th role="columnheader" class="" scope="col">
+                Status
+            </th>
+            <th role="columnheader" class="" scope="col">
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+        @foreach (var delegateSelfAssessment in Model)
         {
-          <a class="status-tag" asp-action="SendReminderDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Send reminder</a>
-        } 
-        @if (delegateSelfAssessment.LaunchCount > 0)
-        {
-          <a asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">@(delegateSelfAssessment.SignOffRequested > 0 | delegateSelfAssessment.ResultsVerificationRequests > 0 ? "Review" : "View")</a>
-        } 
-        @if (delegateSelfAssessment.CompletedDate != null | delegateSelfAssessment.LaunchCount == 0)
-        {
-          <a asp-action="RemoveDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Remove</a>
+            <tr role="row" class="nhsuk-table__row">
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Self Assessment </span>@delegateSelfAssessment.RoleName
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Role links </span>@(delegateSelfAssessment.ProfessionalGroup != null ? delegateSelfAssessment.ProfessionalGroup : "None/Generic")
+                    @(delegateSelfAssessment.SubGroup != null ? " / " + delegateSelfAssessment.SubGroup : "")
+                    @(delegateSelfAssessment.RoleProfile != null ? " / " + delegateSelfAssessment.RoleProfile : "")
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Last activity </span>@delegateSelfAssessment.LastAccessed.ToShortDateString()<br /> (@delegateSelfAssessment.LaunchCount launches)
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Status </span> <partial name="Shared/_ProfileAssessmentStatusTag" model="delegateSelfAssessment" />
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Actions </span>
+                    @if (delegateSelfAssessment.IsAssignedToSupervisor)
+                    {
+                        @if (delegateSelfAssessment.SignOffRequested == 0 && delegateSelfAssessment.LastAccessed < DateTime.Now.AddDays(-7))
+                        {
+                            <a class="status-tag" asp-action="SendReminderDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Send reminder</a>
+                        }
+                        @if (delegateSelfAssessment.LaunchCount > 0)
+                        {
+                            <a asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">
+                                @(
+                                    delegateSelfAssessment.SignOffRequested > 0 | delegateSelfAssessment.ResultsVerificationRequests > 0 ? "Review" : "View"
+                                    )
+                            </a>
+                        }
+                        @if (delegateSelfAssessment.CompletedDate != null | delegateSelfAssessment.LaunchCount == 0)
+                        {
+                            <a asp-action="RemoveDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Remove</a>
+                        }
+
+                    }
+                    else
+                    {
+                        <a asp-action="QuickAddSupervisor" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.CandidateID" asp-route-selfAssessmentId="@delegateSelfAssessment.SelfAssessmentID">Supervise</a>
+                    }
+                </td>
+            </tr>
         }
-      </td>
-    </tr>
-    }
-  </tbody>
+    </tbody>
 </table>
