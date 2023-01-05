@@ -109,11 +109,11 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             return connection.Query<DashboardData>(
                 @"SELECT (SELECT COUNT(SupervisorDelegates.ID) AS StaffCount
                     FROM    SupervisorDelegates LEFT OUTER JOIN
-                            Candidates ON SupervisorDelegates.CandidateID = Candidates.CandidateID AND Candidates.Active = 1
+                            Candidates ON SupervisorDelegates.CandidateID_deprecated = Candidates.CandidateID AND Candidates.Active = 1
                      WHERE  (SupervisorDelegates.SupervisorAdminID = @adminId) AND (SupervisorDelegates.Removed IS NULL)) AS StaffCount,
                          (SELECT COUNT(ID) AS StaffCount
                          FROM    SupervisorDelegates AS SupervisorDelegates_1
-                         WHERE (SupervisorAdminID = @adminId) AND (CandidateID IS NULL) AND (Removed IS NULL)) AS StaffUnregisteredCount,
+                         WHERE (SupervisorAdminID = @adminId) AND (CandidateID_deprecated IS NULL) AND (Removed IS NULL)) AS StaffUnregisteredCount,
                     (SELECT COUNT(ca.ID) AS ProfileSelfAssessmentCount
                          FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
                            CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
@@ -185,7 +185,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     connection.Execute(@"UPDATE AdminUsers SET Supervisor = 1 WHERE AdminID = @supervisorAdminId AND Supervisor = 0", new { supervisorAdminId });
                 }
                 var numberOfAffectedRows = connection.Execute(
-         @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail, AddedByDelegate)
+         @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID_deprecated, SupervisorEmail, AddedByDelegate)
                     VALUES (@supervisorAdminId, @delegateEmail, @delegateId, @supervisorEmail, @addedByDelegate)",
         new { supervisorAdminId, delegateEmail, delegateId, supervisorEmail, addedByDelegate });
                 if (numberOfAffectedRows < 1)
@@ -210,7 +210,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             return connection.Query<SupervisorDelegateDetail>(
                $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
-                    WHERE (sd.ID = @supervisorDelegateId) AND (sd.CandidateID = @delegateId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateId }
+                    WHERE (sd.ID = @supervisorDelegateId) AND (sd.CandidateID_deprecated = @delegateId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateId }
                ).FirstOrDefault();
         }
 
@@ -228,7 +228,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         {
             var numberOfAffectedRows = connection.Execute(
          @"UPDATE SupervisorDelegates SET Confirmed = getUTCDate()
-            WHERE ID = @supervisorDelegateId AND Confirmed IS NULL AND Removed IS NULL AND (CandidateID = @candidateId OR SupervisorAdminID = @adminId)",
+            WHERE ID = @supervisorDelegateId AND Confirmed IS NULL AND Removed IS NULL AND (CandidateID_deprecated = @candidateId OR SupervisorAdminID = @adminId)",
         new { supervisorDelegateId, candidateId, adminId });
             if (numberOfAffectedRows < 1)
             {
@@ -244,7 +244,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         {
             var numberOfAffectedRows = connection.Execute(
          @"UPDATE SupervisorDelegates SET Removed = getUTCDate()
-            WHERE ID = @supervisorDelegateId AND Removed IS NULL AND (CandidateID = @candidateId OR SupervisorAdminID = @adminId)",
+            WHERE ID = @supervisorDelegateId AND Removed IS NULL AND (CandidateID_deprecated = @candidateId OR SupervisorAdminID = @adminId)",
         new { supervisorDelegateId, candidateId, adminId });
             if (numberOfAffectedRows < 1)
             {
@@ -342,7 +342,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                     SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
                     CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID INNER JOIN
-                    Candidates AS c ON ca.CandidateID = c.CandidateID
+                    Candidates AS c ON ca.CandidateID_deprecated = c.CandidateID
                 WHERE (sd.SupervisorAdminID = @adminId) AND (casv.Verified IS NULL) AND (sd.Removed IS NULL)", new { adminId }
                 );
         }
@@ -352,7 +352,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                 @"SELECT ca.ID, sd.ID AS SupervisorDelegateId, c.FirstName + ' ' + c.LastName AS DelegateName, sa.Name AS ProfileName, MAX(sasv.Requested) AS Requested, 0 AS SignOffRequest, 1 AS ResultsReviewRequest
                     FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
                     CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
-                    Candidates AS c ON ca.CandidateID = c.CandidateID INNER JOIN
+                    Candidates AS c ON ca.CandidateID_deprecated = c.CandidateID INNER JOIN
                     SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
 					SelfAssessmentResults AS sar ON sar.SelfAssessmentID = sa.ID INNER JOIN
@@ -540,7 +540,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
             else
             {
                 var numberOfAffectedRows = connection.Execute(
-         @"INSERT INTO CandidateAssessments (CandidateID, SelfAssessmentID, CompleteByDate, EnrolmentMethodId, EnrolledByAdminId)
+         @"INSERT INTO CandidateAssessments (CandidateID_deprecated, SelfAssessmentID, CompleteByDate, EnrolmentMethodId, EnrolledByAdminId)
                     VALUES (@delegateId, @selfAssessmentId, @completeByDate, 2, @adminId)",
         new { delegateId, selfAssessmentId, completeByDate, adminId });
                 if (numberOfAffectedRows < 1)

@@ -70,12 +70,12 @@
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM CandidateAssessments ca
                 INNER JOIN SelfAssessmentResults s
-                    ON s.CandidateID = ca.CandidateID AND s.SelfAssessmentID = ca.SelfAssessmentID
+                    ON s.CandidateID = ca.CandidateID_deprecated AND s.SelfAssessmentID = ca.SelfAssessmentID
                 INNER JOIN (
                     SELECT MAX(s1.ID) as ID
                     FROM SelfAssessmentResults AS s1
                     INNER JOIN CandidateAssessments AS ca1
-                        ON  s1.CandidateID = ca1.CandidateID AND s1.SelfAssessmentID = ca1.SelfAssessmentID
+                        ON  s1.CandidateID = ca1.CandidateID_deprecated AND s1.SelfAssessmentID = ca1.SelfAssessmentID
                     WHERE ca1.ID = @candidateAssessmentId
                     GROUP BY CompetencyID, AssessmentQuestionID
                 ) t
