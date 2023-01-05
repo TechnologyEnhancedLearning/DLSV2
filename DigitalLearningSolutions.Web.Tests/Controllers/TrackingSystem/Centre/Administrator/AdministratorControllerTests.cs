@@ -126,7 +126,7 @@
             );
 
             // Then
-            result.Should().BeNotFoundResult();
+            result.Should().BeStatusCodeResult().WithStatusCode(410);
         }
 
         [Test]
@@ -203,7 +203,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).MustNotHaveHappened();
-                result.Should().BeNotFoundResult();
+                result.Should().BeStatusCodeResult().WithStatusCode(410);
             }
         }
     }

@@ -52,7 +52,7 @@
             new VerifyAdminUserCanAccessAdminUser(userDataService).OnActionExecuting(context);
 
             // Then
-            context.Result.Should().BeNotFoundResult();
+            context.Result.Should().BeStatusCodeResult().WithStatusCode(410);
         }
 
         [Test]
