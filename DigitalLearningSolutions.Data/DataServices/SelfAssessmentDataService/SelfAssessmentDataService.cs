@@ -15,9 +15,9 @@
         // CompetencyDataService
         IEnumerable<int> GetCompetencyIdsForSelfAssessment(int selfAssessmentId);
 
-        Competency? GetNthCompetency(int n, int selfAssessmentId,int candidateId, int delegateUserId); // 1 indexed
+        Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateUserId); // 1 indexed
 
-        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId,int candidateId, int delegateUserId);
+        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateUserId);
 
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int delegateUserId, int? selfAssessmentResultId = null);
 

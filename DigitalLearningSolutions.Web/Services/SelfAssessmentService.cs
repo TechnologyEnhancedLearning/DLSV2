@@ -29,7 +29,7 @@
 
         void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
 
-        bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId);
+        bool CanDelegateAccessSelfAssessment(int delegateUserId, int selfAssessmentId);
 
         // Competencies
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null);
@@ -48,7 +48,7 @@
 
         Competency? GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
 
-        Competency? GetNthCompetency(int n, int selfAssessmentId,int candidateId, int delegateUserId); // 1 indexed
+        Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateUserId); // 1 indexed
 
         void SetResultForCompetency(
             int competencyId,
@@ -62,7 +62,7 @@
 
         IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int delegateUserId);
 
-        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId,int candidateId, int delegateUserId);
+        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateUserId);
 
         List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int delegateUserId);
 
@@ -319,9 +319,9 @@
             return selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId, delegateUserId);
         }
 
-        public bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId)
+        public bool CanDelegateAccessSelfAssessment(int delegateUserId, int selfAssessmentId)
         {
-            var candidateAssessments = selfAssessmentDataService.GetCandidateAssessments(delegateId, selfAssessmentId);
+            var candidateAssessments = selfAssessmentDataService.GetCandidateAssessments(delegateUserId, selfAssessmentId);
 
             return candidateAssessments.Any(ca => ca.CompletedDate == null && ca.RemovedDate == null);
         }
@@ -354,9 +354,9 @@
             );
         }
 
-        public Competency? GetNthCompetency(int n, int selfAssessmentId,int candidateId, int delegateUserId)
+        public Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateUserId)
         {
-            return selfAssessmentDataService.GetNthCompetency(n, selfAssessmentId, candidateId,delegateUserId);
+            return selfAssessmentDataService.GetNthCompetency(n, selfAssessmentId, delegateUserId);
         }
 
         public void SetResultForCompetency(
@@ -390,9 +390,9 @@
             return selfAssessmentDataService.GetSelfAssessmentsForCandidate(delegateUserId);
         }
 
-        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId,int candidateId, int delegateUserId)
+        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateUserId)
         {
-            return selfAssessmentDataService.GetMostRecentResults(selfAssessmentId, candidateId,delegateUserId);
+            return selfAssessmentDataService.GetMostRecentResults(selfAssessmentId, delegateUserId);
         }
 
         public List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int delegateUserId)

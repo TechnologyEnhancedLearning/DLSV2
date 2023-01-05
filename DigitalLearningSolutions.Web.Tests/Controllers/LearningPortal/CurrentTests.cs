@@ -44,7 +44,7 @@
 
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(DelegateUserId)).Returns(selfAssessments);
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
                 .Returns((actionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);

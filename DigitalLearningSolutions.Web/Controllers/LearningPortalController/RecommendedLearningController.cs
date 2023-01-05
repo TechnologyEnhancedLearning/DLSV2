@@ -59,9 +59,9 @@
         public async Task<IActionResult> SelfAssessmentResults(int selfAssessmentId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var userId = User.GetUserIdKnownNotNull();
-            selfAssessmentService.SetSubmittedDateNow(selfAssessmentId, candidateId);
-            selfAssessmentService.SetUpdatedFlag(selfAssessmentId, userId, false);
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            selfAssessmentService.SetSubmittedDateNow(selfAssessmentId, delegateUserId);
+            selfAssessmentService.SetUpdatedFlag(selfAssessmentId, delegateUserId, false);
 
             if (!configuration.IsSignpostingUsed())
             {
@@ -85,13 +85,12 @@
                 return RedirectToAction("FilteredDashboard", new { selfAssessmentId });
             }
 
-            var candidateId = User.GetCandidateIdKnownNotNull();
-            var delegateUserId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/RecommendedLearning";
             selfAssessmentService.SetBookmark(selfAssessmentId, delegateUserId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
 
-            return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId, page, searchString);
+            return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, delegateUserId, page, searchString);
         }
 
         [FeatureGate(FeatureFlags.UseSignposting)]
@@ -119,6 +118,7 @@
         )
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
 
             if (!actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, delegateId))
             {
@@ -136,7 +136,7 @@
                     return NotFound();
                 }
 
-                var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateId, selfAssessmentId);
+                var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
                 var model = new ResourceRemovedViewModel(assessment!);
                 return View("ResourceRemovedErrorPage", model);
             }
@@ -154,13 +154,12 @@
                 return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
             }
 
-            var candidateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
             var destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Filtered/Dashboard";
             selfAssessmentService.SetBookmark(selfAssessmentId, delegateUserId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
 
-            return await ReturnFilteredResultsView(selfAssessmentId, candidateId);
+            return await ReturnFilteredResultsView(selfAssessmentId, delegateUserId);
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/PlayList/{playListId}")]
@@ -280,10 +279,10 @@
             var response = await filteredApiHelperService.UpdateProfileAndGoals(filteredToken, profile, goals);
         }
 
-        private async Task<IActionResult> ReturnFilteredResultsView(int selfAssessmentId, int candidateId)
+        private async Task<IActionResult> ReturnFilteredResultsView(int selfAssessmentId, int delegateUserId)
         {
             var filteredToken = await GetFilteredToken();
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId)!;
             var model = new SelfAssessmentFilteredResultsViewModel
             {
                 SelfAssessment = assessment,
@@ -306,14 +305,15 @@
 
         private async Task<IActionResult> ReturnSignpostingRecommendedLearningView(
             int selfAssessmentId,
-            int candidateId,
+            int delegateUserId,
             int page,
             string? searchString
         )
         {
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId)!;
             var (recommendedResources, apiIsAccessible) =
-                await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
+                await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, delegateId);
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),

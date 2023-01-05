@@ -6,7 +6,7 @@
 
     public partial class SelfAssessmentDataService
     {
-        public CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId, int candidateId)
+        public CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId, int delegateUserID)
         {
             return connection.QuerySingle<CandidateAssessmentExportSummary>(
                 @"SELECT sa.Name AS SelfAssessment, c.FirstName + ' ' + c.LastName AS CandidateName, c.ProfessionalRegistrationNumber AS CandidatePrn, ca.StartedDate AS StartDate,
@@ -118,13 +118,13 @@ FROM   CandidateAssessmentSupervisorVerifications AS casv RIGHT OUTER JOIN
              SupervisorDelegates AS sd LEFT OUTER JOIN
              AdminUsers as au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
              CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId ON casv.CandidateAssessmentSupervisorID = cas.ID
-WHERE (ca.ID = @candidateAssessmentId  AND ca.CandidateID = @candidateId)",
-                new { candidateAssessmentId, candidateId }
+WHERE (ca.ID = @candidateAssessmentId  AND ca.DelegateUserID  = @delegateUserID)",
+                new { candidateAssessmentId, delegateUserID }
             );
         }
 
         public List<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(
-            int candidateAssessmentId, int candidateId
+            int candidateAssessmentId, int delegateUserID
         )
         {
             return connection.Query<CandidateAssessmentExportDetail>(
@@ -168,7 +168,7 @@ WHERE (ca.ID = @candidateAssessmentId  AND ca.CandidateID = @candidateId)",
                
 				LEFT OUTER JOIN AdminUsers as au
 					ON sd.SupervisorAdminID = au.AdminID
-                 WHERE ca.ID = @candidateAssessmentId AND ca.CandidateID = @candidateId
+                 WHERE ca.ID = @candidateAssessmentId AND ca.DelegateUserID = @delegateUserID
             )
                     SELECT 
 					CG.Name AS [Group],
@@ -199,7 +199,7 @@ WHERE (ca.ID = @candidateAssessmentId  AND ca.CandidateID = @candidateId)",
             INNER JOIN AssessmentQuestions AS AQ
                 ON AQ.ID = CAQ.AssessmentQuestionID
             INNER JOIN CandidateAssessments AS CA
-                ON CA.ID = @candidateAssessmentId AND CA.CandidateID = @candidateId
+                ON CA.ID = @candidateAssessmentId AND CA.DelegateUserID = @delegateUserID
             LEFT OUTER JOIN LatestAssessmentResults AS LAR
                 ON LAR.CompetencyID = C.ID AND LAR.AssessmentQuestionID = AQ.ID
             INNER JOIN SelfAssessmentStructure AS SAS
@@ -210,7 +210,7 @@ WHERE (ca.ID = @candidateAssessmentId  AND ca.CandidateID = @candidateId)",
                 ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
                     WHERE (CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)
                     ORDER BY SAS.Ordering, CAQ.Ordering",
-                new { candidateAssessmentId, candidateId }
+                new { candidateAssessmentId, delegateUserID }
             ).AsList();
         }
     }

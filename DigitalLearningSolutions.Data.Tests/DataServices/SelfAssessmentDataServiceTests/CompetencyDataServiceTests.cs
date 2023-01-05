@@ -43,7 +43,7 @@
             );
 
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(1, SelfAssessmentId, CandidateId,delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(1, SelfAssessmentId, delegateUserId);
 
             // Then
             result.Should().BeEquivalentTo(expectedCompetency);
@@ -74,7 +74,7 @@
             );
 
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(32, SelfAssessmentId, CandidateId, delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(32, SelfAssessmentId, delegateUserId);
 
             // Then
             result.Should().BeEquivalentTo(expectedCompetency);
@@ -84,7 +84,7 @@
         public void GetNthCompetency_returns_null_when_reached_end_of_assessment()
         {
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(33, SelfAssessmentId, CandidateId, delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(33, SelfAssessmentId, delegateUserId);
 
             // Then
             result.Should().BeNull();
@@ -94,7 +94,7 @@
         public void GetNthCompetency_returns_null_when_n_zero()
         {
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(0, SelfAssessmentId, CandidateId, delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(0, SelfAssessmentId, delegateUserId);
 
             // Then
             result.Should().BeNull();
@@ -104,7 +104,7 @@
         public void GetNthCompetency_returns_null_when_n_negative()
         {
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(-1, SelfAssessmentId, CandidateId, delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(-1, SelfAssessmentId, delegateUserId);
 
             // Then
             result.Should().BeNull();
@@ -114,7 +114,7 @@
         public void GetNthCompetency_returns_null_when_invalid_candidate()
         {
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(1, SelfAssessmentId, 1, 2);
+            var result = selfAssessmentDataService.GetNthCompetency(1, SelfAssessmentId, 2);
 
             // Then
             result.Should().BeNull();
@@ -124,7 +124,7 @@
         public void GetNthCompetency_returns_null_when_invalid_assessment()
         {
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(1, 2, 1,2);
+            var result = selfAssessmentDataService.GetNthCompetency(1, 2, 2);
 
             // Then
             result.Should().BeNull();
@@ -161,7 +161,7 @@
                 );
 
                 // Then
-                var competency = selfAssessmentDataService.GetNthCompetency(2, SelfAssessmentId, CandidateId, delegateUserId);
+                var competency = selfAssessmentDataService.GetNthCompetency(2, SelfAssessmentId, delegateUserId);
                 var actualResult = competency.AssessmentQuestions.First(question => question.Id == assessmentQuestionId)
                     .Result;
                 result.Should().Be(actualResult);
@@ -495,7 +495,7 @@
                 );
 
                 // Then
-                var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId, CandidateId,delegateUserId).ToList();
+                var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId, delegateUserId).ToList();
 
                 results.Count.Should().Be(32);
                 SelfAssessmentHelper.GetQuestionResult(results, firstCompetencyId, firstAssessmentQuestionId).Should()
@@ -584,7 +584,7 @@
                 );
 
                 // Then
-                var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId,CandidateId, delegateUserId).ToList();
+                var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId, delegateUserId).ToList();
 
                 results.Count.Should().Be(32);
                 SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, thirdAssessmentQuestionId).Should()

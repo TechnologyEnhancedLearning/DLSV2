@@ -44,7 +44,7 @@
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
-        int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
+        int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
         bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId);
@@ -554,14 +554,14 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                 return existingId;
             }
         }
-        public int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
+        public int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
         {
             int candidateAssessmentId = (int)connection.ExecuteScalar(
                  @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @delegateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
-               new { selfAssessmentId, delegateId });
+                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
+               new { selfAssessmentId, delegateUserId });
             if (candidateAssessmentId > 0)
             {
                 int numberOfAffectedRows = connection.Execute(
