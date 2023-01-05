@@ -234,11 +234,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 
         public SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId)
         {
-
-
-            // TODO: Fix this...
-
-
             return connection.Query<SupervisorDelegateDetail>(
                $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}

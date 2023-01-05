@@ -243,20 +243,12 @@
         {
             var resultIdFilter = selfAssessmentResultId.HasValue ? $"ResultID = {selfAssessmentResultId.Value}" : "1=1";
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
-
-
-
-                //TODO: Fix this...
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields},
                     LAR.SupervisorName
                     FROM {SpecificCompetencyTables}
                     WHERE (CAOC.IncludedInSelfAssessment = 1 OR SAS.Optional = 0) AND {resultIdFilter}
                     ORDER BY SAS.Ordering, CAQ.Ordering",
-
-
-
-
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
@@ -301,8 +293,6 @@
                 LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = CandidateAssessmentSupervisorID
                 LEFT OUTER JOIN SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId AND sd.Removed IS NULL
                 LEFT OUTER JOIN AdminUsers AS au ON au.AdminID = sd.SupervisorAdminID";
-
-            // TODO: Fix this...
 
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
