@@ -920,7 +920,7 @@
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegateDetail = superviseDelegate
             };
-            if (superviseDelegate.DelegateUserId != null)
+            if (superviseDelegate.DelegateUserID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,

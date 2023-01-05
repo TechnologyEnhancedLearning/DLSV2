@@ -32,19 +32,21 @@
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM SelfAssessmentResults s
                 INNER JOIN (
-                    SELECT MAX(ID) as ID
-                    FROM SelfAssessmentResults
-                    WHERE CandidateID = @candidateId
-                        AND SelfAssessmentID = @selfAssessmentId
-                    GROUP BY CompetencyID, AssessmentQuestionID
+                    SELECT MAX(sar1.ID) as ID
+                    FROM SelfAssessmentResults AS sar1 
+                    INNER JOIN DelegateAccounts AS da1 ON sar1.CandidateID = da1.ID
+                    WHERE da1.UserID = @delegateUserId
+                    AND sar1.SelfAssessmentID = @selfAssessmentId
+                    GROUP BY sar1.CompetencyID, sar1.AssessmentQuestionID
                 ) t
                     ON s.ID = t.ID
+                INNER JOIN DelegateAccounts AS da ON s.CandidateID = da.ID
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
                     ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
                         AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
-                WHERE CandidateID = @candidateId
+                WHERE da.UserID = @delegateUserId
                 AND s.SelfAssessmentID = @selfAssessmentId
             )";
 
@@ -183,7 +185,7 @@
             );
         }
 
-        public Competency? GetNthCompetency(int n, int selfAssessmentId,int candidateId, int delegateUserId)
+        public Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateUserId)
         {
             Competency? competencyResult = null;
             return connection.Query<Competency, AssessmentQuestion, Competency>(
@@ -214,11 +216,11 @@
                     competencyResult.AssessmentQuestions.Add(assessmentQuestion);
                     return competencyResult;
                 },
-                new { n, selfAssessmentId,candidateId, delegateUserId }
+                new { n, selfAssessmentId, delegateUserId }
             ).FirstOrDefault();
         }
 
-        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId,int candidateId, int delegateUserId)
+        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateUserId)
         {
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
@@ -231,7 +233,7 @@
                     competency.AssessmentQuestions.Add(assessmentQuestion);
                     return competency;
                 },
-                new { selfAssessmentId, candidateId, delegateUserId }
+                new { selfAssessmentId, delegateUserId }
             );
             return GroupCompetencyAssessmentQuestions(result);
         }

@@ -44,7 +44,7 @@
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
-        int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
+        int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
         bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId);
@@ -54,28 +54,38 @@
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
         private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateUserID,
-        sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed,
-        sd.InviteHash, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5,
-        c.Answer6, c.CandidateNumber, c.ProfessionalRegistrationNumber, c.EmailAddress AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2,
-        cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5,
-        cp6.CustomPrompt AS CustomPrompt6, COALESCE(au.CentreID, c.CentreID) AS CentreID,
-        au.Forename + ' ' + au.Surname AS SupervisorName, (SELECT COUNT(cas.ID)
-        FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
-        CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
-        WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount,
-        CAST(COALESCE (au2.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.Supervisor, 0) AS Bit) AS DelegateIsSupervisor ";
-        private const string supervisorDelegateDetailTables = @"SupervisorDelegates AS sd LEFT OUTER JOIN
-        AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID FULL OUTER JOIN
-        CustomPrompts AS cp6 RIGHT OUTER JOIN
-        CustomPrompts AS cp1 RIGHT OUTER JOIN
-        Centres AS ct ON cp1.CustomPromptID = ct.CustomField1PromptID LEFT OUTER JOIN
-        CustomPrompts AS cp2 ON ct.CustomField2PromptID = cp2.CustomPromptID LEFT OUTER JOIN
-        CustomPrompts AS cp3 ON ct.CustomField3PromptID = cp3.CustomPromptID LEFT OUTER JOIN
-        CustomPrompts AS cp4 ON ct.CustomField4PromptID = cp4.CustomPromptID LEFT OUTER JOIN
-        CustomPrompts AS cp5 ON ct.CustomField5PromptID = cp5.CustomPromptID ON cp6.CustomPromptID = ct.CustomField6PromptID FULL OUTER JOIN
-        JobGroups AS jg RIGHT OUTER JOIN
-        Candidates AS c ON jg.JobGroupID = c.JobGroupID ON ct.CentreID = c.CentreID ON sd.CandidateID = c.CandidateID FULL OUTER JOIN
-        AdminUsers AS au2 ON au2.CentreID = c.CentreID AND au2.Email = c.EmailAddress AND au2.Active = 1 AND au2.Approved = 1 AND au2.Email IS NOT NULL";
+            sd.DelegateEmail, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed,
+            sd.InviteHash, u.FirstName, u.LastName, jg.JobGroupName, da.Answer1, da.Answer2, da.Answer3, da.Answer4, da.Answer5,
+            da.Answer6, da.CandidateNumber, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2,
+            cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5,
+            cp6.CustomPrompt AS CustomPrompt6, COALESCE(au.CentreID, da.CentreID) AS CentreID,
+            au.Forename + ' ' + au.Surname AS SupervisorName, (SELECT COUNT(cas.ID)
+            FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+            CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+            WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount,
+            CAST(COALESCE (au2.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.Supervisor, 0) AS Bit) AS DelegateIsSupervisor ";
+        private const string supervisorDelegateDetailTables = @"SupervisorDelegates AS sd 
+            INNER JOIN Users u
+	            ON u.id = sd.DelegateUserID
+            FULL OUTER JOIN JobGroups AS jg 		
+	            ON jg.JobGroupID = u.JobGroupID
+            INNER JOIN dbo.DelegateAccounts da 
+	            ON u.ID = da.UserID
+            LEFT OUTER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID 
+            FULL OUTER JOIN CustomPrompts AS cp6 
+            RIGHT OUTER JOIN CustomPrompts AS cp1 
+            RIGHT OUTER JOIN Centres AS ct ON cp1.CustomPromptID = ct.CustomField1PromptID 
+            LEFT OUTER JOIN CustomPrompts AS cp2 ON ct.CustomField2PromptID = cp2.CustomPromptID 
+            LEFT OUTER JOIN CustomPrompts AS cp3 ON ct.CustomField3PromptID = cp3.CustomPromptID 
+            LEFT OUTER JOIN CustomPrompts AS cp4 ON ct.CustomField4PromptID = cp4.CustomPromptID 
+            LEFT OUTER JOIN CustomPrompts AS cp5 ON ct.CustomField5PromptID = cp5.CustomPromptID ON cp6.CustomPromptID = ct.CustomField6PromptID 
+            ON ct.CentreID = da.CentreID		
+            FULL OUTER JOIN AdminUsers AS au2 
+	            ON au2.CentreID = da.CentreID 
+	            AND au2.Email = u.PrimaryEmail 
+	            AND au2.Active = 1 
+	            AND au2.Approved = 1 
+	            AND au2.Email IS NOT NULL ";
         private const string delegateSelfAssessmentFields = "ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate";
         private const string signedOffFields = @"(SELECT TOP (1) casv.Verified
 FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
@@ -132,7 +142,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)
-                    ORDER BY c.LastName, COALESCE(c.FirstName, sd.DelegateEmail)", new { adminId }
+                    ORDER BY u.LastName, COALESCE(u.FirstName, sd.DelegateEmail)", new { adminId }
                 );
         }
         public int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId)
@@ -544,14 +554,14 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                 return existingId;
             }
         }
-        public int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
+        public int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
         {
             int candidateAssessmentId = (int)connection.ExecuteScalar(
                  @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @delegateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
-               new { selfAssessmentId, delegateId });
+                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
+               new { selfAssessmentId, delegateUserId });
             if (candidateAssessmentId > 0)
             {
                 int numberOfAffectedRows = connection.Execute(
