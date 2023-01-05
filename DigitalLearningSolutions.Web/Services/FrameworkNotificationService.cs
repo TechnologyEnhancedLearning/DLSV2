@@ -205,7 +205,7 @@
             string emailSubjectLine = "Invite from Supervisor - Digital Learning Solutions";
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
-            if (supervisorDelegate.CandidateID == null)
+            if (supervisorDelegate.DelegateUserID == null)
             {
                 dlsUrlBuilder.Path += "Register";
                 dlsUrlBuilder.Query = $"centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegate.InviteHash}";
@@ -301,7 +301,7 @@ If this looks like a mistake, please contact {supervisorDelegate.SupervisorName}
         public void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID, int delegateId, int? selfAssessmentResultId = null)
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateId);
-            if (supervisorDelegate == null || supervisorDelegate.CandidateID == null || supervisorDelegate.SupervisorAdminID == null)
+            if (supervisorDelegate == null || supervisorDelegate.DelegateUserID == null || supervisorDelegate.SupervisorAdminID == null)
             {
                 return;
             }
