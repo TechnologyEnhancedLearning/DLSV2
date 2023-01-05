@@ -374,7 +374,7 @@
             );
 
             // Then
-            result.Should().BeNotFoundResult();
+            result.Should().BeStatusCodeResult().WithStatusCode(410);
         }
 
         [Test]
