@@ -14,6 +14,7 @@
                 c.CentreName,
                 da.CentreID,
                 da.DateRegistered,
+                da.RegistrationConfirmationHash,
                 c.Active AS CentreActive,
                 COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
                 u.FirstName,
