@@ -124,13 +124,18 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public DashboardData GetDashboardDataForAdminId(int adminId)
         {
             return connection.Query<DashboardData>(
-                @"SELECT (SELECT COUNT(SupervisorDelegates.ID) AS StaffCount
-                    FROM    SupervisorDelegates LEFT OUTER JOIN
-                            Candidates ON SupervisorDelegates.CandidateID = Candidates.CandidateID AND Candidates.Active = 1
-                     WHERE  (SupervisorDelegates.SupervisorAdminID = @adminId) AND (SupervisorDelegates.Removed IS NULL)) AS StaffCount,
+                @"  SELECT (SELECT COUNT(sd.ID) AS StaffCount
+                        FROM SupervisorDelegates sd
+                        LEFT OUTER JOIN users u
+                            ON u.id = sd.DelegateUserID
+                            AND u.Active = 1
+                        WHERE  (sd.SupervisorAdminID = @adminId) 
+	                        AND (sd.Removed IS NULL)) AS StaffCount,
                          (SELECT COUNT(ID) AS StaffCount
-                         FROM    SupervisorDelegates AS SupervisorDelegates_1
-                         WHERE (SupervisorAdminID = @adminId) AND (CandidateID IS NULL) AND (Removed IS NULL)) AS StaffUnregisteredCount,
+                         FROM SupervisorDelegates AS SupervisorDelegates_1
+                         WHERE (SupervisorAdminID = @adminId)
+                            AND (DelegateUserID IS NULL)
+                            AND (Removed IS NULL)) AS StaffUnregisteredCount,
                     (SELECT COUNT(ca.ID) AS ProfileSelfAssessmentCount
                          FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
                            CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
