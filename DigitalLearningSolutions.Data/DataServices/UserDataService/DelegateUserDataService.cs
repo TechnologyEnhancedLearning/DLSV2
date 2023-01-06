@@ -40,6 +40,41 @@
             INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID";
 
+        private const string BaseSelectDelegateUserPassportingQuery =
+            @"SELECT da.UserId AS Id,
+                da.CandidateNumber,
+                ct.CentreName,
+                da.CentreID,
+                da.DateRegistered,
+                ct.Active AS CentreActive,
+                u.PrimaryEmail AS EmailAddress,
+                u.FirstName,
+                u.LastName,
+                u.PasswordHash AS Password,
+                u.Active,
+                da.Approved,
+                u.ProfileImage,
+                da.Answer1,
+                da.Answer2,
+                da.Answer3,
+                da.Answer4,
+                da.Answer5,
+                da.Answer6,
+                u.JobGroupID,
+                jg.JobGroupName,
+                u.HasBeenPromptedForPrn,
+                u.ProfessionalRegistrationNumber,
+                u.HasDismissedLhLoginWarning,
+                u.ResetPasswordID
+            FROM Users u
+            INNER JOIN DelegateAccounts da
+	            ON da.UserId = u.ID
+            INNER JOIN Centres AS ct 
+	            ON ct.CentreID = da.CentreID
+            INNER JOIN JobGroups AS jg 
+	            ON jg.JobGroupID = u.JobGroupID
+            ";
+
         private const string BaseSelectDelegateAccountQuery =
             @"SELECT
                 da.ID,
@@ -180,6 +215,17 @@
                 @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateId = @id",
                 new { id }
+            ).SingleOrDefault();
+
+            return user;
+        }
+
+        public DelegateUser? GetDelegateUserByDelegateUserId(int delegateUserId)
+        {
+            var user = connection.Query<DelegateUser>(
+                @$"{BaseSelectDelegateUserPassportingQuery}
+                    WHERE da.UserId = @delegateUserId",
+                new { delegateUserId }
             ).SingleOrDefault();
 
             return user;
