@@ -45,6 +45,7 @@
         IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId);
 
         DelegateUser? GetDelegateUserById(int id);
+        DelegateUser? GetDelegateUserByDelegateUserId(int delegateUserId);
 
         List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
 
