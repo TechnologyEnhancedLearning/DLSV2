@@ -234,25 +234,24 @@
                         Email,
                         ProfileImage,
                         IsFrameworkDeveloper
-                    FROM AdminUsers
-                    WHERE (
-                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId)
-                        OR
-                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = (SELECT CategoryID FROM SelfAssessments WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)
-                    )
+                        FROM AdminUsers
+                        WHERE 
+                        CentreID IN (SELECT CentreID FROM DelegateAccounts where UserID = @delegateUserId)
+                        AND (CategoryID = 0 OR (CategoryID IN (select CategoryID from SelfAssessments where ID=@selfAssessmentId)))
                         AND AdminID NOT IN (
-                            SELECT sd.SupervisorAdminID
-                            FROM CandidateAssessmentSupervisors AS cas
-                            INNER JOIN SupervisorDelegates AS sd
-                                ON cas.SupervisorDelegateId = sd.ID
-                            INNER JOIN CandidateAssessments AS ca
-                                ON cas.CandidateAssessmentID = ca.ID
-                            WHERE (ca.SelfAssessmentID = @selfAssessmentId)
-                                AND (ca.DelegateUserID = @delegateUserId)
-                                AND (sd.SupervisorAdminID = AdminUsers.AdminID)
-                                AND (cas.Removed IS NULL)
-                                AND (sd.Removed IS NULL)
-                         ) ",
+                        SELECT sd.SupervisorAdminID
+                        FROM CandidateAssessmentSupervisors AS cas
+                        INNER JOIN SupervisorDelegates AS sd
+                        ON cas.SupervisorDelegateId = sd.ID
+                        INNER JOIN CandidateAssessments AS ca
+                        ON cas.CandidateAssessmentID = ca.ID
+                        WHERE (ca.SelfAssessmentID = @selfAssessmentId)
+                        AND (ca.DelegateUserID = @delegateUserId)
+                        AND (sd.SupervisorAdminID = AdminUsers.AdminID)
+                        AND (cas.Removed IS NULL)
+                        AND (sd.Removed IS NULL)
+                        )
+                        AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) ",
                 new { centreId, selfAssessmentId, delegateUserId }
             );
         }
