@@ -93,7 +93,7 @@
         {
             // Given
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(expectedDelegateUser);
+            A.CallTo(() => userDataService.GetDelegateUserByDelegateUserId(A<int>._)).Returns(expectedDelegateUser);
 
             // When
             var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(null, 2);
