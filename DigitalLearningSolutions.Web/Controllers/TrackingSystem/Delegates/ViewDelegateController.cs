@@ -77,17 +77,22 @@
         public IActionResult SendWelcomeEmail(int delegateId)
         {
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
-
-            var baseUrl = config.GetAppRootPath();
-
-            passwordResetService.GenerateAndSendDelegateWelcomeEmail(
-                delegateId,
-                baseUrl
-            );
-
             var model = new WelcomeEmailSentViewModel(delegateUser);
 
-            return View("WelcomeEmailSent", model);
+            if (delegateUser.RegistrationConfirmationHash != null)
+            {
+                var baseUrl = config.GetAppRootPath();
+
+                passwordResetService.GenerateAndSendDelegateWelcomeEmail(
+                    delegateId,
+                    baseUrl
+                );
+                return View("WelcomeEmailSent", model);
+            }
+            else
+            {
+                return View("DelegateAccountAlreadyClaimed",model);
+            }
         }
 
         [HttpPost]
