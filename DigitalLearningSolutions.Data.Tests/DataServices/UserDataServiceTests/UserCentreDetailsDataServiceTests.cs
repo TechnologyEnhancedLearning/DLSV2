@@ -364,6 +364,76 @@
 
             // Then
             result.Count.Should().Be(4);
+            result.Should()
+                .ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
+            result.Should().ContainEquivalentOf((adminOnlyCentreId, adminOnlyCentreName, adminOnlyCentreEmail));
+            result.Should().ContainEquivalentOf(
+                (adminAndDelegateCentreId, adminAndDelegateCentreName, adminAndDelegateCentreEmail)
+            );
+            result.Should().ContainEquivalentOf((nullCentreEmailCentreId, nullCentreEmailCentreName, (string?)null));
+        }
+
+        [Test]
+        public void GetAllCentreEmailsForUser_returns_centre_email_list()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int delegateOnlyCentreId = 2;
+            const int adminOnlyCentreId = 3;
+            const int adminAndDelegateCentreId = 101;
+            const int nullCentreEmailCentreId = 4;
+            const string delegateOnlyCentreEmail = "centre2@email.com";
+            const string adminOnlyCentreEmail = "centre3@email.com";
+            const string adminAndDelegateCentreEmail = "centre101@email.com";
+
+            var delegateOnlyCentreName = connection.QuerySingleOrDefault<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @delegateOnlyCentreId",
+                new { delegateOnlyCentreId }
+            );
+
+            var adminOnlyCentreName = connection.QuerySingleOrDefault<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @adminOnlyCentreId",
+                new { adminOnlyCentreId }
+            );
+
+            var adminAndDelegateCentreName = connection.QuerySingleOrDefault<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @adminAndDelegateCentreId",
+                new { adminAndDelegateCentreId }
+            );
+
+            var nullCentreEmailCentreName = connection.QuerySingleOrDefault<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @nullCentreEmailCentreId",
+                new { nullCentreEmailCentreId }
+            );
+
+            connection.Execute(
+                @"INSERT INTO AdminAccounts (UserID, CentreID, Active) VALUES
+                    (@userId, @adminOnlyCentreId, 0),
+                    (@userId, @nullCentreEmailCentreId, 1)",
+                new { userId, adminOnlyCentreId, nullCentreEmailCentreId }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES
+                    (@userId, @delegateOnlyCentreId, @delegateOnlyCentreEmail),
+                    (@userId, @adminOnlyCentreId, @adminOnlyCentreEmail),
+                    (@userId, @adminAndDelegateCentreId, @adminAndDelegateCentreEmail)",
+                new
+                {
+                    userId,
+                    delegateOnlyCentreId, delegateOnlyCentreEmail,
+                    adminOnlyCentreId, adminOnlyCentreEmail,
+                    adminAndDelegateCentreId, adminAndDelegateCentreEmail,
+                }
+            );
+
+            // When
+            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+
+            // Then
+            result.Count.Should().Be(4);
             result.Should().ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
             result.Should().ContainEquivalentOf((adminOnlyCentreId, adminOnlyCentreName, adminOnlyCentreEmail));
             result.Should().ContainEquivalentOf(
