@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub;
@@ -63,16 +64,21 @@
         {
             var publicBrands = brandsService.GetPublicBrands()
                 .Select(b => new LearningContentSummary(b));
-
             var model = new LearningContentLandingPageViewModel
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, 2),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
+                UserIsLoggedInCentre = GetCentreId() != null,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
                 LearningContentItems = publicBrands,
             };
 
             return View(model);
+        }
+
+        private int? GetCentreId()
+        {
+            return User.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
         }
 
         private LandingPageViewModel GetLandingPageViewModel(int sectionIndex)
@@ -81,6 +87,7 @@
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, sectionIndex),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
+                UserIsLoggedInCentre = GetCentreId() != null,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
             };
         }
