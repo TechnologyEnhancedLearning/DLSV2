@@ -192,11 +192,10 @@
                 @"SELECT
                         c.CentreID,
                         c.CentreName,
-                        ucd.Email
+                        ISNULL(ucd.Email,'')
                     FROM UserCentreDetails AS ucd
                     INNER JOIN Centres AS c ON c.CentreID = ucd.CentreID
                     WHERE ucd.UserID = @userId
-                        AND ucd.Email IS NOT NULL
                         AND ucd.EmailVerified IS NULL
                         AND c.Active = 1",
                 new { userId }
