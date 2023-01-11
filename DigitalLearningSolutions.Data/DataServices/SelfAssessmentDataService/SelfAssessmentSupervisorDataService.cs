@@ -234,12 +234,13 @@
                         Email,
                         ProfileImage,
                         IsFrameworkDeveloper
-                    FROM AdminUsers
-                    WHERE (
-                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId)
-                        OR
-                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = (SELECT CategoryID FROM SelfAssessments WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)
-                    )
+                        FROM AdminUsers
+                        WHERE 
+                        CentreID IN (SELECT DA.CentreID FROM DelegateAccounts DA
+                        INNER JOIN CentreSelfAssessments CSA on csa.CentreID = DA.CentreID
+                        where DA.UserID = @delegateUserId And DA.Active = 1
+                        AND CSA.SelfAssessmentID=@selfAssessmentId)
+                        AND (CategoryID = 0 OR (CategoryID IN (select CategoryID from SelfAssessments where ID=@selfAssessmentId)))
                         AND AdminID NOT IN (
                             SELECT sd.SupervisorAdminID
                             FROM CandidateAssessmentSupervisors AS cas
