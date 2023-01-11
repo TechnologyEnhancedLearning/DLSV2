@@ -64,8 +64,6 @@
             IEnumerable<string> emails
         )
         {
-            //sd.CandidateID
-            //AND sd.CandidateID IS NULL
             return connection.Query<SupervisorDelegate>(
                 @"SELECT
                         sd.ID,
