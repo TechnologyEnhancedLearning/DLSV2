@@ -22,6 +22,7 @@
             Tags = FilterableTagHelper.GetCurrentStatusTagsForDelegateCourses(courseStatistics);
             Assessed = courseStatistics.IsAssessed;
             AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
+            Status = DeriveCourseStatus(courseStatistics);
         }
 
         public int CustomisationId { get; set; }
