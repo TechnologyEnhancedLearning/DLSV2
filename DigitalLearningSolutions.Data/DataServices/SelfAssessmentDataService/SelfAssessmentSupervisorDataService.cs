@@ -236,7 +236,10 @@
                         IsFrameworkDeveloper
                         FROM AdminUsers
                         WHERE 
-                        CentreID IN (SELECT CentreID FROM DelegateAccounts where UserID = @delegateUserId)
+                        CentreID IN (SELECT DA.CentreID FROM DelegateAccounts DA
+                        INNER JOIN CentreSelfAssessments CSA on csa.CentreID = DA.CentreID
+                        where DA.UserID = @delegateUserId And DA.Active = 1
+                        AND CSA.SelfAssessmentID=@selfAssessmentId)
                         AND (CategoryID = 0 OR (CategoryID IN (select CategoryID from SelfAssessments where ID=@selfAssessmentId)))
                         AND AdminID NOT IN (
                         SELECT sd.SupervisorAdminID
