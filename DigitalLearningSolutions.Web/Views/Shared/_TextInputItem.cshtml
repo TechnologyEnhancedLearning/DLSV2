@@ -1,8 +1,8 @@
 ﻿@using NHSUKViewComponents.Web.ViewModels;
 @using DigitalLearningSolutions.Web.Helpers
 @model TextInputViewModel
-<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")" style="white-space:nowrap">
-  <label class="nhsuk-label" for="@Model.Name">
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
+  <label class="nhsuk-label" for="@Model.Id">
     @Model.Label
   </label>
   @if (Model.HintText != null)

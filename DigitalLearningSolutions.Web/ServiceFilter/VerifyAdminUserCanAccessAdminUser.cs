@@ -1,9 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Web.Helpers;
+    using System.Net;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Web.Helpers;    
 
     public class VerifyAdminUserCanAccessAdminUser : IActionFilter
     {
@@ -29,7 +30,7 @@
 
             if (adminAccount == null)
             {
-                context.Result = new NotFoundResult();
+                context.Result = new StatusCodeResult((int)HttpStatusCode.Gone);
             }
             else if (adminAccount.CentreId != centreId)
             {

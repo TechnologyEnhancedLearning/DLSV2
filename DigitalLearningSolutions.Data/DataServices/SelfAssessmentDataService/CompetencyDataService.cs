@@ -32,19 +32,21 @@
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM SelfAssessmentResults s
                 INNER JOIN (
-                    SELECT MAX(ID) as ID
-                    FROM SelfAssessmentResults
-                    WHERE CandidateID = @candidateId
-                        AND SelfAssessmentID = @selfAssessmentId
-                    GROUP BY CompetencyID, AssessmentQuestionID
+                    SELECT MAX(sar1.ID) as ID
+                    FROM SelfAssessmentResults AS sar1 
+                    INNER JOIN DelegateAccounts AS da1 ON sar1.CandidateID = da1.ID
+                    WHERE da1.UserID = @delegateUserId
+                    AND sar1.SelfAssessmentID = @selfAssessmentId
+                    GROUP BY sar1.CompetencyID, sar1.AssessmentQuestionID
                 ) t
                     ON s.ID = t.ID
+                INNER JOIN DelegateAccounts AS da ON s.CandidateID = da.ID
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
                     ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
                         AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
-                WHERE CandidateID = @candidateId
+                WHERE da.UserID = @delegateUserId
                 AND s.SelfAssessmentID = @selfAssessmentId
             )";
 
@@ -145,7 +147,7 @@
             INNER JOIN AssessmentQuestions AS AQ
                 ON AQ.ID = CAQ.AssessmentQuestionID
             INNER JOIN CandidateAssessments AS CA
-                ON CA.SelfAssessmentID = @selfAssessmentId AND CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL
+                ON CA.SelfAssessmentID = @selfAssessmentId AND CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL
             LEFT OUTER JOIN LatestAssessmentResults AS LAR
                 ON LAR.CompetencyID = C.ID AND LAR.AssessmentQuestionID = AQ.ID
             INNER JOIN SelfAssessmentStructure AS SAS
@@ -183,7 +185,7 @@
             );
         }
 
-        public Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId)
+        public Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateUserId)
         {
             Competency? competencyResult = null;
             return connection.Query<Competency, AssessmentQuestion, Competency>(
@@ -193,7 +195,7 @@
                             DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
                             sas.CompetencyID
                         FROM            SelfAssessmentStructure AS sas INNER JOIN
-                                         CandidateAssessments AS CA ON CA.SelfAssessmentID = @selfAssessmentId AND CA.CandidateID = @candidateId INNER JOIN
+                                         CandidateAssessments AS CA ON CA.SelfAssessmentID = @selfAssessmentId AND CA.DelegateUserID = @delegateUserId INNER JOIN
                                          CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID LEFT OUTER JOIN
                                          CandidateAssessmentOptionalCompetencies AS CAOC ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID AND 
                                          sas.CompetencyGroupID = CAOC.CompetencyGroupID
@@ -214,11 +216,11 @@
                     competencyResult.AssessmentQuestions.Add(assessmentQuestion);
                     return competencyResult;
                 },
-                new { n, selfAssessmentId, candidateId }
+                new { n, selfAssessmentId, delegateUserId }
             ).FirstOrDefault();
         }
 
-        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateUserId)
         {
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
@@ -231,7 +233,7 @@
                     competency.AssessmentQuestions.Add(assessmentQuestion);
                     return competency;
                 },
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, delegateUserId }
             );
             return GroupCompetencyAssessmentQuestions(result);
         }
@@ -278,7 +280,7 @@
             return GroupCompetencyAssessmentQuestions(result);
         }
 
-        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateUserId)
         {
             const string supervisorFields = @"
                 LAR.EmailSent,
@@ -306,12 +308,12 @@
                     competency.AssessmentQuestions.Add(assessmentQuestion);
                     return competency;
                 },
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, delegateUserId }
             );
             return result;
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int delegateUserId)
         {
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
@@ -327,7 +329,7 @@
                     competency.AssessmentQuestions.Add(assessmentQuestion);
                     return competency;
                 },
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, delegateUserId }
             );
             return GroupCompetencyAssessmentQuestions(result);
         }
@@ -359,6 +361,7 @@
             int competencyId,
             int selfAssessmentId,
             int candidateId,
+            int delegateUserId,
             int assessmentQuestionId,
             int? result,
             string? supportingComments
@@ -374,7 +377,7 @@
             {
                 logger.LogWarning(
                     "Not saving self assessment result as assessment question Id is invalid. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
+                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId,assessmentQuestionId, result)}"
                 );
                 return;
             }
@@ -385,7 +388,7 @@
             {
                 logger.LogWarning(
                     "Not saving self assessment result as result is invalid. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
+                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId,assessmentQuestionId, result)}"
                 );
                 return;
             }
@@ -396,7 +399,7 @@
                         INNER JOIN SelfAssessmentStructure AS SAS ON CA.SelfAssessmentID = SAS.SelfAssessmentID
                         INNER JOIN Competencies AS C ON SAS.CompetencyID = C.ID
                         INNER JOIN CompetencyAssessmentQuestions as CAQ ON SAS.CompetencyID = CAQ.CompetencyID
-                        WHERE CandidateID = @candidateId
+                        WHERE DelegateUserID = @delegateUserId
                             AND CA.SelfAssessmentID = @selfAssessmentId
                             AND C.ID = @competencyId
                             AND CAQ.AssessmentQuestionID = @assessmentQuestionId
@@ -429,19 +432,19 @@
                                 ,[SupportingComments])
                             VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments)
                     END",
-                new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result, supportingComments }
+                new { competencyId, selfAssessmentId, candidateId, delegateUserId, assessmentQuestionId, result, supportingComments }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not saving self assessment result as db insert failed. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
+                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId,assessmentQuestionId, result)}"
                 );
             }
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int delegateUserId)
         {
             return connection.Query<Competency>(
                 @"SELECT
@@ -456,7 +459,7 @@
                         COALESCE (CAOC.IncludedInSelfAssessment, 0) AS IncludedInSelfAssessment
                     FROM Competencies AS C
                     INNER JOIN CandidateAssessments AS CA
-                        ON CA.SelfAssessmentID = @selfAssessmentId AND CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL
+                        ON CA.SelfAssessmentID = @selfAssessmentId AND CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL
                     INNER JOIN SelfAssessmentStructure AS SAS
                         ON C.ID = SAS.CompetencyID AND SAS.SelfAssessmentID = @selfAssessmentId
                     INNER JOIN CompetencyGroups AS CG
@@ -465,11 +468,11 @@
                         ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
                     WHERE (SAS.Optional = 1)
                     ORDER BY SAS.Ordering",
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, delegateUserId }
             );
         }
 
-        public void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int candidateId)
+        public void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int delegateUserId)
         {
             connection.Execute(
                 @"UPDATE CandidateAssessmentOptionalCompetencies
@@ -480,9 +483,9 @@
                     INNER JOIN SelfAssessmentStructure AS SAS
                         ON CA.SelfAssessmentID = SAS.SelfAssessmentID AND CAOC.CompetencyID = SAS.CompetencyID
                             AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
-                    WHERE (CA.CandidateID = @candidateId) AND (CA.RemovedDate IS NULL)
+                    WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL)
                                     ",
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, delegateUserId }
             );
             connection.Execute(
                 @"INSERT INTO CandidateAssessmentOptionalCompetencies
@@ -492,14 +495,14 @@
                     FROM SelfAssessmentStructure AS SAS
                     INNER JOIN CandidateAssessments AS CA
                         ON SAS.SelfAssessmentID = CA.SelfAssessmentID AND CA.SelfAssessmentID = @selfAssessmentId
-                            AND CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND SAS.Optional = 1
+                            AND CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL AND SAS.Optional = 1
                     WHERE NOT EXISTS (SELECT * FROM CandidateAssessmentOptionalCompetencies WHERE CandidateAssessmentID = CA.ID
                         AND CompetencyID = SAS.CompetencyID AND CompetencyGroupID = SAS.CompetencyGroupID)",
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, delegateUserId }
             );
         }
 
-        public void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int candidateId)
+        public void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int delegateUserId)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE CandidateAssessmentOptionalCompetencies
@@ -510,14 +513,14 @@
                     INNER JOIN SelfAssessmentStructure AS SAS
                         ON CA.SelfAssessmentID = SAS.SelfAssessmentID AND CAOC.CompetencyID = SAS.CompetencyID
                             AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
-                    WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.CandidateID = @candidateId) AND (CA.RemovedDate IS NULL)",
-                new { selfAssessmentStructureId, candidateId }
+                    WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL)",
+                new { selfAssessmentStructureId, delegateUserId }
             );
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not setting CandidateAssessmentOptionalCompetencies include state as db update failed. " +
-                    $"Self assessment id: {selfAssessmentStructureId}, candidate id: {candidateId} "
+                    $"Self assessment id: {selfAssessmentStructureId}, Delegate User id: {delegateUserId} "
                 );
             }
         }
@@ -548,7 +551,7 @@
             );
         }
 
-        public List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int candidateId)
+        public List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int delegateUserId)
         {
             return connection.Query<int>(
                 @"SELECT
@@ -556,12 +559,12 @@
                     FROM CandidateAssessmentOptionalCompetencies AS CAOC
                     INNER JOIN CandidateAssessments  AS CA
                         ON CAOC.CandidateAssessmentID = CA.ID AND CA.SelfAssessmentID = @selfAssessmentId
-                            AND CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL
+                            AND CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL
                     INNER JOIN SelfAssessmentStructure AS SAS
                             ON CAOC.CompetencyID = SAS.CompetencyID AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
                                 AND SAS.SelfAssessmentID = @selfAssessmentId
                     WHERE (CAOC.IncludedInSelfAssessment = 1)",
-                new { selfAssessmentId, candidateId }
+                new { selfAssessmentId, delegateUserId }
             ).ToList();
         }
 
@@ -615,12 +618,13 @@
             int competencyId,
             int selfAssessmentId,
             int candidateId,
+            int delegateUserId,
             int assessmentQuestionId,
             int? result
         )
         {
             return
-                $"Competency id: {competencyId}, self assessment id: {selfAssessmentId}, candidate id: {candidateId}, " +
+                $"Competency id: {competencyId}, self assessment id: {selfAssessmentId}, candidate id: {candidateId},delegate user id: {delegateUserId} " +
                 $"assessment question id: {assessmentQuestionId}, result: {result}";
         }
 

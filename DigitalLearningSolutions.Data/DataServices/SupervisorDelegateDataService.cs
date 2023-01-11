@@ -39,7 +39,7 @@
                         sd.ID,
                         sd.SupervisorAdminID,
                         sd.SupervisorEmail,
-                        sd.CandidateID,
+                        sd.DelegateUserID,
                         sd.DelegateEmail,
                         sd.Added,
                         sd.AddedByDelegate,
@@ -69,7 +69,6 @@
                         sd.ID,
                         sd.SupervisorAdminID,
                         sd.SupervisorEmail,
-                        sd.CandidateID,
                         sd.DelegateEmail,
                         sd.Added,
                         sd.AddedByDelegate,
@@ -80,20 +79,20 @@
                     INNER JOIN AdminUsers au ON sd.SupervisorAdminID = au.AdminID
                     WHERE au.CentreID = @centreId
                       AND sd.DelegateEmail IN @emails
-                      AND sd.CandidateID IS NULL
+                      AND sd.DelegateUserID IS NULL
                       AND sd.Removed IS NULL",
                 new { centreId, emails }
             );
         }
 
         // TODO: HEEDLS-1014 - Change CandidateID to UserID
-        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId)
+        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int delegateUserId)
         {
             connection.Execute(
                 @"UPDATE SupervisorDelegates
-                    SET CandidateID = @candidateId
+                    SET DelegateUserID = @delegateUserId
                     WHERE ID IN @supervisorDelegateIds",
-                new { supervisorDelegateIds, candidateId }
+                new { supervisorDelegateIds, delegateUserId }
             );
         }
     }

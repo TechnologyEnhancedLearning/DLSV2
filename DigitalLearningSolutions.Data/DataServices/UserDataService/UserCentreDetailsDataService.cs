@@ -141,6 +141,28 @@
         }
 
         public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
+            int userId, bool isAll = false
+        )
+        {
+            string delegateAccount = "SELECT c.CentreId, c.CentreName, ucd.Email FROM DelegateAccounts AS da INNER JOIN Centres AS c ON c.CentreID = da.CentreID LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = c.CentreID WHERE da.UserID = ";
+            string adminAccount = " SELECT c.CentreId, c.CentreName, ucd.Email FROM AdminAccounts AS aa INNER JOIN Centres AS c ON c.centreID = aa.CentreID LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = aa.UserID AND ucd.CentreID = c.CentreID WHERE aa.UserID = ";
+
+            if (!isAll)
+            {
+                delegateAccount += userId + " AND da.Active = 1";
+                adminAccount += userId + " AND aa.Active = 1 ";
+            }
+            else
+            {
+                delegateAccount += userId;
+                adminAccount += userId;
+            }
+            return connection.Query<(int, string, string?)>(
+                $"{delegateAccount} UNION {adminAccount}"
+            );
+        }
+
+        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
             int userId
         )
         {
@@ -149,7 +171,7 @@
                     FROM DelegateAccounts AS da
                     INNER JOIN Centres AS c ON c.CentreID = da.CentreID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = c.CentreID
-                    WHERE da.UserID = @userId AND da.Active = 1
+                    WHERE da.UserID = @userId
 
                     UNION
 
@@ -157,7 +179,7 @@
                     FROM AdminAccounts AS aa
                     INNER JOIN Centres AS c ON c.centreID = aa.CentreID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = aa.UserID AND ucd.CentreID = c.CentreID
-                    WHERE aa.UserID = @userId AND aa.Active = 1",
+                    WHERE aa.UserID = @userId",
                 new { userId }
             );
         }
@@ -170,11 +192,10 @@
                 @"SELECT
                         c.CentreID,
                         c.CentreName,
-                        ucd.Email
+                        ISNULL(ucd.Email,'')
                     FROM UserCentreDetails AS ucd
                     INNER JOIN Centres AS c ON c.CentreID = ucd.CentreID
                     WHERE ucd.UserID = @userId
-                        AND ucd.Email IS NOT NULL
                         AND ucd.EmailVerified IS NULL
                         AND c.Active = 1",
                 new { userId }

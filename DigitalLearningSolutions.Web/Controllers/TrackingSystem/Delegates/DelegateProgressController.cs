@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System;
+    using System.Net;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
@@ -266,7 +267,7 @@
             var progress = progressService.GetDetailedCourseProgress(progressId);
             if (!courseService.DelegateHasCurrentProgress(progressId) || progress == null)
             {
-                return new NotFoundResult();
+                return StatusCode((int)HttpStatusCode.Gone);
             }
 
             var model = new RemoveFromCourseViewModel(

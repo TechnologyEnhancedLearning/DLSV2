@@ -282,11 +282,11 @@
                 competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
             };
 
-            if (superviseDelegate.CandidateID != null)
+            if (superviseDelegate.DelegateUserID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
-                    (int)superviseDelegate.CandidateID
+                    (int)superviseDelegate.DelegateUserID
                 );
             }
 
@@ -426,7 +426,7 @@
                 SupervisorComments = assessmentQuestion.SupervisorComments,
                 SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false,
                 Verified = assessmentQuestion.Verified,
-                SupervisorName = supervisorDelegate.SupervisorName
+                SupervisorName = assessmentQuestion.SupervisorName
             };
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             return model;
@@ -535,7 +535,7 @@
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
-                (int)supervisorDelegate.CandidateID,
+                (int)supervisorDelegate.DelegateUserID,
                 GetCentreId()
             );
             var model = new EnrolDelegateOnProfileAssessmentViewModel()
@@ -567,7 +567,7 @@
                 var supervisorDelegate =
                     supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
-                    (int)supervisorDelegate.CandidateID,
+                    (int)supervisorDelegate.DelegateUserID,
                     GetCentreId()
                 );
                 var model = new EnrolDelegateOnProfileAssessmentViewModel()
@@ -920,11 +920,11 @@
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegateDetail = superviseDelegate
             };
-            if (superviseDelegate.CandidateID != null)
+            if (superviseDelegate.DelegateUserID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
-                    (int)superviseDelegate.CandidateID
+                    (int)superviseDelegate.DelegateUserID
                 );
             }
 

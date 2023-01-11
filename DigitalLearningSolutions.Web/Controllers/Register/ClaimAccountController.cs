@@ -226,6 +226,14 @@
             return View(model);
         }
 
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        [HttpGet]
+        public IActionResult AdminAccountAlreadyExists(string email, string centreName)
+        {
+            var model = new ClaimAccountViewModel { Email = email, CentreName = centreName };
+            return View(model);
+        }
+
         private ClaimAccountViewModel? GetViewModelIfValidParameters(
             string? email,
             string? code,
@@ -266,6 +274,16 @@
             if (model == null)
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
+
+            var adminAccounts = userService.GetUserById(loggedInUserId)!.AdminAccounts;
+
+            if (adminAccounts.Any())
+            {
+                return RedirectToAction(
+                    "AdminAccountAlreadyExists",
+                    new { email = model.Email, centreName = model.CentreName }
+                );
             }
 
             var delegateAccounts = userService.GetUserById(loggedInUserId)!.DelegateAccounts;

@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -701,17 +701,19 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 08/12/2022 13:00:15 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
+        ///
         ///SET QUOTED_IDENTIFIER ON
         ///GO
+        ///
         ///-- =============================================
-        ///-- Author:		Kevin Whittaker
-        ///-- Create date: 05/10/2020
-        ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
+        ///-- Author:		Manish Agarwal
+        ///-- Create date: 26/09/2022
+        ///-- Description:	Returns active available customisations for centre v6 adds SelfAssessments.
         ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFil [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_786_GetSelfRegisteredFlag_DOWN {
             get {

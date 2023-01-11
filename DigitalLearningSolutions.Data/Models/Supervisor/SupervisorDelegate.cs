@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
         public int CentreId { get; set; }
         public string DelegateEmail { get; set; }
         public int? CandidateID { get; set; }
+        public int? DelegateUserID { get; set; }
         public DateTime Added { get; set; }
         public bool AddedByDelegate { get; set; }
         public DateTime NotificationSent { get; set; }

@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -34,6 +35,7 @@
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private ILearningResourceReferenceDataService learningResourceReferenceDataService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -45,6 +47,7 @@
             learningHubResourceService = A.Fake<ILearningHubResourceService>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
             learningResourceReferenceDataService = A.Fake<ILearningResourceReferenceDataService>();
+            userDataService = A.Fake<IUserDataService>();
             config = A.Fake<IConfiguration>();
 
             actionPlanService = new ActionPlanService(
@@ -54,7 +57,8 @@
                 learningHubResourceService,
                 selfAssessmentDataService,
                 config,
-                learningResourceReferenceDataService
+                learningResourceReferenceDataService,
+                userDataService
             );
         }
 
@@ -70,9 +74,12 @@
             const string resourceLink = "www.test.com";
             const int learningLogId = 4;
             const int learningHubResourceId = 6;
+            const int delegateUserId = 1;
 
             var addedDate = new DateTime(2021, 11, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(addedDate);
+
+            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateId)).Returns(delegateUserId);
 
             A.CallTo(
                 () => learningResourceReferenceDataService.GetLearningHubResourceReferenceById(
@@ -95,7 +102,7 @@
             A.CallTo(() => selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(selfAssessmentId))
                 .Returns(assessmentCompetencies);
 
-            A.CallTo(() => selfAssessmentDataService.GetCandidateAssessments(delegateId, selfAssessmentId))
+            A.CallTo(() => selfAssessmentDataService.GetCandidateAssessments(delegateUserId, selfAssessmentId))
                 .Returns(
                     new[] { Builder<CandidateAssessment>.CreateNew().With(ca => ca.Id = candidateAssessmentId).Build() }
                 );

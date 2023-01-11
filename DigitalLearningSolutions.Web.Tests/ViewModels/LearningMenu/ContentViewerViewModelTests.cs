@@ -17,6 +17,7 @@
         private const int SectionId = 3;
         private const int TutorialId = 4;
         private const int CandidateId = 254480;
+        private const int DelegateUserID = 1;
         private const int ProgressId = 276837;
 
         [SetUp]

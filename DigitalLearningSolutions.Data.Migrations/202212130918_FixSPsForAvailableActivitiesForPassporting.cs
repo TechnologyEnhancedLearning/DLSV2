@@ -1,7 +1,7 @@
 ﻿using FluentMigrator;
 namespace DigitalLearningSolutions.Data.Migrations
 {
-    [Migration(202212130918)]
+    [Migration(202212151111)]
     public class FixSPsForAvailableActivitiesForPassporting : Migration
     {
         public override void Up()
