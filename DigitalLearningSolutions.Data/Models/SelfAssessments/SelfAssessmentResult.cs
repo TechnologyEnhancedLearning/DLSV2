@@ -6,8 +6,6 @@
     {
         public int Id { get; set; }
 
-        public int CandidateId { get; set; }
-
         public int SelfAssessmentId { get; set; }
 
         public int CompetencyId { get; set; }
@@ -19,5 +17,8 @@
         public DateTime DateTime { get; set; }
 
         public string? SupportingComments { get; set; }
+
+        public int DelegateUserId { get; set; }
+
     }
 }

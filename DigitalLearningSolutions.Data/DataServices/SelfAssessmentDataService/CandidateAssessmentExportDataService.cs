@@ -23,7 +23,7 @@
                               SelfAssessmentResults AS sar1 ON sar1.ID =
                                   (SELECT MAX(ID) AS Expr1
                                   FROM    SelfAssessmentResults AS sar2
-                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (CandidateID = ca1.CandidateID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
+                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (DelegateUserID = ca1.DelegateUserID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -37,7 +37,7 @@
                               CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.ID =
                                   (SELECT MAX(ID) AS Expr1
                                   FROM    SelfAssessmentResults AS sar2
-                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (CandidateID = ca1.CandidateID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
+                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (DelegateUserID = ca1.DelegateUserID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -53,7 +53,7 @@
                               CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.ID =
                                   (SELECT MAX(ID) AS Expr1
                                   FROM    SelfAssessmentResults AS sar2
-                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (CandidateID = ca1.CandidateID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
+                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (DelegateUserID = ca1.DelegateUserID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications_4.SignedOff = 1) AND (caqrr1.ID IS NULL) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications_4.SignedOff = 1) AND (caqrr1.ID IS NULL) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -69,7 +69,7 @@
                               CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.ID =
                                   (SELECT MAX(ID) AS Expr1
                                   FROM    SelfAssessmentResults AS sar2
-                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (CandidateID = ca1.CandidateID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
+                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (DelegateUserID = ca1.DelegateUserID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications_3.SignedOff = 1) AND (caqrr1.LevelRAG = 1) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications_3.SignedOff = 1) AND (caqrr1.LevelRAG = 1) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -85,7 +85,7 @@
                               CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.ID =
                                   (SELECT MAX(ID) AS Expr1
                                   FROM    SelfAssessmentResults AS sar2
-                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (CandidateID = ca1.CandidateID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
+                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (DelegateUserID = ca1.DelegateUserID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications_2.SignedOff = 1) AND (caqrr1.LevelRAG = 2) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications_2.SignedOff = 1) AND (caqrr1.LevelRAG = 2) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -101,7 +101,7 @@
                               CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.ID =
                                   (SELECT MAX(ID) AS Expr1
                                   FROM    SelfAssessmentResults AS sar2
-                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (CandidateID = ca1.CandidateID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
+                                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (DelegateUserID = ca1.DelegateUserID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications_1.SignedOff = 1) AND (caqrr1.LevelRAG = 3) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications_1.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -146,12 +146,12 @@ WHERE (ca.ID = @candidateAssessmentId  AND ca.DelegateUserID  = @delegateUserID)
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM CandidateAssessments ca
                 INNER JOIN SelfAssessmentResults s
-                    ON s.CandidateID = ca.CandidateID AND s.SelfAssessmentID = ca.SelfAssessmentID
+                    ON s.DelegateUserID = ca.DelegateUserID AND s.SelfAssessmentID = ca.SelfAssessmentID
                 INNER JOIN (
                     SELECT MAX(s1.ID) as ID
                     FROM SelfAssessmentResults AS s1
                     INNER JOIN CandidateAssessments AS ca1
-                        ON  s1.CandidateID = ca1.CandidateID AND s1.SelfAssessmentID = ca1.SelfAssessmentID
+                        ON  s1.DelegateUserID = ca1.DelegateUserID AND s1.SelfAssessmentID = ca1.SelfAssessmentID
                     WHERE ca1.ID = @candidateAssessmentId
                     GROUP BY CompetencyID, AssessmentQuestionID
                 ) t

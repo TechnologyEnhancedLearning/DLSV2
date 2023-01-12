@@ -45,7 +45,7 @@
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(DelegateUserId)).Returns(selfAssessments);
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(DelegateUserId))
                 .Returns((actionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
             A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("true");
@@ -87,7 +87,7 @@
             await controller.Current();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(DelegateUserId)).MustNotHaveHappened();
         }
 
         [Test]
@@ -101,7 +101,7 @@
             await controller.Current();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(DelegateUserId))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -116,7 +116,7 @@
             await controller.AllCurrentItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(DelegateUserId)).MustNotHaveHappened();
         }
 
         [Test]
@@ -130,7 +130,7 @@
             await controller.AllCurrentItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(DelegateUserId))
                 .MustHaveHappenedOnceExactly();
         }
 

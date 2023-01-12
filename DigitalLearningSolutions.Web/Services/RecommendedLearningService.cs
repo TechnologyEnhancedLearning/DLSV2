@@ -16,7 +16,7 @@
         Task<(IEnumerable<RecommendedResource> recommendedResources, bool apiIsAccessible)>
             GetRecommendedLearningForSelfAssessment(
                 int selfAssessmentId,
-                int delegateId
+                int delegateUserId
             );
     }
 
@@ -46,7 +46,7 @@
         public async Task<(IEnumerable<RecommendedResource> recommendedResources, bool apiIsAccessible)>
             GetRecommendedLearningForSelfAssessment(
                 int selfAssessmentId,
-                int delegateId
+                int delegateUserId
             )
         {
             var hasMaxSignpostedResources = Int32.TryParse(
@@ -81,12 +81,12 @@
             var resources =
                 learningHubResourceService.GetResourceReferenceDetailsByReferenceIds(uniqueLearningHubReferenceIds);
 
-            var delegateLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId);
+            var delegateLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateUserId);
 
             var recommendedResources = resources.Select(
                     rr => GetPopulatedRecommendedResource(
                         selfAssessmentId,
-                        delegateId,
+                        delegateUserId,
                         resourceReferences[rr.RefId],
                         delegateLearningLogItems,
                         rr,
@@ -116,7 +116,7 @@
 
         private RecommendedResource? GetPopulatedRecommendedResource(
             int selfAssessmentId,
-            int delegateId,
+            int delegateUserId,
             int learningHubResourceReferenceId,
             IEnumerable<LearningLogItem> delegateLearningLogItems,
             ResourceReferenceWithResourceDetails rr,
@@ -142,7 +142,7 @@
                 clrsForResource,
                 competencyResourceAssessmentQuestionParameters,
                 selfAssessmentId,
-                delegateId
+                delegateUserId
             ))
             {
                 return null;
@@ -158,7 +158,7 @@
                     clrsForResource,
                     competencyResourceAssessmentQuestionParameters,
                     selfAssessmentId,
-                    delegateId
+                    delegateUserId
                 )
             );
         }
@@ -167,14 +167,14 @@
             List<CompetencyLearningResource> clrsForResource,
             List<CompetencyResourceAssessmentQuestionParameter> competencyResourceAssessmentQuestionParameters,
             int selfAssessmentId,
-            int delegateId
+            int delegateUserId
         )
         {
             foreach (var competencyLearningResource in clrsForResource)
             {
                 var delegateResults = selfAssessmentDataService
                     .GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-                        delegateId,
+                        delegateUserId,
                         selfAssessmentId,
                         competencyLearningResource.CompetencyId
                     ).ToList();
@@ -213,7 +213,7 @@
             List<CompetencyLearningResource> clrsForResource,
             List<CompetencyResourceAssessmentQuestionParameter> competencyResourceAssessmentQuestionParameters,
             int selfAssessmentId,
-            int delegateId
+            int delegateUserId
         )
         {
             var essentialnessValue = CalculateEssentialnessValue(competencyResourceAssessmentQuestionParameters);
@@ -224,7 +224,7 @@
                 clrsForResource,
                 competencyResourceAssessmentQuestionParameters,
                 selfAssessmentId,
-                delegateId
+                delegateUserId
             );
 
             return essentialnessValue + learningHubRating * 4 + requirementAdjuster;
@@ -242,7 +242,7 @@
             List<CompetencyLearningResource> competencyLearningResources,
             List<CompetencyResourceAssessmentQuestionParameter> competencyResourceAssessmentQuestionParameters,
             int selfAssessmentId,
-            int delegateId
+            int delegateUserId
         )
         {
             var requirementAdjusters = new List<decimal>();
@@ -261,7 +261,7 @@
 
                 var delegateResults = selfAssessmentDataService
                     .GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-                        delegateId,
+                        delegateUserId,
                         selfAssessmentId,
                         competencyLearningResource.CompetencyId
                     ).ToList();

@@ -9,7 +9,7 @@
 
     public interface ILearningLogItemsDataService
     {
-        IEnumerable<LearningLogItem> GetLearningLogItems(int delegateId);
+        IEnumerable<LearningLogItem> GetLearningLogItems(int delegateUserId);
 
         LearningLogItem? GetLearningLogItem(int learningLogItemId);
 
@@ -73,7 +73,7 @@
             this.logger = logger;
         }
 
-        public IEnumerable<LearningLogItem> GetLearningLogItems(int delegateId)
+        public IEnumerable<LearningLogItem> GetLearningLogItems(int delegateUserId)
         {
             return connection.Query<LearningLogItem>(
                 $@"SELECT
@@ -81,9 +81,9 @@
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
                     INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = l.LearningResourceReferenceID
-                    WHERE LoggedById = @delegateId
+                    WHERE LoggedById = @delegateUserId
                     AND a.TypeLabel = '{LearningHubResourceActivityLabel}'",
-                new { delegateId }
+                new { delegateUserId }
             );
         }
 
