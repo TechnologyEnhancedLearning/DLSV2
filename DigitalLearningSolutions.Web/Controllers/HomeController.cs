@@ -68,17 +68,12 @@
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, 2),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
-                UserIsLoggedInCentre = GetCentreId() != null,
+                UserIsLoggedInCentre = User.GetCentreId() != null,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
                 LearningContentItems = publicBrands,
             };
 
             return View(model);
-        }
-
-        private int? GetCentreId()
-        {
-            return User.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
         }
 
         private LandingPageViewModel GetLandingPageViewModel(int sectionIndex)
@@ -87,7 +82,7 @@
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, sectionIndex),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
-                UserIsLoggedInCentre = GetCentreId() != null,
+                UserIsLoggedInCentre = User.GetCentreId() != null,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
             };
         }
