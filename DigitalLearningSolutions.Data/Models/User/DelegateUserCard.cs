@@ -35,6 +35,7 @@
             SelfReg = delegateEntity.DelegateAccount.SelfReg;
             ExternalReg = delegateEntity.DelegateAccount.ExternalReg;
             AdminId = delegateEntity.AdminId;
+            RegistrationConfirmationHash = delegateEntity.DelegateAccount.RegistrationConfirmationHash;
         }
 
         public bool SelfReg { get; set; }

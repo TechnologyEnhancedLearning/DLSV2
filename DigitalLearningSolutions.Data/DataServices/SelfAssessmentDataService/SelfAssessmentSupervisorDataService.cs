@@ -213,8 +213,7 @@
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
                     AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID INNER JOIN
                     SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    INNER JOIN DelegateAccounts AS da ON sar.CandidateID = da.ID
-                    WHERE (da.UserID = @delegateUserId) AND (sasv.SelfAssessmentResultId = @resultId)",
+                    WHERE (sar.DelegateUserID = @delegateUserId) AND (sasv.SelfAssessmentResultId = @resultId)",
                 new { delegateUserId, resultId }
             ).FirstOrDefault();
         }
