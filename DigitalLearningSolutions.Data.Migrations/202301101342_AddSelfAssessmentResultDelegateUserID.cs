@@ -24,10 +24,14 @@ namespace DigitalLearningSolutions.Data.Migrations
 
         public override void Down()
         {
+            Rename.Column("CandidateID_deprecated").OnTable("SelfAssessmentResults").To("CandidateID");
+
+            Execute.Sql("UPDATE SAR SET SAR.CandidateID = DA.ID FROM SelfAssessmentResults SAR " +
+            "INNER JOIN DelegateAccounts DA ON SAR.DelegateUserID = DA.UserID Where SAR.CandidateID Is Null");
+
             Delete.ForeignKey("FK_SelfAssessmentResults_DelegateUserID_Users_ID").OnTable("SelfAssessmentResults");
             Delete.Column("DelegateUserID").FromTable("SelfAssessmentResults");
 
-            Rename.Column("CandidateID_deprecated").OnTable("SelfAssessmentResults").To("CandidateID");
             Create.ForeignKey("FK_SelfAssessmentResults_CandidateID_Candidates_CandidateID")
             .FromTable("SelfAssessmentResults").ForeignColumn("CandidateID").ToTable("DelegateAccounts").PrimaryColumn("ID");
             Alter.Table("SelfAssessmentResults").AlterColumn("CandidateID").AsInt32().NotNullable();
