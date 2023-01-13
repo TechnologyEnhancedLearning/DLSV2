@@ -53,7 +53,6 @@
         void SetResultForCompetency(
             int competencyId,
             int selfAssessmentId,
-            int candidateId,
             int delegateUserId,
             int assessmentQuestionId,
             int? result,
@@ -362,7 +361,6 @@
         public void SetResultForCompetency(
             int competencyId,
             int selfAssessmentId,
-            int candidateId,
             int delegateUserId,
             int assessmentQuestionId,
             int? result,
@@ -372,7 +370,6 @@
             selfAssessmentDataService.SetResultForCompetency(
                 competencyId,
                 selfAssessmentId,
-                candidateId,
                 delegateUserId,
                 assessmentQuestionId,
                 result,

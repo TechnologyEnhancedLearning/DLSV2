@@ -97,7 +97,7 @@
                 A.CallTo(
                     () => recommendedLearningService.GetRecommendedLearningForSelfAssessment(
                         SelfAssessmentId,
-                        DelegateId
+                        DelegateUserId
                     )
                 ).MustHaveHappenedOnceExactly();
                 result.Should().BeViewResult().WithViewName("RecommendedLearning");
@@ -109,7 +109,7 @@
         {
             // Given
             const int resourceReferenceId = 1;
-            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateId))
+            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateUserId))
                 .Returns(false);
 
             // When
@@ -131,7 +131,7 @@
         {
             // Given
             const int resourceReferenceId = 1;
-            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateId))
+            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateUserId))
                 .Returns(true);
 
             // When
