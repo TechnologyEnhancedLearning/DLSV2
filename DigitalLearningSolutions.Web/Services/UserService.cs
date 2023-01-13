@@ -149,7 +149,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (userDelegateId != null)
             {
-                delegateUser = userDataService.GetDelegateUserById(userDelegateId.Value);
+                delegateUser = userDataService.GetDelegateUserByDelegateUserId(userDelegateId.Value);
             }
 
             return (adminUser, delegateUser);
