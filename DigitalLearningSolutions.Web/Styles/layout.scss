@@ -17,8 +17,6 @@ body {
   flex-direction: column;
   height: 100%;
   min-height: 100vh;
-  padding-left:32px;
-  padding-right:32px;
 }
 
 #maincontentwrapper {
@@ -339,6 +337,8 @@ nav, .nhsuk-header__navigation, #header-navigation {
 }
 .nhsuk-width-container {
   max-width: 1144px !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
 }
 @media only screen and (max-width: 767px) {
   .section-card-result {
