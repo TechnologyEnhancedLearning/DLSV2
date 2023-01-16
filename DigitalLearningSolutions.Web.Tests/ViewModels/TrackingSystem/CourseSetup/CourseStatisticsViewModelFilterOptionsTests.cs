@@ -38,7 +38,7 @@
             new[]
             {
                 new FilterOptionModel(
-                    "Inactive",
+                    "Inactive/archived",
                     "Status" + FilteringHelper.Separator + "Active" + FilteringHelper.Separator +
                     "false",
                     FilterStatus.Warning

@@ -941,7 +941,8 @@
             }
 
             var competencies = PopulateCompetencyLevelDescriptors(
-                selfAssessmentService.GetResultSupervisorVerifications(selfAssessmentId, delegateUserId).ToList()
+                selfAssessmentService.GetResultSupervisorVerifications(selfAssessmentId, delegateUserId)
+                .Where(s=>s.SupervisorName !=null).ToList()
             );
             var model = new ReviewConfirmationRequestsViewModel
             {
