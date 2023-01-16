@@ -148,7 +148,6 @@
             int? competencyGroupId
         )
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
             if (assessment == null)
@@ -171,7 +170,7 @@
             }
             else
             {
-                return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, candidateId, assessmentQuestions, delegateUserId);
+                return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, assessmentQuestions, delegateUserId);
             }
         }
 
@@ -220,11 +219,10 @@
         {
             if (model.IsChecked)
             {
-                var candidateId = User.GetCandidateIdKnownNotNull();
                 var delegateUserId = User.GetUserIdKnownNotNull();
                 var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
                 var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
-                return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, candidateId, assessmentQuestions, delegateUserId);
+                return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, assessmentQuestions, delegateUserId);
             }
             else
             {
@@ -246,7 +244,7 @@
             }
         }
 
-        IActionResult SubmitSelfAssessment(CurrentSelfAssessment assessment, int selfAssessmentId, int competencyNumber, int competencyId, int? competencyGroupId, int candidateId, ICollection<AssessmentQuestion> assessmentQuestions,int delegateUserId)
+        IActionResult SubmitSelfAssessment(CurrentSelfAssessment assessment, int selfAssessmentId, int competencyNumber, int competencyId, int? competencyGroupId, ICollection<AssessmentQuestion> assessmentQuestions,int delegateUserId)
         {
             if (assessment == null)
             {
@@ -272,7 +270,6 @@
                     selfAssessmentService.SetResultForCompetency(
                         competencyId,
                         assessment.Id,
-                        candidateId,
                         delegateUserId,
                         assessmentQuestion.Id,
                         assessmentQuestion.Result,
@@ -944,7 +941,8 @@
             }
 
             var competencies = PopulateCompetencyLevelDescriptors(
-                selfAssessmentService.GetResultSupervisorVerifications(selfAssessmentId, delegateUserId).ToList()
+                selfAssessmentService.GetResultSupervisorVerifications(selfAssessmentId, delegateUserId)
+                .Where(s=>s.SupervisorName !=null).ToList()
             );
             var model = new ReviewConfirmationRequestsViewModel
             {

@@ -498,10 +498,10 @@
             // When
             groupsService.SynchroniseJobGroupsOnOtherCentres(
                 originalDelegateId,
+                userId,
                 oldJobGroupId,
                 newJobGroupId,
-                accountDetailsData,
-                centreEmail
+                accountDetailsData
             );
 
             // Then

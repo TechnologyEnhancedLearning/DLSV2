@@ -224,7 +224,6 @@
                     () => selfAssessmentService.SetResultForCompetency(
                         competencyId,
                         selfAssessment.Id,
-                        CandidateId,
                         DelegateUserId,
                         assessmentQuestionId,
                         assessmentQuestionResult,

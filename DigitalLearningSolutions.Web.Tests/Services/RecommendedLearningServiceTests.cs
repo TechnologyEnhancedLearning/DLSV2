@@ -23,6 +23,7 @@
         private const int LearningResourceReferenceId = 3;
         private const int LearningHubResourceReferenceId = 4;
         private const int DelegateId = 5;
+        private const int DelegateUserId = 2;
         private const int LearningLogId = 6;
         private const int CompetencyLearningResourceId = 1;
         private const int SecondCompetencyLearningResourceId = 2;
@@ -68,14 +69,14 @@
             GivenQuestionParametersAreReturned(true, true, 1, 10);
             GivenSelfAssessmentHasResultsForFirstCompetency(5, 5);
 
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateUserId))
                 .Returns(new List<LearningLogItem>());
 
             var expectedResource = GetExpectedResource(false, false, null, 175);
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -95,14 +96,14 @@
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()
                 .With(i => i.LearningHubResourceReferenceId = LearningHubResourceReferenceId + 1)
                 .And(i => i.ArchivedDate = null).Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateUserId))
                 .Returns(learningLogItems);
 
             var expectedResource = GetExpectedResource(false, false, null, 175);
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -124,14 +125,14 @@
                 .And(i => i.CompletedDate = DateTime.UtcNow)
                 .And(i => i.LearningLogItemId = LearningLogId)
                 .And(i => i.ArchivedDate = null).Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateUserId))
                 .Returns(new List<LearningLogItem> { learningLogItem });
 
             var expectedResource = GetExpectedResource(false, true, null, 175);
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -153,14 +154,14 @@
                 .And(i => i.CompletedDate = null)
                 .And(i => i.LearningLogItemId = LearningLogId)
                 .And(i => i.ArchivedDate = null).Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateUserId))
                 .Returns(new List<LearningLogItem> { learningLogItem });
 
             var expectedResource = GetExpectedResource(true, false, LearningLogId, 175);
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -187,14 +188,14 @@
                 .TheRest()
                 .With(i => i.CompletedDate = null)
                 .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateUserId))
                 .Returns(learningLogItems);
 
             var expectedResource = GetExpectedResource(true, true, LearningLogId, 175);
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -222,7 +223,7 @@
             GivenLearningHubApiReturnsResources(0);
 
             // When
-            await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId);
+            await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId);
 
             // Then
             A.CallTo(
@@ -277,7 +278,7 @@
             ).Returns(competencyLearningResources);
 
             // When
-            await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId);
+            await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId);
 
             // Then
             A.CallTo(
@@ -313,7 +314,7 @@
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -354,7 +355,7 @@
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -382,7 +383,7 @@
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -423,7 +424,7 @@
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -460,7 +461,7 @@
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -487,7 +488,7 @@
 
             A.CallTo(
                 () => selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-                    DelegateId,
+                    DelegateUserId,
                     SelfAssessmentId,
                     CompetencyId
                 )
@@ -495,7 +496,7 @@
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -543,7 +544,7 @@
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -573,7 +574,7 @@
 
             // When
             var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateUserId))
                 .recommendedResources.ToList();
 
             // Then
@@ -667,7 +668,7 @@
                 .And(i => i.CompletedDate = null)
                 .And(i => i.LearningLogItemId = LearningLogId)
                 .And(i => i.ArchivedDate = null).Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateUserId))
                 .Returns(new List<LearningLogItem> { learningLogItem });
         }
 
@@ -717,7 +718,7 @@
             var assessmentResults = Builder<SelfAssessmentResult>.CreateListOfSize(2)
                 .All()
                 .With(r => r.SelfAssessmentId = SelfAssessmentId)
-                .And(r => r.CandidateId = DelegateId)
+                .And(r => r.DelegateUserId = DelegateUserId)
                 .And(r => r.CompetencyId = CompetencyId)
                 .TheFirst(1)
                 .With(r => r.AssessmentQuestionId = CompetencyAssessmentQuestionId)
@@ -728,7 +729,7 @@
                 .Build();
             A.CallTo(
                 () => selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-                    DelegateId,
+                    DelegateUserId,
                     SelfAssessmentId,
                     CompetencyId
                 )

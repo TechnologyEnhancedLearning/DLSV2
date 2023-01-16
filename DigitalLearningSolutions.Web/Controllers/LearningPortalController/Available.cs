@@ -54,7 +54,7 @@
 
         public IActionResult EnrolOnSelfAssessment(int selfAssessmentId)
         {
-            courseDataService.EnrolOnSelfAssessment(selfAssessmentId, User.GetCandidateIdKnownNotNull());
+            courseDataService.EnrolOnSelfAssessment(selfAssessmentId, User.GetUserIdKnownNotNull(), User.GetCentreIdKnownNotNull());
             return RedirectToAction("SelfAssessment", new { selfAssessmentId });
         }
     }

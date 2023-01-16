@@ -70,12 +70,12 @@
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM CandidateAssessments ca
                 INNER JOIN SelfAssessmentResults s
-                    ON s.CandidateID = ca.CandidateID_deprecated AND s.SelfAssessmentID = ca.SelfAssessmentID
+                    ON s.DelegateUserID = ca.DelegateUserID AND s.SelfAssessmentID = ca.SelfAssessmentID
                 INNER JOIN (
                     SELECT MAX(s1.ID) as ID
                     FROM SelfAssessmentResults AS s1
                     INNER JOIN CandidateAssessments AS ca1
-                        ON  s1.CandidateID = ca1.CandidateID_deprecated AND s1.SelfAssessmentID = ca1.SelfAssessmentID
+                        ON  s1.DelegateUserID = ca1.DelegateUserID AND s1.SelfAssessmentID = ca1.SelfAssessmentID
                     WHERE ca1.ID = @candidateAssessmentId
                     GROUP BY CompetencyID, AssessmentQuestionID
                 ) t
@@ -360,7 +360,6 @@
         public void SetResultForCompetency(
             int competencyId,
             int selfAssessmentId,
-            int candidateId,
             int delegateUserId,
             int assessmentQuestionId,
             int? result,
@@ -377,7 +376,7 @@
             {
                 logger.LogWarning(
                     "Not saving self assessment result as assessment question Id is invalid. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId,assessmentQuestionId, result)}"
+                    $"{PrintResult(competencyId, selfAssessmentId, delegateUserId, assessmentQuestionId, result)}"
                 );
                 return;
             }
@@ -388,7 +387,7 @@
             {
                 logger.LogWarning(
                     "Not saving self assessment result as result is invalid. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId,assessmentQuestionId, result)}"
+                    $"{PrintResult(competencyId, selfAssessmentId, delegateUserId, assessmentQuestionId, result)}"
                 );
                 return;
             }
@@ -410,7 +409,7 @@
 
                         SELECT TOP 1 @existentResultId = ID, @existentResult = [Result]
                         FROM SelfAssessmentResults
-                        WHERE [CandidateID] = @candidateId
+                        WHERE [DelegateUserID] = @delegateUserId
                             AND [SelfAssessmentID] = @selfAssessmentId
                             AND [CompetencyID] = @competencyId
                             AND [AssessmentQuestionID] = @assessmentQuestionId
@@ -423,23 +422,23 @@
                             WHERE ID = @existentResultId
                         ELSE
                             INSERT INTO SelfAssessmentResults
-                                ([CandidateID]
-                                ,[SelfAssessmentID]
+                                ([SelfAssessmentID]
                                 ,[CompetencyID]
                                 ,[AssessmentQuestionID]
                                 ,[Result]
                                 ,[DateTime]
-                                ,[SupportingComments])
-                            VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments)
+                                ,[SupportingComments]
+                                ,[DelegateUserID])
+                            VALUES(@selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments,@delegateUserId)
                     END",
-                new { competencyId, selfAssessmentId, candidateId, delegateUserId, assessmentQuestionId, result, supportingComments }
+                new { competencyId, selfAssessmentId, delegateUserId, assessmentQuestionId, result, supportingComments }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not saving self assessment result as db insert failed. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, delegateUserId,assessmentQuestionId, result)}"
+                    $"{PrintResult(competencyId, selfAssessmentId, delegateUserId, assessmentQuestionId, result)}"
                 );
             }
         }
@@ -591,7 +590,7 @@
         }
 
         public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-            int delegateId,
+            int delegateUserId,
             int selfAssessmentId,
             int competencyId
         )
@@ -599,7 +598,6 @@
             return connection.Query<SelfAssessmentResult>(
                 @"SELECT
                         ID,
-                        CandidateID,
                         SelfAssessmentID,
                         CompetencyID,
                         AssessmentQuestionID,
@@ -609,22 +607,21 @@
                     FROM SelfAssessmentResults
                     WHERE CompetencyID = @competencyId
                         AND SelfAssessmentID = @selfAssessmentId
-                        AND CandidateID = @delegateId",
-                new { selfAssessmentId, delegateId, competencyId }
+                        AND DelegateUserID = @delegateUserId",
+                new { selfAssessmentId, delegateUserId, competencyId }
             );
         }
 
         private static string PrintResult(
             int competencyId,
             int selfAssessmentId,
-            int candidateId,
             int delegateUserId,
             int assessmentQuestionId,
             int? result
         )
         {
             return
-                $"Competency id: {competencyId}, self assessment id: {selfAssessmentId}, candidate id: {candidateId},delegate user id: {delegateUserId} " +
+                $"Competency id: {competencyId}, self assessment id: {selfAssessmentId}, delegate user id: {delegateUserId} " +
                 $"assessment question id: {assessmentQuestionId}, result: {result}";
         }
 

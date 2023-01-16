@@ -45,6 +45,7 @@
         IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId);
 
         DelegateUser? GetDelegateUserById(int id);
+        DelegateUser? GetDelegateUserByDelegateUserId(int delegateUserId);
 
         List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
 
@@ -169,6 +170,10 @@
 
         IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
             int userId,bool isAll = false
+        );
+
+        IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
+            int userId
         );
 
         IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);

@@ -19,9 +19,10 @@
             CategoryName = courseStatistics.CategoryName;
             CourseTopic = courseStatistics.CourseTopic;
             LearningMinutes = courseStatistics.LearningMinutes;
-            Tags = FilterableTagHelper.GetCurrentTagsForDelegateCourses(courseStatistics);
+            Tags = FilterableTagHelper.GetCurrentStatusTagsForDelegateCourses(courseStatistics);
             Assessed = courseStatistics.IsAssessed;
             AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
+            Status = DeriveCourseStatus(courseStatistics);
         }
 
         public int CustomisationId { get; set; }
@@ -32,7 +33,7 @@
         public string CourseTopic { get; set; }
         public string LearningMinutes { get; set; }
         public bool Assessed { get; set; }
-
+        public string? Status { get; set; }
         public IEnumerable<CourseAdminFieldWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
 
         public bool HasAdminFields => AdminFieldWithResponseCounts.Any();
@@ -49,5 +50,19 @@
                                               FilteringHelper.Separator +
                                               nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields) +
                                               FilteringHelper.Separator + HasAdminFields.ToString().ToLowerInvariant();
+        private static string DeriveCourseStatus(Course courseStatistics)
+        {
+            if (courseStatistics.Archived)
+            {
+                return "archived";
+            }
+            else switch (courseStatistics.Active)
+            {
+                case true:
+                    return "active";
+                case false:
+                    return "inactive";
+            }
+        }
     }
 }
