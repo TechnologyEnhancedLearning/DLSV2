@@ -149,6 +149,17 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 );
                 return -3;
             }
+            if (delegateUserId == null)
+            {
+                delegateUserId = (int?)connection.ExecuteScalar(
+                    @"SELECT da.UserID AS DelegateUserID 
+                            FROM Users u
+                            INNER JOIN DelegateAccounts da
+                            ON da.UserID = u.ID
+                            WHERE PrimaryEmail = @delegateEmail
+                            AND u.Active = 1 
+                            AND da.CentreID = @centreId", new { delegateEmail, centreId });
+            }
             int existingId = (int)connection.ExecuteScalar(
                @"SELECT COALESCE
                  ((SELECT ID
@@ -157,22 +168,11 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                new { supervisorEmail, delegateEmail });
             if (existingId > 0)
             {
-                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL WHERE (SupervisorAdminID = @supervisorAdminId) AND (DelegateEmail = @delegateEmail) AND (Removed IS NOT NULL)", new { supervisorAdminId, delegateEmail });
+                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId WHERE (SupervisorAdminID = @supervisorAdminId) AND (DelegateEmail = @delegateEmail) AND (Removed IS NOT NULL)", new { supervisorAdminId, delegateEmail, delegateUserId });
                 return existingId;
             }
             else
             {
-                if (delegateUserId == null)
-                {
-                    delegateUserId = (int?)connection.ExecuteScalar(
-                        @"SELECT da.UserID AS DelegateUserID 
-                            FROM Users u
-                            INNER JOIN DelegateAccounts da
-                            ON da.UserID = u.ID
-                            WHERE PrimaryEmail = @delegateEmail
-                            AND u.Active = 1 
-                            AND da.CentreID = @centreId", new { delegateEmail, centreId });
-                }
                 if (supervisorAdminId == null)
                 {
                     supervisorAdminId = (int?)connection.ExecuteScalar(
