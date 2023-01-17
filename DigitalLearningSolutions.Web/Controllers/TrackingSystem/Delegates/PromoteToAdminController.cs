@@ -138,13 +138,6 @@
 
                 var delegateUserEmailDetails = userDataService.GetDelegateById(delegateId);
 
-                var delegateEmail = delegateUserEmailDetails.UserAccount.PrimaryEmail;
-
-                if (Guid.TryParse(delegateEmail, out _))
-                {
-                    delegateEmail = delegateUserEmailDetails.EmailForCentreNotifications;
-                }
-
                 if (delegateUserEmailDetails != null)
                 {
                     var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
@@ -160,7 +153,7 @@
                         isContentCreator: adminRoles.IsContentCreator,
                         isCmsAdmin: adminRoles.IsCmsAdministrator,
                         isCmsManager: adminRoles.IsCmsManager,
-                        primaryEmail: delegateEmail,
+                        primaryEmail: delegateUserEmailDetails.EmailForCentreNotifications,
                         centreName: centreName
                     );
 
