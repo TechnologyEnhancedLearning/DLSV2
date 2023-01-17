@@ -144,6 +144,8 @@
 
         public string? Answer6 { get; }
 
+        public string? RegistrationConfirmationHash { get; }
+
         public DateTime? NotifyDate { get; }
 
         public bool IsSelfRegistered { get; }

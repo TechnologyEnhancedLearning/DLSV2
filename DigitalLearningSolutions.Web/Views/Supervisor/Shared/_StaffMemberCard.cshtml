@@ -38,7 +38,7 @@
     </summary>
     <div class="nhsuk-details__text">
       <div class="nhsuk-u-padding-left-3">
-        @if (Model.SupervisorDelegateDetail.CandidateID == null)
+        @if (Model.SupervisorDelegateDetail.DelegateUserID == null)
         {
           <dl class="nhsuk-summary-list">
             <div class="nhsuk-summary-list__row">
@@ -74,7 +74,7 @@
         <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" view-data="@(new ViewDataDictionary(ViewData){{"isSupervisor", Model.IsUserSupervisor}})" />
       }
       </div>
-      @if (Model.SupervisorDelegateDetail.DlsRole == DlsRole.Learner && !Model.SupervisorDelegateDetail.DelegateIsNominatedSupervisor && Model.SupervisorDelegateDetail.CandidateID != null)
+      @if (Model.SupervisorDelegateDetail.DlsRole == DlsRole.Learner && !Model.SupervisorDelegateDetail.DelegateIsNominatedSupervisor && Model.SupervisorDelegateDetail.DelegateUserID != null)
       {
         <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 button-small"
          data-return-page-enabled="true"
@@ -109,7 +109,7 @@
       }
     </div>
   </details>
-  @if (Model.SupervisorDelegateDetail.CandidateID != null)
+  @if (Model.SupervisorDelegateDetail.DelegateUserID != null)
   {
     <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
         aria-describedby="@Model.SupervisorDelegateDetail.ID-name"

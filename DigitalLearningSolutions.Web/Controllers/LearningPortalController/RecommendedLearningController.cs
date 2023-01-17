@@ -97,10 +97,10 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AllRecommendedLearningItems")]
         public async Task<IActionResult> AllRecommendedLearningItems(int selfAssessmentId)
         {
-            var candidateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var (recommendedResources, _) = await recommendedLearningService.GetRecommendedLearningForSelfAssessment(
                 selfAssessmentId,
-                candidateId
+                delegateUserId
             );
 
             var model = new AllRecommendedLearningItemsViewModel(recommendedResources, selfAssessmentId);
@@ -120,7 +120,7 @@
             var delegateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
 
-            if (!actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, delegateId))
+            if (!actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, delegateUserId))
             {
                 return NotFound();
             }
@@ -310,10 +310,9 @@
             string? searchString
         )
         {
-            var delegateId = User.GetCandidateIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId)!;
             var (recommendedResources, apiIsAccessible) =
-                await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, delegateId);
+                await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, delegateUserId);
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),

@@ -1,7 +1,16 @@
 ﻿@use "../shared/cardWithButtons";
+@use "nhsuk-frontend/packages/core/all" as *;
 @use "../shared/searchableElements/searchableElements";
 @use "../shared/headingButtons.scss";
 
 .admin-field-count {
     width: 10%;
+}
+
+.status-inactive {
+  border-left: 6px solid tint($color_nhsuk-red, 80);
+}
+
+.status-archived {
+  border-left: 6px solid $color_nhsuk-grey-2;
 }

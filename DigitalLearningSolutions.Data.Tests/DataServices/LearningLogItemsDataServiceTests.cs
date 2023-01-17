@@ -155,6 +155,7 @@
             const int learningResourceReferenceId = 1;
             const int learningHubResourceReferenceId = 2;
             const int delegateId = 2;
+            const int delegateUserId = 2;
             const int differentDelegateId = 3;
             const string firstActivityName = "activity 1";
             const string secondActivityName = "activity 2";
@@ -199,7 +200,7 @@
                 );
 
                 // When
-                var result = service.GetLearningLogItems(delegateId).ToList();
+                var result = service.GetLearningLogItems(delegateUserId).ToList();
 
                 // Then
                 using (new AssertionScope())

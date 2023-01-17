@@ -19,18 +19,18 @@
         Task AddResourceToActionPlan(int learningResourceReferenceId, int delegateId, int selfAssessmentId);
 
         Task<(IEnumerable<ActionPlanResource> resources, bool apiIsAccessible)> GetIncompleteActionPlanResources(
-            int delegateId
+            int delegateUserId
         );
 
         Task<(IEnumerable<ActionPlanResource> resources, bool apiIsAccessible)> GetCompletedActionPlanResources(
-            int delegateId
+            int delegateUserId
         );
 
         Task<(ActionPlanResource? actionPlanResource, bool apiIsAccessible)> GetActionPlanResource(
             int learningLogItemId
         );
 
-        void UpdateActionPlanResourcesLastAccessedDateIfPresent(int resourceReferenceId, int delegateId);
+        void UpdateActionPlanResourcesLastAccessedDateIfPresent(int resourceReferenceId, int delegateUserId);
 
         public void SetCompletionDate(int learningLogItemId, DateTime completedDate);
 
@@ -40,7 +40,7 @@
 
         bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateId);
 
-        bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateId);
+        bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateUserId);
     }
 
     public class ActionPlanService : IActionPlanService
@@ -148,9 +148,9 @@
         }
 
         public async Task<(IEnumerable<ActionPlanResource> resources, bool apiIsAccessible)>
-            GetIncompleteActionPlanResources(int delegateId)
+            GetIncompleteActionPlanResources(int delegateUserId)
         {
-            var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
+            var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateUserId)
                 .Where(
                     i => i.CompletedDate == null && i.ArchivedDate == null
                 ).ToList();
@@ -159,9 +159,9 @@
         }
 
         public async Task<(IEnumerable<ActionPlanResource> resources, bool apiIsAccessible)>
-            GetCompletedActionPlanResources(int delegateId)
+            GetCompletedActionPlanResources(int delegateUserId)
         {
-            var completedLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
+            var completedLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateUserId)
                 .Where(
                     i => i.CompletedDate != null && i.ArchivedDate == null
                 ).ToList();
@@ -187,10 +187,10 @@
 
         public void UpdateActionPlanResourcesLastAccessedDateIfPresent(
             int resourceReferenceId,
-            int delegateId
+            int delegateUserId
         )
         {
-            var actionPlanResourcesToUpdate = learningLogItemsDataService.GetLearningLogItems(delegateId).Where(
+            var actionPlanResourcesToUpdate = learningLogItemsDataService.GetLearningLogItems(delegateUserId).Where(
                 r =>
                     r.ArchivedDate == null &&
                     r.LearningHubResourceReferenceId == resourceReferenceId
@@ -239,9 +239,9 @@
             return actionPlanResource.LoggedById == delegateId;
         }
 
-        public bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateId)
+        public bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateUserId)
         {
-            var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
+            var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateUserId)
                 .Where(
                     i => i.CompletedDate == null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
                 ).ToList();

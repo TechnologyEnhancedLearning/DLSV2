@@ -36,7 +36,7 @@
                 completedActionPlanResources.Select(r => new CompletedActionPlanResource(r));
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId))
                 .Returns((completedActionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
             var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
@@ -92,7 +92,7 @@
             await controller.Completed();
 
             // Then
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId)).MustNotHaveHappened();
         }
 
         [Test]
@@ -106,7 +106,7 @@
             await controller.Completed();
 
             // Then
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -121,7 +121,7 @@
             await controller.AllCompletedItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId)).MustNotHaveHappened();
         }
 
         [Test]
@@ -135,7 +135,7 @@
             await controller.AllCompletedItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId))
                 .MustHaveHappenedOnceExactly();
         }
 

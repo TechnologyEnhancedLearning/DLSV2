@@ -31,7 +31,6 @@
         void SetResultForCompetency(
             int competencyId,
             int selfAssessmentId,
-            int candidateId,
             int delegateUserId,
             int assessmentQuestionId,
             int? result,
@@ -61,7 +60,7 @@
         );
 
         IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-            int delegateId,
+            int delegateUserId,
             int selfAssessmentId,
             int competencyId
         );
