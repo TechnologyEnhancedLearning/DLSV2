@@ -347,6 +347,42 @@
         }
 
         [Test]
+        public async Task Check_registration_complete_returns_redirect_to_confirmation()
+        {
+            // Given
+            const string candidateNumber = "TN1";
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
+
+            var model = new SummaryViewModel
+            {
+                PrimaryEmail = data.PrimaryEmail,
+                CentreSpecificEmail = data.CentreSpecificEmail,
+            };
+
+            SetUpFakesForSuccessfulRegistration(candidateNumber, data, 1);
+
+            // When
+            var result = await controller.Summary(model);
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationService.RegisterDelegateForNewUser(
+                            A<DelegateRegistrationModel>.That.Matches(
+                                d =>
+                                    d.RegistrationConfirmationHash == null
+                            ),
+                            IpAddress,
+                            false,
+                            true,
+                            SupervisorDelegateId
+                        )
+                )
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+        }
+
+        [Test]
         public async Task Summary_post_returns_default_view_with_invalid_model()
         {
             // Given

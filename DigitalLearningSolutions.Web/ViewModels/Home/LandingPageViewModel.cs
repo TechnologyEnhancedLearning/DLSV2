@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Home
     {
         public MiniHubNavigationModel MiniHubNavigationModel { get; set; }
         public bool UserIsLoggedIn { get; set; }
+        public bool UserIsLoggedInCentre { get; set; }
         public string CurrentSiteBaseUrl { get; set; }
     }
 }
