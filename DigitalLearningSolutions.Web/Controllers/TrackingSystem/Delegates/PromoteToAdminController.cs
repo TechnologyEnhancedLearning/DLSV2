@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -137,6 +138,13 @@
 
                 var delegateUserEmailDetails = userDataService.GetDelegateById(delegateId);
 
+                var delegateEmail = delegateUserEmailDetails.UserAccount.PrimaryEmail;
+
+                if (Guid.TryParse(delegateEmail, out _))
+                {
+                    delegateEmail = delegateUserEmailDetails.EmailForCentreNotifications;
+                }
+
                 if (delegateUserEmailDetails != null)
                 {
                     var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
@@ -152,7 +160,7 @@
                         isContentCreator: adminRoles.IsContentCreator,
                         isCmsAdmin: adminRoles.IsCmsAdministrator,
                         isCmsManager: adminRoles.IsCmsManager,
-                        primaryEmail: delegateUserEmailDetails.UserAccount.PrimaryEmail,
+                        primaryEmail: delegateEmail,
                         centreName: centreName
                     );
 
