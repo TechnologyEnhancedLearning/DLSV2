@@ -98,10 +98,6 @@ nav .nhsuk-width-container {
 
 nav, .nhsuk-header__navigation, #header-navigation {
   border-bottom: 0;
-
-  @include mq($until: 1024px) {
-    padding: 0 32px;
-  }
 }
 
 .visual-separator {
@@ -339,6 +335,9 @@ nav, .nhsuk-header__navigation, #header-navigation {
   max-width: 1144px !important;
   padding-left: 32px !important;
   padding-right: 32px !important;
+}
+.nhsuk-width-container {
+  margin: auto !important;
 }
 @media only screen and (max-width: 767px) {
   .section-card-result {
