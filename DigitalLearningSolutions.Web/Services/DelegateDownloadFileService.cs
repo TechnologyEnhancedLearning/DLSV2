@@ -36,7 +36,7 @@
         private const string ProfessionalRegistrationNumber = "Professional Registration Number";
         private const string JobGroup = "Job group";
         private const string RegisteredDate = "Registered";
-        private const string PasswordSet = "Password set";
+        private const string RegistrationComplete = "Registration complete";
         private const string Active = "Active";
         private const string Approved = "Approved";
         private const string IsAdmin = "Is admin";
@@ -216,7 +216,7 @@
             dataTable.Columns.AddRange(
                 new[]
                 {
-                    new DataColumn(PasswordSet),
+                    new DataColumn(RegistrationComplete),
                     new DataColumn(Active),
                     new DataColumn(Approved),
                     new DataColumn(IsAdmin),
@@ -259,7 +259,7 @@
                 }
             }
 
-            row[PasswordSet] = delegateRecord.IsPasswordSet;
+            row[RegistrationComplete] = delegateRecord.IsPasswordSet;
             row[Active] = delegateRecord.Active;
             row[Approved] = delegateRecord.Approved;
             row[IsAdmin] = delegateRecord.IsAdmin;
@@ -271,7 +271,7 @@
         {
             ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, RegisteredDate, XLDataType.DateTime);
 
-            var boolColumns = new[] { PasswordSet, Active, Approved, IsAdmin };
+            var boolColumns = new[] { RegistrationComplete, Active, Approved, IsAdmin };
             foreach (var columnName in boolColumns)
             {
                 ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Boolean);

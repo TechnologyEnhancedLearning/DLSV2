@@ -24,15 +24,6 @@ body {
   align-self: center;
   width: 100%;
   margin: 0;
-  padding: 0 16px;
-
-  @include mq($from: desktop, $until: 1024px) {
-    padding: 0 32px;
-  }
-
-  @include mq($from: 1024px) {
-    padding: 0;
-  }
 }
 
 footer {
@@ -98,10 +89,6 @@ nav .nhsuk-width-container {
 
 nav, .nhsuk-header__navigation, #header-navigation {
   border-bottom: 0;
-
-  @include mq($until: 1024px) {
-    padding: 0 32px;
-  }
 }
 
 .visual-separator {
@@ -337,6 +324,11 @@ nav, .nhsuk-header__navigation, #header-navigation {
 }
 .nhsuk-width-container {
   max-width: 1144px !important;
+  padding-left: $nhsuk-gutter !important;
+  padding-right: $nhsuk-gutter !important;
+}
+.nhsuk-width-container {
+  margin: auto !important;
 }
 @media only screen and (max-width: 767px) {
   .section-card-result {
