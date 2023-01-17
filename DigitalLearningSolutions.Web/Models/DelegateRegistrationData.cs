@@ -26,6 +26,7 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
+        public string RegistrationConfirmationHash { get; set; }
 
         public override void SetLearnerInformation(LearnerInformationViewModel model)
         {
