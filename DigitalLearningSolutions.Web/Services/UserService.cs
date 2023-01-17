@@ -184,6 +184,7 @@ namespace DigitalLearningSolutions.Web.Services
                 user => user.Approved && !user.SelfReg && string.IsNullOrEmpty(user.Password) &&
                         !string.IsNullOrEmpty(user.EmailAddress)
                         && !Guid.TryParse(user.EmailAddress, out _)
+                        && user.RegistrationConfirmationHash != null
             );
         }
 

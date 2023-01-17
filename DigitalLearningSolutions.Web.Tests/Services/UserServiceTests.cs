@@ -630,9 +630,7 @@
             var result = userService.GetDelegateUserCardsForWelcomeEmail(101).ToList();
 
             // Then
-            result.Should().HaveCount(2);
-            result[0].FirstName.Should().Be("include");
-            result[1].FirstName.Should().Be("include");
+            result.Should().HaveCount(0);
         }
 
         [Test]
