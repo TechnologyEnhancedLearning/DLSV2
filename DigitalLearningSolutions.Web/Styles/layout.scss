@@ -24,15 +24,6 @@ body {
   align-self: center;
   width: 100%;
   margin: 0;
-  padding: 0 16px;
-
-  @include mq($from: desktop, $until: 1024px) {
-    padding: 0 32px;
-  }
-
-  @include mq($from: 1024px) {
-    padding: 0;
-  }
 }
 
 footer {
@@ -333,8 +324,8 @@ nav, .nhsuk-header__navigation, #header-navigation {
 }
 .nhsuk-width-container {
   max-width: 1144px !important;
-  padding-left: 32px !important;
-  padding-right: 32px !important;
+  padding-left: $nhsuk-gutter !important;
+  padding-right: $nhsuk-gutter !important;
 }
 .nhsuk-width-container {
   margin: auto !important;
