@@ -23,11 +23,6 @@
       <dd class="nhsuk-summary-list__actions" />
     </div>
   }
-  <div class="tags @(@Model.Status() != string.Empty ? string.Empty : "nhsuk-u-visually-hidden")">
-    <dt class="card-filter-tag">
-      <strong class="nhsuk-tag @Model.StatusTagStyle() capitalise">@Model.Status()</strong>
-    </dt>
-  </div>
   <div class="nhsuk-summary-list__row details-list-with-button__row">
     <dt class="nhsuk-summary-list__key">
       Enrolled
