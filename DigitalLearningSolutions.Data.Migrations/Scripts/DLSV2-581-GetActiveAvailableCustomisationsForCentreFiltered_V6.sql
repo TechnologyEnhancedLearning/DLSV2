@@ -54,7 +54,7 @@ AS
 						WHERE (SA.ID NOT IN
 										 (SELECT SelfAssessmentID
 										 FROM    CandidateAssessments AS CA
-										 WHERE (CandidateID_deprecated = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))) AS Q1
+										 WHERE (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))) AS Q1
 						ORDER BY Q1.CourseName
 		END
 	ELSE

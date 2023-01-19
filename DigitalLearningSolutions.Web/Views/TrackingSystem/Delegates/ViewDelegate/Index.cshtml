@@ -141,7 +141,7 @@
         {
             @foreach (var delegateCourseInfoViewModel in Model.DelegateCourses)
             {
-                <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
+              <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
             }
         }
         @if (Model.DelegateInfo.IsActive && !string.IsNullOrEmpty(Model.DelegateInfo.Email))
