@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.ServiceFilter;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -64,6 +65,10 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         }
 
         [HttpGet]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateInActivity) }
+        )]
         public IActionResult Index(int delegateId, string delegateName)
         {
             var categoryId = User.GetAdminCategoryId();
