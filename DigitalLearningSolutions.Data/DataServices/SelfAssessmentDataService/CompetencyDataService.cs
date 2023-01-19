@@ -81,7 +81,7 @@
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas 
-                    ON sv.CandidateAssessmentSupervisorID = cas.ID
+                    ON sv.CandidateAssessmentSupervisorID = cas.ID AND cas.Removed IS NULL
                 LEFT OUTER JOIN SupervisorDelegates AS sd
                     ON cas.SupervisorDelegateId = sd.ID
                 LEFT OUTER JOIN AdminUsers AS adu
@@ -287,7 +287,7 @@
                 SelfAssessmentResultSupervisorVerificationId AS SupervisorVerificationId,
                 CandidateAssessmentSupervisorID";
             const string supervisorTables = @"
-                LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = CandidateAssessmentSupervisorID
+                LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = CandidateAssessmentSupervisorID AND cas.Removed IS NULL
                 LEFT OUTER JOIN SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId AND sd.Removed IS NULL
                 LEFT OUTER JOIN AdminUsers AS au ON au.AdminID = sd.SupervisorAdminID";
 
