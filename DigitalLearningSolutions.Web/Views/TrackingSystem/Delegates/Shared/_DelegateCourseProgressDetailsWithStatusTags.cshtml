@@ -1,0 +1,217 @@
+﻿@using DigitalLearningSolutions.Data.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
+@model DelegateCourseInfoViewModel
+
+<dl class="nhsuk-summary-list details-list-with-button word-break">
+  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Delegate ID
+      </dt>
+      <dd class="nhsuk-summary-list__value searchable-element-candidate-number" data-name-for-sorting="delegate-id">
+        @Model.DelegateNumber
+      </dd>
+      <dd class="nhsuk-summary-list__actions" />
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Professional Registration Number
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+      <dd class="nhsuk-summary-list__actions" />
+    </div>
+  }
+  <div class="tags @(@Model.Status() != string.Empty ? string.Empty : "nhsuk-u-visually-hidden")">
+    <dt class="card-filter-tag">
+      <strong class="nhsuk-tag @Model.StatusTagStyle() capitalise">@Model.Status()</strong>
+    </dt>
+  </div>
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Enrolled
+    </dt>
+    <dd class="nhsuk-summary-list__value" data-name-for-sorting="enrolled-date">
+      @Model.Enrolled
+    </dd>
+    <dd class="nhsuk-summary-list__actions"></dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Supervisor
+    </dt>
+    <partial name="_SummaryFieldValue" model="@Model.Supervisor" />
+    <dd class="nhsuk-summary-list__actions">
+      <a data-return-page-enabled="true"
+         asp-controller="DelegateProgress"
+         asp-action="EditSupervisor"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@Model.AccessedVia"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery">
+        Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
+      </a>
+    </dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Complete by
+    </dt>
+    <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
+      @(Model.CompleteBy ?? "-")
+    </dd>
+    <dd class="nhsuk-summary-list__actions">
+      <a data-return-page-enabled="true"
+         asp-controller="DelegateProgress"
+         asp-action="EditCompleteByDate"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@Model.AccessedVia"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery">
+        Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
+      </a>
+    </dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Last access
+    </dt>
+    <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-accessed">
+      @Model.LastAccessed
+    </dd>
+    <dd class="nhsuk-summary-list__actions"></dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Completed
+    </dt>
+    <dd class="nhsuk-summary-list__value" data-name-for-sorting="completed-date">
+      @(Model.Completed ?? "-")
+    </dd>
+    <dd class="nhsuk-summary-list__actions">
+      <a data-return-page-enabled="true"
+         asp-controller="DelegateProgress"
+         asp-action="EditCompletionDate"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@Model.AccessedVia"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery">
+        Edit<span class="nhsuk-u-visually-hidden"> completed date</span>
+      </a>
+    </dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Evaluated
+    </dt>
+    <partial name="_SummaryFieldValue" model="@Model.Evaluated" />
+    <dd class="nhsuk-summary-list__actions"></dd>
+  </div>
+
+  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Removed
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.RemovedDate" />
+      <dd class="nhsuk-summary-list__actions" />
+    </div>
+  }
+
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Enrolment method
+    </dt>
+    <partial name="_SummaryFieldValue" model="@Model.EnrolmentMethod" />
+    <dd class="nhsuk-summary-list__actions"></dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Logins
+    </dt>
+    <partial name="_SummaryFieldValue" model="@Model.LoginCount.ToString()" />
+    <dd class="nhsuk-summary-list__actions"></dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Learning time
+    </dt>
+    <partial name="_SummaryFieldValue" model="@Model.LearningTime" />
+    <dd class="nhsuk-summary-list__actions"></dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row details-list-with-button__row">
+    <dt class="nhsuk-summary-list__key">
+      Diagnostic score
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @(Model.DiagnosticScore?.ToString() ?? "N/A")
+    </dd>
+    <dd class="nhsuk-summary-list__actions"></dd>
+  </div>
+
+  @foreach (var courseCustomPrompt in Model.CourseAdminFieldsWithAnswers)
+  {
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        @courseCustomPrompt.PromptText
+      </dt>
+      <partial name="_SummaryFieldValue" model="@courseCustomPrompt.Answer" />
+      <div hidden data-filter-value="@FilteringHelper.GetFilterValueForAdminField(courseCustomPrompt)"></div>
+      <dd class="nhsuk-summary-list__actions">
+        <a data-return-page-enabled="true"
+         asp-controller="DelegateProgress"
+         asp-action="EditDelegateCourseAdminField"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-promptNumber="@courseCustomPrompt.PromptNumber"
+         asp-route-accessedVia="@Model.AccessedVia"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery">
+          Edit<span class="nhsuk-u-visually-hidden"> @courseCustomPrompt.PromptText</span>
+        </a>
+      </dd>
+    </div>
+  }
+
+  @if (Model.IsAssessed)
+  {
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        Assessments passed
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.AttemptsPassed.ToString()" />
+      <dd class="nhsuk-summary-list__actions"></dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        Assessment attempts
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.TotalAttempts.ToString()" />
+      <dd class="nhsuk-summary-list__actions"></dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        Pass rate
+      </dt>
+      <dd class="nhsuk-summary-list__value" data-name-for-sorting="pass-rate">
+        @(Model.PassRateDisplayString ?? "-")
+      </dd>
+      <dd class="nhsuk-summary-list__actions"></dd>
+    </div>
+  }
+
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Progress locked
+    </dt>
+    <partial name="_SummaryBooleanField" model="@Model.IsProgressLocked" />
+    <dd class="nhsuk-summary-list__actions"></dd>
+  </div>
+</dl>
