@@ -640,7 +640,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         public bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId)
         {
             //Set any existing verification requests to superceded:
-            connection.Execute(@"UPDATE SelfAssessmentResultSupervisorVerifications SET Superceded = 1 WHERE CandidateAssessmentSupervisorID = @candidateAssessmentSupervisorId AND SelfAssessmentResultId = @resultId", new { candidateAssessmentSupervisorId, resultId });
+            connection.Execute(@"UPDATE SelfAssessmentResultSupervisorVerifications SET Superceded = 1 WHERE SelfAssessmentResultId = @resultId", new { candidateAssessmentSupervisorId, resultId });
             //Insert a new SelfAssessmentResultSupervisorVerifications record:
             var numberOfAffectedRows = connection.Execute(
                      @"INSERT INTO SelfAssessmentResultSupervisorVerifications (CandidateAssessmentSupervisorID, SelfAssessmentResultId, EmailSent) VALUES (@candidateAssessmentSupervisorId, @resultId, GETUTCDATE())", new { candidateAssessmentSupervisorId, resultId });
