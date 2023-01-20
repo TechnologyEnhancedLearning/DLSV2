@@ -192,7 +192,7 @@
                     au.Forename + ' ' + au.Surname As SupervisorName,
                     sasr.RoleName,
                     sasv.Comments,
-                    sar.CandidateID,
+                    sar.DelegateUserID,
                     sar.CompetencyID,
                     com.Name AS CompetencyName,
                     sar.SelfAssessmentID,
