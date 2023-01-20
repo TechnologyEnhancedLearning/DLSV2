@@ -40,7 +40,7 @@
                     GROUP BY sar1.CompetencyID, sar1.AssessmentQuestionID
                 ) t
                     ON s.ID = t.ID
-                INNER JOIN DelegateAccounts AS da ON s.CandidateID = da.ID
+                INNER JOIN DelegateAccounts AS da ON s.DelegateUserID = da.UserID
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
