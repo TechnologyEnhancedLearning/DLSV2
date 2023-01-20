@@ -45,7 +45,7 @@
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
                     ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
                         AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
-                WHERE da.UserID = @delegateUserId
+                WHERE da.ID = @delegateId
                 AND s.SelfAssessmentID = @selfAssessmentId
             )";
 
@@ -82,7 +82,7 @@
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas 
-                    ON sv.CandidateAssessmentSupervisorID = cas.ID
+                    ON sv.CandidateAssessmentSupervisorID = cas.ID AND cas.Removed IS NULL
                 LEFT OUTER JOIN SupervisorDelegates AS sd
                     ON cas.SupervisorDelegateId = sd.ID
                 LEFT OUTER JOIN AdminUsers AS adu
@@ -146,7 +146,8 @@
             INNER JOIN AssessmentQuestions AS AQ
                 ON AQ.ID = CAQ.AssessmentQuestionID
             INNER JOIN CandidateAssessments AS CA
-                ON CA.SelfAssessmentID = @selfAssessmentId AND CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL
+                ON CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL
+			INNER JOIN DelegateAccounts AS DA ON CA.DelegateUserID = DA.UserID AND DA.ID = @delegateId
             LEFT OUTER JOIN LatestAssessmentResults AS LAR
                 ON LAR.CompetencyID = C.ID AND LAR.AssessmentQuestionID = AQ.ID
             INNER JOIN SelfAssessmentStructure AS SAS
@@ -184,7 +185,7 @@
             );
         }
 
-        public Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateUserId)
+        public Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateId)
         {
             Competency? competencyResult = null;
             return connection.Query<Competency, AssessmentQuestion, Competency>(
@@ -193,10 +194,11 @@
                         SELECT
                             DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
                             sas.CompetencyID
-                        FROM            SelfAssessmentStructure AS sas INNER JOIN
-                                         CandidateAssessments AS CA ON CA.SelfAssessmentID = @selfAssessmentId AND CA.DelegateUserID = @delegateUserId INNER JOIN
-                                         CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID LEFT OUTER JOIN
-                                         CandidateAssessmentOptionalCompetencies AS CAOC ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID AND 
+                        FROM            SelfAssessmentStructure AS sas
+                                        INNER JOIN CandidateAssessments AS CA ON CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL
+			                            INNER JOIN DelegateAccounts AS DA ON CA.DelegateUserID = DA.UserID AND DA.ID = @delegateId
+                                        INNER JOIN CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID 
+                                        LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID AND 
                                          sas.CompetencyGroupID = CAOC.CompetencyGroupID
                         WHERE        (sas.SelfAssessmentID = @selfAssessmentId) AND (sas.Optional = 0) OR
                          (sas.SelfAssessmentID = @selfAssessmentId) AND (CAOC.IncludedInSelfAssessment = 1)
@@ -215,11 +217,11 @@
                     competencyResult.AssessmentQuestions.Add(assessmentQuestion);
                     return competencyResult;
                 },
-                new { n, selfAssessmentId, delegateUserId }
+                new { n, selfAssessmentId, delegateId }
             ).FirstOrDefault();
         }
 
-        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateUserId)
+        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateId)
         {
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
@@ -232,7 +234,7 @@
                     competency.AssessmentQuestions.Add(assessmentQuestion);
                     return competency;
                 },
-                new { selfAssessmentId, delegateUserId }
+                new { selfAssessmentId, delegateId }
             );
             return GroupCompetencyAssessmentQuestions(result);
         }
@@ -279,7 +281,7 @@
             return GroupCompetencyAssessmentQuestions(result);
         }
 
-        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateUserId)
+        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateId)
         {
             const string supervisorFields = @"
                 LAR.EmailSent,
@@ -288,7 +290,7 @@
                 SelfAssessmentResultSupervisorVerificationId AS SupervisorVerificationId,
                 CandidateAssessmentSupervisorID";
             const string supervisorTables = @"
-                LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = CandidateAssessmentSupervisorID
+                LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = CandidateAssessmentSupervisorID AND cas.Removed IS NULL
                 LEFT OUTER JOIN SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId AND sd.Removed IS NULL
                 LEFT OUTER JOIN AdminUsers AS au ON au.AdminID = sd.SupervisorAdminID";
 
@@ -307,12 +309,12 @@
                     competency.AssessmentQuestions.Add(assessmentQuestion);
                     return competency;
                 },
-                new { selfAssessmentId, delegateUserId }
+                new { selfAssessmentId, delegateId }
             );
             return result;
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int delegateUserId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int delegateId)
         {
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
@@ -328,7 +330,7 @@
                     competency.AssessmentQuestions.Add(assessmentQuestion);
                     return competency;
                 },
-                new { selfAssessmentId, delegateUserId }
+                new { selfAssessmentId, delegateId }
             );
             return GroupCompetencyAssessmentQuestions(result);
         }

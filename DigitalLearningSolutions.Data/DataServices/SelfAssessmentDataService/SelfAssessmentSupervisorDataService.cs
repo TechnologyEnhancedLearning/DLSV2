@@ -192,7 +192,7 @@
                     au.Forename + ' ' + au.Surname As SupervisorName,
                     sasr.RoleName,
                     sasv.Comments,
-                    sar.CandidateID,
+                    sar.DelegateUserID,
                     sar.CompetencyID,
                     com.Name AS CompetencyName,
                     sar.SelfAssessmentID,
@@ -205,7 +205,7 @@
                     sasv.SignedOff,
                     sea.ReviewerCommentsLabel
                     FROM   SelfAssessmentResultSupervisorVerifications AS sasv INNER JOIN
-                    SelfAssessmentResults AS sar ON sasv.SelfAssessmentResultId = sar.ID INNER JOIN
+                    SelfAssessmentResults AS sar ON sasv.SelfAssessmentResultId = sar.ID AND sasv.Superceded = 0 INNER JOIN
                     SelfAssessments AS sea ON sar.SelfAssessmentID = sea.ID INNER JOIN
                     SelfAssessmentStructure AS sstrc ON sar.CompetencyID = sstrc.CompetencyID INNER JOIN
                     Competencies AS com ON sar.CompetencyID = com.ID INNER JOIN

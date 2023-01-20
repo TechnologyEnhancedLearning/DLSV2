@@ -9,7 +9,7 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public string? SupervisorName { get; set; }
         public string? RoleName { get; set; }
         public string? Comments { get; set; }
-        public int? CandidateID { get; set; }
+        public int? DelegateUserID { get; set; }
         public int? CompetencyID { get; set; }
         public string? CompetencyName { get; set; }
         public int? SelfAssessmentID { get; set; }
