@@ -195,10 +195,11 @@
                         SELECT
                             DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
                             sas.CompetencyID
-                        FROM            SelfAssessmentStructure AS sas INNER JOIN
-                                         CandidateAssessments AS CA ON CA.SelfAssessmentID = @selfAssessmentId AND CA.ID = @delegateId INNER JOIN
-                                         CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID LEFT OUTER JOIN
-                                         CandidateAssessmentOptionalCompetencies AS CAOC ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID AND 
+                        FROM            SelfAssessmentStructure AS sas
+                                        INNER JOIN CandidateAssessments AS CA ON CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL
+			                            INNER JOIN DelegateAccounts AS DA ON CA.DelegateUserID = DA.UserID AND DA.ID = @delegateId
+                                        INNER JOIN CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID 
+                                        LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID AND 
                                          sas.CompetencyGroupID = CAOC.CompetencyGroupID
                         WHERE        (sas.SelfAssessmentID = @selfAssessmentId) AND (sas.Optional = 0) OR
                          (sas.SelfAssessmentID = @selfAssessmentId) AND (CAOC.IncludedInSelfAssessment = 1)
