@@ -152,7 +152,7 @@
                         isContentCreator: adminRoles.IsContentCreator,
                         isCmsAdmin: adminRoles.IsCmsAdministrator,
                         isCmsManager: adminRoles.IsCmsManager,
-                        primaryEmail: delegateUserEmailDetails.UserAccount.PrimaryEmail,
+                        primaryEmail: delegateUserEmailDetails.EmailForCentreNotifications,
                         centreName: centreName
                     );
 
