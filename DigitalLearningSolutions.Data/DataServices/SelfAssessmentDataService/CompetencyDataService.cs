@@ -32,12 +32,11 @@
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM SelfAssessmentResults s
                 INNER JOIN (
-                    SELECT MAX(sar1.ID) as ID
-                    FROM SelfAssessmentResults AS sar1 
-                    INNER JOIN DelegateAccounts AS da1 ON sar1.CandidateID = da1.ID
-                    WHERE da1.UserID = @delegateUserId
-                    AND sar1.SelfAssessmentID = @selfAssessmentId
-                    GROUP BY sar1.CompetencyID, sar1.AssessmentQuestionID
+                   SELECT MAX(ID) as ID
+                    FROM SelfAssessmentResults
+                    WHERE DelegateUserID = @delegateUserId
+                    AND SelfAssessmentID = @selfAssessmentId
+                    GROUP BY CompetencyID, AssessmentQuestionID
                 ) t
                     ON s.ID = t.ID
                 INNER JOIN DelegateAccounts AS da ON s.DelegateUserID = da.UserID
