@@ -1064,7 +1064,7 @@
             var competencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
                     selfAssessmentId,
-                    User.GetUserIdKnownNotNull()
+                    User.GetCandidateIdKnownNotNull()
                 ).ToList()
             );
             var model = new VerificationPickResultsViewModel
