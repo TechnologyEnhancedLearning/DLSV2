@@ -255,17 +255,15 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         [HttpPost]
         public IActionResult EnrolDelegateSummary(int delegateId)
         {
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            var centreId = User.GetCentreIdKnownNotNull();
             var clockUtility = new ClockUtility();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
                TempData);
             if (!sessionEnrol.IsSelfAssessment)
             {
-                progressDataService.CreateNewDelegateProgress(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion,
-                  clockUtility.UtcNow, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
-
                 enrolService.EnrolDelegateOnCourse(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault(), "AdminEnrolDelegateOnCourse");
-
             }
             else
             {
@@ -276,7 +274,9 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     sessionEnrol.SupervisorID.GetValueOrDefault(),
                     adminEmail,
                     sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault(),
-                    sessionEnrol.CompleteByDate.GetValueOrDefault()
+                    sessionEnrol.CompleteByDate.GetValueOrDefault(),
+                    delegateUserId,
+                    centreId
                     );
 
             }
