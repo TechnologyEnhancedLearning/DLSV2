@@ -30,7 +30,7 @@
             result.Should()
                 .BeRedirectToActionResult()
                 .WithControllerName("LearningPortal")
-                .WithActionName("Current");
+                .WithActionName("Completed");
         }
     }
 }
