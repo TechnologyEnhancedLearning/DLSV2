@@ -158,7 +158,7 @@
         {
             sessionService.StopDelegateSession(User.GetCandidateIdKnownNotNull(), HttpContext.Session);
 
-            return RedirectToAction("Completed", "LearningPortal");
+            return RedirectToAction("Current", "LearningPortal");
         }
 
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}")]
