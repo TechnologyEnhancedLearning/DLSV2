@@ -78,6 +78,7 @@
         private const string BaseSelectDelegateAccountQuery =
             @"SELECT
                 da.ID,
+                da.UserID AS DelegateUserID,
                 da.Active,
                 da.CentreID,
                 ce.CentreName,
@@ -104,6 +105,7 @@
         private const string BaseDelegateEntitySelectQuery =
             @"SELECT
                 da.ID,
+                da.UserID AS DelegateUserID,
                 da.Active,
                 da.CentreID,
                 ce.CentreName,
