@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.ServiceFilter;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -64,6 +65,10 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         }
 
         [HttpGet]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateInActivity) }
+        )]
         public IActionResult Index(int delegateId, string delegateName)
         {
             var categoryId = User.GetAdminCategoryId();
@@ -250,6 +255,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         [HttpPost]
         public IActionResult EnrolDelegateSummary(int delegateId)
         {
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            var centreId = User.GetCentreIdKnownNotNull();
             var clockUtility = new ClockUtility();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
@@ -257,7 +264,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             if (!sessionEnrol.IsSelfAssessment)
             {
                 progressDataService.CreateNewDelegateProgress(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion,
-    clockUtility.UtcNow, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
+                  clockUtility.UtcNow, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
 
                 enrolService.EnrolDelegateOnCourse(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault(), "AdminEnrolDelegateOnCourse");
 
@@ -271,7 +278,9 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     sessionEnrol.SupervisorID.GetValueOrDefault(),
                     adminEmail,
                     sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault(),
-                    sessionEnrol.CompleteByDate.GetValueOrDefault()
+                    sessionEnrol.CompleteByDate.GetValueOrDefault(),
+                    delegateUserId,
+                    centreId
                     );
 
             }

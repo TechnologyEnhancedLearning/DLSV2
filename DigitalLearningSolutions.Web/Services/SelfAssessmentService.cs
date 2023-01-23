@@ -36,8 +36,8 @@
 
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
 
-        IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int delegateUserId);
-        IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateUserId);
+        IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int delegateId);
+        IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateId);
 
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(
             int assessmentQuestionId,
@@ -48,7 +48,7 @@
 
         Competency? GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
 
-        Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateUserId); // 1 indexed
+        Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateId); // 1 indexed
 
         void SetResultForCompetency(
             int competencyId,
@@ -61,7 +61,7 @@
 
         IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int delegateUserId);
 
-        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateUserId);
+        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateId);
 
         List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int delegateUserId);
 
@@ -184,14 +184,14 @@
             return selfAssessmentDataService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int delegateUserId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int delegateId)
         {
-            return selfAssessmentDataService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, delegateUserId);
+            return selfAssessmentDataService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, delegateId);
         }
 
-        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateUserId)
+        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateId)
         {
-            return selfAssessmentDataService.GetResultSupervisorVerifications(selfAssessmentId, delegateUserId);
+            return selfAssessmentDataService.GetResultSupervisorVerifications(selfAssessmentId, delegateId);
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(
@@ -353,9 +353,9 @@
             );
         }
 
-        public Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateUserId)
+        public Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateId)
         {
-            return selfAssessmentDataService.GetNthCompetency(n, selfAssessmentId, delegateUserId);
+            return selfAssessmentDataService.GetNthCompetency(n, selfAssessmentId, delegateId);
         }
 
         public void SetResultForCompetency(
@@ -387,9 +387,9 @@
             return selfAssessmentDataService.GetSelfAssessmentsForCandidate(delegateUserId);
         }
 
-        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateUserId)
+        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateId)
         {
-            return selfAssessmentDataService.GetMostRecentResults(selfAssessmentId, delegateUserId);
+            return selfAssessmentDataService.GetMostRecentResults(selfAssessmentId, delegateId);
         }
 
         public List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int delegateUserId)

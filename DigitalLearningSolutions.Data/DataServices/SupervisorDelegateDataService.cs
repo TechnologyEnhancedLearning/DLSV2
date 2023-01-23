@@ -69,7 +69,7 @@
                         sd.ID,
                         sd.SupervisorAdminID,
                         sd.SupervisorEmail,
-                        sd.DelegateUserID
+                        sd.DelegateUserID,
                         sd.DelegateEmail,
                         sd.Added,
                         sd.AddedByDelegate,
