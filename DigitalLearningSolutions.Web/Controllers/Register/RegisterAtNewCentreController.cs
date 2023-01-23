@@ -37,6 +37,7 @@
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly ISupervisorService supervisorService;
 
         public RegisterAtNewCentreController(
             ICentresDataService centresDataService,
@@ -47,7 +48,8 @@
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
             IUserService userService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            ISupervisorService supervisorService
         )
         {
             this.centresDataService = centresDataService;
@@ -59,6 +61,7 @@
             this.supervisorDelegateService = supervisorDelegateService;
             this.userService = userService;
             this.userDataService = userDataService;
+            this.supervisorService = supervisorService;
         }
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
@@ -122,6 +125,12 @@
                         nameof(InternalPersonalInformationViewModel.Centre),
                         "You are already registered at this centre"
                     );
+                }
+
+                int? approvedDelegateId = supervisorService.ValidateDelegate(model.Centre.Value, model.CentreSpecificEmail);
+                if (approvedDelegateId != null && approvedDelegateId > 0)
+                {
+                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address which has approved delegate account.");
                 }
             }
 
