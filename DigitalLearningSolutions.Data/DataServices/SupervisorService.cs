@@ -221,13 +221,14 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public int? ValidateDelegate(int centreId, string delegateEmail)
         {
             int? delegateUserId = (int?)connection.ExecuteScalar(
-                 @"SELECT da.UserID AS DelegateUserID 
+                 @"SELECT TOP 1 da.UserID AS DelegateUserID 
                             FROM Users u
                             INNER JOIN DelegateAccounts da
                             ON da.UserID = u.ID
                             LEFT JOIN UserCentreDetails ucd
                             ON ucd.UserID = u.ID
-                            WHERE u.PrimaryEmail = @delegateEmail
+                            WHERE (u.PrimaryEmail = @delegateEmail
+                            OR ucd.Email = @delegateEmail)
                             AND u.Active = 1 
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
 
