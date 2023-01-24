@@ -118,6 +118,7 @@
                 model.ContentManagementRole = formData.ContentManagementRole;
                 ModelState.Clear();
                 ModelState.AddModelError("IsCenterManager", $"Delegate must have one role to be promoted to Admin.");
+                ViewBag.RequiredCheckboxMessage = "Delegate must have one role to be promoted to Admin.";
                 return View(model);
             }
             var userAdminId = User.GetAdminId();
