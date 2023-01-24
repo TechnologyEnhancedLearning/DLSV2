@@ -192,7 +192,7 @@
                     au.Forename + ' ' + au.Surname As SupervisorName,
                     sasr.RoleName,
                     sasv.Comments,
-                    sar.CandidateID,
+                    sar.DelegateUserID,
                     sar.CompetencyID,
                     com.Name AS CompetencyName,
                     sar.SelfAssessmentID,
@@ -239,7 +239,7 @@
                         INNER JOIN CentreSelfAssessments CSA on csa.CentreID = DA.CentreID
                         where DA.UserID = @delegateUserId And DA.Active = 1
                         AND CSA.SelfAssessmentID=@selfAssessmentId)
-                        AND (CategoryID = 0 OR (CategoryID IN (select CategoryID from SelfAssessments where ID=@selfAssessmentId)))
+                        AND (COALESCE(CategoryID, 0) = 0) OR (CategoryID IN (select CategoryID from SelfAssessments where ID=@selfAssessmentId)))
                         AND AdminID NOT IN (
                         SELECT sd.SupervisorAdminID
                         FROM CandidateAssessmentSupervisors AS cas

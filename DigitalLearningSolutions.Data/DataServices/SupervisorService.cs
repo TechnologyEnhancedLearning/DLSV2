@@ -156,7 +156,10 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             FROM Users u
                             INNER JOIN DelegateAccounts da
                             ON da.UserID = u.ID
-                            WHERE PrimaryEmail = @delegateEmail
+	                        INNER JOIN UserCentreDetails ucd
+	                        ON ucd.UserID = u.ID
+                            AND ucd.CentreID = da.CentreID
+                            WHERE (ucd.Email = @delegateEmail OR u.PrimaryEmail = @delegateEmail)
                             AND u.Active = 1 
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
