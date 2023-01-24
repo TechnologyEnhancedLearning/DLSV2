@@ -3,11 +3,6 @@
     using System;
     public class SessionEnrolDelegate
     {
-        public SessionEnrolDelegate()
-        {
-            Id = new Guid();
-        }
-        public Guid Id { get; set; }
         public int? AssessmentID { get; set; }
         public string? AssessmentName { get; set; }
         public DateTime? CompleteByDate { get; set; }
