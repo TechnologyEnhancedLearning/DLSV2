@@ -239,7 +239,7 @@
                         INNER JOIN CentreSelfAssessments CSA on csa.CentreID = DA.CentreID
                         where DA.UserID = @delegateUserId And DA.Active = 1
                         AND CSA.SelfAssessmentID=@selfAssessmentId)
-                        AND (COALESCE(CategoryID, 0) = 0) OR (CategoryID IN (select CategoryID from SelfAssessments where ID=@selfAssessmentId)))
+                        AND ((COALESCE(CategoryID, 0) = 0) OR (CategoryID IN (select CategoryID from SelfAssessments where ID=@selfAssessmentId)))
                         AND AdminID NOT IN (
                         SELECT sd.SupervisorAdminID
                         FROM CandidateAssessmentSupervisors AS cas
@@ -253,7 +253,7 @@
                         AND (cas.Removed IS NULL)
                         AND (sd.Removed IS NULL)
                         )
-                        AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) ",
+                        AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (Email LIKE '%@%') ",
                 new { centreId, selfAssessmentId, delegateUserId }
             );
         }
