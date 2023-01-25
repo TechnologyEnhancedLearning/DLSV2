@@ -306,8 +306,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId)
         {
             return connection.Query<AvailableCourse>(
-                @"GetActiveAvailableCustomisationsForCentreFiltered_V5",
-                new { candidateId, centreId },
+                @"GetActivitiesForDelegateEnrolment",
+                new { delegateId = candidateId, centreId, categoryId = 0 },
                 commandType: CommandType.StoredProcedure
             );
         }
@@ -408,10 +408,25 @@ namespace DigitalLearningSolutions.Data.DataServices
                 );
             if (supervisorDelegateId == 0 && supervisorId > 0)
             {
-                supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, DelegateUserId, SupervisorEmail, AddedByDelegate)
+                supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates
+                    (SupervisorAdminID,
+                        DelegateEmail,
+                        DelegateUserId,
+                        SupervisorEmail,
+                        AddedByDelegate)
                     OUTPUT INSERTED.Id
-                    SELECT @supervisorId, COALESCE(UCD.Email, U.PrimaryEmail), DA.UserID, @adminEmail, 0
+                    SELECT
+                        @supervisorId,
+                        COALESCE(UCD.Email, U.PrimaryEmail),
+                        DA.UserID,
+                        @adminEmail,
+                        0
                         FROM   DelegateAccounts AS DA
+                        INNER JOIN Users AS U
+                        ON DA.UserID = U.ID
+                        LEFT OUTER JOIN UserCentreDetails AS UCD ON
+                        DA.UserID = UCD.UserID AND
+                        DA.CentreID = UCD.CentreID
                         WHERE (DA.UserID = @delegateUserId)", new {supervisorId, delegateUserId, adminEmail });
             }
 

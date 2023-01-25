@@ -22,7 +22,7 @@ AS
 	SET NOCOUNT ON;
 			SELECT * FROM
 			-- Insert statements for procedure here
-			(SELECT cu.CustomisationID, cu.Active, cu.CurrentVersion, cu.CentreID, cu.ApplicationID, a.ApplicationName + ' - ' + cu.CustomisationName AS CourseName, cu.CustomisationText, 0 AS IncludesSignposting, 0 AS IsSelfAssessment,
+			(SELECT cu.CustomisationID, cu.Active, cu.CurrentVersion, cu.CentreID, cu.ApplicationID, a.ApplicationName + ' - ' + cu.CustomisationName AS CourseName, cu.CustomisationText, 0 AS IncludesSignposting, 0 AS IsSelfAssessment, cu.SelfRegister AS SelfRegister,
 					   cu.IsAssessed, dbo.CheckCustomisationSectionHasDiagnostic(cu.CustomisationID, 0) AS HasDiagnostic, 
 					   dbo.CheckCustomisationSectionHasLearning(cu.CustomisationID, 0) AS HasLearning, (SELECT BrandName FROM Brands WHERE BrandID = a.BrandID) AS Brand, (SELECT CategoryName FROM CourseCategories WHERE CourseCategoryID = a.CourseCategoryID) AS Category, (SELECT CourseTopic FROM CourseTopics WHERE CourseTopicID = a.CourseTopicID) AS Topic, dbo.CheckDelegateStatusForCustomisation(cu.CustomisationID, @DelegateID) AS DelegateStatus
 			FROM  Customisations AS cu INNER JOIN
@@ -37,7 +37,7 @@ AS
 					   (cu.CustomisationName <> 'ESR') AND
 					   (a.CourseCategoryID = @CategoryId OR @CategoryId =0)
 					   UNION ALL
-					   SELECT SA.ID AS CustomisationID, 1 AS Active, 1 AS CurrentVersion, CSA.CentreID as CentreID, 0 AS ApplicationID, SA.Name AS CourseName, SA.Description AS CustomisationText, SA.IncludesSignposting, 1 AS IsSelfAssessment, 0 AS IsAssessed, 0 AS HasDiagnostic, 0 AS HasLearning,
+					   SELECT SA.ID AS CustomisationID, 1 AS Active, 1 AS CurrentVersion, CSA.CentreID as CentreID, 0 AS ApplicationID, SA.Name AS CourseName, SA.Description AS CustomisationText, SA.IncludesSignposting, 1 AS IsSelfAssessment, CSA.AllowEnrolment AS SelfRegister, 0 AS IsAssessed, 0 AS HasDiagnostic, 0 AS HasLearning,
 										 (SELECT BrandName
 										 FROM    Brands
 										 WHERE (BrandID = SA.BrandID)) AS Brand,
