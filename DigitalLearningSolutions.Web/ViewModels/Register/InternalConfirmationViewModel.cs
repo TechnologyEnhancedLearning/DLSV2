@@ -8,7 +8,8 @@
             bool hasAdminAccountAtCentre,
             int? centreId,
             string? centreEmailIfUnverified,
-            string centreName
+            string centreName,
+            bool hasDelegateAccountAtAdminCentre=false
         )
         {
             CandidateNumber = candidateNumber;
@@ -17,6 +18,7 @@
             CentreId = centreId;
             CentreEmailIfUnverified = centreEmailIfUnverified;
             CentreName = centreName;
+            HasDelegateAccountAtAdminCentre = hasDelegateAccountAtAdminCentre;
         }
 
         public string CandidateNumber { get; }
@@ -25,5 +27,6 @@
         public int? CentreId { get; }
         public string? CentreEmailIfUnverified { get; }
         public string CentreName { get; }
+        public bool HasDelegateAccountAtAdminCentre { get; }
     }
 }

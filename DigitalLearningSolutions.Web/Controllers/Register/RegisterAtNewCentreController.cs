@@ -243,6 +243,23 @@
 
             var userIp = Request.GetUserIpAddressFromRequest();
 
+            bool userHasDelAccAtAdminCentre = false;
+
+            var userEntity = userService.GetUserById(userId);
+
+            if (userEntity.AdminAccounts.Any())
+            {
+                var adminAccountAtCentre = userEntity.AdminAccounts.Where(a => a.CentreId == data.Centre).ToList();
+                if (adminAccountAtCentre.Any())
+                {
+                    var delegateAccount = userEntity.DelegateAccounts.Where(da => da.CentreId == data.Centre).ToList();
+                    if (!delegateAccount.Any())
+                    {
+                        userHasDelAccAtAdminCentre = true;
+                    }
+                }
+            }
+
             try
             {
                 var (candidateNumber, approved, userHasAdminAccountAtCentre) =
@@ -270,7 +287,7 @@
 
                 return RedirectToAction(
                     "Confirmation",
-                    new { candidateNumber, approved, userHasAdminAccountAtCentre, centreId = data.Centre }
+                    new { candidateNumber, approved, userHasAdminAccountAtCentre, centreId = data.Centre, userHasDelAccAtAdminCentre }
                 );
             }
             catch (DelegateCreationFailedException e)
@@ -291,7 +308,8 @@
             string candidateNumber,
             bool approved,
             bool userHasAdminAccountAtCentre,
-            int? centreId
+            int? centreId,
+            bool userHasDelAccAtAdminCentre = false
         )
         {
             if (centreId == null)
@@ -312,7 +330,8 @@
                 userHasAdminAccountAtCentre,
                 centreId,
                 unverifiedCentreEmail,
-                centreName
+                centreName,
+                userHasDelAccAtAdminCentre
             );
 
             return View(model);
