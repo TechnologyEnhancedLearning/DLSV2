@@ -60,7 +60,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
         public void Index_calls_expected_methods_and_returns_view()
         {
             //When
-            var result = enrolController.Index(1, "DelegateName");
+            var result = enrolController.Index(1, 1, "DelegateName");
 
             //Then
             using (new AssertionScope())
@@ -80,7 +80,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
                 tempDataDictionary));
 
             //When
-            var result = enrolController.StartEnrolProcess(1, "DelegateName");
+            var result = enrolController.StartEnrolProcess(1, 1, "DelegateName");
 
             //Then
             using (new AssertionScope())
