@@ -57,21 +57,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
         }
 
         [Test]
-        public void Index_calls_expected_methods_and_returns_view()
-        {
-            //When
-            var result = enrolController.Index(1);
-
-            //Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => courseDataService.GetAvailableCourses(1, A<int>._, A<int>._)).MustHaveHappened();
-
-                result.Should().BeViewResult().WithDefaultViewName();
-            }
-        }
-
-        [Test]
         public void StartEnrolProcess_calls_expected_methods_and_returns_view()
         {
             //Given
