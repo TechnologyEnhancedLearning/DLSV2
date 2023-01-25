@@ -397,7 +397,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                            @lastAccessed,
                            @completeByDateDynamic,
                            @centreId);",
-                    new { delegateUserId, selfAssessmentId, startedDate, lastAccessed, completeByDateDynamic,centreId }
+                    new { delegateUserId, selfAssessmentId, startedDate, lastAccessed, completeByDateDynamic, centreId }
                 );
             }
 
@@ -427,7 +427,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         LEFT OUTER JOIN UserCentreDetails AS UCD ON
                         DA.UserID = UCD.UserID AND
                         DA.CentreID = UCD.CentreID
-                        WHERE (DA.UserID = @delegateUserId)", new {supervisorId, delegateUserId, adminEmail });
+                        WHERE (DA.UserID = @delegateUserId)", new { supervisorId, delegateUserId, adminEmail });
             }
 
             if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)

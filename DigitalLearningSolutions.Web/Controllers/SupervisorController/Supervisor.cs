@@ -200,8 +200,8 @@
         [HttpPost]
         public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
-          ModelState.ClearErrorsOnField("ActionConfirmed");
-          return View("RemoveConfirm", supervisorDelegate);
+            ModelState.ClearErrorsOnField("ActionConfirmed");
+            return View("RemoveConfirm", supervisorDelegate);
         }
 
         [HttpPost]
@@ -968,22 +968,22 @@
 
                     if (delegateUser != null && adminUser != null)
                     {
-                            var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
-                            firstName: delegateUser.FirstName,
-                            supervisorFirstName: adminUser.FirstName!,
-                            supervisorLastName: adminUser.LastName,
-                            supervisorEmail: adminUser.EmailAddress!,
-                            isCentreAdmin: adminRoles.IsCentreAdmin,
-                            isCentreManager: adminRoles.IsCentreManager,
-                            isSupervisor: adminRoles.IsSupervisor,
-                            isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
-                            isTrainer: adminRoles.IsTrainer,
-                            isContentCreator: adminRoles.IsContentCreator,
-                            isCmsAdmin: adminRoles.IsCmsAdministrator,
-                            isCmsManager: adminRoles.IsCmsManager,
-                            primaryEmail: delegateUser.EmailAddress,
-                            centreName: centreName
-                        );
+                        var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
+                        firstName: delegateUser.FirstName,
+                        supervisorFirstName: adminUser.FirstName!,
+                        supervisorLastName: adminUser.LastName,
+                        supervisorEmail: adminUser.EmailAddress!,
+                        isCentreAdmin: adminRoles.IsCentreAdmin,
+                        isCentreManager: adminRoles.IsCentreManager,
+                        isSupervisor: adminRoles.IsSupervisor,
+                        isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
+                        isTrainer: adminRoles.IsTrainer,
+                        isContentCreator: adminRoles.IsContentCreator,
+                        isCmsAdmin: adminRoles.IsCmsAdministrator,
+                        isCmsManager: adminRoles.IsCmsManager,
+                        primaryEmail: delegateUser.EmailAddress,
+                        centreName: centreName
+                    );
 
                         emailService.SendEmail(adminRolesEmail);
 
