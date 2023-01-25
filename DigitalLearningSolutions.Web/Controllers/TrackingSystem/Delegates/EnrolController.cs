@@ -282,7 +282,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var clockUtility = new ClockUtility();
-            
+
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
                TempData);

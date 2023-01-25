@@ -50,7 +50,7 @@ AS
 						WHERE (SA.ID NOT IN
 										 (SELECT SelfAssessmentID
 										 FROM    CandidateAssessments AS CA
-										 INNER JOIN Users AS U ON CA.DelegateUserID = CA.DelegateUserID
+										 INNER JOIN Users AS U ON CA.DelegateUserID = U.ID
 										 INNER JOIN DelegateAccounts AS DA ON U.ID = DA.UserID
 										 WHERE (DA.ID = @DelegateID) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL))) AND
 					   (SA.CategoryID = @CategoryId OR @CategoryId =0)
