@@ -10,6 +10,7 @@
         public DelegateUserCard(DelegateEntity delegateEntity)
         {
             Id = delegateEntity.DelegateAccount.Id;
+            UserId = delegateEntity.DelegateAccount.UserId;
             CentreId = delegateEntity.DelegateAccount.CentreId;
             CentreName = delegateEntity.DelegateAccount.CentreName;
             Active = delegateEntity.DelegateAccount.Active;

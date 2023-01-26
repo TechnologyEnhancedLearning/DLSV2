@@ -5,6 +5,8 @@
 
     public class DelegateUser : User
     {
+        public int Id { get; set; }
+        public int UserId { get; set; }
         public string CandidateNumber { get; set; }
         public DateTime? DateRegistered { get; set; }
         public int JobGroupId { get; set; }

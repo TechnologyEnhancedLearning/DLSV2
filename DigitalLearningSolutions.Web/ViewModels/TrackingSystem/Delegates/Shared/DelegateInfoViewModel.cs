@@ -16,6 +16,7 @@
         )
         {
             Id = delegateUser.Id;
+            UserId = delegateUser.UserId;
             TitleName = delegateUser.SearchableName;
             Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
                 delegateUser.FirstName,
@@ -44,6 +45,7 @@
         }
 
         public int Id { get; set; }
+        public int UserId { get; set; }
         public string TitleName { get; set; }
         public string Name { get; set; }
         public string CandidateNumber { get; set; }
