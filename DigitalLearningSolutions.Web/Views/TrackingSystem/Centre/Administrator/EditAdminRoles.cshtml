@@ -38,7 +38,9 @@
       <vc:checkboxes label="Please select all the roles this user has."
                      populate-with-current-values="true"
                      checkboxes="@Model.Checkboxes"
-                     hint-text="" />
+                     hint-text=""
+                     required="false"
+                     errormessage=""/>
 
       <div class="@(Model.NoContentManagerOptionsAvailable ? "display-none" : null)">
         <vc:radios asp-for="@nameof(Model.ContentManagementRole)"
