@@ -190,7 +190,7 @@
                 splitOn: "ID,ID"
             ).SingleOrDefault();
         }
-
+        
         public IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId)
         {
             var sql =

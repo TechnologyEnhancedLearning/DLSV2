@@ -91,7 +91,7 @@
             }
             else
             {
-                return View("DelegateAccountAlreadyClaimed", model);
+                return View("DelegateAccountAlreadyClaimed",model);
             }
         }
 

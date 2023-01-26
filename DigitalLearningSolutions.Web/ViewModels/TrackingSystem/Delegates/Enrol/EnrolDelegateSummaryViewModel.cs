@@ -4,7 +4,6 @@
     public class EnrolSummaryViewModel
     {
         public int DelegateId { get; set; }
-        public int DelegateUserId { get; set; }
         public string? DelegateName { get; set; }
         public string? ActivityName { get; set; }
         public DateTime? CompleteByDate { get; set; }

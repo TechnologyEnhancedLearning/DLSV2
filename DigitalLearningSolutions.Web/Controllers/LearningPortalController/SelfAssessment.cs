@@ -950,7 +950,7 @@
 
             var competencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetResultSupervisorVerifications(selfAssessmentId, delegateId)
-                .Where(s => s.SupervisorName != null).ToList()
+                .Where(s=>s.SupervisorName !=null).ToList()
             );
             var model = new ReviewConfirmationRequestsViewModel
             {

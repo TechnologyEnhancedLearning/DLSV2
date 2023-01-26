@@ -20,7 +20,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId);
 
-        IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId);
+        IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId, int categoryId);
 
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
 
@@ -306,17 +306,17 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId)
         {
             return connection.Query<AvailableCourse>(
-                @"GetActivitiesForDelegateEnrolment",
-                new { delegateId = candidateId, centreId, categoryId = 0 },
+                @"GetActiveAvailableCustomisationsForCentreFiltered_V5",
+                new { candidateId, centreId },
                 commandType: CommandType.StoredProcedure
             );
         }
 
-        public IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId)
+        public IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId, int categoryId)
         {
             return connection.Query<AvailableCourse>(
-                @"GetActivitiesForDelegateEnrolment",
-                new { delegateId, centreId, categoryId },
+                @"GetActiveAvailableCustomisationsForCentreFiltered_V6",
+                new { candidateId, centreId, categoryId },
                 commandType: CommandType.StoredProcedure
             );
         }
@@ -397,7 +397,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                            @lastAccessed,
                            @completeByDateDynamic,
                            @centreId);",
-                    new { delegateUserId, selfAssessmentId, startedDate, lastAccessed, completeByDateDynamic, centreId }
+                    new { delegateUserId, selfAssessmentId, startedDate, lastAccessed, completeByDateDynamic,centreId }
                 );
             }
 
@@ -408,26 +408,13 @@ namespace DigitalLearningSolutions.Data.DataServices
                 );
             if (supervisorDelegateId == 0 && supervisorId > 0)
             {
-                supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates
-                    (SupervisorAdminID,
-                        DelegateEmail,
-                        DelegateUserId,
-                        SupervisorEmail,
-                        AddedByDelegate)
+                supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, DelegateUserId, SupervisorEmail, AddedByDelegate, CentreID)
                     OUTPUT INSERTED.Id
-                    SELECT
-                        @supervisorId,
-                        COALESCE(UCD.Email, U.PrimaryEmail),
-                        DA.UserID,
-                        @adminEmail,
-                        0
-                        FROM   DelegateAccounts AS DA
-                        INNER JOIN Users AS U
-                        ON DA.UserID = U.ID
-                        LEFT OUTER JOIN UserCentreDetails AS UCD ON
-                        DA.UserID = UCD.UserID AND
-                        DA.CentreID = UCD.CentreID
-                        WHERE (DA.UserID = @delegateUserId)", new { supervisorId, delegateUserId, adminEmail });
+                    SELECT @supervisorId, COALESCE(UCD.Email, U.PrimaryEmail), DA.UserID, @adminEmail, 0, DA.CentreID
+                        FROM   DelegateAccounts AS DA INNER JOIN
+                                     Users AS U ON DA.UserID = U.ID LEFT OUTER JOIN
+                                     UserCentreDetails AS UCD ON U.ID = UCD.UserID AND DA.CentreID = UCD.CentreID
+                        WHERE (DA.ID = @candidateId)", new {supervisorId, candidateId, adminEmail });
             }
 
             if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)
