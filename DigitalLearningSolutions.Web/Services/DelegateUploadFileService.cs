@@ -223,16 +223,16 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var model = RegistrationMappingHelper.MapDelegateUploadTableRowToDelegateRegistrationModel(delegateTableRow, welcomeEmailDate, centreId);
 
-            var (delegateId, _) =
+            var (delegateId, _, delegateUserId) =
                 registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(model, false, true);
-
+            
             UpdateUserProfessionalRegistrationNumberIfNecessary(
                 delegateTableRow.HasPrn,
                 delegateTableRow.Prn,
                 delegateId
             );
 
-            SetUpSupervisorDelegateRelations(delegateTableRow.Email!, centreId, delegateId);
+            SetUpSupervisorDelegateRelations(delegateTableRow.Email!, centreId, delegateUserId);
 
             passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                 delegateId,
@@ -268,7 +268,7 @@ namespace DigitalLearningSolutions.Web.Services
             }
         }
 
-        private void SetUpSupervisorDelegateRelations(string emailAddress, int centreId, int delegateId)
+        private void SetUpSupervisorDelegateRelations(string emailAddress, int centreId, int delegateUserId)
         {
             var pendingSupervisorDelegateIds =
                 supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
@@ -284,7 +284,7 @@ namespace DigitalLearningSolutions.Web.Services
             // TODO: HEEDLS-1014 - Change Delegate ID to User ID
             supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                 pendingSupervisorDelegateIds,
-                delegateId
+                delegateUserId
             );
         }
 

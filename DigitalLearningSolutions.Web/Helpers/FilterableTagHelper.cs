@@ -72,13 +72,17 @@
         {
             var tags = new List<SearchableTagViewModel>();
 
-            if (courseStatistics.Active)
+            if (courseStatistics.Archived)
             {
-                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsActive));
+                tags.Add(new SearchableTagViewModel("Archived", string.Empty, CourseStatusFilterOptions.IsArchived.TagStatus));
+            }
+            else if (courseStatistics.Active)
+            {
+                tags.Add(new SearchableTagViewModel("Active", string.Empty, CourseStatusFilterOptions.IsActive.TagStatus));
             }
             else
             {
-                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive));
+                tags.Add(new SearchableTagViewModel("Inactive", string.Empty, CourseStatusFilterOptions.IsInactive.TagStatus));
             }
 
             if (courseStatistics.HideInLearnerPortal)
@@ -92,6 +96,7 @@
 
             return tags;
         }
+
 
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateCourses(
             CourseStatistics courseStatistics

@@ -33,7 +33,7 @@
         private const int CentreId = 101;
         public const string TestDelegateUploadRelativeFilePath = "/TestData/DelegateUploadTest.xlsx";
         private static readonly DateTime WelcomeEmailDate = new DateTime(3000, 1, 1);
-        private static readonly (int, string) NewDelegateIdAndCandidateNumber = (5, "DELEGATE");
+        private static readonly (int, string,int) NewDelegateIdAndCandidateNumber = (5, "DELEGATE", 281054);
         private IClockUtility clockUtility = null!;
         private IConfiguration configuration = null!;
 
@@ -974,13 +974,13 @@
             // Given
             const string candidateNumber = "DELEGATE";
             const string delegateEmail = "email@test.com";
-            const int newDelegateRecordId = 5;
+            const int newDelegateRecordId = 281054;
 
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
             var supervisorDelegates = new List<SupervisorDelegate>
-                { new SupervisorDelegate { ID = 1 }, new SupervisorDelegate { ID = 2 } };
-            var supervisorDelegateIds = new List<int> { 1, 2 };
+                { new SupervisorDelegate { ID = 8 }, new SupervisorDelegate { ID = 9 } };
+            var supervisorDelegateIds = new List<int> { 8,9 };
             var delegateEmailList = new List<string?> { delegateEmail };
 
             A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(delegateEmail, CentreId))
@@ -1249,7 +1249,7 @@
                         true
                     )
                 )
-                .Returns((2, "ANY"));
+                .Returns((2, "ANY", 61188));
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When

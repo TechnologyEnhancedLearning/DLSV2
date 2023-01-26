@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
         public EnrolSupervisorViewModel() { }
         public EnrolSupervisorViewModel(
             int delegateId,
+            int delegateUserId,
             string delegateName,
             bool isSelfAssessment,
             IEnumerable<SupervisorForEnrolDelegate> supervisorList,
@@ -20,12 +21,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
         )
         {
             DelegateId = delegateId;
+            DelegateUserId = delegateUserId;
             DelegateName = delegateName;
             IsSelfAssessment = isSelfAssessment;
             SupervisorList = PopulateItems(supervisorList, selectedSupervisor);
         }
         public EnrolSupervisorViewModel(
             int delegateId,
+            int delegateUserId,
             string delegateName,
             bool isSelfAssessment,
             IEnumerable<SupervisorForEnrolDelegate> supervisorList,
@@ -35,6 +38,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
         )
         {
             DelegateId = delegateId;
+            DelegateUserId = delegateUserId;
             DelegateName = delegateName;
             IsSelfAssessment = isSelfAssessment;
             SupervisorList = PopulateItems(supervisorList, selectedSupervisor);
@@ -42,6 +46,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
             SelectedSupervisorRoleId = selectedSupervisorRole;
         }
         public int DelegateId { get; set; }
+        public int DelegateUserId { get; set; }
         public string? DelegateName { get; set; }
 
         public IEnumerable<SelectListItem> SupervisorList { get; set; }

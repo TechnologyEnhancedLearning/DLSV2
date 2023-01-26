@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -697,6 +697,39 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP {
             get {
                 return ResourceManager.GetString("HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 24/01/2023 15:00:41 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for cate [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_1043_getactivitiesforenrolment {
+            get {
+                return ResourceManager.GetString("td_1043_getactivitiesforenrolment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 24/01/2023 15:31:20 ******/
+        ///DROP PROCEDURE [dbo].[GetActivitiesForDelegateEnrolment]
+        ///GO
+        ///
+        ///
+        ///.
+        /// </summary>
+        internal static string td_1043_getactivitiesforenrolment_down {
+            get {
+                return ResourceManager.GetString("td_1043_getactivitiesforenrolment_down", resourceCulture);
             }
         }
         

@@ -101,7 +101,15 @@
             ModelState.Remove("Page");
             if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             {
-                AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
+                string delegateEmail = model.DelegateEmail ?? String.Empty;
+                int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
+                if(approvedDelegateId != null && approvedDelegateId > 0)
+                {
+                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address which has approved delegate account.");
+                    ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
+                    return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
+                }
+                AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else
@@ -200,8 +208,8 @@
         [HttpPost]
         public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
-          ModelState.ClearErrorsOnField("ActionConfirmed");
-          return View("RemoveConfirm", supervisorDelegate);
+            ModelState.ClearErrorsOnField("ActionConfirmed");
+            return View("RemoveConfirm", supervisorDelegate);
         }
 
         [HttpPost]
@@ -968,22 +976,22 @@
 
                     if (delegateUser != null && adminUser != null)
                     {
-                            var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
-                            firstName: delegateUser.FirstName,
-                            supervisorFirstName: adminUser.FirstName!,
-                            supervisorLastName: adminUser.LastName,
-                            supervisorEmail: adminUser.EmailAddress!,
-                            isCentreAdmin: adminRoles.IsCentreAdmin,
-                            isCentreManager: adminRoles.IsCentreManager,
-                            isSupervisor: adminRoles.IsSupervisor,
-                            isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
-                            isTrainer: adminRoles.IsTrainer,
-                            isContentCreator: adminRoles.IsContentCreator,
-                            isCmsAdmin: adminRoles.IsCmsAdministrator,
-                            isCmsManager: adminRoles.IsCmsManager,
-                            primaryEmail: delegateUser.EmailAddress,
-                            centreName: centreName
-                        );
+                        var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
+                        firstName: delegateUser.FirstName,
+                        supervisorFirstName: adminUser.FirstName!,
+                        supervisorLastName: adminUser.LastName,
+                        supervisorEmail: adminUser.EmailAddress!,
+                        isCentreAdmin: adminRoles.IsCentreAdmin,
+                        isCentreManager: adminRoles.IsCentreManager,
+                        isSupervisor: adminRoles.IsSupervisor,
+                        isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
+                        isTrainer: adminRoles.IsTrainer,
+                        isContentCreator: adminRoles.IsContentCreator,
+                        isCmsAdmin: adminRoles.IsCmsAdministrator,
+                        isCmsManager: adminRoles.IsCmsManager,
+                        primaryEmail: delegateUser.EmailAddress,
+                        centreName: centreName
+                    );
 
                         emailService.SendEmail(adminRolesEmail);
 

@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         private const string NewCandidateNumber = "TU67";
         private const string RefactoredSystemBaseUrl = "refactoredUrl";
         private const string OldSystemBaseUrl = "oldUrl";
-        private static readonly (int, string) NewDelegateIdAndCandidateNumber = (2, NewCandidateNumber);
+        private static readonly (int, string,int) NewDelegateIdAndCandidateNumber = (2, NewCandidateNumber, 61188);
 
         private ICentresDataService centresDataService = null!;
         private IClockUtility clockUtility = null!;
@@ -291,13 +291,14 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         {
             // Given
             const int delegateId = 777;
+            const int delegateUserId = 270058;
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
             GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
 
             A.CallTo(
                 () => registrationDataService.RegisterNewUserAndDelegateAccount(model, A<bool>._, A<bool>._)
-            ).Returns((delegateId, "CANDIDATE_NUMBER"));
+            ).Returns((delegateId, "CANDIDATE_NUMBER", delegateUserId));
 
             // When
             registrationService.RegisterDelegateForNewUser(
@@ -312,7 +313,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(
                 () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
-                    delegateId
+                    delegateUserId
                 )
             ).MustHaveHappened();
         }
@@ -1002,7 +1003,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                         A<bool>._
                     )
                 )
-                .Returns((777, NewCandidateNumber));
+                .Returns((777, NewCandidateNumber, 270058));
             A.CallTo(
                     () => userDataService.GetDelegateByCandidateNumber(NewCandidateNumber)
                 )
@@ -1019,7 +1020,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(
                 () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
-                    777
+                    270058
                 )
             ).MustHaveHappened();
         }

@@ -72,7 +72,7 @@
                 );
 
             // When
-            var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
+            var (delegateId, candidateNumber, delegateUserId) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 false,
                 isRegisteredByAdmin
@@ -116,7 +116,7 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(dateTime);
 
             // When
-            var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
+            var (delegateId, candidateNumber, delegateUserId) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 true,
                 false
@@ -161,7 +161,7 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
-            var (delegateId, _) = service.RegisterNewUserAndDelegateAccount(
+            var (delegateId, _, delegateUserId) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 true,
                 registeredByAdmin
@@ -193,7 +193,7 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
-            var (delegateId, _) = service.RegisterNewUserAndDelegateAccount(
+            var (delegateId, _, delegateUserId) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 true,
                 registeredByAdmin
@@ -797,8 +797,8 @@
         }
 
         [Test]
-        public async Task
-            ReregisterDelegateAccountAndCentreDetailForExistingUser_sets_email_verified_to_current_time_if_user_has_already_verified_new_email()
+        public void
+           ReregisterDelegateAccountAndCentreDetailForExistingUser_sets_email_verified_to_current_time_if_user_has_already_verified_new_email()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 

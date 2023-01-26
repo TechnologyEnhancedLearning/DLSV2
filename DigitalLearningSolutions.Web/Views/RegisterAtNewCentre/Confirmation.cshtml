@@ -30,12 +30,22 @@
       <partial name="_UnapprovedAccountWarning" />
     }
 
-    @if (Model.Approved) {
-      <p>You can now log into your new account.</p>
-      <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
-    } else {
-      <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
-      <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+    @if (Model.Approved)
+    {
+        if (Model.HasDelegateAccountAtAdminCentre)
+        {
+            <p>Use the Switch centre page to access the learning portal for your new delegate account.</p>
+        }
+        else
+        {
+            <p>You can now log into your new account.</p>
+        }
+        <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+    }
+    else
+    {
+        <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
+        <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
     }
   </div>
 </div>

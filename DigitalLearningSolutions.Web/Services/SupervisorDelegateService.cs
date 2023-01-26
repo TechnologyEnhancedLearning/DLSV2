@@ -15,7 +15,7 @@
             IEnumerable<string?> emails
         );
 
-        void AddDelegateIdToSupervisorDelegateRecords(IEnumerable<int> supervisorDelegateIds, int delegateId);
+        void AddDelegateIdToSupervisorDelegateRecords(IEnumerable<int> supervisorDelegateIds, int delegateUserId);
     }
 
     public class SupervisorDelegateService : ISupervisorDelegateService
@@ -35,9 +35,9 @@
         }
 
         // TODO: HEEDLS-1014 - Change name of method to AddUserIdToSupervisorDelegateRecords
-        public void AddDelegateIdToSupervisorDelegateRecords(IEnumerable<int> supervisorDelegateIds, int delegateId)
+        public void AddDelegateIdToSupervisorDelegateRecords(IEnumerable<int> supervisorDelegateIds, int delegateUserId)
         {
-            supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(supervisorDelegateIds, delegateId);
+            supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(supervisorDelegateIds, delegateUserId);
         }
 
         public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
