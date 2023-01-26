@@ -15,11 +15,11 @@
     .DefaultIfEmpty(DateTime.MinValue)
     .Max();
   var competencySummaries = from g in Model.CompetencyGroups
-      let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
-      let selfAssessedCount = questions.Count(q => q.ResultId.HasValue)
-      let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
-      select new ViewDataDictionary(ViewData)
-      {
+                            let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
+                            let selfAssessedCount = questions.Count(q => q.ResultId.HasValue)
+                            let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
+                            select new ViewDataDictionary(ViewData)
+{
         { "isSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed },
         { "questionsCount", questions.Count() },
         { "selfAssessedCount", selfAssessedCount },
@@ -49,13 +49,13 @@
   </p>
 }
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
-    @if (Model.SelfAssessment.IsSupervised && Model.CompetencyGroups.Count() > 5)
+@if (Model.SelfAssessment.IsSupervised && Model.CompetencyGroups.Count() > 5)
 {
-    <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
-        <partial name="SelfAssessments/_SelfAssessmentOverallProgress"
+  <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
+    <partial name="SelfAssessments/_SelfAssessmentOverallProgress"
              model="@competencySummaries"
              view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
-    </div>
+  </div>
 }
 <partial name="SelfAssessments/_SearchSelfAssessmentOverview"
          model="@Model.SearchViewModel"

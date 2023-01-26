@@ -10,7 +10,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-  @section NavBreadcrumbs {
+@section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -23,31 +23,31 @@
     </div>
   </nav>
 }
-  <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
-  <partial name="Developer/_SignpostingParametersHeader" model="Model" />
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<partial name="Developer/_SignpostingParametersHeader" model="Model" />
 
-  <h2>Compare self-assessment result to</h2>
-  <label class="nhsuk-label nhsuk-u-margin-bottom-4">
-    Optionally, choose a mechanism to dermine whether the individual is meeting their role-requirements for this competency.
-    If they are not, the prominence of this learning resource in their recommendations will increase.
-  </label>
-  <form method="post" asp-controller="Frameworks">
-    <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
-      <div class="nhsuk-radios nhsuk-radios--conditional">
-        <div class="nhsuk-radios__item">
-          <input name="compareQuestionType" type="radio" class="nhsuk-radios__input"
+<h2>Compare self-assessment result to</h2>
+<label class="nhsuk-label nhsuk-u-margin-bottom-4">
+  Optionally, choose a mechanism to dermine whether the individual is meeting their role-requirements for this competency.
+  If they are not, the prominence of this learning resource in their recommendations will increase.
+</label>
+<form method="post" asp-controller="Frameworks">
+  <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
+    <div class="nhsuk-radios nhsuk-radios--conditional">
+      <div class="nhsuk-radios__item">
+        <input name="compareQuestionType" type="radio" class="nhsuk-radios__input"
                value="0"
                @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.DontCompare ? "checked" : String.Empty)>
-          <label class="nhsuk-label nhsuk-radios__label">
-            Don't compare result
-          </label>
-        </div>
+        <label class="nhsuk-label nhsuk-radios__label">
+          Don't compare result
+        </label>
+      </div>
       @if (Model.SelectedQuestionRoleRequirements > 0)
       {
         <div class="nhsuk-radios__item">
           <input type="radio" name="compareQuestionType" class="nhsuk-radios__input"
-               value="1"
-               @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToRole ? "checked" : String.Empty)>
+                 value="1"
+                 @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToRole ? "checked" : String.Empty)>
           <label class="nhsuk-label nhsuk-radios__label">
             Competency assessment question role requirements
           </label>
@@ -57,8 +57,8 @@
       {
         <div class="nhsuk-radios__item">
           <input id="compareToOther" type="radio" name="compareQuestionType" class="nhsuk-radios__input" aria-controls="conditional-compareToOther" aria-expanded="false"
-               value="2"
-               @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToOtherQuestion ? "checked" : String.Empty)>
+                 value="2"
+                 @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToOtherQuestion ? "checked" : String.Empty)>
           <label class="nhsuk-label nhsuk-radios__label" for="compareToOther">
             Other competency assessment question response
           </label>
@@ -71,7 +71,7 @@
               {
                 @if (question.ID != Model.SelectedQuestion?.ID)
                 {
-                  <!option value="@question.ID" @(Model.SelectedCompareToQuestion?.ID == question.ID ? "selected" : String.Empty)>@question.Question</!option>
+                  <!option value="@question.ID" @(Model.SelectedCompareToQuestion?.ID == question.ID ? "selected" : String.Empty)>@question.Question </!option>
                 }
               }
             </select>

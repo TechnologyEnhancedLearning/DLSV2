@@ -35,8 +35,7 @@
                    SELECT MAX(sar.ID) as ID
                     FROM SelfAssessmentResults AS sar
                     INNER JOIN DelegateAccounts AS da ON sar.DelegateUserID = da.UserID
-                    WHERE da.ID = @delegateId
-                        AND SelfAssessmentID = @selfAssessmentId
+                    WHERE da.ID = @delegateId AND SelfAssessmentID = @selfAssessmentId
                     GROUP BY CompetencyID, AssessmentQuestionID
                 ) t
                     ON s.ID = t.ID
