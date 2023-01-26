@@ -16,6 +16,7 @@
             int page = 1
         )
         {
+            TempData["LearningActivity"] = "Available";
             sortBy ??= CourseSortByOptions.Name.PropertyName;
 
             var availableCourses = courseDataService.GetAvailableCourses(

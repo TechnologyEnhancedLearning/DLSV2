@@ -17,12 +17,13 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+@{var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");}
 
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
         <li class="nhsuk-breadcrumb__item">Completion summary</li>
       </ol>
@@ -43,36 +44,36 @@
   @if (Model.ShowDiagnosticScore)
   {
     <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Diagnostic Score
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.DiagnosticScore%
-      </dd>
+    <dt class="nhsuk-summary-list__key">
+      Diagnostic Score
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.DiagnosticScore%
+    </dd>
     </div>
   }
 
   @if (Model.ShowPercentageTutorialsCompleted)
   {
     <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Learning Completed
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.PercentageTutorialsCompleted%
-      </dd>
+    <dt class="nhsuk-summary-list__key">
+      Learning Completed
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.PercentageTutorialsCompleted%
+    </dd>
     </div>
   }
 
   @if (Model.IsAssessed)
   {
     <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Assessments Passed
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.PostLearningPasses out of @Model.SectionCount
-      </dd>
+    <dt class="nhsuk-summary-list__key">
+      Assessments Passed
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.PostLearningPasses out of @Model.SectionCount
+    </dd>
     </div>
   }
 </dl>

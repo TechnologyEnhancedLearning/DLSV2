@@ -25,6 +25,7 @@
             int page = 1
         )
         {
+            TempData["LearningActivity"] = "Completed";
             sortBy ??= CourseSortByOptions.CompletedDate.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
