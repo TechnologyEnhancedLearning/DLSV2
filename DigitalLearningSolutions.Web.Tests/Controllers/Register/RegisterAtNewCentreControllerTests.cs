@@ -424,7 +424,7 @@
             // Then
             A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.GetUserById(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => userService.GetUserById(A<int>._)).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
