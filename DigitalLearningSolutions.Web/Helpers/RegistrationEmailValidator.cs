@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using System;
 
     public static class RegistrationEmailValidator
     {
@@ -21,6 +23,22 @@
             )
             {
                 modelState.AddModelError(nameOfFieldToValidate, errorMessage);
+            }
+        }
+
+        public static void ValidatePrimaryEmailWithCentre(
+            string? primaryEmail,
+            int? centreId,
+            ModelStateDictionary modelState,
+            ISupervisorService supervisorService
+        )
+        {
+            string delegateEmail = primaryEmail ?? String.Empty;
+            int? approvedDelegateId = supervisorService.ValidateDelegate(Convert.ToInt16(centreId), delegateEmail);
+            if (approvedDelegateId != null && approvedDelegateId > 0)
+            {
+                modelState.AddModelError("DelegateEmail", "The email address must not match the email address which has approved delegate account.");
+
             }
         }
 

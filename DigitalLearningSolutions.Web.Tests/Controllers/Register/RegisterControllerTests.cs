@@ -38,6 +38,7 @@
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private ISupervisorService supervisorService = null!;
 
         [SetUp]
         public void Setup()
@@ -50,6 +51,7 @@
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
+            supervisorService = A.Fake<ISupervisorService>();
             request = A.Fake<HttpRequest>();
 
             controller = new RegisterController(
@@ -60,7 +62,8 @@
                     promptsService,
                     featureManager,
                     supervisorDelegateService,
-                    userDataService
+                    userDataService,
+                    supervisorService
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
@@ -157,7 +160,8 @@
                 promptsService,
                 featureManager,
                 supervisorDelegateService,
-                userDataService
+                userDataService,
+                supervisorService
             ).WithDefaultContext().WithMockUser(true);
 
             // When
@@ -230,7 +234,8 @@
                 promptsService,
                 featureManager,
                 supervisorDelegateService,
-                userDataService
+                userDataService,
+                supervisorService
             ).WithDefaultContext().WithMockUser(true);
 
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(centreName);

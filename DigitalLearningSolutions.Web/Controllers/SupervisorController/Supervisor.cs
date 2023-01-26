@@ -101,7 +101,15 @@
             ModelState.Remove("Page");
             if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             {
-                AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
+                string delegateEmail = model.DelegateEmail ?? String.Empty;
+                int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
+                if(approvedDelegateId != null && approvedDelegateId > 0)
+                {
+                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address which has approved delegate account.");
+                    ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
+                    return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
+                }
+                AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else

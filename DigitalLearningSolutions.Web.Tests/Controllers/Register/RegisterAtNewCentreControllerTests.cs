@@ -45,6 +45,7 @@
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private ISupervisorService supervisorService = null!;
 
         [SetUp]
         public void Setup()
@@ -53,6 +54,7 @@
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
+            supervisorService = A.Fake<ISupervisorService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
@@ -69,7 +71,8 @@
                     registrationService,
                     supervisorDelegateService,
                     userService,
-                    userDataService
+                    userDataService,
+                    supervisorService
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)

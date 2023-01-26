@@ -16,6 +16,7 @@
         DashboardData GetDashboardDataForAdminId(int adminId);
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId);
+        int? ValidateDelegate(int centreId, string delegateEmail);
         IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
         DelegateSelfAssessment GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedSignOffs(int adminId);
@@ -169,6 +170,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                   FROM    SupervisorDelegates
                   WHERE (SupervisorEmail = @supervisorEmail) AND (DelegateEmail = @delegateEmail)), 0) AS ID",
                new { supervisorEmail, delegateEmail });
+
             if (existingId > 0)
             {
                 var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId WHERE (SupervisorAdminID = @supervisorAdminId) AND (DelegateEmail = @delegateEmail) AND (Removed IS NOT NULL)", new { supervisorAdminId, delegateEmail, delegateUserId });
@@ -214,6 +216,35 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.ID = @supervisorDelegateId) AND (sd.DelegateUserID = @delegateUserId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateUserId }
                ).FirstOrDefault();
+        }
+
+        public int? ValidateDelegate(int centreId, string delegateEmail)
+        {
+            int? delegateUserId = (int?)connection.ExecuteScalar(
+                 @"SELECT TOP 1 da.UserID AS DelegateUserID 
+                            FROM Users u
+                            INNER JOIN DelegateAccounts da
+                            ON da.UserID = u.ID
+                            LEFT JOIN UserCentreDetails ucd
+                            ON ucd.UserID = u.ID
+                            WHERE (u.PrimaryEmail = @delegateEmail
+                            OR ucd.Email = @delegateEmail)
+                            AND u.Active = 1 
+                            AND da.CentreID = @centreId", new { delegateEmail, centreId });
+
+            if (delegateUserId != null && delegateUserId > 0)
+            {
+                int? delegateId = (int?)connection.ExecuteScalar(
+                     @"SELECT da.ID FROM DelegateAccounts da
+                            WHERE da.UserID=@delegateUserId 
+                            AND da.Approved = 1
+                            AND da.CentreID = @centreId", new { delegateUserId,centreId });
+                return delegateId;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
