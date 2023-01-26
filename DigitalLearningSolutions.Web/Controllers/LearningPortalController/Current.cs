@@ -29,6 +29,7 @@
             int page = 1
         )
         {
+            TempData["LearningActivity"] = "Current";
             sortBy ??= CourseSortByOptions.LastAccessed.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();

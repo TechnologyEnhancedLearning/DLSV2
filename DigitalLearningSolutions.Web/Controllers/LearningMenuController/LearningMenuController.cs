@@ -154,11 +154,12 @@
             }
         }
             [Route("/LearningMenu/Close")]
-        public IActionResult Close()
+        public IActionResult Close(string learningActivity)
         {
+            var action = string.IsNullOrEmpty(learningActivity) ? "Current" : learningActivity;
             sessionService.StopDelegateSession(User.GetCandidateIdKnownNotNull(), HttpContext.Session);
 
-            return RedirectToAction("Current", "LearningPortal");
+            return RedirectToAction(action, "LearningPortal");
         }
 
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}")]
