@@ -539,7 +539,7 @@
 
             return View("Current/SetCompleteByDate", model);
         }
-
+        [NoCaching]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors")]
         public IActionResult ManageSupervisors(int selfAssessmentId)
         {
