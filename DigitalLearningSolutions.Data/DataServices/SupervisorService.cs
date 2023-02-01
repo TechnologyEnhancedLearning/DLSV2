@@ -131,15 +131,56 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 ).FirstOrDefault();
         }
 
+        //public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId)
+        //{
+        //    return connection.Query<SupervisorDelegateDetail>(
+        //        $@"SELECT {supervisorDelegateDetailFields}
+        //            FROM   {supervisorDelegateDetailTables}
+        //            WHERE (sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)
+        //            ORDER BY u.LastName, COALESCE(u.FirstName, sd.DelegateEmail)", new { adminId }
+        //        );
+        //}
+
         public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId)
         {
-            return connection.Query<SupervisorDelegateDetail>(
-                $@"SELECT {supervisorDelegateDetailFields}
-                    FROM   {supervisorDelegateDetailTables}
-                    WHERE (sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)
-                    ORDER BY u.LastName, COALESCE(u.FirstName, sd.DelegateEmail)", new { adminId }
-                );
+            var supervisorDelegateDetails = connection.Query<SupervisorDelegateDetail>(
+                $@"SELECT sd.DelegateUserID, sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, 
+	                        sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, sd.InviteHash,
+	                        u.FirstName, u.LastName, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, 
+	                        da.Answer1, da.Answer2, da.Answer3, da.Answer4, da.Answer5,
+                            da.Answer6, da.CandidateNumber, 
+	                        COALESCE (au.CentreID, da.CentreID) AS CentreID, 
+	                        au.Forename + ' ' + au.Surname AS SupervisorName,
+                            (SELECT COUNT(cas.ID) AS Expr1
+		                        FROM    CandidateAssessmentSupervisors cas 
+		                        INNER JOIN CandidateAssessments ca 
+			                        ON cas.CandidateAssessmentID = ca.ID 
+			                        AND cas.Removed IS NULL
+		                        WHERE cas.SupervisorDelegateId = sd.ID 
+			                        AND ca.RemovedDate IS NULL) AS CandidateAssessmentCount, 
+	                        CAST(COALESCE (delAdmin.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, 
+	                        CAST(COALESCE (delAdmin.Supervisor, 0) AS Bit) AS DelegateIsSupervisor,
+	                        jg.JobGroupName
+                        FROM SupervisorDelegates sd
+                        INNER JOIN Users u
+	                        ON sd.DelegateUserID = u.ID
+                        INNER JOIN JobGroups jg
+	                        ON jg.JobGroupID = u.JobGroupID
+                        INNER JOIN DelegateAccounts da 
+	                        ON da.UserID = u.ID
+                        INNER JOIN AdminUsers au
+	                        ON sd.SupervisorAdminID = au.AdminID
+                        LEFT JOIN AdminUsers delAdmin
+	                        ON delAdmin.CentreID = da.CentreID 
+	                        AND delAdmin.Email = u.PrimaryEmail
+                        WHERE sd.SupervisorAdminID = @adminId
+	                        AND sd.Removed IS NULL
+                        ORDER BY u.LastName, COALESCE(u.FirstName, sd.DelegateEmail)
+                ", new { adminId }
+            );
+            return supervisorDelegateDetails;
         }
+
         public int AddSuperviseDelegate(int? supervisorAdminId, int? delegateUserId, string delegateEmail, string supervisorEmail, int centreId)
         {
             var addedByDelegate = (delegateUserId != null);
@@ -238,7 +279,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                      @"SELECT da.ID FROM DelegateAccounts da
                             WHERE da.UserID=@delegateUserId 
                             AND da.Approved = 1
-                            AND da.CentreID = @centreId", new { delegateUserId,centreId });
+                            AND da.CentreID = @centreId", new { delegateUserId, centreId });
                 return delegateId;
             }
             else
