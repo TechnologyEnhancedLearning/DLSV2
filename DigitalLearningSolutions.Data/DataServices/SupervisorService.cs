@@ -559,7 +559,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserId = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
                new { selfAssessmentId, delegateUserId });
             if (existingId > 0)
             {
