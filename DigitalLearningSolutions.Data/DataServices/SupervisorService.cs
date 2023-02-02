@@ -238,7 +238,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                      @"SELECT da.ID FROM DelegateAccounts da
                             WHERE da.UserID=@delegateUserId 
                             AND da.Approved = 1
-                            AND da.CentreID = @centreId", new { delegateUserId,centreId });
+                            AND da.CentreID = @centreId", new { delegateUserId, centreId });
                 return delegateId;
             }
             else
