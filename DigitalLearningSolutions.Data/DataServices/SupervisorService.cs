@@ -238,7 +238,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                      @"SELECT da.ID FROM DelegateAccounts da
                             WHERE da.UserID=@delegateUserId 
                             AND da.Approved = 1
-                            AND da.CentreID = @centreId", new { delegateUserId,centreId });
+                            AND da.CentreID = @centreId", new { delegateUserId, centreId });
                 return delegateId;
             }
             else
@@ -559,7 +559,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserId = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
                new { selfAssessmentId, delegateUserId });
             if (existingId > 0)
             {
