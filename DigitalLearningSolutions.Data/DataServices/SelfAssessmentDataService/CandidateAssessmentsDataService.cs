@@ -29,7 +29,9 @@
                         CA.UnprocessedUpdates,
                         CA.LaunchCount,
                         1 AS IsSelfAssessment,
-                        CA.SubmittedDate
+                        CA.SubmittedDate,
+                        (SELECT CentreName FROM Centres
+                        WHERE CentreID=MAX(CA.CentreID)) AS CentreName
                     FROM CandidateAssessments CA
                         JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
