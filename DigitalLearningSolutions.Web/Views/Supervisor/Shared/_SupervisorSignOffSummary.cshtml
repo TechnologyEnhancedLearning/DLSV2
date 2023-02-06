@@ -12,6 +12,10 @@
           </dt>
           <dd class="nhsuk-summary-list__value">
         @Model.FirstOrDefault().SupervisorName (@Model.FirstOrDefault().SupervisorEmail)
+        @if (Model.FirstOrDefault().Removed != null)
+        {
+                <span class="nhsuk-tag nhsuk-tag--red">Removed @Model.FirstOrDefault().Removed.Value.ToShortDateString()</span>
+        }
           </dd>
       @if ((Model.Count() - 1) > 0)
       {
