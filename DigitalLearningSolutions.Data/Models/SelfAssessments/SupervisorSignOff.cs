@@ -13,5 +13,6 @@
         public DateTime? Verified { get; set; }
         public string? Comments { get; set; }
         public bool SignedOff { get; set; }
+        public DateTime? Removed { get; set; }
     }
 }
