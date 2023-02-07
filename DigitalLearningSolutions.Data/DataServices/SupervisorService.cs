@@ -157,7 +157,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             FROM Users u
                             INNER JOIN DelegateAccounts da
                             ON da.UserID = u.ID
-	                        INNER JOIN UserCentreDetails ucd
+	                        LEFT JOIN UserCentreDetails ucd
 	                        ON ucd.UserID = u.ID
                             AND ucd.CentreID = da.CentreID
                             WHERE (ucd.Email = @delegateEmail OR u.PrimaryEmail = @delegateEmail)
@@ -238,7 +238,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                      @"SELECT da.ID FROM DelegateAccounts da
                             WHERE da.UserID=@delegateUserId 
                             AND da.Approved = 1
-                            AND da.CentreID = @centreId", new { delegateUserId,centreId });
+                            AND da.CentreID = @centreId", new { delegateUserId, centreId });
                 return delegateId;
             }
             else
