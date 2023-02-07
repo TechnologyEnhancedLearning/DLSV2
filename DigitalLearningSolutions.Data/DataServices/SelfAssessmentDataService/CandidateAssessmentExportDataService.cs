@@ -107,7 +107,7 @@
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (caoc1.IncludedInSelfAssessment = 1) OR
                               (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (NOT (sar1.SupportingComments IS NULL)) OR
                               (ca1.ID = ca.ID) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL))) AS MeetingCount, 
-             CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN casv.Verified ELSE NULL END AS SignedOff, CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN au.Forename + ' ' + au.Surname ELSE NULL END AS 'Signatory', CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN (SELECT TOP(1) ProfessionalRegistrationNumber FROM Candidates as ca WHERE ca.EmailAddress = au.Email AND ca.CentreID = au.CentreID AND ca.Active = 1 AND ca.ProfessionalRegistrationNumber IS NOT NULL) ELSE NULL END AS SignatoryPrn
+             CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN casv.Verified ELSE NULL END AS SignedOff, CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN au.Forename + ' ' + au.Surname + ' (' + au.CentreName + ')' ELSE NULL END AS 'Signatory', CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN (SELECT TOP(1) ProfessionalRegistrationNumber FROM Candidates as ca WHERE ca.EmailAddress = au.Email AND ca.CentreID = au.CentreID AND ca.Active = 1 AND ca.ProfessionalRegistrationNumber IS NOT NULL) ELSE NULL END AS SignatoryPrn
 FROM   CandidateAssessmentSupervisorVerifications AS casv RIGHT OUTER JOIN
              CandidateAssessments AS ca INNER JOIN
              SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN Users AS u
@@ -137,7 +137,7 @@ WHERE (ca.ID = @candidateAssessmentId  AND ca.DelegateUserID  = @delegateUserID)
 					COALESCE((SELECT LevelLabel FROM AssessmentQuestionLevels as aql WHERE aql.AssessmentQuestionID = s.AssessmentQuestionID AND aql.LevelValue = s.Result), CAST(s.Result AS nvarchar)) AS Result,
                     s.SupportingComments,
                     sv.ID AS SelfAssessmentResultSupervisorVerificationId,
-                    au.Forename + ' ' + au.Surname AS Reviewer,
+                    au.Forename + ' ' + au.Surname+ ' (' + au.CentreName + ')' AS Reviewer,
 					COALESCE((SELECT TOP(1) ProfessionalRegistrationNumber FROM Candidates as ca WHERE ca.EmailAddress = au.Email AND ca.CentreID = au.CentreID AND ca.Active = 1 AND ca.ProfessionalRegistrationNumber IS NOT NULL), '') AS PRN,
                     sv.Verified,
                     sv.Comments,

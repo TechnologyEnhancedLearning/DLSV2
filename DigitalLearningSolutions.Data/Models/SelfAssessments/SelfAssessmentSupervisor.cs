@@ -17,5 +17,6 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public bool SelfAssessmentReview { get; set; }
         public bool AddedByDelegate { get; set; }
         public DateTime? Confirmed { get; set; }
+        public string CentreName { get; set; }
     }
 }
