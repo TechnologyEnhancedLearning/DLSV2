@@ -10,8 +10,9 @@
         [Test]
         public void Close_should_close_sessions()
         {
+            var learningActivity = "Current";
             // When
-            controller.Close();
+            controller.Close(learningActivity);
 
             // Then
             A.CallTo(() => sessionService.StopDelegateSession(CandidateId, httpContextSession)).MustHaveHappenedOnceExactly();
@@ -23,8 +24,9 @@
         [Test]
         public void Close_should_redirect_to_Current_LearningPortal()
         {
+            var learningActivity = "Current";
             // When
-            var result = controller.Close();
+            var result = controller.Close(learningActivity);
 
             // Then
             result.Should()

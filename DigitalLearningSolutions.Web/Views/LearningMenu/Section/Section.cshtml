@@ -17,12 +17,13 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+@{var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");}
 
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
         <li class="nhsuk-breadcrumb__item">@Model.SectionName</li>
       </ol>
@@ -33,7 +34,7 @@
       }
       else
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close">Return to current activities</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
       }
     </div>
   </nav>
@@ -44,7 +45,7 @@
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
     @if (!Model.OtherSectionsExist)
     {
-  <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>
+      <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>
     }
     @if (Model.ShowPercentComplete)
     {

@@ -284,7 +284,8 @@
                         casv.EmailSent,
                         casv.Verified,
                         casv.Comments,
-                        casv.SignedOff
+                        casv.SignedOff,
+                        sd.Removed
                     FROM CandidateAssessmentSupervisorVerifications AS casv
                     INNER JOIN CandidateAssessmentSupervisors AS cas
                         ON casv.CandidateAssessmentSupervisorID = cas.ID

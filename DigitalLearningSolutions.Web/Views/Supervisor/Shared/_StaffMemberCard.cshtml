@@ -74,7 +74,10 @@
         <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" view-data="@(new ViewDataDictionary(ViewData){{"isSupervisor", Model.IsUserSupervisor}})" />
       }
       </div>
-      @if (Model.SupervisorDelegateDetail.DlsRole == DlsRole.Learner && !Model.SupervisorDelegateDetail.DelegateIsNominatedSupervisor && Model.SupervisorDelegateDetail.DelegateUserID != null)
+      @if ((Model.SupervisorDelegateDetail.DlsRole == DlsRole.Learner
+           && !Model.SupervisorDelegateDetail.DelegateIsNominatedSupervisor
+           && Model.SupervisorDelegateDetail.DelegateUserID != null)
+          && !(Model.SupervisorDelegateDetail.DelegateEmail == String.Empty || Guid.TryParse(Model.SupervisorDelegateDetail.DelegateEmail, out _)))
       {
         <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 button-small"
          data-return-page-enabled="true"

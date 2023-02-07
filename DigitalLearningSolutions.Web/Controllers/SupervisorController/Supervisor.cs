@@ -103,7 +103,7 @@
             {
                 string delegateEmail = model.DelegateEmail ?? String.Empty;
                 int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
-                if(approvedDelegateId != null && approvedDelegateId > 0)
+                if (approvedDelegateId != null && approvedDelegateId > 0)
                 {
                     ModelState.AddModelError("DelegateEmail", "The email address must not match the email address which has approved delegate account.");
                     ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
@@ -1008,6 +1008,18 @@
                 return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
 
             }
+        }
+
+        [Route("/Supervisor/Staff/{reviewId}/ResendInvite")]
+        public IActionResult ResendInvite(int reviewId)
+        {
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(reviewId, GetAdminId(), 0);
+            if (reviewId > 0)
+            {
+                frameworkNotificationService.SendSupervisorDelegateInvite(reviewId, GetAdminId());
+                supervisorService.UpdateNotificationSent(reviewId);
+            }
+            return RedirectToAction("MyStaffList");
         }
     }
 }
