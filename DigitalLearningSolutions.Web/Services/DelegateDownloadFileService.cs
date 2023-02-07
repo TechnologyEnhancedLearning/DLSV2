@@ -259,7 +259,7 @@
                 }
             }
 
-            row[RegistrationComplete] = delegateRecord.IsPasswordSet;
+            row[RegistrationComplete] = delegateRecord.IsPasswordSet && string.IsNullOrEmpty(delegateRecord.RegistrationConfirmationHash);
             row[Active] = delegateRecord.Active;
             row[Approved] = delegateRecord.Approved;
             row[IsAdmin] = delegateRecord.IsAdmin;

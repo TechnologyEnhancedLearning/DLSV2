@@ -25,7 +25,7 @@
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
         <li class="nhsuk-breadcrumb__item">@Model.Title</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link" asp-action="Close">Return to current activities</a></p>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
     </div>
   </nav>
 }

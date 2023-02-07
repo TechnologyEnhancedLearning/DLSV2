@@ -145,6 +145,12 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 );
 
                 var viewModel = new EmailDelegatesViewModel(result, availableFilters, formData);
+
+                if (viewModel.Delegates != null && viewModel.Delegates.Where(x => x.IsDelegateSelected).Count() == 0)
+                {
+                    ViewBag.RequiredCheckboxMessage = "You must select at least one delegate";
+                }
+
                 return View(viewModel);
             }
 
