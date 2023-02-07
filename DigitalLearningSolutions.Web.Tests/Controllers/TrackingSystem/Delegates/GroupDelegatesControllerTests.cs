@@ -93,7 +93,7 @@
         {
             // Given
             A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => groupsService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
+            A.CallTo(() => groupsService.GetGroupDelegates(1,false)).Returns(new List<GroupDelegate>());
 
             // When
             var result = groupDelegatesController.Index(1);
@@ -173,7 +173,7 @@
             const int delegateId = 3274;
 
             A.CallTo(() => groupsService.GetGroupName(groupId, 2)).Returns("Group");
-            A.CallTo(() => groupsService.GetGroupDelegates(groupId))
+            A.CallTo(() => groupsService.GetGroupDelegates(groupId,false))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = delegateId } });
             A.CallTo(
                 () => groupsService.RemoveDelegateFromGroup(groupId, delegateId, model.RemoveStartedEnrolments)
@@ -199,7 +199,7 @@
             var model = new RemoveGroupDelegateViewModel
                 { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => groupsService.GetGroupDelegates(1))
+            A.CallTo(() => groupsService.GetGroupDelegates(1,false))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
             A.CallTo(() => groupsService.RemoveDelegateFromGroup(1, 2, A<bool>._))
                 .DoesNothing();
@@ -225,7 +225,7 @@
             const int delegateIdNotInGroup = 3;
 
             A.CallTo(() => groupsService.GetGroupName(groupId, 2)).Returns("Group");
-            A.CallTo(() => groupsService.GetGroupDelegates(groupId))
+            A.CallTo(() => groupsService.GetGroupDelegates(groupId,false))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = delegateId } });
 
             // When

@@ -42,7 +42,7 @@
                 GroupId = 34,
                 GroupLabel = "Social care - unspecified",
                 GroupDescription = null,
-                DelegateCount = 1,
+                DelegateCount = 0,
                 CoursesCount = 0,
                 AddedByAdminId = 1,
                 AddedByFirstName = "Kevin",
@@ -72,7 +72,7 @@
             var expectedFirstGroupDelegate = GroupTestHelper.GetDefaultGroupDelegate();
 
             // When
-            var result = groupsDataService.GetGroupDelegates(5).ToList();
+            var result = groupsDataService.GetGroupDelegates(5,false).ToList();
 
             // Then
             using (new AssertionScope())
@@ -140,7 +140,7 @@
 
                 // When
                 groupsDataService.DeleteGroupDelegatesRecordForDelegate(5, delegateId);
-                var delegates = groupsDataService.GetGroupDelegates(1);
+                var delegates = groupsDataService.GetGroupDelegates(1,false);
 
                 // Then
                 delegates.Any(d => d.DelegateId == delegateId).Should().BeFalse();
@@ -326,7 +326,7 @@
             {
                 // When
                 groupsDataService.AddDelegateToGroup(delegateId, groupId, addedDate, addedByFieldLink);
-                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId,false).ToList();
 
                 // Then
                 groupDelegates.Count.Should().Be(25);
@@ -829,7 +829,7 @@
                     "Implementation and Business Change Manager",
                     null
                 );
-                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId, false).ToList();
 
                 // Then
                 using (new AssertionScope())
@@ -859,7 +859,7 @@
             {
                 // When
                 groupsDataService.AddDelegatesWithMatchingAnswersToGroup(groupId, addedDate, 4, 101, null, 9);
-                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId,false).ToList();
 
                 // Then
                 using (new AssertionScope())
@@ -897,7 +897,7 @@
                     "Implementation and Business Change Manager",
                     null
                 );
-                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId,false).ToList();
 
                 // Then
                 groupDelegates.Count.Should().Be(0);
@@ -921,7 +921,7 @@
             {
                 // When
                 groupsDataService.AddDelegatesWithMatchingAnswersToGroup(100, addedDate, 5, 101, null, 9);
-                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId,false).ToList();
 
                 // Then
                 groupDelegates.Count.Should().Be(0);

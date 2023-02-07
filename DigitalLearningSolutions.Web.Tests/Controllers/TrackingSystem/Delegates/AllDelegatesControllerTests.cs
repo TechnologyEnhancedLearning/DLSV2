@@ -66,7 +66,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(A<int>._)).MustHaveHappened();
+                A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(A<int>._,false)).MustHaveHappened();
                 A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
                     .MustHaveHappened();
                 A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(A<int>._))

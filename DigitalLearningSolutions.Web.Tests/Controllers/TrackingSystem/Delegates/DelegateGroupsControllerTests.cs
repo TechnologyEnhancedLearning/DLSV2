@@ -86,7 +86,7 @@
             // Given
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
                 .Returns(delegateGroupsController.User.GetCentreIdKnownNotNull());
-            A.CallTo(() => groupsService.GetGroupDelegates(A<int>._))
+            A.CallTo(() => groupsService.GetGroupDelegates(A<int>._,false))
                 .Returns(new List<GroupDelegate> { new GroupDelegate() });
             const int groupId = 1;
 

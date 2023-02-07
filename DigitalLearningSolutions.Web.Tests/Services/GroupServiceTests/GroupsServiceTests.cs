@@ -274,10 +274,10 @@
             // Given
             const int groupId = 1;
             var groupDelegates = Builder<GroupDelegate>.CreateListOfSize(10).Build();
-            A.CallTo(() => groupsDataService.GetGroupDelegates(groupId)).Returns(groupDelegates);
+            A.CallTo(() => groupsDataService.GetGroupDelegates(groupId,false)).Returns(groupDelegates);
 
             // When
-            var result = groupsService.GetGroupDelegates(groupId).ToList();
+            var result = groupsService.GetGroupDelegates(groupId,false).ToList();
 
             // Then
             result.Should().HaveCount(10);
@@ -839,7 +839,7 @@
                 )
             ).Returns(groupCourse.GroupCustomisationId);
 
-            A.CallTo(() => groupsDataService.GetGroupDelegates(A<int>._))
+            A.CallTo(() => groupsDataService.GetGroupDelegates(A<int>._,false))
                 .Returns(new List<GroupDelegate> { reusableGroupDelegate });
 
             A.CallTo(

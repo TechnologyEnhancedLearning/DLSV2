@@ -253,7 +253,7 @@
                         AND (cas.Removed IS NULL)
                         AND (sd.Removed IS NULL)
                         )
-                        AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (Email LIKE '%@%') ",
+                        AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (Email LIKE '%@%') AND TRY_CAST(Email AS UNIQUEIDENTIFIER) IS NULL",
                 new { centreId, selfAssessmentId, delegateUserId }
             );
         }

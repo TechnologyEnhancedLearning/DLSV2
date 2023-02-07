@@ -11,7 +11,7 @@
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
+        IEnumerable<GroupDelegate> GetGroupDelegates(int groupId,bool excludeGuid);
 
         IEnumerable<GroupCourse> GetGroupCoursesVisibleToCentre(int centreId);
 
@@ -146,7 +146,10 @@
                         GroupID,
                         GroupLabel,
                         GroupDescription,
-                        (SELECT COUNT(*) FROM GroupDelegates AS gd WHERE gd.GroupID = g.GroupID) AS DelegateCount,
+                        (SELECT COUNT(*) FROM GroupDelegates as gd 
+                        INNER JOIN DelegateAccounts AS da ON gd.DelegateID = da.ID
+                        INNER JOIN Users AS u ON da.UserID=u.ID AND TRY_CAST(u.PrimaryEmail AS UNIQUEIDENTIFIER) IS NULL
+                        where gd.GroupID = g.GroupID) AS DelegateCount,
                         ({CourseCountSql}) AS CoursesCount,
                         g.CreatedByAdminUserID AS AddedByAdminId,
                         au.Forename AS AddedByFirstName,
@@ -183,10 +186,15 @@
             );
         }
 
-        public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
+        public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId, bool excludeGuid)
         {
+            string whereClause = string.Empty;
+            if (excludeGuid)
+            {
+                whereClause = "AND TRY_CAST(u.PrimaryEmail AS UNIQUEIDENTIFIER) IS NULL";
+            }
             return connection.Query<GroupDelegate>(
-                @"SELECT
+                $@"SELECT
                         gd.GroupDelegateID,
                         gd.GroupID,
                         gd.DelegateID,
@@ -202,7 +210,7 @@
                     JOIN DelegateAccounts AS da ON da.ID = gd.DelegateID
                     JOIN Users AS u ON u.ID = da.UserID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
-                    WHERE gd.GroupID = @groupId",
+                    WHERE gd.GroupID = @groupId {whereClause}",
                 new { groupId }
             );
         }
@@ -418,8 +426,12 @@
                         (@groupId, @customisationId, @completeWithinMonths, @addedByAdminUserId, @cohortLearners, @supervisorAdminID)",
                 new
                 {
-                    groupId, customisationId, completeWithinMonths,
-                    addedByAdminUserId, cohortLearners, supervisorAdminId,
+                    groupId,
+                    customisationId,
+                    completeWithinMonths,
+                    addedByAdminUserId,
+                    cohortLearners,
+                    supervisorAdminId,
                 }
             );
         }

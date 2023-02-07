@@ -624,7 +624,7 @@
                 new DelegateUserCard
                     { FirstName = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = null },
             };
-            A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(101)).Returns(testDelegates);
+            A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(101,false)).Returns(testDelegates);
 
             // When
             var result = userService.GetDelegateUserCardsForWelcomeEmail(101).ToList();
