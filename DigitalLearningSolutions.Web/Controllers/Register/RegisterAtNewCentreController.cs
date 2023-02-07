@@ -116,9 +116,6 @@
             {
                 ValidateEmailAddress(model);
 
-                var userId = User.GetUserIdKnownNotNull();
-                var user = userService.GetUserById(userId);
-
                 var delegateAccount = userService.GetUserById(User.GetUserIdKnownNotNull())!.GetCentreAccountSet(model.Centre.Value)?.DelegateAccount;
 
                 if (delegateAccount?.Active == true)
