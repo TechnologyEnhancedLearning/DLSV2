@@ -751,9 +751,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///       null                                    AS Login,
         ///       dbo.Users.PasswordHas [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string td_264_AlterViewAdminUsersAddCentreName_DOWN {
+        internal static string td_264_alterviewadminusersaddcentrename_down {
             get {
-                return ResourceManager.GetString("td_264_AlterViewAdminUsersAddCentreName_DOWN", resourceCulture);
+                return ResourceManager.GetString("td_264_alterviewadminusersaddcentrename_down", resourceCulture);
             }
         }
         
@@ -775,9 +775,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///       null                                    AS Login,
         ///       dbo.Users.PasswordHas [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string td_264_AlterViewAdminUsersAddCentreName_UP {
+        internal static string td_264_alterviewadminusersaddcentrename_up {
             get {
-                return ResourceManager.GetString("td_264_AlterViewAdminUsersAddCentreName_UP", resourceCulture);
+                return ResourceManager.GetString("td_264_alterviewadminusersaddcentrename_up", resourceCulture);
             }
         }
         
