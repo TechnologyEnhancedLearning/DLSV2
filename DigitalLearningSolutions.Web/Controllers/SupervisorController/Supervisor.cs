@@ -965,8 +965,6 @@
 
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
 
-                //TODO: AdminId??
-                //var (adminUser, delegateUser) = userService.GetUsersById(User.GetUserId(), supervisorDelegateDetail.DelegateUserID);
                 var (adminUser, delegateUser) = userService.GetUsersById(GetAdminId(), supervisorDelegateDetail.DelegateUserID);
 
                 var centreName = adminUser.CentreName;

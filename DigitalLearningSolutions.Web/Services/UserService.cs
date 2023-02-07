@@ -143,7 +143,6 @@ namespace DigitalLearningSolutions.Web.Services
             if (userAdminId != null)
             {
                 adminUser = userDataService.GetAdminUserById(userAdminId.Value);
-                //adminUser = userDataService.GetAdminById(userAdminId.Value);
             }
 
             DelegateUser? delegateUser = null;
