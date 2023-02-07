@@ -133,7 +133,7 @@
                     : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllActiveCentreEmailsForUser(userId,true).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId, true).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             var model = new MyAccountEditDetailsViewModel(
@@ -295,6 +295,7 @@
             if (centreId.HasValue)
             {
                 ValidateSingleCentreEmail(formData.CentreSpecificEmail, centreId.Value, userId);
+                ValidateCentreEmailIsSameAsPrimary(formData);
             }
             else
             {
@@ -582,10 +583,10 @@
             return delegateAccount is { Active: true } ? delegateAccount : null;
         }
 
-        private List<string>? GetRoles(AdminAccount? adminAccount, DelegateAccount? delegateAccount, UserEntity userEntity )
+        private List<string>? GetRoles(AdminAccount? adminAccount, DelegateAccount? delegateAccount, UserEntity userEntity)
         {
             var roles = new List<string>();
-            
+
             if (adminAccount != null)
             {
                 var adminentity = new AdminEntity(adminAccount, userEntity.UserAccount, null);
@@ -598,6 +599,17 @@
                 roles.Add("Delegate");
             }
             return roles;
+        }
+        private void ValidateCentreEmailIsSameAsPrimary(MyAccountEditDetailsFormData formData)
+        {
+            if (formData.CentreSpecificEmail == formData.Email)
+            {
+                ModelState.AddModelError(
+                    nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
+                    CommonValidationErrorMessages.CenterEmailIsSameAsPrimary
+                );
+                formData.CentreSpecificEmail = null;
+            }
         }
     }
 }
