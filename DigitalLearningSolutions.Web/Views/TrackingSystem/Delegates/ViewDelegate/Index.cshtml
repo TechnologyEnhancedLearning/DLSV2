@@ -134,14 +134,14 @@
         @if (!Model.DelegateCourses.Any())
         {
             <p class="nhsuk-u-margin-top-4">
-                <b>Not currently registered for any courses.</b>
+                <b>Not currently enrolled on any courses.</b>
             </p>
         }
         else
         {
             @foreach (var delegateCourseInfoViewModel in Model.DelegateCourses)
             {
-                <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
+              <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
             }
         }
         @if (Model.DelegateInfo.IsActive && !string.IsNullOrEmpty(Model.DelegateInfo.Email))
@@ -151,6 +151,7 @@
            asp-controller="Enrol"
            asp-action="StartEnrolProcess"
            asp-route-delegateId="@Model.DelegateInfo.Id"
+           asp-route-delegateUserId="@Model.DelegateInfo.UserId"
            asp-route-delegateName="@Model.DelegateInfo.Name">
                 Enrol on activity
             </a>

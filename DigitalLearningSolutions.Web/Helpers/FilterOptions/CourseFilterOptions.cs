@@ -4,15 +4,13 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class CourseStatusFilterOptions
     {
         private const string Group = "Status";
 
         public static readonly FilterOptionModel IsInactive = new FilterOptionModel(
-            "Inactive",
+            "Inactive/archived",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "false"),
             FilterStatus.Warning
         );
@@ -21,6 +19,12 @@
             "Active",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "true"),
             FilterStatus.Success
+        );
+
+        public static readonly FilterOptionModel IsArchived = new FilterOptionModel(
+            "Archived",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Archived), "true"),
+            FilterStatus.Default
         );
     }
 

@@ -42,7 +42,8 @@
                 COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
                 sasr.SelfAssessmentReview,
                 sasr.ResultsReview,
-                sd.AddedByDelegate
+                sd.AddedByDelegate,
+                au.CentreName
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId
@@ -116,7 +117,8 @@
                     au.Forename + ' ' + au.Surname AS SupervisorName,
                     (CASE WHEN au.Supervisor = 1 THEN 'Supervisor'
 			             WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor'
-		            END) AS RoleName
+		            END) AS RoleName,
+                    au.CentreName
                 FROM SupervisorDelegates AS sd
                 INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
                 INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
@@ -192,7 +194,7 @@
                     au.Forename + ' ' + au.Surname As SupervisorName,
                     sasr.RoleName,
                     sasv.Comments,
-                    sar.CandidateID,
+                    sar.DelegateUserID,
                     sar.CompetencyID,
                     com.Name AS CompetencyName,
                     sar.SelfAssessmentID,
@@ -205,7 +207,7 @@
                     sasv.SignedOff,
                     sea.ReviewerCommentsLabel
                     FROM   SelfAssessmentResultSupervisorVerifications AS sasv INNER JOIN
-                    SelfAssessmentResults AS sar ON sasv.SelfAssessmentResultId = sar.ID INNER JOIN
+                    SelfAssessmentResults AS sar ON sasv.SelfAssessmentResultId = sar.ID AND sasv.Superceded = 0 INNER JOIN
                     SelfAssessments AS sea ON sar.SelfAssessmentID = sea.ID INNER JOIN
                     SelfAssessmentStructure AS sstrc ON sar.CompetencyID = sstrc.CompetencyID INNER JOIN
                     Competencies AS com ON sar.CompetencyID = com.ID INNER JOIN
@@ -213,8 +215,7 @@
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
                     AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID INNER JOIN
                     SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    INNER JOIN DelegateAccounts AS da ON sar.CandidateID = da.ID
-                    WHERE (da.UserID = @delegateUserId) AND (sasv.SelfAssessmentResultId = @resultId)",
+                    WHERE (sar.DelegateUserID = @delegateUserId) AND (sasv.SelfAssessmentResultId = @resultId)",
                 new { delegateUserId, resultId }
             ).FirstOrDefault();
         }
@@ -233,26 +234,29 @@
                         Active,
                         Email,
                         ProfileImage,
-                        IsFrameworkDeveloper
-                    FROM AdminUsers
-                    WHERE (
-                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId)
-                        OR
-                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = (SELECT CategoryID FROM SelfAssessments WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)
-                    )
+                        IsFrameworkDeveloper,
+                        CentreName
+                        FROM AdminUsers
+                        WHERE 
+                        CentreID IN (SELECT DA.CentreID FROM DelegateAccounts DA
+                        INNER JOIN CentreSelfAssessments CSA on csa.CentreID = DA.CentreID
+                        where DA.UserID = @delegateUserId And DA.Active = 1
+                        AND CSA.SelfAssessmentID=@selfAssessmentId)
+                        AND ((COALESCE(CategoryID, 0) = 0) OR (CategoryID IN (select CategoryID from SelfAssessments where ID=@selfAssessmentId)))
                         AND AdminID NOT IN (
-                            SELECT sd.SupervisorAdminID
-                            FROM CandidateAssessmentSupervisors AS cas
-                            INNER JOIN SupervisorDelegates AS sd
-                                ON cas.SupervisorDelegateId = sd.ID
-                            INNER JOIN CandidateAssessments AS ca
-                                ON cas.CandidateAssessmentID = ca.ID
-                            WHERE (ca.SelfAssessmentID = @selfAssessmentId)
-                                AND (ca.DelegateUserID = @delegateUserId)
-                                AND (sd.SupervisorAdminID = AdminUsers.AdminID)
-                                AND (cas.Removed IS NULL)
-                                AND (sd.Removed IS NULL)
-                         ) ",
+                        SELECT sd.SupervisorAdminID
+                        FROM CandidateAssessmentSupervisors AS cas
+                        INNER JOIN SupervisorDelegates AS sd
+                        ON cas.SupervisorDelegateId = sd.ID
+                        INNER JOIN CandidateAssessments AS ca
+                        ON cas.CandidateAssessmentID = ca.ID
+                        WHERE (ca.SelfAssessmentID = @selfAssessmentId)
+                        AND (ca.DelegateUserID = @delegateUserId)
+                        AND (sd.SupervisorAdminID = AdminUsers.AdminID)
+                        AND (cas.Removed IS NULL)
+                        AND (sd.Removed IS NULL)
+                        )
+                        AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (Email LIKE '%@%') ",
                 new { centreId, selfAssessmentId, delegateUserId }
             );
         }
@@ -260,7 +264,7 @@
         public Administrator GetSupervisorByAdminId(int supervisorAdminId)
         {
             return connection.Query<Administrator>(
-                @"SELECT AdminID, Forename, Surname, Active, Email, ProfileImage, IsFrameworkDeveloper
+                @"SELECT AdminID, Forename, Surname, Active, Email, ProfileImage, IsFrameworkDeveloper, CentreID, CentreName
                     FROM AdminUsers
                     WHERE (AdminID = @supervisorAdminId)",
                 new { supervisorAdminId }
@@ -283,7 +287,8 @@
                         casv.EmailSent,
                         casv.Verified,
                         casv.Comments,
-                        casv.SignedOff
+                        casv.SignedOff,
+                        sd.Removed
                     FROM CandidateAssessmentSupervisorVerifications AS casv
                     INNER JOIN CandidateAssessmentSupervisors AS cas
                         ON casv.CandidateAssessmentSupervisorID = cas.ID

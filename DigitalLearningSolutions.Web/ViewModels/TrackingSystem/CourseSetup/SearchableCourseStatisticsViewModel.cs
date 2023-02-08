@@ -26,6 +26,8 @@
             Assessed = courseStatistics.IsAssessed;
             AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
             LaunchCourseLink = $"{config.GetAppRootPath()}/LearningMenu/{CustomisationId}";
+            Active = courseStatistics.Active;
+            Archived = courseStatistics.Archived;
         }
 
         private string LaunchCourseLink { get; set; }
@@ -38,6 +40,10 @@
         public string CourseTopic { get; set; }
         public string LearningMinutes { get; set; }
         public bool Assessed { get; set; }
+        public string? Status { get; set; }
+        public bool Active { get; set; }
+        public bool Archived { get; set; }
+
         public IEnumerable<CourseAdminFieldWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
         public bool HasAdminFields => AdminFieldWithResponseCounts.Any();
 

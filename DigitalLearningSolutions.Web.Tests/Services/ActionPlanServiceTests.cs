@@ -23,6 +23,7 @@
     {
         private const int GenericLearningLogItemId = 1;
         private const int GenericDelegateId = 2;
+        private const int delegateUserId = 2;
         private const int GenericLearningHubResourceReferenceId = 3;
         private const int GenericLearningResourceReferenceId = 33;
 
@@ -160,7 +161,7 @@
             GetIncompleteActionPlanResources_returns_empty_list_if_no_incomplete_learning_log_items_found()
         {
             // Given
-            const int delegateId = 1;
+            const int delegateUserId = 2;
             var invalidLearningLogItems = Builder<LearningLogItem>.CreateListOfSize(3)
                 .All().With(i => i.CompletedDate = null).And(i => i.ArchivedDate = null)
                 .And(i => i.LearningHubResourceReferenceId = 1)
@@ -168,11 +169,11 @@
                 .TheNext(1).With(i => i.Activity = "removed").And(i => i.ArchivedDate = DateTime.UtcNow)
                 .TheNext(1).With(i => i.Activity = "no resource link").And(i => i.LearningHubResourceReferenceId = null)
                 .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .Returns(invalidLearningLogItems);
 
             // When
-            var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
+            var result = await actionPlanService.GetIncompleteActionPlanResources(delegateUserId);
 
             // Then
             result.resources.Should().BeEmpty();
@@ -185,7 +186,7 @@
         public async Task GetIncompleteActionPlanResources_returns_correctly_matched_action_plan_items()
         {
             // Given
-            const int delegateId = 1;
+            const int delegateUserId = 2;
             var learningLogIds = new List<int> { 4, 5, 6, 7, 8 };
             var learningResourceIds = new List<int> { 15, 21, 33, 48, 51 };
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()
@@ -194,12 +195,12 @@
                 .And((i, index) => i.LearningHubResourceReferenceId = learningResourceIds[index])
                 .And((i, index) => i.LearningLogItemId = learningLogIds[index])
                 .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .Returns(learningLogItems);
             GivenLearningHubResourceServiceBulkResponseReturnsExpectedResources(learningResourceIds);
 
             // When
-            var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
+            var result = await actionPlanService.GetIncompleteActionPlanResources(delegateUserId);
 
             // Then
             result.apiIsAccessible.Should().BeFalse();
@@ -210,7 +211,7 @@
         public async Task GetCompletedActionPlanResources_returns_empty_list_if_no_completed_learning_log_items_found()
         {
             // Given
-            const int delegateId = 1;
+            const int delegateUserId = 2;
             var invalidLearningLogItems = Builder<LearningLogItem>.CreateListOfSize(3)
                 .All().With(i => i.CompletedDate = DateTime.UtcNow).And(i => i.ArchivedDate = null)
                 .And(i => i.LearningHubResourceReferenceId = 1)
@@ -218,11 +219,11 @@
                 .TheNext(1).With(i => i.Activity = "removed").And(i => i.ArchivedDate = DateTime.UtcNow)
                 .TheNext(1).With(i => i.Activity = "no resource link").And(i => i.LearningHubResourceReferenceId = null)
                 .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .Returns(invalidLearningLogItems);
 
             // When
-            var result = await actionPlanService.GetCompletedActionPlanResources(delegateId);
+            var result = await actionPlanService.GetCompletedActionPlanResources(delegateUserId);
 
             // Then
             result.resources.Should().BeEmpty();
@@ -235,7 +236,7 @@
         public async Task GetCompleteActionPlanResources_returns_correctly_matched_action_plan_items()
         {
             // Given
-            const int delegateId = 1;
+            const int delegateUserId = 2;
             var learningLogIds = new List<int> { 4, 5, 6, 7, 8 };
             var learningResourceIds = new List<int> { 15, 21, 33, 48, 51 };
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()
@@ -244,12 +245,12 @@
                 .And((i, index) => i.LearningHubResourceReferenceId = learningResourceIds[index])
                 .And((i, index) => i.LearningLogItemId = learningLogIds[index])
                 .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .Returns(learningLogItems);
             GivenLearningHubResourceServiceBulkResponseReturnsExpectedResources(learningResourceIds);
 
             // When
-            var result = await actionPlanService.GetCompletedActionPlanResources(delegateId);
+            var result = await actionPlanService.GetCompletedActionPlanResources(delegateUserId);
 
             // Then
             result.apiIsAccessible.Should().BeFalse();
@@ -261,7 +262,7 @@
             GetCompleteActionPlanResources_returns_correctly_matched_action_plan_items_with_repeated_resource()
         {
             // Given
-            const int delegateId = 1;
+            const int delegateUserId = 2;
             var learningLogIds = new List<int> { 4, 5, 6 };
             var learningResourceIds = new List<int> { 15, 26, 15 };
             var expectedLearningResourceIdsUsedInApiCall = new List<int> { 15, 26 };
@@ -271,7 +272,7 @@
                 .And((i, index) => i.LearningHubResourceReferenceId = learningResourceIds[index])
                 .And((i, index) => i.LearningLogItemId = learningLogIds[index])
                 .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .Returns(learningLogItems);
             var matchedResources = Builder<ResourceReferenceWithResourceDetails>.CreateListOfSize(2).All()
                 .With((r, index) => r.RefId = learningResourceIds[index])
@@ -290,7 +291,7 @@
                 .Returns((bulkReturnedItems, false));
 
             // When
-            var result = await actionPlanService.GetCompletedActionPlanResources(delegateId);
+            var result = await actionPlanService.GetCompletedActionPlanResources(delegateUserId);
 
             // Then
             List<(int id, string title)> resultIdsAndTitles = result.resources.Select(r => (r.Id, r.Name)).ToList();
@@ -317,7 +318,7 @@
             // Given
             var testDate = new DateTime(2021, 12, 2);
             A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
-            const int delegateId = 2;
+            const int delegateUserId = 2;
             const int resourceReferenceId = 3;
             var expectedLearningLogItemIdsToUpdate = new[] { 1, 4 };
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(4).All()
@@ -329,14 +330,14 @@
                 .TheNext(1).With(i => i.ArchivedDate = DateTime.UtcNow)
                 .TheNext(1).With(i => i.LearningHubResourceReferenceId = resourceReferenceId + 100)
                 .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .Returns(learningLogItems);
 
             // When
-            actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(resourceReferenceId, delegateId);
+            actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(resourceReferenceId, delegateUserId);
 
             // Then
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .MustHaveHappenedOnceExactly();
             foreach (var id in expectedLearningLogItemIdsToUpdate)
             {
@@ -537,11 +538,11 @@
         public void ResourceCanBeAddedToActionPlan_returns_true_with_no_learning_log_records()
         {
             // Given
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(GenericDelegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .Returns(new List<LearningLogItem>());
 
             // When
-            var result = actionPlanService.ResourceCanBeAddedToActionPlan(1, GenericDelegateId);
+            var result = actionPlanService.ResourceCanBeAddedToActionPlan(1, delegateUserId);
 
             // Then
             result.Should().BeTrue();
@@ -557,13 +558,13 @@
                 .And(i => i.LearningResourceReferenceId = GenericLearningResourceReferenceId)
                 .And(i => i.ArchivedDate = null)
                 .And(i => i.CompletedDate = DateTime.UtcNow).Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(GenericDelegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .Returns(learningLogItems);
 
             // When
             var result = actionPlanService.ResourceCanBeAddedToActionPlan(
                 GenericLearningResourceReferenceId,
-                GenericDelegateId
+                delegateUserId
             );
 
             // Then
@@ -585,13 +586,13 @@
                 .And(i => i.LearningResourceReferenceId = GenericLearningResourceReferenceId)
                 .And(i => i.ArchivedDate = null)
                 .And(i => i.CompletedDate = DateTime.UtcNow).Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(GenericDelegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateUserId))
                 .Returns(learningLogItems);
 
             // When
             var result = actionPlanService.ResourceCanBeAddedToActionPlan(
                 GenericLearningResourceReferenceId,
-                GenericDelegateId
+                delegateUserId
             );
 
             // Then

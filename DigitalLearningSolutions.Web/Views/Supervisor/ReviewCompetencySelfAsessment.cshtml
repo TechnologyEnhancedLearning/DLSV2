@@ -94,6 +94,10 @@
   </dt>
   <dd class="nhsuk-summary-list__value">
     @Model.Competency.AssessmentQuestions.First().Question
+    @if (!@Model.Competency.AssessmentQuestions.First().Required)
+    {
+      <span>(Optional)</span>
+    }
   </dd>
   </div>
 

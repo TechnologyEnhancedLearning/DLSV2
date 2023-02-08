@@ -61,3 +61,11 @@
     border-left: 6px solid $color_nhsuk-grey-2;
   }
 }
+
+.status-inactive {
+  border-left: 6px solid tint($color_nhsuk-red, 80);
+}
+
+.status-archived {
+  border-left: 6px solid $color_nhsuk-grey-2;
+}

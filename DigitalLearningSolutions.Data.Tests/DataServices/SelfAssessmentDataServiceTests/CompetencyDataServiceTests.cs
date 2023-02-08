@@ -43,7 +43,7 @@
             );
 
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(1, SelfAssessmentId, delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(1, SelfAssessmentId, DelegateId);
 
             // Then
             result.Should().BeEquivalentTo(expectedCompetency);
@@ -74,7 +74,7 @@
             );
 
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(32, SelfAssessmentId, delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(32, SelfAssessmentId, DelegateId);
 
             // Then
             result.Should().BeEquivalentTo(expectedCompetency);
@@ -84,7 +84,7 @@
         public void GetNthCompetency_returns_null_when_reached_end_of_assessment()
         {
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(33, SelfAssessmentId, delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(33, SelfAssessmentId, DelegateId);
 
             // Then
             result.Should().BeNull();
@@ -94,7 +94,7 @@
         public void GetNthCompetency_returns_null_when_n_zero()
         {
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(0, SelfAssessmentId, delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(0, SelfAssessmentId, DelegateId);
 
             // Then
             result.Should().BeNull();
@@ -104,7 +104,7 @@
         public void GetNthCompetency_returns_null_when_n_negative()
         {
             // When
-            var result = selfAssessmentDataService.GetNthCompetency(-1, SelfAssessmentId, delegateUserId);
+            var result = selfAssessmentDataService.GetNthCompetency(-1, SelfAssessmentId, DelegateId);
 
             // Then
             result.Should().BeNull();
@@ -144,7 +144,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     result + 1,
@@ -153,7 +152,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     result,
@@ -161,7 +159,7 @@
                 );
 
                 // Then
-                var competency = selfAssessmentDataService.GetNthCompetency(2, SelfAssessmentId, delegateUserId);
+                var competency = selfAssessmentDataService.GetNthCompetency(2, SelfAssessmentId, DelegateId);
                 var actualResult = competency.AssessmentQuestions.First(question => question.Id == assessmentQuestionId)
                     .Result;
                 result.Should().Be(actualResult);
@@ -182,7 +180,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     result,
@@ -191,7 +188,7 @@
                 var insertedResult = GetAssessmentResults(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
+                    delegateUserId,
                     assessmentQuestionId
                 ).First();
 
@@ -215,7 +212,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     firstResult,
@@ -224,7 +220,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     secondResult,
@@ -233,7 +228,7 @@
                 var insertedResults = GetAssessmentResults(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
+                    delegateUserId,
                     assessmentQuestionId
                 ).ToList();
 
@@ -260,7 +255,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    invalidCandidateId,
                     invalidDelegateUserId,
                     assessmentQuestionId,
                     result,
@@ -269,7 +263,7 @@
                 var insertedResults = GetAssessmentResults(
                     competencyId,
                     SelfAssessmentId,
-                    invalidCandidateId,
+                    invalidDelegateUserId,
                     assessmentQuestionId
                 );
 
@@ -293,7 +287,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     invalidSelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     result,
@@ -302,7 +295,7 @@
                 var insertedResults = GetAssessmentResults(
                     competencyId,
                     invalidSelfAssessmentId,
-                    CandidateId,
+                    delegateUserId,
                     assessmentQuestionId
                 );
 
@@ -325,7 +318,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     invalidCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     result,
@@ -334,7 +326,7 @@
                 var insertedResults = GetAssessmentResults(
                     invalidCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
+                    delegateUserId,
                     assessmentQuestionId
                 );
 
@@ -357,7 +349,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     invalidAssessmentQuestionId,
                     result,
@@ -366,7 +357,7 @@
                 var insertedResults = GetAssessmentResults(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
+                    delegateUserId,
                     invalidAssessmentQuestionId
                 );
 
@@ -389,7 +380,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     invalidResult,
@@ -398,7 +388,7 @@
                 var insertedResults = GetAssessmentResults(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
+                    delegateUserId,
                     assessmentQuestionId
                 );
 
@@ -421,7 +411,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     invalidResult,
@@ -430,7 +419,7 @@
                 var insertedResults = GetAssessmentResults(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
+                    delegateUserId,
                     assessmentQuestionId
                 );
 
@@ -460,7 +449,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     firstCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     firstAssessmentQuestionId,
                     firstResult,
@@ -469,7 +457,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     firstCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     secondAssessmentQuestionId,
                     secondResult,
@@ -478,7 +465,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     secondCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     thirdAssessmentQuestionId,
                     thirdResult,
@@ -487,7 +473,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     secondCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     fourthAssessmentQuestionId,
                     fourthResult,
@@ -495,7 +480,7 @@
                 );
 
                 // Then
-                var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId, delegateUserId).ToList();
+                var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId, DelegateId).ToList();
 
                 results.Count.Should().Be(32);
                 SelfAssessmentHelper.GetQuestionResult(results, firstCompetencyId, firstAssessmentQuestionId).Should()
@@ -531,7 +516,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     firstCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     firstAssessmentQuestionId,
                     firstResult,
@@ -540,7 +524,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     firstCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     secondAssessmentQuestionId,
                     secondResult,
@@ -549,7 +532,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     secondCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     thirdAssessmentQuestionId,
                     9,
@@ -558,7 +540,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     secondCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     fourthAssessmentQuestionId,
                     9,
@@ -567,7 +548,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     secondCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     thirdAssessmentQuestionId,
                     thirdResult,
@@ -576,7 +556,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     secondCompetencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     fourthAssessmentQuestionId,
                     fourthResult,
@@ -584,7 +563,7 @@
                 );
 
                 // Then
-                var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId, delegateUserId).ToList();
+                var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId, DelegateId).ToList();
 
                 results.Count.Should().Be(32);
                 SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, thirdAssessmentQuestionId).Should()
@@ -632,7 +611,6 @@
                 selfAssessmentDataService.SetResultForCompetency(
                     competencyId,
                     SelfAssessmentId,
-                    CandidateId,
                     delegateUserId,
                     assessmentQuestionId,
                     result,
@@ -642,7 +620,7 @@
                 // When
                 var results =
 selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-                        CandidateId,
+                        delegateUserId,
                         SelfAssessmentId,
                         competencyId
                     ).ToList();
@@ -651,7 +629,7 @@ selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompe
                 using (new AssertionScope())
                 {
                     results.Should().HaveCount(1);
-                    results.First().CandidateId.Should().Be(CandidateId);
+                    results.First().DelegateUserId.Should().Be(delegateUserId);
                     results.First().SelfAssessmentId.Should().Be(SelfAssessmentId);
                     results.First().AssessmentQuestionId.Should().Be(assessmentQuestionId);
                     results.First().CompetencyId.Should().Be(competencyId);
@@ -663,7 +641,7 @@ selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompe
         private IEnumerable<int> GetAssessmentResults(
             int competencyId,
             int selfAssessmentId,
-            int candidateId,
+            int delegateUserId,
             int assessmentQuestionId
         )
         {
@@ -671,9 +649,9 @@ selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompe
                 @"SELECT Result FROM SelfAssessmentResults WHERE
                         CompetencyID = @competencyId AND
                         SelfAssessmentID = @selfAssessmentId AND
-                        CandidateID = @candidateId AND
+                        DelegateUserID = @delegateUserId AND
                         AssessmentQuestionID = @assessmentQuestionId",
-                new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId }
+                new { competencyId, selfAssessmentId, delegateUserId, assessmentQuestionId }
             );
         }
     }

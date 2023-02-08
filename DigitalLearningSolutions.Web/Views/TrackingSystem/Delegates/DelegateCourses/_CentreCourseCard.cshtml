@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
 @model SearchableDelegateCourseStatisticsViewModel
 
-<div class="searchable-element nhsuk-panel card-with-buttons word-break" id="@Model.CustomisationId-card">
+<div class="searchable-element nhsuk-panel card-with-buttons word-break status-@Model.Status" id="@Model.CustomisationId-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.CustomisationId-name" name="course-name">
@@ -10,8 +10,8 @@
     </summary>
 
     <div class="nhsuk-details__text">
-      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
-
+      <partial name="SearchablePage/_StatusTags" model="@Model.Tags" />
+      
       <partial name="_CentreCourseCardDetails" model="@Model" />
 
       <input type="hidden" data-filter-value="@Model.HasAdminFieldsFilter" />

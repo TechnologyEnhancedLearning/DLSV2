@@ -10,5 +10,6 @@
         public int Passes { get; set; }
         public int Sections { get; set; }
         public int ProgressID { get; set; }
+        public string CentreName { get; set; }
     }
 }

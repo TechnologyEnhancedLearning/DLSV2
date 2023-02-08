@@ -90,13 +90,12 @@
         public IActionResult Index(AdminRolesFormData formData, int delegateId)
         {
             var adminRoles = formData.GetAdminRoles();
+
             if (!(adminRoles.IsCentreAdmin ||
                 adminRoles.IsSupervisor ||
                 adminRoles.IsNominatedSupervisor ||
                 adminRoles.IsContentCreator ||
                 adminRoles.IsTrainer ||
-                adminRoles.IsContentManager ||
-                adminRoles.ImportOnly ||
                 adminRoles.IsCentreManager))
             {
                 var centreId = User.GetCentreIdKnownNotNull();
@@ -116,9 +115,10 @@
                                 categories,
                                 numberOfAdmins
                             );
-
+                model.ContentManagementRole = formData.ContentManagementRole;
                 ModelState.Clear();
                 ModelState.AddModelError("IsCenterManager", $"Delegate must have one role to be promoted to Admin.");
+                ViewBag.RequiredCheckboxMessage = "Delegate must have one role to be promoted to Admin.";
                 return View(model);
             }
             var userAdminId = User.GetAdminId();
@@ -153,7 +153,7 @@
                         isContentCreator: adminRoles.IsContentCreator,
                         isCmsAdmin: adminRoles.IsCmsAdministrator,
                         isCmsManager: adminRoles.IsCmsManager,
-                        primaryEmail: delegateUserEmailDetails.UserAccount.PrimaryEmail,
+                        primaryEmail: delegateUserEmailDetails.EmailForCentreNotifications,
                         centreName: centreName
                     );
 

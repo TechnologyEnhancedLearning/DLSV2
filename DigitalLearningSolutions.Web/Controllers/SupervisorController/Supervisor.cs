@@ -99,14 +99,21 @@
             var supervisorEmail = GetUserEmail();
 
             ModelState.Remove("Page");
+
             if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             {
-                AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
+                string delegateEmail = model.DelegateEmail ?? String.Empty;
+                int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
+
+                AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else
             {
-                if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
+                if (supervisorEmail == model.DelegateEmail)
+                {
+                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with.");
+                }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
@@ -200,8 +207,8 @@
         [HttpPost]
         public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
-          ModelState.ClearErrorsOnField("ActionConfirmed");
-          return View("RemoveConfirm", supervisorDelegate);
+            ModelState.ClearErrorsOnField("ActionConfirmed");
+            return View("RemoveConfirm", supervisorDelegate);
         }
 
         [HttpPost]
@@ -789,7 +796,7 @@
             return View("EnrolDelegateSummary", model);
         }
 
-        public IActionResult EnrolDelegateConfirm(int delegateId, int supervisorDelegateId)
+        public IActionResult EnrolDelegateConfirm(int delegateUserId, int supervisorDelegateId)
         {
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
@@ -799,12 +806,13 @@
             var completeByDate = sessionEnrolOnRoleProfile.CompleteByDate;
             var selfAssessmentSupervisorRoleId = sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId;
             var candidateAssessmentId = supervisorService.EnrolDelegateOnAssessment(
-                delegateId,
+                delegateUserId,
                 supervisorDelegateId,
                 selfAssessmentId.Value,
                 completeByDate,
                 selfAssessmentSupervisorRoleId,
-                GetAdminId()
+                GetAdminId(),
+                GetCentreId()
             );
             if (candidateAssessmentId > 0)
             {
@@ -956,39 +964,33 @@
 
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
 
-                var (adminUser, delegateUser) = userService.GetUsersById(User.GetUserId(), supervisorDelegateDetail.ID);
+                var (adminUser, delegateUser) = userService.GetUsersById(GetAdminId(), supervisorDelegateDetail.DelegateUserID);
 
                 var centreName = adminUser.CentreName;
 
-                var delegateAccount = userDataService.GetDelegateAccountById(supervisorDelegateDetail.CandidateID ?? 0)!;
-
-                var delegateToPromoteUserId = delegateAccount.UserId;
-
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
-                if (supervisorDelegateDetail.CandidateID != null)
+                if (supervisorDelegateDetail.DelegateUserID != null)
                 {
-                    registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, delegateToPromoteUserId, (int)User.GetCentreId());
+                    registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId());
 
-                    var delegateUserEmailDetails = userDataService.GetDelegateById(supervisorDelegateDetail.CandidateID ?? 0);
-
-                    if (delegateUserEmailDetails != null && adminUser != null)
+                    if (delegateUser != null && adminUser != null)
                     {
                         var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
-                            firstName: delegateUserEmailDetails.UserAccount.FirstName,
-                            supervisorFirstName: adminUser.FirstName!,
-                            supervisorLastName: adminUser.LastName,
-                            supervisorEmail: adminUser.EmailAddress!,
-                            isCentreAdmin: adminRoles.IsCentreAdmin,
-                            isCentreManager: adminRoles.IsCentreManager,
-                            isSupervisor: adminRoles.IsSupervisor,
-                            isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
-                            isTrainer: adminRoles.IsTrainer,
-                            isContentCreator: adminRoles.IsContentCreator,
-                            isCmsAdmin: adminRoles.IsCmsAdministrator,
-                            isCmsManager: adminRoles.IsCmsManager,
-                            primaryEmail: delegateUserEmailDetails.UserAccount.PrimaryEmail,
-                            centreName: centreName
-                        );
+                        firstName: delegateUser.FirstName,
+                        supervisorFirstName: adminUser.FirstName!,
+                        supervisorLastName: adminUser.LastName,
+                        supervisorEmail: adminUser.EmailAddress!,
+                        isCentreAdmin: adminRoles.IsCentreAdmin,
+                        isCentreManager: adminRoles.IsCentreManager,
+                        isSupervisor: adminRoles.IsSupervisor,
+                        isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
+                        isTrainer: adminRoles.IsTrainer,
+                        isContentCreator: adminRoles.IsContentCreator,
+                        isCmsAdmin: adminRoles.IsCmsAdministrator,
+                        isCmsManager: adminRoles.IsCmsManager,
+                        primaryEmail: delegateUser.EmailAddress,
+                        centreName: centreName
+                    );
 
                         emailService.SendEmail(adminRolesEmail);
 
@@ -1003,6 +1005,18 @@
                 return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
 
             }
+        }
+
+        [Route("/Supervisor/Staff/{reviewId}/ResendInvite")]
+        public IActionResult ResendInvite(int reviewId)
+        {
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(reviewId, GetAdminId(), 0);
+            if (reviewId > 0)
+            {
+                frameworkNotificationService.SendSupervisorDelegateInvite(reviewId, GetAdminId());
+                supervisorService.UpdateNotificationSent(reviewId);
+            }
+            return RedirectToAction("MyStaffList");
         }
     }
 }

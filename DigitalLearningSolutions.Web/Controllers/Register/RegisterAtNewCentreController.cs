@@ -37,6 +37,7 @@
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly ISupervisorService supervisorService;
 
         public RegisterAtNewCentreController(
             ICentresDataService centresDataService,
@@ -47,7 +48,8 @@
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
             IUserService userService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            ISupervisorService supervisorService
         )
         {
             this.centresDataService = centresDataService;
@@ -59,6 +61,7 @@
             this.supervisorDelegateService = supervisorDelegateService;
             this.userService = userService;
             this.userDataService = userDataService;
+            this.supervisorService = supervisorService;
         }
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
@@ -122,6 +125,12 @@
                         nameof(InternalPersonalInformationViewModel.Centre),
                         "You are already registered at this centre"
                     );
+                }
+
+                int? approvedDelegateId = supervisorService.ValidateDelegate(model.Centre.Value, model.CentreSpecificEmail);
+                if (approvedDelegateId != null && approvedDelegateId > 0)
+                {
+                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address which has approved delegate account.");
                 }
             }
 
@@ -243,6 +252,23 @@
 
             var userIp = Request.GetUserIpAddressFromRequest();
 
+            bool userHasDelAccAtAdminCentre = false;
+
+            var userEntity = userService.GetUserById(userId);
+
+            if (userEntity.AdminAccounts.Any())
+            {
+                var adminAccountAtCentre = userEntity.AdminAccounts.Where(a => a.CentreId == data.Centre).ToList();
+                if (adminAccountAtCentre.Any())
+                {
+                    var delegateAccount = userEntity.DelegateAccounts.Where(da => da.CentreId == data.Centre).ToList();
+                    if (!delegateAccount.Any())
+                    {
+                        userHasDelAccAtAdminCentre = true;
+                    }
+                }
+            }
+
             try
             {
                 var (candidateNumber, approved, userHasAdminAccountAtCentre) =
@@ -270,7 +296,7 @@
 
                 return RedirectToAction(
                     "Confirmation",
-                    new { candidateNumber, approved, userHasAdminAccountAtCentre, centreId = data.Centre }
+                    new { candidateNumber, approved, userHasAdminAccountAtCentre, centreId = data.Centre, userHasDelAccAtAdminCentre }
                 );
             }
             catch (DelegateCreationFailedException e)
@@ -291,7 +317,8 @@
             string candidateNumber,
             bool approved,
             bool userHasAdminAccountAtCentre,
-            int? centreId
+            int? centreId,
+            bool userHasDelAccAtAdminCentre = false
         )
         {
             if (centreId == null)
@@ -312,7 +339,8 @@
                 userHasAdminAccountAtCentre,
                 centreId,
                 unverifiedCentreEmail,
-                centreName
+                centreName,
+                userHasDelAccAtAdminCentre
             );
 
             return View(model);

@@ -50,7 +50,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId);
 
-        (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
+        (int delegateId, string candidateNumber,int delegateUserId) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
             bool shouldAssumeEmailVerified
@@ -129,7 +129,7 @@ namespace DigitalLearningSolutions.Web.Services
                 delegateRegistrationModel.Centre
             );
 
-            var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
+            var (delegateId, candidateNumber, delegateUserId) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions,
                 false
@@ -150,7 +150,7 @@ namespace DigitalLearningSolutions.Web.Services
                 // TODO: HEEDLS-1014 - Change Delegate ID to User ID
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
-                    delegateId
+                    delegateUserId
                 );
             }
 
@@ -277,7 +277,7 @@ namespace DigitalLearningSolutions.Web.Services
                 // TODO: HEEDLS-1014 - Change Delegate ID to User ID
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
-                    delegateId
+                    userId
                 );
             }
 
@@ -305,7 +305,7 @@ namespace DigitalLearningSolutions.Web.Services
                 throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
             }
 
-            var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
+            var (delegateId, candidateNumber, delegateUserId) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions,
                 true
@@ -343,7 +343,7 @@ namespace DigitalLearningSolutions.Web.Services
                 // TODO: HEEDLS-1014 - Change Delegate ID to User ID
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
-                    delegateId
+                    delegateUserId
                 );
             }
 
@@ -474,7 +474,7 @@ namespace DigitalLearningSolutions.Web.Services
             }
         }
 
-        public (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
+        public (int delegateId, string candidateNumber,int delegateUserId) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
             bool shouldAssumeEmailVerified
@@ -495,7 +495,7 @@ namespace DigitalLearningSolutions.Web.Services
                     throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
                 }
 
-                var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
+                var (delegateId, candidateNumber, delegateUserId) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
                     registerJourneyContainsTermsAndConditions,
                     shouldAssumeEmailVerified
@@ -503,7 +503,7 @@ namespace DigitalLearningSolutions.Web.Services
 
                 groupsService.AddNewDelegateToAppropriateGroups(delegateId, delegateRegistrationModel);
 
-                return (delegateId, candidateNumber);
+                return (delegateId, candidateNumber, delegateUserId);
             }
             catch (DelegateCreationFailedException exception)
             {
@@ -649,7 +649,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             try
             {
-                var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
+                var (delegateId, candidateNumber, delegateUserId) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
                     registerJourneyContainsTermsAndConditions,
                     false

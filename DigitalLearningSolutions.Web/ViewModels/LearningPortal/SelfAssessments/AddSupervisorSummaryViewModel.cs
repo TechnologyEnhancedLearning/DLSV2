@@ -18,5 +18,6 @@
         public int? SelfAssessmentSupervisorRoleId { get; set; }
         public string SelfAssessmentRoleName { get; set; }
         public int RoleCount { get; set; }
+        public string SupervisorAtCentre { get; set; }
     }
 }

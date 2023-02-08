@@ -35,7 +35,8 @@
         public async Task<IActionResult> LaunchLearningResource(int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
-            actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(resourceReferenceId, delegateId);
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(resourceReferenceId, delegateUserId);
 
             var delegateUser = userService.GetDelegateUserById(delegateId);
 

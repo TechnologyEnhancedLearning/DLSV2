@@ -58,7 +58,7 @@
                 <div class="nhsuk-radios__item">
                   <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
                   <label class="nhsuk-label nhsuk-radios__label" for="supervisor-@supervisor.AdminID">
-                    @supervisor.Forename @supervisor.Surname
+                    @supervisor.Forename @supervisor.Surname (@supervisor.CentreName)
                   </label>
                   <div class="nhsuk-hint nhsuk-radios__hint" id="supervisor-@supervisor.AdminID-item-hint">
                     @supervisor.Email

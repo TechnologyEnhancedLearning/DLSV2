@@ -16,7 +16,7 @@
             IEnumerable<string> emails
         );
 
-        void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId);
+        void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int delegateUserId);
     }
 
     public class SupervisorDelegateDataService : ISupervisorDelegateDataService
@@ -69,6 +69,7 @@
                         sd.ID,
                         sd.SupervisorAdminID,
                         sd.SupervisorEmail,
+                        sd.DelegateUserID,
                         sd.DelegateEmail,
                         sd.Added,
                         sd.AddedByDelegate,
@@ -86,7 +87,7 @@
         }
 
         // TODO: HEEDLS-1014 - Change CandidateID to UserID
-        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int delegateUserId)
+        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds,int delegateUserId)
         {
             connection.Execute(
                 @"UPDATE SupervisorDelegates

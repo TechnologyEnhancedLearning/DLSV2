@@ -17,7 +17,7 @@
 
         Competency? GetNthCompetency(int n, int selfAssessmentId, int delegateUserId); // 1 indexed
 
-        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateUserId);
+        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateId);
 
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int delegateUserId, int? selfAssessmentResultId = null);
 
@@ -31,7 +31,6 @@
         void SetResultForCompetency(
             int competencyId,
             int selfAssessmentId,
-            int candidateId,
             int delegateUserId,
             int assessmentQuestionId,
             int? result,
@@ -61,7 +60,7 @@
         );
 
         IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-            int delegateId,
+            int delegateUserId,
             int selfAssessmentId,
             int competencyId
         );

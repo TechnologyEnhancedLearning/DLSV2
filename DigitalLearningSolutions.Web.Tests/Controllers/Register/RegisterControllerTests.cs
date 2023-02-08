@@ -38,6 +38,7 @@
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private ISupervisorService supervisorService = null!;
 
         [SetUp]
         public void Setup()
@@ -50,6 +51,7 @@
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
+            supervisorService = A.Fake<ISupervisorService>();
             request = A.Fake<HttpRequest>();
 
             controller = new RegisterController(
@@ -60,7 +62,8 @@
                     promptsService,
                     featureManager,
                     supervisorDelegateService,
-                    userDataService
+                    userDataService,
+                    supervisorService
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
@@ -157,7 +160,8 @@
                 promptsService,
                 featureManager,
                 supervisorDelegateService,
-                userDataService
+                userDataService,
+                supervisorService
             ).WithDefaultContext().WithMockUser(true);
 
             // When
@@ -230,7 +234,8 @@
                 promptsService,
                 featureManager,
                 supervisorDelegateService,
-                userDataService
+                userDataService,
+                supervisorService
             ).WithDefaultContext().WithMockUser(true);
 
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(centreName);
@@ -344,6 +349,42 @@
                 )
                 .MustNotHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public async Task Check_registration_complete_returns_redirect_to_confirmation()
+        {
+            // Given
+            const string candidateNumber = "TN1";
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
+
+            var model = new SummaryViewModel
+            {
+                PrimaryEmail = data.PrimaryEmail,
+                CentreSpecificEmail = data.CentreSpecificEmail,
+            };
+
+            SetUpFakesForSuccessfulRegistration(candidateNumber, data, 1);
+
+            // When
+            var result = await controller.Summary(model);
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationService.RegisterDelegateForNewUser(
+                            A<DelegateRegistrationModel>.That.Matches(
+                                d =>
+                                    d.RegistrationConfirmationHash == null
+                            ),
+                            IpAddress,
+                            false,
+                            true,
+                            SupervisorDelegateId
+                        )
+                )
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
         }
 
         [Test]

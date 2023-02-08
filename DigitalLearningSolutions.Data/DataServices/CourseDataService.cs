@@ -20,15 +20,15 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId);
 
-        IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId, int categoryId);
+        IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId);
 
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
 
         void RemoveCurrentCourse(int progressId, int candidateId, RemovalMethod removalMethod);
 
-        void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
+        void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId);
 
-        int EnrolSelfAssessment(int selfAssessmentId, int candidateId);
+        int EnrolSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId);
 
         int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
 
@@ -97,7 +97,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         IEnumerable<CourseDelegateForExport> GetDelegatesOnCourseForExport(int customisationId, int centreId);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime completeByDate);
+            int selfAssessmentSupervisorRoleId, DateTime completeByDate, int delegateUserId, int centreId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -177,6 +177,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cu.CustomisationID,
                         cu.CentreID,
                         cu.Active,
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 0 ELSE cu.Active END AS Active,
                         cu.AllCentres,
                         ap.ApplicationId,
                         ap.ApplicationName,
@@ -189,7 +190,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cc.CategoryName,
                         ct.CourseTopic,
                         cu.LearningTimeMins AS LearningMinutes,
-                        cu.IsAssessed
+                        cu.IsAssessed,
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 1 ELSE 0 END AS Archived
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
@@ -304,17 +306,17 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId)
         {
             return connection.Query<AvailableCourse>(
-                @"GetActiveAvailableCustomisationsForCentreFiltered_V5",
-                new { candidateId, centreId },
+                @"GetActivitiesForDelegateEnrolment",
+                new { delegateId = candidateId, centreId, categoryId = 0 },
                 commandType: CommandType.StoredProcedure
             );
         }
 
-        public IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId, int categoryId)
+        public IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId)
         {
             return connection.Query<AvailableCourse>(
-                @"GetActiveAvailableCustomisationsForCentreFiltered_V6",
-                new { candidateId, centreId, categoryId },
+                @"GetActivitiesForDelegateEnrolment",
+                new { delegateId, centreId, categoryId },
                 commandType: CommandType.StoredProcedure
             );
         }
@@ -359,7 +361,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
         public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime completeByDate)
+            int selfAssessmentSupervisorRoleId, DateTime completeByDate, int delegateUserId, int centreId)
         {
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
@@ -373,42 +375,59 @@ namespace DigitalLearningSolutions.Data.DataServices
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
-                new { selfAssessmentId, candidateId }
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID  = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                new { selfAssessmentId, delegateUserId }
             );
 
             if (candidateAssessmentId == 0)
             {
                 candidateAssessmentId = connection.QuerySingle<int>(
                     @"INSERT INTO [dbo].[CandidateAssessments]
-                           ([CandidateID]
+                           ([DelegateUserID]
                            ,[SelfAssessmentID]
                            ,[StartedDate]
                            ,[LastAccessed]
-                           ,[CompleteByDate] )
+                           ,[CompleteByDate]
+                           ,[CentreID])
                     OUTPUT INSERTED.Id
                      VALUES
-                           (@candidateId,
+                           (@DelegateUserID,
                            @selfAssessmentId,
                            @startedDate,
                            @lastAccessed,
-                           @completeByDateDynamic);",
-                    new { selfAssessmentId, candidateId, startedDate, lastAccessed, completeByDateDynamic }
+                           @completeByDateDynamic,
+                           @centreId);",
+                    new { delegateUserId, selfAssessmentId, startedDate, lastAccessed, completeByDateDynamic, centreId }
                 );
             }
 
             int supervisorDelegateId = (int)connection.ExecuteScalar(
                     @"SELECT COALESCE
-                 ((SELECT TOP 1 ID FROM SupervisorDelegates WHERE SupervisorAdminID = @supervisorId AND CandidateID = @candidateId), 0) AS ID",
-                    new { supervisorId, candidateId }
+                 ((SELECT TOP 1 ID FROM SupervisorDelegates WHERE SupervisorAdminID = @supervisorId AND DelegateUserId = @delegateUserId), 0) AS ID",
+                    new { supervisorId, delegateUserId }
                 );
             if (supervisorDelegateId == 0 && supervisorId > 0)
             {
-                supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail, AddedByDelegate)
+                supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates
+                    (SupervisorAdminID,
+                        DelegateEmail,
+                        DelegateUserId,
+                        SupervisorEmail,
+                        AddedByDelegate)
                     OUTPUT INSERTED.Id
-                    SELECT @supervisorId, EmailAddress, @candidateId, @adminEmail, 0
-                        FROM Candidates
-                        WHERE CandidateID = @candidateId", new { supervisorId, candidateId, adminEmail });
+                    SELECT
+                        @supervisorId,
+                        COALESCE(UCD.Email, U.PrimaryEmail),
+                        DA.UserID,
+                        @adminEmail,
+                        0
+                        FROM   DelegateAccounts AS DA
+                        INNER JOIN Users AS U
+                        ON DA.UserID = U.ID
+                        LEFT OUTER JOIN UserCentreDetails AS UCD ON
+                        DA.UserID = UCD.UserID AND
+                        DA.CentreID = UCD.CentreID
+                        WHERE (DA.UserID = @delegateUserId)", new { supervisorId, delegateUserId, adminEmail });
             }
 
             if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)
@@ -424,33 +443,35 @@ namespace DigitalLearningSolutions.Data.DataServices
             {
                 logger.LogWarning(
                     "Not enrolled delegate on self assessment as db insert failed. " +
-                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
+                    $"Self assessment id: {selfAssessmentId}, user id: {delegateUserId}"
                 );
             }
 
             return candidateAssessmentId;
         }
 
-        public void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId)
+        public void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId)
         {
             var enrolmentExists = (int)connection.ExecuteScalar(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
-                new { selfAssessmentId, candidateId }
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                new { selfAssessmentId, delegateUserId }
             );
 
             if (enrolmentExists == 0)
             {
                 enrolmentExists = connection.Execute(
                     @"INSERT INTO [dbo].[CandidateAssessments]
-                           ([CandidateID]
-                           ,[SelfAssessmentID])
+                           ([DelegateUserID]
+                           ,[SelfAssessmentID]
+                           ,[CentreID])
                      VALUES
-                           (@candidateId,
-                           @selfAssessmentId)",
-                    new { selfAssessmentId, candidateId }
+                           (@delegateUserId,
+                           @selfAssessmentId,
+                            @centreId)",
+                    new { selfAssessmentId, delegateUserId, centreId }
                 );
             }
 
@@ -458,32 +479,34 @@ namespace DigitalLearningSolutions.Data.DataServices
             {
                 logger.LogWarning(
                     "Not enrolled delegate on self assessment as db insert failed. " +
-                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
+                    $"Self assessment id: {selfAssessmentId}, delgate user id: {delegateUserId}"
                 );
             }
         }
 
-        public int EnrolSelfAssessment(int selfAssessmentId, int candidateId)
+        public int EnrolSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId)
         {
             var enrolmentExists = connection.QuerySingle<int>(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
-                new { selfAssessmentId, candidateId }
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                new { selfAssessmentId, delegateUserId }
             );
 
             if (enrolmentExists == 0)
             {
                 enrolmentExists = connection.Execute(
                     @"INSERT INTO [dbo].[CandidateAssessments]
-                           ([CandidateID]
-                           ,[SelfAssessmentID])
+                           ([delegateUserID]
+                           ,[SelfAssessmentID]
+                           ,[CentreID])
                      OUTPUT Inserted.ID
                      VALUES
-                           (@candidateId,
-                           @selfAssessmentId)",
-                    new { selfAssessmentId, candidateId }
+                           (@delegateUserId,
+                           @selfAssessmentId,
+                           @centreId)",
+                    new { selfAssessmentId, delegateUserId, centreId }
                 );
             }
 
@@ -491,7 +514,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             {
                 logger.LogWarning(
                     "Not enrolled delegate on self assessment as db insert failed. " +
-                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
+                    $"Self assessment id: {selfAssessmentId}, delegate user id: {delegateUserId}"
                 );
             }
             return enrolmentExists;

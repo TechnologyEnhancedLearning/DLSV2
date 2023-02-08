@@ -15,14 +15,14 @@
         void SendReviewRequest(int id, int invitedByAdminId, bool required, bool reminder);
         void SendReviewOutcomeNotification(int reviewId);
         void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId);
-        void SendSupervisorDelegateConfirmed(int superviseDelegateId, int adminId, int delegateId);
+        void SendSupervisorDelegateConfirmed(int superviseDelegateId, int adminId, int delegateUserId);
         void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId);
         void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate);
         void SendReminderDelegateSelfAssessment(int adminId, int supervisorDelegateId, int candidateAssessmentId);
         void SendSupervisorMultipleResultsReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int countResults);
-        void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID, int delegateId, int? selfAssessmentResultId = null);
-        void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount, int delegateId, int? selfAssessmentResultId = null);
-        void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateId);
+        void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID, int delegateUserId, int? selfAssessmentResultId = null);
+        void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount, int delegateUserId, int? selfAssessmentResultId = null);
+        void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateUserId);
         void SendProfileAssessmentSignedOff(int supervisorDelegateId, int candidateAssessmentId, string? supervisorComments, bool signedOff, int adminId);
     }
 
@@ -205,7 +205,7 @@
             string emailSubjectLine = "Invite from Supervisor - Digital Learning Solutions";
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
-            if (supervisorDelegate.CandidateID == null)
+            if (supervisorDelegate.DelegateUserID == null)
             {
                 dlsUrlBuilder.Path += "Register";
                 dlsUrlBuilder.Query = $"centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegate.InviteHash}";
@@ -218,9 +218,9 @@
             }
         }
 
-        public void SendSupervisorDelegateConfirmed(int supervisorDelegateId, int adminId, int delegateId)
+        public void SendSupervisorDelegateConfirmed(int supervisorDelegateId, int adminId, int delegateUserId)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
             string emailSubjectLine = "Supervisor Confirmed - Digital Learning Solutions";
             var builder = new BodyBuilder();
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName}
@@ -298,10 +298,10 @@ If this looks like a mistake, please contact {supervisorDelegate.SupervisorName}
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
 
-        public void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID, int delegateId, int? selfAssessmentResultId = null)
+        public void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID, int delegateUserId, int? selfAssessmentResultId = null)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateId);
-            if (supervisorDelegate == null || supervisorDelegate.CandidateID == null || supervisorDelegate.SupervisorAdminID == null)
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateUserId);
+            if (supervisorDelegate == null || supervisorDelegate.DelegateUserID == null || supervisorDelegate.SupervisorAdminID == null)
             {
                 return;
             }
@@ -327,12 +327,12 @@ If this looks like a mistake, please contact {supervisorDelegate.SupervisorName}
             return dlsUrlBuilder.Uri.ToString();
         }
 
-        public void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount, int delegateId, int? selfAssessmentResultId)
+        public void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount, int delegateUserId, int? selfAssessmentResultId)
         {
             var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisorById(candidateAssessmentSupervisorId);
             int supervisorDelegateId = candidateAssessmentSupervisor.SupervisorDelegateId;
             int candidateAssessmentId = candidateAssessmentSupervisor.CandidateAssessmentID;
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateUserId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentSupervisor.CandidateAssessmentID);
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Self Assessment Results Review Request - Digital Learning Solutions";
             string? profileReviewUrl = GetSupervisorProfileReviewUrl(supervisorDelegateId, candidateAssessmentId, selfAssessmentResultId);
@@ -344,12 +344,12 @@ If this looks like a mistake, please contact {supervisorDelegate.SupervisorName}
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.SupervisorEmail));
         }
 
-        public void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateId)
+        public void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateUserId)
         {
             var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisorById(candidateAssessmentSupervisorId);
             int supervisorDelegateId = candidateAssessmentSupervisor.SupervisorDelegateId;
             int candidateAssessmentId = candidateAssessmentSupervisor.CandidateAssessmentID;
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateUserId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentSupervisor.CandidateAssessmentID);
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Self Assessment Sign-off Request - Digital Learning Solutions";
             string? profileReviewUrl = GetSupervisorProfileReviewUrl(supervisorDelegateId, candidateAssessmentId);
