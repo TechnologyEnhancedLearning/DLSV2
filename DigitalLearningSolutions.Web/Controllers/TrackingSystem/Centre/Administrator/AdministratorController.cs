@@ -166,8 +166,8 @@
             AdminRoles adminRoles
         )
         {
-            var (adminUser, _) = userService.GetUsersById(User.GetUserId(), null);
-
+            var adminId = User.GetAdminId();
+            var (adminUser, _) = userService.GetUsersById(adminId, null);
             var centreName = adminUser.CentreName;
 
             var (delegateUserEmailDetails, _) = userService.GetUsersById(adminIdToPromote, null);
