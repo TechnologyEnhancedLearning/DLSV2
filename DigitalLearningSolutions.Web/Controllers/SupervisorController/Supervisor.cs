@@ -1007,5 +1007,16 @@
 
             }
         }
+        [Route("/Supervisor/Staff/{reviewId}/ResendInvite")]
+        public IActionResult ResendInvite(int reviewId)
+        {
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(reviewId, GetAdminId(), 0);
+            if (reviewId > 0)
+            {
+                frameworkNotificationService.SendSupervisorDelegateReminder(reviewId, GetAdminId());
+                supervisorService.UpdateNotificationSent(reviewId);
+            }
+            return RedirectToAction("MyStaffList");
+        }
     }
 }
