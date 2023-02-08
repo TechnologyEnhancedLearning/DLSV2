@@ -3,27 +3,36 @@
 @model CheckboxesViewModel
 
 <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+            <label class="nhsuk-fieldset__heading">
+                @Model.Label
+            </label>
+        </legend>
 
-  <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Label.RemoveWhitespace()-hint">
-    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-      <label class="nhsuk-fieldset__heading">
-        @Model.Label
-      </label>
-    </legend>
+        @if (Model.HintText != null)
+        {
+            <div class="nhsuk-hint" id="@Model.Label.RemoveWhitespace()-hint">
+                @Html.Raw(Model.HintText)
+            </div>
+        }
+        @if (
+        Model.Required
+        && Model.Checkboxes.Where(x => x.Value).Count() == 0
+        )
+        {
+            <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+                <span class="error-message--margin-bottom-1 nhsuk-error-message">
+                    <span>@Model.ErrorMessage</span>
+                </span>
+            </div>
+        }
 
-    @if (Model.HintText != null)
-    {
-      <div class="nhsuk-hint" id="@Model.Label.RemoveWhitespace()-hint">
-        @Html.Raw(Model.HintText)
-      </div>
-    }
-
-    <div class="nhsuk-checkboxes">
-      @foreach (var checkbox in Model.Checkboxes)
-      {
-        <partial name="_CheckboxItem" model="checkbox" />
-      }
-    </div>
-  </fieldset>
-
+        <div class="nhsuk-checkboxes">
+            @foreach (var checkbox in Model.Checkboxes)
+            {
+                <partial name="_CheckboxItem" model="checkbox" />
+            }
+        </div>
+    </fieldset>
 </div>

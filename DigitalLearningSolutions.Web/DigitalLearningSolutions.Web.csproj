@@ -68,7 +68,7 @@
         <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.0.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
-        <PackageReference Include="NHSUKViewComponents.Web" Version="1.0.3" />
+        <PackageReference Include="NHSUKViewComponents.Web" Version="1.0.6" />
         <PackageReference Include="Npm" Version="3.5.2" />
         <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.5.0" />
