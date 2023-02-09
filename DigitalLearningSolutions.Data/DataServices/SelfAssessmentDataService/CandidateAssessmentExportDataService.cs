@@ -9,7 +9,7 @@
         public CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId, int delegateUserID)
         {
             return connection.QuerySingle<CandidateAssessmentExportSummary>(
-                @"SELECT sa.Name AS SelfAssessment, c.FirstName + ' ' + c.LastName AS CandidateName, c.ProfessionalRegistrationNumber AS CandidatePrn, ca.StartedDate AS StartDate,
+                @"SELECT sa.Name AS SelfAssessment, u.FirstName + ' ' + u.LastName AS CandidateName, u.ProfessionalRegistrationNumber AS CandidatePrn, ca.StartedDate AS StartDate,
                  (SELECT COUNT(sas.CompetencyID) AS CompetencyAssessmentQuestionCount
                  FROM    SelfAssessmentStructure AS sas INNER JOIN
                               CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID LEFT OUTER JOIN
@@ -107,11 +107,11 @@
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (caoc1.IncludedInSelfAssessment = 1) OR
                               (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (NOT (sar1.SupportingComments IS NULL)) OR
                               (ca1.ID = ca.ID) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL))) AS MeetingCount, 
-             CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN casv.Verified ELSE NULL END AS SignedOff, CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN au.Forename + ' ' + au.Surname ELSE NULL END AS 'Signatory', CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN (SELECT TOP(1) ProfessionalRegistrationNumber FROM Candidates as ca WHERE ca.EmailAddress = au.Email AND ca.CentreID = au.CentreID AND ca.Active = 1 AND ca.ProfessionalRegistrationNumber IS NOT NULL) ELSE NULL END AS SignatoryPrn
+             CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN casv.Verified ELSE NULL END AS SignedOff, CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN au.Forename + ' ' + au.Surname + ' (' + au.CentreName + ')' ELSE NULL END AS 'Signatory', CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN (SELECT TOP(1) ProfessionalRegistrationNumber FROM Candidates as ca WHERE ca.EmailAddress = au.Email AND ca.CentreID = au.CentreID AND ca.Active = 1 AND ca.ProfessionalRegistrationNumber IS NOT NULL) ELSE NULL END AS SignatoryPrn
 FROM   CandidateAssessmentSupervisorVerifications AS casv RIGHT OUTER JOIN
              CandidateAssessments AS ca INNER JOIN
-             SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
-             Candidates AS c ON ca.CandidateID = c.CandidateID ON casv.ID =
+             SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN Users AS u
+			 ON u.ID = ca.DelegateUserID ON casv.ID =
                  (SELECT MAX(casv1.ID) AS ID
                  FROM    CandidateAssessmentSupervisorVerifications as casv1 INNER JOIN CandidateAssessmentSupervisors as cas1 ON casv1.CandidateAssessmentSupervisorID = cas1.ID
                  WHERE (cas1.CandidateAssessmentID = ca.ID)) LEFT OUTER JOIN
@@ -137,7 +137,7 @@ WHERE (ca.ID = @candidateAssessmentId  AND ca.DelegateUserID  = @delegateUserID)
 					COALESCE((SELECT LevelLabel FROM AssessmentQuestionLevels as aql WHERE aql.AssessmentQuestionID = s.AssessmentQuestionID AND aql.LevelValue = s.Result), CAST(s.Result AS nvarchar)) AS Result,
                     s.SupportingComments,
                     sv.ID AS SelfAssessmentResultSupervisorVerificationId,
-                    au.Forename + ' ' + au.Surname AS Reviewer,
+                    au.Forename + ' ' + au.Surname+ ' (' + au.CentreName + ')' AS Reviewer,
 					COALESCE((SELECT TOP(1) ProfessionalRegistrationNumber FROM Candidates as ca WHERE ca.EmailAddress = au.Email AND ca.CentreID = au.CentreID AND ca.Active = 1 AND ca.ProfessionalRegistrationNumber IS NOT NULL), '') AS PRN,
                     sv.Verified,
                     sv.Comments,

@@ -31,7 +31,7 @@
 
       @if (Model.OnlyItemInOnlySection)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close">Return to current activities</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
       }
       else if (Model.OnlyItemInThisSection)
       {

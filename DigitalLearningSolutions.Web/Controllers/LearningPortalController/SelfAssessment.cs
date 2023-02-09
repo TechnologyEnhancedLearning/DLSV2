@@ -539,7 +539,7 @@
 
             return View("Current/SetCompleteByDate", model);
         }
-
+        [NoCaching]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors")]
         public IActionResult ManageSupervisors(int selfAssessmentId)
         {
@@ -845,6 +845,7 @@
                     : supervisorService.GetSupervisorRoleById((int)sessionAddSupervisor.SelfAssessmentSupervisorRoleId)
                         .RoleName,
                 RoleCount = roles.Count(),
+                SupervisorAtCentre = supervisor.CentreName
             };
             return View("SelfAssessments/AddSupervisorSummary", summaryModel);
         }

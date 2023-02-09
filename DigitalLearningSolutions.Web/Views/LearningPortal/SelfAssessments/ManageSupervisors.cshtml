@@ -48,6 +48,9 @@
                     Name/role
                 </th>
                 <th role="columnheader" class="" scope="col">
+                    Centre
+                </th>
+                <th role="columnheader" class="" scope="col">
                     Action
                 </th>
             </tr>
@@ -56,11 +59,16 @@
             @foreach (var supervisor in Model.Supervisors)
             {
                 <tr role="row" class="nhsuk-table__row">
-                    <td class="nhsuk-table__cell">
-                        <span class="nhsuk-table-responsive__heading">Name/role </span>
-                        @supervisor.SupervisorName, @supervisor.RoleName
+                  <td class="nhsuk-table__cell">
+                      <span class="nhsuk-table-responsive__heading">Name/role </span>
+                      @supervisor.SupervisorName, @supervisor.RoleName
 
-            </td>
+                  </td>
+                  <td class="nhsuk-table__cell">
+                        <span class="nhsuk-table-responsive__heading">Centre </span>
+                        @supervisor.CentreName
+
+                   </td>
             <td class="nhsuk-table__cell">
               <span class="nhsuk-table-responsive__heading">Actions </span>
               @if (supervisor.AddedByDelegate)
@@ -81,12 +89,15 @@ else
 @if (Model.SuggestedSupervisors.Any())
 {
     <h2 class="nhsuk-u-margin-top-6">Quick add</h2>
-    <table class="nhsuk-table">
+    <table class="nhsuk-table-responsive">
         <caption class="nhsuk-table__caption">Supervisors for your other activities</caption>
         <thead role="rowgroup" class="nhsuk-table__head">
             <tr role="row">
                 <th role="columnheader" class="" scope="col">
-                    Name
+                    Name/role
+                </th>
+                <th role="columnheader" class="" scope="col">
+                  Centre
                 </th>
                 <th role="columnheader" class="" scope="col">
                     Action
@@ -97,9 +108,17 @@ else
             @foreach (var supervisor in Model.SuggestedSupervisors)
             {
                 <tr role="row" class="nhsuk-table__row">
-                    <td class="nhsuk-table__cell">@supervisor.SupervisorName</td>
+                    <td class="nhsuk-table__cell">
+                      <span class="nhsuk-table-responsive__heading">Name/role </span>
+                      @supervisor.SupervisorName, @supervisor.RoleName
+                    </td>
+                    <td class="nhsuk-table__cell">
+                      <span class="nhsuk-table-responsive__heading">Centre </span>
+                      @supervisor.CentreName
+                    </td>
                     <td class="nhsuk-table__cell ">
-                        <a asp-action="QuickAddSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Add</a>
+                      <span class="nhsuk-table-responsive__heading">Actions </span>
+                      <a asp-action="QuickAddSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Add</a>
                     </td>
                 </tr>
             }

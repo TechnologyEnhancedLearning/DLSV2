@@ -12,6 +12,7 @@
         public int PassedSections { get; }
         public int Sections { get; }
         public int ProgressId { get; }
+        public string? CentreName { get; }
 
         protected StartedLearningItemViewModel(StartedLearningItem course) : base(course)
         {
@@ -21,6 +22,7 @@
             PassedSections = course.Passes;
             Sections = course.Sections;
             ProgressId = course.ProgressID;
+            CentreName = course.CentreName;
         }
 
         public bool HasDiagnosticScore()

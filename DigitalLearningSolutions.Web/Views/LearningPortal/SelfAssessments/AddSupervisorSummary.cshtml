@@ -51,6 +51,19 @@
       }
     </dd>
     </div>
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Centre
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.SupervisorAtCentre
+    </dd>
+    <dd class="nhsuk-summary-list__actions">
+      <a asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+        Change
+      </a>
+    </dd>
+    </div>
   </dl>
   <form method="post">
     <button class="nhsuk-button" type="submit">Submit</button>

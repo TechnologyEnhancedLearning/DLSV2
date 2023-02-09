@@ -42,7 +42,8 @@
                 COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
                 sasr.SelfAssessmentReview,
                 sasr.ResultsReview,
-                sd.AddedByDelegate
+                sd.AddedByDelegate,
+                au.CentreName
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId
@@ -116,7 +117,8 @@
                     au.Forename + ' ' + au.Surname AS SupervisorName,
                     (CASE WHEN au.Supervisor = 1 THEN 'Supervisor'
 			             WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor'
-		            END) AS RoleName
+		            END) AS RoleName,
+                    au.CentreName
                 FROM SupervisorDelegates AS sd
                 INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
                 INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
@@ -232,7 +234,8 @@
                         Active,
                         Email,
                         ProfileImage,
-                        IsFrameworkDeveloper
+                        IsFrameworkDeveloper,
+                        CentreName
                         FROM AdminUsers
                         WHERE 
                         CentreID IN (SELECT DA.CentreID FROM DelegateAccounts DA
@@ -261,7 +264,7 @@
         public Administrator GetSupervisorByAdminId(int supervisorAdminId)
         {
             return connection.Query<Administrator>(
-                @"SELECT AdminID, Forename, Surname, Active, Email, ProfileImage, IsFrameworkDeveloper
+                @"SELECT AdminID, Forename, Surname, Active, Email, ProfileImage, IsFrameworkDeveloper, CentreID, CentreName
                     FROM AdminUsers
                     WHERE (AdminID = @supervisorAdminId)",
                 new { supervisorAdminId }
@@ -284,7 +287,8 @@
                         casv.EmailSent,
                         casv.Verified,
                         casv.Comments,
-                        casv.SignedOff
+                        casv.SignedOff,
+                        sd.Removed
                     FROM CandidateAssessmentSupervisorVerifications AS casv
                     INNER JOIN CandidateAssessmentSupervisors AS cas
                         ON casv.CandidateAssessmentSupervisorID = cas.ID

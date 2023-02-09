@@ -99,22 +99,21 @@
             var supervisorEmail = GetUserEmail();
 
             ModelState.Remove("Page");
+
             if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             {
                 string delegateEmail = model.DelegateEmail ?? String.Empty;
                 int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
-                if(approvedDelegateId != null && approvedDelegateId > 0)
-                {
-                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address which has approved delegate account.");
-                    ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
-                    return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
-                }
+
                 AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else
             {
-                if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
+                if (supervisorEmail == model.DelegateEmail)
+                {
+                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with.");
+                }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
@@ -965,7 +964,7 @@
 
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
 
-                var (adminUser, delegateUser) = userService.GetUsersById(User.GetUserId(), supervisorDelegateDetail.DelegateUserID);
+                var (adminUser, delegateUser) = userService.GetUsersById(GetAdminId(), supervisorDelegateDetail.DelegateUserID);
 
                 var centreName = adminUser.CentreName;
 
@@ -1006,6 +1005,18 @@
                 return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
 
             }
+        }
+
+        [Route("/Supervisor/Staff/{reviewId}/ResendInvite")]
+        public IActionResult ResendInvite(int reviewId)
+        {
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(reviewId, GetAdminId(), 0);
+            if (reviewId > 0)
+            {
+                frameworkNotificationService.SendSupervisorDelegateInvite(reviewId, GetAdminId());
+                supervisorService.UpdateNotificationSent(reviewId);
+            }
+            return RedirectToAction("MyStaffList");
         }
     }
 }
