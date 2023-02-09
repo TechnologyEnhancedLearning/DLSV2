@@ -11,7 +11,7 @@
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        IEnumerable<GroupDelegate> GetGroupDelegates(int groupId,bool excludeGuid);
+        IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
         IEnumerable<GroupCourse> GetGroupCoursesVisibleToCentre(int centreId);
 
@@ -186,13 +186,8 @@
             );
         }
 
-        public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId, bool excludeGuid)
+        public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
         {
-            string whereClause = string.Empty;
-            if (excludeGuid)
-            {
-                whereClause = "AND TRY_CAST(u.PrimaryEmail AS UNIQUEIDENTIFIER) IS NULL";
-            }
             return connection.Query<GroupDelegate>(
                 $@"SELECT
                         gd.GroupDelegateID,
@@ -210,7 +205,7 @@
                     JOIN DelegateAccounts AS da ON da.ID = gd.DelegateID
                     JOIN Users AS u ON u.ID = da.UserID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
-                    WHERE gd.GroupID = @groupId {whereClause}",
+                    WHERE gd.GroupID = @groupId",
                 new { groupId }
             );
         }

@@ -58,16 +58,11 @@
             return user;
         }
 
-        public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId, bool excludeGuid=false)
+        public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId)
         {
-            string whereClause = string.Empty;
-            if (excludeGuid)
-            {
-                whereClause = "AND TRY_CAST(COALESCE(ucd.Email, u.PrimaryEmail) AS UNIQUEIDENTIFIER) IS NULL";
-            }
             return connection.Query<DelegateUserCard>(
                 @$"{DelegateUserCardSelectQuery}
-                        WHERE da.CentreId = @centreId AND da.Approved = 1 {whereClause}",
+                        WHERE da.CentreId = @centreId AND da.Approved = 1",
                 new { centreId }
             ).ToList();
         }

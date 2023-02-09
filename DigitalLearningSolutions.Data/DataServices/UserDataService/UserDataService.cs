@@ -87,7 +87,7 @@
 
         DelegateUserCard? GetDelegateUserCardById(int id);
 
-        List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId, bool excludeGuid = false);
+        List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
 
         List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
 

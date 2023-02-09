@@ -75,7 +75,7 @@
 
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        IEnumerable<GroupDelegate> GetGroupDelegates(int groupId, bool excludeGuid = false);
+        IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
         string? GetGroupName(int groupId, int centreId);
 
@@ -489,9 +489,9 @@
             return groupsDataService.GetGroupsForCentre(centreId);
         }
 
-        public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId, bool excludeGuid = false)
+        public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
         {
-            return groupsDataService.GetGroupDelegates(groupId,excludeGuid);
+            return groupsDataService.GetGroupDelegates(groupId).Where(gd => !Guid.TryParse(gd.PrimaryEmail, out _));
         }
 
         public IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId)

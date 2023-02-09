@@ -111,7 +111,7 @@
                 JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
 
-            A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2,false)).Returns(delegateUserCards);
+            A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
 
             // When
             var resultBytes = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(2);
@@ -143,7 +143,7 @@
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId))
                 .Returns(new CentreRegistrationPrompts(centreId, centreRegistrationPrompts));
 
-            A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2,false)).Returns(delegateUserCards);
+            A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
 
             // When
             var resultBytes = delegateDownloadFileService.GetAllDelegatesFileForCentre(2, null, null, GenericSortingHelper.Ascending, null);

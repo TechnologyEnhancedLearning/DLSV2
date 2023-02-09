@@ -593,8 +593,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                                             cap.Active = 1)))
                         AND da.CentreID = @centreId
                         AND pr.CustomisationID = @customisationId
-                        AND ap.DefaultContentTypeID <> 4
-                        AND TRY_CAST(COALESCE(ucd.Email, u.PrimaryEmail) AS UNIQUEIDENTIFIER) IS NULL",
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
             );
         }
