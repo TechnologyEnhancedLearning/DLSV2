@@ -13,24 +13,33 @@
 
     <div class="nhsuk-grid-column-three-quarters">
         <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-7">
-          <span class="nhsuk-caption-l">
+            <span class="nhsuk-caption-l">
                 Beta
-              <span class="nhsuk-u-visually-hidden"> - </span>
+                <span class="nhsuk-u-visually-hidden"> - </span>
             </span>@ViewData["Title"]
-            </h1>
-            <p class="nhsuk-lede-text">This page will be used to provide access to comprehensive competency framework self assessment reports for your centre. For now, it provides access to temporary reports for specific self assessments.</p>
-            <vc:action-link asp-controller="SelfAssessmentReports" asp-action="DownloadDigitalCapabilityToExcel" link-text="Download Digital Capability Self Assessment Report" />
-            @if(Model.SelfAssessmentSelects.Any())
-    {
-      <h2>Supervised self assessment reports</h2>
-      @foreach (var report in Model.SelfAssessmentSelects)
-      {
-        var routeParamsForActionLink = new Dictionary<string, string> {
-        {
-          "selfAssessmentId", report.Id.ToString() },
-        };
-            <vc:action-link asp-controller="SelfAssessmentReports" asp-action="DownloadSelfAssessmentReport" link-text=@($"Download {report.Name} Report") asp-all-route-data="@routeParamsForActionLink" />
-      }
-    }
-  </div>
+        </h1>
+        <p class="nhsuk-lede-text">Use this page to download Excel learner activity reports for competency self assessments at your centre.</p>
+        <ul>
+            <li>
+                <a asp-controller="SelfAssessmentReports" asp-action="DownloadDigitalCapabilityToExcel">Digital Capability Self Assessment - Download report</a>
+
+            </li>
+            @if (Model.SelfAssessmentSelects.Any())
+            {
+                @foreach (var report in Model.SelfAssessmentSelects)
+                {
+                    <li>
+                        @if (report.LearnerCount > 0)
+                        {
+                            <a asp-controller="SelfAssessmentReports" asp-action="DownloadSelfAssessmentReport" asp-route-selfAssessmentId="@report.Id">@($"{report.Name} ({report.LearnerCount} learners) - Download report")</a>
+                        }
+                        else
+                        {
+                            @($"{report.Name} (0 learners) - Report unavailable")
+                        }
+                    </li>
+                }
+            }
+        </ul>
+    </div>
 </div>

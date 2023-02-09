@@ -93,8 +93,30 @@
         public byte[] GetSelfAssessmentExcelExportForCentre(int centreId, int selfAssessmentId)
         {
             var selfAssessmentReportData = selfAssessmentReportDataService.GetSelfAssessmentReportDataForCentre(centreId, selfAssessmentId);
+            var reportData = selfAssessmentReportData.Select(
+                      x => new
+                      {
+                          x.SelfAssessment,
+                          x.Learner,
+                          x.PRN,
+                          x.JobGroup,
+                          x.ProgrammeCourse,
+                          x.Organisation,
+                          x.DepartmentTeam,
+                          x.DLSRole,
+                          x.Registered,
+                          x.Started,
+                          x.LastAccessed,
+                          x.OptionalProficiencies,
+                          x.SelfAssessedAchieved,
+                          x.ConfirmedResults,
+                          x.SignOffRequested,
+                          x.SignOffAchieved,
+                          x.ReviewedDate
+                      }
+                      );
             using var workbook = new XLWorkbook();
-            AddSheetToWorkbook(workbook, "SelfAssessmentLearners", selfAssessmentReportData);
+            AddSheetToWorkbook(workbook, "SelfAssessmentLearners", reportData);
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();

@@ -26,13 +26,18 @@
         public IEnumerable<SelfAssessmentSelect> GetSelfAssessmentsForReportList(int centreId, int? categoryId)
         {
             return connection.Query<SelfAssessmentSelect>(
-                @"SELECT csa.SelfAssessmentID AS Id, sa.Name
+                @"SELECT csa.SelfAssessmentID AS Id, sa.Name,
+                    (SELECT COUNT(*) FROM
+                        CandidateAssessments ca1 INNER JOIN
+                        Candidates c1 ON ca1.CandidateID = c1.CandidateID
+                    WHERE c1.CentreID = @centreId AND ca1.SelfAssessmentID = sa.ID AND ca1.RemovedDate IS NULL) AS LearnerCount
                     FROM   CentreSelfAssessments AS csa INNER JOIN
                                  SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
                     WHERE (csa.CentreID = @centreId) AND (sa.CategoryID = @categoryId) AND (sa.SupervisorResultsReview = 1) AND (sa.ArchivedDate IS NULL) OR
                                  (csa.CentreID = @centreId) AND (sa.CategoryID = @categoryId) AND (sa.SupervisorSelfAssessmentReview = 1) AND (sa.ArchivedDate IS NULL) OR
                                  (csa.CentreID = @centreId) AND (@categoryId = 0) AND (sa.SupervisorResultsReview = 1) AND (sa.ArchivedDate IS NULL) OR
-                                 (csa.CentreID = @centreId) AND (@categoryId = 0) AND (sa.SupervisorSelfAssessmentReview = 1) AND (sa.ArchivedDate IS NULL)",
+                                 (csa.CentreID = @centreId) AND (@categoryId = 0) AND (sa.SupervisorSelfAssessmentReview = 1) AND (sa.ArchivedDate IS NULL)
+                    ORDER BY sa.Name",
                 new { centreId, categoryId=categoryId??=0 }
             );
         }
@@ -94,7 +99,7 @@
 	                    SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID 
 	                    LEFT OUTER JOIN LatestAssessmentResults AS LAR ON LAR.CandidateID = can.CandidateID
                     WHERE
-                        (sa.ID = @SelfAssessmentID) AND (sa.ArchivedDate IS NULL) AND (c.Active = 1) AND (ca.RemovedDate IS NULL) AND (ca.StartedDate > CONVERT(DATETIME, '2022-07-31 00:00:00', 102))
+                        (sa.ID = @SelfAssessmentID) AND (sa.ArchivedDate IS NULL) AND (c.Active = 1) AND (ca.RemovedDate IS NULL)
                     Group by sa.Name
 	                    , can.LastName + ', ' + can.FirstName
 	                    , can.ProfessionalRegistrationNumber
