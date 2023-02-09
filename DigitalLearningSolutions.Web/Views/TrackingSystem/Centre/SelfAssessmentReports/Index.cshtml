@@ -1,4 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SelfAssessmentReports
+@model SelfAssessmentReportsViewModel
 @{
     ViewData["Title"] = "Self assessment reports";
 }
@@ -18,5 +20,17 @@
             </h1>
             <p class="nhsuk-lede-text">This page will be used to provide access to comprehensive competency framework self assessment reports for your centre. For now, it provides access to temporary reports for specific self assessments.</p>
             <vc:action-link asp-controller="SelfAssessmentReports" asp-action="DownloadDigitalCapabilityToExcel" link-text="Download Digital Capability Self Assessment Report" />
-    </div>
+            @if(Model.SelfAssessmentSelects.Any())
+    {
+      <h2>Supervised self assessment reports</h2>
+      @foreach (var report in Model.SelfAssessmentSelects)
+      {
+        var routeParamsForActionLink = new Dictionary<string, string> {
+        {
+          "selfAssessmentId", report.Id.ToString() },
+        };
+            <vc:action-link asp-controller="SelfAssessmentReports" asp-action="DownloadSelfAssessmentReport" link-text=@($"Download {report.Name} Report") asp-all-route-data="@routeParamsForActionLink" />
+      }
+    }
+  </div>
 </div>

@@ -9,6 +9,8 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Data.Enums;
     using System;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SelfAssessmentReports;
+
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
@@ -26,10 +28,13 @@
         }
         public IActionResult Index()
         {
-            return View();
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList(centreId, categoryId));
+            return View(model);
         }
         [HttpGet]
-        [Route("Download")]
+        [Route("DownloadDcsa")]
         public IActionResult DownloadDigitalCapabilityToExcel()
         {
             var centreId = User.GetCentreId();
@@ -41,5 +46,18 @@
                 fileName
             );
         }
+    [HttpGet]
+    [Route("DownloadReport")]
+    public IActionResult DownloadSelfAssessmentReport(int selfAssessmentId)
+    {
+      var centreId = User.GetCentreId();
+      var dataFile = selfAssessmentReportService.GetSelfAssessmentExcelExportForCentre(centreId, selfAssessmentId);
+      var fileName = $"Competency Self Assessment Report - Centre {centreId} - downloaded {DateTime.Today:yyyy-MM-dd}.xlsx";
+      return File(
+          dataFile,
+          FileHelper.GetContentTypeFromFileName(fileName),
+          fileName
+      );
     }
+  }
 }
