@@ -99,8 +99,8 @@
             var supervisorEmail = GetUserEmail();
 
             ModelState.Remove("Page");
-
-            if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
+            //if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
+            if (ModelState.IsValid)
             {
                 string delegateEmail = model.DelegateEmail ?? String.Empty;
                 int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
@@ -110,10 +110,7 @@
             }
             else
             {
-                if (supervisorEmail == model.DelegateEmail)
-                {
-                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with.");
-                }
+                // if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
@@ -139,7 +136,8 @@
                 var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
                 foreach (var delegateEmail in delegateEmailsList)
                 {
-                    if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
+                    //if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
+                    if (delegateEmail.Length > 0)
                     {
                         if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
                         {
@@ -830,6 +828,101 @@
             }
             TempData.Clear();
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
+        }
+
+        public IActionResult QuickAddSupervisor(int selfAssessmentId, int supervisorDelegateId, int candidateAssessmentId)
+        {
+            var supervisorDelegate =
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
+            var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
+
+            if (supervisorRoles.Any() && supervisorRoles.Count() > 1)
+            {
+                var model = new EnrolDelegateSupervisorRoleViewModel()
+                {
+                    SupervisorDelegateDetail = supervisorDelegate,
+                    RoleProfile = roleProfile,
+                    SelfAssessmentSupervisorRoleId = null,
+                    SelfAssessmentSupervisorRoles = supervisorRoles
+                };
+                return View("SelectDelegateSupervisorRole", model);
+            }
+            else
+            {
+                supervisorService.InsertCandidateAssessmentSupervisor(
+                    candidateAssessmentId,
+                    supervisorDelegateId,
+                    selfAssessmentId,
+                    supervisorRoles.FirstOrDefault()?.ID
+                );
+                return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult QuickAddSupervisor(EnrolDelegateSupervisorRoleViewModel supervisorRole, int selfAssessmentId, int supervisorDelegateId, int candidateAssessmentId)
+        {
+            var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
+            var supervisorDelegate =
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            if (supervisorRole.SelfAssessmentSupervisorRoleId == null)
+            {
+                var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
+                var model = new EnrolDelegateSupervisorRoleViewModel()
+                {
+                    SupervisorDelegateDetail = supervisorDelegate,
+                    RoleProfile = roleProfile,
+                    SelfAssessmentSupervisorRoleId = null,
+                    SelfAssessmentSupervisorRoles = supervisorRoles
+                };
+                return View("SelectDelegateSupervisorRole", model);
+            }
+            else
+            {
+                var model = new EnrolDelegateSummaryViewModel
+                {
+                    RoleProfile = roleProfile,
+                    SupervisorDelegateDetail = supervisorDelegate,
+                    SupervisorRoleName = supervisorRole.SelfAssessmentSupervisorRoleId == null
+                    ? "Supervisor" : supervisorService.GetSupervisorRoleById((int)supervisorRole.SelfAssessmentSupervisorRoleId).RoleName,
+                    SupervisorRoleCount = supervisorRole.SelfAssessmentSupervisorRoleId == null
+                        ? 0 : supervisorService.GetSupervisorRolesForSelfAssessment((int)supervisorRole.SelfAssessmentSupervisorRoleId).Count()
+
+                };
+                return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, supervisorRole.SelfAssessmentSupervisorRoleId));
+            }
+        }
+
+
+        [HttpGet]
+        public IActionResult QuickAddSupervisorConfirm(int? selfAssessmentSupervisorRoleId, int selfAssessmentId, int supervisorDelegateId, int candidateAssessmentId)
+        {
+            if (!selfAssessmentSupervisorRoleId.HasValue)
+            {
+                var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
+                var supervisorDelegate =
+                    supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
+                var model = new EnrolDelegateSupervisorRoleViewModel()
+                {
+                    SupervisorDelegateDetail = supervisorDelegate,
+                    RoleProfile = roleProfile,
+                    SelfAssessmentSupervisorRoleId = null,
+                    SelfAssessmentSupervisorRoles = supervisorRoles
+                };
+                return View("SelectDelegateSupervisorRole", model);
+            }
+            else
+            {
+                supervisorService.InsertCandidateAssessmentSupervisor(
+                    candidateAssessmentId,
+                    supervisorDelegateId,
+                    selfAssessmentId,
+                    selfAssessmentSupervisorRoleId.Value
+                );
+                return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
+            }
         }
 
         public IActionResult RemoveDelegateSelfAssessment(int candidateAssessmentId, int supervisorDelegateId)
