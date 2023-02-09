@@ -2,6 +2,7 @@
 {
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -9,17 +10,30 @@
     public interface ISelfAssessmentReportService
     {
         byte[] GetDigitalCapabilityExcelExportForCentre(int centreId);
+        byte[] GetSelfAssessmentExcelExportForCentre(int centreId, int selfAssessmentId);
+        IEnumerable<SelfAssessmentSelect> GetSelfAssessmentsForReportList(int centreId, int? categoryId);
     }
     public class SelfAssessmentReportService : ISelfAssessmentReportService
     {
         private readonly IDCSAReportDataService dcsaReportDataService;
+        private readonly ISelfAssessmentReportDataService selfAssessmentReportDataService;
 
         public SelfAssessmentReportService(
-            IDCSAReportDataService dcsaReportDataService
+            IDCSAReportDataService dcsaReportDataService,
+            ISelfAssessmentReportDataService selfAssessmentReportDataService
         )
         {
             this.dcsaReportDataService = dcsaReportDataService;
+            this.selfAssessmentReportDataService = selfAssessmentReportDataService;
         }
+        private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects)
+        {
+            var sheet = workbook.Worksheets.Add(sheetName);
+            var table = sheet.Cell(1, 1).InsertTable(dataObjects);
+            table.Theme = XLTableTheme.TableStyleLight9;
+            sheet.Columns().AdjustToContents();
+        }
+
         public byte[] GetDigitalCapabilityExcelExportForCentre(int centreId)
         {
             var delegateCompletionStatus = dcsaReportDataService.GetDelegateCompletionStatusForCentre(centreId);
@@ -71,12 +85,41 @@
             workbook.SaveAs(stream);
             return stream.ToArray();
         }
-        private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects)
+        public IEnumerable<SelfAssessmentSelect> GetSelfAssessmentsForReportList(int centreId, int? categoryId)
         {
-            var sheet = workbook.Worksheets.Add(sheetName);
-            var table = sheet.Cell(1, 1).InsertTable(dataObjects);
-            table.Theme = XLTableTheme.TableStyleLight9;
-            sheet.Columns().AdjustToContents();
+            return selfAssessmentReportDataService.GetSelfAssessmentsForReportList(centreId, categoryId);
+        }
+
+        public byte[] GetSelfAssessmentExcelExportForCentre(int centreId, int selfAssessmentId)
+        {
+            var selfAssessmentReportData = selfAssessmentReportDataService.GetSelfAssessmentReportDataForCentre(centreId, selfAssessmentId);
+            var reportData = selfAssessmentReportData.Select(
+                      x => new
+                      {
+                          x.SelfAssessment,
+                          x.Learner,
+                          x.PRN,
+                          x.JobGroup,
+                          x.ProgrammeCourse,
+                          x.Organisation,
+                          x.DepartmentTeam,
+                          x.DLSRole,
+                          x.Registered,
+                          x.Started,
+                          x.LastAccessed,
+                          x.OptionalProficiencies,
+                          x.SelfAssessedAchieved,
+                          x.ConfirmedResults,
+                          x.SignOffRequested,
+                          x.SignOffAchieved,
+                          x.ReviewedDate
+                      }
+                      );
+            using var workbook = new XLWorkbook();
+            AddSheetToWorkbook(workbook, "SelfAssessmentLearners", reportData);
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
         }
     }
 }
