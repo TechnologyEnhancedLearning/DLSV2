@@ -100,14 +100,15 @@
             var supervisorEmail = GetUserEmail();
 
             ModelState.Remove("Page");
-            if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
+            //if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
+            if (ModelState.IsValid)
             {
                 AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else
             {
-                if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
+                // if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
@@ -133,7 +134,8 @@
                 var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
                 foreach (var delegateEmail in delegateEmailsList)
                 {
-                    if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
+                    //if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
+                    if (delegateEmail.Length > 0)
                     {
                         if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
                         {
@@ -867,11 +869,11 @@
                     SupervisorDelegateDetail = supervisorDelegate,
                     SupervisorRoleName = supervisorRole.SelfAssessmentSupervisorRoleId == null
                     ? "Supervisor" : supervisorService.GetSupervisorRoleById((int)supervisorRole.SelfAssessmentSupervisorRoleId).RoleName,
-                                        SupervisorRoleCount = supervisorRole.SelfAssessmentSupervisorRoleId == null
+                    SupervisorRoleCount = supervisorRole.SelfAssessmentSupervisorRoleId == null
                         ? 0 : supervisorService.GetSupervisorRolesForSelfAssessment((int)supervisorRole.SelfAssessmentSupervisorRoleId).Count()
 
                 };
-                return View("SelectDelegateSupervisorRoleSummary",new Tuple<EnrolDelegateSummaryViewModel,int?>(model, supervisorRole.SelfAssessmentSupervisorRoleId));
+                return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, supervisorRole.SelfAssessmentSupervisorRoleId));
             }
         }
 
