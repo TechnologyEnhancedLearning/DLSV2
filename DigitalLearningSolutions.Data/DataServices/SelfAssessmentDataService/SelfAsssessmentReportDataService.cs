@@ -38,7 +38,7 @@
                                  (csa.CentreID = @centreId) AND (@categoryId = 0) AND (sa.SupervisorResultsReview = 1) AND (sa.ArchivedDate IS NULL) OR
                                  (csa.CentreID = @centreId) AND (@categoryId = 0) AND (sa.SupervisorSelfAssessmentReview = 1) AND (sa.ArchivedDate IS NULL)
                     ORDER BY sa.Name",
-                new { centreId, categoryId=categoryId??=0 }
+                new { centreId, categoryId = categoryId ??= 0 }
             );
         }
 
