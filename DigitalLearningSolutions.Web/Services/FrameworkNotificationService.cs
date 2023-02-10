@@ -380,7 +380,7 @@ If this looks like a mistake, please contact {supervisorDelegate.SupervisorName}
         public void SendSupervisorDelegateReminder(int supervisorDelegateId, int adminId)
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
-            string emailSubjectLine = "Reminder from Supervisor to complete the registration- Digital Learning Solutions";
+            string emailSubjectLine = "Registration reminder from supervisor - Digital Learning Solutions";
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
             if (supervisorDelegate.DelegateUserID == null)
