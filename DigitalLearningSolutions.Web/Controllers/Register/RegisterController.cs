@@ -74,7 +74,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             return View(model);
         }
-
+        
         [HttpGet]
         public IActionResult Start(int? centreId = null, string? inviteId = null)
         {
@@ -416,13 +416,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 userDataService,
                 CommonValidationErrorMessages.EmailInUseDuringDelegateRegistration
             );
-
-            RegistrationEmailValidator.ValidatePrimaryEmailWithCentre(
-                model.PrimaryEmail,
-                model.Centre,
-                ModelState,
-                supervisorService
-                );
 
             RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
                 model.CentreSpecificEmail,
