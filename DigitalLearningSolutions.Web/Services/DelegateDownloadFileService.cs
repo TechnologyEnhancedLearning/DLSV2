@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
@@ -174,7 +175,7 @@
             string? filterString
         )
         {
-            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId).Where(c => !Guid.TryParse(c.EmailAddress, out _));
             var searchedUsers = GenericSearchHelper.SearchItems(delegateUsers, searchString).AsQueryable();
             var filteredItems = FilteringHelper.FilterItems(searchedUsers, filterString).AsQueryable();
             var sortedItems = GenericSortingHelper.SortAllItems(

@@ -237,7 +237,7 @@
             int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetValidSupervisorsForActivity(centreId, selfAssessmentId, delegateUserId);
+            return selfAssessmentDataService.GetValidSupervisorsForActivity(centreId, selfAssessmentId, delegateUserId).Where(c => !Guid.TryParse(c.Email, out _));
         }
 
         public Administrator GetSupervisorByAdminId(int supervisorAdminId)
