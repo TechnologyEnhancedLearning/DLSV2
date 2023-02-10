@@ -164,16 +164,35 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             AND u.Active = 1 
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
+
             int existingId = (int)connection.ExecuteScalar(
-               @"SELECT COALESCE
-                 ((SELECT ID
-                  FROM    SupervisorDelegates
-                  WHERE (SupervisorEmail = @supervisorEmail) AND (DelegateEmail = @delegateEmail)), 0) AS ID",
-               new { supervisorEmail, delegateEmail });
+                @"SELECT COALESCE
+                 ((SELECT sd.ID
+                  FROM    SupervisorDelegates sd
+                    INNER JOIN AdminAccounts aa
+                    ON sd.SupervisorAdminID = aa.ID
+                  WHERE (sd.SupervisorEmail = @supervisorEmail)
+                    AND (sd.DelegateEmail = @delegateEmail)
+                    AND (aa.CentreID = @centreId)
+                  ), 0) AS ID",
+                new
+                {
+                    supervisorEmail,
+                    delegateEmail,
+                    centreId
+                }
+            );
 
             if (existingId > 0)
             {
-                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId WHERE (SupervisorAdminID = @supervisorAdminId) AND (DelegateEmail = @delegateEmail) AND (Removed IS NOT NULL)", new { supervisorAdminId, delegateEmail, delegateUserId });
+                var numberOfAffectedRows = connection.Execute(@"
+                    UPDATE SupervisorDelegates
+                    SET Removed = NULL,
+                        DelegateUserId = @delegateUserId
+                    WHERE (SupervisorAdminID = @supervisorAdminId)
+                        AND (DelegateEmail = @delegateEmail)
+                        AND (Removed IS NOT NULL)",
+                    new { supervisorAdminId, delegateEmail, delegateUserId });
                 return existingId;
             }
             else
@@ -201,10 +220,15 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 }
                 existingId = (int)connection.ExecuteScalar(
                  @"SELECT COALESCE
-                 ((SELECT ID
-                  FROM    SupervisorDelegates
-                  WHERE (SupervisorEmail = @supervisorEmail) AND (DelegateEmail = @delegateEmail)), 0) AS AdminID",
-               new { supervisorEmail, delegateEmail });
+                 ((SELECT sd.ID
+                  FROM    SupervisorDelegates sd
+                    INNER JOIN AdminAccounts aa
+                    ON sd.SupervisorAdminID = aa.ID
+                  WHERE (sd.SupervisorEmail = @supervisorEmail)
+                        AND (sd.DelegateEmail = @delegateEmail)
+                        AND (aa.CentreID = @centreId)
+                  ), 0) AS AdminID",
+               new { supervisorEmail, delegateEmail, centreId });
                 return existingId;
             }
         }
