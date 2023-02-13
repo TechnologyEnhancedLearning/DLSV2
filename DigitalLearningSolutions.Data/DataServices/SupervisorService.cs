@@ -442,7 +442,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL) AND (sar
 						    WHERE sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID
 					)
                 WHERE (sd.SupervisorAdminID = @adminId) AND (cas.Removed IS NULL) AND (sasv.Verified IS NULL) AND (sd.Removed IS NULL)
-				GROUP BY sa.ID, ca.ID, sd.ID, u.FirstName, u.LastName, sa.Name,sasv.Requested", new { adminId }
+				GROUP BY sa.ID, ca.ID, sd.ID, u.FirstName, u.LastName, sa.Name,cast(sasv.Requested as date)", new { adminId }
                 );
         }
 
