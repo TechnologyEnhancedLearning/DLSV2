@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
@@ -43,6 +44,7 @@
             return View("Available/Available", model);
         }
 
+        [NoCaching]
         public IActionResult AllAvailableItems()
         {
             var availableCourses = courseDataService.GetAvailableCourses(
