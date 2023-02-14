@@ -62,6 +62,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.userService = userService;
         }
 
+        [NoCaching]
         [Route("/TrackingSystem/Delegates/Register")]
         public IActionResult Index()
         {
