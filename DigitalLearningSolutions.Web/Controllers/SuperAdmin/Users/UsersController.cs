@@ -12,7 +12,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
-    
+
     [SetDlsSubApplication(nameof(DlsSubApplication.SuperAdmin))]
     [SetSelectedTab(nameof(NavMenuTab.Admins))]
     public class UsersController : Controller
