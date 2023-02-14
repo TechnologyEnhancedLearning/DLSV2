@@ -964,7 +964,7 @@
 
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
 
-                var (adminUser, delegateUser) = userService.GetUsersById(User.GetUserId(), supervisorDelegateDetail.DelegateUserID);
+                var (adminUser, delegateUser) = userService.GetUsersById(GetAdminId(), supervisorDelegateDetail.DelegateUserID);
 
                 var centreName = adminUser.CentreName;
 
@@ -1013,7 +1013,7 @@
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(reviewId, GetAdminId(), 0);
             if (reviewId > 0)
             {
-                frameworkNotificationService.SendSupervisorDelegateInvite(reviewId, GetAdminId());
+                frameworkNotificationService.SendSupervisorDelegateReminder(reviewId, GetAdminId());
                 supervisorService.UpdateNotificationSent(reviewId);
             }
             return RedirectToAction("MyStaffList");

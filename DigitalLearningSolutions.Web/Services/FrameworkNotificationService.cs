@@ -24,6 +24,7 @@
         void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount, int delegateUserId, int? selfAssessmentResultId = null);
         void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateUserId);
         void SendProfileAssessmentSignedOff(int supervisorDelegateId, int candidateAssessmentId, string? supervisorComments, bool signedOff, int adminId);
+        void SendSupervisorDelegateReminder(int supervisorDelegateId, int adminId);
     }
 
     public class FrameworkNotificationService : IFrameworkNotificationService
@@ -375,6 +376,24 @@ If this looks like a mistake, please contact {supervisorDelegate.SupervisorName}
                                To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
             builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has reviewed your profile assessment {delegateSelfAssessment.RoleName} in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+        }
+        public void SendSupervisorDelegateReminder(int supervisorDelegateId, int adminId)
+        {
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
+            string emailSubjectLine = "Registration reminder from supervisor - Digital Learning Solutions";
+            var builder = new BodyBuilder();
+            var dlsUrlBuilder = GetDLSUriBuilder();
+            if (supervisorDelegate.DelegateUserID == null)
+            {
+                dlsUrlBuilder.Path += "Register";
+                dlsUrlBuilder.Query = $"centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegate.InviteHash}";
+                builder.TextBody = $@"Dear colleague,
+                              This is a reminder to to register to access the NHS Health Education England, Digital Learning Solutions platform as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}).
+                              To register, visit {dlsUrlBuilder.Uri.ToString()}.
+                              Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.";
+                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>This is a reminder to register to access the NHS Health Education England, Digital Learning Solutions platform as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName}</a>.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to register. </p><p>Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.</p></body>";
+                emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+            }
         }
     }
 }

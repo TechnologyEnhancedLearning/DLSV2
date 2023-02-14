@@ -845,6 +845,7 @@
                     : supervisorService.GetSupervisorRoleById((int)sessionAddSupervisor.SelfAssessmentSupervisorRoleId)
                         .RoleName,
                 RoleCount = roles.Count(),
+                SupervisorAtCentre = supervisor.CentreName
             };
             return View("SelfAssessments/AddSupervisorSummary", summaryModel);
         }

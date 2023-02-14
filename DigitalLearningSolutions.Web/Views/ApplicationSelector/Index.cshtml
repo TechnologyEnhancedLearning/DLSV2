@@ -114,7 +114,7 @@
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
             <feature name="@(FeatureFlags.RefactoredSuperAdminInterface)">
-              <a class="nhsuk-card__link" asp-controller="Admins" asp-action="Index">Super admin</a>
+              <a class="nhsuk-card__link" asp-controller="Users" asp-action="Index">Super admin</a>
             </feature>
             <feature name="@(FeatureFlags.RefactoredSuperAdminInterface)" negate="true">
               <a class="nhsuk-card__link" href="@Configuration.GetCurrentSystemBaseUrl()/tracking/admin-adminusers">Super admin</a>

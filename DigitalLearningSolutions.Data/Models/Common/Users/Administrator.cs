@@ -10,5 +10,6 @@
         public bool Active { get; set; }
         public bool IsFrameworkDeveloper { get; set; }
         public byte[]? ProfileImage { get; set; }
+        public string? CentreName { get; set; }
     }
 }
