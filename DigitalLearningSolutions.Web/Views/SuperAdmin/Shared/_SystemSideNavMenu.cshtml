@@ -1,0 +1,30 @@
+@using DigitalLearningSolutions.Web.Models.Enums
+@model SuperAdminSystemPage
+
+<h2 class="side-nav__heading">System</h2>
+<ul class="nhsuk-list side-nav__list">
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="SuperAdminFaqs"
+                     link-text="Configuration"
+                     is-current-page="@(Model == SuperAdminSystemPage.Configuration)" />
+
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="SuperAdminFaqs"
+                     link-text="Manage Lists"
+                     is-current-page="@(Model == SuperAdminSystemPage.ManageLists)" />
+
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="SuperAdminFaqs"
+                     link-text="Notifications"
+                     is-current-page="@(Model == SuperAdminSystemPage.Notifications)" />
+
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="SuperAdminFaqs"
+                     link-text="Resources"
+                     is-current-page="@(Model == SuperAdminSystemPage.Resources)" />
+
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="SuperAdminFaqs"
+                     link-text="FAQs"
+                     is-current-page="@(Model == SuperAdminSystemPage.FAQs)" />
+</ul>

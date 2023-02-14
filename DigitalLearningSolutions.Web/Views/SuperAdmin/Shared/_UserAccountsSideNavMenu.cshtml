@@ -1,0 +1,21 @@
+@using DigitalLearningSolutions.Web.Models.Enums
+@model SuperAdminUserAccountsPage
+
+<h2 class="side-nav__heading">Users</h2>
+<ul class="nhsuk-list side-nav__list">
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="Users"
+                     link-text="User Accounts"
+                     is-current-page="@(Model == SuperAdminUserAccountsPage.UserAccounts)" />
+
+    <vc:side-menu-link asp-action="Administrators"
+                     asp-controller="Users"
+                     link-text="Administrators"
+                       is-current-page="@(Model == SuperAdminUserAccountsPage.Administrators)" />
+
+  <vc:side-menu-link asp-action="Delegates"
+                     asp-controller="Users"
+                     link-text="Delegates"
+                       is-current-page="@(Model == SuperAdminUserAccountsPage.Delegates)" />
+
+</ul>
