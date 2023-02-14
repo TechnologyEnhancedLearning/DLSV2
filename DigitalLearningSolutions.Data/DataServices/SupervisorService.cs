@@ -169,11 +169,10 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 @"SELECT COALESCE
                  ((SELECT sd.ID
                   FROM    SupervisorDelegates sd
-                    INNER JOIN AdminAccounts aa
-                    ON sd.SupervisorAdminID = aa.ID
+          
                   WHERE (sd.SupervisorEmail = @supervisorEmail)
                     AND (sd.DelegateEmail = @delegateEmail)
-                    AND (aa.CentreID = @centreId)
+              
                   ), 0) AS ID",
                 new
                 {
@@ -222,11 +221,10 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  @"SELECT COALESCE
                  ((SELECT sd.ID
                   FROM    SupervisorDelegates sd
-                    INNER JOIN AdminAccounts aa
-                    ON sd.SupervisorAdminID = aa.ID
+                    
                   WHERE (sd.SupervisorEmail = @supervisorEmail)
                         AND (sd.DelegateEmail = @delegateEmail)
-                        AND (aa.CentreID = @centreId)
+                        
                   ), 0) AS AdminID",
                new { supervisorEmail, delegateEmail, centreId });
                 return existingId;
