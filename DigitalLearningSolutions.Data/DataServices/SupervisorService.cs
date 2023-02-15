@@ -258,11 +258,30 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 
         public SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId)
         {
-            return connection.Query<SupervisorDelegateDetail>(
-               $@"SELECT {supervisorDelegateDetailFields}
+            var supervisorDelegateDetail = connection.Query<SupervisorDelegateDetail>(
+                $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.ID = @supervisorDelegateId) AND (sd.DelegateUserID = @delegateUserId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateUserId }
-               ).FirstOrDefault();
+            ).FirstOrDefault();
+
+            var delegateDetails = connection.Query<SupervisorDelegateDetail>(
+               $@"SELECT u.ID AS DelegateUserId, u.FirstName, u.LastName, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, da.CandidateNumber
+                    FROM   Users u
+                    INNER JOIN DelegateAccounts da
+                        ON da.UserID = u.ID
+                    WHERE u.ID = @delegateUserId AND u.Active = 1 AND da.Active = 1", new { delegateUserId }
+            ).FirstOrDefault();
+
+            if (supervisorDelegateDetail != null && delegateDetails != null)
+            {
+                supervisorDelegateDetail.FirstName = delegateDetails.FirstName;
+                supervisorDelegateDetail.LastName = delegateDetails.LastName;
+                supervisorDelegateDetail.ProfessionalRegistrationNumber = delegateDetails.ProfessionalRegistrationNumber;
+                supervisorDelegateDetail.CandidateEmail = delegateDetails.CandidateEmail;
+                supervisorDelegateDetail.CandidateNumber = delegateDetails.CandidateNumber;
+            }
+
+            return supervisorDelegateDetail!;
         }
 
         public int? ValidateDelegate(int centreId, string delegateEmail)

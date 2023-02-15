@@ -230,11 +230,11 @@
             }
         }
 
-        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessments")]
-        public IActionResult DelegateProfileAssessments(int supervisorDelegateId)
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/{delegateUserId}/ProfileAssessments")]
+        public IActionResult DelegateProfileAssessments(int supervisorDelegateId, int delegateUserId)
         {
             var adminId = GetAdminId();
-            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
