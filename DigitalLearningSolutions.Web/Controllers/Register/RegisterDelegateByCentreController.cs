@@ -263,7 +263,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult Confirmation()
         {
             var delegateNumber = (string?)TempData.Peek("delegateNumber");
-            TempData.Clear();
 
             if (delegateNumber == null)
             {
