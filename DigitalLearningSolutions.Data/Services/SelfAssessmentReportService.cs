@@ -98,6 +98,7 @@
                       {
                           x.SelfAssessment,
                           x.Learner,
+                          x.LearnerActive,
                           x.PRN,
                           x.JobGroup,
                           x.ProgrammeCourse,

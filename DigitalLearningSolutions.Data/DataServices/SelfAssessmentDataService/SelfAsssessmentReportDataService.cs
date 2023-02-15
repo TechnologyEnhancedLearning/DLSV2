@@ -65,6 +65,7 @@
                     SELECT 
                         sa.Name AS SelfAssessment
                     	, can.LastName + ', ' + can.FirstName AS Learner
+                        , can.Active AS LearnerActive
                     	, can.ProfessionalRegistrationNumber AS PRN
                         , jg.JobGroupName AS JobGroup
                     	, CASE WHEN c.CustomField1PromptID = 10 THEN can.Answer1 WHEN c.CustomField2PromptID = 10 THEN can.Answer2 WHEN c.CustomField3PromptID = 10 THEN can.Answer3 WHEN c.CustomField4PromptID = 10 THEN can.Answer4 WHEN c.CustomField5PromptID = 10 THEN can.Answer5 WHEN c.CustomField6PromptID = 10 THEN can.Answer6 ELSE '' END AS 'ProgrammeCourse'
@@ -102,6 +103,7 @@
                         (sa.ID = @SelfAssessmentID) AND (sa.ArchivedDate IS NULL) AND (c.Active = 1) AND (ca.RemovedDate IS NULL)
                     Group by sa.Name
 	                    , can.LastName + ', ' + can.FirstName
+                        , can.Active
 	                    , can.ProfessionalRegistrationNumber
 	                    , c.CustomField1PromptID
 	                    , c.CustomField2PromptID
