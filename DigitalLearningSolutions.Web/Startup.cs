@@ -341,6 +341,24 @@ namespace DigitalLearningSolutions.Web
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
         {
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("content-security-policy",
+                    "default-src 'self'; " +
+                    "script-src 'self' 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='; " +
+                    "style-src 'self' 'unsafe-inline'; " +
+                    "font-src https://assets.nhs.uk/; " +
+                    "connect-src 'self' http: ws:; " +
+                    "img-src 'self' data: https:; " +
+                    "frame-src 'self' https:");
+                context.Response.Headers.Add("Referrer-Policy", "no-referrer");
+                context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("X-Frame-Options", "deny");
+                context.Response.Headers.Add("X-XSS-protection", "0");
+                await next();
+            });
+
             app.UseForwardedHeaders(
                 new ForwardedHeadersOptions
                 {
