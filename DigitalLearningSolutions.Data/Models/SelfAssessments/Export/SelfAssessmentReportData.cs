@@ -5,6 +5,7 @@
     {
         public string? SelfAssessment { get; set; }
         public string? Learner { get; set; }
+        public bool LearnerActive { get; set; }
         public string? PRN { get; set; }
         public string? JobGroup { get; set; }
         public string? ProgrammeCourse { get; set; }
