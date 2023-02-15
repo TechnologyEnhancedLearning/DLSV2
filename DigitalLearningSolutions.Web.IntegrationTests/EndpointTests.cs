@@ -1,9 +1,12 @@
 namespace DigitalLearningSolutions.Web.IntegrationTests
 {
     using System.Threading.Tasks;
+    using System.Net.Http;
+    using AngleSharp.Io;
     using FluentAssertions;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Xunit;
+    using DocumentFormat.OpenXml.InkML;
 
     public class EndpointTests: IClassFixture<DefaultWebApplicationFactory<Startup>>
     {
@@ -34,6 +37,29 @@ namespace DigitalLearningSolutions.Web.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode();
+
+            checkHeaderValue(response, "content-security-policy", "default-src 'self'; " +
+                    "script-src 'self' 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='; " +
+                    "style-src 'self' 'unsafe-inline'; " +
+                    "font-src https://assets.nhs.uk/; " +
+                    "connect-src 'self' http: ws:; " +
+                    "img-src 'self' data: https:; " +
+                    "frame-src 'self' https:"
+                    );
+            checkHeaderValue(response, "Referrer-Policy", "no-referrer");
+            checkHeaderValue(response, "strict-transport-security", "max-age=31536000; includeSubDomains");
+            checkHeaderValue(response, "x-content-type-options", "nosniff");
+            checkHeaderValue(response, "X-Frame-Options", "deny");
+            checkHeaderValue(response, "X-XSS-protection", "0");
+
+
+        }
+
+        private void checkHeaderValue(HttpResponseMessage response, string header, string expectedValue)
+        {
+            var contentTypeOptionsHeader = response.Headers.GetValues(header).GetEnumerator();
+            contentTypeOptionsHeader.MoveNext();
+            contentTypeOptionsHeader.Current.Should().Be(expectedValue);
         }
 
         [Fact]
