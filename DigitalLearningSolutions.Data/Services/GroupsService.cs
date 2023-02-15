@@ -406,7 +406,7 @@
             {
                 var fullName = groupDelegate.FirstName + " " + groupDelegate.LastName;
                 EnrolDelegateOnGroupCourse(
-                    groupDelegate.GroupDelegateId,
+                    groupDelegate.DelegateId,
                     addedByAdminId,
                     groupCourse,
                     true,
