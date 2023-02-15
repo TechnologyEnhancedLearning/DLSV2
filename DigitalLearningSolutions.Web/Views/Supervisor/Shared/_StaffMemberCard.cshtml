@@ -97,6 +97,8 @@
           </button>
           @Html.Hidden("Id", Model.SupervisorDelegateDetail.ID)
           @Html.Hidden("DelegateEmail", Model.SupervisorDelegateDetail.DelegateEmail)
+          @Html.Hidden("FirstName", Model.SupervisorDelegateDetail.FirstName)
+          @Html.Hidden("LastName", Model.SupervisorDelegateDetail.LastName)
           @Html.Hidden("ConfirmedRemove", true)
           @Html.HiddenFor(m => m.ReturnPageQuery)
         </form>
