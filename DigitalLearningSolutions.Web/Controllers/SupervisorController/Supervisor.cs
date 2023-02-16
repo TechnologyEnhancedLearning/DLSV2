@@ -506,7 +506,7 @@
             );
         }
 
-        public IActionResult StartEnrolDelegateOnProfileAssessment(int supervisorDelegateId) //, int delegateUserId
+        public IActionResult StartEnrolDelegateOnProfileAssessment(int supervisorDelegateId)
         {
             TempData.Clear();
 
@@ -519,18 +519,15 @@
             return RedirectToAction(
                 "EnrolDelegateOnProfileAssessment",
                 "Supervisor",
-                //new { supervisorDelegateId = supervisorDelegateId, delegateUserId = delegateUserId }
-            new { supervisorDelegateId = supervisorDelegateId }
+                new { supervisorDelegateId = supervisorDelegateId }
             );
         }
 
-        //[Route("/Supervisor/Staff/{supervisorDelegateId}/{delegateUserId}/ProfileAssessment/Enrol/Profile")]
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/Profile")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment) }
         )]
-        //public IActionResult EnrolDelegateOnProfileAssessment(int supervisorDelegateId, int delegateUserId)
         public IActionResult EnrolDelegateOnProfileAssessment(int supervisorDelegateId)
         {
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
