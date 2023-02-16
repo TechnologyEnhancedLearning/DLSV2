@@ -230,8 +230,9 @@
             }
         }
 
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessments")]
         [Route("/Supervisor/Staff/{supervisorDelegateId}/{delegateUserId}/ProfileAssessments")]
-        public IActionResult DelegateProfileAssessments(int supervisorDelegateId, int delegateUserId)
+        public IActionResult DelegateProfileAssessments(int supervisorDelegateId, int delegateUserId = 0)
         {
             var adminId = GetAdminId();
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
