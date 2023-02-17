@@ -12,11 +12,13 @@
         public const string EmailsRegexWithNewLineSeparator = @"(([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)(\s*\r\n\s*|\s*$))*";
         public const string InvalidMultiLineEmail = "Enter an email in the correct format (like name@example.com). Note: Each email address should be on separate lines";
 
-        public const string PasswordRegex = @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Za-z]).*";
-        public const string PasswordInvalidCharacters = "Password must contain at least 1 letter, 1 number and 1 symbol";
+        public const string PasswordRegex = @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[a-z]).*";
+        public const string PasswordInvalidCharacters = "Password must contain at least 1 upper case and 1 lower case letter, 1 number and 1 symbol";
         public const string PasswordRequired = "Enter a password";
         public const string PasswordMinLength = "Password must be 8 characters or more";
         public const string PasswordMaxLength = "Password must be 100 characters or fewer";
         public const string StringMaxLengthValidation = "{0} must be {1} characters or fewer";
+        public const string PasswordTooCommon = "Enter a less common password";
+        public const string PasswordSimilarUsername = "Enter a password which is less similar to your user name";
     }
 }
