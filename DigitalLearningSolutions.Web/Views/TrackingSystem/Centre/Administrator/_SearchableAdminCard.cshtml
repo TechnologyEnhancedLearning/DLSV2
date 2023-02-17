@@ -1,80 +1,86 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
+﻿@using DigitalLearningSolutions.Web.Helpers;
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @model SearchableAdminViewModel
 
 <div class="searchable-element nhsuk-panel word-break" id="@Model.Id-card">
-  <details class="nhsuk-details nhsuk-expander">
-    <summary class="nhsuk-details__summary">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name">
-        @Model.Name
-      </span>
-    </summary>
-    <div class="nhsuk-details__text">
+    <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+            <span class="nhsuk-details__summary-text" id="@Model.Id-name">
+                <span class="searchable-element-title" name="name">
+                    @Model.Name
+                </span>
+                <span class="searchable-element-email">
+                    @DisplayStringHelper.GetEmailDisplayString(Model.EmailAddress)
+                </span>
+            </span>
+        </summary>
+        <div class="nhsuk-details__text">
 
-      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
+            <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
 
-      <dl class="nhsuk-summary-list details-list-with-button">
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Email
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.EmailAddress
-          </dd>
+            <dl class="nhsuk-summary-list details-list-with-button">
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Email
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.EmailAddress
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Course category
+                    </dt>
+                    <dd class="nhsuk-summary-list__value" data-filter-value="@Model.CategoryFilter">
+                        @Model.CategoryName
+                    </dd>
+                </div>
+            </dl>
+
+            @if (Model.IsLocked)
+            {
+                <p class="nhsuk-body-m">This account is currently locked out</p>
+            }
+
+            @if (Model.IsLocked)
+            {
+                var unlockAccountAspAllRouteData = new Dictionary<string, string> { { "adminId", Model.Id.ToString() } };
+                <form asp-action="UnlockAccount" asp-all-route-data="unlockAccountAspAllRouteData" class="unlock-account-form">
+                    <button class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
+                        role="button"
+                        type="submit">
+                        Unlock account
+                    </button>
+                </form>
+            }
+            else
+            {
+                @if (!(Model.EmailAddress == String.Empty || Guid.TryParse(Model.EmailAddress, out _)))
+                {
+                    <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
+               role="button"
+               data-return-page-enabled="true"
+               asp-controller="Administrator"
+               asp-action="EditAdminRoles"
+               asp-route-adminId="@Model.Id"
+               asp-route-returnPageQuery="@Model.ReturnPageQuery">
+                        Manage roles
+                    </a>
+                }
+            }
+            @if (Model.CanShowDeactivateAdminButton)
+            {
+                <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
+               role="button"
+               aria-label="Deactivate admin account"
+               data-return-page-enabled="true"
+               asp-controller="Administrator"
+               asp-action="DeactivateOrDeleteAdmin"
+               asp-route-adminId="@Model.Id"
+               asp-route-returnPageQuery="@Model.ReturnPageQuery">
+                    Deactivate admin account
+                </a>
+            }
         </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Course category
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-filter-value="@Model.CategoryFilter">
-            @Model.CategoryName
-          </dd>
-        </div>
-      </dl>
-
-      @if (Model.IsLocked)
-      {
-        <p class="nhsuk-body-m">This account is currently locked out</p>
-      }
-
-      @if (Model.IsLocked)
-      {
-        var unlockAccountAspAllRouteData = new Dictionary<string, string> { { "adminId", Model.Id.ToString() } };
-        <form asp-action="UnlockAccount" asp-all-route-data="unlockAccountAspAllRouteData" class="unlock-account-form">
-          <button class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
-                role="button"
-                type="submit">
-            Unlock account
-          </button>
-        </form>
-      }
-      else
-      {
-        @if (!(Model.EmailAddress == String.Empty || Guid.TryParse(Model.EmailAddress, out _)))
-        {
-          <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
-         role="button"
-         data-return-page-enabled="true"
-         asp-controller="Administrator"
-         asp-action="EditAdminRoles"
-         asp-route-adminId="@Model.Id"
-         asp-route-returnPageQuery="@Model.ReturnPageQuery">
-            Manage roles
-          </a>
-        }
-      }
-      @if (Model.CanShowDeactivateAdminButton)
-      {
-        <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
-         role="button"
-         aria-label="Deactivate admin account"
-         data-return-page-enabled="true"
-         asp-controller="Administrator"
-         asp-action="DeactivateOrDeleteAdmin"
-         asp-route-adminId="@Model.Id"
-         asp-route-returnPageQuery="@Model.ReturnPageQuery">
-          Deactivate admin account
-        </a>
-      }
-    </div>
-  </details>
+    </details>
 </div>
