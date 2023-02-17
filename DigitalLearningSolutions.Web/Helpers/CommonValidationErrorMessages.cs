@@ -22,15 +22,14 @@
         public const string WrongEmailForCentreDuringAdminRegistration =
             "This email address does not match the one held by the centre; either your primary email or centre email must match the one held by the centre";
 
-        public const string PasswordRegex = @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Za-z]).*";
-
-        public const string PasswordInvalidCharacters =
-            "Password must contain at least 1 letter, 1 number and 1 symbol";
-
+        public const string PasswordRegex = @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[a-z]).*";
+        public const string PasswordInvalidCharacters = "Password must contain at least 1 upper case and 1 lower case letter, 1 number and 1 symbol";
         public const string PasswordRequired = "Enter a password";
         public const string PasswordMinLength = "Password must be 8 characters or more";
         public const string PasswordMaxLength = "Password must be 100 characters or fewer";
         public const string StringMaxLengthValidation = "{0} must be {1} characters or fewer";
         public const string CenterEmailIsSameAsPrimary = "Centre email is the same as primary email";
+        public const string PasswordTooCommon = "Enter a less common password";
+        public const string PasswordSimilarUsername = "Enter a password which is less similar to your user name";
     }
 }
