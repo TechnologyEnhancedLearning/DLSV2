@@ -74,14 +74,14 @@
                         , CASE WHEN c.CustomField1PromptID = 1 THEN can.Answer1 WHEN c.CustomField2PromptID = 1 THEN can.Answer2 WHEN c.CustomField3PromptID = 1 THEN can.Answer3 WHEN c.CustomField4PromptID = 1 THEN can.Answer4 WHEN c.CustomField5PromptID = 1 THEN can.Answer5 WHEN c.CustomField6PromptID = 1 THEN can.Answer6 ELSE '' END AS 'DepartmentTeam'
                         
                     	, can.DateRegistered AS Registered
-                        , ca.StartedDate AS Started
+                        , ca.StartedDate AS Enrolled
                         , ca.LastAccessed
                     	, COALESCE(COUNT(DISTINCT LAR.Optional), 0) AS [OptionalProficiencies]
                     	, COALESCE(COUNT(DISTINCT LAR.SelfAssessed),0) AS [SelfAssessedAchieved]
                     	, COALESCE(COUNT(DISTINCT LAR.Confirmed), 0) AS [ConfirmedResults]
                         , max(casv.Requested) AS SignOffRequested
                         , max(1*casv.SignedOff) AS SignOffAchieved
-                        , min(casv.Verified) AS ReviewedDate
+                        , min(casv.Verified) AS SignOffReviewed
                     FROM   
                         CandidateAssessments AS ca INNER JOIN
                         Candidates AS can ON ca.CandidateID = can.CandidateID AND can.CentreID = @centreId INNER JOIN

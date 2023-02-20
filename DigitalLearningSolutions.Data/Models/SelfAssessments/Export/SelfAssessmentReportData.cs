@@ -12,13 +12,13 @@
         public string? Organisation { get; set; }
         public string? DepartmentTeam { get; set; }
         public DateTime? Registered { get; set; }
-        public DateTime? Started { get; set; }
+        public DateTime? Enrolled { get; set; }
         public DateTime? LastAccessed { get; set; }
         public int? OptionalProficiencies { get; set; }
         public int? SelfAssessedAchieved { get; set; }
         public int? ConfirmedResults { get; set; }
         public DateTime? SignOffRequested { get; set; }
         public bool SignOffAchieved { get; set; }
-        public DateTime? ReviewedDate { get; set; }
+        public DateTime? SignOffReviewed { get; set; }
     }
 }

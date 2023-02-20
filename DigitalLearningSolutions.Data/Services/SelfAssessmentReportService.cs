@@ -105,14 +105,14 @@
                           x.Organisation,
                           x.DepartmentTeam,
                           x.Registered,
-                          x.Started,
+                          x.Enrolled,
                           x.LastAccessed,
                           x.OptionalProficiencies,
                           x.SelfAssessedAchieved,
                           x.ConfirmedResults,
                           x.SignOffRequested,
                           x.SignOffAchieved,
-                          x.ReviewedDate
+                          x.SignOffReviewed
                       }
                       );
             using var workbook = new XLWorkbook();
