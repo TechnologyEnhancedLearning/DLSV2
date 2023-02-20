@@ -29,8 +29,9 @@
                 @"SELECT csa.SelfAssessmentID AS Id, sa.Name,
                     (SELECT COUNT(*) FROM
                         CandidateAssessments ca1 INNER JOIN
-                        Candidates c1 ON ca1.CandidateID = c1.CandidateID
-                    WHERE c1.CentreID = @centreId AND ca1.SelfAssessmentID = sa.ID AND ca1.RemovedDate IS NULL) AS LearnerCount
+                        Candidates c1 ON ca1.CandidateID = c1.CandidateID LEFT OUTER JOIN
+                        AdminUsers AS au ON c1.EmailAddress = au.Email AND c1.CentreID = au.CentreID
+                    WHERE (au.AdminID IS NULL) AND (c1.CentreID = @centreId) AND (ca1.SelfAssessmentID = sa.ID) AND (ca1.RemovedDate IS NULL)) AS LearnerCount
                     FROM   CentreSelfAssessments AS csa INNER JOIN
                                  SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
                     WHERE (csa.CentreID = @centreId) AND (sa.CategoryID = @categoryId) AND (sa.SupervisorResultsReview = 1) AND (sa.ArchivedDate IS NULL) OR
@@ -71,13 +72,7 @@
                     	, CASE WHEN c.CustomField1PromptID = 10 THEN can.Answer1 WHEN c.CustomField2PromptID = 10 THEN can.Answer2 WHEN c.CustomField3PromptID = 10 THEN can.Answer3 WHEN c.CustomField4PromptID = 10 THEN can.Answer4 WHEN c.CustomField5PromptID = 10 THEN can.Answer5 WHEN c.CustomField6PromptID = 10 THEN can.Answer6 ELSE '' END AS 'ProgrammeCourse'
                         , CASE WHEN c.CustomField1PromptID = 4 THEN can.Answer1 WHEN c.CustomField2PromptID = 4 THEN can.Answer2 WHEN c.CustomField3PromptID = 4 THEN can.Answer3 WHEN c.CustomField4PromptID = 4 THEN can.Answer4 WHEN c.CustomField5PromptID = 4 THEN can.Answer5 WHEN c.CustomField6PromptID = 4 THEN can.Answer6 ELSE '' END AS 'Organisation'
                         , CASE WHEN c.CustomField1PromptID = 1 THEN can.Answer1 WHEN c.CustomField2PromptID = 1 THEN can.Answer2 WHEN c.CustomField3PromptID = 1 THEN can.Answer3 WHEN c.CustomField4PromptID = 1 THEN can.Answer4 WHEN c.CustomField5PromptID = 1 THEN can.Answer5 WHEN c.CustomField6PromptID = 1 THEN can.Answer6 ELSE '' END AS 'DepartmentTeam'
-                        , CASE
-                            WHEN au.AdminID IS NULL THEN 'Learner'
-                            WHEN au.IsCentreManager = 1 THEN 'Centre Manager'
-                            WHEN au.CentreAdmin = 1 AND au.IsCentreManager = 0 THEN 'Centre Admin'
-                            WHEN au.Supervisor = 1 THEN 'Supervisor'
-                            WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor'
-                        END AS DLSRole
+                        
                     	, can.DateRegistered AS Registered
                         , ca.StartedDate AS Started
                         , ca.LastAccessed
@@ -100,7 +95,7 @@
 	                    SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID 
 	                    LEFT OUTER JOIN LatestAssessmentResults AS LAR ON LAR.CandidateID = can.CandidateID
                     WHERE
-                        (sa.ID = @SelfAssessmentID) AND (sa.ArchivedDate IS NULL) AND (c.Active = 1) AND (ca.RemovedDate IS NULL)
+                        (au.AdminID IS NULL) AND (sa.ID = @SelfAssessmentID) AND (sa.ArchivedDate IS NULL) AND (c.Active = 1) AND (ca.RemovedDate IS NULL)
                     Group by sa.Name
 	                    , can.LastName + ', ' + can.FirstName
                         , can.Active
@@ -120,11 +115,6 @@
 	                    , can.Answer5
 	                    , can.Answer6
 	                    , can.DateRegistered
-                        , au.AdminID
-                        , au.IsCentreManager
-                        , au.CentreAdmin
-                        , au.Supervisor
-                        , au.NominatedSupervisor
                         , ca.StartedDate
                         , ca.LastAccessed
                     ORDER BY
