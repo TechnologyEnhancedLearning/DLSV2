@@ -11,7 +11,6 @@
         public string? ProgrammeCourse { get; set; }
         public string? Organisation { get; set; }
         public string? DepartmentTeam { get; set; }
-        public string? DLSRole { get; set; }
         public DateTime? Registered { get; set; }
         public DateTime? Started { get; set; }
         public DateTime? LastAccessed { get; set; }
