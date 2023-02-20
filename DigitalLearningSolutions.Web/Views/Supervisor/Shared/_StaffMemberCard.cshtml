@@ -59,7 +59,7 @@
                             <dd class="nhsuk-summary-list__actions">
                                 @if (Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
                                 {
-                                    <a asp-action="ResendInvite" asp-route-reviewId="@Model.SupervisorDelegateDetail.ID">
+                                    <a asp-action="ResendInvite" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
                                         Send reminder
                                     </a>
                                 }

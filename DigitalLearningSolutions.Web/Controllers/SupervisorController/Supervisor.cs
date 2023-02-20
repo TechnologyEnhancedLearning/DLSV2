@@ -171,6 +171,12 @@
                 frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminID());
             }
         }
+        public IActionResult ResendInvite (int supervisorDelegateId)
+        {
+            frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminID());
+            supervisorService.UpdateNotificationSent(supervisorDelegateId);
+            return RedirectToAction("MyStaffList");
+        }
 
         public IActionResult ConfirmSupervise(int supervisorDelegateId)
         {
