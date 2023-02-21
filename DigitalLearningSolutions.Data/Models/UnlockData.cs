@@ -9,6 +9,7 @@
         public string ContactEmail { get; set; }
         public string CourseName { get; set; }
         public int CustomisationId { get; set; }
+        public string CentreName { get; set; }
     }
 
     public class NotificationDataException : Exception

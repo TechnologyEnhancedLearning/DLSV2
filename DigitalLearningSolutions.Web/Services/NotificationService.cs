@@ -31,13 +31,15 @@
         private readonly IFeatureManager featureManager;
         private readonly INotificationDataService notificationDataService;
         private readonly IUserService userService;
+        private readonly ICentresDataService centresDataService;
 
         public NotificationService(
             IConfiguration configuration,
             INotificationDataService notificationDataService,
             IEmailService emailService,
             IFeatureManager featureManager,
-            IUserService userService
+            IUserService userService,
+            ICentresDataService centresDataService
         )
         {
             this.configuration = configuration;
@@ -45,6 +47,7 @@
             this.emailService = emailService;
             this.featureManager = featureManager;
             this.userService = userService;
+            this.centresDataService = centresDataService;
         }
 
         public async Task SendUnlockRequest(int progressId)
@@ -83,15 +86,16 @@
             };
 
             const string emailSubjectLine = "Digital Learning Solutions Progress Unlock Request";
+            
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear {unlockData.ContactForename}
-                    Digital Learning Solutions Delegate, {delegateEntity.UserAccount.FullName}, has requested that you unlock their progress for the course {unlockData.CourseName}.
+                    Digital Learning Solutions Delegate, {delegateEntity.UserAccount.FullName} ({unlockData.CentreName}), has requested that you unlock their progress for the course {unlockData.CourseName}.
                     They have reached the maximum number of assessment attempt allowed without passing.
                     To review and unlock their progress, visit this url: ${unlockUrl.Uri}.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                     <p>Dear {unlockData.ContactForename}</p>
-                    <p>Digital Learning Solutions Delegate, {delegateEntity.UserAccount.FullName}, has requested that you unlock their progress for the course {unlockData.CourseName}</p>
+                    <p>Digital Learning Solutions Delegate, {delegateEntity.UserAccount.FullName} ({unlockData.CentreName}), has requested that you unlock their progress for the course {unlockData.CourseName}</p>
                     <p>They have reached the maximum number of assessment attempt allowed without passing.</p><p>To review and unlock their progress, <a href='{unlockUrl.Uri}'>click here</a>.</p>
                     </body>",
             };
@@ -160,6 +164,7 @@
 
             const string emailSubjectLine = "Digital Learning Solutions Activity Complete";
             var delegateNameOrGenericTitle = progress.DelegateFirstName ?? "Digital Learning Solutions Delegate";
+            string centreName = centresDataService.GetCentreName(progress.DelegateCentreId);
             var emailsToCc = GetEmailsToCc(
                 progressCompletionData.AdminId,
                 progressCompletionData.CourseNotificationEmail
@@ -167,11 +172,11 @@
 
             var builder = new BodyBuilder
             {
-                TextBody = $@"Dear {delegateNameOrGenericTitle},
+                TextBody = $@"Dear {delegateNameOrGenericTitle} ({centreName}),
                     You have completed the Digital Learning Solutions learning activity - {progressCompletionData.CourseName}.
                     {textActivityCompletionInfo}",
                 HtmlBody = $@"<body style=""font-family: Calibri; font-size: small;"">
-                                <p>Dear {delegateNameOrGenericTitle},</p>
+                                <p>Dear {delegateNameOrGenericTitle} ({centreName}),</p>
                                 <p>You have completed the Digital Learning Solutions learning activity - {progressCompletionData.CourseName}.</p>
                                 {htmlActivityCompletionInfo}
                             </body>",

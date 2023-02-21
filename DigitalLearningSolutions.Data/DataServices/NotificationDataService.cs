@@ -33,7 +33,8 @@
                         centres.ContactForename,
                         COALESCE (centres.NotifyEmail, COALESCE (centres.ContactEmail, centres.pwEmail)) AS ContactEmail,
                         applications.ApplicationName + ' - ' + customisations.CustomisationName AS CourseName,
-                        progress.CustomisationID AS CustomisationId
+                        progress.CustomisationID AS CustomisationId,
+                        centres.CentreName
                     FROM Progress AS progress
                         INNER JOIN Candidates AS candidates
                             ON progress.CandidateID = candidates.CandidateID
