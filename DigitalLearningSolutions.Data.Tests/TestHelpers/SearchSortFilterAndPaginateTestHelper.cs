@@ -21,8 +21,7 @@
             ).ReturnsLazily(
                 x =>
                 {
-                    var items = x.Arguments.Get<IEnumerable<T>>("items")?.ToList() ??
-                                new List<T>();
+                    var items = x.Arguments.Get<IEnumerable<T>>("items")?.ToList() ?? new List<T>();
                     var options =
                         x.Arguments.Get<SearchSortFilterAndPaginateOptions>("searchSortFilterAndPaginateOptions");
                     return new SearchSortFilterPaginationResult<T>(
