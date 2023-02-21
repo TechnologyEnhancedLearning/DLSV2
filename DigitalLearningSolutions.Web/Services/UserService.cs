@@ -84,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Services
         string? GetCentreEmail(int userId, int centreId);
 
         IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
-            int userId,bool isAll=false
+            int userId, bool isAll = false
         );
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
@@ -335,9 +335,9 @@ namespace DigitalLearningSolutions.Web.Services
         }
 
         public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)>
-            GetAllActiveCentreEmailsForUser(int userId,bool isAll = false)
+            GetAllActiveCentreEmailsForUser(int userId, bool isAll = false)
         {
-            return userDataService.GetAllActiveCentreEmailsForUser(userId,isAll);
+            return userDataService.GetAllActiveCentreEmailsForUser(userId, isAll);
         }
 
         public (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)
@@ -480,11 +480,18 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 if (!string.Equals(email, userCentreDetails.SingleOrDefault(ucd => ucd.CentreId == centreId)?.Email))
                 {
-                    var emailVerified = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email)
-                        ? currentTime
-                        : (DateTime?)null;
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        var emailVerified = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email)
+                            ? currentTime
+                            : (DateTime?)null;
 
-                    userDataService.SetCentreEmail(userId, centreId, email, emailVerified);
+                        userDataService.SetCentreEmail(userId, centreId, email, emailVerified);
+                    }
+                    else
+                    {
+                        userDataService.DeleteUserCentreDetail(userId, centreId);
+                    }
                 }
             }
         }
