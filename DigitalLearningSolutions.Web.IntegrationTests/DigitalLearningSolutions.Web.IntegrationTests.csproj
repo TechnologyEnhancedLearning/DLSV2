@@ -21,8 +21,4 @@
     </PackageReference>
   </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
-    </ItemGroup>
-
 </Project>

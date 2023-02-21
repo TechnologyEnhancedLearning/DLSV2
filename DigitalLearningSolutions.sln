@@ -3,28 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Web", "DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj", "{DE1BE25A-B979-47BE-9D88-203F02FE2001}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4FD8D695-2541-4748-AF48-AF2666C9323F}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Web.Tests", "DigitalLearningSolutions.Web.Tests\DigitalLearningSolutions.Web.Tests.csproj", "{BE482B71-E96B-43E5-9294-D00AD86065BC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2949A4E3-E076-4606-903D-6250F73F64E3} = {2949A4E3-E076-4606-903D-6250F73F64E3}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Data", "DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj", "{2949A4E3-E076-4606-903D-6250F73F64E3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Data.Migrations", "DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj", "{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Data.Tests", "DigitalLearningSolutions.Data.Tests\DigitalLearningSolutions.Data.Tests.csproj", "{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Web.IntegrationTests", "DigitalLearningSolutions.Web.IntegrationTests\DigitalLearningSolutions.Web.IntegrationTests.csproj", "{D581EA71-51EE-4BE3-AFE4-07D175EEB039}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Web.AutomatedUiTests", "DigitalLearningSolutions.Web.AutomatedUiTests\DigitalLearningSolutions.Web.AutomatedUiTests.csproj", "{AB5214EA-D17F-471B-BFD8-F23696392908}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalLearning", "DigitalLearning\DigitalLearning.csproj", "{120EC625-73E8-446B-9CA5-344769E4E7CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,33 +17,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DE1BE25A-B979-47BE-9D88-203F02FE2001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE1BE25A-B979-47BE-9D88-203F02FE2001}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE1BE25A-B979-47BE-9D88-203F02FE2001}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE482B71-E96B-43E5-9294-D00AD86065BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE482B71-E96B-43E5-9294-D00AD86065BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE482B71-E96B-43E5-9294-D00AD86065BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE482B71-E96B-43E5-9294-D00AD86065BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2949A4E3-E076-4606-903D-6250F73F64E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2949A4E3-E076-4606-903D-6250F73F64E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2949A4E3-E076-4606-903D-6250F73F64E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2949A4E3-E076-4606-903D-6250F73F64E3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D581EA71-51EE-4BE3-AFE4-07D175EEB039}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D581EA71-51EE-4BE3-AFE4-07D175EEB039}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D581EA71-51EE-4BE3-AFE4-07D175EEB039}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D581EA71-51EE-4BE3-AFE4-07D175EEB039}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB5214EA-D17F-471B-BFD8-F23696392908}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB5214EA-D17F-471B-BFD8-F23696392908}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB5214EA-D17F-471B-BFD8-F23696392908}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB5214EA-D17F-471B-BFD8-F23696392908}.Release|Any CPU.Build.0 = Release|Any CPU
+		{120EC625-73E8-446B-9CA5-344769E4E7CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{120EC625-73E8-446B-9CA5-344769E4E7CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{120EC625-73E8-446B-9CA5-344769E4E7CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{120EC625-73E8-446B-9CA5-344769E4E7CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
