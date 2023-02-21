@@ -50,7 +50,7 @@ namespace DigitalLearningSolutions.Web
                 .WriteTo.MSSqlServer(
                     connectionString: config.GetConnectionString(ConfigHelper.DefaultConnectionStringName),
                     sinkOptions: new SinkOptions { TableName = "V2LogEvents", AutoCreateSqlTable = true },
-                    appConfiguration: config)
+                    appConfiguration: config, restrictedToMinimumLevel: LogEventLevel.Error)
                 .CreateLogger();
         }
     }
