@@ -23,6 +23,7 @@
         private INotificationDataService notificationDataService = null!;
         private INotificationService notificationService = null!;
         private IUserService userService = null!;
+        private ICentresDataService centresDataService = null!;
 
         [SetUp]
         public void SetUp()
@@ -32,13 +33,15 @@
             featureManager = A.Fake<IFeatureManager>();
             notificationDataService = A.Fake<INotificationDataService>();
             userService = A.Fake<IUserService>();
+            centresDataService = A.Fake<ICentresDataService>();
 
             notificationService = new NotificationService(
                 configuration,
                 notificationDataService,
                 emailService,
                 featureManager,
-                userService
+                userService,
+                centresDataService
             );
 
             A.CallTo(() => configuration["AppRootPath"]).Returns("https://new-tracking-system.com");
