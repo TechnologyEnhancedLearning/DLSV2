@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <Nullable>annotations</Nullable>
     </PropertyGroup>
 
@@ -71,6 +71,8 @@
         <PackageReference Include="Npm" Version="3.5.2"/>
         <PackageReference Include="Serilog.AspNetCore" Version="3.2.0"/>
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.5.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0"/>
     </ItemGroup>
 
     <ItemGroup>

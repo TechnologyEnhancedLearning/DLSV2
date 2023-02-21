@@ -65,7 +65,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 
             if (competencyFlags?.Count() > 0)
             {
-                var competencyFlagOptions = competencyFlags.DistinctBy(f => f.FlagId)
+                var competencyFlagOptions = competencyFlags.DistinctBy(f => f.FlagId, null)
                     .Select(c =>
                         new FilterOptionModel(
                                 $"{c.FlagGroup}: {c.FlagName}",
