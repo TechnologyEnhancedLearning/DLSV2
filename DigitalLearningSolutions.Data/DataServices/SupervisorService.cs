@@ -325,10 +325,13 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
         {
             return connection.Query<SupervisorForEnrolDelegate>(
-                $@"SELECT AdminID, Forename + ' ' + Surname AS Name, Email FROM AdminUsers AS au
+                $@"SELECT AdminID, Forename + ' ' + Surname + ' (' + CentreName +')' AS Name, Email FROM AdminUsers AS au
                     WHERE (Supervisor = 1) AND (CentreID = @CentreID) AND (CategoryID = 0 OR
                          CategoryID = (SELECT au.CategoryID FROM Applications AS a INNER JOIN
-                           Customisations AS c ON a.ApplicationID = c.ApplicationID WHERE        (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1) GROUP BY AdminID, Surname, Forename, Email ORDER BY Surname, Forename",
+                           Customisations AS c ON a.ApplicationID = c.ApplicationID
+                            WHERE (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1)
+                            GROUP BY AdminID, Surname, Forename, Email, CentreName
+                            ORDER BY Surname, Forename",
                 new { CentreID, CustomisationID });
         }
 

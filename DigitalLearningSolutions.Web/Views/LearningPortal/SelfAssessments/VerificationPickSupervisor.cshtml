@@ -48,7 +48,7 @@
               <div class="nhsuk-radios__item">
                 <input class="nhsuk-radios__input" id="radio-@supervisor.ID" asp-for="CandidateAssessmentSupervisorId" type="radio" value="@supervisor.ID">
                 <label class="nhsuk-label nhsuk-radios__label" for="radio-@supervisor.ID">
-                  @supervisor.SupervisorName (@supervisor.SupervisorEmail) - @supervisor.RoleName
+                  @supervisor.SupervisorName - @supervisor.SupervisorEmail - @supervisor.RoleName (@supervisor.CentreName)
                 </label>
               </div>
             }
