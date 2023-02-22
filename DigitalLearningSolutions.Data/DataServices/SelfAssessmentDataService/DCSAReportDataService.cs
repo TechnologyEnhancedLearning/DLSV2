@@ -105,7 +105,7 @@
 											  DelegateAccounts as da ON ca.CandidateID = da.ID
                                  WHERE (sar.AssessmentQuestionID = 2) AND (sas.CompetencyGroupID = 6)) AS DigitalIdentityWellbeingSafetyAndSecurityRelevance
                 FROM   Candidates AS ca INNER JOIN
-                             CandidateAssessments AS caa ON ca.CandidateID = caa.CandidateID INNER JOIN
+                             CandidateAssessments AS caa ON ca.UserID = caa.DelegateUserID AND ca.CentreID = caa.CentreID INNER JOIN
                              JobGroups AS jg ON ca.JobGroupID = jg.JobGroupID
                 WHERE (ca.Active = 1) AND (ca.CentreID = @centreId) AND (caa.SelfAssessmentID = 1)
                 ORDER BY EnrolledYear DESC, EnrolledMonth DESC, JobGroup, CentreField1, CentreField2, CentreField3, Status",
