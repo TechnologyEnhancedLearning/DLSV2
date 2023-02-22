@@ -134,6 +134,10 @@
         <_ContentIncludedByDefault Remove="Views\Shared\Components\VerifyEmailWarningIfAppropriate\Default.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
+    </ItemGroup>
+
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
         <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
         <Exec Command="yarn install --frozen-lockfile" />
