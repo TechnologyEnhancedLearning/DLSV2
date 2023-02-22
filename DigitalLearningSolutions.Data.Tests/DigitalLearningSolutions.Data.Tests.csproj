@@ -29,11 +29,11 @@
   </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
+      <Folder Include="Services\" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Services\" />
+      <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
     </ItemGroup>
 
 </Project>
