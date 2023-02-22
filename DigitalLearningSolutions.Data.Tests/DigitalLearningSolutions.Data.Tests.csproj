@@ -26,18 +26,18 @@
     <PackageReference Include="FakeItEasy" Version="6.0.1" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="FluentAssertions.AspNetCore.Mvc" Version="3.2.0" />
-      <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.0"/>
-      <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0"/>
+      <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj" />
-        <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
-        <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
+      <Folder Include="Services\" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Services\" />
+      <ProjectReference Include="..\DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj" />
+      <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
+      <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
     </ItemGroup>
 
 </Project>

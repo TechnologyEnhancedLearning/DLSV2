@@ -24,8 +24,8 @@
     </PackageReference>
   </ItemGroup>
 
-    <ItemGroup>
-    <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
+  <ItemGroup>
+    <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
   </ItemGroup>
 
 </Project>
