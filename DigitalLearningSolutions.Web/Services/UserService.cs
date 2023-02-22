@@ -16,13 +16,8 @@ namespace DigitalLearningSolutions.Web.Services
 
     public interface IUserService
     {
-        //(AdminUser? adminUser, DelegateUser? delegateUser) GetUsersByIdXYZ(int? adminId, int? delegateId);
         AdminUser? GetAdminUserByAdminId(int? adminId);
         DelegateUser? GetDelegateUserByDelegateUserIdAndCentreId(int? delegateUserId, int? centreId);
-
-
-
-
 
         DelegateEntity? GetDelegateById(int id);
 
