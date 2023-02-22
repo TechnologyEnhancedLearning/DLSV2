@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="202104220853_FixCustomisationUpdateSPs.cs">
       <SubType>Code</SubType>
     </Compile>
