@@ -195,10 +195,10 @@
         )
         {
             var adminId = User.GetAdminId();
-            var (adminUser, _) = userService.GetUsersById(adminId, null);
+            var adminUser = userService.GetAdminUserByAdminId(adminId);
             var centreName = adminUser.CentreName;
 
-            var (delegateUserEmailDetails, _) = userService.GetUsersById(adminIdToPromote, null);
+            var delegateUserEmailDetails = userService.GetAdminUserByAdminId(adminIdToPromote);
 
             if (delegateUserEmailDetails != null && adminUser != null)
             {
