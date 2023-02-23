@@ -87,7 +87,7 @@
                 CentreId = rank,
                 Ranking = rank,
                 CentreName = $"Centre {rank}",
-                DelegateSessionCount = 10000-rank*10
+                DelegateSessionCount = 10000 - rank * 10
             };
         }
     }

@@ -486,7 +486,7 @@
         {
             // When
             var result = userDataService.GetDelegateAccountsByUserId(61188).ToList();
-         
+
             // Then
             using (new AssertionScope())
             {

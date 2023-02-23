@@ -11,7 +11,7 @@
         {
             // Given
             const int brandId = 1;
-            var expectedIndexes = new [] { 551, 3549, 3564, 4674 };
+            var expectedIndexes = new[] { 551, 3549, 3564, 4674 };
 
             // When
             var result = tutorialContentDataService.GetPublicTutorialSummariesByBrandId(brandId)
