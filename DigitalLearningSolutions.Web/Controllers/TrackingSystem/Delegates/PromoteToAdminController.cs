@@ -96,7 +96,8 @@
                 adminRoles.IsNominatedSupervisor ||
                 adminRoles.IsContentCreator ||
                 adminRoles.IsTrainer ||
-                adminRoles.IsCentreManager))
+                adminRoles.IsCentreManager ||
+                adminRoles.IsContentManager))
             {
                 var centreId = User.GetCentreIdKnownNotNull();
                 var userId = userDataService.GetUserIdFromDelegateId(delegateId);
