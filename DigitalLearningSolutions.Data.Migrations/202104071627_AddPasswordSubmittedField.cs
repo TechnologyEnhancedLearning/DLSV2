@@ -15,6 +15,6 @@ namespace DigitalLearningSolutions.Data.Migrations
             Delete.Column("PasswordSubmitted").FromTable("Progress");
         }
 
-       
+
     }
 }
