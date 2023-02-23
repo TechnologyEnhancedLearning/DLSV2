@@ -23,7 +23,7 @@
             "This email address does not match the one held by the centre; either your primary email or centre email must match the one held by the centre";
 
         public const string PasswordRegex = @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[a-z]).*";
-        public const string PasswordInvalidCharacters = "Password must contain at least 1 upper case and 1 lower case letter, 1 number and 1 symbol";
+        public const string PasswordInvalidCharacters = "Password must contain at least 1 uppercase and 1 lowercase letter, 1 number and 1 symbol";
         public const string PasswordRequired = "Enter a password";
         public const string PasswordMinLength = "Password must be 8 characters or more";
         public const string PasswordMaxLength = "Password must be 100 characters or fewer";
