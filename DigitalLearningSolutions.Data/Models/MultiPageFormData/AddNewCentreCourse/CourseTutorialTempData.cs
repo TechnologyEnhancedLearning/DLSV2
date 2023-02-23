@@ -3,7 +3,7 @@
     public class CourseTutorialTempData
     {
         // 'Unused' constructor required for JsonConvert
-        public CourseTutorialTempData(){}
+        public CourseTutorialTempData() { }
 
         public CourseTutorialTempData(Tutorial tutorial)
         {

@@ -11,7 +11,7 @@
         public bool IncludeOnLanding { get; set; }
         [RegularExpression(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*")]
         [StringLength(255)]
-        public string? ContactEmail {get; set; }
+        public string? ContactEmail { get; set; }
         public int OwnerOrganisationId { get; set; }
         public bool Active { get; set; }
         public int OrderByNumber { get; set; }

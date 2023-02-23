@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.SelfAssessments.Export
 {
     using System;
-    public  class DCSAOutcomeSummary
+    public class DCSAOutcomeSummary
     {
         public int? EnrolledMonth { get; set; }
         public int? EnrolledYear { get; set; }

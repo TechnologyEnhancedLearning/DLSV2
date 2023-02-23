@@ -2,8 +2,8 @@
 {
     using Newtonsoft.Json;
     public class ProfileResponse : FilteredResponse
-    {       
+    {
         [JsonProperty("result")]
         public Profile? Result { get; set; }
     }
-    }
+}
