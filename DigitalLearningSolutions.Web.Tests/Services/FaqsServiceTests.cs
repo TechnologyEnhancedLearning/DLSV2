@@ -11,7 +11,7 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class FaqsServiceTests
+    public class FaqsServiceTests1
     {
         private IFaqsDataService faqDataService = null!;
         private FaqsService faqsService = null!;

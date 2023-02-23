@@ -44,7 +44,7 @@
         {
             // Given
             var delegateUser = new DelegateUserCard
-                { Active = true, AdminId = 1, Password = "some password", SelfReg = true };
+            { Active = true, AdminId = 1, Password = "some password", SelfReg = true };
             var expectedTags = new List<SearchableTagViewModel>
             {
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsActive),
@@ -91,7 +91,7 @@
         {
             // Given
             var delegateUser = new DelegateUserCard
-                { SelfReg = true, ExternalReg = true };
+            { SelfReg = true, ExternalReg = true };
             var expectedTags = new List<SearchableTagViewModel>
             {
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsNotActive),

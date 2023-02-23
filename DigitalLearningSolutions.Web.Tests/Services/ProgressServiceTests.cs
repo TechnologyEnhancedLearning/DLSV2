@@ -230,7 +230,11 @@
             // Given
             var testCourseProgress = new Progress
             {
-                ProgressId = 1, CustomisationId = 4, CandidateId = 5, DiagnosticScore = 42, Completed = null,
+                ProgressId = 1,
+                CustomisationId = 4,
+                CandidateId = 5,
+                DiagnosticScore = 42,
+                Completed = null,
                 RemovedDate = null,
             };
             var testSectionProgress = new List<DetailedSectionProgress>

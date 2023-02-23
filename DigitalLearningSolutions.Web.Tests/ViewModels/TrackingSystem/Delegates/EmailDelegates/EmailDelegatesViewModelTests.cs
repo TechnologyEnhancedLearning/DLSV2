@@ -81,7 +81,7 @@
                     availableFilters,
                     new DateTime(2022, 1, 1)
                 )
-                { SelectedDelegateIds = selectedDelegateIds };
+            { SelectedDelegateIds = selectedDelegateIds };
 
             // Then
             model.Delegates!.Count().Should().Be(delegateUsers.Length);

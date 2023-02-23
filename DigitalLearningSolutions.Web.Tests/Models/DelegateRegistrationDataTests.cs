@@ -80,7 +80,11 @@
             // Given
             var data = new DelegateRegistrationData
             {
-                Answer1 = Answer1, Answer2 = Answer2, Answer3 = Answer3, Answer4 = Answer4, Answer5 = Answer5,
+                Answer1 = Answer1,
+                Answer2 = Answer2,
+                Answer3 = Answer3,
+                Answer4 = Answer4,
+                Answer5 = Answer5,
                 Answer6 = Answer6,
             };
 
