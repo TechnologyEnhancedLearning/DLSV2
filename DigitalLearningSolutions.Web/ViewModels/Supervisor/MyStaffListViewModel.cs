@@ -41,7 +41,8 @@
                 null
             ),
             new CentreRegistrationPrompts()
-        ) { }
+        )
+        { }
 
         public IEnumerable<SupervisorDelegateDetailViewModel> SuperviseDelegateDetailViewModels { get; set; }
 

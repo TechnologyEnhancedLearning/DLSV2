@@ -10,12 +10,12 @@ namespace DigitalLearningSolutions.Web.Extensions
         public static async Task<bool> IsDuplicateSubmission(this HttpContext context)
         {
 
-            var currentToken =context.Request.Form["__RequestVerificationToken"].ToString();
+            var currentToken = context.Request.Form["__RequestVerificationToken"].ToString();
             var lastToken = context.Session.GetString("LastProcessedToken");
 
             if (lastToken == currentToken)
             {
-               return true;
+                return true;
             }
             else
             {

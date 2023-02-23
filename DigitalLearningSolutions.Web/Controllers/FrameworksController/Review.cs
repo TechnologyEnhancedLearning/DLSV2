@@ -28,7 +28,7 @@
         public IActionResult SubmitReviewers(int frameworkId, List<int> userChecked, List<int> signOffRequiredChecked)
         {
             var adminId = GetAdminId();
-            foreach(var user in userChecked)
+            foreach (var user in userChecked)
             {
                 var required = signOffRequiredChecked.IndexOf(user) != -1;
                 frameworkService.InsertFrameworkReview(frameworkId, user, required);
@@ -81,10 +81,10 @@
         {
             var adminId = GetAdminId();
             int? commentId = null;
-            if(!string.IsNullOrWhiteSpace(comment)) commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
+            if (!string.IsNullOrWhiteSpace(comment)) commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             frameworkService.SubmitFrameworkReview(frameworkId, reviewId, signedOff, commentId);
             frameworkNotificationService.SendReviewOutcomeNotification(reviewId);
-            return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId , tabname = "Structure"});
+            return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId, tabname = "Structure" });
         }
         public IActionResult ResendRequest(int reviewId, int frameworkId, int frameworkCollaboratorId, bool required)
         {

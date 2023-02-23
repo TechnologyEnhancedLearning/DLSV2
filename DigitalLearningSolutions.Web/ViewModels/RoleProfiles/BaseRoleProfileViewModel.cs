@@ -1,4 +1,5 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.RoleProfiles {
+﻿namespace DigitalLearningSolutions.Web.ViewModels.RoleProfiles
+{
     using System;
     using System.Collections.Generic;
     using System.Linq;

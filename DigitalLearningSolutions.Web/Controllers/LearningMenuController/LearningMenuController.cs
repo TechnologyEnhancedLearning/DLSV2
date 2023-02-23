@@ -67,7 +67,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             if (config.GetValue<string>("LegacyLearningMenu") != "")
             {
-                if ((config.GetValue<bool>("LegacyLearningMenu") && !configDataService.GetCentreBetaTesting(centreId))|(!config.GetValue<bool>("LegacyLearningMenu") && configDataService.GetCentreBetaTesting(centreId)))
+                if ((config.GetValue<bool>("LegacyLearningMenu") && !configDataService.GetCentreBetaTesting(centreId)) | (!config.GetValue<bool>("LegacyLearningMenu") && configDataService.GetCentreBetaTesting(centreId)))
                 {
                     string baseUrl = config.GetValue<string>("CurrentSystemBaseUrl");
                     string url = $"{baseUrl}/tracking/learn?customisationid={customisationId}&lp=1";
@@ -139,7 +139,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var candidateId = User.GetCandidateIdKnownNotNull();
             var coursePassword = courseContentService.GetCoursePassword(customisationId);
-            if(coursePassword == null)
+            if (coursePassword == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as course password was null. " +
@@ -165,7 +165,7 @@
                 return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId, error = true });
             }
         }
-            [Route("/LearningMenu/Close")]
+        [Route("/LearningMenu/Close")]
         public IActionResult Close(string learningActivity)
         {
             var action = string.IsNullOrEmpty(learningActivity) ? "Current" : learningActivity;
@@ -249,7 +249,7 @@
             var diagnosticAssessment =
                 diagnosticAssessmentService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
 
-            if (diagnosticAssessment == null )
+            if (diagnosticAssessment == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as section/centre id was not found. " +

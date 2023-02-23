@@ -159,7 +159,7 @@
                 adminUser.IsCentreManager = adminRoles.IsCentreManager;
                 adminUser.ImportOnly = model.ContentManagementRole.ImportOnly;
                 adminUser.IsContentManager = model.ContentManagementRole.IsContentManager;
-                
+
 
                 var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
                 categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
