@@ -48,22 +48,22 @@
 
             <a class="nhsuk-button button-small nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
              role="button"
-               aria-describedby="@Model.ID-header"
-               asp-action="ViewThread"
-               asp-controller="Frameworks"
-               asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
-               asp-route-commentId="@Model.ID">
+             aria-describedby="@Model.ID-header"
+             asp-action="ViewThread"
+             asp-controller="Frameworks"
+             asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
+             asp-route-commentId="@Model.ID">
               Reply
             </a>
             @if (!Model.Replies.Any() && Model.UserIsCommenter)
             {
               <a class="nhsuk-button button-small delete-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
              role="button"
-                 aria-describedby="@Model.ID-header"
-                 asp-action="ArchiveComment"
-                 asp-controller="Frameworks"
-                 asp-route-commentId="@Model.ID"
-                 asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+             aria-describedby="@Model.ID-header"
+             asp-action="ArchiveComment"
+             asp-controller="Frameworks"
+             asp-route-commentId="@Model.ID"
+             asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
                 Delete
               </a>
             }
@@ -89,4 +89,4 @@
       </div>
     </div>
   </div>
-  </div>
+</div>

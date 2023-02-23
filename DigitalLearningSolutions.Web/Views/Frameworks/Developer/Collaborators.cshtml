@@ -11,9 +11,9 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@if (Model.Error)
+  @if (Model.Error)
 {
-    <vc:error-summary order-of-property-names="@(new string[] { "userEmail" })" />
+  <vc:error-summary order-of-property-names="@(new string[] { "userEmail" })" />
 }
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {

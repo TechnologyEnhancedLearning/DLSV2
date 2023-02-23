@@ -12,7 +12,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CurrentPassword), nameof(Model.Password), nameof(Model.ConfirmPassword) })" />
     }
 
@@ -22,16 +23,15 @@
     </p>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment">
-      <vc:text-input
-        asp-for="@nameof(Model.CurrentPassword)"
-        label="Current password"
-        populate-with-current-value="false"
-        type="password"
-        spell-check="false"
-        hint-text=""
-        autocomplete="off"
-        css-class="nhsuk-u-width-one-half"
-        required="true" />
+      <vc:text-input asp-for="@nameof(Model.CurrentPassword)"
+                     label="Current password"
+                     populate-with-current-value="false"
+                     type="password"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="off"
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
 
       <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel(Model, "New password"))" />
       <button class="nhsuk-button" type="submit">Change password</button>
