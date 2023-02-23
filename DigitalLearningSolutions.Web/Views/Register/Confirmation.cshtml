@@ -23,10 +23,13 @@
 
     <partial name="_VerifyEmailWarningForRegistrationConfirmationPage" model="@verifyEmailWarningViewModel" />
 
-    @if (!Model.Approved) {
+    @if (!Model.Approved)
+    {
       <partial name="_UnapprovedAccountWarning" />
       <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
-    } else {
+    }
+    else
+    {
       <vc:action-link link-text="Log in" asp-controller="Login" asp-action="Index" />
     }
   </div>

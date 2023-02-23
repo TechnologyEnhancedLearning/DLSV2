@@ -8,9 +8,11 @@
     </h3>
 
     <div class="nhsuk-card__description">
-      @if (Model.Responses.Any()) {
+      @if (Model.Responses.Any())
+      {
         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
-          @foreach (var response in Model.Responses) {
+          @foreach (var response in Model.Responses)
+          {
             <div class="nhsuk-summary-list__row">
               <dt class="nhsuk-summary-list__key eval-summary-row__key">
                 @response.Response
@@ -24,7 +26,9 @@
             </div>
           }
         </dl>
-      } else {
+      }
+      else
+      {
         <span>This question has not been answered yet.</span>
       }
     </div>

@@ -8,7 +8,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Telephone) })" />
     }
 
@@ -23,7 +24,7 @@
                      autocomplete="given-name"
                      hint-text=""
                      css-class="nhsuk-u-width-one-half"
-                     required="true"/>
+                     required="true" />
 
       <vc:text-input asp-for="LastName"
                      label="Last name"
@@ -52,7 +53,7 @@
                      autocomplete=""
                      hint-text=""
                      css-class="nhsuk-u-width-one-half"
-                     required="false"/>
+                     required="false" />
 
       <button class="nhsuk-button" type="submit" value="save">Save</button>
     </form>

@@ -3,10 +3,12 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/support/faqs.css")" asp-append-version="true">
 
-@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-@section scripts {
+@if (Model.JavascriptSearchSortFilterPaginateEnabled)
+{
+  @section scripts {
   <script src="@Url.Content("~/js/support/faqs.js")" asp-append-version="true"></script>
-}}
+}
+}
 
 @{
   ViewData["Title"] = "FAQs";
@@ -22,7 +24,8 @@
   <span id="dls-sub-application" class="display-none">@Model.DlsSubApplication</span>
 
   <div class="nhsuk-grid-column-three-quarters">
-    @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+    @if (Model.JavascriptSearchSortFilterPaginateEnabled)
+    {
       <vc:loading-spinner page-has-side-nav-menu="true" />
     }
     <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
@@ -32,17 +35,21 @@
       <input type="hidden" aria-hidden="true" id="select-sort-by" value="@Model.SortBy" data-sort-by-multiple="true" />
       <input type="hidden" aria-hidden="true" id="select-sort-direction" value="@Model.SortDirection" />
 
-      @if (Model.NoDataFound) {
+      @if (Model.NoDataFound)
+      {
         <p class="nhsuk-u-margin-top-4" role="alert">
           <b>No FAQs found.</b>
         </p>
-      } else {
+      }
+      else
+      {
         <partial name="SearchablePage/_SearchResultsCount" model="Model" />
         <partial name="SearchablePage/_TopPagination" model="Model" />
         <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
         <div id="searchable-elements">
-          @foreach (var faq in Model.Faqs) {
+          @foreach (var faq in Model.Faqs)
+          {
             <partial name="_SearchableFaqCard" model="faq" />
           }
         </div>

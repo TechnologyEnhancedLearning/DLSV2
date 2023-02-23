@@ -29,13 +29,16 @@
             <span class="nhsuk-table-responsive__heading">Status </span>
             @if (supervisorSignOff.Verified == null)
             {
-              <span class="nhsuk-tag">Requested @supervisorSignOff.Requested.Value.ToShortDateString()</span> }
+              <span class="nhsuk-tag">Requested @supervisorSignOff.Requested.Value.ToShortDateString()</span>
+            }
             else if (supervisorSignOff.SignedOff && supervisorSignOff.Verified != null)
             {
-              <span class="nhsuk-tag nhsuk-tag--green">Signed off @supervisorSignOff.Verified.Value.ToShortDateString()</span> }
+              <span class="nhsuk-tag nhsuk-tag--green">Signed off @supervisorSignOff.Verified.Value.ToShortDateString()</span>
+            }
             else
             {
-              <span class="nhsuk-tag nhsuk-tag--red">Rejected @supervisorSignOff.Verified.Value.ToShortDateString()</span>}
+              <span class="nhsuk-tag nhsuk-tag--red">Rejected @supervisorSignOff.Verified.Value.ToShortDateString()</span>
+            }
           </td>
           <td role="cell" class="nhsuk-table__cell">
             <span class="nhsuk-table-responsive__heading">Comments </span>@supervisorSignOff.Comments
@@ -47,7 +50,7 @@
 }
 else
 {
-<h1>Sign-off History</h1>
+  <h1>Sign-off History</h1>
   <p class="nhsuk-body-l">There are no sign-off requests for this self assessment.</p>
 }
 

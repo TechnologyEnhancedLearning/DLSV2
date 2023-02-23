@@ -5,97 +5,97 @@
 @model StartedLearningItemViewModel
 
 <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-        Enrolled
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-        @Model.StartedDate.ToShortDateString()
-    </dd>
+  <dt class="nhsuk-summary-list__key">
+    Enrolled
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.StartedDate.ToShortDateString()
+  </dd>
 </div>
 <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-        Last access
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-        @Html.Raw(Model.LastAccessedDate?.ToShortDateString() ?? "<span class='nhsuk-u-visually-hidden'>Not started </span>-")
-    </dd>
+  <dt class="nhsuk-summary-list__key">
+    Last access
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Html.Raw(Model.LastAccessedDate?.ToShortDateString() ?? "<span class='nhsuk-u-visually-hidden'>Not started </span>-")
+  </dd>
 </div>
 @if (Model is CurrentLearningItemViewModel currentLearningItemViewModel)
 {
-    <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            Complete by
-        </dt>
-        <dd class="nhsuk-summary-list__value @currentLearningItemViewModel.DateStyle()">
-            @(currentLearningItemViewModel.CompleteByDate == null ?
-        Html.Raw("<span class='nhsuk-u-visually-hidden'>No complete by date set </span>-") :
-        Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentLearningItemViewModel.DueByDescription()}</span>{currentLearningItemViewModel.CompleteByDate?.ToShortDateString()}"))
-        </dd>
-        <dd class="nhsuk-summary-list__actions" style="border-bottom:none;">
-            @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled))
-            {
-                <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
-           aria-describedby="@Model.Id-name-course"
-           aria-label="Edit complete by date"
-           data-return-page-enabled="true"
-           asp-action="SetCurrentCourseCompleteByDate"
-           asp-route-id="@Model.Id"
-           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
-           role="button">
-                    Edit
-                </a>
-            }
-            else if (currentLearningItemViewModel is SelfAssessmentCardViewModel)
-            {
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Complete by
+    </dt>
+    <dd class="nhsuk-summary-list__value @currentLearningItemViewModel.DateStyle()">
+      @(currentLearningItemViewModel.CompleteByDate == null ?
+    Html.Raw("<span class='nhsuk-u-visually-hidden'>No complete by date set </span>-") :
+    Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentLearningItemViewModel.DueByDescription()}</span>{currentLearningItemViewModel.CompleteByDate?.ToShortDateString()}"))
+    </dd>
+    <dd class="nhsuk-summary-list__actions" style="border-bottom:none;">
+      @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled))
+      {
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
+       aria-describedby="@Model.Id-name-course"
+       aria-label="Edit complete by date"
+       data-return-page-enabled="true"
+       asp-action="SetCurrentCourseCompleteByDate"
+       asp-route-id="@Model.Id"
+       asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
+       role="button">
+          Edit
+        </a>
+      }
+      else if (currentLearningItemViewModel is SelfAssessmentCardViewModel)
+      {
 
-                <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
-           aria-describedby="@Model.Id-name-sa"
-           aria-label="Edit complete by date"
-           data-return-page-enabled="true"
-           asp-route-selfAssessmentId="@Model.Id"
-           asp-action="SetSelfAssessmentCompleteByDate"
-           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
-           role="button">
-                    Edit
-                </a>
-            }
-            else if (currentLearningItemViewModel is CurrentLearningResourceViewModel { AbsentInLearningHub: false })
-            {
-                <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
-           aria-describedby="@Model.Id-name-lhr"
-           aria-label="Edit complete by date"
-           data-return-page-enabled="true"
-           asp-action="SetCurrentActionPlanResourceCompleteByDate"
-           asp-route-learningLogItemId="@Model.Id"
-           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
-           role="button">
-                    Edit
-                </a>
-            }
-        </dd>
-    </div>
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
+       aria-describedby="@Model.Id-name-sa"
+       aria-label="Edit complete by date"
+       data-return-page-enabled="true"
+       asp-route-selfAssessmentId="@Model.Id"
+       asp-action="SetSelfAssessmentCompleteByDate"
+       asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
+       role="button">
+          Edit
+        </a>
+      }
+      else if (currentLearningItemViewModel is CurrentLearningResourceViewModel { AbsentInLearningHub: false })
+      {
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
+       aria-describedby="@Model.Id-name-lhr"
+       aria-label="Edit complete by date"
+       data-return-page-enabled="true"
+       asp-action="SetCurrentActionPlanResourceCompleteByDate"
+       asp-route-learningLogItemId="@Model.Id"
+       asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
+       role="button">
+          Edit
+        </a>
+      }
+    </dd>
+  </div>
 }
 @if (Model is CompletedLearningItemViewModel completedLearningItem)
 {
-    <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            Completed
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-            @completedLearningItem.CompletedDate.ToShortDateString()
-        </dd>
-    </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Completed
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @completedLearningItem.CompletedDate.ToShortDateString()
+    </dd>
+  </div>
 }
 @if (Model is CompletedCourseViewModel completedCourseViewModel)
 {
-    <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            Evaluated
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-            @(completedCourseViewModel.EvaluatedDate == null ?
-        Html.Raw("<span class='nhsuk-u-visually-hidden'>Not evaluated</span>-") :
-        Html.Raw($"{completedCourseViewModel.EvaluatedDate?.ToShortDateString()}"))
-        </dd>
-    </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Evaluated
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @(completedCourseViewModel.EvaluatedDate == null ?
+    Html.Raw("<span class='nhsuk-u-visually-hidden'>Not evaluated</span>-") :
+    Html.Raw($"{completedCourseViewModel.EvaluatedDate?.ToShortDateString()}"))
+    </dd>
+  </div>
 }

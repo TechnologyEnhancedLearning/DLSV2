@@ -16,7 +16,8 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+    @if (Model.JavascriptSearchSortFilterPaginateEnabled)
+    {
       <vc:loading-spinner page-has-side-nav-menu="true" />
     }
     <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
@@ -41,15 +42,19 @@
 
       <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
 
-      @if (Model.NoDataFound) {
+      @if (Model.NoDataFound)
+      {
         <p>The centre has no courses set up yet.</p>
-      } else {
+      }
+      else
+      {
         <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
         <partial name="SearchablePage/_TopPagination" model="Model" />
         <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
         <div id="searchable-elements">
-          @foreach (var course in Model.Courses) {
+          @foreach (var course in Model.Courses)
+          {
             <partial name="_CentreCourseCard" model="course" />
           }
         </div>

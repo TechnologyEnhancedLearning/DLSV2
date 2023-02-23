@@ -12,7 +12,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@new []{ nameof(Model.ApplicationId) }" />
     }
 
@@ -21,7 +22,8 @@
 
   <div class="nhsuk-grid-column-one-half">
 
-    @foreach (var filter in Model.Filters) {
+    @foreach (var filter in Model.Filters)
+    {
       <partial name="AddNewCentreCourse/_CategoryTopicFilter" model="@filter" />
     }
 
@@ -35,7 +37,8 @@
           <label class="nhsuk-label--s nhsuk-u-margin-bottom-1" for="searchable-elements">
             Course
           </label>
-          @if (errorHasOccurred) {
+          @if (errorHasOccurred)
+          {
             <span class="nhsuk-error-message" id="@nameof(Model.ApplicationId)-error">
               <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
             </span>
@@ -47,7 +50,8 @@
                   value="@Model.ApplicationId">
 
             <option id="default-option" disabled selected=@(Model.ApplicationId == null)>@defaultOptionText</option>
-            @foreach (var item in Model.ApplicationOptions) {
+            @foreach (var item in Model.ApplicationOptions)
+            {
               <partial name="AddNewCentreCourse/_SelectCourseFilterableSelectListItem" model="@item" />
             }
           </select>

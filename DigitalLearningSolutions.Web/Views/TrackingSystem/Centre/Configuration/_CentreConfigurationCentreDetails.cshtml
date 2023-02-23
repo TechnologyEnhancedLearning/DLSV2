@@ -31,9 +31,12 @@
           Centre signature
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @if (Model.SignatureImage != null) {
+          @if (Model.SignatureImage != null)
+          {
             <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture" />
-          } else {
+          }
+          else
+          {
             <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder signature image" />
           }
         </dd>
@@ -44,9 +47,12 @@
           Centre logo
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @if (Model.CentreLogo != null) {
+          @if (Model.CentreLogo != null)
+          {
             <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture" />
-          } else {
+          }
+          else
+          {
             <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder logo image" />
           }
         </dd>

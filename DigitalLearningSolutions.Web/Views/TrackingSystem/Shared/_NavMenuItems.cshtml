@@ -3,7 +3,8 @@
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
 
-@if (User.HasCentreAdminPermissions()) {
+@if (User.HasCentreAdminPermissions())
+{
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Centre)">
     <a class="nhsuk-header__navigation-link" asp-controller="Dashboard" asp-action="Index">
       Centre

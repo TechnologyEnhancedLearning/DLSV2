@@ -12,11 +12,13 @@
   <title></title>
 </head>
 <body>
-@foreach (var admin in Model.Admins) {
-  <partial name="_SearchableAdminCard" model="admin" />
-}
-@foreach (var filter in Model.Filters) {
-  <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
-}
+  @foreach (var admin in Model.Admins)
+  {
+    <partial name="_SearchableAdminCard" model="admin" />
+  }
+  @foreach (var filter in Model.Filters)
+  {
+    <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+  }
 </body>
 </html>

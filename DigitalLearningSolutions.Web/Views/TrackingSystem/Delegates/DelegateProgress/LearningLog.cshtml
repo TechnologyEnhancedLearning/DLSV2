@@ -16,14 +16,18 @@
 }
 
 @section NavBreadcrumbs {
-  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+  {
     <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
-  } else {
+  }
+  else
+  {
     <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml" model="(Model.DelegateId, Model.ProgressId)" />
   }
 }
 
-@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  @if (Model.JavascriptSearchSortFilterPaginateEnabled)
+{
   <vc:loading-spinner page-has-side-nav-menu="false" />
 }
 <div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
@@ -34,9 +38,12 @@
     <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateAndCourseNames.cshtml"
              model="(Model.DelegateNameAndEmail, Model.CourseName)" />
 
-    @if (Model.NoDataFound) {
+    @if (Model.NoDataFound)
+    {
       <p class="nhsuk-lede-text">No learning log entries exist for this delegate on this course</p>
-    } else {
+    }
+    else
+    {
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-three-quarters">
           <partial name="SearchablePage/_Sort" model="Model" />
@@ -46,28 +53,29 @@
       <table role="table" class="nhsuk-table-responsive">
         <caption class="nhsuk-table__caption">Learning log entries</caption>
         <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            When
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Learning time (minutes)
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Assessment taken
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Assessment score
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Assessment status
-          </th>
-        </tr>
+          <tr role="row">
+            <th role="columnheader" class="" scope="col">
+              When
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Learning time (minutes)
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Assessment taken
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Assessment score
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Assessment status
+            </th>
+          </tr>
         </thead>
         <tbody class="nhsuk-table__body" id="searchable-elements">
-        @foreach (var entry in Model.Entries) {
-          <partial name="_LearningLogTableRow" model="entry" />
-        }
+          @foreach (var entry in Model.Entries)
+          {
+            <partial name="_LearningLogTableRow" model="entry" />
+          }
         </tbody>
       </table>
     }

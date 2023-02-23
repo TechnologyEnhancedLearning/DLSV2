@@ -62,11 +62,15 @@
     Completion criteria
   </dt>
   <dd class="nhsuk-summary-list__value">
-    @if (Model.PostLearningAssessment) {
+    @if (Model.PostLearningAssessment)
+    {
       <p>Post learning assessment</p>
-    } else {
+    }
+    else
+    {
       <p>Required learning percentage: @(Model.RequiredLearningPercentage)%</p>
-      @if (Model.DiagAssess) {
+      @if (Model.DiagAssess)
+      {
         <p>Required diagnostic percentage: @(Model.RequiredDiagnosticPercentage)%</p>
       }
     }
