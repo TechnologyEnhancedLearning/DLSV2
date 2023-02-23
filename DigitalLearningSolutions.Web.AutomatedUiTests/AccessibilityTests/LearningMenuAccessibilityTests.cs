@@ -17,7 +17,7 @@
                 // Given
                 Driver.LogUserInAsAdminAndDelegate(BaseUrl);
                 const string startUrl = "/LearningMenu/19262";
-                const string submenuUrl = startUrl +"/1010";
+                const string submenuUrl = startUrl + "/1010";
                 const string diagnosticUrl = submenuUrl + "/Diagnostic";
                 const string tutorialUrl = submenuUrl + "/4448";
                 const string postLearningUrl = submenuUrl + "/PostLearning";

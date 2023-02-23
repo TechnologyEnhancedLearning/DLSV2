@@ -8,7 +8,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
     {
         public BasicAuthenticatedAccessibilityTests(AuthenticatedAccessibilityTestsFixture<Startup> fixture) : base(
             fixture
-        ) { }
+        )
+        { }
 
         [Theory]
         [InlineData("/MyAccount", "My account")]
