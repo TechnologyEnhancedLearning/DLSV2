@@ -5,61 +5,67 @@
 @model CentreConfigurationViewModel
 
 <details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary">
-    <span class="nhsuk-details__summary-text">
-      Centre details
-    </span>
-  </summary>
-  <div class="nhsuk-details__text">
-    <dl class="nhsuk-summary-list details-list-with-button">
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Notify email
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.NotifyEmail" />
-      </div>
+    <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">
+            Centre details
+        </span>
+    </summary>
+    <div class="nhsuk-details__text">
+        <dl class="nhsuk-summary-list details-list-with-button">
+            <div class="nhsuk-summary-list__row details-list-with-button__row">
+                <dt class="nhsuk-summary-list__key">
+                    Notify email
+                </dt>
+                <partial name="_SummaryFieldValue" model="@Model.NotifyEmail" />
+            </div>
 
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Centre support details
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.BannerText" />
-      </div>
+            <div class="nhsuk-summary-list__row details-list-with-button__row">
+                <dt class="nhsuk-summary-list__key">
+                    Centre support details
+                </dt>
+                <partial name="_SummaryFieldValue" model="@Model.BannerText" />
+            </div>
 
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Centre signature
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @if (Model.SignatureImage != null) {
-            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture" />
-          } else {
-            <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder signature image" />
+            <div class="nhsuk-summary-list__row details-list-with-button__row">
+                <dt class="nhsuk-summary-list__key">
+                    Centre signature
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+          @if (Model.SignatureImage != null)
+          {
+                      <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture" />
           }
-        </dd>
-      </div>
-
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Centre logo
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @if (Model.CentreLogo != null) {
-            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture" />
-          } else {
-            <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder logo image" />
+          else
+          {
+                      <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder signature image" />
           }
-        </dd>
-      </div>
-    </dl>
+                </dd>
+            </div>
 
-    <a class="nhsuk-button" role="button" asp-action="EditCentreDetails">
-      Edit
-    </a>
+            <div class="nhsuk-summary-list__row details-list-with-button__row">
+                <dt class="nhsuk-summary-list__key">
+                    Centre logo
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+          @if (Model.CentreLogo != null)
+          {
+                      <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture" />
+          }
+          else
+          {
+                      <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder logo image" />
+          }
+                </dd>
+            </div>
+        </dl>
 
-    <a class="nhsuk-button nhsuk-button--secondary" role="button" href="@Configuration.GetCurrentSystemBaseUrl()/tracking/finalise?Preview=1" target="_blank">
-      Preview certificate
-      <span class="nhsuk-u-visually-hidden">(opens in a new window)</span>
-    </a>
-  </div>
+        <a class="nhsuk-button" role="button" asp-action="EditCentreDetails">
+            Edit
+        </a>
+
+        <a class="nhsuk-button nhsuk-button--secondary" asp-route-preview=1 asp-controller="Certificate" asp-action="PreviewCertificate" role="button" target="_blank">
+            Preview certificate
+            <span class="nhsuk-u-visually-hidden">(opens in a new window)</span>
+        </a>
+    </div>
 </details>

@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Certificates\Certificates.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.4" />
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Dapper.FluentMap" Version="2.0.0" />

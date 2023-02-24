@@ -2,46 +2,46 @@
 @model CompletedCourseViewModel
 
 <div class="searchable-element nhsuk-panel" id="@Model.Id-card">
-  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
-    <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" role="heading" aria-level="2">
+    <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+        <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
+            <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" role="heading" aria-level="2">
         @Model.Name @(Model.ArchivedDate == null ? "" : " - ARCHIVED")
-      </span>
-    </summary>
-    <div class="nhsuk-details__text">
-      <div class="nhsuk-grid-row">
-        <partial name="Shared/_TagRow" model="@Model" />
-      </div>
-      <dl class="nhsuk-summary-list">
-        <partial name="Shared/_Dates" model="@Model" view-data="@(new ViewDataDictionary(ViewData) { { "showActions", true } })" />
-        <partial name="Shared/_Scores" model="@Model" view-data="@(new ViewDataDictionary(ViewData) { { "showActions", true } })" />
-      </dl>
-    </div>
-  </details>
+            </span>
+        </summary>
+        <div class="nhsuk-details__text">
+            <div class="nhsuk-grid-row">
+                <partial name="Shared/_TagRow" model="@Model" />
+            </div>
+            <dl class="nhsuk-summary-list">
+                <partial name="Shared/_Dates" model="@Model" view-data="@(new ViewDataDictionary(ViewData) { { "showActions", true } })" />
+                <partial name="Shared/_Scores" model="@Model" view-data="@(new ViewDataDictionary(ViewData) { { "showActions", true } })" />
+            </dl>
+        </div>
+    </details>
 
-  <div class="flex-row">
+    <div class="flex-row">
     @if (Model.ArchivedDate == null)
     {
-      <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2"
-       aria-describedby="@Model.Id-name"
-       asp-controller="LearningMenu"
-       asp-action="Index"
-       asp-route-customisationId="@Model.Id"
-       role="button">
-        Launch course <span class="nhsuk-u-visually-hidden">@Model.Name</span>
-      </a>
+          <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2"
+           aria-describedby="@Model.Id-name"
+           asp-controller="LearningMenu"
+           asp-action="Index"
+           asp-route-customisationId="@Model.Id"
+           role="button">
+              Launch course <span class="nhsuk-u-visually-hidden">@Model.Name</span>
+          </a>
     }
     @if (Model.HasFinaliseButton())
     {
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-       aria-describedby="@Model.Id-name"
-       aria-label="@Model.FinaliseButtonAriaLabel()"
-       href="@Model.EvaluateUrl"
-       role="button">
-        <span aria-hidden="true">
+          <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+           aria-describedby="@Model.Id-name"
+           aria-label="@Model.FinaliseButtonAriaLabel()"
+           asp-route-progressId=@Model.ProgressId asp-controller="Certificate" asp-action="ViewCertificate"
+           role="button">
+              <span aria-hidden="true">
           @Model.FinaliseButtonText()  <span class="nhsuk-u-visually-hidden">@Model.Name</span>
-        </span>
-      </a>
+              </span>
+          </a>
     }
-  </div>
+    </div>
 </div>

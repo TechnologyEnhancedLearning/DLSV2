@@ -260,6 +260,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IActivityDataService, ActivityDataService>();
             services.AddScoped<ICentreRegistrationPromptsDataService, CentreRegistrationPromptsDataService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
+            services.AddScoped<ICertificateDataService, CertificateDataService>();
             services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
@@ -311,6 +312,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             services.AddHttpClient<ILearningHubApiClient, LearningHubApiClient>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
+            services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
