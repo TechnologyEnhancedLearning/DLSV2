@@ -11,7 +11,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(RemoveRegistrationPromptViewModel.Confirm) }" />
+      <vc:error-summary order-of-property-names="@(new []{ nameof(RemoveRegistrationPromptViewModel.Confirm) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Remove delegate registration prompt</h1>

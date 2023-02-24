@@ -10,7 +10,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.CompleteWithinMonths), nameof(@Model.ValidityMonths) }" />
+      <vc:error-summary order-of-property-names="@(new []{ nameof(@Model.CompleteWithinMonths), nameof(@Model.ValidityMonths) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit Learning Pathway defaults</h1>

@@ -21,7 +21,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.Answer)}" />
+      <vc:error-summary order-of-property-names="@(new []{ nameof(@Model.Answer)})" />
     }
 
     <h1 class="nhsuk-heading-xl word-break">@pageTitle</h1>
