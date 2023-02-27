@@ -172,7 +172,7 @@
             );
             if (supervisorDelegateId > 0)
             {
-                frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminId());
+                frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminId(), GetCentreId());
             }
         }
 
@@ -181,7 +181,7 @@
             var adminId = GetAdminId();
             if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, 0, adminId))
             {
-                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0);
+                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0, GetCentreId());
             }
 
             return RedirectToAction("MyStaffList");
@@ -389,7 +389,8 @@
                     GetAdminId(),
                     supervisorDelegateId,
                     candidateAssessmentId,
-                    resultId
+                    resultId,
+                    GetCentreId()
                 );
             }
 
@@ -490,7 +491,8 @@
                     GetAdminId(),
                     supervisorDelegateId,
                     candidateAssessmentId,
-                    countResults
+                    countResults,
+                    GetCentreId()
                 );
             }
 
@@ -822,7 +824,8 @@
                     GetAdminId(),
                     supervisorDelegateId,
                     candidateAssessmentId,
-                    completeByDate
+                    completeByDate,
+                    GetCentreId()
                 );
             }
             TempData.Clear();
@@ -840,7 +843,8 @@
             frameworkNotificationService.SendReminderDelegateSelfAssessment(
                 GetAdminId(),
                 supervisorDelegateId,
-                candidateAssessmentId
+                candidateAssessmentId,
+                GetCentreId()
             );
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
@@ -902,7 +906,8 @@
                 candidateAssessmentId,
                 model.SupervisorComments,
                 model.SignedOff,
-                GetAdminId()
+                GetAdminId(),
+                GetCentreId()
             );
             return RedirectToAction(
                 "ReviewDelegateSelfAssessment",
@@ -1018,7 +1023,7 @@
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(reviewId, GetAdminId(), 0);
             if (reviewId > 0)
             {
-                frameworkNotificationService.SendSupervisorDelegateReminder(reviewId, GetAdminId());
+                frameworkNotificationService.SendSupervisorDelegateReminder(reviewId, GetAdminId(), GetCentreId());
                 supervisorService.UpdateNotificationSent(reviewId);
             }
             return RedirectToAction("MyStaffList");
