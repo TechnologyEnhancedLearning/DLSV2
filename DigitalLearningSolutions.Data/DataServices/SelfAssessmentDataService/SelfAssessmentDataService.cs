@@ -66,7 +66,7 @@
         );
 
         // CandidateAssessmentsDataService
-        //IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId);
+
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId);
 
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int delegateUserId, int selfAssessmentId);
