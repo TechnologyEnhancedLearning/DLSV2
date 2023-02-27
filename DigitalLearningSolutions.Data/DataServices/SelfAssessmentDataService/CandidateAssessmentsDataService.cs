@@ -8,7 +8,7 @@
 
     public partial class SelfAssessmentDataService
     {
-        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId)
+        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId)
         {
             return connection.Query<CurrentSelfAssessment>(
                 @"SELECT
@@ -40,16 +40,72 @@
                         ON SAS.CompetencyID = C.ID
                     INNER JOIN Centres AS CR
                         ON CA.CentreID = CR.CentreID
+
+inner join CentreSelfAssessments csa
+	on csa.CentreID = ca.CentreID
+
                     WHERE CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
+                        and ca.CentreId = @centreId
+
+
+
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName",
-                new { delegateUserId }
+                new { delegateUserId, centreId }
             );
         }
+
+
+        //public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId)
+        //{
+        //    return connection.Query<CurrentSelfAssessment>(
+        //        @"SELECT
+        //                CA.SelfAssessmentID AS Id,
+        //                SA.Name,
+        //                SA.Description,
+        //                SA.IncludesSignposting,
+        //                SA.IncludeRequirementsFilters,
+        //                SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
+        //                SA.ReviewerCommentsLabel,
+        //                COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
+        //                COUNT(C.ID) AS NumberOfCompetencies,
+        //                CA.StartedDate,
+        //                CA.LastAccessed,
+        //                CA.CompleteByDate,
+        //                CA.ID AS CandidateAssessmentId,
+        //                CA.UserBookmark,
+        //                CA.UnprocessedUpdates,
+        //                CA.LaunchCount,
+        //                1 AS IsSelfAssessment,
+        //                CA.SubmittedDate,
+        //                CR.CentreName AS CentreName
+        //            FROM CandidateAssessments CA
+        //                JOIN SelfAssessments SA
+        //                ON CA.SelfAssessmentID = SA.ID
+        //            INNER JOIN SelfAssessmentStructure AS SAS
+        //                ON CA.SelfAssessmentID = SAS.SelfAssessmentID
+        //            INNER JOIN Competencies AS C
+        //                ON SAS.CompetencyID = C.ID
+        //            INNER JOIN Centres AS CR
+        //                ON CA.CentreID = CR.CentreID
+        //            WHERE CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
+        //                and csa.CentreId = @centreId
+        //            GROUP BY
+        //                CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
+        //                SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
+        //                COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
+        //                CA.ID,
+        //                CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName",
+        //        new { delegateUserId }
+        //    );
+        //}
+
+
+
 
         public CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int delegateUserId, int selfAssessmentId)
         {
