@@ -27,9 +27,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
-      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.Day), nameof(@Model.Month), nameof(@Model.Year)}" />
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new []{ nameof(@Model.Day), nameof(@Model.Month), nameof(@Model.Year)})" />
     }
 
     <h1 class="nhsuk-heading-xl word-break">Edit completed date for @Model.CourseName</h1>

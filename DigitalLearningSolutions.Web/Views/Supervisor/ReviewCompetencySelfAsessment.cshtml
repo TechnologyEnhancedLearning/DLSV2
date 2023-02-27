@@ -170,7 +170,7 @@
 </dl>
 @if (errorHasOccurred)
 {
-  <vc:error-summary order-of-property-names="@new []{ nameof(ReviewCompetencySelfAsessmentViewModel) }" />
+  <vc:error-summary order-of-property-names="@(new []{ nameof(ReviewCompetencySelfAsessmentViewModel) })" />
 }
 
 @if (Model.Competency.AssessmentQuestions.First().SelfAssessmentResultSupervisorVerificationId != null && Model.Competency.AssessmentQuestions.First().Requested != null && ViewContext.RouteData.Values["viewMode"].ToString() == "Review" && (bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)

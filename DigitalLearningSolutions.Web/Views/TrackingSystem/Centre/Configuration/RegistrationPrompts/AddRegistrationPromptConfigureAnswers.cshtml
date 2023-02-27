@@ -9,9 +9,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
-      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)})" />
     }
 
     <h1 class="nhsuk-heading-xl">Configure responses</h1>
