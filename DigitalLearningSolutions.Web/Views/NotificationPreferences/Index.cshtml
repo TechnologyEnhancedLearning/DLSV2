@@ -25,16 +25,18 @@
   </nav>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Notification preferences</h1>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">Notification preferences</h1>
 
-    <div class="nhsuk-u-margin-bottom-7">
-      @if (Model.AdminNotifications.Notifications.Any()) {
+      <div class="nhsuk-u-margin-bottom-7">
+        @if (Model.AdminNotifications.Notifications.Any())
+      {
         <partial name="_UserNotificationPreferences" model="Model.AdminNotifications" />
       }
 
-      @if (Model.DelegateNotifications.Notifications.Any()) {
+      @if (Model.DelegateNotifications.Notifications.Any())
+      {
         <partial name="_UserNotificationPreferences" model="Model.DelegateNotifications" />
       }
     </div>

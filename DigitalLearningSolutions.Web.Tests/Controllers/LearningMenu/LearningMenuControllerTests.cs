@@ -32,7 +32,7 @@
         private ISectionContentDataService sectionContentDataService = null!;
         private ISessionService sessionService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
-        private ICourseDataService courseDataService=null;
+        private ICourseDataService courseDataService = null;
 
         [SetUp]
         public void SetUp()

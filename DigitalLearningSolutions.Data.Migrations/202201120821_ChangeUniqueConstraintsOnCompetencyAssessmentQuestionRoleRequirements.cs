@@ -3,7 +3,7 @@
     using FluentMigrator;
 
     [Migration(202201120821)]
-    public class ChangeUniqueConstraintsOnCompetencyAssessmentQuestionRoleRequirements: Migration
+    public class ChangeUniqueConstraintsOnCompetencyAssessmentQuestionRoleRequirements : Migration
     {
         // This migration is undone in 202201171115_UndoPreviousConstraintMigrationsForCompetencyAssessmentQuestionRoleRequirements
         // and does not need to be run again, so it has been commented out

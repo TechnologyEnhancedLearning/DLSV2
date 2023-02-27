@@ -12,8 +12,9 @@
   <title></title>
 </head>
 <body>
-@foreach (var application in Model.ApplicationOptions) {
-  <partial name="../AddNewCentreCourse/_SelectCourseFilterableSelectListItem" model="application" />
-}
+  @foreach (var application in Model.ApplicationOptions)
+  {
+    <partial name="../AddNewCentreCourse/_SelectCourseFilterableSelectListItem" model="application" />
+  }
 </body>
 </html>

@@ -10,7 +10,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.CompleteWithinMonths), nameof(@Model.ValidityMonths) }" />
+      <vc:error-summary order-of-property-names="@(new []{ nameof(@Model.CompleteWithinMonths), nameof(@Model.ValidityMonths) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit Learning Pathway defaults</h1>
@@ -28,7 +28,7 @@
                         hint-text="Within how many months of enrolment (up to 48) should the learner complete the
                                      course? Enter 0 or leave blank if you do not wish to configure this value."
                         css-class="nhsuk-input--width-10"
-                        required="false"/>
+                        required="false" />
 
       <vc:numeric-input asp-for="@nameof(Model.ValidityMonths)"
                         label="Completion valid for - months"

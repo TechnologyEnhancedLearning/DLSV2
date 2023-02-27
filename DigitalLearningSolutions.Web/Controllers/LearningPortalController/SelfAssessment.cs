@@ -890,7 +890,8 @@
             frameworkNotificationService.SendDelegateSupervisorNominated(
                 supervisorDelegateId,
                 sessionAddSupervisor.SelfAssessmentID,
-                delegateUserId
+                delegateUserId,
+                User.GetCentreIdKnownNotNull()
             );
             return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
         }
@@ -906,7 +907,8 @@
             frameworkNotificationService.SendDelegateSupervisorNominated(
                 supervisorDelegateId,
                 selfAssessmentId,
-                User.GetUserIdKnownNotNull()
+                User.GetUserIdKnownNotNull(),
+                User.GetCentreIdKnownNotNull()
             );
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
@@ -1175,6 +1177,7 @@
                 selfAssessmentId,
                 1,
                 User.GetUserIdKnownNotNull(),
+                User.GetCentreIdKnownNotNull(),
                 selfAssessmentResultId
             );
             supervisorService.UpdateSelfAssessmentResultSupervisorVerificationsEmailSent(supervisorVerificationId);
@@ -1230,7 +1233,8 @@
                     candidateAssessmentSupervisorId,
                     sessionRequestVerification.SelfAssessmentID,
                     resultCount,
-                    User.GetUserIdKnownNotNull()
+                    User.GetUserIdKnownNotNull(),
+                    User.GetCentreIdKnownNotNull()
                 );
             }
 
@@ -1333,7 +1337,8 @@
             frameworkNotificationService.SendSignOffRequest(
                 model.CandidateAssessmentSupervisorId,
                 selfAssessmentId,
-                delegateUserId
+                delegateUserId,
+                User.GetCentreIdKnownNotNull()
             );
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
         }
@@ -1348,7 +1353,8 @@
             frameworkNotificationService.SendSignOffRequest(
                 candidateAssessmentSupervisorId,
                 selfAssessmentId,
-                User.GetUserIdKnownNotNull()
+                User.GetUserIdKnownNotNull(),
+                User.GetCentreIdKnownNotNull()
             );
             selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(
                 candidateAssessmentSupervisorVerificationId

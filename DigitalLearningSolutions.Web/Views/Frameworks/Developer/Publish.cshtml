@@ -10,7 +10,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -22,9 +22,9 @@
     </div>
   </nav>
 }
-<h1>Publish framework</h1>
-<p>Please ensure that all of the reviewers who are required to approve the framework are listed below.</p>
-@if (Model.FrameworkReviews.Any())
+  <h1>Publish framework</h1>
+  <p>Please ensure that all of the reviewers who are required to approve the framework are listed below.</p>
+  @if (Model.FrameworkReviews.Any())
 {
   <table role="table" class="nhsuk-table-responsive">
     <caption class="nhsuk-table__caption">Framework review status</caption>
@@ -64,9 +64,9 @@
             {
               <text>
                 <a asp-action="ViewThread"
-                   asp-controller="Frameworks"
-                   asp-route-frameworkId="@Model.DetailFramework.ID"
-                   asp-route-commentId="@review.FrameworkCommentID">
+             asp-controller="Frameworks"
+             asp-route-frameworkId="@Model.DetailFramework.ID"
+             asp-route-commentId="@review.FrameworkCommentID">
                   View comment
                 </a>
                 &nbsp;

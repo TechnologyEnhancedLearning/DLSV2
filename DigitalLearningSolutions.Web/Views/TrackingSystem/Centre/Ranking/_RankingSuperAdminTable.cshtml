@@ -3,31 +3,32 @@
 
 <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-7">
   <thead role="rowgroup" class="nhsuk-table__head">
-  <tr role="row">
-    <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-      Rank
-    </th>
-    <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-      Centre
-    </th>
-    <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-      Sum
-    </th>
-  </tr>
+    <tr role="row">
+      <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+        Rank
+      </th>
+      <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+        Centre
+      </th>
+      <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+        Sum
+      </th>
+    </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-  @foreach (var centre in Model.Centres) {
-    <tr role="row" class="nhsuk-table__row @(centre.IsHighlighted ? "current-centre" : string.Empty)" @(centre.IsHighlighted ? "aria-current=\"true\"" : "")>
-      <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-        <span class="nhsuk-table-responsive__heading">Rank </span>@centre.Rank
-      </td>
-      <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-        <span class="nhsuk-table-responsive__heading">Centre </span>@centre.CentreName
-      </td>
-      <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-        <span class="nhsuk-table-responsive__heading">Sum </span>@centre.Sum
-      </td>
-    </tr>
-  }
+    @foreach (var centre in Model.Centres)
+    {
+      <tr role="row" class="nhsuk-table__row @(centre.IsHighlighted ? "current-centre" : string.Empty)" @(centre.IsHighlighted ? "aria-current=\"true\"" : "")>
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+          <span class="nhsuk-table-responsive__heading">Rank </span>@centre.Rank
+        </td>
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+          <span class="nhsuk-table-responsive__heading">Centre </span>@centre.CentreName
+        </td>
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+          <span class="nhsuk-table-responsive__heading">Sum </span>@centre.Sum
+        </td>
+      </tr>
+    }
   </tbody>
 </table>

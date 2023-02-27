@@ -2,7 +2,7 @@
 {
     using FluentMigrator;
     [Migration(202105041339)]
-    public class AddFrameworkReviewsTable:Migration
+    public class AddFrameworkReviewsTable : Migration
     {
         public override void Up()
         {

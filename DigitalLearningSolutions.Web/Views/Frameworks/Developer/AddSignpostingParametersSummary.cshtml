@@ -45,7 +45,7 @@
       </dd>
       <dd class="nhsuk-summary-list__actions"></dd>
     </div>
-  @if (Model.SelectedQuestion != null)
+    @if (Model.SelectedQuestion != null)
   {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
@@ -105,8 +105,8 @@
       </dt>
       <dd class="nhsuk-summary-list__value">
         @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToRole ? "Role requirements"
-            : Model.AssessmentQuestionParameter.RelevanceAssessmentQuestion != null ? Model.AssessmentQuestionParameter.RelevanceAssessmentQuestion.Question
-            : "Don't compare result")
+      : Model.AssessmentQuestionParameter.RelevanceAssessmentQuestion != null ? Model.AssessmentQuestionParameter.RelevanceAssessmentQuestion.Question
+      : "Don't compare result")
       </dd>
       <dd class="nhsuk-summary-list__actions">
         <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"
@@ -125,8 +125,8 @@
     </dt>
     <dd class="nhsuk-summary-list__value">
       @(Model.AssessmentQuestionParameter?.Essential == true ? "Essential"
-          : Model.AssessmentQuestionParameter?.Essential == false ? "Optional/Recommended"
-          : String.Empty)
+      : Model.AssessmentQuestionParameter?.Essential == false ? "Optional/Recommended"
+      : String.Empty)
     </dd>
     <dd class="nhsuk-summary-list__actions">
       <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"

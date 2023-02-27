@@ -225,7 +225,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             var (delegateId, _, delegateUserId) =
                 registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(model, false, true);
-            
+
             UpdateUserProfessionalRegistrationNumberIfNecessary(
                 delegateTableRow.HasPrn,
                 delegateTableRow.Prn,

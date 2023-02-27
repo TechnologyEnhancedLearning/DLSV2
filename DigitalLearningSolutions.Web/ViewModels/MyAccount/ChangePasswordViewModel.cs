@@ -7,7 +7,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public ChangePasswordViewModel(DlsSubApplication dlsSubApplication) : this(
             new ChangePasswordFormData(),
             dlsSubApplication
-        ) { }
+        )
+        { }
 
         public ChangePasswordViewModel(ChangePasswordFormData formData, DlsSubApplication dlsSubApplication) : base(formData)
         {

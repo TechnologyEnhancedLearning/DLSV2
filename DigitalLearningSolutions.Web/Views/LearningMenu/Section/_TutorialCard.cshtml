@@ -8,7 +8,8 @@
           @Model.TutorialName
         </h3>
       </div>
-      @if (Model.ShowRecommendationStatus) {
+      @if (Model.ShowRecommendationStatus)
+      {
         <div class="nhsuk-grid-column-one-third">
           <strong class="status-tag @Model.StatusTagColour float-right-additional-information">
             <span class="nhsuk-u-visually-hidden">This tutorial is</span>
@@ -16,14 +17,16 @@
           </strong>
         </div>
       }
-      @if (Model.TimeSummary.ShowTime || Model.ShowRecommendationStatus) {
+      @if (Model.TimeSummary.ShowTime || Model.ShowRecommendationStatus)
+      {
         <div class="@(Model.ShowLearnStatus ? "nhsuk-grid-column-two-thirds" : "nhsuk-grid-column-full")">
           <div class="nhsuk-u-margin-bottom-4">
-            <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary"/>
+            <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary" />
           </div>
         </div>
       }
-      @if (Model.ShowLearnStatus) {
+      @if (Model.ShowLearnStatus)
+      {
         <div class="nhsuk-grid-column-one-third">
           <h3 class="nhsuk-u-secondary-text-color float-right-additional-information">
             @Model.CompletionStatus

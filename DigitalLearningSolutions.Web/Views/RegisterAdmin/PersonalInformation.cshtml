@@ -10,7 +10,8 @@
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
 
-      @if (errorHasOccurred) {
+      @if (errorHasOccurred)
+      {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.CentreSpecificEmail) })" />
       }
 
@@ -52,7 +53,7 @@
                      hint-text="This will be used for logging into the system. All communications will be sent to this email by default."
                      autocomplete="email"
                      css-class="nhsuk-u-width-one-half"
-                     required="true"/>
+                     required="true" />
 
       <vc:text-input asp-for="CentreSpecificEmail"
                      label="Centre email (optional)"

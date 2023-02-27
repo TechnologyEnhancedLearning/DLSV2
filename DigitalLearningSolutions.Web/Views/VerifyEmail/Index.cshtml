@@ -11,11 +11,14 @@
 
     <p class="nhsuk-body-m">Thank you for verifying your email address.</p>
 
-    @if (Model.CentreIdIfEmailIsForUnapprovedDelegate == null) {
+    @if (Model.CentreIdIfEmailIsForUnapprovedDelegate == null)
+    {
       <div class="nhsuk-u-margin-top-5">
         <vc:action-link asp-controller="Home" asp-action="Index" link-text="Return to the Digital Learning Solutions homepage" />
       </div>
-    } else {
+    }
+    else
+    {
       <partial name="_UnapprovedAccountWarning" />
       <vc:centre-contact-info centre-id="@((int)Model.CentreIdIfEmailIsForUnapprovedDelegate)" />
     }

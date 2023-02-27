@@ -9,7 +9,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -39,11 +39,11 @@
     </div>
   </nav>
 }
-<h1>
-  @Model.AssessmentQuestionDetail.Question
-</h1>
-<form method="post">
-  @if (!ViewData.ModelState.IsValid)
+  <h1>
+    @Model.AssessmentQuestionDetail.Question
+  </h1>
+  <form method="post">
+    @if (!ViewData.ModelState.IsValid)
   {
     <partial name="_ErrorSummary" />
   }
@@ -55,12 +55,14 @@
 
           if (Model.LevelDescriptor.LevelValue == 0)
           {
-            <text>No or false option
+            <text>
+              No or false option
             </text>
           }
           else
           {
-            <text>Yes or true option
+            <text>
+              Yes or true option
             </text>
           }
         }
@@ -79,12 +81,14 @@
 
           if (Model.LevelDescriptor.LevelValue == 0)
           {
-            <text>No or false option label
+            <text>
+              No or false option label
             </text>
           }
           else
           {
-            <text>Yes or true option label
+            <text>
+              Yes or true option label
             </text>
           }
         }
@@ -105,12 +109,14 @@
 
           if (Model.LevelDescriptor.LevelValue == 0)
           {
-            <text>No or false option description
+            <text>
+              No or false option description
             </text>
           }
           else
           {
-            <text>Yes or true option description
+            <text>
+              Yes or true option description
             </text>
           }
         }
@@ -123,11 +129,11 @@
         What additional description (if any) should be provided for this radio button option?
       </div>
       <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-levelDescription-@Model.LevelDescriptor.LevelValue" asp-for="@Model.LevelDescriptor.LevelDescription" name="LevelDescription" type="text"></textarea>
-      </nhs-form-group>
-      <input name="ID" type="hidden" asp-for="@Model.LevelDescriptor.ID" />
-      <input name="LevelValue" type="hidden" asp-for="@Model.LevelDescriptor.LevelValue" />
-      <input name="UpdatedByAdminID" type="hidden" asp-for="@Model.LevelDescriptor.UpdatedByAdminID" />
-</fieldset>
+    </nhs-form-group>
+    <input name="ID" type="hidden" asp-for="@Model.LevelDescriptor.ID" />
+    <input name="LevelValue" type="hidden" asp-for="@Model.LevelDescriptor.LevelValue" />
+    <input name="UpdatedByAdminID" type="hidden" asp-for="@Model.LevelDescriptor.UpdatedByAdminID" />
+  </fieldset>
   @if (Model.LevelDescriptor.LevelValue > Model.AssessmentQuestionDetail.MinValue)
   {
     <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="AssessmentQuestionLevelDescriptor" asp-route-level="@((int)Model.LevelDescriptor.LevelValue-1)" asp-route-frameworkId="@Model.FrameworkId" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">

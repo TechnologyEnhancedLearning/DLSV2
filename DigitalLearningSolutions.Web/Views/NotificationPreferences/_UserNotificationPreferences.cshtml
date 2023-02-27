@@ -5,7 +5,8 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/notificationPreferences.css")" asp-append-version="true">
 
-@if (Model.ShowAsExpandable) {
+@if (Model.ShowAsExpandable)
+{
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text">
@@ -16,7 +17,9 @@
       <partial name="_NotificationPreferenceList" model="Model" />
     </div>
   </details>
-} else {
+}
+else
+{
   <div class="nhsuk-card">
     <div class="nhsuk-card__content account-card-content">
       <partial name="_NotificationPreferenceList" model="Model" />

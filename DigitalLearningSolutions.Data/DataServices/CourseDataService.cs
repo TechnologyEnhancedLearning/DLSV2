@@ -1046,7 +1046,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                                 AND (NOT (p.Completed IS NULL)))
                             THEN CAST(1 AS BIT)
                             ELSE CAST(0 AS BIT) END",
-                new {candidateId, customisationId }
+                new { candidateId, customisationId }
             );
         }
     }

@@ -85,7 +85,8 @@
     </dd>
   </div>
 
-  @if (Model.IsAssessed) {
+  @if (Model.IsAssessed)
+  {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
         Assessments passed
@@ -112,7 +113,8 @@
     </div>
   }
 
-  @foreach (var delegateCourseAdminField in Model.AdminFields) {
+  @foreach (var delegateCourseAdminField in Model.AdminFields)
+  {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
         @delegateCourseAdminField.Prompt

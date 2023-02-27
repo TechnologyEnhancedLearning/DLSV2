@@ -10,14 +10,17 @@
   <div class="nhsuk-details__text">
     <dl class="nhsuk-summary-list details-list-with-button">
       <div class="nhsuk-summary-list__row details-list-with-button__row">
-        @if (string.IsNullOrWhiteSpace(Model.Password)) {
+        @if (string.IsNullOrWhiteSpace(Model.Password))
+        {
           <dt class="nhsuk-summary-list__key">
             Requires password
           </dt>
           <dd class="nhsuk-summary-list__value">
             No
           </dd>
-        } else {
+        }
+        else
+        {
           <dt class="nhsuk-summary-list__key">
             Password
           </dt>
@@ -28,14 +31,17 @@
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
-        @if (string.IsNullOrWhiteSpace(Model.NotificationEmails)) {
+        @if (string.IsNullOrWhiteSpace(Model.NotificationEmails))
+        {
           <dt class="nhsuk-summary-list__key">
             Send completion notification emails
           </dt>
           <dd class="nhsuk-summary-list__value">
             No
           </dd>
-        } else {
+        }
+        else
+        {
           <dt class="nhsuk-summary-list__key">
             Course completion notification email
           </dt>
@@ -49,16 +55,21 @@
         <dt class="nhsuk-summary-list__key">
           Completion criteria
         </dt>
-        @if (Model.PostLearningAssessment && Model.IsAssessed) {
+        @if (Model.PostLearningAssessment && Model.IsAssessed)
+        {
           <dd class="nhsuk-summary-list__value">
             Post learning assessment
           </dd>
-        } else if (Model.DiagAssess) {
+        }
+        else if (Model.DiagAssess)
+        {
           <dd class="nhsuk-summary-list__value">
             <p>Required learning percentage: @Model.TutCompletionThreshold%</p>
             <p>Required diagnostic percentage: @Model.DiagCompletionThreshold%</p>
           </dd>
-        } else {
+        }
+        else
+        {
           <dd class="nhsuk-summary-list__value">
             Required learning percentage: @Model.TutCompletionThreshold%
           </dd>

@@ -71,8 +71,13 @@
                     VALUES (@competencyLearningResourceId, @assessmentQuestionId, @essential, @relevanceQuestionId, @compareToRoleRequirements, @minMatchResult, @maxMatchResult)",
                 new
                 {
-                    competencyLearningResourceId, assessmentQuestionId, essential, relevanceQuestionId,
-                    compareToRoleRequirements, minMatchResult, maxMatchResult,
+                    competencyLearningResourceId,
+                    assessmentQuestionId,
+                    essential,
+                    relevanceQuestionId,
+                    compareToRoleRequirements,
+                    minMatchResult,
+                    maxMatchResult,
                 }
             );
         }

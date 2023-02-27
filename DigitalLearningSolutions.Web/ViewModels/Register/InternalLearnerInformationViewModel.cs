@@ -6,7 +6,7 @@
 
     public class InternalLearnerInformationViewModel
     {
-        public InternalLearnerInformationViewModel() {}
+        public InternalLearnerInformationViewModel() { }
 
         public InternalLearnerInformationViewModel(InternalDelegateRegistrationData data)
         {

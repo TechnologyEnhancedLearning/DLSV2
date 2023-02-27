@@ -70,7 +70,7 @@
             var expected = new List<CourseAdminFieldWithAnswer> { expected1, expected2 };
             A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
                 .Returns(PromptsTestHelper.GetDefaultCourseAdminFieldsResult());
-            var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2, CustomisationId = 100};
+            var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2, CustomisationId = 100 };
 
             // When
             var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(delegateCourseInfo);

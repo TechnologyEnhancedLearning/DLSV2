@@ -3,31 +3,33 @@
 @model AdminFieldAnswersViewModel
 
 <table class="nhsuk-table">
-  @if (Model.IncludeAnswersTableCaption) {
+  @if (Model.IncludeAnswersTableCaption)
+  {
     <caption class="nhsuk-table__caption">Configured Responses:</caption>
   }
   <thead role="rowgroup" class="nhsuk-table__head">
-  <tr role="row">
-    <th role="columnheader" class="" scope="col">
-      Response
-    </th>
-    <th role="columnheader" class="" scope="col">
-      Action
-    </th>
-  </tr>
+    <tr role="row">
+      <th role="columnheader" class="" scope="col">
+        Response
+      </th>
+      <th role="columnheader" class="" scope="col">
+        Action
+      </th>
+    </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-  @foreach (var answer in Model.Options) {
-    <tr role="row" class="nhsuk-table__row">
-      <td class="nhsuk-table__cell word-break">@answer</td>
-      <td class="nhsuk-table__cell vertical-align-centre">
-        <button name="action"
+    @foreach (var answer in Model.Options)
+    {
+      <tr role="row" class="nhsuk-table__row">
+        <td class="nhsuk-table__cell word-break">@answer</td>
+        <td class="nhsuk-table__cell vertical-align-centre">
+          <button name="action"
                 class="nhsuk-button nhsuk-button--secondary nhsuk-u-padding-bottom-1 nhsuk-u-padding-top-1 nhsuk-u-margin-bottom-1 nhsuk-u-margin-top-0"
                 value="@(AdminFieldsController.DeleteAction + Model.Options.IndexOf(answer))">
-          Remove
-        </button>
-      </td>
-    </tr>
-  }
+            Remove
+          </button>
+        </td>
+      </tr>
+    }
   </tbody>
 </table>

@@ -4,7 +4,7 @@
 
     public class CourseTutorialViewModel
     {
-        public CourseTutorialViewModel() {}
+        public CourseTutorialViewModel() { }
 
         public CourseTutorialViewModel(Tutorial tutorial)
         {

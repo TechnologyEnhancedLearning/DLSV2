@@ -9,6 +9,7 @@
         public SelfAssessmentCardViewModel(CurrentLearningItem course, ReturnPageQuery returnPageQuery) : base(
             course,
             returnPageQuery
-        ) { }
+        )
+        { }
     }
 }

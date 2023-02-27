@@ -15,9 +15,12 @@
                     asp-action="Index"
                     link-text="Show notifications later and take me to dashboard" />
 
-    @if (Model.UnacknowledgedNotification == null) {
+    @if (Model.UnacknowledgedNotification == null)
+    {
       <p>No new notifications.</p>
-    } else {
+    }
+    else
+    {
       <div class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-2 nhsuk-body-m">
         Subject
       </div>
@@ -40,8 +43,8 @@
       </div>
 
       <form asp-action="AcknowledgeNotification"
-            asp-controller="SystemNotifications"
-            asp-all-route-data="@(new Dictionary<string, string> { { "page", Model.Page.ToString() } })">
+          asp-controller="SystemNotifications"
+          asp-all-route-data="@(new Dictionary<string, string> { { "page", Model.Page.ToString() } })">
         <input type="hidden" value="@Model.UnacknowledgedNotification.SystemNotificationId" name="systemNotificationId" />
         <button class="nhsuk-button" type="submit">Acknowledge</button>
       </form>

@@ -15,7 +15,7 @@
         [Required(ErrorMessage = "Comments are Required")]
         public bool SignedOff { get; set; }
         [Required(ErrorMessage = "Required")]
-        public string SupervisorSignedOff { get; set; }        
+        public string SupervisorSignedOff { get; set; }
         public string Status { get; set; }
         public DateTime? Verified { get; set; }
         public string SupervisorName { get; set; }

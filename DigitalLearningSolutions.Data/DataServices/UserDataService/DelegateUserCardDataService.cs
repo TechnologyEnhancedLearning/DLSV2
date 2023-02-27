@@ -78,7 +78,8 @@
                                         AND GroupID = @groupId)",
                 new
                 {
-                    centreId, groupId,
+                    centreId,
+                    groupId,
                 }
             ).ToList();
         }

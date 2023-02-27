@@ -15,27 +15,30 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
     }
 
     <h1 class="nhsuk-heading-xl word-break">Mark @Model.ResourceName as complete</h1>
 
-    @if (Model.AbsentInLearningHub) {
+    @if (Model.AbsentInLearningHub)
+    {
       <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
-                                    text="@LearningHubWarningTextHelper.ResourceHasBeenRemoved" />
+                                  text="@LearningHubWarningTextHelper.ResourceHasBeenRemoved" />
     }
 
-    @if (!Model.ApiIsAccessible) {
+    @if (!Model.ApiIsAccessible)
+    {
       <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
-                                    text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
+                                  text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
     }
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
       <input type="hidden" asp-for="ResourceName" />
       <input type="hidden" asp-for="AbsentInLearningHub" />
       <input type="hidden" asp-for="ApiIsAccessible" />
-      <input type="hidden" asp-for="ReturnPageQuery"/>
+      <input type="hidden" asp-for="ReturnPageQuery" />
 
       <vc:date-input id="completion-date"
                      label="Completion date"
@@ -48,6 +51,6 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    <vc:cancel-link-with-return-page-query asp-controller="LearningPortal" asp-action="Current" return-page-query="@Model.ReturnPageQuery"/>
+    <vc:cancel-link-with-return-page-query asp-controller="LearningPortal" asp-action="Current" return-page-query="@Model.ReturnPageQuery" />
   </div>
 </div>

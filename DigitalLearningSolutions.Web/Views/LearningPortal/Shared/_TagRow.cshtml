@@ -5,67 +5,80 @@
 @model BaseLearningItemViewModel
 
 <div class="nhsuk-grid-column-three-quarters tags">
-  @if (Model is CompletedCourseViewModel) {
+  @if (Model is CompletedCourseViewModel)
+  {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--blue">Course</strong>
     </div>
   }
-  @if (Model is CurrentCourseViewModel currentCourseViewModel) {
+  @if (Model is CurrentCourseViewModel currentCourseViewModel)
+  {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--blue">Course</strong>
     </div>
-    @if (currentCourseViewModel.UserIsSupervisor) {
+    @if (currentCourseViewModel.UserIsSupervisor)
+    {
       <div class="card-filter-tag">
         <strong class="nhsuk-tag nhsuk-tag--grey">Supervisor</strong>
       </div>
     }
-    @if (currentCourseViewModel.IsEnrolledWithGroup) {
+    @if (currentCourseViewModel.IsEnrolledWithGroup)
+    {
       <div class="card-filter-tag">
         <strong class="nhsuk-tag nhsuk-tag--grey">In group</strong>
       </div>
     }
   }
-  @if (Model is SelfAssessmentCardViewModel) {
+  @if (Model is SelfAssessmentCardViewModel)
+  {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--blue">Self assessment</strong>
     </div>
   }
-  @if (Model is ILearningResourceCardViewModel resource) {
+  @if (Model is ILearningResourceCardViewModel resource)
+  {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--blue">Learning resource</strong>
     </div>
-    @if (!string.IsNullOrWhiteSpace(resource.ResourceType)) {
+    @if (!string.IsNullOrWhiteSpace(resource.ResourceType))
+    {
       <div class="card-filter-tag">
         <strong class="nhsuk-tag nhsuk-tag--grey">@resource.ResourceType</strong>
       </div>
     }
-    @if (!string.IsNullOrWhiteSpace(resource.CatalogueName)) {
+    @if (!string.IsNullOrWhiteSpace(resource.CatalogueName))
+    {
       <div class="card-filter-tag">
         <strong class="nhsuk-tag nhsuk-tag--grey">@resource.CatalogueName</strong>
       </div>
     }
   }
-  @if (Model.HasDiagnosticAssessment) {
+  @if (Model.HasDiagnosticAssessment)
+  {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--grey">Diagnostic assessment</strong>
     </div>
   }
-  @if (Model.HasLearningContent) {
+  @if (Model.HasLearningContent)
+  {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--grey">Learning content</strong>
     </div>
   }
-  @if (Model.HasLearningAssessmentAndCertification) {
+  @if (Model.HasLearningAssessmentAndCertification)
+  {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--grey">Learning assessment and certification</strong>
     </div>
   }
-  @if (Model.IsSelfAssessment) {
+  @if (Model.IsSelfAssessment)
+  {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--grey">Competency assessment</strong>
     </div>
   }
-  @if (Model.IncludesSignposting) {
+  @if (Model.IncludesSignposting)
+  {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--grey">Signposts learning</strong>
     </div>
