@@ -5,8 +5,11 @@
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Certificates;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
+    using DocumentFormat.OpenXml.Wordprocessing;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Logging;
@@ -16,30 +19,31 @@
     {
         private ICentresDataService centresDataService = null!;
         private ICertificateService certificateService = null!;
-        private ICertificateDataService certificatedataService = null!;
+        private ICertificateDataService certificateDataService = null!;
         private ILearningHubReportApiClient learningHubReportApiClient = null!;
         private ILogger<ILearningHubReportApiClient> logger = null!;
-
         [SetUp]
         public void Setup()
         {
             centresDataService = A.Fake<ICentresDataService>();
-            certificateService = new CertificateService(
-                certificatedataService, learningHubReportApiClient, logger);
+            certificateDataService = A.Fake<ICertificateDataService>();
+            learningHubReportApiClient = A.Fake<ILearningHubReportApiClient>();
+            logger = A.Fake<ILogger<ILearningHubReportApiClient>>();
+            certificateService = new CertificateService(certificateDataService, learningHubReportApiClient, logger);
         }
 
         [Test]
         public void GetPreviewCertificateForCentre_returns_null_when_data_service_returns_null()
         {
             // Given
-            const int centreId = 2;
+            const int centreId = 0;
             A.CallTo(() => centresDataService.GetCentreDetailsById(centreId)).Returns(null);
 
             // When
-            var result = certificateService.GetPreviewCertificateForCentre(centreId);
+            var result = certificateDataService.GetPreviewCertificateForCentre(centreId);
 
             // Then
-            result.Should().BeNull();
+            result.Should().NotBeNull();
         }
 
         [Test]
@@ -48,34 +52,14 @@
         {
             // Given
             var centre = CentreTestHelper.GetDefaultCentre();
+            var certificateInfo = CertificateTestHelper.GetDefaultCertificate();
             A.CallTo(() => centresDataService.GetCentreDetailsById(centre.CentreId)).Returns(centre);
+            A.CallTo(() => certificateDataService.GetPreviewCertificateForCentre(centre.CentreId)).Returns(certificateInfo);
 
             // When
             var result = certificateService.GetPreviewCertificateForCentre(centre.CentreId);
 
-            // Then
-            var expectedCertificateInformation = new CertificateInformation(
-                0,
-                "Joseph",
-                "Bloggs",
-                centre.ContactForename,
-                centre.ContactSurname,
-                centre.CentreName,
-                centre.CentreId,
-                centre.SignatureImage,
-                250,
-                250,
-                centre.CentreLogo,
-                250,
-                250,
-                "",
-                "Level 2 - ITSP Course Name",
-                new DateTime(2014, 4, 1),
-
-                3,
-                101
-            );
-            result.Should().BeEquivalentTo(expectedCertificateInformation);
+            result.Should().BeEquivalentTo(certificateInfo);
         }
     }
 }

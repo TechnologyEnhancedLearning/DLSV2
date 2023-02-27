@@ -342,27 +342,27 @@
             // Given
             var centre = CentreTestHelper.GetDefaultCentre();
             A.CallTo(() => centresDataService.GetCentreDetailsById(centre.CentreId)).Returns(centre);
-
-            var certificateInformation = new CertificateInformation(
-                0,
-                "Test",
-                "Name",
-                centre.ContactForename,
-                centre.ContactSurname,
-                centre.CentreName,
-                centre.CentreId,
-                centre.SignatureImage,
-                250,
-                250,
-                centre.CentreLogo,
-                250,
-                250,
-                "",
-                "Course",
-                DateTime.UtcNow,
-                3,
-                101
-            );
+            var certificateInformation = CertificateTestHelper.GetDefaultCertificate();
+            //var certificateInformation = new CertificateInformation(
+            //    0,
+            //    "Test",
+            //    "Name",
+            //    centre.ContactForename,
+            //    centre.ContactSurname,
+            //    centre.CentreName,
+            //    centre.CentreId,
+            //    centre.SignatureImage,
+            //    250,
+            //    250,
+            //    centre.CentreLogo,
+            //    250,
+            //    250,
+            //    "",
+            //    "Course",
+            //    DateTime.UtcNow,
+            //    3,
+            //    101
+            //);
             A.CallTo(() => certificateService.GetPreviewCertificateForCentre(A<int>._)).Returns(certificateInformation);
 
             // When
