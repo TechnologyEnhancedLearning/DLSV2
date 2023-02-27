@@ -11,9 +11,12 @@
 
   var routeParamsForBackLink = new Dictionary<string, string?>();
 
-  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+  {
     routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
-  } else {
+  }
+  else
+  {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
 }
@@ -37,35 +40,39 @@
           <input type="hidden" asp-for="CustomisationId" />
           <input type="hidden" asp-for="ReturnPageQuery" />
 
-          @if (Model.Options.Count > 0) {
+          @if (Model.Options.Count > 0)
+          {
             <div class="nhsuk-radios nhsuk-u-margin-bottom-4">
-              @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i))) {
+              @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i)))
+              {
                 var isBlankOption = radio.Value == string.Empty;
                 var radioId = $"{(isBlankOption ? blankRadioId : radio.Value)}-{index}";
                 <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3 @(isBlankOption ? "nhsuk-u-margin-top-6" : "")">
                   <input class="nhsuk-radios__input"
-                         id="@radioId"
-                         name="@nameof(Model.Answer)"
-                         type="radio"
-                         value="@radio.Value"
-                         aria-describedby="@radioId-item-hint"
-                         @(radio.Selected ? "checked" : string.Empty) />
+                     id="@radioId"
+                     name="@nameof(Model.Answer)"
+                     type="radio"
+                     value="@radio.Value"
+                     aria-describedby="@radioId-item-hint"
+                     @(radio.Selected ? "checked" : string.Empty) />
                   <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
                     @radio.Label
                   </label>
                 </div>
               }
             </div>
-          } else {
+          }
+          else
+          {
             <vc:text-input asp-for="@nameof(Model.Answer)"
-                           label="Answer"
-                           populate-with-current-value="true"
-                           type="text"
-                           spell-check="true"
-                           autocomplete=""
-                           hint-text="Answer must be 100 characters or fewer."
-                           css-class="nhsuk-u-width-full"
-                           required="false" />
+                         label="Answer"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="true"
+                         autocomplete=""
+                         hint-text="Answer must be 100 characters or fewer."
+                         css-class="nhsuk-u-width-full"
+                         required="false" />
           }
 
           <button class="nhsuk-button" type="submit">Save</button>
@@ -73,9 +80,12 @@
       </div>
     </div>
 
-    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+    {
       <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery!.Value" />
-    } else {
+    }
+    else
+    {
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
     }
   </div>

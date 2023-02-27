@@ -2,11 +2,14 @@
 @model MyRoleProfilesViewModel
 
 <h1>My Role Profiles</h1>
-@if (!Model.RoleProfiles.Any() && Model.SearchString == null) {
+@if (!Model.RoleProfiles.Any() && Model.SearchString == null)
+{
   <p class="nhsuk-u-margin-top-4" role="alert">
     <b>You are not working on any role profiles.</b>
   </p>
-} else {
+}
+else
+{
   <form method="get" role="search" asp-action="FrameworksViewAll" asp-route-page="@Model.Page">
 
     <partial name="Shared/_RoleProfilesSearchAndSort" model="Model" />
@@ -18,7 +21,8 @@
 
   </form>
 }
-@if (Model.IsWorkforceManager) {
+@if (Model.IsWorkforceManager)
+{
   <a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="StartNewRoleProfileSession">
     Create new role profile
   </a>

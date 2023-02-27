@@ -417,13 +417,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 CommonValidationErrorMessages.EmailInUseDuringDelegateRegistration
             );
 
-            RegistrationEmailValidator.ValidatePrimaryEmailWithCentre(
-                model.PrimaryEmail,
-                model.Centre,
-                ModelState,
-                supervisorService
-                );
-
             RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
                 model.CentreSpecificEmail,
                 model.Centre,

@@ -117,7 +117,7 @@
       <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
       <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
     </fieldset>
-  @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID != 2)
+    @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID != 2)
   {
     <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="AssessmentQuestionLevelDescriptor" asp-route-level="@Model.AssessmentQuestionDetail.MaxValue" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
       Back

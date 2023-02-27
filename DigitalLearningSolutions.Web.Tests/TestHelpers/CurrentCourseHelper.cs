@@ -31,7 +31,8 @@
             bool locked = false
             )
         {
-            return new CurrentCourse {
+            return new CurrentCourse
+            {
                 Id = customisationId,
                 Name = courseName,
                 HasDiagnostic = hasDiagnostic,

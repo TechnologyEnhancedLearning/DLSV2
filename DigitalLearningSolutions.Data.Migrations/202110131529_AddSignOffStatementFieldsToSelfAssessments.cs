@@ -4,7 +4,7 @@
     [Migration(202110131529)]
     public class AddSignOffStatementFieldsToSelfAssessments : Migration
     {
-       public override void Up()
+        public override void Up()
         {
             Alter.Table("SelfAssessments").AddColumn("SignOffRequestorStatement").AsString(1000).Nullable()
                 .AddColumn("SignOffSupervisorStatement").AsString(1000).Nullable()

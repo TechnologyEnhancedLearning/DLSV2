@@ -19,10 +19,9 @@
       @(Model.DelegateName) has been added to the @(Model.GroupName) group
     </p>
 
-    <vc:action-link
-      link-text="See all delegates in @(Model.GroupName) group"
-      asp-controller="GroupDelegates"
-      asp-action="Index"
-      asp-all-route-data="@routeParamsForIndexLink" />
+    <vc:action-link link-text="See all delegates in @(Model.GroupName) group"
+                    asp-controller="GroupDelegates"
+                    asp-action="Index"
+                    asp-all-route-data="@routeParamsForIndexLink" />
   </div>
 </div>

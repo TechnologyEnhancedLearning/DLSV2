@@ -25,7 +25,7 @@
   </nav>
 }
 
-@if (errorHasOccurred)
+  @if (errorHasOccurred)
 {
   <vc:error-summary order-of-property-names="@(new []{ nameof(AddMultipleSupervisorDelegatesViewModel.DelegateEmails) })" />
 }

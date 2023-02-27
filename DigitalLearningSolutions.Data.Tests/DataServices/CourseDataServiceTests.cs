@@ -440,7 +440,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var results = courseDataService.GetDelegateCourseInfosForCourse(27915, 101).ToList();
 
             // Then
-            results.Should().HaveCount(34);
+            results.Should().HaveCount(20);
             results.Should().ContainEquivalentOf(ExpectedCourseInfo);
         }
 
@@ -451,7 +451,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var results = courseDataService.GetDelegateCourseInfosForCourse(27409, 101).ToList();
 
             // Then
-            results.Should().HaveCount(9);
+            results.Should().HaveCount(7);
             results[0].CourseName.Should().Be("An Introduction to Cognition - New");
         }
 

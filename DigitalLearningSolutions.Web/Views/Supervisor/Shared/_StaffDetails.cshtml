@@ -5,123 +5,123 @@
 @model SupervisorDelegateDetail
 
 @{
-    bool IsSupervisor = (bool)(ViewData["isSupervisor"] ?? false);
+  bool IsSupervisor = (bool)(ViewData["isSupervisor"] ?? false);
 }
 
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Added
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @(Model.Added.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString() ? Model.Added.ToShortDateString() : "Today")
-  </dd>
-  <dd class="nhsuk-summary-list__actions">
-  </dd>
+    <dt class="nhsuk-summary-list__key">
+      Added
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @(Model.Added.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString() ? Model.Added.ToShortDateString() : "Today")
+    </dd>
+    <dd class="nhsuk-summary-list__actions">
+    </dd>
   </div>
-    @if (IsSupervisor)
-    {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                PRN
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @(Model.ProfessionalRegistrationNumber == null ? "Not Recorded" : Model.ProfessionalRegistrationNumber)
-            </dd>
-        </div>
-    }
+  @if (IsSupervisor)
+  {
     <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            ID
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-            @Model.CandidateNumber
-        </dd>
+      <dt class="nhsuk-summary-list__key">
+        PRN
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @(Model.ProfessionalRegistrationNumber == null ? "Not Recorded" : Model.ProfessionalRegistrationNumber)
+      </dd>
     </div>
+  }
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      ID
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.CandidateNumber
+    </dd>
+  </div>
   @if (Model.CustomPrompt2 != null)
   {
     <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            Job Group
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-            @Model.JobGroupName
-        </dd>
+      <dt class="nhsuk-summary-list__key">
+        Job Group
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.JobGroupName
+      </dd>
     </div>
   }
-    @if (Model.CustomPrompt1 != null)
-    {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                @Model.CustomPrompt1
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @Model.Answer1
-            </dd>
-        </div>
-    }
-    @if (Model.CustomPrompt2 != null)
-    {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                @Model.CustomPrompt2
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @Model.Answer2
-            </dd>
-        </div>
-    }
-    @if (Model.CustomPrompt3 != null)
-    {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                @Model.CustomPrompt3
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @Model.Answer3
-            </dd>
-        </div>
-    }
-    @if (Model.CustomPrompt4 != null)
-    {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                @Model.CustomPrompt4
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @Model.Answer4
-            </dd>
-        </div>
-    }
-    @if (Model.CustomPrompt5 != null)
-    {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                @Model.CustomPrompt5
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @Model.Answer5
-            </dd>
-        </div>
-    }
-    @if (Model.CustomPrompt6 != null)
-    {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                @Model.CustomPrompt6
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @Model.Answer6
-            </dd>
-        </div>
-    }
+  @if (Model.CustomPrompt1 != null)
+  {
     <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            DLS Role
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-            @Model.DlsRole.GetDescription()
-
-        </dd>
+      <dt class="nhsuk-summary-list__key">
+        @Model.CustomPrompt1
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Answer1
+      </dd>
     </div>
+  }
+  @if (Model.CustomPrompt2 != null)
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        @Model.CustomPrompt2
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Answer2
+      </dd>
+    </div>
+  }
+  @if (Model.CustomPrompt3 != null)
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        @Model.CustomPrompt3
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Answer3
+      </dd>
+    </div>
+  }
+  @if (Model.CustomPrompt4 != null)
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        @Model.CustomPrompt4
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Answer4
+      </dd>
+    </div>
+  }
+  @if (Model.CustomPrompt5 != null)
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        @Model.CustomPrompt5
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Answer5
+      </dd>
+    </div>
+  }
+  @if (Model.CustomPrompt6 != null)
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        @Model.CustomPrompt6
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Answer6
+      </dd>
+    </div>
+  }
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      DLS Role
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.DlsRole.GetDescription()
+
+    </dd>
+  </div>
 </dl>

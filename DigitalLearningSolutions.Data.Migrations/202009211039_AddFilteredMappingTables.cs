@@ -20,7 +20,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                 .WithColumn("JobGroupID").AsInt32().NotNullable().PrimaryKey().ForeignKey("JobGroups", "JobGroupID")
                 .WithColumn("SectorID").AsInt32().NotNullable().PrimaryKey();
             //Add the mapping data, competencies:
-            Insert.IntoTable("FilteredComptenencyMapping").Row(new { CompetencyID=1, FilteredCompetencyID= 1385 });
+            Insert.IntoTable("FilteredComptenencyMapping").Row(new { CompetencyID = 1, FilteredCompetencyID = 1385 });
             Insert.IntoTable("FilteredComptenencyMapping").Row(new { CompetencyID = 2, FilteredCompetencyID = 1398 });
             Insert.IntoTable("FilteredComptenencyMapping").Row(new { CompetencyID = 3, FilteredCompetencyID = 1384 });
             Insert.IntoTable("FilteredComptenencyMapping").Row(new { CompetencyID = 4, FilteredCompetencyID = 1383 });

@@ -22,11 +22,14 @@
       </div>
 
       <input type="hidden" asp-for="OptionsString" />
-      <input type="hidden" asp-for="PromptName"/>
+      <input type="hidden" asp-for="PromptName" />
 
-      @if (string.IsNullOrEmpty(Model.OptionsString)) {
+      @if (string.IsNullOrEmpty(Model.OptionsString))
+      {
         <partial name="_NoConfiguredAnswers" />
-      } else {
+      }
+      else
+      {
         <partial name="_RegistrationPromptAnswerTable" model="Model" />
       }
 

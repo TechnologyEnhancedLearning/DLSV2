@@ -6,19 +6,26 @@
     Course content
   </dt>
   <dd class="nhsuk-summary-list__value">
-    @if (Model.NoContent) {
+    @if (Model.NoContent)
+    {
       <p>No content</p>
-    } else if (Model.IncludeAllSections) {
+    }
+    else if (Model.IncludeAllSections)
+    {
       <p>All content enabled</p>
-    } else {
+    }
+    else
+    {
       <p>@(Model.NumberOfLearning == 0 ? "No" : Model.NumberOfLearning.ToString()) learning</p>
-      @if (Model.DiagAssess) {
+      @if (Model.DiagAssess)
+      {
         <p>@(Model.NumberOfDiagnostic == 0 ? "No" : Model.NumberOfDiagnostic.ToString()) diagnostic</p>
       }
     }
   </dd>
   <dd class="nhsuk-summary-list__actions">
-    @if (!Model.NoContent) {
+    @if (!Model.NoContent)
+    {
       <a asp-action="SetCourseContent">
         Change<span class="nhsuk-u-visually-hidden"> course content</span>
       </a>

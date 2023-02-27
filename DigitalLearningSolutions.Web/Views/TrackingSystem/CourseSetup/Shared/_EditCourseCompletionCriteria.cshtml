@@ -17,13 +17,14 @@
   <fieldset class="nhsuk-fieldset">
     <div class="nhsuk-radios nhsuk-radios--conditional">
 
-      @if (Model.PostLearningAssessment) {
+      @if (Model.PostLearningAssessment)
+      {
         <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3">
           <input class="nhsuk-radios__input"
-                 id="PostLearningAssessmentRadio"
-                 asp-for="IsAssessed"
-                 type="radio"
-                 value="true">
+               id="PostLearningAssessmentRadio"
+               asp-for="IsAssessed"
+               type="radio"
+               value="true">
           <label class="nhsuk-label nhsuk-radios__label" for="PostLearningAssessmentRadio">
             Post learning assessment
           </label>
@@ -31,12 +32,12 @@
 
         <div class="nhsuk-radios__item">
           <input class="nhsuk-radios__input"
-                 id="OtherCompletionCriteria"
-                 asp-for="IsAssessed"
-                 type="radio"
-                 value="false"
-                 aria-controls="@completionCriteriaId"
-                 aria-expanded="@Model.IsAssessed.ToString()">
+               id="OtherCompletionCriteria"
+               asp-for="IsAssessed"
+               type="radio"
+               value="false"
+               aria-controls="@completionCriteriaId"
+               aria-expanded="@Model.IsAssessed.ToString()">
           <label class="nhsuk-label nhsuk-radios__label" for="OtherCompletionCriteria">
             Other completion criteria
           </label>
@@ -45,7 +46,9 @@
         <div class="@otherCompletionCriteriaCss" id="@completionCriteriaId">
           <partial name="../Shared/_OtherCompletionCriteriaInputs" model="Model" />
         </div>
-      } else {
+      }
+      else
+      {
         <partial name="../Shared/_OtherCompletionCriteriaInputs" model="Model" />
       }
 

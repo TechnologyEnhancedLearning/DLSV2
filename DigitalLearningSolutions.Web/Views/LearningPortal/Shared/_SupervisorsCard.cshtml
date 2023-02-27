@@ -11,7 +11,7 @@
         <ul>
           @foreach (var supervisor in Model)
           {
-            <li>@supervisor.SupervisorName, @supervisor.RoleName</li>
+            <li>@supervisor.SupervisorName, @supervisor.RoleName (@supervisor.CentreName)</li>
           }
         </ul>
       }

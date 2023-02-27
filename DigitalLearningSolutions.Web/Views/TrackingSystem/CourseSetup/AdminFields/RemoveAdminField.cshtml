@@ -24,16 +24,20 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (Model.AnswerCount == 1) {
+    @if (Model.AnswerCount == 1)
+    {
       <p class="nhsuk-body-m">An admin has responded to this field for @Model.AnswerCount delegate. Deleting the field will permanently delete their response.</p>
-    } else {
+    }
+    else
+    {
       <p class="nhsuk-body-m">Admins have responded to this field for @Model.AnswerCount delegates. Deleting the field will permanently delete their responses.</p>
     }
 
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveAdminField">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="confirm-error">
-          @if (confirmError) {
+          @if (confirmError)
+          {
             <span class="nhsuk-error-message" id="confirm-error">
               <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)].Errors[0].ErrorMessage
             </span>
@@ -42,9 +46,12 @@
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" asp-for="Confirm" />
               <label class="nhsuk-label nhsuk-checkboxes__label" for="confirm">
-                @if (Model.AnswerCount == 1) {
+                @if (Model.AnswerCount == 1)
+                {
                   @:I am sure that I wish to delete this field and @Model.AnswerCount admin response
-                } else {
+                }
+                else
+                {
                   @:I am sure that I wish to delete this field and @Model.AnswerCount admin responses
                 }
               </label>

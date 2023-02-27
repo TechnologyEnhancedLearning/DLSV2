@@ -37,7 +37,7 @@
             courseDetails.RefreshToCourseName.Should().BeEquivalentTo("Same course");
         }
 
-        
+
         [Test]
         public void RefreshedToCourseName_should_be_from_refresh_course_if_RefreshToId_is_not_zero_or_CustomisationId()
         {
@@ -88,7 +88,7 @@
             courseDetails.CourseName.Should().BeEquivalentTo("Original course - name");
         }
 
-        
+
         [Test]
         public void CourseName_should_be_ApplicationName_if_CustomisationName_is_blank()
         {

@@ -102,7 +102,8 @@
             row.Prn,
             true,
             welcomeEmailDate
-        ) { }
+        )
+        { }
 
         public DelegateRegistrationModel(
             UserAccount userAccount,

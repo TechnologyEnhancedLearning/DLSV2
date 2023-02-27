@@ -88,7 +88,8 @@
 
             DelegateUser returnedDelegateUser = new DelegateUser() { };
 
-            A.CallTo(() => userService.GetUsersById(A<int?>._, A<int?>._)).Returns((returnedAdminUser, returnedDelegateUser));
+            A.CallTo(() => userService.GetAdminUserByAdminId(A<int?>._)).Returns(returnedAdminUser);
+            A.CallTo(() => userService.GetDelegateUserByDelegateUserIdAndCentreId(A<int?>._, A<int?>._)).Returns(returnedDelegateUser);
 
             var emailBody = A.Fake<MimeKit.BodyBuilder>();
 

@@ -30,10 +30,13 @@
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
-    @if (!Model.IsAddPromptJourney) {
+    @if (!Model.IsAddPromptJourney)
+    {
       var routeData = new Dictionary<string, string> { { "promptNumber", Model.PromptNumber!.Value.ToString() } };
       <vc:cancel-link asp-controller="RegistrationPrompts" asp-action="EditRegistrationPrompt" asp-all-route-data="@routeData" />
-    } else {
+    }
+    else
+    {
       <vc:cancel-link asp-controller="RegistrationPrompts" asp-action="AddRegistrationPromptConfigureAnswers" />
     }
   </div>

@@ -1,0 +1,24 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users
+@model UserAccountsViewModel
+@{
+  ViewData["Title"] = "User Accounts";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/SuperAdmin/Shared/_UserAccountsSideNavMenu.cshtml" model="Model.CurrentPage" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <div class="nhsuk-grid-row">
+      <h1 class="nhsuk-heading-xl">User Accounts</h1>
+    </div>
+
+
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/SuperAdmin/Shared/_UserAccountsSideNavMenu.cshtml" model="Model.CurrentPage" />
+    </nav>
+  </div>
+</div>

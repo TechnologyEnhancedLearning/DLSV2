@@ -12,9 +12,9 @@
   <title></title>
 </head>
 <body>
-@foreach (var availableCourse in Model.AvailableCourses)
-{
-  <partial name="Available/_AvailableCourseCard" model="availableCourse" />
-}
+  @foreach (var availableCourse in Model.AvailableCourses)
+  {
+    <partial name="Available/_AvailableCourseCard" model="availableCourse" />
+  }
 </body>
 </html>

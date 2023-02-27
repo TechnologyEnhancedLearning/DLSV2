@@ -130,7 +130,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
 
         public string? PassRateDisplayString =>
             TotalAttempts != 0 ? PassRate + "%" : null;
-        
+
         public string Status()
         {
             if (CourseArchivedDate != null)

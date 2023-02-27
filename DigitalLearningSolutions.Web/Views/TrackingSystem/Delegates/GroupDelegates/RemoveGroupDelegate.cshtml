@@ -31,7 +31,8 @@
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveGroupDelegate">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.ConfirmRemovalFromGroup))-error">
-          @if (confirmError) {
+          @if (confirmError)
+          {
             <span class="nhsuk-error-message" id="@(nameof(Model.ConfirmRemovalFromGroup))-error">
               <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(Model.ConfirmRemovalFromGroup)].Errors[0].ErrorMessage
             </span>
@@ -47,7 +48,8 @@
         </fieldset>
       </div>
 
-      @if (Model.RemoveStartedEnrolmentsEnabled) {
+      @if (Model.RemoveStartedEnrolmentsEnabled)
+      {
         <div class="nhsuk-form-group">
           <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveStartedEnrolments))-error">
             <div class="nhsuk-checkboxes">
@@ -74,8 +76,8 @@
 
     @{
       var routeData = new Dictionary<string, string> {
-        { "groupId", Model.GroupId.ToString() },
-      };
+    { "groupId", Model.GroupId.ToString() },
+    };
     }
     <vc:cancel-link-with-return-page-query asp-controller="GroupDelegates" asp-action="Index" route-data="@routeData" return-page-query="@Model.ReturnPageQuery" />
   </div>

@@ -88,7 +88,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 clockUtility
             );
             controller.ControllerContext = new ControllerContext
-                { HttpContext = new DefaultHttpContext { User = user } };
+            { HttpContext = new DefaultHttpContext { User = user } };
             controller = controller.WithMockTempData();
         }
     }

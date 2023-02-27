@@ -77,16 +77,16 @@
 
         private string GetPassStatus(PostLearningAssessment postLearningAssessment)
         {
-             return postLearningAssessment.PostLearningPassed
-                ? "Passed"
-                : "Failed";
+            return postLearningAssessment.PostLearningPassed
+               ? "Passed"
+               : "Failed";
         }
 
         private string GetPassStatusStyling(PostLearningAssessment postLearningAssessment)
         {
-             return postLearningAssessment.PostLearningAttempts > 0 && postLearningAssessment.PostLearningPassed
-                ? "passed-text"
-                : "not-passed-text";
+            return postLearningAssessment.PostLearningAttempts > 0 && postLearningAssessment.PostLearningPassed
+               ? "passed-text"
+               : "not-passed-text";
         }
     }
 }

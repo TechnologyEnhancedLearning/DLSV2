@@ -34,9 +34,12 @@
 
       <input type="hidden" asp-for="OptionsString" />
 
-      @if (string.IsNullOrEmpty(Model.OptionsString)) {
+      @if (string.IsNullOrEmpty(Model.OptionsString))
+      {
         <partial name="_NoConfiguredAnswers" />
-      } else {
+      }
+      else
+      {
         <partial name="_AdminFieldAnswerTable" model="Model" />
       }
 

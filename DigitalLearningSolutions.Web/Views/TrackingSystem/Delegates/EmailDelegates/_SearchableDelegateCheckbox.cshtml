@@ -15,7 +15,8 @@
     Registered on @Model.RegistrationDate
   </div>
   <div hidden data-filter-value="@Model.JobGroupFilter"></div>
-  @foreach ((_, string filterValue) in Model.RegistrationPromptFilters) {
+  @foreach ((_, string filterValue) in Model.RegistrationPromptFilters)
+  {
     <div hidden data-filter-value="@filterValue"></div>
   }
 </div>
