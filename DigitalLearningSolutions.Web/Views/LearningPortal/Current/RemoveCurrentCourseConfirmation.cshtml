@@ -14,25 +14,25 @@
   <partial name="Shared/_NavMenuItems" />
 }
 
-<div>
-  <div class="nhsuk-form-group" id="form-group">
-    <form asp-action="RemoveCurrentCourse" asp-route-progressId="@Model.ProgressId">
-      <div class="nhsuk-u-reading-width">
-        <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
-          Are you sure you want to remove @Model.Name?
-        </h1>
-        <p>
-          Are you sure that you wish to remove this course from your Current Courses list?
-        </p>
-        <p>
-          If you remove it, and decide that you wish to add it again in future, your current progress will be lost.
-        </p>
-      </div>
-      <button class="nhsuk-button delete-button" aria-describedby="@Model.Id-name" type="submit">
-        Remove course
-      </button>
-    </form>
+  <div>
+    <div class="nhsuk-form-group" id="form-group">
+      <form asp-action="RemoveCurrentCourse" asp-route-progressId="@Model.ProgressId">
+        <div class="nhsuk-u-reading-width">
+          <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+            Are you sure you want to remove @Model.Name?
+          </h1>
+          <p>
+            Are you sure that you wish to remove this course from your Current Courses list?
+          </p>
+          <p>
+            If you remove it, and decide that you wish to add it again in future, your current progress will be lost.
+          </p>
+        </div>
+        <button class="nhsuk-button delete-button" aria-describedby="@Model.Id-name" type="submit">
+          Remove course
+        </button>
+      </form>
+    </div>
+
+    <vc:cancel-link-with-return-page-query asp-controller="LearningPortal" asp-action="Current" return-page-query="@Model.ReturnPageQuery" />
   </div>
-  
-  <vc:cancel-link-with-return-page-query asp-controller="LearningPortal" asp-action="Current" return-page-query="@Model.ReturnPageQuery" />
-</div>

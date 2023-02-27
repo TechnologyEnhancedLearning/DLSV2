@@ -12,11 +12,13 @@
   <title></title>
 </head>
 <body>
-@foreach (var course in Model.Courses) {
-  <partial name="_SearchableCourseCard" model="course" />
-}
-@foreach (var filter in Model.Filters) {
-  <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
-}
+  @foreach (var course in Model.Courses)
+  {
+    <partial name="_SearchableCourseCard" model="course" />
+  }
+  @foreach (var filter in Model.Filters)
+  {
+    <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+  }
 </body>
 </html>

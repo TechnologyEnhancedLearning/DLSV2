@@ -80,7 +80,7 @@
                 // When
                 selfAssessmentDataService.UpdateLastAccessed(invalidSelfAssessmentId, DelegateUserId);
 
-                var updatedSelfAssessment =  selfAssessmentDataService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId)!;
+                var updatedSelfAssessment = selfAssessmentDataService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.LastAccessed.Should().BeNull();

@@ -13,13 +13,15 @@
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
   ViewData["HeaderPathName"] = Model.CourseTitle;
 }
-@{var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");}
+@{
+  var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");
+}
 
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
 
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -45,22 +47,23 @@
   </nav>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">
-      <span class="nhsuk-caption-l">Post learning assessment</span>
-      @Model.SectionName
-    </h1>
-    @if (Model.OnlyItemInOnlySection)
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 id="page-heading" class="nhsuk-heading-xl">
+        <span class="nhsuk-caption-l">Post learning assessment</span>
+        @Model.SectionName
+      </h1>
+      @if (Model.OnlyItemInOnlySection)
     {
-  <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>}
+      <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>
+    }
     <h2 class="@Model.AssessmentStatusStyling">
       <span class="nhsuk-u-visually-hidden">Your status: </span>
       @Model.AssessmentStatus
       @if (Model.ScoreInformation != null)
       {
-  @:(<span class="nhsuk-u-visually-hidden">Your score: </span>@Model.ScoreInformation)
-}
+        @:(<span class="nhsuk-u-visually-hidden">Your score: </span>@Model.ScoreInformation)
+      }
     </h2>
   </div>
 </div>
@@ -74,9 +77,10 @@
       The assessment is locked as there have been too many failed attempts.
     </p>
 
-    @if (Model.ShowNextButton) {
+    @if (Model.ShowNextButton)
+    {
       <div>
-        <partial name="PostLearning/_PostLearningNextLink" model="Model"/>
+        <partial name="PostLearning/_PostLearningNextLink" model="Model" />
       </div>
     }
   }
@@ -84,18 +88,18 @@
   {
     <div class="button-row">
       <div>
-        <a
-          class="nhsuk-button nhsuk-u-margin-bottom-0 @Model.StartButtonAdditionalStyling"
-          asp-action="PostLearningContent"
-          asp-route-customisationId="@Model.CustomisationId"
-          asp-route-sectionId="@Model.SectionId">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 @Model.StartButtonAdditionalStyling"
+         asp-action="PostLearningContent"
+         asp-route-customisationId="@Model.CustomisationId"
+         asp-route-sectionId="@Model.SectionId">
           @Model.StartButtonText
         </a>
       </div>
 
-      @if (Model.ShowNextButton) {
+      @if (Model.ShowNextButton)
+      {
         <div>
-          <partial name="PostLearning/_PostLearningNextLink" model="Model"/>
+          <partial name="PostLearning/_PostLearningNextLink" model="Model" />
         </div>
       }
     </div>

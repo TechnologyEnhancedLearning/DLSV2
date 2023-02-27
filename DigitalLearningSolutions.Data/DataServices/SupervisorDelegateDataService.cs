@@ -87,7 +87,7 @@
         }
 
         // TODO: HEEDLS-1014 - Change CandidateID to UserID
-        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds,int delegateUserId)
+        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int delegateUserId)
         {
             connection.Execute(
                 @"UPDATE SupervisorDelegates

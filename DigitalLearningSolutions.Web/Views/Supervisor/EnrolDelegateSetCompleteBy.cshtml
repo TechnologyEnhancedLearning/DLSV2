@@ -14,7 +14,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -34,14 +34,14 @@
     </div>
     <p class="nhsuk-breadcrumb__back">
       <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-         asp-action="DelegateProfileAssessments"
-         asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+       asp-action="DelegateProfileAssessments"
+       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
         Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
       </a>
     </p>
   </nav>
 }
-@{
+  @{
   var exampleDate = ClockUtility.UtcToday + TimeSpan.FromDays(7);
   string prefillDay;
   string prefillMonth;

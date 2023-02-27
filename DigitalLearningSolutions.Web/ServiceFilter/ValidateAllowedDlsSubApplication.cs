@@ -47,7 +47,7 @@
             {
                 return;
             }
-            
+
             if (application == null || await ApplicationIsInaccessibleByPage(application!))
             {
                 SetNotFoundResult(context);

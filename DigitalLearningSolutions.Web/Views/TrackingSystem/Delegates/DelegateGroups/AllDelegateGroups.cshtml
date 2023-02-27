@@ -12,11 +12,13 @@
   <title></title>
 </head>
 <body>
-@foreach (var delegateGroup in Model.DelegateGroups) {
-  <partial name="_SearchableDelegateGroupCard" model="delegateGroup" />
-}
-@foreach (var filter in Model.Filters) {
-  <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
-}
+  @foreach (var delegateGroup in Model.DelegateGroups)
+  {
+    <partial name="_SearchableDelegateGroupCard" model="delegateGroup" />
+  }
+  @foreach (var filter in Model.Filters)
+  {
+    <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+  }
 </body>
 </html>

@@ -10,48 +10,49 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a></li>
   <li class="nhsuk-breadcrumb__item">Add</li>
 }
-@section mobilebacklink
-{
+  @section mobilebacklink
+  {
   <p class="nhsuk-breadcrumb__back">
     <a class="nhsuk-breadcrumb__backlink" asp-action="ManageSupervisors"
-       asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+     asp-route-selfAssessmentId="@Model.SelfAssessmentID">
       Back to Manage Supervisors
     </a>
-  </p>}
+  </p>
+}
   <h1 class="">
     Add supervisor summary
   </h1>
   <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Supervisor
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.Supervisor.Forename @Model.Supervisor.Surname (@Model.Supervisor.Email)
-    </dd>
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
-        Change
-      </a>
-    </dd>
+      <dt class="nhsuk-summary-list__key">
+        Supervisor
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Supervisor.Forename @Model.Supervisor.Surname (@Model.Supervisor.Email)
+      </dd>
+      <dd class="nhsuk-summary-list__actions">
+        <a asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+          Change
+        </a>
+      </dd>
     </div>
     <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Role
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.SelfAssessmentRoleName
-    </dd>
-    <dd class="nhsuk-summary-list__actions">
-      @if (@Model.RoleCount > 1)
+      <dt class="nhsuk-summary-list__key">
+        Role
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.SelfAssessmentRoleName
+      </dd>
+      <dd class="nhsuk-summary-list__actions">
+        @if (@Model.RoleCount > 1)
       {
         <a asp-action="SetSupervisorRole" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
           Change
         </a>
       }
     </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
+  </div>
+  <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Centre
     </dt>
@@ -63,16 +64,16 @@
         Change
       </a>
     </dd>
-    </div>
-  </dl>
-  <form method="post">
-    <button class="nhsuk-button" type="submit">Submit</button>
-  </form>
-  <div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
-      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-      </svg>
-      Cancel
-    </a>
   </div>
+</dl>
+<form method="post">
+  <button class="nhsuk-button" type="submit">Submit</button>
+</form>
+<div class="nhsuk-back-link">
+  <a class="nhsuk-back-link__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+    </svg>
+    Cancel
+  </a>
+</div>

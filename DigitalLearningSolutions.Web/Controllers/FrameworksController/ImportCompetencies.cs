@@ -13,7 +13,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2)
                 return StatusCode(403);
-            var model = new ImportCompetenciesViewModel() {
+            var model = new ImportCompetenciesViewModel()
+            {
                 FrameworkId = frameworkId
             };
             return View("Developer/ImportCompetencies", model);

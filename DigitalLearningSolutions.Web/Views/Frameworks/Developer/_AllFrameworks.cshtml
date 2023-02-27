@@ -2,11 +2,14 @@
 @model AllFrameworksViewModel
 
 <h1>All Frameworks</h1>
-@if (Model.NoDataFound) {
+@if (Model.NoDataFound)
+{
   <p class="nhsuk-u-margin-top-4" role="alert">
     <b>There are no frameworks in the system.</b>
   </p>
-} else {
+}
+else
+{
   <form method="get" role="search" asp-action="FrameworksViewAll" asp-route-page="@Model.Page">
 
     <partial name="Shared/_FrameworksSearchAndSort" model="Model" />

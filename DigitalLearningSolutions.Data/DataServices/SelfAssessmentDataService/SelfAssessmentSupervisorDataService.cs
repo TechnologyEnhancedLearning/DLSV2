@@ -20,7 +20,8 @@
                 COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
                 sasr.SelfAssessmentReview,
                 sasr.ResultsReview,
-                sd.AddedByDelegate
+                sd.AddedByDelegate,
+                au.CentreName
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId

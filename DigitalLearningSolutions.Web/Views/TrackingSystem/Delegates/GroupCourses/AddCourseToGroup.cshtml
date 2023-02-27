@@ -12,7 +12,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccured) {
+    @if (errorHasOccured)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SupervisorId) })" />
     }
 
@@ -33,7 +34,7 @@
                       css-class="nhsuk-u-width-one-half"
                       default-option="No supervisor"
                       select-list-options="@Model.Supervisors"
-                      required="false"/>
+                      required="false" />
 
       <vc:numeric-input asp-for="@nameof(Model.MonthsToComplete)"
                         label="Months that course needs to be completed within"
@@ -41,7 +42,7 @@
                         type="text"
                         hint-text=""
                         css-class="nhsuk-u-width-one-half"
-                        required="false"/>
+                        required="false" />
 
       <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="GroupCourses" asp-action="AddCourseToGroupSelectCourse" asp-route-groupId="@Model.GroupId">Back</a>
       <button class="nhsuk-button" type="submit">Add course</button>

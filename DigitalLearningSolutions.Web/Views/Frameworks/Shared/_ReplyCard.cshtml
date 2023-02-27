@@ -15,12 +15,12 @@
       {
         <div class="nhsuk-grid-column-full">
           <a class="nhsuk-button button-small delete-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
-             aria-describedby="@Model.ID-header"
-             asp-action="ArchiveReply"
-             asp-controller="Frameworks"
-             asp-route-commentId="@Model.ID"
-             asp-route-replyToCommentId="@Model.ReplyToFrameworkCommentID"
-             asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+           aria-describedby="@Model.ID-header"
+           asp-action="ArchiveReply"
+           asp-controller="Frameworks"
+           asp-route-commentId="@Model.ID"
+           asp-route-replyToCommentId="@Model.ReplyToFrameworkCommentID"
+           asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
             Delete
           </a>
         </div>

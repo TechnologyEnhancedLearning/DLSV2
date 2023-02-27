@@ -2,15 +2,15 @@
 @model PlayList
 <h2>@Model.Name</h2>
 
-  @if (Model.LearningAssets.Any())
-  {
-<div class="nhsuk-grid-row">
-  @foreach (var learningAsset in Model.LearningAssets)
-  {
-    @if (learningAsset.Completed == false)
+@if (Model.LearningAssets.Any())
+{
+  <div class="nhsuk-grid-row">
+    @foreach (var learningAsset in Model.LearningAssets)
     {
-  <partial name="_AssetCard.cshtml" model="learningAsset" />
+      @if (learningAsset.Completed == false)
+      {
+        <partial name="_AssetCard.cshtml" model="learningAsset" />
+      }
     }
-  }
-</div>
-  }
+  </div>
+}

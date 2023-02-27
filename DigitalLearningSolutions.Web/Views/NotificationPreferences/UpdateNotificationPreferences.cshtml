@@ -23,15 +23,16 @@
         <div class="nhsuk-fieldset" aria-describedby="notification-hint">
           <div class="nhsuk-hint update-notification-hint" id="notification-hint">Please tick the boxes for all the notifications you would like to receive.</div>
           <div class="nhsuk-checkboxes">
-            @foreach (var (notification, index) in Model.Notifications.Select((item, index) => (item, index))) {
+            @foreach (var (notification, index) in Model.Notifications.Select((item, index) => (item, index)))
+            {
               <div class="nhsuk-checkboxes__item">
                 <input class="nhsuk-checkboxes__input"
-                       id="notification-@index.ToString()"
-                       name="notificationIds"
-                       type="checkbox"
-                       value="@notification.NotificationId"
-                       aria-describedby="notification-@index.ToString()-item-hint"
-                       @(notification.Accepted ? "checked" : "")>
+                     id="notification-@index.ToString()"
+                     name="notificationIds"
+                     type="checkbox"
+                     value="@notification.NotificationId"
+                     aria-describedby="notification-@index.ToString()-item-hint"
+                     @(notification.Accepted ? "checked" : "")>
                 <label class="nhsuk-label nhsuk-checkboxes__label" for="notification-@index.ToString()">
                   @notification.NotificationName
                 </label>

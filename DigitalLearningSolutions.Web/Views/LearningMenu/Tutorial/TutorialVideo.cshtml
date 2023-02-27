@@ -16,7 +16,9 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@{var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");}
+  @{
+  var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");
+}
 
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -33,15 +35,15 @@
   </nav>
 }
 
-<div class="nhsuk-grid-column-full">
-  <div class="nhsuk-grid-row">
-    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
-  </div>
+  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-grid-row">
+      <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
+    </div>
 
-  <div class="nhsuk-grid-row nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-3">
-    <video controls class="tutorial-video" aria-label="@Model.TutorialName video">
-      <source src="@Model.VideoPath">
-      <p>Your browser does not support videos.</p>
-    </video>
+    <div class="nhsuk-grid-row nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-3">
+      <video controls class="tutorial-video" aria-label="@Model.TutorialName video">
+        <source src="@Model.VideoPath">
+        <p>Your browser does not support videos.</p>
+      </video>
+    </div>
   </div>
-</div>

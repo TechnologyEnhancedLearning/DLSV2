@@ -37,7 +37,7 @@
         </a>
       </dd>
     }
-    </div>
+  </div>
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Vocabulary
@@ -53,7 +53,7 @@
         </a>
       </dd>
     }
-    </div>
+  </div>
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Branding
@@ -63,9 +63,17 @@
         @Model.DetailFramework.Brand
       </span>
       @if (Model.DetailFramework.Category != null)
-      {<span>/</span><span class="framework-category"> @Model.DetailFramework.Category </span>}
+      {
+        <span>/</span>
+
+        <span class="framework-category"> @Model.DetailFramework.Category </span>
+      }
       @if (Model.DetailFramework.Topic != null)
-      {<span>/</span><span class="framework-topic"> @Model.DetailFramework.Topic </span>}
+      {
+        <span>/</span>
+
+        <span class="framework-topic"> @Model.DetailFramework.Topic </span>
+      }
     </dd>
     @if (Model.DetailFramework.UserRole > 1)
     {

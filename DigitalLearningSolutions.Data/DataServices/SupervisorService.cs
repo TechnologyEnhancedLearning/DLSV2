@@ -211,12 +211,24 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             AND u.Active = 1 
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
+
             int existingId = (int)connection.ExecuteScalar(
-               @"SELECT COALESCE
-                 ((SELECT ID
-                  FROM    SupervisorDelegates
-                  WHERE (SupervisorEmail = @supervisorEmail) AND (DelegateEmail = @delegateEmail)), 0) AS ID",
-               new { supervisorEmail, delegateEmail });
+                @"
+                    SELECT COALESCE
+                    ((SELECT ID
+                        FROM    SupervisorDelegates sd
+                        WHERE(SupervisorEmail = @supervisorEmail) AND(DelegateEmail = @delegateEmail)
+                            AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
+                            AND(sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
+                        ), 0) AS ID",
+                new
+                {
+                    supervisorEmail,
+                    delegateEmail,
+                    supervisorAdminId = supervisorAdminId ?? 0,
+                    delegateUserId = delegateUserId ?? 0,
+                }
+            );
 
             if (existingId > 0)
             {
@@ -246,13 +258,24 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     );
                     return -1;
                 }
+
                 existingId = (int)connection.ExecuteScalar(
-                 @"SELECT COALESCE
-                 ((SELECT ID
-                  FROM    SupervisorDelegates
-                  WHERE (SupervisorEmail = @supervisorEmail) AND (DelegateEmail = @delegateEmail)), 0) AS AdminID",
-               new { supervisorEmail, delegateEmail });
-                return existingId;
+                    @"
+                    SELECT COALESCE
+                    ((SELECT ID
+                        FROM    SupervisorDelegates sd
+                        WHERE(SupervisorEmail = @supervisorEmail) AND(DelegateEmail = @delegateEmail)
+                            AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
+                            AND(sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
+                        ), 0) AS ID",
+                    new
+                    {
+                        supervisorEmail,
+                        delegateEmail,
+                        supervisorAdminId = supervisorAdminId ?? 0,
+                        delegateUserId = delegateUserId ?? 0,
+                    }
+                ); return existingId;
             }
         }
 
@@ -325,10 +348,13 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
         {
             return connection.Query<SupervisorForEnrolDelegate>(
-                $@"SELECT AdminID, Forename + ' ' + Surname AS Name, Email FROM AdminUsers AS au
+                $@"SELECT AdminID, Forename + ' ' + Surname + ' (' + CentreName +')' AS Name, Email FROM AdminUsers AS au
                     WHERE (Supervisor = 1) AND (CentreID = @CentreID) AND (CategoryID = 0 OR
                          CategoryID = (SELECT au.CategoryID FROM Applications AS a INNER JOIN
-                           Customisations AS c ON a.ApplicationID = c.ApplicationID WHERE        (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1) GROUP BY AdminID, Surname, Forename, Email ORDER BY Surname, Forename",
+                           Customisations AS c ON a.ApplicationID = c.ApplicationID
+                            WHERE (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1)
+                            GROUP BY AdminID, Surname, Forename, Email, CentreName
+                            ORDER BY Surname, Forename",
                 new { CentreID, CustomisationID });
         }
 

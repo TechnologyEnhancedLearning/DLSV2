@@ -11,7 +11,7 @@
         FrameworkCompetencyGroup =frameworkCompetencyGroup,
         CompetencyFlags = Model.CompetencyFlags
       }"
-      view-data='@new ViewDataDictionary(ViewData)
+         view-data='@new ViewDataDictionary(ViewData)
       {
         { "VocabSingular", @Model.VocabSingular() },
         { "VocabPlural", @Model.VocabPlural() },
@@ -23,65 +23,66 @@ else
 {
   @if (!Model.FrameworkCompetencies.Any())
   {
-<div class="nhsuk-warning-callout callout-green">
-  <h3 class="nhsuk-warning-callout__label">
-    <span role="text">
-      This is an empty framework.
-    </span>
-  </h3>
-  @if (Model.DetailFramework.UserRole <= 1)
-  {
-    <p>This framework doesn't contain any @Model.VocabSingular().ToLower() groups or @Model.VocabPlural().ToLower().</p>
-  }
-  @if (Model.DetailFramework.UserRole > 1)
-  {
-    <p>Start adding @Model.VocabSingular().ToLower() groups and @Model.VocabPlural().ToLower() to this framework using the buttons below.</p>
-    <p>Use the <strong>Details</strong> tab above to view and edit the framework details and working group.</p>
-  }
-  @if (Model.DetailFramework.UserRole > 0)
-  {
-    <p>Use the <strong>Comments</strong> tab to view, add and respond to comments from working group members on this framework.</p>
-  }
-  @if (Model.DetailFramework.UserRole > 1)
-  {
-    <p>When you are ready, use the <strong>Send for Review</strong> button above to request review and sign off of your framework.</p>
-  }
-</div>
-  }
-  else { 
-    <p>No @Model.VocabSingular().ToLower() groups in this framework.</p>
-    }
-  }
-  <div id="fc-ungrouped">
-    @if (Model.FrameworkCompetencies.Any())
-    {
-
-      foreach (var frameworkCompetency in Model.FrameworkCompetencies)
+    <div class="nhsuk-warning-callout callout-green">
+      <h3 class="nhsuk-warning-callout__label">
+        <span role="text">
+          This is an empty framework.
+        </span>
+      </h3>
+      @if (Model.DetailFramework.UserRole <= 1)
       {
-        <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel()
+        <p>This framework doesn't contain any @Model.VocabSingular().ToLower() groups or @Model.VocabPlural().ToLower().</p>
+      }
+      @if (Model.DetailFramework.UserRole > 1)
+      {
+        <p>Start adding @Model.VocabSingular().ToLower() groups and @Model.VocabPlural().ToLower() to this framework using the buttons below.</p>
+        <p>Use the <strong>Details</strong> tab above to view and edit the framework details and working group.</p>
+      }
+      @if (Model.DetailFramework.UserRole > 0)
+      {
+        <p>Use the <strong>Comments</strong> tab to view, add and respond to comments from working group members on this framework.</p>
+      }
+      @if (Model.DetailFramework.UserRole > 1)
+      {
+        <p>When you are ready, use the <strong>Send for Review</strong> button above to request review and sign off of your framework.</p>
+      }
+    </div>
+  }
+  else
+  {
+    <p>No @Model.VocabSingular().ToLower() groups in this framework.</p>
+  }
+}
+<div id="fc-ungrouped">
+  @if (Model.FrameworkCompetencies.Any())
+  {
+
+    foreach (var frameworkCompetency in Model.FrameworkCompetencies)
+    {
+      <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel()
             {
               CanModify = Model.DetailFramework.UserRole > 1,
               FrameworkCompetencyGroupId = null,
               FrameworkCompetency = frameworkCompetency,
               CompetencyFlags = Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)
             }"
-            view-data='@new ViewDataDictionary(ViewData)
+           view-data='@new ViewDataDictionary(ViewData)
               {
                 { "VocabSingular", @Model.VocabSingular() },
                 {"VocabPlural", @Model.VocabPlural()  }
               }' />
-      }
-
     }
-  </div>
-  @if (Model.DetailFramework.UserRole > 1)
-  {
-    <div class="nhsuk-grid-row nhsuk-u-margin-top-3">
-      <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add @Model.VocabSingular().ToLower() group</a>
-        <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add ungrouped @Model.VocabSingular().ToLower()</a>
-        <a class="nhsuk-button nhsuk-button--secondary" asp-action="ImportCompetencies" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="@(ViewContext.RouteData.Values["tabname"])">Import @Model.VocabPlural().ToLower() from Excel</a>
-      </div>
-    </div>
+
   }
+</div>
+@if (Model.DetailFramework.UserRole > 1)
+{
+  <div class="nhsuk-grid-row nhsuk-u-margin-top-3">
+    <div class="nhsuk-grid-column-full">
+      <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add @Model.VocabSingular().ToLower() group</a>
+      <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add ungrouped @Model.VocabSingular().ToLower()</a>
+      <a class="nhsuk-button nhsuk-button--secondary" asp-action="ImportCompetencies" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="@(ViewContext.RouteData.Values["tabname"])">Import @Model.VocabPlural().ToLower() from Excel</a>
+    </div>
+  </div>
+}
 

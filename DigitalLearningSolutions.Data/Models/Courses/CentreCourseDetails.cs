@@ -4,7 +4,7 @@
 
     public class CentreCourseDetails
     {
-        public CentreCourseDetails(){}
+        public CentreCourseDetails() { }
 
         public CentreCourseDetails(
             IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses,

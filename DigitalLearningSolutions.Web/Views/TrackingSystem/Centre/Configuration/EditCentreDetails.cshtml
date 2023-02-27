@@ -13,7 +13,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.NotifyEmail), nameof(Model.BannerText), nameof(Model.CentreSignatureFile), nameof(Model.CentreLogoFile) })" />
     }
 
@@ -53,9 +54,12 @@
           <vc:file-input asp-for="CentreSignatureFile" label="Centre signature" hint-text="@string.Format(hintText, "signature")" css-class="nhsuk-u-width-full" />
         </div>
         <div class="nhsuk-grid-column-one-half">
-          @if (Model.CentreSignature != null) {
+          @if (Model.CentreSignature != null)
+          {
             <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreSignature)" alt="Centre signature picture" />
-          } else {
+          }
+          else
+          {
             <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder signature image" />
           }
         </div>
@@ -74,9 +78,12 @@
           <vc:file-input asp-for="CentreLogoFile" label="Centre logo" hint-text="@string.Format(hintText, "logo")" css-class="nhsuk-u-width-full" />
         </div>
         <div class="nhsuk-grid-column-one-half">
-          @if (Model.CentreLogo != null) {
+          @if (Model.CentreLogo != null)
+          {
             <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre logo picture" />
-          } else {
+          }
+          else
+          {
             <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder logo image" />
           }
         </div>

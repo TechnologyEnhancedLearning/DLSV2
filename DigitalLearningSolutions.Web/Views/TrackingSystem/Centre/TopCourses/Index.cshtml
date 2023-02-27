@@ -9,61 +9,62 @@
   <partial name="~/Views/TrackingSystem/Shared/_CentreDashboardBreadcrumbs.cshtml" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <table role="table" class="nhsuk-table-responsive">
-      <thead role="rowgroup" class="nhsuk-table__head">
-      <tr role="row">
-        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-          Course
-        </th>
-        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-          Delegates
-        </th>
-        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-          In progress
-        </th>
-        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-          Completed
-        </th>
-        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-          Pass rate
-        </th>
-        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-          Action
-        </th>
-      </tr>
-      </thead>
-      <tbody class="nhsuk-table__body">
-      @foreach (var course in Model.TopCourses) {
-        <tr role="row" class="nhsuk-table__row">
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-            <span class="nhsuk-table-responsive__heading">Course </span>@course.CourseName
-          </td>
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-            <span class="nhsuk-table-responsive__heading">Delegates </span>@course.DelegateCount
-          </td>
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-            <span class="nhsuk-table-responsive__heading">In progress </span>@course.InProgressCount
-          </td>
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-            <span class="nhsuk-table-responsive__heading">Completed </span>@course.CompletedCount
-          </td>
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-            <span class="nhsuk-table-responsive__heading">Pass rate </span>@course.PassRate%
-          </td>
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-            <span class="nhsuk-table-responsive__heading">Action </span>
-            <a asp-controller="CourseDelegates"
+      <table role="table" class="nhsuk-table-responsive">
+        <thead role="rowgroup" class="nhsuk-table__head">
+          <tr role="row">
+            <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+              Course
+            </th>
+            <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+              Delegates
+            </th>
+            <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+              In progress
+            </th>
+            <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+              Completed
+            </th>
+            <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+              Pass rate
+            </th>
+            <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          @foreach (var course in Model.TopCourses)
+        {
+          <tr role="row" class="nhsuk-table__row">
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+              <span class="nhsuk-table-responsive__heading">Course </span>@course.CourseName
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+              <span class="nhsuk-table-responsive__heading">Delegates </span>@course.DelegateCount
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+              <span class="nhsuk-table-responsive__heading">In progress </span>@course.InProgressCount
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+              <span class="nhsuk-table-responsive__heading">Completed </span>@course.CompletedCount
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+              <span class="nhsuk-table-responsive__heading">Pass rate </span>@course.PassRate%
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+              <span class="nhsuk-table-responsive__heading">Action </span>
+              <a asp-controller="CourseDelegates"
                asp-action="Index"
                asp-route-customisationId="@course.CustomisationId">
-              View course
-            </a>
-          </td>
-        </tr>
-      }
+                View course
+              </a>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
 

@@ -143,7 +143,7 @@ namespace DigitalLearningSolutions.Data.Migrations
             Execute.Sql(Properties.Resources.DLSV2_95_RemoveSystemVersioning);
             Delete.Column("IsFrameworkDeveloper").FromTable("AdminUsers");
             Delete.Table("PublishStatus");
-            Delete.Table("CompetencyLevelCriteria");  
+            Delete.Table("CompetencyLevelCriteria");
             Delete.Table("AssessmentQuestionLevels");
             Delete.ForeignKey("FK_AssessmentQuestions_AssessmentQuestionInputTypeID_AssessmentQuestionInputTypes_ID").OnTable("AssessmentQuestions");
             Delete.Column("AssessmentQuestionInputTypeID").FromTable("AssessmentQuestions");

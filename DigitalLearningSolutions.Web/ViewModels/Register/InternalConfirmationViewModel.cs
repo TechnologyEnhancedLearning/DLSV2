@@ -9,7 +9,7 @@
             int? centreId,
             string? centreEmailIfUnverified,
             string centreName,
-            bool hasDelegateAccountAtAdminCentre=false
+            bool hasDelegateAccountAtAdminCentre = false
         )
         {
             CandidateNumber = candidateNumber;

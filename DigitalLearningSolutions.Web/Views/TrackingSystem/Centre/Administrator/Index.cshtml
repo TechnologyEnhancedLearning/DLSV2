@@ -16,7 +16,8 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+    @if (Model.JavascriptSearchSortFilterPaginateEnabled)
+    {
       <vc:loading-spinner page-has-side-nav-menu="true" />
     }
     <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
@@ -28,17 +29,21 @@
 
       <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model" />
 
-      @if (Model.NoDataFound) {
+      @if (Model.NoDataFound)
+      {
         <p class="nhsuk-u-margin-top-4" role="alert">
           <b>No administrators found.</b>
         </p>
-      } else {
+      }
+      else
+      {
         <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
         <partial name="SearchablePage/_TopPagination" model="Model" />
         <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
         <div id="searchable-elements">
-          @foreach (var admin in Model.Admins) {
+          @foreach (var admin in Model.Admins)
+          {
             <partial name="_SearchableAdminCard" model="admin" />
           }
         </div>
@@ -52,7 +57,9 @@
   </div>
 </div>
 
-@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-@section scripts {
+@if (Model.JavascriptSearchSortFilterPaginateEnabled)
+{
+  @section scripts {
   <script src="@Url.Content("~/js/trackingSystem/centreAdministrators.js")" asp-append-version="true"></script>
-}}
+}
+}

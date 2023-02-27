@@ -73,16 +73,19 @@
          href="#">
         View courses
       </a>
-      @if (Model.Active) {
+      @if (Model.Active)
+      {
         <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2"
-           role="button"
-           href="#">
+         role="button"
+         href="#">
           Deactivate centre
         </a>
-      } else {
+      }
+      else
+      {
         <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-           role="button"
-           href="#">
+         role="button"
+         href="#">
           Reactivate centre
         </a>
       }

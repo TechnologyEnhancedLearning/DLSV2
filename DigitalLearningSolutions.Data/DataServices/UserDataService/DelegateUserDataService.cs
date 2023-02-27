@@ -220,13 +220,14 @@
             return user;
         }
 
-        public DelegateUser? GetDelegateUserByDelegateUserId(int delegateUserId)
+        public DelegateUser? GetDelegateUserByDelegateUserIdAndCentreId(int delegateUserId, int centreId)
         {
             var user = connection.Query<DelegateUser>(
                 @$"{BaseSelectDelegateUserPassportingQuery}
-                    WHERE da.UserId = @delegateUserId",
-                new { delegateUserId }
-            ).SingleOrDefault();
+                    WHERE da.UserId = @delegateUserId
+                        AND da.CentreId = @centreId",
+                new { delegateUserId, centreId }
+            ).FirstOrDefault();
 
             return user;
         }

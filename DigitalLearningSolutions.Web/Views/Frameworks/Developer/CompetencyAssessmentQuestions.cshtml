@@ -24,7 +24,7 @@
   <h1 class="truncate-overflow">@Model.CompetencyName</h1>
   <h2>@Model.VocabSingular() assessment questions</h2>
   <p class="nhsuk-body-l">Assessment questions listed here will be presented to users assessing themselves against this @Model.VocabSingular().ToLower().</p>
-@if (Model.DetailFramework.PublishStatusID == 3)
+  @if (Model.DetailFramework.PublishStatusID == 3)
 {
   <partial name="Shared/_PublishedWarning" />
 }
