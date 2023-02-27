@@ -22,30 +22,32 @@
       <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
     </div>
 
-    @if (!centreEmailIsVerified) {
+    @if (!centreEmailIsVerified)
+    {
       <partial name="_VerifyEmailWarningForRegistrationConfirmationPage" model="@verifyEmailWarningViewModel" />
     }
 
-    @if (!Model.Approved) {
+    @if (!Model.Approved)
+    {
       <partial name="_UnapprovedAccountWarning" />
     }
 
     @if (Model.Approved)
     {
-        if (Model.HasDelegateAccountAtAdminCentre)
-        {
-            <p>Use the Switch centre page to access the learning portal for your new delegate account.</p>
-        }
-        else
-        {
-            <p>You can now log into your new account.</p>
-        }
-        <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+      if (Model.HasDelegateAccountAtAdminCentre)
+      {
+        <p>Use the Switch centre page to access the learning portal for your new delegate account.</p>
+      }
+      else
+      {
+        <p>You can now log into your new account.</p>
+      }
+      <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
     }
     else
     {
-        <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
-        <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+      <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
+      <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
     }
   </div>
 </div>

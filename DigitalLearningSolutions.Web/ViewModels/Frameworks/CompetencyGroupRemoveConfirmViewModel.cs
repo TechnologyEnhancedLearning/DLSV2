@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
-    public class CompetencyGroupRemoveConfirmViewModel{
-        public CompetencyGroupRemoveConfirmViewModel(int frameworkId ,int frameworkCompetencyGroupId, int competencyGroupId, int competencyCount)
+    public class CompetencyGroupRemoveConfirmViewModel
+    {
+        public CompetencyGroupRemoveConfirmViewModel(int frameworkId, int frameworkCompetencyGroupId, int competencyGroupId, int competencyCount)
         {
             FrameworkId = frameworkId;
             FrameworkCompetencyGroupId = frameworkCompetencyGroupId;

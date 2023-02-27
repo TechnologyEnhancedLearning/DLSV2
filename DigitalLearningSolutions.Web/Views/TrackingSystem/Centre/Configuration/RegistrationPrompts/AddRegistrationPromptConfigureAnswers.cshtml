@@ -9,7 +9,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
     }
 
@@ -22,11 +23,14 @@
       </div>
 
       <input type="hidden" asp-for="OptionsString" />
-      <input type="hidden" asp-for="PromptName"/>
+      <input type="hidden" asp-for="PromptName" />
 
-      @if (string.IsNullOrEmpty(Model.OptionsString)) {
+      @if (string.IsNullOrEmpty(Model.OptionsString))
+      {
         <partial name="_NoConfiguredAnswers" />
-      } else {
+      }
+      else
+      {
         <partial name="_RegistrationPromptAnswerTable" model="Model" />
       }
 

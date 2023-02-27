@@ -1,7 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @model CourseSectionViewModel
 
-@if (Model.Tutorials.Any(t => t.DiagnosticEnabled || t.LearningEnabled)) {
+@if (Model.Tutorials.Any(t => t.DiagnosticEnabled || t.LearningEnabled))
+{
   <div class="nhsuk-panel word-break">
     <details class="nhsuk-details nhsuk-expander">
       <summary class="nhsuk-details__summary">
@@ -11,19 +12,23 @@
       </summary>
       <div class="nhsuk-details__text nhsuk-u-margin-bottom-0">
         <dl class="nhsuk-summary-list">
-          @foreach (var tutorial in Model.Tutorials) {
-            @if (tutorial.DiagnosticEnabled || tutorial.LearningEnabled) {
+          @foreach (var tutorial in Model.Tutorials)
+          {
+            @if (tutorial.DiagnosticEnabled || tutorial.LearningEnabled)
+            {
               <div class="nhsuk-summary-list__row basic-summary-list__row">
                 <dt class="nhsuk-summary-list__key">
                   @tutorial.TutorialName
                 </dt>
                 <dd class="nhsuk-summary-list__value summary-list-right-align-tags">
-                  @if (tutorial.DiagnosticEnabled) {
+                  @if (tutorial.DiagnosticEnabled)
+                  {
                     <strong class="nhsuk-tag nhsuk-tag--grey">
                       Diagnostic
                     </strong>
                   }
-                  @if (tutorial.LearningEnabled) {
+                  @if (tutorial.LearningEnabled)
+                  {
                     <strong class="nhsuk-tag nhsuk-tag--grey">
                       Learning
                     </strong>
@@ -34,17 +39,19 @@
           }
         </dl>
         <a class="nhsuk-button"
-           role="button"
-           asp-controller="CourseContent"
-           asp-action="EditSection"
-           asp-route-customisationId="@Model.CustomisationId"
-           asp-route-sectionId = "@Model.SectionId">
+         role="button"
+         asp-controller="CourseContent"
+         asp-action="EditSection"
+         asp-route-customisationId="@Model.CustomisationId"
+         asp-route-sectionId="@Model.SectionId">
           Edit section content
         </a>
       </div>
     </details>
   </div>
-} else if (Model.PostLearningAssessment) {
+}
+else if (Model.PostLearningAssessment)
+{
   <div class="nhsuk-panel word-break">
     <details class="nhsuk-details nhsuk-expander">
       <summary class="nhsuk-details__summary">
@@ -55,11 +62,11 @@
       <div class="nhsuk-details__text">
         <p>No learning or diagnostic has been selected for this section. However, the post-learning assessment is enabled.</p>
         <a class="nhsuk-button"
-           role="button"
-           asp-controller="CourseContent"
-           asp-action="EditSection"
-           asp-route-customisationId="@Model.CustomisationId"
-           asp-route-sectionId="@Model.SectionId">
+         role="button"
+         asp-controller="CourseContent"
+         asp-action="EditSection"
+         asp-route-customisationId="@Model.CustomisationId"
+         asp-route-sectionId="@Model.SectionId">
           Edit section content
         </a>
       </div>

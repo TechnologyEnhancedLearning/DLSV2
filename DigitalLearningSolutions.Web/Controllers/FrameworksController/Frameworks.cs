@@ -690,7 +690,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 {
                     TempData["FrameworkError"] = $"The email address must match a registered DLS Admin account";
                 }
-                else if(collaboratorId == -5)
+                else if (collaboratorId == -5)
                 {
                     TempData["FrameworkError"] = $"The owner cannot be the collaborator of the framework.";
                 }

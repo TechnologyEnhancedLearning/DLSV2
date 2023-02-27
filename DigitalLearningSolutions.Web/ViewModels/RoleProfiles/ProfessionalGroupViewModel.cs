@@ -5,7 +5,7 @@
 
     public class ProfessionalGroupViewModel
     {
-       public IEnumerable<NRPProfessionalGroups> NRPProfessionalGroups { get; set; }
-       public RoleProfileBase RoleProfileBase { get; set; }
+        public IEnumerable<NRPProfessionalGroups> NRPProfessionalGroups { get; set; }
+        public RoleProfileBase RoleProfileBase { get; set; }
     }
 }

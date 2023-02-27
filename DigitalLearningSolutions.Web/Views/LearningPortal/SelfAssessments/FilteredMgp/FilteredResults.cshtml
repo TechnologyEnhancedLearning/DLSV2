@@ -11,101 +11,101 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SelfAssessmentOverview" asp-route-vocabulary="Capabilities" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a></li>
   <li class="nhsuk-breadcrumb__item">Recommended Learning Resources</li>
 }
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<style>
-  .playlist-title {
-    min-height: 72px;
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+  <style>
+    .playlist-title {
+        min-height: 72px;
+    }
+  </style>
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link nhsuk-u-margin-right-2 trigger-loader" asp-action="SelfAssessmentOverview" asp-route-vocabulary="Capabilities" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+      </svg>
+      Back to Self Assessment
+    </a>
+
+  </div>
+
+  <h1 id="reclist-heading nhsuk-u-margin-bottom-3">Recommendations</h1>
+  <div class="nhsuk-grid-row">
+
+    @if (Model.FavouritePlayList.Name != null)
+  {
+    @if (Model.FavouritePlayList.LearningAssets.Any())
+    {
+      <div class="nhsuk-grid-column-full">
+        <partial name='_Playlist.cshtml' for='FavouritePlayList' />
+      </div>
+    }
   }
-</style>
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link nhsuk-u-margin-right-2 trigger-loader" asp-action="SelfAssessmentOverview" asp-route-vocabulary="Capabilities" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-    </svg>
-    Back to Self Assessment
-  </a>
 
-</div>
-
-    <h1 id="reclist-heading nhsuk-u-margin-bottom-3">Recommendations</h1>
-    <div class="nhsuk-grid-row">
-
-      @if (Model.FavouritePlayList.Name != null)
+  <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
+    @if (Model.RecommendedPlayLists.Any())
+    {
+      @foreach (var playList in Model.RecommendedPlayLists)
       {
-        @if (Model.FavouritePlayList.LearningAssets.Any())
+        @if (playList.Name != null)
         {
-          <div class="nhsuk-grid-column-full">
-            <partial name='_Playlist.cshtml' for='FavouritePlayList' />
-          </div>
+          <partial name="_Playlist.cshtml" Model="playList" />
         }
+
       }
 
-      <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
-        @if (Model.RecommendedPlayLists.Any())
+    }
+    else
+    {
+      <p>Check back soon for recommended learning learning resources. <a class="trigger-loader" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Reload resources.</a></p>
+    }
+  </div>
+  @if (Model.CompetencyPlayLists.Any())
+  {
+    <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
+      <h2 id="complist-heading">Explore more</h2>
+      <div class="nhsuk-grid-row">
+        @foreach (var playList in Model.CompetencyPlayLists)
         {
-          @foreach (var playList in Model.RecommendedPlayLists)
-          {
-            @if (playList.Name != null)
-            {
-              <partial name="_Playlist.cshtml" Model="playList" />
-            }
-
-          }
-
-        }
-        else
-        {
-          <p>Check back soon for recommended learning learning resources. <a class="trigger-loader" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Reload resources.</a></p>
+          <div class="nhsuk-grid-column-one-half card-container">
+            <div class="course-card nhsuk-panel" id="@playList.Id-card">
+              <h3 class="playlist-title nhsuk-u-padding-top-2 nhsuk-u-margin-bottom-2" id="@playList.Id-title" name="name" role="heading" aria-level="3">
+                @playList.Name
+              </h3>
+              <div class="nhsuk-action-link">
+                <a class="nhsuk-action-link__link trigger-loader"
+               aria-describedby="@playList.Id-title"
+               asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+               asp-route-playListId="@playList.Id"
+               asp-action="FilteredCompetencyPlaylist"
+               asp-controller="RecommendedLearning">
+                  <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
+                  </svg>
+                  <span class="nhsuk-action-link__text">Explore</span>
+                </a>
+              </div>
+            </div>
+          </div>
         }
       </div>
-      @if (Model.CompetencyPlayLists.Any())
-      {
-        <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
-          <h2 id="complist-heading">Explore more</h2>
-          <div class="nhsuk-grid-row">
-            @foreach (var playList in Model.CompetencyPlayLists)
-            {
-              <div class="nhsuk-grid-column-one-half card-container">
-                <div class="course-card nhsuk-panel" id="@playList.Id-card">
-                  <h3 class="playlist-title nhsuk-u-padding-top-2 nhsuk-u-margin-bottom-2" id="@playList.Id-title" name="name" role="heading" aria-level="3">
-                    @playList.Name
-                  </h3>
-                  <div class="nhsuk-action-link">
-                    <a class="nhsuk-action-link__link trigger-loader"
-                       aria-describedby="@playList.Id-title"
-                       asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-                       asp-route-playListId="@playList.Id"
-                       asp-action="FilteredCompetencyPlaylist"
-                       asp-controller="RecommendedLearning">
-                      <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
-                      </svg>
-                      <span class="nhsuk-action-link__text">Explore</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      }
-    <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full card-container">
-          <div class="course-card nhsuk-panel">
-            <h3>Feedback</h3>
-            <p>Once you have explored some of your learning recommendations, please take a moment to provide some feedback:</p>
-            <a class="nhsuk-action-link__link" href="https://healtheducationyh.onlinesurveys.ac.uk/digital-self-assessment-diagnostic-tool-feedback-questionn-2" target="_blank">
-              <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
-              </svg>
-              <span class="nhsuk-action-link__text">Review the Digital Capability Self Assessment tool</span>
-            </a>
-          </div>
-          </div>
+    </div>
+  }
+  <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full card-container">
+        <div class="course-card nhsuk-panel">
+          <h3>Feedback</h3>
+          <p>Once you have explored some of your learning recommendations, please take a moment to provide some feedback:</p>
+          <a class="nhsuk-action-link__link" href="https://healtheducationyh.onlinesurveys.ac.uk/digital-self-assessment-diagnostic-tool-feedback-questionn-2" target="_blank">
+            <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
+            </svg>
+            <span class="nhsuk-action-link__text">Review the Digital Capability Self Assessment tool</span>
+          </a>
         </div>
       </div>
     </div>
+  </div>
+</div>
 

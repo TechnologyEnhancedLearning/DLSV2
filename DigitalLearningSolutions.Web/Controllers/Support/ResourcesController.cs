@@ -17,7 +17,7 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.Support))]
-    [TypeFilter(typeof(ValidateAllowedDlsSubApplication), Arguments = new object[] { new [] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } })]
+    [TypeFilter(typeof(ValidateAllowedDlsSubApplication), Arguments = new object[] { new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } })]
     public class ResourcesController : Controller
     {
         private readonly IConfiguration configuration;

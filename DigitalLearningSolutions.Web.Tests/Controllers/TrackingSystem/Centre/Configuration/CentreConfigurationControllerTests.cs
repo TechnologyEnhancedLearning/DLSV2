@@ -214,7 +214,7 @@
                 CentreSignature = new byte[100],
                 CentreSignatureFile = A.Fake<IFormFile>(),
             };
-            var newImage = new byte [200];
+            var newImage = new byte[200];
             A.CallTo(() => imageResizeService.ResizeCentreImage(A<IFormFile>._)).Returns(newImage);
 
             // When
@@ -238,7 +238,7 @@
                 CentreLogo = new byte[100],
                 CentreLogoFile = A.Fake<IFormFile>(),
             };
-            var newImage = new byte [200];
+            var newImage = new byte[200];
             A.CallTo(() => imageResizeService.ResizeCentreImage(A<IFormFile>._)).Returns(newImage);
 
             // When

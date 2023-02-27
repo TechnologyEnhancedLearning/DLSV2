@@ -15,7 +15,7 @@
             if (user.Identity.IsAuthenticated
                 && user.IsDelegateOnlyAccount())
             {
-                context.Result = new RedirectToActionResult("Current", "LearningPortal", new {});
+                context.Result = new RedirectToActionResult("Current", "LearningPortal", new { });
             }
         }
     }

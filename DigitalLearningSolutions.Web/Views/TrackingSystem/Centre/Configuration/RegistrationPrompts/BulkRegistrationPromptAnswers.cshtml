@@ -8,7 +8,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@new []{ nameof(BulkRegistrationPromptAnswersViewModel.OptionsString) }" />
     }
 
@@ -30,10 +31,13 @@
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
-    @if (!Model.IsAddPromptJourney) {
+    @if (!Model.IsAddPromptJourney)
+    {
       var routeData = new Dictionary<string, string> { { "promptNumber", Model.PromptNumber!.Value.ToString() } };
       <vc:cancel-link asp-controller="RegistrationPrompts" asp-action="EditRegistrationPrompt" asp-all-route-data="@routeData" />
-    } else {
+    }
+    else
+    {
       <vc:cancel-link asp-controller="RegistrationPrompts" asp-action="AddRegistrationPromptConfigureAnswers" />
     }
   </div>

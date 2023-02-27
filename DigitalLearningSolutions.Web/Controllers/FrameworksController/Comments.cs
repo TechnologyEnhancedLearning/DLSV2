@@ -19,7 +19,7 @@
             var adminId = GetAdminId();
             var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             if (baseFramework == null) return StatusCode(404);
-            if(baseFramework.UserRole == 0)
+            if (baseFramework.UserRole == 0)
             {
                 return StatusCode(403);
             }
@@ -47,5 +47,5 @@
             return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
         }
     }
-    
+
 }

@@ -2,8 +2,12 @@
 @model AssessmentQuestion
 
 <label for="@Model.Id-input">
-  <h3 class="nhsuk-u-margin-bottom-1">@Model.Question @if (!Model.Required)
-  {<span>(optional)</span>}</h3>
+  <h3 class="nhsuk-u-margin-bottom-1">
+    @Model.Question @if (!Model.Required)
+    {
+      <span>(optional)</span>
+    }
+  </h3>
 </label>
 @if (Model.ScoringInstructions != null)
 {

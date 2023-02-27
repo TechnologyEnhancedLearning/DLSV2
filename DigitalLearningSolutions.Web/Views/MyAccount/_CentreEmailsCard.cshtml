@@ -8,12 +8,13 @@
     </h2>
     <div class="nhsuk-card__description">
       <dl class="nhsuk-summary-list details-list-with-button">
-        @foreach (var (_, centreName, centreSpecificEmail) in Model.AllCentreSpecificEmails) {
+        @foreach (var (_, centreName, centreSpecificEmail) in Model.AllCentreSpecificEmails)
+        {
           var centreSpecificEmailModel = new CentreSpecificEmailDetailsViewModel(
-            Model.PrimaryEmail,
-            centreSpecificEmail,
-            centreName
-            );
+          Model.PrimaryEmail,
+          centreSpecificEmail,
+          centreName
+          );
 
           <partial name="_CentreSpecificEmailDetailsSection" model="@centreSpecificEmailModel" />
         }

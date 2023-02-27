@@ -10,12 +10,12 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.VocabPlural()) home</a></li>
   <li class="nhsuk-breadcrumb__item">Sign-off History</li>
 }
-@section mobilebacklink
-{
+  @section mobilebacklink
+  {
   <p class="nhsuk-breadcrumb__back">
     <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
-       asp-route-vocabulary="@Model.VocabPlural()"
-       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+     asp-route-vocabulary="@Model.VocabPlural()"
+     asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
       Back to @Model.VocabPlural()
     </a>
   </p>

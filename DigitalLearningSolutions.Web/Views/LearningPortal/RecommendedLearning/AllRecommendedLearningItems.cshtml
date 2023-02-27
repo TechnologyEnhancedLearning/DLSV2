@@ -12,8 +12,9 @@
   <title></title>
 </head>
 <body>
-@foreach (var resource in Model.RecommendedResources) {
-  <partial name="_SearchableRecommendedResourceCard" model="resource" />
-}
+  @foreach (var resource in Model.RecommendedResources)
+  {
+    <partial name="_SearchableRecommendedResourceCard" model="resource" />
+  }
 </body>
 </html>

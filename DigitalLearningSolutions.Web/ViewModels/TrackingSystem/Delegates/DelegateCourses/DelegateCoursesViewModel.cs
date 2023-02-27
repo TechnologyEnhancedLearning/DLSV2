@@ -20,7 +20,7 @@
         )
         {
             UpdateCourseActiveFlags(result);
-            
+
             Courses = result.ItemsToDisplay.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
         }
 

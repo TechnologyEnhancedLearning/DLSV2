@@ -11,6 +11,6 @@
         public string LocationType { get; set; }
 
         [JsonProperty("viewport")]
-        public Viewport Viewport { get; set; }  
+        public Viewport Viewport { get; set; }
     }
 }

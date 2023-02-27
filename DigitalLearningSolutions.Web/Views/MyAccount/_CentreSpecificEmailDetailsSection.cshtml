@@ -1,12 +1,15 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model CentreSpecificEmailDetailsViewModel
 
-@{ var key = Model.CentreName ?? "Centre email"; }
+@{
+  var key = Model.CentreName ?? "Centre email";
+}
 <div class="nhsuk-summary-list__row basic-summary-list__row">
   <dt class="nhsuk-summary-list__key">
     @key
   </dt>
-  @if (string.IsNullOrWhiteSpace(Model.CentreSpecificEmail)) {
+  @if (string.IsNullOrWhiteSpace(Model.CentreSpecificEmail))
+  {
     <dd class="nhsuk-summary-list__value">
       <div class="centre-email__row">
         @Model.PrimaryEmail
@@ -17,7 +20,9 @@
         </div>
       </div>
     </dd>
-  } else {
+  }
+  else
+  {
     <dd class="nhsuk-summary-list__value">
       @Model.CentreSpecificEmail
     </dd>

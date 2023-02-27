@@ -11,7 +11,7 @@
         }
 
         public override void Down()
-        {            
+        {
             Delete.Column("ReviewerCommentsLabel").FromTable("SelfAssessments");
         }
     }

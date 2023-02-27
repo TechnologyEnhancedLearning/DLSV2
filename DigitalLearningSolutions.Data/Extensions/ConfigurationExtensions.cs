@@ -29,7 +29,7 @@
 
         private const string ExcelPassword = "ExcelPassword";
 
-	private const string MonthsToPromptUserDetailsCheckKey = "MonthsToPromptUserDetailsCheck";
+        private const string MonthsToPromptUserDetailsCheckKey = "MonthsToPromptUserDetailsCheck";
 
         public static string GetAppRootPath(this IConfiguration config)
         {

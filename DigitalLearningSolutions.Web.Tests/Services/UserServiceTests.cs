@@ -1048,7 +1048,7 @@
 
             var centreEmailList = new List<(int centreId, string centreName, string? centreEmail)>
                 { (centreId, centreName, centreEmail) };
-            A.CallTo(() => userDataService.GetAllActiveCentreEmailsForUser(userId,false)).Returns(
+            A.CallTo(() => userDataService.GetAllActiveCentreEmailsForUser(userId, false)).Returns(
                 isEmpty ? new List<(int centreId, string centreName, string? centreSpecificEmail)>() : centreEmailList
             );
 

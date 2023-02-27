@@ -8,7 +8,7 @@
     public class SupportTicketDataServiceTests
     {
         private ISupportTicketDataService supportTicketDataService = null!;
-        
+
         [SetUp]
         public void Setup()
         {

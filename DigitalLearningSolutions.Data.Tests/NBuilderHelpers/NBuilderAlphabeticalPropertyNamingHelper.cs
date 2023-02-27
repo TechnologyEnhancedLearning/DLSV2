@@ -9,7 +9,7 @@
         {
             if (index < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(index) , @"Index must be greater than or equal to zero");
+                throw new ArgumentOutOfRangeException(nameof(index), @"Index must be greater than or equal to zero");
             }
 
             var remainder = index % 26;

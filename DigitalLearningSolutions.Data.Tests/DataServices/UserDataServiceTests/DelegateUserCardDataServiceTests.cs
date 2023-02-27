@@ -27,7 +27,7 @@
         {
             // When
             var userCard = userDataService.GetDelegateUserCardById(3)!;
-            
+
             // Then
             using (new AssertionScope())
             {

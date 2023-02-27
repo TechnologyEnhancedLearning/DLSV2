@@ -4,6 +4,6 @@
     {
         public string? UserEmail { get; set; }
         public bool? UserActive { get; set; }
-        public string? FrameworkRole { get; set;  }
+        public string? FrameworkRole { get; set; }
     }
 }

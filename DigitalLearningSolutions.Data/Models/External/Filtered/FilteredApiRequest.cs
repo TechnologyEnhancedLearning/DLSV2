@@ -8,6 +8,6 @@
         [JsonProperty("method")]
         public string? Method { get; set; }
         [JsonProperty("jsonrpc")]
-        public string? JSonRPC { get; set; }        
+        public string? JSonRPC { get; set; }
     }
 }
