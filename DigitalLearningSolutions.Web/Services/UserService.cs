@@ -16,7 +16,8 @@ namespace DigitalLearningSolutions.Web.Services
 
     public interface IUserService
     {
-        (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
+        AdminUser? GetAdminUserByAdminId(int? adminId);
+        DelegateUser? GetDelegateUserByDelegateUserIdAndCentreId(int? delegateUserId, int? centreId);
 
         DelegateEntity? GetDelegateById(int id);
 
@@ -84,7 +85,7 @@ namespace DigitalLearningSolutions.Web.Services
         string? GetCentreEmail(int userId, int centreId);
 
         IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
-            int userId,bool isAll=false
+            int userId, bool isAll = false
         );
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
@@ -136,23 +137,25 @@ namespace DigitalLearningSolutions.Web.Services
             this.configuration = configuration;
         }
 
-        public (AdminUser?, DelegateUser?) GetUsersById(int? userAdminId, int? userDelegateId)
+        public AdminUser? GetAdminUserByAdminId(int? adminId)
         {
             AdminUser? adminUser = null;
 
-            if (userAdminId != null)
+            if (adminId != null)
             {
-                adminUser = userDataService.GetAdminUserById(userAdminId.Value);
+                adminUser = userDataService.GetAdminUserById(adminId.Value);
             }
-
+            return adminUser;
+        }
+        public DelegateUser? GetDelegateUserByDelegateUserIdAndCentreId(int? delegateUserId, int? centreId)
+        {
             DelegateUser? delegateUser = null;
 
-            if (userDelegateId != null)
+            if (delegateUserId != null && centreId != null)
             {
-                delegateUser = userDataService.GetDelegateUserByDelegateUserId(userDelegateId.Value);
+                delegateUser = userDataService.GetDelegateUserByDelegateUserIdAndCentreId(delegateUserId.Value, centreId.Value);
             }
-
-            return (adminUser, delegateUser);
+            return delegateUser;
         }
 
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
@@ -335,9 +338,9 @@ namespace DigitalLearningSolutions.Web.Services
         }
 
         public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)>
-            GetAllActiveCentreEmailsForUser(int userId,bool isAll = false)
+            GetAllActiveCentreEmailsForUser(int userId, bool isAll = false)
         {
-            return userDataService.GetAllActiveCentreEmailsForUser(userId,isAll);
+            return userDataService.GetAllActiveCentreEmailsForUser(userId, isAll);
         }
 
         public (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)

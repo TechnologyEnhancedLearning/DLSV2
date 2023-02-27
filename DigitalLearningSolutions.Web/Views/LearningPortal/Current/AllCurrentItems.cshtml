@@ -15,14 +15,20 @@
   <title></title>
 </head>
 <body>
-@foreach (var currentLearningItem in Model.CurrentItems) {
-  if (currentLearningItem is SelfAssessmentCardViewModel) {
-    <partial name="SelfAssessments/_SelfAssessmentCard" model="currentLearningItem" />
-  } else if (currentLearningItem is CurrentLearningResourceViewModel) {
-    <partial name="Current/_CurrentLearningResourceCard" model="currentLearningItem" />
-  } else {
-    <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentLearningItem" />
+  @foreach (var currentLearningItem in Model.CurrentItems)
+  {
+    if (currentLearningItem is SelfAssessmentCardViewModel)
+    {
+      <partial name="SelfAssessments/_SelfAssessmentCard" model="currentLearningItem" />
+    }
+    else if (currentLearningItem is CurrentLearningResourceViewModel)
+    {
+      <partial name="Current/_CurrentLearningResourceCard" model="currentLearningItem" />
+    }
+    else
+    {
+      <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentLearningItem" />
+    }
   }
-}
 </body>
 </html>

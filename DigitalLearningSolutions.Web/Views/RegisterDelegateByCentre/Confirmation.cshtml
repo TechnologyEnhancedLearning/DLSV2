@@ -9,18 +9,18 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">
-      Delegate registration complete
-    </h1>
-    <p class="nhsuk-body-l">
-      A welcome message will be sent to the email provided, on the date specified, inviting the delegate to confirm their registration.
-    </p>
-    <div class="nhsuk-inset-text">
-      <span class="nhsuk-u-visually-hidden">Information: </span>
-      <p>Delegate number <span class="nhsuk-u-font-weight-bold">@Model.DelegateNumber</span></p>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 id="page-heading" class="nhsuk-heading-xl">
+        Delegate registration complete
+      </h1>
+      <p class="nhsuk-body-l">
+        A welcome message will be sent to the email provided, on the date specified, inviting the delegate to confirm their registration.
+      </p>
+      <div class="nhsuk-inset-text">
+        <span class="nhsuk-u-visually-hidden">Information: </span>
+        <p>Delegate number <span class="nhsuk-u-font-weight-bold">@Model.DelegateNumber</span></p>
+      </div>
+      <vc:action-link asp-controller="AllDelegates" asp-action="Index" link-text="Manage all delegates" />
     </div>
-    <vc:action-link asp-controller="AllDelegates" asp-action="Index" link-text="Manage all delegates" />
   </div>
-</div>

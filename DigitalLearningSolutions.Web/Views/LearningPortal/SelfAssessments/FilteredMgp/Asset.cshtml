@@ -16,23 +16,24 @@
   <li class="nhsuk-breadcrumb__item">Learning Resource</li>
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link trigger-loader" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-    </svg>
-    Back to Recommendations
-  </a>
-</div>
-<div class="asset-title-header">
-  <img src="@Model.Provider.Image" onerror="this.style.display='none'" alt="@Model.Provider.Name Logo" class="img-circle">
-  <div data-v-145e8433="" class="title">@Model.Provider.Name</div>
-</div>
-<h1 id="asset-title-@Model.Id">@Model.Title</h1>
-<div class="nhsuk-grid-row">
-  @if (Model.MainImage != "") {
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link trigger-loader" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+      </svg>
+      Back to Recommendations
+    </a>
+  </div>
+  <div class="asset-title-header">
+    <img src="@Model.Provider.Image" onerror="this.style.display='none'" alt="@Model.Provider.Name Logo" class="img-circle">
+    <div data-v-145e8433="" class="title">@Model.Provider.Name</div>
+  </div>
+  <h1 id="asset-title-@Model.Id">@Model.Title</h1>
+  <div class="nhsuk-grid-row">
+    @if (Model.MainImage != "")
+  {
     <div class="nhsuk-grid-column-one-half">
       <img src="@Model.MainImage" onerror="this.style.display='none'" alt="@Model.Title screenshot" class="img-screenshot" />
     </div>

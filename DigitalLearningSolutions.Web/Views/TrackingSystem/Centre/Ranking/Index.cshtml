@@ -12,18 +12,18 @@
   <partial name="~/Views/TrackingSystem/Shared/_CentreDashboardBreadcrumbs.cshtml" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <p class="nhsuk-body-l">The top ten Digital Learning Solutions centres by learner course launches.</p>
+      <p class="nhsuk-body-l">The top ten Digital Learning Solutions centres by learner course launches.</p>
+    </div>
   </div>
-</div>
 
-<div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
-  <form class="ranking-flex-container" method="get" asp-controller="Ranking" asp-action="Index">
-    <div class="nhsuk-grid-column-one-half">
-      <vc:select-list asp-for="@nameof(Model.RegionId)"
+  <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
+    <form class="ranking-flex-container" method="get" asp-controller="Ranking" asp-action="Index">
+      <div class="nhsuk-grid-column-one-half">
+        <vc:select-list asp-for="@nameof(Model.RegionId)"
                       label="Region"
                       value="@Model.RegionId.ToString()"
                       hint-text=""
@@ -31,9 +31,9 @@
                       css-class="nhsuk-u-width-full"
                       default-option="All"
                       select-list-options="@Model.RegionOptions" />
-    </div>
-    <div class="nhsuk-grid-column-one-quarter">
-      <vc:select-list asp-for="Period"
+      </div>
+      <div class="nhsuk-grid-column-one-quarter">
+        <vc:select-list asp-for="Period"
                       label="Period"
                       value="@Model.Period?.Id.ToString()"
                       hint-text=""
@@ -41,31 +41,38 @@
                       css-class="nhsuk-u-width-full"
                       default-option="@null"
                       select-list-options="@Model.PeriodOptions" />
-    </div>
-    <div class="nhsuk-grid-column-one-quarter apply-filter-flex-container">
-      <div class="nhsuk-form-group">
-        <button class="nhsuk-button filter-submit" type="submit">Apply filter</button>
       </div>
-    </div>
-  </form>
-</div>
+      <div class="nhsuk-grid-column-one-quarter apply-filter-flex-container">
+        <div class="nhsuk-form-group">
+          <button class="nhsuk-button filter-submit" type="submit">Apply filter</button>
+        </div>
+      </div>
+    </form>
+  </div>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    @if (Model.Centres.Any()) {
-      @if (User.HasSuperAdminPermissions()) {
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      @if (Model.Centres.Any())
+    {
+      @if (User.HasSuperAdminPermissions())
+      {
         <partial name="_RankingSuperAdminTable" model="Model" />
-      } else {
+      }
+      else
+      {
         <partial name="_RankingStandardUserTable" model="Model" />
       }
 
-      @if (Model.CentreHasNoActivity) {
+      @if (Model.CentreHasNoActivity)
+      {
         <p class="current-centre nhsuk-body-l nhsuk-u-padding-left-2 nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3"
-           aria-current="true">
+       aria-current="true">
           Your centre overall rank: no activity
         </p>
       }
-    } else {
+    }
+    else
+    {
       <p class="nhsuk-body-m">
         No activity in the selected region for the selected period.
       </p>

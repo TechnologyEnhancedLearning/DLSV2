@@ -970,7 +970,11 @@
 
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
 
-                var (adminUser, delegateUser) = userService.GetUsersById(GetAdminId(), supervisorDelegateDetail.DelegateUserID);
+                var adminUser = userService.GetAdminUserByAdminId(GetAdminId());
+                var delegateUser = userService.GetDelegateUserByDelegateUserIdAndCentreId(
+                    supervisorDelegateDetail.DelegateUserID,
+                    (int)User.GetCentreId()
+                );
 
                 var centreName = adminUser.CentreName;
 

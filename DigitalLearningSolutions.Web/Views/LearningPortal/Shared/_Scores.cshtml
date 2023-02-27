@@ -2,28 +2,28 @@
 @model StartedLearningItemViewModel
 
 @if (Model.HasDiagnosticScore() || Model.HasPassedSections())
+{
+  @if (Model.HasDiagnosticScore())
   {
-      @if (Model.HasDiagnosticScore())
-      {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                Diagnostic Score
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-               @Model.DiagnosticScore
-            </dd>
-        </div>
-      }
-      @if (Model.HasPassedSections())
-      {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                Passed Sections
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-               @Model.DisplayPassedSections()
-            </dd>
-        </div>
-      }
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Diagnostic Score
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.DiagnosticScore
+      </dd>
+    </div>
   }
+  @if (Model.HasPassedSections())
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Passed Sections
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.DisplayPassedSections()
+      </dd>
+    </div>
+  }
+}
 

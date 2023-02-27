@@ -4,11 +4,12 @@
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
   <fieldset class="nhsuk-fieldset" aria-describedby="@(Model.HasError ? "terms-error" : null )">
     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-        <span class="nhsuk-fieldset__heading">
-          Terms and Conditions
-        </span>
-      </legend>
-    @if (Model.HasError) {
+      <span class="nhsuk-fieldset__heading">
+        Terms and Conditions
+      </span>
+    </legend>
+    @if (Model.HasError)
+    {
       <span class="nhsuk-error-message" id="terms-error">
         <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
       </span>

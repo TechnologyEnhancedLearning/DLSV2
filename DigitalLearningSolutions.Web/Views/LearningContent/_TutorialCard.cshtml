@@ -22,10 +22,11 @@
          href="@Model.TutorialPath">
         Launch tutorial
       </a>
-      @if (!string.IsNullOrEmpty(Model.SupportingMatsPath)) {
+      @if (!string.IsNullOrEmpty(Model.SupportingMatsPath))
+      {
         <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-           role="button"
-           href="@Model.SupportingMatsPath">
+         role="button"
+         href="@Model.SupportingMatsPath">
           Supporting info
         </a>
       }

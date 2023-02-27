@@ -74,28 +74,28 @@
       </dt>
       <dd class="nhsuk-summary-list__value">
         @(Model.CompleteByDate == null ? "Not set" : Model.CompleteByDate.Value.ToShortDateString())
-    </dd>
+      </dd>
 
-    <dd class="nhsuk-summary-list__actions">
+      <dd class="nhsuk-summary-list__actions">
 
-      <a asp-action="EnrolDelegateCompleteBy" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-        Change<span class="nhsuk-u-visually-hidden"> complete by date</span>
-      </a>
+        <a asp-action="EnrolDelegateCompleteBy" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+          Change<span class="nhsuk-u-visually-hidden"> complete by date</span>
+        </a>
 
-    </dd>
+      </dd>
 
-  </div>
+    </div>
 
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Supervisor role
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.SupervisorRoleName
-    </dd>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Supervisor role
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.SupervisorRoleName
+      </dd>
 
-    <dd class="nhsuk-summary-list__actions">
-      @if (Model.SupervisorRoleCount > 1)
+      <dd class="nhsuk-summary-list__actions">
+        @if (Model.SupervisorRoleCount > 1)
       {
         <a asp-action="EnrolDelegateSupervisorRole" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
           Change<span class="nhsuk-u-visually-hidden"> supervisor role</span>

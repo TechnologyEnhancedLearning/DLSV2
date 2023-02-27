@@ -12,8 +12,9 @@
   <title></title>
 </head>
 <body>
-@foreach (var faq in Model.Faqs) {
-  <partial name="_SearchableFaqCard" model="faq" />
-}
+  @foreach (var faq in Model.Faqs)
+  {
+    <partial name="_SearchableFaqCard" model="faq" />
+  }
 </body>
 </html>

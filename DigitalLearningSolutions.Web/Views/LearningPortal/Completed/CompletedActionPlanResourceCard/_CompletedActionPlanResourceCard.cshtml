@@ -16,9 +16,10 @@
         <partial name="Shared/_TagRow" model="@Model" />
       </div>
 
-      @if (Model.AbsentInLearningHub) {
+      @if (Model.AbsentInLearningHub)
+      {
         <vc:inset-text css-class="nhsuk-u-margin-0"
-                       text="This resource has been removed from the Learning Hub so its details may be out of date." />
+                     text="This resource has been removed from the Learning Hub so its details may be out of date." />
       }
 
       <div class="nhsuk-grid-row">
@@ -32,14 +33,15 @@
     </div>
   </details>
 
-  @if (!Model.AbsentInLearningHub) {
+  @if (!Model.AbsentInLearningHub)
+  {
     <div class="flex-row">
       <a class="nhsuk-button nhsuk-u-margin-bottom-2"
-         aria-describedby="@Model.Id-name-lhr"
-         asp-controller="Signposting"
-         asp-action="LaunchLearningResource"
-         asp-route-resourceReferenceId="@Model.ResourceReferenceId"
-         role="button">
+       aria-describedby="@Model.Id-name-lhr"
+       asp-controller="Signposting"
+       asp-action="LaunchLearningResource"
+       asp-route-resourceReferenceId="@Model.ResourceReferenceId"
+       role="button">
         Launch learning resource
       </a>
     </div>

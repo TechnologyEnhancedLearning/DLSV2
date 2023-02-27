@@ -1,4 +1,4 @@
-﻿   namespace DigitalLearningSolutions.Data.Migrations
+﻿namespace DigitalLearningSolutions.Data.Migrations
 {
     using FluentMigrator;
     [Migration(202012151501)]

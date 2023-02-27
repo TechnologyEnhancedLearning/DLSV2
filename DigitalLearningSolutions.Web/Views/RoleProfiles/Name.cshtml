@@ -8,33 +8,33 @@
 @section NavMenuItems {
   <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
   @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Role Profiles</a></li>
-          <li class="nhsuk-breadcrumb__item">Create role profile</li>
-        </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Back to role profiles</a></p>
-      </div>
-    </nav>
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Role Profiles</a></li>
+        <li class="nhsuk-breadcrumb__item">Create role profile</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Back to role profiles</a></p>
+    </div>
+  </nav>
   }
 }
 else
 {
   @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Role Profiles</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.ID" asp-route-tabname="Details">Role Profile Details</a></li>
-          <li class="nhsuk-breadcrumb__item">Name</li>
-        </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.ID" asp-route-tabname="Details">Back to role profile detail</a></p>
-      </div>
-    </nav>
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Role Profiles</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.ID" asp-route-tabname="Details">Role Profile Details</a></li>
+        <li class="nhsuk-breadcrumb__item">Name</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.ID" asp-route-tabname="Details">Back to role profile detail</a></p>
+    </div>
+  </nav>
   }
 }
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
@@ -48,7 +48,8 @@ else
 <form method="post">
   @if (!ViewData.ModelState.IsValid)
   {
-    <partial name="_ErrorSummary" />}
+    <partial name="_ErrorSummary" />
+  }
   <nhs-form-group nhs-validation-for="RoleProfileName">
     <label class="nhsuk-label" for="framework-name-hint">
       <h2>What is the name of your role profile?</h2>

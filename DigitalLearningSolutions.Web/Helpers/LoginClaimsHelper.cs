@@ -72,7 +72,7 @@
                 new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateAccount != null).ToString()),
                 new Claim(CustomClaimTypes.IsSupervisor, adminAccount?.IsSupervisor.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.IsTrainer, adminAccount?.IsTrainer.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsNominatedSupervisor, adminAccount?.IsNominatedSupervisor.ToString() ?? "False"), 
+                new Claim(CustomClaimTypes.IsNominatedSupervisor, adminAccount?.IsNominatedSupervisor.ToString() ?? "False"),
                 new Claim(
                     CustomClaimTypes.IsFrameworkDeveloper,
                     adminAccount?.IsFrameworkDeveloper.ToString() ?? "False"

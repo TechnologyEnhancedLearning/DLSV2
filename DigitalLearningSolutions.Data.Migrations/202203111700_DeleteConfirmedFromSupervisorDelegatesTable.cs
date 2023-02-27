@@ -7,7 +7,7 @@
     {
         public override void Up()
         {
-            Delete.Column("Confirmed").FromTable("SupervisorDelegates"); 
+            Delete.Column("Confirmed").FromTable("SupervisorDelegates");
         }
         public override void Down()
         {

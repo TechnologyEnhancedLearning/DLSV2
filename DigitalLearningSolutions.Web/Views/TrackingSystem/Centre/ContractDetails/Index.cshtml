@@ -12,13 +12,13 @@
   <partial name="~/Views/TrackingSystem/Shared/_CentreDashboardBreadcrumbs.cshtml" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <partial name="_ContractDetailsList" model="Model" />
-   
-    @if (User.HasCentreManagerPermissions())
+      <partial name="_ContractDetailsList" model="Model" />
+
+      @if (User.HasCentreManagerPermissions())
     {
       <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Administrator" asp-action="Index" role="button">
         Manage users

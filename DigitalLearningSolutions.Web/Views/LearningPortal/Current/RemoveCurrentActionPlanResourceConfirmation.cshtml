@@ -12,14 +12,16 @@
       Are you sure you want to remove @Model.Name?
     </h1>
 
-    @if (Model.AbsentInLearningHub) {
+    @if (Model.AbsentInLearningHub)
+    {
       <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
-                                    text="@LearningHubWarningTextHelper.ResourceHasBeenRemoved" />
+                                  text="@LearningHubWarningTextHelper.ResourceHasBeenRemoved" />
     }
 
-    @if (!Model.ApiIsAccessible) {
+    @if (!Model.ApiIsAccessible)
+    {
       <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
-                                    text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
+                                  text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
     }
 
     <p>

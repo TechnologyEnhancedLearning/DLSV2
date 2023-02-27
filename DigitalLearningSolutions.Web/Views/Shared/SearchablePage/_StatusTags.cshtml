@@ -2,7 +2,8 @@
 @model IEnumerable<SearchableTagViewModel>
 
 <div class="tags">
-  @foreach (var tag in Model) {
+  @foreach (var tag in Model)
+  {
     <div class="card-filter-tag" data-filter-value="@tag.FilterValue" @(tag.Hidden ? "hidden" : string.Empty)>
       <strong class="nhsuk-tag @tag.NhsTagStyle()">@tag.DisplayText</strong>
     </div>

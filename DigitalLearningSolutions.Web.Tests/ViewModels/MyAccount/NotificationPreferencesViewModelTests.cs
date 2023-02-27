@@ -41,8 +41,8 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
         public void When_both_notification_types_are_present_they_are_marked_to_show_as_expandable()
         {
             // given
-            var adminNotifications = new List<NotificationPreference>{ new NotificationPreference() };
-            var delegateNotifications = new List<NotificationPreference>{ new NotificationPreference() };
+            var adminNotifications = new List<NotificationPreference> { new NotificationPreference() };
+            var delegateNotifications = new List<NotificationPreference> { new NotificationPreference() };
 
             // when
             var returnedModel = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, null);

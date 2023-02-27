@@ -6,7 +6,7 @@
     {
         public int MatchingSearchResults { get; set; }
         public string FrameworkName { get; set; }
-        public  IEnumerable<BrandedFramework> SimilarFrameworks { get; set; }
+        public IEnumerable<BrandedFramework> SimilarFrameworks { get; set; }
         public IEnumerable<BrandedFramework> SameFrameworks { get; set; }
     }
 }

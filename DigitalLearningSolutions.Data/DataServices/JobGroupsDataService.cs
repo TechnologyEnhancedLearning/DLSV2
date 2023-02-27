@@ -11,7 +11,7 @@
         IEnumerable<(int id, string name)> GetJobGroupsAlphabetical();
     }
 
-    public class JobGroupsDataService: IJobGroupsDataService
+    public class JobGroupsDataService : IJobGroupsDataService
     {
         private readonly IDbConnection connection;
         private readonly ILogger<JobGroupsDataService> logger;

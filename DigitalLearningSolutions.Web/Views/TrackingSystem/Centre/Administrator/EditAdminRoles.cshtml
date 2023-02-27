@@ -2,8 +2,8 @@
 @model EditRolesViewModel
 
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Edit administrator roles";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Edit administrator roles";
 }
 
 <div class="nhsuk-grid-row">
@@ -11,7 +11,7 @@
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
     @if (errorHasOccurred)
     {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Checkboxes) })" />
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Checkboxes) })" />
     }
     <vc:field-name-value-display display-name="User" field-value="@Model.FullName" />
 
@@ -19,18 +19,18 @@
 
     @if (Model.NotAllRolesDisplayed)
     {
-      <div class="nhsuk-warning-callout nhsuk-u-margin-bottom-4">
-        <h3 class="nhsuk-warning-callout__label">
-          <span role="text">
-            <span class="nhsuk-u-visually-hidden">Important: </span>
-            Some user roles are not available for selection
-          </span>
-        </h3>
-        <p>
-          Some user roles already have the maximum number of members assigned and are not available for selection.
-          Check the "Number of administrators" information to see which roles have reached their limits.
-        </p>
-      </div>
+        <div class="nhsuk-warning-callout nhsuk-u-margin-bottom-4">
+          <h3 class="nhsuk-warning-callout__label">
+            <span role="text">
+              <span class="nhsuk-u-visually-hidden">Important: </span>
+              Some user roles are not available for selection
+            </span>
+          </h3>
+          <p>
+            Some user roles already have the maximum number of members assigned and are not available for selection.
+            Check the "Number of administrators" information to see which roles have reached their limits.
+          </p>
+        </div>
     }
 
     <div class="nhsuk-u-margin-bottom-8 nhsuk-u-margin-top-8">

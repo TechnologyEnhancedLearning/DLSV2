@@ -6,7 +6,7 @@
 
     public class CourseStatisticsWithAdminFieldResponseCounts : CourseStatistics
     {
-        public CourseStatisticsWithAdminFieldResponseCounts(){}
+        public CourseStatisticsWithAdminFieldResponseCounts() { }
 
         public CourseStatisticsWithAdminFieldResponseCounts(
             CourseStatistics courseStatistics,

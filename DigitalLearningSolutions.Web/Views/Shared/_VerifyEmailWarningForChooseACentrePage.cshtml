@@ -5,7 +5,8 @@
   var multipleCentreEmailsAreUnverified = Model.NumberOfUnverifiedCentreEmails > 1;
   var atLeastOneCentreEmailIsUnverified = Model.NumberOfUnverifiedCentreEmails >= 1;
 
-  var numSpecificPhrases = new {
+  var numSpecificPhrases = new
+  {
     address = multipleCentreEmailsAreUnverified ? "addresses" : "address",
     anUnverifiedCentreEmail = multipleCentreEmailsAreUnverified ?
       "multiple unverified centre email addresses" : "an unverified centre email address",
@@ -13,18 +14,21 @@
   };
 }
 
-@if (!Model.PrimaryEmailIsVerified || atLeastOneCentreEmailIsUnverified) {
+@if (!Model.PrimaryEmailIsVerified || atLeastOneCentreEmailIsUnverified)
+{
   <div class="nhsuk-warning-callout word-break">
     <partial name="_VerifyEmailWarningHeading" model="@Model.NumberOfUnverifiedCentreEmails" />
 
-    @if (!Model.PrimaryEmailIsVerified) {
+    @if (!Model.PrimaryEmailIsVerified)
+    {
       <p>
         Your primary email address has not been verified yet. You will not be able to
         choose a centre, reactivate an account, or register at a new centre until it you verify the address.
       </p>
     }
 
-    @if (atLeastOneCentreEmailIsUnverified) {
+    @if (atLeastOneCentreEmailIsUnverified)
+    {
       <p>
         You @(Model.PrimaryEmailIsVerified ? null : "also") have @numSpecificPhrases.anUnverifiedCentreEmail.
         You will not be able to access the centre @numSpecificPhrases.accountThatUsesIt

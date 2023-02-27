@@ -26,7 +26,8 @@
             controller,
             action,
             linkText
-        ) { }
+        )
+        { }
 
         public override IEnumerable<BaseTabEnumeration> GetAllTabs()
         {

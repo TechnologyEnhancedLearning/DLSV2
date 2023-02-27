@@ -17,7 +17,9 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@{var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");}
+  @{
+  var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");
+}
 
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -45,10 +47,10 @@
   </nav>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
-    @if (Model.OnlyItemInOnlySection)
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
+      @if (Model.OnlyItemInOnlySection)
     {
       <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>
     }
@@ -86,11 +88,11 @@
   {
     <div>
       <a class="nhsuk-button @Model.TutorialStartButtonAdditionalStyling" role="button"
-         asp-action="ContentViewer"
-         asp-controller="LearningMenu"
-         asp-route-customisationId="@Model.CustomisationId"
-         asp-route-sectionId="@Model.SectionId"
-         asp-route-tutorialId="@Model.TutorialId">
+       asp-action="ContentViewer"
+       asp-controller="LearningMenu"
+       asp-route-customisationId="@Model.CustomisationId"
+       asp-route-sectionId="@Model.SectionId"
+       asp-route-tutorialId="@Model.TutorialId">
         @Model.TutorialStartButtonText
       </a>
     </div>
@@ -100,11 +102,11 @@
   {
     <div>
       <a class="nhsuk-button nhsuk-button--secondary" role="button"
-         asp-controller="LearningMenu"
-         asp-action="TutorialVideo"
-         asp-route-customisationId="@Model.CustomisationId"
-         asp-route-sectionId="@Model.SectionId"
-         asp-route-tutorialId="@Model.TutorialId">
+       asp-controller="LearningMenu"
+       asp-action="TutorialVideo"
+       asp-route-customisationId="@Model.CustomisationId"
+       asp-route-sectionId="@Model.SectionId"
+       asp-route-tutorialId="@Model.TutorialId">
         Watch video
       </a>
     </div>
@@ -119,7 +121,8 @@
     </div>
   }
 
-  @if (Model.ShowNextButton) {
+  @if (Model.ShowNextButton)
+  {
     <div>
       <partial name="Tutorial/_TutorialNextLink" model="Model.NextLinkViewModel" />
     </div>

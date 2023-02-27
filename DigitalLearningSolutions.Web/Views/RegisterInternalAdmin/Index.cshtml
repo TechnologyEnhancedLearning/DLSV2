@@ -10,7 +10,8 @@
   <div class="nhsuk-grid-column-full word-break">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
 
-      @if (errorHasOccurred) {
+      @if (errorHasOccurred)
+      {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CentreSpecificEmail) })" />
       }
 

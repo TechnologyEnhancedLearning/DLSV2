@@ -9,40 +9,41 @@
   </summary>
   <div class="nhsuk-details__text">
     <table role="table" class="nhsuk-table-responsive">
-     <thead role="rowgroup" class="nhsuk-table__head">
-       <tr role="row">
-         <th role="columnheader" class="" scope="col">
-           Resource
-         </th>
-         <th role="columnheader" class="" scope="col">
-           Date
-         </th>
-         <th role="columnheader" class="" scope="col">
-           Size
-         </th>
-         <th role="columnheader" class="" scope="col">
-           Action
-         </th>
-       </tr>
+      <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+          <th role="columnheader" class="" scope="col">
+            Resource
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Date
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Size
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Action
+          </th>
+        </tr>
       </thead>
-     <tbody class="nhsuk-table__body">
-     @foreach (var resource in Model.Resources) {
-       <tr role="row" class="nhsuk-table__row">
-         <td role="cell" class="nhsuk-table__cell">
-           <span class="nhsuk-table-responsive__heading">Resource </span>@resource.Resource
-         </td>
-         <td role="cell" class="nhsuk-table__cell">
-           <span class="nhsuk-table-responsive__heading">Date </span>@resource.Date
-         </td>
-         <td role="cell" class="nhsuk-table__cell">
-           <span class="nhsuk-table-responsive__heading">Size </span>@resource.Size
-         </td>
-         <td role="cell" class="nhsuk-table__cell">
-           <a href="@resource.DownloadUrl">Download</a>
-         </td>
-       </tr>
-     }
-     </tbody>
+      <tbody class="nhsuk-table__body">
+        @foreach (var resource in Model.Resources)
+        {
+          <tr role="row" class="nhsuk-table__row">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Resource </span>@resource.Resource
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Date </span>@resource.Date
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Size </span>@resource.Size
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <a href="@resource.DownloadUrl">Download</a>
+            </td>
+          </tr>
+        }
+      </tbody>
     </table>
   </div>
 </details>

@@ -26,7 +26,7 @@
 }
   <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
   <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
-@if (errorHasOccurred)
+  @if (errorHasOccurred)
 {
   <vc:error-summary order-of-property-names="@(new[] { nameof(Model) })" />
 }

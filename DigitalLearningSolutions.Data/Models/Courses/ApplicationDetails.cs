@@ -5,7 +5,7 @@
 
     public class ApplicationDetails : BaseSearchableItem
     {
-        public ApplicationDetails(){}
+        public ApplicationDetails() { }
 
         public ApplicationDetails(ApplicationDetails applicationDetails)
         {

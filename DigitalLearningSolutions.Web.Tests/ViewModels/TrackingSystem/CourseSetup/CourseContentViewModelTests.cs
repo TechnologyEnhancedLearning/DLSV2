@@ -9,7 +9,7 @@
 
     public class CourseContentViewModelTests
     {
-        private static readonly Tutorial DisabledTutorial = TutorialTestHelper.GetDefaultTutorial(status:false, diagStatus:false);
+        private static readonly Tutorial DisabledTutorial = TutorialTestHelper.GetDefaultTutorial(status: false, diagStatus: false);
 
         private static readonly Section DisabledSection =
             new Section(1, "disabled", new List<Tutorial> { DisabledTutorial, DisabledTutorial });

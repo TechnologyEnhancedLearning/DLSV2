@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.External.Filtered
 {
     using Newtonsoft.Json;
-   public class FilteredError
+    public class FilteredError
     {
         [JsonProperty("code")]
         public int Code { get; set; }

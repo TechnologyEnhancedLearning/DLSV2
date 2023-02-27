@@ -12,7 +12,7 @@
 
     public interface IRegistrationDataService
     {
-        (int delegateId, string candidateNumber,int delegateUserId) RegisterNewUserAndDelegateAccount(
+        (int delegateId, string candidateNumber, int delegateUserId) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
             bool shouldAssumeEmailVerified
@@ -57,7 +57,7 @@
             this.logger = logger;
         }
 
-        public (int delegateId, string candidateNumber,int delegateUserId) RegisterNewUserAndDelegateAccount(
+        public (int delegateId, string candidateNumber, int delegateUserId) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
             bool shouldAssumeEmailVerified

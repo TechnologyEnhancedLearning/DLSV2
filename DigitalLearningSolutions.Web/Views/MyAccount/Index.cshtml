@@ -5,44 +5,44 @@
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
 
 @{
-    ViewData["Title"] = "My account";
-    ViewData["Application"] = Model.DlsSubApplication.HeaderExtension;
-    ViewData["HeaderPath"] = Model.DlsSubApplication.HeaderPath;
-    ViewData["HeaderPathName"] = Model.DlsSubApplication.HeaderPathName;
+  ViewData["Title"] = "My account";
+  ViewData["Application"] = Model.DlsSubApplication.HeaderExtension;
+  ViewData["HeaderPath"] = Model.DlsSubApplication.HeaderPath;
+  ViewData["HeaderPathName"] = Model.DlsSubApplication.HeaderPathName;
 }
 
 @section NavMenuItems {
-<partial name="_AutoNavMenuItems" model="Model.DlsSubApplication" />
+  <partial name="_AutoNavMenuItems" model="Model.DlsSubApplication" />
 }
 
-@if (!Model.PrimaryEmailIsVerified || Model.UnverifiedCentreEmails.Count > 0)
+  @if (!Model.PrimaryEmailIsVerified || Model.UnverifiedCentreEmails.Count > 0)
 {
-    <partial name="../Shared/_VerifyEmailWarningForMyAccountPage" model="@Model" />
+      <partial name="../Shared/_VerifyEmailWarningForMyAccountPage" model="@Model" />
 }
 
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-        @if (Model.CentreId == null || Model.CentreId == 0)
-        {
-            <div class="nhsuk-warning-callout">
-                <h3 class="nhsuk-warning-callout__label">
-                    <span role="text">
-                        <span class="nhsuk-u-visually-hidden">Important: </span>
-                        You are not logged into a centre
-                    </span>
-                </h3>
-                <p>You can manage your account, but you must log into a centre before you can access any other areas of DLS.</p>
-            </div>
-        }
+    @if (Model.CentreId == null || Model.CentreId == 0)
+    {
+              <div class="nhsuk-warning-callout">
+                  <h3 class="nhsuk-warning-callout__label">
+                      <span role="text">
+                          <span class="nhsuk-u-visually-hidden">Important: </span>
+                          You are not logged into a centre
+                      </span>
+                  </h3>
+                  <p>You can manage your account, but you must log into a centre before you can access any other areas of DLS.</p>
+              </div>
+    }
         <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-one-half">
                 <h1 class="nhsuk-heading-xl" id="app-page-heading">
                     My account
                 </h1>
             </div>
-            @{
-                var switchCentreButtonText = Model.CentreId == null ? "Choose centre" : "Switch centre";
-            }
+      @{
+        var switchCentreButtonText = Model.CentreId == null ? "Choose centre" : "Switch centre";
+      }
 
             <div class="nhsuk-grid-column-one-half heading-button-group">
                 <a class="@($"{ButtonType.Secondary.CssClass} heading-button")"
@@ -51,24 +51,24 @@
                    asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment"
                    asp-route-returnUrl="@Model.SwitchCentreReturnUrl"
                    role="button">
-                    @switchCentreButtonText
+          @switchCentreButtonText
                 </a>
             </div>
         </div>
 
         <partial name="_MyDetailsCard" model="Model" />
 
-        @if (Model.CentreId == null)
-        {
-            if (Model.AllCentreSpecificEmails.Any())
-            {
-                <partial name="_CentreEmailsCard" model="Model" />
-            }
-        }
-        else
-        {
-            <partial name="_CentreSpecificDetailsCard" model="Model" />
-        }
+    @if (Model.CentreId == null)
+    {
+      if (Model.AllCentreSpecificEmails.Any())
+      {
+                    <partial name="_CentreEmailsCard" model="Model" />
+      }
+    }
+    else
+    {
+              <partial name="_CentreSpecificDetailsCard" model="Model" />
+    }
 
     </div>
 </div>
@@ -80,12 +80,12 @@
         <a class="@($"{ButtonType.Secondary.CssClass} left-button-mobile-margin-bottom nhsuk-u-margin-right-2")" asp-controller="ChangePassword" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
             Change password
         </a>
-        @if (Model.CentreId != null)
-        {
-            <a class="@ButtonType.Secondary.CssClass" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
-                View notification preferences
-            </a>
-        }
+    @if (Model.CentreId != null)
+    {
+              <a class="@ButtonType.Secondary.CssClass" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
+                  View notification preferences
+              </a>
+    }
     </div>
 </div>
 <div class="nhsuk-grid-row">

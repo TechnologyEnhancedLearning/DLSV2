@@ -2,89 +2,89 @@
 @model AvailableCourseViewModel
 
 <div class="searchable-element nhsuk-panel" id="@Model.Id-card">
-    <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
-        <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-            <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" role="heading" aria-level="2">
-                @Model.Name
-            </span>
-        </summary>
-        <div class="nhsuk-details__text">
-            <div class="nhsuk-grid-row">
-                <partial name="Shared/_TagRow" model="@Model" />
-            </div>
-            <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-4">
-                <div class="nhsuk-summary-list__row">
-                <dt class="nhsuk-summary-list__key">
-                    Brand
-                </dt>
-                <dd class="nhsuk-summary-list__value">
-                        @Model.Brand
-                </dd>
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" role="heading" aria-level="2">
+        @Model.Name
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+      <div class="nhsuk-grid-row">
+        <partial name="Shared/_TagRow" model="@Model" />
+      </div>
+      <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Brand
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.Brand
+          </dd>
         </div>
-                @if (Model.Category != null)
-                {
-            <div class="nhsuk-summary-list__row">
-                <dt class="nhsuk-summary-list__key">
-                    Category
-                </dt>
-                <dd class="nhsuk-summary-list__value">
-                            @Model.Category
-                </dd>
-            </div>
-                }
-                @if (Model.Topic != null)
-                {
-            <div class="nhsuk-summary-list__row">
-                <dt class="nhsuk-summary-list__key">
-                    Topic
-                </dt>
-                <dd class="nhsuk-summary-list__value">
-                            @Model.Topic
-                </dd>
-            </div>
-                }
-        </dl>
-</div>
-</details>
+        @if (Model.Category != null)
+        {
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Category
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.Category
+            </dd>
+          </div>
+        }
+        @if (Model.Topic != null)
+        {
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Topic
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.Topic
+            </dd>
+          </div>
+        }
+      </dl>
+    </div>
+  </details>
 
-    @if (Model.EnrolButtonText != null)
-    {
+  @if (Model.EnrolButtonText != null)
+  {
     <div class="flex-row">
-            @if (!Model.SelfRegister)
-            {
-            <div class="nhsuk-warning-callout">
-                <h3 class="nhsuk-warning-callout__label">
-                    <span role="text">
-                        <span class="nhsuk-u-visually-hidden">Important: </span>
-                        Not available for self-enrolment
-                    </span>
-                </h3>
-                <p>Only an administrator or supervisor can enrol you on this activity.</p>
-            </div>
-            }
-            else
-            {
-                @if (Model.IsSelfAssessment)
-                {
-                <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
+      @if (!Model.SelfRegister)
+      {
+        <div class="nhsuk-warning-callout">
+          <h3 class="nhsuk-warning-callout__label">
+            <span role="text">
+              <span class="nhsuk-u-visually-hidden">Important: </span>
+              Not available for self-enrolment
+            </span>
+          </h3>
+          <p>Only an administrator or supervisor can enrol you on this activity.</p>
+        </div>
+      }
+      else
+      {
+        @if (Model.IsSelfAssessment)
+        {
+          <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
        aria-describedby="@Model.Id-name"
        aria-label="@Model.EnrolButtonAriaLabel" asp-action="EnrolOnSelfAssessment" asp-route-selfAssessmentId="@Model.Id">
-                        @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
-                </a>
-                }
-                else
-                {
-                <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
+            @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
+          </a>
+        }
+        else
+        {
+          <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
        aria-describedby="@Model.Id-name"
        aria-label="@Model.EnrolButtonAriaLabel"
        asp-controller="LearningMenu"
        asp-action="Index"
        asp-route-customisationId="@Model.Id">
-                        @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
-                </a>
-                }
-            }
+            @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
+          </a>
+        }
+      }
 
     </div>
-    }
+  }
 </div>

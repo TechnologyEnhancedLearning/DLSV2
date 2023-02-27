@@ -1,21 +1,26 @@
 ﻿@use "nhsuk-frontend/packages/core/all" as *;
 
-.nhsuk-card.comment{
-    border-width: medium;
+.nhsuk-card.comment {
+  border-width: medium;
 }
+
 .nhsuk-card.comment.comment-mine {
   border-color: $color_nhsuk-green;
 }
+
 .nhsuk-card.comment.comment-other {
   border-color: $color_nhsuk-blue;
 }
-.heading-xxs{
-    font-size:14px;
+
+.heading-xxs {
+  font-size: 14px;
 }
+
 .heading-light {
   font-weight: 200;
   color: $color_nhsuk-grey-1;
 }
+
 .grid-column-ninety {
   box-sizing: border-box;
   padding: 0 16px;

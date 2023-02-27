@@ -41,13 +41,16 @@
         <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
           @Model.NumberOfAdmins <span class="nhsuk-u-visually-hidden">Admins</span>
         </p>
-        @if (User.HasCentreManagerPermissions()) {
+        @if (User.HasCentreManagerPermissions())
+        {
           <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
-             asp-controller="Administrator"
-             asp-action="Index">
+           asp-controller="Administrator"
+           asp-action="Index">
             Admins
           </a>
-        } else {
+        }
+        else
+        {
           <p>Admins</p>
         }
       </div>
