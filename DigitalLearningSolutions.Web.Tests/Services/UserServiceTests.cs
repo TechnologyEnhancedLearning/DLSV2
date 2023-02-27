@@ -57,61 +57,51 @@
         }
 
         [Test]
-        public void GetUsersById_Returns_admin_user_and_delegate_user()
+        public void GetAdminUserById_Returns_admin_user()
         {
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(expectedAdminUser);
-            A.CallTo(() => userDataService.GetDelegateUserByDelegateUserId(A<int>._)).Returns(expectedDelegateUser);
 
             // When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, 2);
+            var returnedAdminUser = userService.GetAdminUserByAdminId(1);
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
+        }
+
+
+        [Test]
+        public void GetDelegateUserByDelegateUserIdAndCentreId_Returns_delegate_user()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+            A.CallTo(() => userDataService.GetDelegateUserByDelegateUserIdAndCentreId(A<int>._, A<int>._)).Returns(expectedDelegateUser);
+
+            // When
+            var returnedDelegateUser = userService.GetDelegateUserByDelegateUserIdAndCentreId(2, 0);
+
+            // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
         }
 
         [Test]
-        public void GetUsersById_Returns_admin_user()
+        public void GetAdminUserByAdminId_Returns_nulls_with_unexpected_input()
         {
-            // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(expectedAdminUser);
-
             // When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, null);
-
-            // Then
-            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
-            returnedDelegateUser.Should().BeNull();
-        }
-
-        [Test]
-        public void GetUsersById_Returns_delegate_user()
-        {
-            // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            A.CallTo(() => userDataService.GetDelegateUserByDelegateUserId(A<int>._)).Returns(expectedDelegateUser);
-
-            // When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(null, 2);
+            var returnedAdminUser = userService.GetAdminUserByAdminId(null);
 
             // Then
             returnedAdminUser.Should().BeNull();
-            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
         }
 
         [Test]
         public void GetUsersById_Returns_nulls_with_unexpected_input()
         {
             // When
-            var (returnedAdminUser, returnedDelegateUser) =
-                userService.GetUsersById(null, null);
+            var returnedDelegateUser = userService.GetDelegateUserByDelegateUserIdAndCentreId(null, null);
 
             // Then
-            returnedAdminUser.Should().BeNull();
             returnedDelegateUser.Should().BeNull();
         }
 

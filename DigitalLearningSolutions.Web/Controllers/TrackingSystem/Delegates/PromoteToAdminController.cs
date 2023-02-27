@@ -124,7 +124,7 @@
             }
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
-            var (currentAdminUser, _) = userService.GetUsersById(userAdminId, userDelegateId);
+            var currentAdminUser = userService.GetAdminUserByAdminId(userAdminId);
 
             var centreName = currentAdminUser.CentreName;
 
