@@ -1446,5 +1446,72 @@
                 cmsManagers: 6
             );
         }
+
+        [Test]
+        public void SetCentreEmails_delete_user_centre_detail_on_empty_email()
+        {
+            // Given
+            const int userId = 2;
+            var centreEmailsByCentreId = new Dictionary<int, string?>
+            {
+                { 1, "" },
+                { 2, "" }
+            };
+            A.CallTo(() => clockUtility.UtcNow).Returns(new DateTime(2022, 5, 5));
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    A<int>._,
+                    A<int>._,
+                    A<string?>._,
+                    A<DateTime?>._,
+                    A<IDbTransaction?>._
+                )
+            ).DoesNothing();
+
+            // When
+            userService.SetCentreEmails(userId, centreEmailsByCentreId, new List<UserCentreDetails>());
+
+            // Then
+            A.CallTo(
+                () => userDataService.DeleteUserCentreDetail(userId, 1)
+            ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                () => userDataService.DeleteUserCentreDetail(userId, 2)
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void SetCentreEmails_does_not_delete_user_centre_detail_on_valid_email()
+        {
+            // Given
+            const int userId = 2;
+            var centreEmailsByCentreId = new Dictionary<int, string?>
+            {
+                { 1, "email@centre1.com" },
+                { 2, "email@centre2.com" },
+            };
+            A.CallTo(() => clockUtility.UtcNow).Returns(new DateTime(2022, 5, 5));
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    A<int>._,
+                    A<int>._,
+                    A<string?>._,
+                    A<DateTime?>._,
+                    A<IDbTransaction?>._
+                )
+            ).DoesNothing();
+
+            // When
+            userService.SetCentreEmails(userId, centreEmailsByCentreId, new List<UserCentreDetails>());
+
+            A.CallTo(
+                () => userDataService.DeleteUserCentreDetail(userId, 1)
+            ).MustNotHaveHappened();
+
+            A.CallTo(
+                () => userDataService.DeleteUserCentreDetail(userId, 2)
+            ).MustNotHaveHappened();
+        }
     }
 }
