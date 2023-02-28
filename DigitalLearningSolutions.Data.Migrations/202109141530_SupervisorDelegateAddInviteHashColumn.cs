@@ -11,6 +11,6 @@
         public override void Down()
         {
             Delete.Column("InviteHash").FromTable("SupervisorDelegates");
-        }        
+        }
     }
 }

@@ -18,20 +18,22 @@
     LearningItemType.Course => nameof(LearningPortalController.SetCurrentCourseCompleteByDate),
     LearningItemType.SelfAssessment => nameof(LearningPortalController.SetSelfAssessmentCompleteByDate),
     _ => nameof(LearningPortalController.SetCurrentActionPlanResourceCompleteByDate),
-    };
+  };
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
     }
 
     <h1 class="nhsuk-heading-xl word-break">Enter a complete by date for @Model.Name</h1>
 
-    @if (Model.Type is LearningItemType.Resource && Model.ApiIsAccessible == false) {
+    @if (Model.Type is LearningItemType.Resource && Model.ApiIsAccessible == false)
+    {
       <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
-                                    text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
+                                  text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
     }
 
     <form asp-action="@action"
@@ -41,10 +43,12 @@
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="Type" />
       <input type="hidden" asp-for="ReturnPageQuery" />
-      @if (Equals(Model.Type, LearningItemType.Course)) {
+      @if (Equals(Model.Type, LearningItemType.Course))
+      {
         <input type="hidden" asp-for="@Model.ProgressId" />
       }
-      @if (Equals(Model.Type, LearningItemType.Resource)) {
+      @if (Equals(Model.Type, LearningItemType.Resource))
+      {
         <input type="hidden" asp-for="@Model.ApiIsAccessible" />
       }
 

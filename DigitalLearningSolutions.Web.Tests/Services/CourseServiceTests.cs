@@ -696,11 +696,11 @@
             const int centreId = 1;
             const int categoryId = 1;
             var delegateCourseInfoAtCentre = new DelegateCourseInfo
-                { CustomisationCentreId = centreId, CourseCategoryId = categoryId };
+            { CustomisationCentreId = centreId, CourseCategoryId = categoryId };
             var delegateCourseInfoNotAtCentre = new DelegateCourseInfo
-                { CustomisationCentreId = 1000, CourseCategoryId = categoryId };
+            { CustomisationCentreId = 1000, CourseCategoryId = categoryId };
             var allCentresCourseInfoNotAtCentre = new DelegateCourseInfo
-                { CustomisationCentreId = 1000, CourseCategoryId = categoryId, AllCentresCourse = true };
+            { CustomisationCentreId = 1000, CourseCategoryId = categoryId, AllCentresCourse = true };
             A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId))
                 .Returns(
                     new[] { delegateCourseInfoAtCentre, delegateCourseInfoNotAtCentre, allCentresCourseInfoNotAtCentre }
@@ -721,11 +721,11 @@
         {
             // Given
             var info1 = new DelegateCourseInfo
-                { DelegateId = 1, CustomisationId = 1, CourseCategoryId = 1, CustomisationCentreId = 1 };
+            { DelegateId = 1, CustomisationId = 1, CourseCategoryId = 1, CustomisationCentreId = 1 };
             var info2 = new DelegateCourseInfo
-                { DelegateId = 2, CustomisationId = 2, CourseCategoryId = 1, CustomisationCentreId = 1 };
+            { DelegateId = 2, CustomisationId = 2, CourseCategoryId = 1, CustomisationCentreId = 1 };
             var info3 = new DelegateCourseInfo
-                { DelegateId = 3, CustomisationId = 3, CourseCategoryId = 2, CustomisationCentreId = 1 };
+            { DelegateId = 3, CustomisationId = 3, CourseCategoryId = 2, CustomisationCentreId = 1 };
             A.CallTo(
                 () => courseDataService.GetDelegateCoursesInfo(1)
             ).Returns(new[] { info1, info2, info3 });

@@ -12,41 +12,44 @@
       <p class="nhsuk-body">
         @(Html.Raw(Model.FrameworkCompetency.Description))
       </p>
-  }
-  else
-  {
-    <h4>
-      @Model.FrameworkCompetency.Name
-    </h4>
-  }
-  <p class="nhsuk-u-secondary-text-color">
-    @if (Model.CanModify)
+    }
+    else
     {
-      <a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
-        Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)
-      </a><br />
-          @if (Model.FrameworkCompetencyGroupId != null)
-          {
+      <h4>
+        @Model.FrameworkCompetency.Name
+      </h4>
+    }
+    <p class="nhsuk-u-secondary-text-color">
+      @if (Model.CanModify)
+      {
+        <a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
+          Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)
+        </a>
+
+        <br />
+        @if (Model.FrameworkCompetencyGroupId != null)
+        {
           <a asp-controller="Frameworks" asp-action="EditCompetencyLearningResources"
-             asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
-             asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
-             asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
+         asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
+         asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+         asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
             Manage resource signposting (@(Model.FrameworkCompetency.CompetencyLearningResourcesCount == 0 ? "No" : Model.FrameworkCompetency.CompetencyLearningResourcesCount.ToString()) resources)
           </a>
-          }
-          else
-          {
-            <a asp-controller="Frameworks" asp-action="EditCompetencyLearningResources"
-               asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
-               asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
-              Manage resource signposting (@(Model.FrameworkCompetency.CompetencyLearningResourcesCount == 0 ? "No" : Model.FrameworkCompetency.CompetencyLearningResourcesCount.ToString()) resources)
-            </a>
-          }
-     }
-else
-{
-  <span>@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "No " : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assessment questions assigned</span>      }
-  </p>
+        }
+        else
+        {
+          <a asp-controller="Frameworks" asp-action="EditCompetencyLearningResources"
+         asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
+         asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
+            Manage resource signposting (@(Model.FrameworkCompetency.CompetencyLearningResourcesCount == 0 ? "No" : Model.FrameworkCompetency.CompetencyLearningResourcesCount.ToString()) resources)
+          </a>
+        }
+      }
+      else
+      {
+        <span>@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "No " : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assessment questions assigned</span>
+      }
+    </p>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-three-quarters">
         @if (Model.CanModify)
@@ -65,4 +68,4 @@ else
       }
     </div>
   </div>
-  </div>
+</div>

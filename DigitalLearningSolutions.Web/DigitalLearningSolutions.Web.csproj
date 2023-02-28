@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <Nullable>annotations</Nullable>
     </PropertyGroup>
 
@@ -82,11 +82,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj" />
-        <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <TypeScriptCompile Include="Scripts\checkboxes.ts" />
         <TypeScriptCompile Include="Scripts\common.ts" />
         <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
@@ -135,6 +130,11 @@
 
     <ItemGroup>
         <_ContentIncludedByDefault Remove="Views\Shared\Components\VerifyEmailWarningIfAppropriate\Default.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj" />
+      <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
     </ItemGroup>
 
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">

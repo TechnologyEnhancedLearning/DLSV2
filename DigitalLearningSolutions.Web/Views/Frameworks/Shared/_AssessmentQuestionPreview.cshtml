@@ -13,18 +13,18 @@
 </div>
 @if (Model.IncludeComments)
 {
-<div class="nhsuk-form-group">
-  <label class="nhsuk-label" for="tb-supportingComments-@Model.Id">
-    @(Model.CommentsPrompt == null ? "Supporting comments" : Model.CommentsPrompt)
-  </label>
-  @if (Model.CommentsHint != null)
-  {
-    <div class="nhsuk-hint" id="comments-hint">
-      @Model.CommentsHint
-    </div>
-  }
-  <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-supportingComments-@Model.Id" asp-for="@Model.SupportingComments" name="SupportingComments" type="text"></textarea>
-</div>
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="tb-supportingComments-@Model.Id">
+      @(Model.CommentsPrompt == null ? "Supporting comments" : Model.CommentsPrompt)
+    </label>
+    @if (Model.CommentsHint != null)
+    {
+      <div class="nhsuk-hint" id="comments-hint">
+        @Model.CommentsHint
+      </div>
+    }
+    <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-supportingComments-@Model.Id" asp-for="@Model.SupportingComments" name="SupportingComments" type="text"></textarea>
+  </div>
 }
 
 <div class="nhsuk-u-margin-top-4">

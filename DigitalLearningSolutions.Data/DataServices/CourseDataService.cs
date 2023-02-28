@@ -98,6 +98,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
             int selfAssessmentSupervisorRoleId, DateTime completeByDate, int delegateUserId, int centreId);
+
+        bool IsCourseCompleted(int candidateId, int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -1029,6 +1031,22 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND p.CustomisationID = @customisationId
                         AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
+            );
+        }
+
+        public bool IsCourseCompleted(int candidateId, int customisationId)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                            SELECT p.Completed
+                                FROM  Progress AS p INNER JOIN
+                                                Customisations AS cu ON p.CustomisationID = cu.CustomisationID INNER JOIN
+                                                Applications AS a ON cu.ApplicationID = a.ApplicationID
+                                WHERE  (p.CandidateID = @candidateId) AND p.CustomisationID = @customisationId
+                                AND (NOT (p.Completed IS NULL)))
+                            THEN CAST(1 AS BIT)
+                            ELSE CAST(0 AS BIT) END",
+                new { candidateId, customisationId }
             );
         }
     }

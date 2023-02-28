@@ -8,7 +8,8 @@
         public CourseDelegate() { }
 
         public CourseDelegate(DelegateCourseInfo delegateCourseInfo) :
-            base(delegateCourseInfo) { }
+            base(delegateCourseInfo)
+        { }
 
         public string FullNameForSearchingSorting =>
             NameQueryHelper.GetSortableFullName(DelegateFirstName, DelegateLastName);

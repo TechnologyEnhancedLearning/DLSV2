@@ -96,7 +96,8 @@
                 adminRoles.IsNominatedSupervisor ||
                 adminRoles.IsContentCreator ||
                 adminRoles.IsTrainer ||
-                adminRoles.IsCentreManager))
+                adminRoles.IsCentreManager ||
+                adminRoles.IsContentManager))
             {
                 var centreId = User.GetCentreIdKnownNotNull();
                 var userId = userDataService.GetUserIdFromDelegateId(delegateId);
@@ -123,7 +124,7 @@
             }
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
-            var (currentAdminUser, _) = userService.GetUsersById(userAdminId, userDelegateId);
+            var currentAdminUser = userService.GetAdminUserByAdminId(userAdminId);
 
             var centreName = currentAdminUser.CentreName;
 

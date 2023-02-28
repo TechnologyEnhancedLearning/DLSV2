@@ -14,9 +14,9 @@
   <partial name="Shared/_NavMenuItems" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full word-break">
-    @if (errorHasOccurred)
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full word-break">
+      @if (errorHasOccurred)
     {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
     }

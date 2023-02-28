@@ -1,11 +1,14 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model MyFrameworksViewModel
 <h1>My Frameworks</h1>
-@if (Model.NoDataFound) {
+@if (Model.NoDataFound)
+{
   <p class="nhsuk-u-margin-top-4" role="alert">
     <b>You are not currently working on any frameworks.</b>
   </p>
-} else {
+}
+else
+{
   <form method="get" role="search" asp-action="ViewFrameworks" asp-route-tabname="Mine" asp-route-page="@Model.Page">
 
     <partial name="Shared/_FrameworksSearchAndSort" model="Model" />
@@ -91,7 +94,8 @@
 
   </form>
 }
-@if (Model.IsFrameworkDeveloper) {
+@if (Model.IsFrameworkDeveloper)
+{
   <a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="StartNewFrameworkSession">
     Create new framework
   </a>

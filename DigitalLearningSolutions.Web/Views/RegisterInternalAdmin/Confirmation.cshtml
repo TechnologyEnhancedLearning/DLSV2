@@ -15,7 +15,8 @@
       Your email address matched details stored with the centre, so your centre manager account has successfully been created.
     </p>
 
-    @if (!centreEmailIsVerified) {
+    @if (!centreEmailIsVerified)
+    {
       <partial name="_VerifyEmailWarningForRegistrationConfirmationPage" model="@verifyEmailWarningViewModel" />
     }
 

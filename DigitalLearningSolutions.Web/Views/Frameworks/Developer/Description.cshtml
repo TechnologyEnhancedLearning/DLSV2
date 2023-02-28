@@ -9,7 +9,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
   @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">

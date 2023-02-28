@@ -8,7 +8,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Password) })" />
     }
 
@@ -27,17 +28,20 @@
                      type="text"
                      spell-check="false"
                      autocomplete="off"
-                     hint-text="Password should have a minimum of 8 characters with at least 1 letter, 1 number and 1 symbol."
+                     hint-text="Password should have a minimum of 8 characters with at least 1 uppercase and 1 lowercase letter, 1 number and 1 symbol."
                      css-class="nhsuk-u-width-one-half"
                      required="true" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    @if (Model.IsFromViewDelegatePage) {
+    @if (Model.IsFromViewDelegatePage)
+    {
       var routeData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeData" />
-    } else {
+    }
+    else
+    {
       <vc:cancel-link-with-return-page-query asp-controller="AllDelegates" asp-action="Index" return-page-query="@Model.ReturnPageQuery!.Value" />
     }
 

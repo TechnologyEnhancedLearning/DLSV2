@@ -62,6 +62,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.userService = userService;
         }
 
+        [NoCaching]
         [Route("/TrackingSystem/Delegates/Register")]
         public IActionResult Index()
         {
@@ -263,7 +264,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult Confirmation()
         {
             var delegateNumber = (string?)TempData.Peek("delegateNumber");
-            TempData.Clear();
 
             if (delegateNumber == null)
             {

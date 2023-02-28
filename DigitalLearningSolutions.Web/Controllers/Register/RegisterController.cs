@@ -74,7 +74,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             return View(model);
         }
-        
+
         [HttpGet]
         public IActionResult Start(int? centreId = null, string? inviteId = null)
         {

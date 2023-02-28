@@ -3,21 +3,22 @@
 
 <table class="nhsuk-table">
   <thead role="rowgroup" class="nhsuk-table__head">
-  <tr role="row">
-    <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-      Rank
-    </th>
-    <th role="columnheader" scope="col">
-      Centre
-    </th>
-  </tr>
+    <tr role="row">
+      <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+        Rank
+      </th>
+      <th role="columnheader" scope="col">
+        Centre
+      </th>
+    </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-  @foreach (var centre in Model.Centres) {
-    <tr role="row" class="nhsuk-table__row @(centre.IsHighlighted ? "current-centre" : string.Empty)" @(centre.IsHighlighted ? "aria-current=\"true\"" : "")>
-      <td class="nhsuk-table__cell nhsuk-u-padding-left-2">@centre.Rank</td>
-      <td class="nhsuk-table__cell ">@centre.CentreName</td>
-    </tr>
-  }
+    @foreach (var centre in Model.Centres)
+    {
+      <tr role="row" class="nhsuk-table__row @(centre.IsHighlighted ? "current-centre" : string.Empty)" @(centre.IsHighlighted ? "aria-current=\"true\"" : "")>
+        <td class="nhsuk-table__cell nhsuk-u-padding-left-2">@centre.Rank</td>
+        <td class="nhsuk-table__cell ">@centre.CentreName</td>
+      </tr>
+    }
   </tbody>
 </table>

@@ -18,38 +18,43 @@
       <div class="card-filter-tag">
         <strong class="nhsuk-tag nhsuk-tag--blue">@Model.Rating</strong>
       </div>
-      @if (!string.IsNullOrWhiteSpace(Model.ResourceType)) {
+      @if (!string.IsNullOrWhiteSpace(Model.ResourceType))
+      {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--grey">@Model.ResourceType</strong>
         </div>
       }
-      @if (!string.IsNullOrWhiteSpace(Model.CatalogueName)) {
+      @if (!string.IsNullOrWhiteSpace(Model.CatalogueName))
+      {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--grey">@Model.CatalogueName</strong>
         </div>
       }
-      @if (Model.IsInActionPlan) {
+      @if (Model.IsInActionPlan)
+      {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--blue">Already in action plan</strong>
         </div>
       }
-      @if (Model.IsCompleted) {
+      @if (Model.IsCompleted)
+      {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
         </div>
       }
     </div>
 
-    @if (!Model.IsInActionPlan) {
+    @if (!Model.IsInActionPlan)
+    {
       <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
-         role="button"
-         data-return-page-enabled="true"
-         aria-label="Add to action plan '@Model.ResourceName'"
-         asp-controller="RecommendedLearning"
-         asp-action="AddResourceToActionPlan"
-         asp-route-selfAssessmentId="@Model.SelfAssessmentId"
-         asp-route-resourceReferenceId="@Model.LearningResourceReferenceId"
-         asp-route-returnPageQuery="@Model.ReturnPageQuery">
+       role="button"
+       data-return-page-enabled="true"
+       aria-label="Add to action plan '@Model.ResourceName'"
+       asp-controller="RecommendedLearning"
+       asp-action="AddResourceToActionPlan"
+       asp-route-selfAssessmentId="@Model.SelfAssessmentId"
+       asp-route-resourceReferenceId="@Model.LearningResourceReferenceId"
+       asp-route-returnPageQuery="@Model.ReturnPageQuery">
         Add to action plan
       </a>
     }

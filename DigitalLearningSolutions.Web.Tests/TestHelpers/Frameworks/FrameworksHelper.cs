@@ -15,7 +15,7 @@
              string? category = "Category 1",
              string? topic = "Topic 1",
              int ownerAdminId = 1,
-             string  owner = "admin",
+             string owner = "admin",
             int brandId = 1,
             int categoryId = 1,
             int topicId = 1,

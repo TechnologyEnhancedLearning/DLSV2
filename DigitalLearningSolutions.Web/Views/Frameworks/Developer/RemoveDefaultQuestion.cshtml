@@ -24,7 +24,7 @@
 }
   <h1>Remove default assessment question</h1>
   <p>You have chosen to remove the default question <strong>@Model.FrameworkDefaultQuestionUsage.Question</strong>.</p>
-@if (Model.FrameworkDefaultQuestionUsage.CompetencyAssessmentQuestions == Model.FrameworkDefaultQuestionUsage.Competencies)
+  @if (Model.FrameworkDefaultQuestionUsage.CompetencyAssessmentQuestions == Model.FrameworkDefaultQuestionUsage.Competencies)
 {
   <p>The question is currently applied to all @Model.FrameworkDefaultQuestionUsage.Competencies competencies in this framework.</p>
 }

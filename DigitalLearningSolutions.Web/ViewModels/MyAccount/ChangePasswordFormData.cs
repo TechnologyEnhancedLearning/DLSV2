@@ -5,7 +5,7 @@
 
     public class ChangePasswordFormData : ConfirmPasswordViewModel
     {
-        public ChangePasswordFormData() {}
+        public ChangePasswordFormData() { }
 
         protected ChangePasswordFormData(ChangePasswordFormData formData)
         {

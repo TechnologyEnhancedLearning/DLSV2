@@ -12,12 +12,14 @@
   <title></title>
 </head>
 <body>
-@foreach (var delegateUser in Model.Delegates) {
-  <partial name="_AddGroupDelegateCard" model="delegateUser"
+  @foreach (var delegateUser in Model.Delegates)
+  {
+    <partial name="_AddGroupDelegateCard" model="delegateUser"
            view-data="@(new ViewDataDictionary(ViewData) { { "groupId", @Model.GroupId } })" />
-}
-@foreach (var filter in Model.Filters) {
-  <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
-}
+  }
+  @foreach (var filter in Model.Filters)
+  {
+    <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+  }
 </body>
 </html>

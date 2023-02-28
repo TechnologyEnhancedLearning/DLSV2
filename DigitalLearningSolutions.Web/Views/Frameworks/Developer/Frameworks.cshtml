@@ -19,7 +19,7 @@
   </nav>
 }
 
-@if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
+  @if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
 {
   <partial name="_SecondaryTabsNavMenu" model="Model.TabsNavLinks" />
 }

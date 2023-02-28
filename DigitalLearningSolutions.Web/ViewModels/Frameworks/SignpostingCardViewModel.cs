@@ -28,7 +28,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public string GetLevelLabel(int value)
         {
             string levelLabel = value.ToString();
-            if(AssessmentQuestionInputTypeId != 2)
+            if (AssessmentQuestionInputTypeId != 2)
                 levelLabel = AssessmentQuestionLevelDescriptors?.FirstOrDefault(d => d.LevelValue == value)?.LevelLabel;
             return levelLabel;
         }

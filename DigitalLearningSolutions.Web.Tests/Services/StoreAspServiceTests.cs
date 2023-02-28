@@ -445,7 +445,7 @@
             }
         }
 
-                [Test]
+        [Test]
         public void GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_progress_is_null()
         {
             // Given

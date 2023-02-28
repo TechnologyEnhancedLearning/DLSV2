@@ -6,7 +6,7 @@
     public class SectionContentTempData
     {
         // 'Unused' constructor required for JsonConvert
-        public SectionContentTempData(){}
+        public SectionContentTempData() { }
 
         public SectionContentTempData(
             IEnumerable<Tutorial> tutorials

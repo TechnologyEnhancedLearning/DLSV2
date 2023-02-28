@@ -4,36 +4,37 @@
 <h2>Comments</h2>
 @if (Model.DetailFramework.UserRole == 0)
 {
-<p class="nhsuk-body-l">Only the framework owner and identified contributors and reviewers can see and post comments on this framework. Please contact the framework owner to request access, if required.</p>
+  <p class="nhsuk-body-l">Only the framework owner and identified contributors and reviewers can see and post comments on this framework. Please contact the framework owner to request access, if required.</p>
 }
 else
-{ 
-@if (Model.CommentReplies.Any())
 {
-  foreach (var comment in Model.CommentReplies)
+  @if (Model.CommentReplies.Any())
   {
-<partial name="../Shared/_CommentCard.cshtml" model="comment" />
+    foreach (var comment in Model.CommentReplies)
+    {
+      <partial name="../Shared/_CommentCard.cshtml" model="comment" />
+    }
+
   }
-  
-}
-else
-{
-  <p class="nhsuk-body-l">No comments added against this framework, yet.</p>
-}
-<hr/>
-<form method="post">
-  @if (!ViewData.ModelState.IsValid)
+  else
   {
-    <partial name="_ErrorSummary" />}
-<nhs-form-group nhs-validation-for="Comment">
-  <label class="nhsuk-label" for="new-comment">
-    Add a comment
-  </label>
-  <span nhs-validation-for="Comment"></span>
-  <textarea class="nhsuk-textarea" id="new-comment" name="Comment" rows="3"></textarea>
-</nhs-form-group>
+    <p class="nhsuk-body-l">No comments added against this framework, yet.</p>
+  }
+  <hr />
+  <form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+      <partial name="_ErrorSummary" />
+    }
+    <nhs-form-group nhs-validation-for="Comment">
+      <label class="nhsuk-label" for="new-comment">
+        Add a comment
+      </label>
+      <span nhs-validation-for="Comment"></span>
+      <textarea class="nhsuk-textarea" id="new-comment" name="Comment" rows="3"></textarea>
+    </nhs-form-group>
     <button class="nhsuk-button" type="submit">
       Post
     </button>
-</form>
+  </form>
 }

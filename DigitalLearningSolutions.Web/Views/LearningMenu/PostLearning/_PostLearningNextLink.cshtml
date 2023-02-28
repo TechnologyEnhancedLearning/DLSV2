@@ -3,10 +3,10 @@
 @if (Model.NextSectionId != null)
 {
   <a class="nhsuk-button"
-     asp-controller="LearningMenu"
-     asp-action="Section"
-     asp-route-customisationId="@Model.CustomisationId"
-     asp-route-sectionId="@Model.NextSectionId">
+   asp-controller="LearningMenu"
+   asp-action="Section"
+   asp-route-customisationId="@Model.CustomisationId"
+   asp-route-sectionId="@Model.NextSectionId">
 
     Next section
   </a>
@@ -14,9 +14,9 @@
 else
 {
   <a class="nhsuk-button"
-     asp-controller="LearningMenu"
-     asp-action="Index"
-     asp-route-customisationId="@Model.CustomisationId">
+   asp-controller="LearningMenu"
+   asp-action="Index"
+   asp-route-customisationId="@Model.CustomisationId">
 
     Finish
   </a>

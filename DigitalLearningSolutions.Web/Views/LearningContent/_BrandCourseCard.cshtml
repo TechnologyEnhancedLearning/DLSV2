@@ -19,7 +19,7 @@
         <div class="card-filter-tag" data-filter-value="@Model.TopicFilter">
           <strong class="nhsuk-tag nhsuk-tag--grey">@Model.CourseTopic</strong>
         </div>
-        
+
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--grey" aria-hidden="true">@Model.DisplayTime</strong>
           <span class="nhsuk-u-visually-hidden">Length @Model.TimeForScreenReader</span>
@@ -31,7 +31,7 @@
           <span hidden name="popularity-score">@Model.PopularityRating</span>
         </div>
       </div>
-      
+
       <span class="nhsuk-u-margin-bottom-4">
         <span class="nhsuk-u-font-weight-bold">Created</span> @Model.CreatedDate.ToString(DateHelper.StandardDateFormat)
         <span hidden data-name-for-sorting="created-date">@Model.CreatedDate</span>
@@ -42,7 +42,8 @@
           <th class="value header-row-content">Section</th>
           <th class="value header-row-content">Tutorials</th>
         </tr>
-        @foreach (var section in Model.Sections) {
+        @foreach (var section in Model.Sections)
+        {
           <tr class="value-row">
             <td class="value">
               <p class="responsive-header nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-3">Section</p>
@@ -50,11 +51,15 @@
             </td>
             <td class="value">
               <p class="responsive-header nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-3">Tutorials</p>
-              @if (section.Tutorials.Any()) {
-                @foreach (var tutorial in section.Tutorials) {
+              @if (section.Tutorials.Any())
+              {
+                @foreach (var tutorial in section.Tutorials)
+                {
                   <p class="nhsuk-u-margin-bottom-3">@tutorial.TutorialName</p>
                 }
-              } else {
+              }
+              else
+              {
                 <p class="nhsuk-u-margin-bottom-3">No tutorials</p>
               }
             </td>

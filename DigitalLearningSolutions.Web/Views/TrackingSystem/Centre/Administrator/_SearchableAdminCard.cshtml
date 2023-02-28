@@ -1,11 +1,17 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
+﻿@using DigitalLearningSolutions.Web.Helpers;
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @model SearchableAdminViewModel
 
 <div class="searchable-element nhsuk-panel word-break" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name">
-        @Model.Name
+      <span class="nhsuk-details__summary-text" id="@Model.Id-name">
+        <span class="searchable-element-title" name="name">
+          @Model.Name
+        </span>
+        <span class="searchable-element-email">
+          @DisplayStringHelper.GetEmailDisplayString(Model.EmailAddress)
+        </span>
       </span>
     </summary>
     <div class="nhsuk-details__text">

@@ -50,7 +50,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId);
 
-        (int delegateId, string candidateNumber,int delegateUserId) CreateAccountAndReturnCandidateNumberAndDelegateId(
+        (int delegateId, string candidateNumber, int delegateUserId) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
             bool shouldAssumeEmailVerified
@@ -474,7 +474,7 @@ namespace DigitalLearningSolutions.Web.Services
             }
         }
 
-        public (int delegateId, string candidateNumber,int delegateUserId) CreateAccountAndReturnCandidateNumberAndDelegateId(
+        public (int delegateId, string candidateNumber, int delegateUserId) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
             bool shouldAssumeEmailVerified

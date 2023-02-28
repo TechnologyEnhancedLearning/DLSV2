@@ -6,83 +6,83 @@
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/emailDelegates.css")" asp-append-version="true">
 
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = errorHasOccurred ? "Error: Send welcome messages" : "Send welcome messages";
-    var exampleDate = ClockUtility.UtcToday;
-    var hintTextLines = new List<string> {
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Send welcome messages" : "Send welcome messages";
+  var exampleDate = ClockUtility.UtcToday;
+  var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}",
   };
 }
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled)
 {
-        <vc:loading-spinner page-has-side-nav-menu="false" />
+  <vc:loading-spinner page-has-side-nav-menu="false" />
 }
 <div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
-    <div class="nhsuk-grid-column-full">
-        <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Send welcome messages</h1>
-        @if (errorHasOccurred)
-        {
-                <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedDelegateIds), nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
-        }
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Send welcome messages</h1>
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedDelegateIds), nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
+    }
 
-        <span class="nhsuk-body-l">Filter and select delegates to send emails to.</span>
+    <span class="nhsuk-body-l">Filter and select delegates to send emails to.</span>
 
-        <partial name="SearchablePage/_Filters" model="Model" />
+    <partial name="SearchablePage/_Filters" model="Model" />
 
-        @if (Model.Delegates == null || Model.NoDataFound)
-        {
-                <p class="nhsuk-u-margin-top-4" role="alert">
-                    <b>No delegates found.</b>
-                </p>
-        }
-        else
-        {
-                <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-6">
-                    <div class="nhsuk-grid-column-full">
-                        <form id="select-all-form" method="get" asp-action="Index">
-                            <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Select</label>
-                            <button type="submit" class="nhsuk-button select-all-button" id="select-all-button" name="selectAll" value="true">Select all</button>
-                            <button type="submit" class="nhsuk-button select-all-button" id="deselect-all-button" name="selectAll" value="false">Deselect all</button>
-                        </form>
-                    </div>
-                </div>
+    @if (Model.Delegates == null || Model.NoDataFound)
+    {
+      <p class="nhsuk-u-margin-top-4" role="alert">
+        <b>No delegates found.</b>
+      </p>
+    }
+    else
+    {
+      <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-6">
+        <div class="nhsuk-grid-column-full">
+          <form id="select-all-form" method="get" asp-action="Index">
+            <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Select</label>
+            <button type="submit" class="nhsuk-button select-all-button" id="select-all-button" name="selectAll" value="true">Select all</button>
+            <button type="submit" class="nhsuk-button select-all-button" id="deselect-all-button" name="selectAll" value="false">Deselect all</button>
+          </form>
+        </div>
+      </div>
 
-                <partial name="SearchablePage/_SearchResultsCountWithAlert" model="Model" />
-                <form method="post">
-                    <div id="SelectedDelegateIds" class="nhsuk-form-group nhsuk-u-margin-top-4">
-                        <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
-                            <span class="error-message--margin-bottom-1 nhsuk-error-message">
-                                <span>@ViewBag.RequiredCheckboxMessage</span>
-                            </span>
-                        </div>
-                        <fieldset class="nhsuk-fieldset">
-                            <div id="searchable-elements" class="nhsuk-checkboxes">
-                            @foreach (var delegateModel in Model.Delegates)
-                            {
-                                        <partial name="_SearchableDelegateCheckbox" model="delegateModel" />
-                            }
-                            </div>
-                        </fieldset>
-                    </div>
-                    <vc:date-input id="welcome-email-date"
-                           label="Deliver email on or after"
-                           day-id="@nameof(Model.Day)"
-                           month-id="@nameof(Model.Month)"
-                           year-id="@nameof(Model.Year)"
-                           css-class="nhsuk-u-margin-bottom-4"
-                           hint-text-lines="@hintTextLines" />
-                    <button class="nhsuk-button" type="submit">Send welcome emails</button>
-                </form>
-        }
+      <partial name="SearchablePage/_SearchResultsCountWithAlert" model="Model" />
+      <form method="post">
+        <div class="nhsuk-form-group nhsuk-u-margin-top-4">
+          <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+            <span class="error-message--margin-bottom-1 nhsuk-error-message">
+              <span>@ViewBag.RequiredCheckboxMessage</span>
+            </span>
+          </div>
+          <fieldset class="nhsuk-fieldset">
+            <div id="searchable-elements" class="nhsuk-checkboxes">
+              @foreach (var delegateModel in Model.Delegates)
+              {
+                <partial name="_SearchableDelegateCheckbox" model="delegateModel" />
+              }
+            </div>
+          </fieldset>
+        </div>
+        <vc:date-input id="welcome-email-date"
+                     label="Deliver email on or after"
+                     day-id="@nameof(Model.Day)"
+                     month-id="@nameof(Model.Month)"
+                     year-id="@nameof(Model.Year)"
+                     css-class="nhsuk-u-margin-bottom-4"
+                     hint-text-lines="@hintTextLines" />
+        <button class="nhsuk-button" type="submit">Send welcome emails</button>
+      </form>
+    }
 
-        <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
-    </div>
+    <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+  </div>
 </div>
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled)
 {
-    @section scripts {
-<script src="@Url.Content("~/js/trackingSystem/emailDelegates.js")" asp-append-version="true"></script>
+  @section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/emailDelegates.js")" asp-append-version="true"></script>
 }
 }

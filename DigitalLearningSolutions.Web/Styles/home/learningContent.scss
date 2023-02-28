@@ -6,6 +6,7 @@
 
 .learning-content-item__heading {
   @extend .nhsuk-heading-m;
+
   @include govuk-media-query($until: tablet) {
     text-align: center;
   }
@@ -30,7 +31,6 @@
 
 .learning-content-item__details-container {
   display: flex;
-
   flex-direction: row;
 
   @include govuk-media-query($until: tablet) {
@@ -65,7 +65,6 @@
 .learning-content-item__image {
   height: 200px;
   width: auto;
-
   // We do this so the containing div won't leave extra space below the image. See https://stackoverflow.com/a/8522087z
   display: block;
 }

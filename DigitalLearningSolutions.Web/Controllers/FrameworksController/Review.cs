@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Frameworks;
     using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
@@ -28,11 +29,11 @@
         public IActionResult SubmitReviewers(int frameworkId, List<int> userChecked, List<int> signOffRequiredChecked)
         {
             var adminId = GetAdminId();
-            foreach(var user in userChecked)
+            foreach (var user in userChecked)
             {
                 var required = signOffRequiredChecked.IndexOf(user) != -1;
                 frameworkService.InsertFrameworkReview(frameworkId, user, required);
-                frameworkNotificationService.SendReviewRequest(user, adminId, required, false);
+                frameworkNotificationService.SendReviewRequest(user, adminId, required, false, User.GetCentreIdKnownNotNull());
             }
             frameworkService.UpdateFrameworkStatus(frameworkId, 2, adminId);
             return RedirectToAction("ViewFrameworkReviews", "Frameworks", new { frameworkId });
@@ -81,15 +82,15 @@
         {
             var adminId = GetAdminId();
             int? commentId = null;
-            if(!string.IsNullOrWhiteSpace(comment)) commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
+            if (!string.IsNullOrWhiteSpace(comment)) commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             frameworkService.SubmitFrameworkReview(frameworkId, reviewId, signedOff, commentId);
-            frameworkNotificationService.SendReviewOutcomeNotification(reviewId);
-            return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId , tabname = "Structure"});
+            frameworkNotificationService.SendReviewOutcomeNotification(reviewId, User.GetCentreIdKnownNotNull());
+            return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId, tabname = "Structure" });
         }
         public IActionResult ResendRequest(int reviewId, int frameworkId, int frameworkCollaboratorId, bool required)
         {
             var adminId = GetAdminId();
-            frameworkNotificationService.SendReviewRequest(frameworkCollaboratorId, adminId, required, true);
+            frameworkNotificationService.SendReviewRequest(frameworkCollaboratorId, adminId, required, true, User.GetCentreIdKnownNotNull());
             frameworkService.UpdateReviewRequestedDate(reviewId);
             return RedirectToAction("ViewFrameworkReviews", "Frameworks", new { frameworkId });
         }
@@ -99,7 +100,7 @@
             frameworkService.InsertFrameworkReReview(reviewId);
             var review = frameworkService.GetFrameworkReviewNotification(reviewId);
             if (review == null) return StatusCode(404);
-            frameworkNotificationService.SendReviewRequest(review.FrameworkCollaboratorID, adminId, review.SignOffRequired, false);
+            frameworkNotificationService.SendReviewRequest(review.FrameworkCollaboratorID, adminId, review.SignOffRequired, false, User.GetCentreIdKnownNotNull());
             return RedirectToAction("ViewFrameworkReviews", "Frameworks", new { frameworkId });
         }
         public IActionResult RemoveRequest(int frameworkId, int reviewId)

@@ -48,9 +48,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
         {
             var allFilters = Enum.GetValues(typeof(SelfAssessmentCompetencyFilter)).Cast<SelfAssessmentCompetencyFilter>();
             var filterOptions = (from f in allFilters
-                                let includeRejectedWhenSupervisorReviewed = f != SelfAssessmentCompetencyFilter.ConfirmationRejected || isSupervisorResultsReviewed
-                                where CompetencyFilterHelper.IsResponseStatusFilter((int)f) && includeRejectedWhenSupervisorReviewed
-                                select f).ToList();           
+                                 let includeRejectedWhenSupervisorReviewed = f != SelfAssessmentCompetencyFilter.ConfirmationRejected || isSupervisorResultsReviewed
+                                 where CompetencyFilterHelper.IsResponseStatusFilter((int)f) && includeRejectedWhenSupervisorReviewed
+                                 select f).ToList();
             if (includeRequirementsFilters)
             {
                 if (AnyQuestionMeetingRequirements) filterOptions.Add(SelfAssessmentCompetencyFilter.MeetingRequirements);
@@ -65,7 +65,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 
             if (competencyFlags?.Count() > 0)
             {
-                var competencyFlagOptions = competencyFlags.DistinctBy(f => f.FlagId)
+                var competencyFlagOptions = competencyFlags.DistinctBy(f => f.FlagId,null)
                     .Select(c =>
                         new FilterOptionModel(
                                 $"{c.FlagGroup}: {c.FlagName}",
@@ -90,7 +90,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
         {
             FilterBy = nameof(SelectedFilter);
             SearchText = searchText ?? string.Empty;
-            SelfAssessmentId = selfAssessmentId;   
+            SelfAssessmentId = selfAssessmentId;
             Vocabulary = vocabulary;
             IncludeRequirementsFilters = includeRequirementsFilters;
             Initialise(appliedFilters, competencyFlags, isSupervisorResultsReviewed, includeRequirementsFilters);
