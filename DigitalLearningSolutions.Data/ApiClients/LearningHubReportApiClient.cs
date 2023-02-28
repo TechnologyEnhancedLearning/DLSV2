@@ -1,21 +1,14 @@
-﻿using DigitalLearningSolutions.Data.Models.Common;
+﻿using DigitalLearningSolutions.Data.Extensions;
+using DigitalLearningSolutions.Data.Models.Certificates;
+using DigitalLearningSolutions.Data.Models.Common;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using DigitalLearningSolutions.Data.Extensions;
-using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
-using DigitalLearningSolutions.Data.Models.Certificates;
-using Microsoft.AspNetCore.Http;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Microsoft.AspNetCore.Http.Internal;
-using DigitalLearningSolutions.Data.Models.User;
 
 namespace DigitalLearningSolutions.Data.ApiClients
 {
