@@ -44,8 +44,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Certificate
             this.imageResizeService = imageResizeService;
             this.certificateService = certificateService;
         }
-        [Route("preview:int")]
-        public IActionResult PreviewCertificate(int id)
+        [Route("Certificate/Preview/{previewId:int}")]
+        public IActionResult PreviewCertificate(int previewId)
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var certificateInfo = certificateService.GetPreviewCertificateForCentre(centreId);
@@ -57,7 +57,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Certificate
             var model = new PreviewCertificateViewModel(certificateInfo);
             return View("Index", model);
         }
-        [Route("progressId:int")]
+        [Route("Certificate/Activity/{progressId:int}")]
         public IActionResult ViewCertificate(int progressId)
         {
             var certificateInfo = certificateService.GetCertificateDetailsById(progressId);
