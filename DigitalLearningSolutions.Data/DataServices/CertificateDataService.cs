@@ -1,15 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Certificates;
     using Microsoft.Extensions.Logging;
-    using Org.BouncyCastle.Crypto.Tls;
-    using Org.BouncyCastle.Ocsp;
-    using System;
-    using System.Collections.Generic;
     using System.Data;
-    using System.Text;
     public interface ICertificateDataService
     {
         CertificateInformation? GetCertificateDetailsById(int progressId);

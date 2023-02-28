@@ -1,24 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
-    using System;
-    using System.Net.Http;
-    using System.Net;
-    using System.Text;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Models.Certificates;
-    using Newtonsoft.Json;
-    using Org.BouncyCastle.Crypto.Tls;
-    using static System.Net.WebRequestMethods;
-    using DigitalLearningSolutions.Data.Models.Common;
-    using System.Net.Http.Headers;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Http;
-    using System.IO;
     using DigitalLearningSolutions.Data.ApiClients;
-    using System.Runtime.InteropServices.WindowsRuntime;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Certificates;
+    using DigitalLearningSolutions.Data.Models.Common;
     using Microsoft.Extensions.Logging;
-    using System.Web;
+    using System.Threading.Tasks;
 
     public interface ICertificateService
     {
