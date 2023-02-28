@@ -44,7 +44,7 @@
 
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(DelegateUserId)).Returns(selfAssessments);
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(DelegateUserId, A<int>._)).Returns(selfAssessments);
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(DelegateUserId))
                 .Returns((actionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
@@ -426,7 +426,7 @@
         private void GivenCurrentActivitiesAreEmptyLists()
         {
             A.CallTo(() => courseDataService.GetCurrentCourses(A<int>._)).Returns(new List<CurrentCourse>());
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(A<int>._))
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(A<int>._, A<int>._))
                 .Returns(new List<CurrentSelfAssessment>());
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(A<int>._))
                 .Returns((new List<ActionPlanResource>(), false));
