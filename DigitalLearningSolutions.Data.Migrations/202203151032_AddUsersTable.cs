@@ -7,6 +7,7 @@
     {
         public override void Up()
         {
+            Execute.Sql(Properties.Resources.DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6);
             Create.Table("Users")
                 .WithColumn("ID").AsInt32().NotNullable().PrimaryKey().Identity()
                 .WithColumn("PrimaryEmail").AsString(255).Unique().NotNullable()
@@ -29,6 +30,7 @@
         public override void Down()
         {
             Delete.Table("Users");
+            Execute.Sql(Properties.Resources.DropActiveAvailableV6);
         }
     }
 }
