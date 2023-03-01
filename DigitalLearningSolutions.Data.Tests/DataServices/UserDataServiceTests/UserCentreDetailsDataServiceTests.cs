@@ -352,9 +352,12 @@
                 new
                 {
                     userId,
-                    delegateOnlyCentreId, delegateOnlyCentreEmail,
-                    adminOnlyCentreId, adminOnlyCentreEmail,
-                    adminAndDelegateCentreId, adminAndDelegateCentreEmail,
+                    delegateOnlyCentreId,
+                    delegateOnlyCentreEmail,
+                    adminOnlyCentreId,
+                    adminOnlyCentreEmail,
+                    adminAndDelegateCentreId,
+                    adminAndDelegateCentreEmail,
                 }
             );
 

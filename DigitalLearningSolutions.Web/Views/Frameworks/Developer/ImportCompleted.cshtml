@@ -34,13 +34,13 @@
       <h2>Summary of results:</h2>
       <ul>
         <li>@Model.ProcessedCount @(Model.ProcessedCount == 1 ? "line" : "lines") processed</li>
-      <li>@Model.CompetencyGroupsInsertedCount new @(Model.CompetencyGroupsInsertedCount == 1 ? "competency group" : "competency groups") inserted</li>
-      <li>@Model.CompetenciesInsertedCount new @(Model.CompetenciesInsertedCount == 1 ? "competency" : "competencies") inserted</li>
-      <li>@Model.SkippedCount rows @(Model.SkippedCount == 1 ? "record" : "records") skipped (nothing inserted but no errors)</li>
-      <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "line" : "lines") skipped due to errors</li>
-    </ul>
+        <li>@Model.CompetencyGroupsInsertedCount new @(Model.CompetencyGroupsInsertedCount == 1 ? "competency group" : "competency groups") inserted</li>
+        <li>@Model.CompetenciesInsertedCount new @(Model.CompetenciesInsertedCount == 1 ? "competency" : "competencies") inserted</li>
+        <li>@Model.SkippedCount rows @(Model.SkippedCount == 1 ? "record" : "records") skipped (nothing inserted but no errors)</li>
+        <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "line" : "lines") skipped due to errors</li>
+      </ul>
 
-    @if (Model.ErrorCount > 0)
+      @if (Model.ErrorCount > 0)
     {
       <div class="nhsuk-warning-callout">
         <h3 class="nhsuk-warning-callout__label">

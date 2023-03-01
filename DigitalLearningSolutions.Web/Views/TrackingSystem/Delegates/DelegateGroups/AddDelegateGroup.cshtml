@@ -18,7 +18,8 @@
 
   <div class="nhsuk-grid-column-three-quarters">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="AddDelegateGroup">
-      @if (errorHasOccurred) {
+      @if (errorHasOccurred)
+      {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.GroupName), nameof(Model.GroupDescription) })" />
       }
 

@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Data;
-    using Dapper;    
+    using Dapper;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
@@ -104,7 +104,7 @@
             );
         }
 
-        public IEnumerable<CompetencyResourceAssessmentQuestionParameter>GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds)
+        public IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds)
         {
             return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
                 @"SELECT

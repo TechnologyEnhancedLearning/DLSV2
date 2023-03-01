@@ -8,6 +8,6 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
     {
         public int AdminId { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }   
+        public string Email { get; set; }
     }
 }

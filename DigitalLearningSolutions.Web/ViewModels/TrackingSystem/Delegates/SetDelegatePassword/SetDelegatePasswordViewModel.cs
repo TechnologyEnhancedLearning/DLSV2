@@ -2,6 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class SetDelegatePasswordViewModel
@@ -34,6 +35,8 @@
             CommonValidationErrorMessages.PasswordRegex,
             ErrorMessage = CommonValidationErrorMessages.PasswordInvalidCharacters
         )]
+        [CommonPasswords(CommonValidationErrorMessages.PasswordTooCommon)]
+        [UserName(CommonValidationErrorMessages.PasswordSimilarUsername)]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 

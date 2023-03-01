@@ -167,7 +167,7 @@
         {
             // Given
             var model = new RemoveGroupDelegateViewModel
-                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = false };
+            { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = false };
 
             const int groupId = 44;
             const int delegateId = 3274;
@@ -197,7 +197,7 @@
         {
             // Given
             var model = new RemoveGroupDelegateViewModel
-                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
+            { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
             A.CallTo(() => groupsService.GetGroupDelegates(1))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });

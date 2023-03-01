@@ -29,7 +29,10 @@
 
         private const string ExcelPassword = "ExcelPassword";
 
-	private const string MonthsToPromptUserDetailsCheckKey = "MonthsToPromptUserDetailsCheck";
+        private const string MonthsToPromptUserDetailsCheckKey = "MonthsToPromptUserDetailsCheck";
+        private const string LearningHubReportAPIBaseUrl = "LearningHubReportAPIConfig:BaseUrl";
+        private const string LearningHubReportAPIClientId = "LearningHubReportAPIConfig:ClientId";
+        private const string LearningHubReportAPIClientIdentityKey = "LearningHubReportAPIConfig:ClientIdentityKey";
 
         public static string GetAppRootPath(this IConfiguration config)
         {
@@ -119,6 +122,18 @@
         public static string GetExcelPassword(this IConfiguration config)
         {
             return config[ExcelPassword];
+        }
+        public static string GetLearningHubReportApiBaseUrl(this IConfiguration config)
+        {
+            return config[LearningHubReportAPIBaseUrl];
+        }
+        public static string GetLearningHubReportApiClientId(this IConfiguration config)
+        {
+            return config[LearningHubReportAPIClientId];
+        }
+        public static string GetLearningHubReportApiClientIdentityKey(this IConfiguration config)
+        {
+            return config[LearningHubReportAPIClientIdentityKey];
         }
     }
 }

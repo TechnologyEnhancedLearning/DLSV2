@@ -9,7 +9,7 @@
 
     public class SmtpClientFactory : ISmtpClientFactory
     {
-        public SmtpClientFactory() {}
+        public SmtpClientFactory() { }
 
         public ISmtpClient GetSmtpClient()
         {

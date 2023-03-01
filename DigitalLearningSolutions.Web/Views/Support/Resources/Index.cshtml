@@ -15,8 +15,9 @@
   <div class="nhsuk-grid-column-three-quarters">
     <h1 class="nhsuk-heading-xl">Resources</h1>
 
-    @foreach (var category in Model.Categories) {
-      <partial name="_ResourceCategoryExpander" model="category"/>
+    @foreach (var category in Model.Categories)
+    {
+      <partial name="_ResourceCategoryExpander" model="category" />
     }
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">

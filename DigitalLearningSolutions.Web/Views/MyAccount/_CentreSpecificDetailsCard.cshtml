@@ -17,14 +17,15 @@
 
         @{
           var centreSpecificEmailModel = new CentreSpecificEmailDetailsViewModel(
-            Model.PrimaryEmail,
-            Model.CentreSpecificEmail,
-            null
-            );
+          Model.PrimaryEmail,
+          Model.CentreSpecificEmail,
+          null
+          );
         }
         <partial name="_CentreSpecificEmailDetailsSection" model="@centreSpecificEmailModel" />
 
-        @if (!string.IsNullOrWhiteSpace(Model.DelegateNumber)) {
+        @if (!string.IsNullOrWhiteSpace(Model.DelegateNumber))
+        {
           <div class="nhsuk-summary-list__row basic-summary-list__row">
             <dt class="nhsuk-summary-list__key">
               Candidate number
@@ -33,7 +34,8 @@
           </div>
         }
 
-        @if (Model.DateRegistered != null) {
+        @if (Model.DateRegistered != null)
+        {
           <div class="nhsuk-summary-list__row basic-summary-list__row">
             <dt class="nhsuk-summary-list__key">
               Date registered
@@ -41,21 +43,22 @@
             <partial name="_SummaryFieldValue" model="@Model.DateRegistered" />
           </div>
         }
-          <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-	        Roles
+            Roles
           </dt>
-	        <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value">
             <ul>
               @foreach (var role in Model.Roles)
               {
                 <li>@role</li>
               }
             </ul>
-	        </dd>
+          </dd>
         </div>
 
-        @foreach (var customField in Model.DelegateRegistrationPrompts) {
+        @foreach (var customField in Model.DelegateRegistrationPrompts)
+        {
           <partial name="../Shared/_CustomPromptBasicSummaryListRow" model="@customField" />
         }
       </dl>

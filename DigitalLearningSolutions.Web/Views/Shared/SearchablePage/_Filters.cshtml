@@ -9,12 +9,14 @@
           name="filterCategorySelector"
           aria-label="Select filter category">
     <option value="" disabled selected="selected">Select filter category</option>
-    @foreach (var filter in Model.Filters) {
+    @foreach (var filter in Model.Filters)
+    {
       <option value="filter-@filter.FilterProperty">@filter.FilterName</option>
     }
   </select>
   <div class="filters-container" id="filters-container">
-    @foreach (var filter in Model.Filters) {
+    @foreach (var filter in Model.Filters)
+    {
       <div class="filter-dropdown-container" id="filter-@filter.FilterProperty">
         <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
           <input type="hidden" name="searchString" value="@Model.SearchString" />
@@ -22,16 +24,18 @@
           <input type="hidden" name="sortBy" value="@Model.SortBy" />
           <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
           <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
-          @foreach (var (key, value) in Model.RouteData) {
+          @foreach (var (key, value) in Model.RouteData)
+          {
             <input type="hidden" name="@key" value="@value" />
           }
           <div class="filter-value-container">
             <select class="nhsuk-select filter-dropdown"
-                    name="newFilterToAdd"
-                    id="@filter.FilterProperty"
-                    aria-label="@filter.FilterName filter">
+                  name="newFilterToAdd"
+                  id="@filter.FilterProperty"
+                  aria-label="@filter.FilterName filter">
               <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
-              @foreach (var filterOption in filter.FilterOptions) {
+              @foreach (var filterOption in filter.FilterOptions)
+              {
                 <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
               }
             </select>

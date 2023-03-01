@@ -12,12 +12,12 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="ReviewConfirmationRequests" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Confirmation requests</a></li>
   <li class="nhsuk-breadcrumb__item">New</li>
 }
-@section mobilebacklink
-{
+  @section mobilebacklink
+  {
   <p class="nhsuk-breadcrumb__back">
     <a class="nhsuk-breadcrumb__backlink"
-       asp-action="ReviewConfirmationRequests"
-       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+     asp-action="ReviewConfirmationRequests"
+     asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
       Back to Confirmation requests
     </a>
   </p>
@@ -27,31 +27,31 @@
   <h2>Summary</h2>
   <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      @Model.SelfAssessment.VerificationRoleName
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.Supervisor
-    </dd>
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-        Change
-      </a>
-    </dd>
+      <dt class="nhsuk-summary-list__key">
+        @Model.SelfAssessment.VerificationRoleName
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Supervisor
+      </dd>
+      <dd class="nhsuk-summary-list__actions">
+        <a asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+          Change
+        </a>
+      </dd>
     </div>
     <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Results to confirm
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.ResultCount
-    </dd>
-    <dd class="nhsuk-summary-list__actions">
+      <dt class="nhsuk-summary-list__key">
+        Results to confirm
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.ResultCount
+      </dd>
+      <dd class="nhsuk-summary-list__actions">
 
-      <a asp-action="VerificationPickResults" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-        Change
-      </a>
-    </dd>
+        <a asp-action="VerificationPickResults" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+          Change
+        </a>
+      </dd>
     </div>
   </dl>
   <form method="post" asp-action="SubmitVerification">

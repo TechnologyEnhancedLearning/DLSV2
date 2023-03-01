@@ -2,7 +2,7 @@
 @model PromoteToAdminViewModel
 
 @{
-   var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Promote centre delegate to admin";
   var cancelRouteData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
 }
@@ -10,7 +10,8 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
-     @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Checkboxes) })" />
     }
 
@@ -32,7 +33,8 @@
       <vc:number-of-administrators centre-id="Model.CentreId" />
     </div>
 
-    @if (Model.NotAllRolesDisplayed) {
+    @if (Model.NotAllRolesDisplayed)
+    {
       <div class="nhsuk-warning-callout nhsuk-u-margin-bottom-4">
         <h3 class="nhsuk-warning-callout__label">
           <span role="text">
@@ -57,16 +59,15 @@
                      checkboxes="@Model.Checkboxes"
                      hint-text=""
                      required="true"
-                     errormessage="@ViewBag.RequiredCheckboxMessage"
-                     />
-                     
+                     errormessage="@ViewBag.RequiredCheckboxMessage" />
+
       <div class="@(Model.NoContentManagerOptionsAvailable ? "display-none" : null)">
         <vc:radios asp-for="@nameof(Model.ContentManagementRole)"
                    label="Please select a content manager role for this user."
                    populate-with-current-values="true"
                    radios="@Model.Radios"
                    hint-text=""
-                   required="true"/>
+                   required="true" />
       </div>
 
       <h2 class="nhsuk-heading-l nhsuk-u-margin-top-8">Learning category</h2>

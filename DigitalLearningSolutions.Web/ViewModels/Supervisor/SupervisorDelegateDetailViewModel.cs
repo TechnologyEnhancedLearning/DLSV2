@@ -7,7 +7,7 @@
     {
         public SupervisorDelegateDetailViewModel() { }
 
-        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, ReturnPageQuery returnPageQuery , bool isUserSupervisor = false)
+        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, ReturnPageQuery returnPageQuery, bool isUserSupervisor = false)
         {
             SupervisorDelegateDetail = supervisorDelegateDetail;
             ReturnPageQuery = returnPageQuery;

@@ -16,7 +16,9 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@{var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");}
+  @{
+  var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");
+}
 
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -30,11 +32,11 @@
   </nav>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.Title</h1>
-    <p class="nhsuk-u-font-size-24">@Model.Description</p>
-    @if (Model.ShowTime)
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 id="page-heading" class="nhsuk-heading-xl">@Model.Title</h1>
+      <p class="nhsuk-u-font-size-24">@Model.Description</p>
+      @if (Model.ShowTime)
     {
       <h2 class="nhsuk-u-secondary-text-color nhsuk-heading-l">Average Course Time: @Model.AverageDuration</h2>
     }

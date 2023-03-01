@@ -174,7 +174,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
             };
         }
 
-        [HttpGet("Certificate")]
+        [Route("PreviewCertificate")]
         public IActionResult PreviewCertificate()
         {
             var centreId = User.GetCentreIdKnownNotNull();

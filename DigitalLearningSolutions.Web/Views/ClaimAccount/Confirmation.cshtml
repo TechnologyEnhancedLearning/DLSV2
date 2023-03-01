@@ -36,9 +36,12 @@
       </div>
     </dl>
 
-    @if (Model.WasPasswordSetByAdmin) {
+    @if (Model.WasPasswordSetByAdmin)
+    {
       <p class="nhsuk-body-m">You can now log in using your primary email or delegate ID and the password your admin has set for you.</p>
-    } else {
+    }
+    else
+    {
       <p class="nhsuk-body-m">You can now log in using your primary email or delegate ID and the password you set.</p>
     }
 

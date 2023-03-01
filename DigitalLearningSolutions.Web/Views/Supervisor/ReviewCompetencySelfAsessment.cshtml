@@ -11,7 +11,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -19,146 +19,148 @@
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-             asp-action="DelegateProfileAssessments"
-             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName</a>
-          </li>
-          <li class="nhsuk-breadcrumb__item">
-            <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-               asp-action="ReviewDelegateSelfAssessment"
-               asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-               asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
-              @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
-            </a>
-          </li>
-          <li class="nhsuk-breadcrumb__item">
-            @(Model.Competency.Name.Length > 35 ? Model.Competency.Name.Substring(0, 32) + "..." : Model.Competency.Name)
-          </li>
-        </ol>
-      </div>
-      <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+           asp-action="DelegateProfileAssessments"
+           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName</a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
            asp-action="ReviewDelegateSelfAssessment"
            asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
            asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
-          Back to  @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
-        </a>
-      </p>
-    </nav>
+            @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
+          </a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          @(Model.Competency.Name.Length > 35 ? Model.Competency.Name.Substring(0, 32) + "..." : Model.Competency.Name)
+        </li>
+      </ol>
+    </div>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+       asp-action="ReviewDelegateSelfAssessment"
+       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+       asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
+        Back to  @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
+      </a>
+    </p>
+  </nav>
 }
-<details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary">
-    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
-      @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName
-    </h1>
-  </summary>
-  <div class="nhsuk-details__text">
-    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegate" />
-  </div>
-</details>
-<h2>@Model.Competency.Vocabulary Self Assessment Result</h2>
-<dl class="nhsuk-summary-list">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+        @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName
+      </h1>
+    </summary>
+    <div class="nhsuk-details__text">
+      <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegate" />
+    </div>
+  </details>
+  <h2>@Model.Competency.Vocabulary Self Assessment Result</h2>
+  <dl class="nhsuk-summary-list">
 
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    @Model.Competency.Vocabulary
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.Competency.Name
-  </dd>
-  </div>
-  @if (Model.Competency.CompetencyFlags.Any())
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        @Model.Competency.Vocabulary
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Competency.Name
+      </dd>
+    </div>
+    @if (Model.Competency.CompetencyFlags.Any())
   {
     <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Flags
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      <partial name="_CompetencyFlags" model="Model.Competency.CompetencyFlags" />
-    </dd>
+      <dt class="nhsuk-summary-list__key">
+        Flags
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <partial name="_CompetencyFlags" model="Model.Competency.CompetencyFlags" />
+      </dd>
     </div>
   }
   @if (Model.Competency.Description != null)
   {
     <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Description
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Html.Raw(Model.Competency.Description)
-    </dd>
+      <dt class="nhsuk-summary-list__key">
+        Description
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Html.Raw(Model.Competency.Description)
+      </dd>
     </div>
   }
   <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Question
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.Competency.AssessmentQuestions.First().Question
-    @if (!@Model.Competency.AssessmentQuestions.First().Required)
-    {
-      <span>(Optional)</span>
-    }
-  </dd>
+    <dt class="nhsuk-summary-list__key">
+      Question
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.Competency.AssessmentQuestions.First().Question
+      @if (!@Model.Competency.AssessmentQuestions.First().Required)
+      {
+        <span>(Optional)</span>
+      }
+    </dd>
   </div>
 
   <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Learner response
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    <partial name="Shared/_AssessmentQuestionResponse" model="Model.Competency.AssessmentQuestions.First()" />
-  </dd>
+    <dt class="nhsuk-summary-list__key">
+      Learner response
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      <partial name="Shared/_AssessmentQuestionResponse" model="Model.Competency.AssessmentQuestions.First()" />
+    </dd>
   </div>
   @if (Model.Competency.AssessmentQuestions.First().ResultRAG > 0)
   {
     <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Role expectations
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @(Model.Competency.AssessmentQuestions.First().ResultRAG == 1 ? "Not meeting" : Model.Competency.AssessmentQuestions.First().ResultRAG == 2 ? "Partially meeting" : "Fully meeting")
-    </dd>
+      <dt class="nhsuk-summary-list__key">
+        Role expectations
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @(Model.Competency.AssessmentQuestions.First().ResultRAG == 1 ? "Not meeting" : Model.Competency.AssessmentQuestions.First().ResultRAG == 2 ? "Partially meeting" : "Fully meeting")
+      </dd>
     </div>
   }
   @if (Model.Competency.AssessmentQuestions.First().IncludeComments)
   {
     <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Comments
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Html.Raw(Model.Competency.AssessmentQuestions.First().SupportingComments)
-    </dd>
+      <dt class="nhsuk-summary-list__key">
+        Comments
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Html.Raw(Model.Competency.AssessmentQuestions.First().SupportingComments)
+      </dd>
     </div>
   }
   <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Status
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.Competency.AssessmentQuestions.First()" />
-  </dd>
+    <dt class="nhsuk-summary-list__key">
+      Status
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.Competency.AssessmentQuestions.First()" />
+    </dd>
   </div>
   @if (Model.Competency.AssessmentQuestions.First().SelfAssessmentResultSupervisorVerificationId != null && Model.Competency.AssessmentQuestions.First().Verified == null && !(bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
   {
     <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Supervisor
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.Competency.AssessmentQuestions.First().SupervisorName
-    </dd>
+      <dt class="nhsuk-summary-list__key">
+        Supervisor
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Competency.AssessmentQuestions.First().SupervisorName
+      </dd>
     </div>
     @if (Model.Competency.AssessmentQuestions.First().Requested != null)
     {
       <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Verification Requested
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @{DateTime verificationRequested = (DateTime)Model.Competency.AssessmentQuestions.First().Requested; }
-        @verificationRequested.ToString("dd/MM/yyyy")
-      </dd>
+        <dt class="nhsuk-summary-list__key">
+          Verification Requested
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @{
+            DateTime verificationRequested = (DateTime)Model.Competency.AssessmentQuestions.First().Requested;
+          }
+          @verificationRequested.ToString("dd/MM/yyyy")
+        </dd>
       </div>
 
     }
@@ -168,7 +170,7 @@
 </dl>
 @if (errorHasOccurred)
 {
-  <vc:error-summary order-of-property-names="@new []{ nameof(ReviewCompetencySelfAsessmentViewModel) }" />
+  <vc:error-summary order-of-property-names="@(new []{ nameof(ReviewCompetencySelfAsessmentViewModel) })" />
 }
 
 @if (Model.Competency.AssessmentQuestions.First().SelfAssessmentResultSupervisorVerificationId != null && Model.Competency.AssessmentQuestions.First().Requested != null && ViewContext.RouteData.Values["viewMode"].ToString() == "Review" && (bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
@@ -232,44 +234,44 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
     <dl class="nhsuk-summary-list">
 
       <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Reviewed
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @if (Model.Verified != null)
-        {
-          DateTime verified = (DateTime)Model.Verified;
-          verifiedString = verified.ToString("dd/MM/yyyy");
-        }
-        @Html.Raw(verifiedString)<text> </text>@Model.SupervisorName
-      </dd>
+        <dt class="nhsuk-summary-list__key">
+          Reviewed
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @if (Model.Verified != null)
+          {
+            DateTime verified = (DateTime)Model.Verified;
+            verifiedString = verified.ToString("dd/MM/yyyy");
+          }
+          @Html.Raw(verifiedString)<text> </text>@Model.SupervisorName
+        </dd>
       </div>
 
       <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Confirmed
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @if (Model.SignedOff)
-        {
-          <span class="nhsuk-tag nhsuk-tag--green">Yes</span>
-        }
-        else
-        {
-          <span class="nhsuk-tag nhsuk-tag--red">No</span>
-        }
-      </dd>
+        <dt class="nhsuk-summary-list__key">
+          Confirmed
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @if (Model.SignedOff)
+          {
+            <span class="nhsuk-tag nhsuk-tag--green">Yes</span>
+          }
+          else
+          {
+            <span class="nhsuk-tag nhsuk-tag--red">No</span>
+          }
+        </dd>
       </div>
 
       @if (Model.SupervisorComments != null)
       {
         <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          @(Model.DelegateSelfAssessment.ReviewerCommentsLabel == null ? "Reviewer comments" : Model.DelegateSelfAssessment.ReviewerCommentsLabel.ToString())
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Html.Raw(Model.SupervisorComments)
-        </dd>
+          <dt class="nhsuk-summary-list__key">
+            @(Model.DelegateSelfAssessment.ReviewerCommentsLabel == null ? "Reviewer comments" : Model.DelegateSelfAssessment.ReviewerCommentsLabel.ToString())
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Html.Raw(Model.SupervisorComments)
+          </dd>
 
         </div>
       }

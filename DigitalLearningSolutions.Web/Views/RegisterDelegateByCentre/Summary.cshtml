@@ -9,77 +9,78 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <div class="nhsuk-u-margin-bottom-8">
-      <h1 class="nhsuk-heading-xl">Summary</h1>
-    </div>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <div class="nhsuk-u-margin-bottom-8">
+        <h1 class="nhsuk-heading-xl">Summary</h1>
+      </div>
 
-    <dl class="nhsuk-summary-list">
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          First name
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.FirstName
-        </dd>
-        <dd class="nhsuk-summary-list__actions">
-          <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> first name</span>
-          </a>
-        </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Last name
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.LastName
-        </dd>
-        <dd class="nhsuk-summary-list__actions">
-          <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> last name</span>
-          </a>
-        </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Email
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CentreSpecificEmail
-        </dd>
-        <dd class="nhsuk-summary-list__actions">
-          <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> email</span>
-          </a>
-        </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Job group
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.JobGroup
-        </dd>
-        <dd class="nhsuk-summary-list__actions">
-          <a asp-action="LearnerInformation">
-            Change<span class="nhsuk-u-visually-hidden"> job group</span>
-          </a>
-        </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Professional registration number
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
-        <dd class="nhsuk-summary-list__actions">
-          <a asp-action="LearnerInformation">
-            Change<span class="nhsuk-u-visually-hidden"> professional registration number</span>
-          </a>
-        </dd>
-      </div>
-      @foreach (var customField in Model.DelegateRegistrationPrompts) {
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            First name
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.FirstName
+          </dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="PersonalInformation">
+              Change<span class="nhsuk-u-visually-hidden"> first name</span>
+            </a>
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Last name
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.LastName
+          </dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="PersonalInformation">
+              Change<span class="nhsuk-u-visually-hidden"> last name</span>
+            </a>
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Email
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CentreSpecificEmail
+          </dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="PersonalInformation">
+              Change<span class="nhsuk-u-visually-hidden"> email</span>
+            </a>
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Job group
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.JobGroup
+          </dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="LearnerInformation">
+              Change<span class="nhsuk-u-visually-hidden"> job group</span>
+            </a>
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Professional registration number
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="LearnerInformation">
+              Change<span class="nhsuk-u-visually-hidden"> professional registration number</span>
+            </a>
+          </dd>
+        </div>
+        @foreach (var customField in Model.DelegateRegistrationPrompts)
+      {
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             @(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))

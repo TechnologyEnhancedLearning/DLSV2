@@ -145,6 +145,34 @@
         {
             AdminRoles adminRoles = model.GetAdminRoles();
 
+            if (!(adminRoles.IsCentreAdmin || adminRoles.IsSupervisor || adminRoles.IsNominatedSupervisor ||
+                adminRoles.IsContentCreator || adminRoles.IsTrainer || adminRoles.IsCentreManager || adminRoles.IsContentManager))
+            {
+                var centreId = User.GetCentreIdKnownNotNull();
+                var adminUser = userDataService.GetAdminUserById(adminId);
+
+                adminUser.IsCentreAdmin = adminRoles.IsCentreAdmin;
+                adminUser.IsSupervisor = adminRoles.IsSupervisor;
+                adminUser.IsNominatedSupervisor = adminRoles.IsNominatedSupervisor;
+                adminUser.IsContentCreator = adminRoles.IsContentCreator;
+                adminUser.IsTrainer = adminRoles.IsTrainer;
+                adminUser.IsCentreManager = adminRoles.IsCentreManager;
+                adminUser.ImportOnly = model.ContentManagementRole.ImportOnly;
+                adminUser.IsContentManager = model.ContentManagementRole.IsContentManager;
+
+
+                var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+                categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+                var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
+
+                var editRolesViewModel = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, model.ReturnPageQuery);
+
+                ModelState.Clear();
+                ModelState.AddModelError("IsCenterManager", $"Delegate must have at least one role to be an Admin.");
+                ViewBag.RequiredCheckboxMessage = "Delegate must have at least one role to be an Admin.";
+                return View(editRolesViewModel);
+            }
+
             userService.UpdateAdminUserPermissions(
                 adminId,
                 adminRoles,
@@ -167,10 +195,10 @@
         )
         {
             var adminId = User.GetAdminId();
-            var (adminUser, _) = userService.GetUsersById(adminId, null);
+            var adminUser = userService.GetAdminUserByAdminId(adminId);
             var centreName = adminUser.CentreName;
 
-            var (delegateUserEmailDetails, _) = userService.GetUsersById(adminIdToPromote, null);
+            var delegateUserEmailDetails = userService.GetAdminUserByAdminId(adminIdToPromote);
 
             if (delegateUserEmailDetails != null && adminUser != null)
             {

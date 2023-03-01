@@ -256,5 +256,17 @@
                 new { email, centreId, userId }
             ) > 0;
         }
+
+        public void DeleteUserCentreDetail(
+            int userId,
+            int centreId
+        )
+        {
+            connection.Execute(
+                @"DELETE FROM UserCentreDetails
+                    WHERE UserID = @userId AND CentreID = @centreId",
+                new { userId, centreId }
+            );
+        }
     }
 }

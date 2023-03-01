@@ -10,7 +10,8 @@
       VerifyYourEmailTextHelper.DirectionsToResendLinkByVisitingMyAccountPage(true);
 }
 
-@if (!primaryEmailIsVerified) {
+@if (!primaryEmailIsVerified)
+{
   var primaryEmailOnlyExplanation = VerifyYourEmailTextHelper.VerifyEmailLinkCommonInfo(false);
 
   <p class="nhsuk-body-m">
@@ -20,7 +21,8 @@
   </p>
 }
 
-@if (primaryEmailIsVerified && Model.SingleUnverifiedEmail) {
+@if (primaryEmailIsVerified && Model.SingleUnverifiedEmail)
+{
   <p>
     You've updated your email address
     for your account at <strong>@Model.CentreSpecificEmails.First().centreName</strong>.
@@ -30,9 +32,11 @@
   </p>
 }
 
-@if (Model.CentreSpecificEmails.Count() > 1) {
+@if (Model.CentreSpecificEmails.Count() > 1)
+{
   foreach (var ((_, centreName, centreEmail), index) in Model.CentreSpecificEmails
-    .Select((emailAndCentreNames, index) => (emailAndCentreNames, index))) {
+    .Select((emailAndCentreNames, index) => (emailAndCentreNames, index)))
+  {
     var isTheFirstEmailListed = primaryEmailIsVerified && index == 0;
     <p>
       You've @(isTheFirstEmailListed ? "" : "also") updated your email address

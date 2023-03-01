@@ -135,5 +135,5 @@
             public bool? Status { get; set; }
             public bool? DiagStatus { get; set; }
         }
-}
+    }
 }

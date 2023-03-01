@@ -29,6 +29,7 @@
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
+        private readonly ICourseDataService courseDataService;
         private readonly IClockUtility clockUtility;
 
         public LearningMenuController(
@@ -42,6 +43,7 @@
             IPostLearningAssessmentService postLearningAssessmentService,
             ISessionService sessionService,
             ICourseCompletionService courseCompletionService,
+            ICourseDataService courseDataService,
             IClockUtility clockUtility
         )
         {
@@ -56,6 +58,7 @@
             this.postLearningAssessmentService = postLearningAssessmentService;
             this.courseCompletionService = courseCompletionService;
             this.clockUtility = clockUtility;
+            this.courseDataService = courseDataService;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
@@ -64,7 +67,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             if (config.GetValue<string>("LegacyLearningMenu") != "")
             {
-                if ((config.GetValue<bool>("LegacyLearningMenu") && !configDataService.GetCentreBetaTesting(centreId))|(!config.GetValue<bool>("LegacyLearningMenu") && configDataService.GetCentreBetaTesting(centreId)))
+                if ((config.GetValue<bool>("LegacyLearningMenu") && !configDataService.GetCentreBetaTesting(centreId)) | (!config.GetValue<bool>("LegacyLearningMenu") && configDataService.GetCentreBetaTesting(centreId)))
                 {
                     string baseUrl = config.GetValue<string>("CurrentSystemBaseUrl");
                     string url = $"{baseUrl}/tracking/learn?customisationid={customisationId}&lp=1";
@@ -100,6 +103,9 @@
             }
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
+
+            SetTempData(candidateId, customisationId);
+
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
         }
@@ -117,6 +123,12 @@
                     $"centre id: {centreId.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
+            var isCompleted = courseDataService.IsCourseCompleted(candidateId, customisationId);
+            if (isCompleted)
+                TempData["LearningActivity"] = "Completed";
+            else
+                TempData["LearningActivity"] = "Available";
+
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
         }
@@ -127,7 +139,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var candidateId = User.GetCandidateIdKnownNotNull();
             var coursePassword = courseContentService.GetCoursePassword(customisationId);
-            if(coursePassword == null)
+            if (coursePassword == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as course password was null. " +
@@ -153,7 +165,7 @@
                 return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId, error = true });
             }
         }
-            [Route("/LearningMenu/Close")]
+        [Route("/LearningMenu/Close")]
         public IActionResult Close(string learningActivity)
         {
             var action = string.IsNullOrEmpty(learningActivity) ? "Current" : learningActivity;
@@ -223,6 +235,8 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
+            SetTempData(candidateId, customisationId);
+
             var model = new SectionContentViewModel(config, sectionContent, customisationId, sectionId);
             return View("Section/Section", model);
         }
@@ -235,7 +249,7 @@
             var diagnosticAssessment =
                 diagnosticAssessmentService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
 
-            if (diagnosticAssessment == null )
+            if (diagnosticAssessment == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as section/centre id was not found. " +
@@ -260,6 +274,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
+            SetTempData(candidateId, customisationId);
             var model = new DiagnosticAssessmentViewModel(diagnosticAssessment, customisationId, sectionId);
             return View("Diagnostic/Diagnostic", model);
         }
@@ -293,6 +308,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
+            SetTempData(candidateId, customisationId);
             var model = new DiagnosticContentViewModel(
                 config,
                 diagnosticContent,
@@ -339,6 +355,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
+            SetTempData(candidateId, customisationId);
             var model = new PostLearningAssessmentViewModel(postLearningAssessment, customisationId, sectionId);
             return View("PostLearning/PostLearning", model);
         }
@@ -372,6 +389,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
+            SetTempData(candidateId, customisationId);
             var model = new PostLearningContentViewModel(
                 config,
                 postLearningContent,
@@ -422,6 +440,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
+            SetTempData(candidateId, customisationId);
             /* Course progress doesn't get updated if the auth token expires by the end of the tutorials.
               Some tutorials are longer than the default auth token lifetime of 1 hour, so we set the auth expiry to 8 hours.
               See HEEDLS-637 and HEEDLS-674 for more details */
@@ -464,6 +483,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
+            SetTempData(candidateId, customisationId);
             var model = new ContentViewerViewModel(
                 config,
                 tutorialContent,
@@ -507,6 +527,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
+            SetTempData(candidateId, customisationId);
             var model = new TutorialVideoViewModel(
                 config,
                 tutorialVideo,
@@ -547,6 +568,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
+            SetTempData(candidateId, customisationId);
             var model = new CourseCompletionViewModel(config, courseCompletion, progressId.Value);
             return View("Completion/Completion", model);
         }
@@ -560,6 +582,15 @@
                 ExpiresUtc = clockUtility.UtcNow.AddHours(8)
             };
             await HttpContext.SignInAsync("Identity.Application", User, authProperties);
+        }
+
+        private void SetTempData(int candidateId, int customisationId)
+        {
+            var isCompleted = courseDataService.IsCourseCompleted(candidateId, customisationId);
+            if (isCompleted)
+                TempData["LearningActivity"] = "Completed";
+            else
+                TempData["LearningActivity"] = "Current";
         }
     }
 }

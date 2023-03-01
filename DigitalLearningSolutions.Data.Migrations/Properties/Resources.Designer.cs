@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -730,6 +730,58 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string td_1043_getactivitiesforenrolment_down {
             get {
                 return ResourceManager.GetString("td_1043_getactivitiesforenrolment_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[Candidates]    Script Date: 2/22/2023 09:29:54 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 22/02/2023
+        ///-- =============================================
+        ///
+        ///ALTER   VIEW [dbo].[Candidates] AS
+        ///SELECT dbo.DelegateAccounts.ID       AS CandidateID,
+        ///       dbo.DelegateAccounts.Active,
+        ///       dbo.DelegateAccounts.CentreID,
+        ///       dbo.Users.FirstName,
+        ///       dbo.Users.LastName,
+        ///    [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_1131_alterviewcandidatesadduserid_down {
+            get {
+                return ResourceManager.GetString("td_1131_alterviewcandidatesadduserid_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[Candidates]    Script Date: 2/22/2023 09:29:54 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 22/02/2023
+        ///-- =============================================
+        ///
+        ///ALTER   VIEW [dbo].[Candidates] AS
+        ///SELECT dbo.DelegateAccounts.ID       AS CandidateID,
+        ///       dbo.DelegateAccounts.Active,
+        ///       dbo.DelegateAccounts.CentreID,
+        ///       dbo.Users.FirstName,
+        ///       dbo.Users.LastName,
+        ///    [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_1131_alterviewcandidatesadduserid_up {
+            get {
+                return ResourceManager.GetString("td_1131_alterviewcandidatesadduserid_up", resourceCulture);
             }
         }
         

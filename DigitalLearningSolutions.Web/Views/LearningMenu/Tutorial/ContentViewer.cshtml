@@ -14,7 +14,9 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@{var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");}
+  @{
+  var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");
+}
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningMenu/contentViewer.css")" asp-append-version="true">
 
@@ -33,17 +35,19 @@
   </nav>
 }
 
-@section scripts {
+  @section scripts {
   <script src="@Url.Content("~/js/learningMenu/contentViewer.js")" asp-append-version="true"></script>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
+    </div>
   </div>
-</div>
 
-@{ var contentType = "tutorial"; }
+  @{
+  var contentType = "tutorial";
+}
 <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
 
 <partial name="Shared/_IFrameWithFullscreen" model="@Model.ContentSource" />

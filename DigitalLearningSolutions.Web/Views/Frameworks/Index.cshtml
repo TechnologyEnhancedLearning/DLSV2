@@ -22,20 +22,20 @@
 }
   <h1>Frameworks Dashboard</h1>
   <p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.Username</span>. You are accessing as a <span class="nhsuk-u-font-weight-bold">@(Model.IsFrameworkDeveloper ? "Framework Developer" : Model.IsFrameworkContributor ? "Framework Contributor" : "Framework Viewer")</span><feature name="@(FeatureFlags.WorkforceManagerInterface)"> and a <span class="nhsuk-u-font-weight-bold">@(Model.IsWorkforceManager ? "Workforce Manager" : Model.IsWorkforceContributor ? "Role Profile Contributor" : "Role Profile Viewer")</span></feature>.</p>
-<ul class="nhsuk-grid-row nhsuk-card-group">
-  <feature name="@(FeatureFlags.WorkforceManagerInterface)">
-    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-  </feature>
-  <feature name="@(FeatureFlags.WorkforceManagerInterface)" negate="true">
-    <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-  </feature>
-  <div class="nhsuk-card">
-    <div class="nhsuk-card__content">
-      <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
-        @Model.DashboardData.FrameworksCount Frameworks
-      </p>
-      <ul class="nhsuk-contents-list__list">
-        @if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
+  <ul class="nhsuk-grid-row nhsuk-card-group">
+    <feature name="@(FeatureFlags.WorkforceManagerInterface)">
+      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    </feature>
+    <feature name="@(FeatureFlags.WorkforceManagerInterface)" negate="true">
+      <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+    </feature>
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
+          @Model.DashboardData.FrameworksCount Frameworks
+        </p>
+        <ul class="nhsuk-contents-list__list">
+          @if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
         {
           <li class="nhsuk-contents-list__item"><a asp-controller="Frameworks" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewFrameworks" asp-route-tabname="Mine">Manage My Frameworks (@Model.DashboardData.MyFrameworksCount)</a></li>
         }

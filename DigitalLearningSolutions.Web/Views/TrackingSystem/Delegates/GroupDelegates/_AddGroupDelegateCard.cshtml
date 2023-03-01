@@ -18,63 +18,63 @@
 
       <dl class="nhsuk-summary-list details-list-with-button">
         <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Name
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Name" />
-    </div>
+          <dt class="nhsuk-summary-list__key">
+            Name
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Name" />
+        </div>
 
-    <div class="nhsuk-summary-list__row details-list-with-button__row">
-      <dt class="nhsuk-summary-list__key ">
-        Email
-      </dt>
-      <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.Email, "email") />
-    </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key ">
+            Email
+          </dt>
+          <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.Email, "email") />
+        </div>
 
-    <div class="nhsuk-summary-list__row details-list-with-button__row">
-      <dt class="nhsuk-summary-list__key">
-        ID
-      </dt>
-      <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.CandidateNumber, "candidate-number") />
-    </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            ID
+          </dt>
+          <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.CandidateNumber, "candidate-number") />
+        </div>
 
-    <div class="nhsuk-summary-list__row details-list-with-button__row">
-      <dt class="nhsuk-summary-list__key">
-        Registration date
-      </dt>
-      <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.RegistrationDate" />
-      <div hidden name="registration-date">@Model.DelegateInfo.RegistrationDate</div>
-    </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Registration date
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.RegistrationDate" />
+          <div hidden name="registration-date">@Model.DelegateInfo.RegistrationDate</div>
+        </div>
 
-    <div class="nhsuk-summary-list__row details-list-with-button__row">
-      <dt class="nhsuk-summary-list__key">
-        Professional Registration Number
-      </dt>
-      <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.ProfessionalRegistrationNumber" />
-    </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Professional Registration Number
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.ProfessionalRegistrationNumber" />
+        </div>
 
-    <div class="nhsuk-summary-list__row details-list-with-button__row">
-      <dt class="nhsuk-summary-list__key">
-        Job group
-      </dt>
-      <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.JobGroup" />
-      <div hidden data-filter-value="@Model.JobGroupFilter"></div>
-    </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Job group
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.JobGroup" />
+          <div hidden data-filter-value="@Model.JobGroupFilter"></div>
+        </div>
 
-    @foreach (var delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts)
-    {
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">@delegateRegistrationPrompt.Prompt</dt>
-        <partial name="_SummaryFieldValue" model="@delegateRegistrationPrompt.Answer" />
-        @if (Model.RegistrationPromptFilters.ContainsKey(delegateRegistrationPrompt.PromptNumber))
+        @foreach (var delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts)
         {
-          <div hidden data-filter-value="@Model.RegistrationPromptFilters[delegateRegistrationPrompt.PromptNumber]"></div>
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">@delegateRegistrationPrompt.Prompt</dt>
+            <partial name="_SummaryFieldValue" model="@delegateRegistrationPrompt.Answer" />
+            @if (Model.RegistrationPromptFilters.ContainsKey(delegateRegistrationPrompt.PromptNumber))
+            {
+              <div hidden data-filter-value="@Model.RegistrationPromptFilters[delegateRegistrationPrompt.PromptNumber]"></div>
+            }
+          </div>
         }
-      </div>
-    }
-    </dl>
+      </dl>
 
-</div>
+    </div>
   </details>
 
   <div class="flex-row nhsuk-u-margin-left-4" aria-hidden="false">

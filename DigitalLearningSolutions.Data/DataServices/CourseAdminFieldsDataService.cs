@@ -186,7 +186,7 @@
                 new { customisationId }
             ).Single();
 
-            return new [] { result.Item1, result.Item2, result.Item3 };
+            return new[] { result.Item1, result.Item2, result.Item3 };
         }
     }
 }

@@ -6,7 +6,7 @@
     {
         public static CentreContractAdminUsage GetDefaultNumberOfAdministrators(
             int admins = 1,
-            int centreManager=1,
+            int centreManager = 1,
             int supervisors = 2,
             int trainers = 3,
             int ccLicences = 4,
@@ -24,7 +24,7 @@
                 SupervisorCount = supervisors,
                 TrainerCount = trainers,
                 CcLicenceCount = ccLicences,
-                CentreManagerCheckCount= centreManager,
+                CentreManagerCheckCount = centreManager,
                 CmsAdministratorCount = cmsAdministrators,
                 CmsManagerCount = cmsManagers,
                 TrainerSpots = trainerSpots,

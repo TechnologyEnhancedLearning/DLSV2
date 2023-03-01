@@ -6,6 +6,7 @@
             promptNumber,
             prompt,
             answer
-        ) { }
+        )
+        { }
     }
 }

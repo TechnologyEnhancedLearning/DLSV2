@@ -1,0 +1,115 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
+@model PreviewCertificateViewModel
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head id="Head1">
+    <title>
+        Digital Learning Solutions Certificate
+    </title>
+    <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/previewCertificate.css")" asp-append-version="true">
+    <link rel="stylesheet" href="@Url.Content("~/css/nhsuk.css")" asp-append-version="true">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
+    <script type="text/javascript">
+        window.addEventListener("load", function () {
+            document.getElementById("btn").style.display = "block"
+        })
+        function hideButton() {
+            document.getElementById("btn").style.display = "none";
+        }
+    </script>
+</head>
+<body>
+    <div class="maincontentcontainer">
+        <div class="container">
+            <div class="row no-print">
+                <div class="col">
+                    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Download" asp-route-progressId="@Model.ProgressID">
+                        <button class="nhsuk-button nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-3 float-right" onclick="hideButton();" id="btn" type="submit">Download PDF</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card card-default">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="p-4 float-right">
+                    @if (Model.CentreLogo != null)
+                    {
+                                          <img id="Logo" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Image" />
+                    }
+                    else
+                    {
+                                          <img id="Logo" src="~/images/itspCertificateLogo.png" alt="Organisation Logo" />
+                    }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center style1">
+                                <div class="clearfix"></div>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style3">This is to certify that </p>
+                            </div>
+                            <div class="text-center style4">
+                                <p class="style2">
+                  @Model.DelegateName
+                                </p>
+                            </div>
+                            <div class="text-center style4">
+                                <p>&nbsp;</p>
+                                <p class="style3">has completed</p>
+                                <p class="style2">
+                  @Model.CourseName
+                                </p>
+                                <p class="style3">
+                                    Meeting the completion criteria defined for this course
+                                </p>
+                                <p class="style2">
+                                </p>
+                            </div>
+                            <div class="text-center ">
+                                <p class="style4">&nbsp;</p>
+                                <p class="style3">
+                                    on
+                  @Model.CompletionDate.ToString("dddd, dd MMMM yyyy")
+                                </p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4 nhsuk-u-font-size-16">
+                  @Model.CentreContactName, Digital Learning Solutions Centre Manager
+                                </p>
+
+                                <p class="style4 nhsuk-u-font-size-16">
+                  @Model.CentreName
+                                </p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">
+                  @if (Model.SignatureImage != null)
+                  {
+                                      <img src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Manager Signature Image" />
+                  }
+                                </p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style7">This certificate does not signify completion of BCS qualifications or MOST exams.</p>
+                                <p class="style4">&nbsp;</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.print();
+    </script>
+</body>
+</html>

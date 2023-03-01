@@ -10,7 +10,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
+      <vc:error-summary order-of-property-names="@(new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)})" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit delegate registration prompt</h1>
@@ -43,9 +43,12 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      @if (string.IsNullOrEmpty(Model.OptionsString)) {
+      @if (string.IsNullOrEmpty(Model.OptionsString))
+      {
         <partial name="_NoConfiguredAnswers" />
-      } else {
+      }
+      else
+      {
         <partial name="_RegistrationPromptAnswerTable" model="Model" />
       }
     </div>
