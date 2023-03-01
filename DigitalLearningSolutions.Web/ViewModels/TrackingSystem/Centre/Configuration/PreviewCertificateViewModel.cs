@@ -21,14 +21,13 @@
             );
 
             CourseName = certificateInformation.CourseName;
-
             SignatureImage = certificateInformation.SignatureImage;
             CentreLogo = certificateInformation.CentreLogo;
             CompletionDate = certificateInformation.CompletionDate;
             CentreName = certificateInformation.CentreName;
-            CertificateModifier = certificateInformation.CertificateModifier;
+            ProgressID = certificateInformation.ProgressID;
         }
-
+        public int ProgressID { get; set; }
         public string DelegateName { get; set; }
         public string CourseName { get; set; }
         public string? CentreContactName { get; set; }
