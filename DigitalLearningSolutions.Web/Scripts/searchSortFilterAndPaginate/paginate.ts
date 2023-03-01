@@ -81,7 +81,7 @@ function updatePageButtonVisibility(page: number, totalPages: number) {
   });
 }
 
-export function getItemsPerPageValue() : number {
+export function getItemsPerPageValue(): number {
   const itemsPerPageSelect = getItemsPerPageSelect();
   return itemsPerPageSelect !== null
     ? parseInt((itemsPerPageSelect as HTMLSelectElement).value, 10)

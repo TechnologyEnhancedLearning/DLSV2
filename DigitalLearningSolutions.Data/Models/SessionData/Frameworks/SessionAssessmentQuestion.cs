@@ -11,7 +11,7 @@
             AssessmentQuestionDetail = new AssessmentQuestionDetail();
         }
         public Guid Id { get; set; }
-        public AssessmentQuestionDetail AssessmentQuestionDetail { get; set;}
+        public AssessmentQuestionDetail AssessmentQuestionDetail { get; set; }
         public List<LevelDescriptor> LevelDescriptors { get; set; }
     }
 }

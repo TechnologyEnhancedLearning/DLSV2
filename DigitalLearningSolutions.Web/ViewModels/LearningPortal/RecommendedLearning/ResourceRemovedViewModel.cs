@@ -9,6 +9,6 @@
             SelfAssessment = selfAssessment;
         }
 
-        public SelfAssessment SelfAssessment { get; set; } 
+        public SelfAssessment SelfAssessment { get; set; }
     }
 }

@@ -11,7 +11,9 @@
 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
   <span class="nhsuk-table-responsive__heading">@ViewData["QuestionLabel"]</span>
   @Model.Question @if (!Model.Required)
-  {<span>(optional)</span>}
+  {
+    <span>(optional)</span>
+  }
 </td>
 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
   <span class="nhsuk-table-responsive__heading">Self-assessment status</span>
@@ -28,9 +30,9 @@
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           <a class="status-tag"
-             asp-action="SupervisorComments" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]"
-             asp-route-competencyNumber="@ViewData["competencyNumber"]"
-             asp-route-resultId="@Model.ResultId">
+         asp-action="SupervisorComments" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]"
+         asp-route-competencyNumber="@ViewData["competencyNumber"]"
+         asp-route-resultId="@Model.ResultId">
             @commentsLinkText
           </a>
         </div>

@@ -174,7 +174,7 @@
         public void GetCourseFieldPromptIdsForCustomisation_returns_expected_results()
         {
             // Given
-            var expectedResult = new [] { 1, 2, 0 };
+            var expectedResult = new[] { 1, 2, 0 };
 
             // When
             var result = courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(100);

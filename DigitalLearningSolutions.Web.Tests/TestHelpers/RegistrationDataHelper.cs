@@ -65,7 +65,7 @@
             string? answer4 = "answer4",
             string? answer5 = "answer5",
             string? answer6 = "answer6",
-            string? registrationConfirmationHash= "5205dcbc-3b25-4982-959b-d17f25e7c9e8"
+            string? registrationConfirmationHash = "5205dcbc-3b25-4982-959b-d17f25e7c9e8"
         )
         {
             return new DelegateRegistrationData

@@ -20,7 +20,8 @@
                 COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
                 sasr.SelfAssessmentReview,
                 sasr.ResultsReview,
-                sd.AddedByDelegate
+                sd.AddedByDelegate,
+                au.CentreName
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId
@@ -28,6 +29,7 @@
                 ON cas.CandidateAssessmentID = ca.ID
             INNER JOIN AdminUsers AS au
                 ON sd.SupervisorAdminID = au.AdminID
+            INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID AND au.CentreID = da.CentreID AND da.Active=1
             LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
                 ON cas.SelfAssessmentSupervisorRoleID = sasr.ID";
 
@@ -51,6 +53,7 @@
                 ON cas.CandidateAssessmentID = ca.ID
             LEFT OUTER JOIN AdminUsers AS au
                 ON sd.SupervisorAdminID = au.AdminID
+            INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID AND au.CentreID = da.CentreID AND da.Active=1
             LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
                 ON cas.SelfAssessmentSupervisorRoleID = sasr.ID";
 
@@ -122,7 +125,8 @@
                 FROM SupervisorDelegates AS sd
                 INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
                 INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
-                INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID AND au.Active = 1 
+                INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID AND au.Active = 1
+                INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID and au.CentreID = da.CentreID and da.Active=1
                 WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.DelegateUserID = @delegateUserId)
 		            AND (au.Supervisor = 1 OR au.NominatedSupervisor = 1) AND (au.Active = 1)
 		            AND (ca.SelfAssessmentID <> @selfAssessmentId)",

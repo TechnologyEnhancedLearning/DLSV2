@@ -9,10 +9,11 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
-      @if (errorHasOccurred) {
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
+        @if (errorHasOccurred)
+      {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.CentreSpecificEmail) })" />
       }
 

@@ -35,8 +35,11 @@
             var delegateUserId = User.GetUserIdKnownNotNull();
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var bannerText = GetBannerText();
+
+            var centreId = User.GetCentreIdKnownNotNull();
             var selfAssessments =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId, centreId);
+
             var (learningResources, apiIsAccessible) =
                 await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateUserId);
 
@@ -69,8 +72,11 @@
             var delegateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
+            var centreId = User.GetCentreIdKnownNotNull();
+
             var selfAssessment =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId, centreId);
+
             var (learningResources, _) = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateUserId);
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
             return View("Current/AllCurrentItems", model);

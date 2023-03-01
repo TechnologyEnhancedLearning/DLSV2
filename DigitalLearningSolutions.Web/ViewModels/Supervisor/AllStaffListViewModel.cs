@@ -25,7 +25,7 @@
                             1,
                             $"{supervisor.ID}-card",
                             PaginationOptions.DefaultItemsPerPage
-                        ) ,
+                        ),
                         isSupervisor
                     )
                 );

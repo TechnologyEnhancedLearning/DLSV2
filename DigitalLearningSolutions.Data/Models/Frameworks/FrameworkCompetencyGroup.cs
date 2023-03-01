@@ -4,6 +4,6 @@
     public class FrameworkCompetencyGroup : CompetencyGroupBase
     {
         public int Ordering { get; set; }
-        public List<FrameworkCompetency> FrameworkCompetencies {get; set; } = new List<FrameworkCompetency>();
+        public List<FrameworkCompetency> FrameworkCompetencies { get; set; } = new List<FrameworkCompetency>();
     }
 }

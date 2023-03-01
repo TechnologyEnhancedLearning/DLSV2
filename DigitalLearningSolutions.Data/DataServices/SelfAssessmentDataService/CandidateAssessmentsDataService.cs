@@ -8,7 +8,7 @@
 
     public partial class SelfAssessmentDataService
     {
-        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId)
+        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId)
         {
             return connection.Query<CurrentSelfAssessment>(
                 @"SELECT
@@ -40,14 +40,17 @@
                         ON SAS.CompetencyID = C.ID
                     INNER JOIN Centres AS CR
                         ON CA.CentreID = CR.CentreID
+                    INNER JOIN CentreSelfAssessments csa
+	                    ON csa.CentreID = ca.CentreID
                     WHERE CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
+                        AND ca.CentreId = @centreId
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName",
-                new { delegateUserId }
+                new { delegateUserId, centreId }
             );
         }
 

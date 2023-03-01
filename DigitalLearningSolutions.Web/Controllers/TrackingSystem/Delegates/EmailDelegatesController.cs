@@ -148,6 +148,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
                 if (viewModel.Delegates != null && viewModel.Delegates.Where(x => x.IsDelegateSelected).Count() == 0)
                 {
+                    ModelState.Clear();
+                    ModelState.AddModelError(viewModel.Delegates.FirstOrDefault().Id + "-checkbox", $"You must select at least one delegate");
                     ViewBag.RequiredCheckboxMessage = "You must select at least one delegate";
                 }
 

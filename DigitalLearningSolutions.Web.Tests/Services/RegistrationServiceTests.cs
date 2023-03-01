@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         private const string NewCandidateNumber = "TU67";
         private const string RefactoredSystemBaseUrl = "refactoredUrl";
         private const string OldSystemBaseUrl = "oldUrl";
-        private static readonly (int, string,int) NewDelegateIdAndCandidateNumber = (2, NewCandidateNumber, 61188);
+        private static readonly (int, string, int) NewDelegateIdAndCandidateNumber = (2, NewCandidateNumber, 61188);
 
         private ICentresDataService centresDataService = null!;
         private IClockUtility clockUtility = null!;

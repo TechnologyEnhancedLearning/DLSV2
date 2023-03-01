@@ -21,7 +21,7 @@
         private readonly ILogger<TrackerService> logger;
 
         private readonly JsonSerializerSettings settings = new JsonSerializerSettings
-            { ContractResolver = new LowercaseContractResolver() };
+        { ContractResolver = new LowercaseContractResolver() };
 
         private readonly ITrackerActionService trackerActionService;
 

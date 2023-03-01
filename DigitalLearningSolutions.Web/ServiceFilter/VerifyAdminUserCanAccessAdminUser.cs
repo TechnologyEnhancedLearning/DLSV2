@@ -4,7 +4,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Web.Helpers;    
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class VerifyAdminUserCanAccessAdminUser : IActionFilter
     {

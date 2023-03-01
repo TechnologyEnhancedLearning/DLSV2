@@ -221,7 +221,7 @@ export class SearchSortFilterAndPaginate {
 
   private displaySearchableElementsAndRunPostDisplayFunction(
     searchableElements: ISearchableElement[],
-  ) : void {
+  ): void {
     SearchSortFilterAndPaginate.displaySearchableElements(searchableElements);
     this.functionToRunAfterDisplayingData();
   }

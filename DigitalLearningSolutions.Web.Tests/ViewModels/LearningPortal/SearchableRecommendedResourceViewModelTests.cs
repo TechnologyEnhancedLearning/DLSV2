@@ -23,7 +23,7 @@
         {
             // Given
             var recommendedResource = new RecommendedResource
-                { RecommendationScore = recommendationScore, ResourceType = "Article" };
+            { RecommendationScore = recommendationScore, ResourceType = "Article" };
 
             // When
             var result = new SearchableRecommendedResourceViewModel(

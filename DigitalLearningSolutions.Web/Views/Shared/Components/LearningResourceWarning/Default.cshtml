@@ -4,8 +4,8 @@
 @model InsetTextViewModel
 @inject IConfiguration configuration
 
-@if (configuration.IsSignpostingUsed()) {
-  <vc:inset-text
-    css-class="@Model.CssClass"
-    text="@Model.Text" />
+@if (configuration.IsSignpostingUsed())
+{
+  <vc:inset-text css-class="@Model.CssClass"
+               text="@Model.Text" />
 }

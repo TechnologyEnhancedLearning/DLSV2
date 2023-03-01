@@ -6,7 +6,7 @@
     public class IncreaseSelfassessmentSignOffSupervisorStatementLength : Migration
     {
         public override void Up()
-        {            
+        {
             Alter.Table("SelfAssessments").AlterColumn("SignOffSupervisorStatement").AsString(2000).Nullable();
         }
 

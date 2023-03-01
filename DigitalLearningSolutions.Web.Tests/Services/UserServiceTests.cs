@@ -57,61 +57,51 @@
         }
 
         [Test]
-        public void GetUsersById_Returns_admin_user_and_delegate_user()
+        public void GetAdminUserById_Returns_admin_user()
         {
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(expectedAdminUser);
-            A.CallTo(() => userDataService.GetDelegateUserByDelegateUserId(A<int>._)).Returns(expectedDelegateUser);
 
             // When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, 2);
+            var returnedAdminUser = userService.GetAdminUserByAdminId(1);
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
+        }
+
+
+        [Test]
+        public void GetDelegateUserByDelegateUserIdAndCentreId_Returns_delegate_user()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+            A.CallTo(() => userDataService.GetDelegateUserByDelegateUserIdAndCentreId(A<int>._, A<int>._)).Returns(expectedDelegateUser);
+
+            // When
+            var returnedDelegateUser = userService.GetDelegateUserByDelegateUserIdAndCentreId(2, 0);
+
+            // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
         }
 
         [Test]
-        public void GetUsersById_Returns_admin_user()
+        public void GetAdminUserByAdminId_Returns_nulls_with_unexpected_input()
         {
-            // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(expectedAdminUser);
-
             // When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, null);
-
-            // Then
-            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
-            returnedDelegateUser.Should().BeNull();
-        }
-
-        [Test]
-        public void GetUsersById_Returns_delegate_user()
-        {
-            // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            A.CallTo(() => userDataService.GetDelegateUserByDelegateUserId(A<int>._)).Returns(expectedDelegateUser);
-
-            // When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(null, 2);
+            var returnedAdminUser = userService.GetAdminUserByAdminId(null);
 
             // Then
             returnedAdminUser.Should().BeNull();
-            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
         }
 
         [Test]
         public void GetUsersById_Returns_nulls_with_unexpected_input()
         {
             // When
-            var (returnedAdminUser, returnedDelegateUser) =
-                userService.GetUsersById(null, null);
+            var returnedDelegateUser = userService.GetDelegateUserByDelegateUserIdAndCentreId(null, null);
 
             // Then
-            returnedAdminUser.Should().BeNull();
             returnedDelegateUser.Should().BeNull();
         }
 
@@ -1048,7 +1038,7 @@
 
             var centreEmailList = new List<(int centreId, string centreName, string? centreEmail)>
                 { (centreId, centreName, centreEmail) };
-            A.CallTo(() => userDataService.GetAllActiveCentreEmailsForUser(userId,false)).Returns(
+            A.CallTo(() => userDataService.GetAllActiveCentreEmailsForUser(userId, false)).Returns(
                 isEmpty ? new List<(int centreId, string centreName, string? centreSpecificEmail)>() : centreEmailList
             );
 
@@ -1455,6 +1445,73 @@
                 cmsManagerSpots: 6,
                 cmsManagers: 6
             );
+        }
+
+        [Test]
+        public void SetCentreEmails_delete_user_centre_detail_on_empty_email()
+        {
+            // Given
+            const int userId = 2;
+            var centreEmailsByCentreId = new Dictionary<int, string?>
+            {
+                { 1, "" },
+                { 2, "" }
+            };
+            A.CallTo(() => clockUtility.UtcNow).Returns(new DateTime(2022, 5, 5));
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    A<int>._,
+                    A<int>._,
+                    A<string?>._,
+                    A<DateTime?>._,
+                    A<IDbTransaction?>._
+                )
+            ).DoesNothing();
+
+            // When
+            userService.SetCentreEmails(userId, centreEmailsByCentreId, new List<UserCentreDetails>());
+
+            // Then
+            A.CallTo(
+                () => userDataService.DeleteUserCentreDetail(userId, 1)
+            ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                () => userDataService.DeleteUserCentreDetail(userId, 2)
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void SetCentreEmails_does_not_delete_user_centre_detail_on_valid_email()
+        {
+            // Given
+            const int userId = 2;
+            var centreEmailsByCentreId = new Dictionary<int, string?>
+            {
+                { 1, "email@centre1.com" },
+                { 2, "email@centre2.com" },
+            };
+            A.CallTo(() => clockUtility.UtcNow).Returns(new DateTime(2022, 5, 5));
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    A<int>._,
+                    A<int>._,
+                    A<string?>._,
+                    A<DateTime?>._,
+                    A<IDbTransaction?>._
+                )
+            ).DoesNothing();
+
+            // When
+            userService.SetCentreEmails(userId, centreEmailsByCentreId, new List<UserCentreDetails>());
+
+            A.CallTo(
+                () => userDataService.DeleteUserCentreDetail(userId, 1)
+            ).MustNotHaveHappened();
+
+            A.CallTo(
+                () => userDataService.DeleteUserCentreDetail(userId, 2)
+            ).MustNotHaveHappened();
         }
     }
 }
