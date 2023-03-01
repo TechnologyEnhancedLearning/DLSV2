@@ -5,19 +5,28 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
-    using Microsoft.AspNetCore.Authorization;
+  using DigitalLearningSolutions.Web.Services;
+  using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
+  using DigitalLearningSolutions.Web.ViewModels.UserCentreAccounts;
+  using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
-
-    [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
+  using System.Linq;
+  [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
 
     [SetDlsSubApplication(nameof(DlsSubApplication.SuperAdmin))]
     [SetSelectedTab(nameof(NavMenuTab.Admins))]
     public class UsersController : Controller
     {
-        [Route("SuperAdmin/Users")]
+    private readonly IUserService userService;
+    private readonly IUserCentreAccountsService userCentreAccountsService;
+    public UsersController(IUserCentreAccountsService userCentreAccountsService, IUserService userService)
+    {
+      this.userService = userService;
+      this.userCentreAccountsService = userCentreAccountsService;
+    }
+    [Route("SuperAdmin/Users")]
         public IActionResult Index()
         {
             var model = new UserAccountsViewModel();
@@ -29,5 +38,22 @@
             var model = new AdministratorsViewModel();
             return View(model);
         }
+    [Route("SuperAdmin/Users/{userId:int}/CentreAccounts")]
+    public IActionResult CentreAccounts(int userId)
+    {
+      var userEntity = userService.GetUserById(userId);
+
+      var (_, unverifiedCentreEmails) =
+          userService.GetUnverifiedEmailsForUser(userId);
+      var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
+      var UserCentreAccountsRoleViewModel =
+          userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity, idsOfCentresWithUnverifiedEmails);
+      var model = new UserCentreAccountRoleViewModel(
+               UserCentreAccountsRoleViewModel.OrderByDescending(account => account.IsActiveAdmin)
+                   .ThenBy(account => account.CentreName).ToList(),
+               userEntity
+           );
+      return View("UserCentreAccounts", model);
     }
+  }
 }

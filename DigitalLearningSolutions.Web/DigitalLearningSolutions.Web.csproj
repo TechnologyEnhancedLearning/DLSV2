@@ -137,6 +137,10 @@
       <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="ViewModels\UserCentreAccounts\" />
+    </ItemGroup>
+
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
         <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
         <Exec Command="yarn install --frozen-lockfile" />
