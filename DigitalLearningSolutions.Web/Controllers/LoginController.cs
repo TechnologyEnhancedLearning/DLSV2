@@ -209,7 +209,10 @@
 
             if (adminAccount?.Active == true)
             {
-                sessionService.StartAdminSession(adminAccount.Id);
+                logger.LogWarning($"Concurrent login detected for admin user {adminAccount.Id}.");
+                sessionService.StopAllAdminSessions(adminAccount.Id);
+                var adminSessionId = sessionService.StartAdminSession(adminAccount.Id);
+                TempData["AdminSessionId"] = adminSessionId;
             }
 
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);

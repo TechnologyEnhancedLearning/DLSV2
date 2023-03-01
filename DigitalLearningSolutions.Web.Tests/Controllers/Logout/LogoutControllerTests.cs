@@ -17,7 +17,8 @@
         [SetUp]
         public void SetUp()
         {
-            controller = new LogoutController()
+            Web.Services.ISessionService sessionService = A.Fake<Web.Services.ISessionService>();
+            controller = new LogoutController(sessionService)
                 .WithDefaultContext()
                 .WithMockUser(true)
                 .WithMockServices();

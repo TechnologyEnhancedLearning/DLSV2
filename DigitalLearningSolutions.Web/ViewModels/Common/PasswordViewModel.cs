@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Web.Attributes;
 
     public class PasswordViewModel
-    {
+    { 
         [MinLength(8, ErrorMessage = CommonValidationErrorMessages.PasswordMinLength)]
         [MaxLength(100, ErrorMessage = CommonValidationErrorMessages.PasswordMaxLength)]
         [RegularExpression(
@@ -13,7 +13,6 @@
             ErrorMessage = CommonValidationErrorMessages.PasswordInvalidCharacters
         )]
         [CommonPasswords(CommonValidationErrorMessages.PasswordTooCommon)]
-        [UserName(CommonValidationErrorMessages.PasswordSimilarUsername)]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
     }
