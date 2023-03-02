@@ -11,8 +11,7 @@ namespace DigitalLearningSolutions.Web.Services
   {
 
     IEnumerable<UserCentreAccountsRoleViewModel> GetUserCentreAccountsRoleViewModel(
-        UserEntity? userEntity,
-        List<int> idsOfCentresWithUnverifiedEmails
+        UserEntity? userEntity
     );
 
     bool CentreEmailIsVerified(int userId, int centreIdIfLoggingIntoSingleCentre);
@@ -21,8 +20,7 @@ namespace DigitalLearningSolutions.Web.Services
   {
     private readonly IUserService userService;
     public IEnumerable<UserCentreAccountsRoleViewModel> GetUserCentreAccountsRoleViewModel(
-           UserEntity? userEntity,
-           List<int> idsOfCentresWithUnverifiedEmails
+           UserEntity? userEntity
        )
     {
       return userEntity!.CentreAccountSetsByCentreId.Values.Where(
@@ -36,8 +34,7 @@ namespace DigitalLearningSolutions.Web.Services
               centreAccountSet.AdminAccount?.Active == true,
               centreAccountSet.DelegateAccount != null,
               centreAccountSet.DelegateAccount?.Approved ?? false,
-              centreAccountSet.DelegateAccount?.Active ?? false,
-              idsOfCentresWithUnverifiedEmails.Contains(centreAccountSet.CentreId)
+              centreAccountSet.DelegateAccount?.Active ?? false
           )
       );
     }

@@ -20,8 +20,7 @@ namespace DigitalLearningSolutions.Data.ViewModels.UserCentreAccount
         bool isActiveAdmin,
         bool isDelegate,
         bool isDelegateApproved,
-        bool isDelegateActive,
-        bool isEmailUnverified
+        bool isDelegateActive
     )
     {
       CentreId = centreId;
@@ -31,7 +30,6 @@ namespace DigitalLearningSolutions.Data.ViewModels.UserCentreAccount
       IsDelegate = isDelegate;
       isApprovedDelegate = IsDelegate && isDelegateApproved;
       isInactiveDelegate = IsDelegate && !isDelegateActive;
-      isUnverifiedEmail = isEmailUnverified;
     }
 
     public bool IsUnapprovedDelegate => IsDelegate && !isApprovedDelegate;

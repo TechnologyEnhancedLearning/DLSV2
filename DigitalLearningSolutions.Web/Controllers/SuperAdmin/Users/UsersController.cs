@@ -42,12 +42,8 @@
     public IActionResult CentreAccounts(int userId)
     {
       var userEntity = userService.GetUserById(userId);
-
-      var (_, unverifiedCentreEmails) =
-          userService.GetUnverifiedEmailsForUser(userId);
-      var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
       var UserCentreAccountsRoleViewModel =
-          userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity, idsOfCentresWithUnverifiedEmails);
+          userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity);
       var model = new UserCentreAccountRoleViewModel(
                UserCentreAccountsRoleViewModel.OrderByDescending(account => account.IsActiveAdmin)
                    .ThenBy(account => account.CentreName).ToList(),

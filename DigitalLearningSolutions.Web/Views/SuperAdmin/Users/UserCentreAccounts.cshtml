@@ -8,10 +8,11 @@
 @*@section NavBreadcrumbs {
   <partial name="~/Views/" />
 }*@
-<h1>User centre roles</h1>
-<h2>@Model.UserEntity.UserAccount.FirstName @Model.UserEntity.UserAccount.LastName (@Model.UserEntity.UserAccount.PrimaryEmail)</h2>
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
+<h1>User centre roles</h1>
+<h2>@Model.UserEntity.UserAccount.FirstName @Model.UserEntity.UserAccount.LastName (@Model.UserEntity.UserAccount.PrimaryEmail)</h2>
+
 @if (Model.CentreUserDetails.Count > 0)
 {
   <div class="nhsuk-u-margin-bottom-6">
