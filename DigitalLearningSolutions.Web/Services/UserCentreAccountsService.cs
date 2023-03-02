@@ -14,7 +14,6 @@ namespace DigitalLearningSolutions.Web.Services
         UserEntity? userEntity
     );
 
-    bool CentreEmailIsVerified(int userId, int centreIdIfLoggingIntoSingleCentre);
   }
   public class UserCentreAccountsService:IUserCentreAccountsService
   {
@@ -37,13 +36,6 @@ namespace DigitalLearningSolutions.Web.Services
               centreAccountSet.DelegateAccount?.Active ?? false
           )
       );
-    }
-
-    public bool CentreEmailIsVerified(int userId, int centreIdIfLoggingIntoSingleCentre)
-    {
-      var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
-      return unverifiedCentreEmails.Select(uce => uce.centreId)
-          .Contains(centreIdIfLoggingIntoSingleCentre) == false;
     }
   }
 }
