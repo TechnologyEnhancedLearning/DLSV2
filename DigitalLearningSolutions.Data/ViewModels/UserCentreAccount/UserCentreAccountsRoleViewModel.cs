@@ -11,7 +11,7 @@ namespace DigitalLearningSolutions.Data.ViewModels.UserCentreAccount
     private readonly bool isCentreInactive;
     public readonly bool IsDelegate;
     private readonly bool isInactiveDelegate;
-    private readonly bool isUnverifiedEmail;
+    
 
     public UserCentreAccountsRoleViewModel(
         int centreId,
@@ -41,11 +41,6 @@ namespace DigitalLearningSolutions.Data.ViewModels.UserCentreAccount
         if (isCentreInactive)
         {
           return ChooseACentreStatus.CentreInactive;
-        }
-
-        if (isUnverifiedEmail)
-        {
-          return ChooseACentreStatus.EmailUnverified;
         }
 
         if (isInactiveDelegate)
