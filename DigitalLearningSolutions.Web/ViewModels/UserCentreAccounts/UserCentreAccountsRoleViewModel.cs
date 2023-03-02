@@ -7,13 +7,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.UserCentreAccounts
 {
     public class UserCentreAccountRoleViewModel
     {
-    public UserCentreAccountRoleViewModel(List<UserCentreAccountsRoleViewModel> centreUserDetails,
-             UserEntity userEntity)
-    {
-      CentreUserDetails = centreUserDetails;
-      UserEntity = userEntity;
+        public UserCentreAccountRoleViewModel(List<UserCentreAccountsRoleViewModel> centreUserDetails,
+                 UserEntity userEntity)
+        {
+            CentreUserDetails = centreUserDetails;
+            UserEntity = userEntity;
+        }
+        public List<UserCentreAccountsRoleViewModel> CentreUserDetails { get; set; }
+        public UserEntity UserEntity { get; set; }
     }
-    public List<UserCentreAccountsRoleViewModel> CentreUserDetails { get; set; }
-    public UserEntity UserEntity { get; set;}
-  }
 }
