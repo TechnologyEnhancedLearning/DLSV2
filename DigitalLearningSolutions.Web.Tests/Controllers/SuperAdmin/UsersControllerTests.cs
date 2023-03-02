@@ -4,6 +4,7 @@ using DigitalLearningSolutions.Data.ViewModels.UserCentreAccount;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Users;
 using DigitalLearningSolutions.Web.Services;
+using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
 using DigitalLearningSolutions.Web.ViewModels.Login;
 using DigitalLearningSolutions.Web.ViewModels.UserCentreAccounts;
 using FakeItEasy;
@@ -31,7 +32,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         {
             userService = A.Fake<IUserService>();
             userCentreAccountsService = A.Fake<IUserCentreAccountsService>();
-            controller = new UsersController(userCentreAccountsService, userService);
+            controller = new UsersController(userCentreAccountsService, userService)
+                .WithDefaultContext()
+                .WithMockHttpContextSession()
+                .WithMockTempData();
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(10));
         }
         [Test]
