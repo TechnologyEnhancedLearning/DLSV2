@@ -1088,28 +1088,92 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
         [Test]
         public void
-            PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_active_admin_already_exists()
+            PromoteDelegateToAdmin_reactivates_admin_record_if_inactive_admin_already_exists()
         {
             // Given
+            const int categoryId = 1;
             const int userId = 2;
-            var adminAccount = UserTestHelper.GetDefaultAdminAccount(userId: userId);
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(
+                active: false,
+                categoryId: categoryId,
+                userId: userId
+            );
+
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
 
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            Action action = () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, userId, 2);
+            registrationService.PromoteDelegateToAdmin(adminRoles, 1, userId, 2);
 
             // Then
-            action.Should().Throw<AdminCreationFailedException>();
-            UpdateToExistingAdminAccountMustNotHaveHappened();
+            A.CallTo(() => userDataService.ReactivateAdmin(adminAccount.Id)).MustHaveHappenedOnceExactly();
             A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    adminAccount.Id,
+                    adminRoles.IsCentreAdmin,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor,
+                    adminRoles.IsTrainer,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsContentManager,
+                    adminRoles.ImportOnly,
+                    categoryId,
+                    adminRoles.IsCentreManager
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => registrationDataService.RegisterAdmin(
+                    A<AdminAccountRegistrationModel>._,
+                    A<PossibleEmailUpdate>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_updates_existing_active_admin_if_admin_at_same_centre_already_exists()
+        {
+            // Given
+            const int categoryId = 1;
+            const int userId = 2;
+            const int centreId = 2;
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(
+                active: true,
+                categoryId: categoryId,
+                userId: userId
+            );
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
+
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
+
+            // When
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.ReactivateAdmin(adminAccount.Id)).MustNotHaveHappened();
+                A.CallTo(
+                    () => userDataService.UpdateAdminUserPermissions(
+                        adminAccount.Id,
+                        adminRoles.IsCentreAdmin,
+                        adminRoles.IsSupervisor,
+                        adminRoles.IsNominatedSupervisor,
+                        adminRoles.IsTrainer,
+                        adminRoles.IsContentCreator,
+                        adminRoles.IsContentManager,
+                        adminRoles.ImportOnly,
+                        categoryId,
+                        adminRoles.IsCentreManager
+                    )
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
                     () => registrationDataService.RegisterAdmin(
                         A<AdminAccountRegistrationModel>._,
                         A<PossibleEmailUpdate>._
                     )
-                )
-                .MustNotHaveHappened();
+                ).MustNotHaveHappened();
+            }
         }
 
         [Test]
