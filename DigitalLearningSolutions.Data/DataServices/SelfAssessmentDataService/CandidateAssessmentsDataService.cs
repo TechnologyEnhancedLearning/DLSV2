@@ -41,9 +41,8 @@
                     INNER JOIN Centres AS CR
                         ON CA.CentreID = CR.CentreID
                     INNER JOIN CentreSelfAssessments csa
-	                    ON csa.CentreID = ca.CentreID
-                    WHERE CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                        AND ca.CentreId = @centreId
+	                    ON csa.CentreID = @centreId
+                    WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL)
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
