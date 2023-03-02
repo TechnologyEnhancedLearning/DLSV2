@@ -41,6 +41,7 @@
     [Route("SuperAdmin/Users/{userId:int}/CentreAccounts")]
     public IActionResult CentreAccounts(int userId)
     {
+      TempData["UserID"] = userId;
       var userEntity = userService.GetUserById(userId);
       var UserCentreAccountsRoleViewModel =
           userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity);
