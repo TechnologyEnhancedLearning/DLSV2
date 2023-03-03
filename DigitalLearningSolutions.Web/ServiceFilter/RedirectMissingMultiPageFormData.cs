@@ -3,6 +3,7 @@
     using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -12,7 +13,7 @@
     /// </summary>
     public class RedirectMissingMultiPageFormData : IActionFilter
     {
-        private readonly MultiPageFormDataFeature feature;
+        private readonly GDS.MultiPageFormData.Enums.MultiPageFormDataFeature feature;
         private readonly IMultiPageFormService multiPageFormService;
 
         public RedirectMissingMultiPageFormData(
@@ -37,7 +38,7 @@
                     return;
                 }
 
-                if (!multiPageFormService.FormDataExistsForGuidAndFeature(feature, tempDataGuid))
+                if (!multiPageFormService.FormDataExistsForGuidAndFeature(feature, tempDataGuid).GetAwaiter().GetResult () )
                 {
                     RedirectToIndex(context, controller);
                 }

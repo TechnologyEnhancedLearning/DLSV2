@@ -17,6 +17,7 @@
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.Extensions.Configuration;
@@ -193,9 +194,9 @@
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseTempData>._,
-                        MultiPageFormDataFeature.AddNewCourse,
+                        GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
-                    )
+                    ).GetAwaiter().GetResult()
                 ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("SelectCourse");
             }
@@ -228,9 +229,9 @@
                                  d.CourseContentData == null &&
                                  d.SectionContentData == null
                         ),
-                        MultiPageFormDataFeature.AddNewCourse,
+                      GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
-                    )
+                    ).GetAwaiter ().GetResult ()
                 ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("SetCourseDetails");
             }
@@ -353,9 +354,9 @@
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseTempData>.That.Matches(d => d.CourseDetailsData != null),
-                        MultiPageFormDataFeature.AddNewCourse,
+                       GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
-                    )
+                    ).GetAwaiter ().GetResult ()
                 ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("SetCourseOptions");
             }
@@ -377,7 +378,7 @@
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseTempData>.That.Matches(d => d.CourseOptionsData != null),
-                        MultiPageFormDataFeature.AddNewCourse,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
                     )
                 ).MustHaveHappenedOnceExactly();
@@ -428,9 +429,9 @@
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseTempData>.That.Matches(d => d.CourseContentData != null),
-                        MultiPageFormDataFeature.AddNewCourse,
+                       GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
-                    )
+                    ).GetAwaiter().GetResult()
                 ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("Summary");
             }
@@ -538,9 +539,9 @@
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseTempData>.That.Matches(d => d.SectionContentData != null),
-                        MultiPageFormDataFeature.AddNewCourse,
+                      GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
-                    )
+                    ).GetAwaiter().GetResult()
                 ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("SetSectionContent");
             }
@@ -572,9 +573,9 @@
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseTempData>.That.Matches(d => d.SectionContentData != null),
-                        MultiPageFormDataFeature.AddNewCourse,
+                       GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
-                    )
+                    ).GetAwaiter().GetResult()
                 ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("Summary");
             }
@@ -697,9 +698,9 @@
             };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                    A<MultiPageFormDataFeature>._,
+                    A<GDS.MultiPageFormData.Enums.MultiPageFormDataFeature>._,
                     A<ITempDataDictionary>._
-                )
+                ).GetAwaiter ().GetResult() 
             ).Returns(initialTempData);
         }
     }

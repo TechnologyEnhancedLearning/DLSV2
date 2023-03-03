@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Web.Controllers.FrameworksController;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;

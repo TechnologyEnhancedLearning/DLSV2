@@ -17,6 +17,7 @@
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
@@ -213,9 +214,9 @@
 
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
-                    MultiPageFormDataFeature.EditAdminField,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter().GetResult()
             ).Returns(initialTempData);
 
             A.CallTo(() => courseService.VerifyAdminUserCanManageCourse(A<int>._, A<int>._, A<int>._))
@@ -236,9 +237,9 @@
                                  d.IncludeAnswersTableCaption == initialTempData.IncludeAnswersTableCaption &&
                                  d.OptionsString == inputViewModel.OptionsString
                         ),
-                        MultiPageFormDataFeature.EditAdminField,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                         controller.TempData
-                    )
+                    ).GetAwaiter ().GetResult ()
                 ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("EditAdminField");
             }
@@ -265,9 +266,9 @@
             { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult ()
             ).Returns(initialTempData);
 
             A.CallTo(
@@ -284,9 +285,9 @@
             // Then
             A.CallTo(
                 () => multiPageFormService.ClearMultiPageFormData(
-                    MultiPageFormDataFeature.AddAdminField,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult ()
             ).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
@@ -301,9 +302,9 @@
             { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult ()
             ).Returns(initialTempData);
 
             A.CallTo(
@@ -331,9 +332,9 @@
             { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult ()
             ).Returns(initialTempData);
 
             A.CallTo(
@@ -367,9 +368,9 @@
             };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult()
             ).Returns(initialTempData);
 
             var expectedData = new AddAdminFieldTempData
@@ -407,9 +408,9 @@
             };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter().GetResult()
             ).Returns(initialTempData);
 
             const string action = "addPrompt";
@@ -438,9 +439,9 @@
             { AdminFieldId = initialViewModel.AdminFieldId, OptionsString = initialViewModel.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                  GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult ()
             ).Returns(initialTempData);
             const string action = "addPrompt";
 
@@ -466,9 +467,9 @@
             { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                  GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter().GetResult()
             ).Returns(initialTempData);
 
             // When
@@ -491,9 +492,9 @@
             { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult ()
             ).Returns(initialTempData);
 
             // When
@@ -522,9 +523,9 @@
             };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                  GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter().GetResult ()
             ).Returns(initialTempData);
 
             // When
@@ -548,9 +549,9 @@
             { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                 GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult ()
             ).Returns(initialTempData);
 
             // When
@@ -574,9 +575,9 @@
             { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter().GetResult()
             ).Returns(initialTempData);
 
             // When
@@ -597,9 +598,9 @@
             { AdminFieldId = initialAddViewModel.AdminFieldId, OptionsString = initialAddViewModel.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult()
             ).Returns(initialTempData);
 
             // When
@@ -676,9 +677,9 @@
             { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                  GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult()
             ).Returns(initialTempData);
             const string action = "save";
 
@@ -705,9 +706,9 @@
             { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                    MultiPageFormDataFeature.AddAdminField,
+                  GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult()
             ).Returns(initialTempData);
             const string action = "addPrompt";
 
@@ -732,9 +733,9 @@
             { PromptNumber = model.PromptNumber, Prompt = model.Prompt, OptionsString = model.OptionsString };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
-                    MultiPageFormDataFeature.EditAdminField,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter().GetResult()
             ).Returns(initialTempData);
             const string action = "addPrompt";
 
@@ -810,9 +811,9 @@
                              d.IncludeAnswersTableCaption ==
                              expectedTempData.IncludeAnswersTableCaption
                     ),
-                    MultiPageFormDataFeature.AddAdminField,
+                  GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter ().GetResult ()
             ).MustHaveHappened();
         }
 
@@ -830,9 +831,9 @@
                              d.IncludeAnswersTableCaption ==
                              expectedTempData.IncludeAnswersTableCaption
                     ),
-                    MultiPageFormDataFeature.EditAdminField,
+                 GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                     controller.TempData
-                )
+                ).GetAwaiter().GetResult()
             ).MustHaveHappened();
         }
     }

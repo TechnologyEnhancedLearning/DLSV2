@@ -351,9 +351,9 @@
             TempData.Clear();
             multiPageFormService.SetMultiPageFormData(
                 model,
-                MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             return RedirectToAction("FilteredSelfAssessmentGroups", model);
         }
 
@@ -366,16 +366,16 @@
                 model.AppliedFilters.Clear();
                 multiPageFormService.SetMultiPageFormData(
                     model,
-                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                     TempData
-                );
+                ).GetAwaiter ().GetResult();
             }
             else
             {
                 var session = multiPageFormService.GetMultiPageFormData<SearchSelfAssessmentOvervieviewViewModel>(
-                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                     TempData
-                );
+                ).GetAwaiter ().GetResult ();
                 model.AppliedFilters = session.AppliedFilters;
             }
             return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model);
@@ -402,9 +402,9 @@
             TempData.Clear();
             multiPageFormService.SetMultiPageFormData(
                 model,
-                MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             return RedirectToAction("FilteredSelfAssessmentGroups", new { model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model.SearchText });
         }
 
@@ -612,9 +612,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
-                MultiPageFormDataFeature.AddNewSupervisor,
+              GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             return RedirectToAction("AddNewSupervisor", new { selfAssessmentId });
         }
 
@@ -626,15 +626,15 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Forbidden });
             }
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
-                MultiPageFormDataFeature.AddNewSupervisor,
+             GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
                 User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
@@ -655,9 +655,9 @@
         public IActionResult SetSupervisorName(AddSupervisorViewModel model)
         {
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             if (!ModelState.IsValid)
             {
                 var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
@@ -681,9 +681,9 @@
             {
                 multiPageFormService.SetMultiPageFormData(
                     sessionAddSupervisor,
-                    MultiPageFormDataFeature.AddNewSupervisor,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter ().GetResult ();
                 return RedirectToAction("SetSupervisorRole", new { model.SelfAssessmentID });
             }
 
@@ -695,9 +695,9 @@
             sessionAddSupervisor.SelfAssessmentSupervisorRoleId = roles.First().ID;
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
-                MultiPageFormDataFeature.AddNewSupervisor,
+              GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
         }
 
@@ -713,9 +713,9 @@
             if (supervisorDelegateId == null)
             {
                 var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                    MultiPageFormDataFeature.AddNewSupervisor,
+                  GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter ().GetResult ();
                 if (sessionAddSupervisor == null)
                 {
                     return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -723,9 +723,9 @@
 
                 multiPageFormService.SetMultiPageFormData(
                     sessionAddSupervisor,
-                    MultiPageFormDataFeature.AddNewSupervisor,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter ().GetResult ();
                 supervisorAdminId = sessionAddSupervisor.SupervisorAdminId;
                 selfAssessmentName = sessionAddSupervisor.SelfAssessmentName;
                 selfAssessmentSupervisorRoleId = sessionAddSupervisor.SelfAssessmentSupervisorRoleId;
@@ -784,9 +784,9 @@
             if (model.SupervisorDelegateId == null)
             {
                 var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                    MultiPageFormDataFeature.AddNewSupervisor,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter ().GetResult ();
                 if (sessionAddSupervisor == null)
                 {
                     return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -795,9 +795,9 @@
                 sessionAddSupervisor.SelfAssessmentSupervisorRoleId = model.SelfAssessmentSupervisorRoleId;
                 multiPageFormService.SetMultiPageFormData(
                     sessionAddSupervisor,
-                    MultiPageFormDataFeature.AddNewSupervisor,
+                 GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter ().GetResult ();
                 return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
             }
 
@@ -819,9 +819,9 @@
         public IActionResult AddSupervisorSummary(int selfAssessmentId)
         {
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
+              GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             if (sessionAddSupervisor == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -829,9 +829,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
-                MultiPageFormDataFeature.AddNewSupervisor,
+              GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
             var summaryModel = new AddSupervisorSummaryViewModel
@@ -855,9 +855,9 @@
         public async Task<IActionResult> SubmitSummary()
         {
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
 
             if (sessionAddSupervisor == null)
@@ -868,9 +868,9 @@
             if (await HttpContext.IsDuplicateSubmission()) return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
-                MultiPageFormDataFeature.AddNewSupervisor,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var candidateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
             var delegateEntity = userDataService.GetDelegateById(candidateId);
@@ -934,9 +934,9 @@
             };
             multiPageFormService.SetMultiPageFormData(
                 sessionRequestVerification,
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             return RedirectToAction("VerificationPickSupervisor", new { selfAssessmentId });
         }
 
@@ -973,9 +973,9 @@
         public IActionResult VerificationPickSupervisor(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -983,9 +983,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 sessionRequestVerification,
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+              GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult(); 
             var delegateUserId = User.GetUserIdKnownNotNull();
             var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
             var supervisors = selfAssessmentService
@@ -1005,9 +1005,9 @@
         public IActionResult VerificationPickSupervisor(VerificationPickSupervisorViewModel model)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1015,9 +1015,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 sessionRequestVerification,
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var delegateUserId = User.GetUserIdKnownNotNull();
             if (!ModelState.IsValid)
             {
@@ -1037,7 +1037,7 @@
             sessionRequestVerification.CandidateAssessmentSupervisorId = model.CandidateAssessmentSupervisorId;
             multiPageFormService.SetMultiPageFormData(
                 sessionRequestVerification,
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
             );
             return RedirectToAction("VerificationPickResults", new { sessionRequestVerification.SelfAssessmentID });
@@ -1051,9 +1051,9 @@
         public IActionResult VerificationPickResults(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1061,9 +1061,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 sessionRequestVerification,
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var competencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
                     selfAssessmentId,
@@ -1087,9 +1087,9 @@
         public IActionResult VerificationPickResults(VerificationPickResultsViewModel model, int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                 GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1112,7 +1112,7 @@
             sessionRequestVerification.ResultIds = model.ResultIds;
             multiPageFormService.SetMultiPageFormData(
                 sessionRequestVerification,
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                  GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
             );
             return RedirectToAction("VerificationSummary", new { sessionRequestVerification.SelfAssessmentID });
@@ -1127,9 +1127,9 @@
         public IActionResult VerificationSummary(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                 GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1137,9 +1137,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 sessionRequestVerification,
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                 GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult ();
             var supervisor =
                 selfAssessmentService.GetSelfAssessmentSupervisorByCandidateAssessmentSupervisorId(
                     sessionRequestVerification.CandidateAssessmentSupervisorId
@@ -1195,9 +1195,9 @@
         public IActionResult SubmitVerification()
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                 GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1205,9 +1205,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 sessionRequestVerification,
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                 GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             if (sessionRequestVerification.ResultIds == null)
             {
                 return RedirectToAction(

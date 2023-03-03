@@ -10,6 +10,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using NUnit.Framework;
@@ -20,13 +21,17 @@
         private IMultiPageFormDataService multiPageFormDataService = null!;
         private IMultiPageFormService multiPageFormService = null!;
         private ITempDataDictionary tempDataDictionary = null!;
+        public MultiPageFormServiceTests(IMultiPageFormService MultiPageFormService)
+        {
+            multiPageFormService = MultiPageFormService;
+        }
 
         [SetUp]
         public void Setup()
         {
             clockUtility = A.Fake<IClockUtility>();
             multiPageFormDataService = A.Fake<IMultiPageFormDataService>();
-            multiPageFormService = new MultiPageFormService(clockUtility, multiPageFormDataService);
+           // multiPageFormService = new   MultiPageFormService(clockUtility, multiPageFormDataService);
 
             tempDataDictionary = new TempDataDictionary(new DefaultHttpContext(), A.Fake<ITempDataProvider>());
         }
@@ -36,7 +41,7 @@
         {
             // Given
             const int objectToInsert = 12345;
-            var feature = MultiPageFormDataFeature.AddNewCourse;
+            var feature = GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse;
             var currentTime = DateTime.UtcNow;
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
@@ -70,7 +75,7 @@
         {
             // Given
             const int objectToInsert = 12345;
-            var feature = MultiPageFormDataFeature.AddNewCourse;
+            var feature = GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse;
             var currentTime = DateTime.UtcNow;
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             var guid = Guid.NewGuid();
@@ -109,7 +114,7 @@
         {
             // Given
             const int objectToInsert = 12345;
-            var feature = MultiPageFormDataFeature.AddNewCourse;
+            var feature = GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse;
             var currentTime = DateTime.UtcNow;
             var guid = Guid.NewGuid();
             tempDataDictionary[feature.TempDataKey] = guid;
@@ -148,9 +153,9 @@
         {
             // When
             Action act = () => multiPageFormService.GetMultiPageFormData<int>(
-                MultiPageFormDataFeature.AddNewCourse,
+              GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse,
                 tempDataDictionary
-            );
+            ).GetAwaiter ().GetResult ();
 
             // Then
             act.Should().Throw<MultiPageFormDataException>()
@@ -162,7 +167,7 @@
         {
             // Given
             var guid = Guid.NewGuid();
-            var feature = MultiPageFormDataFeature.AddNewCourse;
+            var feature = GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse;
             tempDataDictionary[feature.TempDataKey] = guid;
             A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
                 .Returns(null);
@@ -184,7 +189,7 @@
             // Given
             const int expectedValue = 67890;
             var guid = Guid.NewGuid();
-            var feature = MultiPageFormDataFeature.AddNewCourse;
+            var feature = GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse;
             tempDataDictionary[feature.TempDataKey] = guid;
 
             A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
@@ -218,9 +223,9 @@
         {
             // When
             Action act = () => multiPageFormService.ClearMultiPageFormData(
-                MultiPageFormDataFeature.AddNewCourse,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse,
                 tempDataDictionary
-            );
+            ).GetAwaiter().GetResult();
 
             // Then
             act.Should().Throw<MultiPageFormDataException>()
@@ -232,7 +237,7 @@
         {
             // Given
             var guid = Guid.NewGuid();
-            var feature = MultiPageFormDataFeature.AddNewCourse;
+            var feature = GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse;
             tempDataDictionary[feature.TempDataKey] = guid;
 
             // When
@@ -254,7 +259,7 @@
         {
             // Given
             var guid = Guid.NewGuid();
-            var feature = MultiPageFormDataFeature.AddNewCourse;
+            var feature = GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse;
             A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
                 .Returns(
                     new MultiPageFormData
@@ -271,7 +276,7 @@
             var result = multiPageFormService.FormDataExistsForGuidAndFeature(
                 feature,
                 guid
-            );
+            ).GetAwaiter ().GetResult ();
 
             // Then
             result.Should().BeTrue();
@@ -282,7 +287,7 @@
         {
             // Given
             var guid = Guid.NewGuid();
-            var feature = MultiPageFormDataFeature.AddNewCourse;
+            var feature = GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddNewCourse;
             A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
                 .Returns(null);
 
@@ -290,7 +295,7 @@
             var result = multiPageFormService.FormDataExistsForGuidAndFeature(
                 feature,
                 guid
-            );
+            ).GetAwaiter ().GetResult ();
 
             // Then
             result.Should().BeFalse();

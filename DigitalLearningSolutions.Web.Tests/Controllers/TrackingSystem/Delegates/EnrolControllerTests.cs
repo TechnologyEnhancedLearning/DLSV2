@@ -14,6 +14,7 @@ using NUnit.Framework;
 namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using DigitalLearningSolutions.Data.Services;
+    using GDS.MultiPageFormData;
 
     public class EnrolControllerTests
     {
@@ -61,7 +62,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
         {
             //Given
             A.CallTo(() => multiPageFormService.SetMultiPageFormData(sessionEnrolDelegate,
-                MultiPageFormDataFeature.EnrolDelegateInActivity,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EnrolDelegateInActivity,
                 tempDataDictionary));
 
             //When
@@ -71,7 +72,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             using (new AssertionScope())
             {
                 // Since MultiPageFormDataFeature.EnrolDelegateInActivity is a static method, it cannot be mocked/faked
-                A.CallTo(() => multiPageFormService.SetMultiPageFormData(A<SessionEnrolDelegate>._, MultiPageFormDataFeature.EnrolDelegateInActivity, enrolController.TempData)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => multiPageFormService.SetMultiPageFormData(A<SessionEnrolDelegate>._, GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EnrolDelegateInActivity, enrolController.TempData).GetAwaiter().GetResult () ).MustHaveHappenedOnceExactly();
 
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
 

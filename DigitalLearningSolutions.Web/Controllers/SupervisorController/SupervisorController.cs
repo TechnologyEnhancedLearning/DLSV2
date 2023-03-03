@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -16,7 +17,7 @@
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly IFrameworkService frameworkService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
-        private readonly IMultiPageFormService multiPageFormService;
+        private readonly IMultiPageFormService multiPageFormService; 
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ISupervisorService supervisorService;
         private readonly IUserDataService userDataService;

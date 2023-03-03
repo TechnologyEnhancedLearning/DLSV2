@@ -14,6 +14,7 @@
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -77,9 +78,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.EditAdminField,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
 
             return RedirectToAction("EditAdminField", new { customisationId, promptNumber });
         }
@@ -94,9 +95,9 @@
         public IActionResult EditAdminField(int customisationId)
         {
             var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
-                MultiPageFormDataFeature.EditAdminField,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
 
             return View(new EditAdminFieldViewModel(data));
         }
@@ -138,9 +139,9 @@
         public IActionResult EditAdminFieldAnswersBulk(int customisationId)
         {
             var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
-                MultiPageFormDataFeature.EditAdminField,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             var model = new BulkAdminFieldAnswersViewModel(
                 data.OptionsString
@@ -168,15 +169,15 @@
             }
 
             var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
-                MultiPageFormDataFeature.EditAdminField,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             data.OptionsString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.EditAdminField,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             return RedirectToAction("EditAdminField", new { customisationId });
         }
@@ -188,9 +189,9 @@
             TempData.Clear();
             multiPageFormService.SetMultiPageFormData(
                 new AddAdminFieldTempData(),
-                MultiPageFormDataFeature.AddAdminField,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             return RedirectToAction("AddAdminField", new { customisationId });
         }
@@ -205,9 +206,9 @@
         public IActionResult AddAdminField(int customisationId)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                MultiPageFormDataFeature.AddAdminField,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             SetViewBagAdminFieldNameOptions(data.AdminFieldId);
             return View(new AddAdminFieldViewModel(data));
@@ -249,9 +250,9 @@
         public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                MultiPageFormDataFeature.AddAdminField,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var model = new AddBulkAdminFieldAnswersViewModel(
                 data.OptionsString
             );
@@ -278,16 +279,16 @@
             }
 
             var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                MultiPageFormDataFeature.AddAdminField,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             data.OptionsString =
                 NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.AddAdminField,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             return RedirectToAction(
                 "AddAdminField",
@@ -343,7 +344,7 @@
                 model.OptionsString
             );
 
-            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.EditAdminField, TempData);
+            multiPageFormService.ClearMultiPageFormData(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField, TempData).GetAwaiter ().GetResult ();
 
             return RedirectToAction("Index", new { customisationId });
         }
@@ -364,9 +365,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.EditAdminField,
+              GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
         }
 
         private IActionResult AddAdminFieldPostSave(int customisationId, AddAdminFieldViewModel model)
@@ -385,7 +386,7 @@
                     model.OptionsString
                 ))
             {
-                multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddAdminField, TempData);
+                multiPageFormService.ClearMultiPageFormData(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField, TempData).GetAwaiter ().GetResult ();
                 return RedirectToAction("Index", new { customisationId });
             }
 
@@ -408,9 +409,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.AddAdminField,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
         }
 
         private IActionResult RemoveAdminFieldAndRedirect(int customisationId, int promptNumber)
@@ -535,18 +536,18 @@
         private void UpdateTempDataWithAddAdminFieldModelValues(AddAdminFieldViewModel model)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                MultiPageFormDataFeature.AddAdminField,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             data.OptionsString = model.OptionsString;
             data.AdminFieldId = model.AdminFieldId;
             data.Answer = model.Answer;
             data.IncludeAnswersTableCaption = model.IncludeAnswersTableCaption;
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.AddAdminField,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddAdminField,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
         }
 
         private bool IsOptionsListUnique(List<string> optionsList)

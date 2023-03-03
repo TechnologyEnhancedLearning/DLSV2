@@ -15,10 +15,11 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
-
+ 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
@@ -82,9 +83,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.EditRegistrationPrompt,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter().GetResult ();
 
             return RedirectToAction("EditRegistrationPrompt");
         }
@@ -98,9 +99,9 @@
         public IActionResult EditRegistrationPrompt()
         {
             var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(
-                MultiPageFormDataFeature.EditRegistrationPrompt,
+               GDS.MultiPageFormData.Enums. MultiPageFormDataFeature.EditRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter().GetResult(); 
 
             return View(new EditRegistrationPromptViewModel(data));
         }
@@ -136,9 +137,9 @@
         public IActionResult EditRegistrationPromptBulk()
         {
             var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(
-                MultiPageFormDataFeature.EditRegistrationPrompt,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             var model = new BulkRegistrationPromptAnswersViewModel(
                 data.OptionsString,
@@ -164,15 +165,15 @@
             }
 
             var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(
-                MultiPageFormDataFeature.EditRegistrationPrompt,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             data.OptionsString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.EditRegistrationPrompt,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             return RedirectToAction("EditRegistrationPrompt");
         }
@@ -185,9 +186,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 new AddRegistrationPromptTempData(),
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult();
 
             return RedirectToAction("AddRegistrationPromptSelectPrompt");
         }
@@ -201,9 +202,9 @@
         public IActionResult AddRegistrationPromptSelectPrompt()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             SetViewBagCustomPromptNameOptions(data.SelectPromptData.CustomPromptId);
             return View(new AddRegistrationPromptSelectPromptViewModel(data.SelectPromptData));
@@ -245,9 +246,9 @@
         public IActionResult AddRegistrationPromptConfigureAnswers()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var viewModel = new RegistrationPromptAnswersViewModel(data);
 
             return View(viewModel);
@@ -287,9 +288,9 @@
         public IActionResult AddRegistrationPromptBulk()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var model = new BulkRegistrationPromptAnswersViewModel(
                 data.ConfigureAnswersTempData.OptionsString,
                 true,
@@ -314,14 +315,14 @@
             }
 
             var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             data.ConfigureAnswersTempData!.OptionsString =
                 NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
             );
 
@@ -337,9 +338,9 @@
         public IActionResult AddRegistrationPromptSummary()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var promptName = centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList()
                 .Single(c => c.id == data.SelectPromptData.CustomPromptId).value;
             var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
@@ -356,9 +357,9 @@
         public IActionResult AddRegistrationPromptSummaryPost()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+              GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
 
             if (data.SelectPromptData.CustomPromptIdIsInPromptIdList(GetPromptIdsAlreadyAtUserCentre())
                 || data.ConfigureAnswersTempData.OptionsStringContainsDuplicates())
@@ -374,9 +375,9 @@
             ))
             {
                 multiPageFormService.ClearMultiPageFormData(
-                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                     TempData
-                );
+                ).GetAwaiter ().GetResult ();
                 return RedirectToAction("Index");
             }
 
@@ -447,7 +448,7 @@
                 model.OptionsString
             );
 
-            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.EditRegistrationPrompt, TempData);
+            multiPageFormService.ClearMultiPageFormData(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditRegistrationPrompt, TempData).GetAwaiter ().GetResult();
 
             return RedirectToAction("Index");
         }
@@ -536,9 +537,9 @@
 
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.EditRegistrationPrompt,
+              GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
         }
 
         private IActionResult RemoveRegistrationPromptAndRedirect(int promptNumber)
@@ -598,15 +599,15 @@
         )
         {
             var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             var promptName = centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList()
                 .Single(c => c.id == model.CustomPromptId).value;
             data.SelectPromptData = new AddRegistrationPromptSelectPromptData(model.CustomPromptId, model.Mandatory, promptName);
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+             GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
             );
         }
@@ -614,15 +615,15 @@
         private void UpdateMultiPageFormDataWithAnswersModelValues(RegistrationPromptAnswersViewModel model)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult ();
             data.ConfigureAnswersTempData = model.ToDataConfigureAnswersTempData();
             multiPageFormService.SetMultiPageFormData(
                 data,
-                MultiPageFormDataFeature.AddRegistrationPrompt,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter ().GetResult();
         }
 
         private bool IsOptionsListUnique(List<string> optionsList)
