@@ -2,12 +2,18 @@
 @using DigitalLearningSolutions.Web.ViewComponents
 @model UserCentreAccountRoleViewModel
 @{
-    ViewData["Title"] = "UserCentreAccounts";
+  ViewData["Title"] = "User Centre Accounts";
 }
 
-@*@section NavBreadcrumbs {
-  <partial name="~/Views/" />
-}*@
+@section NavBreadcrumbs {
+ <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+              <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="Index" asp-controller="Users">User accounts</a></li>
+      </ol>
+    </div>
+  </nav>
+}
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
 <h1>User centre roles</h1>
@@ -64,7 +70,7 @@
 }
 else
 {
-        <p>You have no centre accounts.</p>
+          <p>This user has no centre accounts.</p>
 }
 
 <vc:cancel-link asp-controller="Users" asp-action="Index" />
