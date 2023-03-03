@@ -981,7 +981,7 @@
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
                 if (supervisorDelegateDetail.DelegateUserID != null)
                 {
-                    registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId());
+                    registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId(), true);
 
                     if (delegateUser != null && adminUser != null)
                     {
