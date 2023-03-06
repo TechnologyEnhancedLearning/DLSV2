@@ -11,7 +11,9 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
-          
+            source-url: https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PAT}}
       - name: Set package source
         run: dotnet nuget add source --username kevwhitt-hee --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name githubfeed  'https://nuget.pkg.github.com/TechnologyEnhancedLearning/index.json'  
 
