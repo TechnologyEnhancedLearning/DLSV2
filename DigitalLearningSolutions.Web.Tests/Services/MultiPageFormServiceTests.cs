@@ -11,6 +11,7 @@
     using FluentAssertions;
     using FluentAssertions.Execution;
     using GDS.MultiPageFormData;
+    using LearningHub.Nhs.Caching;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using NUnit.Framework;
@@ -21,6 +22,7 @@
         private IMultiPageFormDataService multiPageFormDataService = null!;
         private IMultiPageFormService multiPageFormService = null!;
         private ITempDataDictionary tempDataDictionary = null!;
+        private ICacheService cacheService = null!;
         //public MultiPageFormServiceTests(IMultiPageFormService MultiPageFormService)
         //{
         //    multiPageFormService = MultiPageFormService;
@@ -32,7 +34,7 @@
             clockUtility = A.Fake<IClockUtility>();
             multiPageFormDataService = A.Fake<IMultiPageFormDataService>();
             // multiPageFormService = new   MultiPageFormService(clockUtility, multiPageFormDataService);
-            multiPageFormService = A.Fake<IMultiPageFormService>();
+            multiPageFormService = new MultiPageFormService(cacheService);
             tempDataDictionary = new TempDataDictionary(new DefaultHttpContext(), A.Fake<ITempDataProvider>());
         }
 
