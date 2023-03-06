@@ -58,10 +58,9 @@
             sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, u.FirstName, u.LastName, jg.JobGroupName, da.Answer1, da.Answer2, da.Answer3, da.Answer4, da.Answer5,
             da.Answer6, da.CandidateNumber, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4,
             cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE (au.CentreID, da.CentreID) AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName,
-            (SELECT COUNT(cas.ID) AS Expr1
-            FROM    CandidateAssessmentSupervisors AS cas INNER JOIN
-                      CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL
-            WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount, CAST(COALESCE (au2.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.Supervisor, 0) AS Bit) AS DelegateIsSupervisor ";
+            (SELECT COUNT(ca.ID) AS Expr1
+            FROM CandidateAssessments AS ca LEFT JOIN CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID
+            WHERE (ca.DelegateUserID = sd.DelegateUserID) AND (ca.RemovedDate IS NULL) AND (ca.CentreID = au.CentreID OR cas.CandidateAssessmentID IS NULL OR cas.SupervisorDelegateId = sd.ID)) AS CandidateAssessmentCount, CAST(COALESCE (au2.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.Supervisor, 0) AS Bit) AS DelegateIsSupervisor ";
         private const string supervisorDelegateDetailTables = @"
             JobGroups AS jg INNER JOIN
             Users AS u ON jg.JobGroupID = u.JobGroupID INNER JOIN
@@ -145,13 +144,9 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 		                cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, 
 		                COALESCE (au.CentreID, da.CentreID) AS CentreID, 
 		                au.Forename + ' ' + au.Surname AS SupervisorName,                 
-		                (SELECT COUNT(cas.ID) AS Expr1
-			                FROM    CandidateAssessmentSupervisors AS cas 
-			                INNER JOIN CandidateAssessments AS ca 
-				                ON cas.CandidateAssessmentID = ca.ID 
-				                AND cas.Removed IS NULL                 
-			                WHERE (cas.SupervisorDelegateId = sd.ID) 
-				                AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount, 
+		                (SELECT COUNT(ca.ID) AS Expr1
+                        FROM CandidateAssessments AS ca LEFT JOIN CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID
+                        WHERE (ca.DelegateUserID = sd.DelegateUserID) AND (ca.RemovedDate IS NULL) AND (ca.CentreID = au.CentreID OR cas.CandidateAssessmentID IS NULL OR cas.SupervisorDelegateId = sd.ID)) AS CandidateAssessmentCount, 
 		                CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, 
 		                CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) AS DelegateIsSupervisor,             
 		                da.ID AS Expr1
@@ -393,22 +388,24 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId)
         {
             return connection.Query<DelegateSelfAssessment>(
-                @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,
+                @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,CONVERT(BIT, IIF(cas.CandidateAssessmentID IS NULL, 0, 1)) AS IsAssignedToSupervisor,ca.DelegateUserID,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
                 {signedOffFields}
                  (SELECT COUNT(*) AS Expr1
-FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
-WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL) AND (sarsv.Superceded = 0)) AS ResultsVerificationRequests
-                 FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
-                 CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID  AND cas.Removed IS NULL INNER JOIN
+                 FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
+                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL) AND (sarsv.Superceded = 0)) AS ResultsVerificationRequests
+                 FROM   CandidateAssessments AS ca  LEFT JOIN
+                 CandidateAssessmentSupervisors AS cas ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL INNER JOIN
                  SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID LEFT OUTER JOIN
                  NRPProfessionalGroups AS pg ON sa.NRPProfessionalGroupID = pg.ID LEFT OUTER JOIN
                  NRPSubGroups AS sg ON sa.NRPSubGroupID = sg.ID LEFT OUTER JOIN
                  NRPRoles AS r ON sa.NRPRoleID = r.ID
                  LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                 WHERE (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = @supervisorDelegateId)", new { supervisorDelegateId }
+                 RIGHT OUTER JOIN SupervisorDelegates AS sd ON sd.ID=@supervisorDelegateId
+                 RIGHT OUTER JOIN AdminAccounts AS au ON au.ID = sd.SupervisorAdminID
+                 WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (ca.CentreID = au.CentreID) AND (sa.[National] = 1 OR cas.SupervisorDelegateId = @supervisorDelegateId OR cas.CandidateAssessmentID IS NULL)", new { supervisorDelegateId }
                 );
         }
         public DelegateSelfAssessment GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId)
