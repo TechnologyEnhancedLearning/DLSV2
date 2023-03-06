@@ -59,8 +59,8 @@
             da.Answer6, da.CandidateNumber, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4,
             cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE (au.CentreID, da.CentreID) AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName,
             (SELECT COUNT(ca.ID) AS Expr1
-            FROM CandidateAssessments AS ca LEFT JOIN CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID
-            WHERE (ca.DelegateUserID = sd.DelegateUserID) AND (ca.RemovedDate IS NULL) AND (ca.CentreID = au.CentreID OR cas.CandidateAssessmentID IS NULL OR cas.SupervisorDelegateId = sd.ID)) AS CandidateAssessmentCount, CAST(COALESCE (au2.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.Supervisor, 0) AS Bit) AS DelegateIsSupervisor ";
+            FROM CandidateAssessments AS ca INNER JOIN SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID LEFT JOIN CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID 
+            WHERE (ca.DelegateUserID = sd.DelegateUserID) AND (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = sd.ID  OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1))) AS CandidateAssessmentCount, CAST(COALESCE (au2.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.Supervisor, 0) AS Bit) AS DelegateIsSupervisor ";
         private const string supervisorDelegateDetailTables = @"
             JobGroups AS jg INNER JOIN
             Users AS u ON jg.JobGroupID = u.JobGroupID INNER JOIN
@@ -145,8 +145,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 		                COALESCE (au.CentreID, da.CentreID) AS CentreID, 
 		                au.Forename + ' ' + au.Surname AS SupervisorName,                 
 		                (SELECT COUNT(ca.ID) AS Expr1
-                        FROM CandidateAssessments AS ca LEFT JOIN CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID
-                        WHERE (ca.DelegateUserID = sd.DelegateUserID) AND (ca.RemovedDate IS NULL) AND (ca.CentreID = au.CentreID OR cas.CandidateAssessmentID IS NULL OR cas.SupervisorDelegateId = sd.ID)) AS CandidateAssessmentCount, 
+                        FROM CandidateAssessments AS ca INNER JOIN SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID LEFT JOIN CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID
+                        WHERE (ca.DelegateUserID = sd.DelegateUserID) AND (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = sd.ID  OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1))) AS CandidateAssessmentCount, 
 		                CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, 
 		                CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) AS DelegateIsSupervisor,             
 		                da.ID AS Expr1
@@ -405,7 +405,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
                  RIGHT OUTER JOIN SupervisorDelegates AS sd ON sd.ID=@supervisorDelegateId
                  RIGHT OUTER JOIN AdminAccounts AS au ON au.ID = sd.SupervisorAdminID
-                 WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (ca.CentreID = au.CentreID) AND (sa.[National] = 1 OR cas.SupervisorDelegateId = @supervisorDelegateId OR cas.CandidateAssessmentID IS NULL)", new { supervisorDelegateId }
+                 WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = @supervisorDelegateId OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1 ))", new { supervisorDelegateId }
                 );
         }
         public DelegateSelfAssessment GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId)
