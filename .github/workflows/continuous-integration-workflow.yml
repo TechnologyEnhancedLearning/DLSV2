@@ -12,6 +12,15 @@ jobs:
         with:
           dotnet-version: 6.0.x
           
+      - name: Add Azure artifact
+          run: dotnet nuget add source 'https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json' --name 'LearningHubFeed'  --username 'kevin.whittaker' --password ${{ secrets.AZUREDEVOPSKEY }} --store-password-in-clear-text
+
+      - name: Dotnet build
+          run:  dotnet build GDSMultiPageFormService.sln --configuration release
+
+      - name: Package nuget        
+          run: dotnet pack GDSMultiPageFormService.sln --configuration release -o:package /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2  }}
+      
       - name: Set package source
         run: dotnet nuget add source --username kevwhitt-hee --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name githubfeed  'https://nuget.pkg.github.com/TechnologyEnhancedLearning/index.json'  
 
