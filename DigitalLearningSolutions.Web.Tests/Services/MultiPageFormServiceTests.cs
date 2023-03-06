@@ -46,7 +46,7 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
-            multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
+            multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary).GetAwaiter().GetResult();
 
             // Then
             using (new AssertionScope())
@@ -84,7 +84,7 @@
                 .Returns(null);
 
             // When
-            multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
+            multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary).GetAwaiter().GetResult();
 
             // Then
             using (new AssertionScope())
@@ -131,7 +131,7 @@
                 );
 
             // When
-            multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
+            multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary).GetAwaiter().GetResult();
 
             // Then
             using (new AssertionScope())
@@ -176,7 +176,7 @@
             Action act = () => multiPageFormService.GetMultiPageFormData<int>(
                 feature,
                 tempDataDictionary
-            );
+            ).GetAwaiter ().GetResult ();
 
             // Then
             act.Should().Throw<MultiPageFormDataException>()
@@ -208,7 +208,7 @@
             var result = multiPageFormService.GetMultiPageFormData<int>(
                 feature,
                 tempDataDictionary
-            );
+            ).GetAwaiter ().GetResult ();
 
             // Then
             using (new AssertionScope())
@@ -244,7 +244,7 @@
             multiPageFormService.ClearMultiPageFormData(
                 feature,
                 tempDataDictionary
-            );
+            ).GetAwaiter ().GetResult ();
 
             // Then
             using (new AssertionScope())
