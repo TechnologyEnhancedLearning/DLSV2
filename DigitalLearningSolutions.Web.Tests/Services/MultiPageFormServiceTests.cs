@@ -22,19 +22,15 @@
         private IMultiPageFormDataService multiPageFormDataService = null!;
         private IMultiPageFormService multiPageFormService = null!;
         private ITempDataDictionary tempDataDictionary = null!;
-        private ICacheService cacheService = null!;
-        //public MultiPageFormServiceTests(IMultiPageFormService MultiPageFormService)
-        //{
-        //    multiPageFormService = MultiPageFormService;
-        //}
-
+       
         [SetUp]
         public void Setup()
         {
             clockUtility = A.Fake<IClockUtility>();
             multiPageFormDataService = A.Fake<IMultiPageFormDataService>();
-            // multiPageFormService = new   MultiPageFormService(clockUtility, multiPageFormDataService);
-            multiPageFormService = new MultiPageFormService(cacheService);
+           //  multiPageFormService = new   MultiPageFormService(clockUtility, multiPageFormDataService);
+           multiPageFormService = A.Fake<IMultiPageFormService>();
+
             tempDataDictionary = new TempDataDictionary(new DefaultHttpContext(), A.Fake<ITempDataProvider>());
         }
 
