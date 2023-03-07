@@ -699,10 +699,29 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                new { selfAssessmentId, delegateUserId });
             if (candidateAssessmentId > 0)
             {
-                int numberOfAffectedRows = connection.Execute(
-                    @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
-                            VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)", new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
-                    );
+                int candidateAssessmentSupervisorId = (int)connection.ExecuteScalar(
+                    @"SELECT COALESCE
+                    ((SELECT ID
+                    FROM    CandidateAssessmentSupervisors
+                    WHERE CandidateAssessmentID = @candidateAssessmentId AND SupervisorDelegateId = @supervisorDelegateId
+                    AND SelfAssessmentSupervisorRoleId=@selfAssessmentSupervisorRoleId AND (Removed IS NOT NULL)), 0) AS CandidateAssessmentID",
+                  new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId });
+                if (candidateAssessmentSupervisorId > 0)
+                {
+                    int numberOfAffectedRows = connection.Execute(
+                                @"UPDATE CandidateAssessmentSupervisors SET Removed = NULL WHERE CandidateAssessmentID = @candidateAssessmentId
+                                AND SupervisorDelegateId = @supervisorDelegateId
+                                AND SelfAssessmentSupervisorRoleId=@selfAssessmentSupervisorRoleId",
+                                new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+                                );
+                }
+                else
+                {
+                    int numberOfAffectedRows = connection.Execute(
+                        @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
+                        VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)", new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+                        );
+                }
             }
             return candidateAssessmentId;
         }
