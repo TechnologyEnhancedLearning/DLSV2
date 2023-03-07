@@ -43,13 +43,17 @@
           Answers
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @if (Model.Answers.Any()) {
+          @if (Model.Answers.Any())
+          {
             <ul>
-              @foreach (var answer in Model.Answers) {
+              @foreach (var answer in Model.Answers)
+              {
                 <li class="word-break">@answer</li>
               }
             </ul>
-          } else {
+          }
+          else
+          {
             <partial name="_NoConfiguredAnswers" />
           }
         </dd>

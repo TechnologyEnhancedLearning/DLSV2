@@ -24,7 +24,7 @@
   <h1 class="truncate-overflow">@Model.BaseFramework.FrameworkName</h1>
   <h2>Framework default assessment questions</h2>
   <p class="nhsuk-body-l">Default assessment questions listed here will be applied to any new competencies added to this framework. You will be able to remove default questions from competencies where appropriate and add bespoke (non-default) questions to a competency, if required.</p>
-@if (Model.BaseFramework.PublishStatusID == 3)
+  @if (Model.BaseFramework.PublishStatusID == 3)
 {
   <partial name="Shared/_PublishedWarning" />
 }

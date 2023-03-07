@@ -55,27 +55,30 @@
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
         private const string supervisorDelegateDetailFields = @"
-            sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, u.FirstName, u.LastName, jg.JobGroupName, da.Answer1, da.Answer2, da.Answer3, da.Answer4, da.Answer5,
-            da.Answer6, da.CandidateNumber, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4,
-            cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE (au.CentreID, da.CentreID) AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName,
-            (SELECT COUNT(cas.ID) AS Expr1
-            FROM    CandidateAssessmentSupervisors AS cas INNER JOIN
-                      CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL
-            WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount, CAST(COALESCE (au2.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.Supervisor, 0) AS Bit) AS DelegateIsSupervisor ";
+            sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, du.FirstName, du.LastName, jg.JobGroupName, da.Answer1, da.Answer2, da.Answer3, da.Answer4, 
+             da.Answer5, da.Answer6, da.CandidateNumber, du.ProfessionalRegistrationNumber, du.PrimaryEmail AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, 
+             cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE (aa.CentreID, da.CentreID) AS CentreID, u.FirstName + ' ' + u.LastName AS SupervisorName,
+                 (SELECT COUNT(cas.ID) AS Expr1
+                 FROM    CandidateAssessmentSupervisors AS cas INNER JOIN
+                              CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL
+                 WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount, CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) 
+             AS DelegateIsSupervisor ";
         private const string supervisorDelegateDetailTables = @"
-            JobGroups AS jg INNER JOIN
-            Users AS u ON jg.JobGroupID = u.JobGroupID INNER JOIN
-            DelegateAccounts AS da ON da.UserID = u.ID AND u.Active = 1 FULL OUTER JOIN
-            CustomPrompts AS cp5 RIGHT OUTER JOIN
-            AdminUsers AS au2 INNER JOIN
-            Centres AS ct ON au2.CentreID = ct.CentreID LEFT OUTER JOIN
-            CustomPrompts AS cp1 ON ct.CustomField1PromptID = cp1.CustomPromptID LEFT OUTER JOIN
-            CustomPrompts AS cp2 ON ct.CustomField2PromptID = cp2.CustomPromptID LEFT OUTER JOIN
-            CustomPrompts AS cp3 ON ct.CustomField3PromptID = cp3.CustomPromptID LEFT OUTER JOIN
-            CustomPrompts AS cp4 ON ct.CustomField4PromptID = cp4.CustomPromptID ON cp5.CustomPromptID = ct.CustomField5PromptID LEFT OUTER JOIN
-            CustomPrompts AS cp6 ON ct.CustomField6PromptID = cp6.CustomPromptID ON da.CentreID = ct.CentreID AND au2.CentreID = da.CentreID AND au2.Email = u.PrimaryEmail FULL OUTER JOIN
-            SupervisorDelegates AS sd LEFT OUTER JOIN
-            AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID ON da.UserID = sd.DelegateUserID AND sd.SupervisorAdminID = 1 AND sd.Removed IS NULL AND au2.Active = 1 AND au2.Approved = 1 AND au2.Email IS NOT NULL ";
+            CustomPrompts AS cp2 RIGHT OUTER JOIN
+             CustomPrompts AS cp3 RIGHT OUTER JOIN
+             CustomPrompts AS cp4 RIGHT OUTER JOIN
+             CustomPrompts AS cp5 RIGHT OUTER JOIN
+             CustomPrompts AS cp6 RIGHT OUTER JOIN
+             Centres AS ct ON cp6.CustomPromptID = ct.CustomField6PromptID ON cp5.CustomPromptID = ct.CustomField5PromptID ON cp4.CustomPromptID = ct.CustomField4PromptID ON cp3.CustomPromptID = ct.CustomField3PromptID ON 
+             cp2.CustomPromptID = ct.CustomField2PromptID LEFT OUTER JOIN
+             CustomPrompts AS cp1 ON ct.CustomField1PromptID = cp1.CustomPromptID FULL OUTER JOIN
+             DelegateAccounts AS da INNER JOIN
+             Users AS u ON da.UserID = u.ID ON ct.CentreID = da.CentreID FULL OUTER JOIN
+             Users AS du INNER JOIN
+             AdminAccounts AS au2 ON du.ID = au2.UserID RIGHT OUTER JOIN
+             JobGroups AS jg ON du.JobGroupID = jg.JobGroupID ON da.CentreID = au2.CentreID AND da.UserID = du.ID FULL OUTER JOIN
+             SupervisorDelegates AS sd INNER JOIN
+             AdminAccounts AS aa ON sd.SupervisorAdminID = aa.ID ON da.CentreID = aa.CentreID AND u.ID = sd.DelegateUserID ";
         private const string delegateSelfAssessmentFields = "ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate";
         private const string signedOffFields = @"(SELECT TOP (1) casv.Verified
 FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
@@ -211,12 +214,24 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             AND u.Active = 1 
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
+
             int existingId = (int)connection.ExecuteScalar(
-               @"SELECT COALESCE
-                 ((SELECT ID
-                  FROM    SupervisorDelegates
-                  WHERE (SupervisorEmail = @supervisorEmail) AND (DelegateEmail = @delegateEmail)), 0) AS ID",
-               new { supervisorEmail, delegateEmail });
+                @"
+                    SELECT COALESCE
+                    ((SELECT ID
+                        FROM    SupervisorDelegates sd
+                        WHERE(SupervisorEmail = @supervisorEmail) AND(DelegateEmail = @delegateEmail)
+                            AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
+                            AND(sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
+                        ), 0) AS ID",
+                new
+                {
+                    supervisorEmail,
+                    delegateEmail,
+                    supervisorAdminId = supervisorAdminId ?? 0,
+                    delegateUserId = delegateUserId ?? 0,
+                }
+            );
 
             if (existingId > 0)
             {
@@ -246,23 +261,62 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     );
                     return -1;
                 }
+
                 existingId = (int)connection.ExecuteScalar(
-                 @"SELECT COALESCE
-                 ((SELECT ID
-                  FROM    SupervisorDelegates
-                  WHERE (SupervisorEmail = @supervisorEmail) AND (DelegateEmail = @delegateEmail)), 0) AS AdminID",
-               new { supervisorEmail, delegateEmail });
-                return existingId;
+                    @"
+                    SELECT COALESCE
+                    ((SELECT ID
+                        FROM    SupervisorDelegates sd
+                        WHERE(SupervisorEmail = @supervisorEmail) AND(DelegateEmail = @delegateEmail)
+                            AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
+                            AND(sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
+                        ), 0) AS ID",
+                    new
+                    {
+                        supervisorEmail,
+                        delegateEmail,
+                        supervisorAdminId = supervisorAdminId ?? 0,
+                        delegateUserId = delegateUserId ?? 0,
+                    }
+                ); return existingId;
             }
         }
 
         public SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId)
         {
-            return connection.Query<SupervisorDelegateDetail>(
-               $@"SELECT {supervisorDelegateDetailFields}
+            var supervisorDelegateDetail = connection.Query<SupervisorDelegateDetail>(
+                $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.ID = @supervisorDelegateId) AND (sd.DelegateUserID = @delegateUserId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateUserId }
-               ).FirstOrDefault();
+            ).FirstOrDefault();
+
+            if (delegateUserId == 0)
+            {
+                if (supervisorDelegateDetail != null && supervisorDelegateDetail.DelegateUserID != null)
+                {
+                    delegateUserId = (int)supervisorDelegateDetail!.DelegateUserID!;
+                }
+            }
+
+            var delegateDetails = connection.Query<SupervisorDelegateDetail>(
+               $@"SELECT u.ID AS DelegateUserId, u.FirstName, u.LastName, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, da.CandidateNumber
+                    FROM   Users u
+                    INNER JOIN DelegateAccounts da
+                        ON da.UserID = u.ID
+                    WHERE u.ID = @delegateUserId AND u.Active = 1 AND da.Active = 1", new { delegateUserId }
+            ).FirstOrDefault();
+
+            if (supervisorDelegateDetail != null && delegateDetails != null)
+            {
+                supervisorDelegateDetail.DelegateUserID = delegateUserId;
+                supervisorDelegateDetail.FirstName = delegateDetails.FirstName;
+                supervisorDelegateDetail.LastName = delegateDetails.LastName;
+                supervisorDelegateDetail.ProfessionalRegistrationNumber = delegateDetails.ProfessionalRegistrationNumber;
+                supervisorDelegateDetail.CandidateEmail = delegateDetails.CandidateEmail;
+                supervisorDelegateDetail.CandidateNumber = delegateDetails.CandidateNumber;
+            }
+
+            return supervisorDelegateDetail!;
         }
 
         public int? ValidateDelegate(int centreId, string delegateEmail)
@@ -297,10 +351,13 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
         {
             return connection.Query<SupervisorForEnrolDelegate>(
-                $@"SELECT AdminID, Forename + ' ' + Surname AS Name, Email FROM AdminUsers AS au
+                $@"SELECT AdminID, Forename + ' ' + Surname + ' (' + CentreName +')' AS Name, Email FROM AdminUsers AS au
                     WHERE (Supervisor = 1) AND (CentreID = @CentreID) AND (CategoryID = 0 OR
                          CategoryID = (SELECT au.CategoryID FROM Applications AS a INNER JOIN
-                           Customisations AS c ON a.ApplicationID = c.ApplicationID WHERE        (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1) GROUP BY AdminID, Surname, Forename, Email ORDER BY Surname, Forename",
+                           Customisations AS c ON a.ApplicationID = c.ApplicationID
+                            WHERE (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1)
+                            GROUP BY AdminID, Surname, Forename, Email, CentreName
+                            ORDER BY Surname, Forename",
                 new { CentreID, CustomisationID });
         }
 
@@ -442,7 +499,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL) AND (sar
 						    WHERE sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID
 					)
                 WHERE (sd.SupervisorAdminID = @adminId) AND (cas.Removed IS NULL) AND (sasv.Verified IS NULL) AND (sd.Removed IS NULL)
-				GROUP BY sa.ID, ca.ID, sd.ID, u.FirstName, u.LastName, sa.Name", new { adminId }
+				GROUP BY sa.ID, ca.ID, sd.ID, u.FirstName, u.LastName, sa.Name,cast(sasv.Requested as date)", new { adminId }
                 );
         }
 

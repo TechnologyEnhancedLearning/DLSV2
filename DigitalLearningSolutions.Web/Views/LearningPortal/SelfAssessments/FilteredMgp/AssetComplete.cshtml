@@ -9,23 +9,23 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a></li>
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Recommended Learning Resources</a></li>
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-controller="RecommendedLearning" asp-action="FilteredLearningAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">Learning Resource</a></li>
-<li class="nhsuk-breadcrumb__item">Complete</li>
+  <li class="nhsuk-breadcrumb__item">Complete</li>
 }
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link trigger-loader" asp-controller="RecommendedLearning" asp-action="FilteredLearningAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-    </svg>
-    Cancel
-  </a>
-</div>
-<div class="nhsuk-form-group">
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link trigger-loader" asp-controller="RecommendedLearning" asp-action="FilteredLearningAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+      </svg>
+      Cancel
+    </a>
+  </div>
+  <div class="nhsuk-form-group">
 
-  <h1>Resource completed: @Model.Title</h1>
-  <h2 id="useful-title">Was this resource useful?</h2>
-  <div class="nhsuk-grid-row nhsuk-u-margin-top-5">
+    <h1>Resource completed: @Model.Title</h1>
+    <h2 id="useful-title">Was this resource useful?</h2>
+    <div class="nhsuk-grid-row nhsuk-u-margin-top-5">
       <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-grid-column-full nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-5 nhsuk-u-padding-2 trigger-loader" role="button"
        aria-describedby="useful-title"
        asp-controller="RecommendedLearning"
@@ -33,8 +33,8 @@
        asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])"
        asp-route-assetId="@Model.Id"
        asp-route-status="useful">
-      This was useful
-    </a>
+        This was useful
+      </a>
       <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-grid-column-full nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-5 nhsuk-u-padding-2 trigger-loader" role="button"
        aria-describedby="useful-title"
        asp-controller="RecommendedLearning"
@@ -42,16 +42,16 @@
        asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])"
        asp-route-assetId="@Model.Id"
        asp-route-status="already_know">
-      I knew this already
-    </a>
+        I knew this already
+      </a>
       <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-grid-column-full nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-5 nhsuk-u-padding-2 trigger-loader" role="button"
        aria-describedby="useful-title"
        asp-controller="RecommendedLearning"
        asp-action="SetCompleteAsset"
        asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])"
        asp-route-assetId="@Model.Id" asp-route-status="already_know">
-      This was not relevant
-    </a>
-  </div>
+        This was not relevant
+      </a>
+    </div>
 
-</div>
+  </div>

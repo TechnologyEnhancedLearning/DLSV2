@@ -21,8 +21,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
         }
 
         public int SelfAssessmentId { get; set; }
-        public int CompetencyGroupId { get; set; }  
-        public int CompetencyId { get; set; }   
+        public int CompetencyGroupId { get; set; }
+        public int CompetencyId { get; set; }
         public int CompetencyNumber { get; set; }
         public string CompetencyName { get; set; }
         [BooleanMustBeTrue(ErrorMessage = "You must check the checkbox to continue")]

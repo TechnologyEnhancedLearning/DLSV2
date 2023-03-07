@@ -9,7 +9,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+    @if (Model.JavascriptSearchSortFilterPaginateEnabled)
+    {
       <vc:loading-spinner page-has-side-nav-menu="false" />
     }
     <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
@@ -26,15 +27,19 @@
 
       <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model" />
 
-      @if (Model.NoDataFound) {
+      @if (Model.NoDataFound)
+      {
         <p>No centres found.</p>
-      } else {
+      }
+      else
+      {
         <partial name="SearchablePage/_SearchResultsCount" model="Model" />
         <partial name="SearchablePage/_TopPagination" model="Model" />
         <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
         <div id="searchable-elements">
-          @foreach (var centre in Model.CentreSummaries) {
+          @foreach (var centre in Model.CentreSummaries)
+          {
             <partial name="_CentreSummaryCard" model="centre" />
           }
         </div>

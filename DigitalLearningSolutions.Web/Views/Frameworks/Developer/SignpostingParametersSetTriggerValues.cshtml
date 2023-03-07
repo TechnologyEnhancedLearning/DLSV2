@@ -30,7 +30,7 @@
   <label class="nhsuk-label nhsuk-u-margin-bottom-4">Choose the minimum and maximum responses that will trigger signposting of this learning resource</label>
   <form method="post" asp-controller="Frameworks">
     <div class="nhsuk-form-group">
-    @if (question.AssessmentQuestionInputTypeID == 2)
+      @if (question.AssessmentQuestionInputTypeID == 2)
     {
       <partial name="Developer/_SignpostingQuestionSlider" model="Model.AssessmentQuestionParameter" />
     }

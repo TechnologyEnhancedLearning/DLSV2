@@ -6,33 +6,33 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <partial name="~/Views/TrackingSystem/Delegates/Shared/_AllDelegatesBreadcrumbs.cshtml" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Bulk upload/update delegates</h1>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">Bulk upload/update delegates</h1>
 
-    <p class="nhsuk-body-m">
-      To bulk upload and/or update delegates, download the Excel delegates file below. This file will include all existing
-      delegates, whose details you can edit. New delegates can be added by including their details on a blank row.
-    </p>
+      <p class="nhsuk-body-m">
+        To bulk upload and/or update delegates, download the Excel delegates file below. This file will include all existing
+        delegates, whose details you can edit. New delegates can be added by including their details on a blank row.
+      </p>
 
-    <p class="nhsuk-body-m">If you are unsure about the "JobGroupID" column, a reference sheet can be found in the Excel file</p>
+      <p class="nhsuk-body-m">If you are unsure about the "JobGroupID" column, a reference sheet can be found in the Excel file</p>
 
-    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="BulkUpload" asp-action="DownloadDelegates" target="_blank">
-      Download delegates
-    </a>
+      <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="BulkUpload" asp-action="DownloadDelegates" target="_blank">
+        Download delegates
+      </a>
 
-    <p class="nhsuk-body-m">
-      Once you have downloaded, amended and saved the Excel delegates sheet above, start the upload to process your changes.
-    </p>
+      <p class="nhsuk-body-m">
+        Once you have downloaded, amended and saved the Excel delegates sheet above, start the upload to process your changes.
+      </p>
 
-    <a class="nhsuk-button nhsuk-u-margin-bottom-7" role="button" asp-controller="BulkUpload" asp-action="StartUpload">
-      Start upload
-    </a>
+      <a class="nhsuk-button nhsuk-u-margin-bottom-7" role="button" asp-controller="BulkUpload" asp-action="StartUpload">
+        Start upload
+      </a>
 
-    <vc:back-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null" link-text="Go back" />
+      <vc:back-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null" link-text="Go back" />
+    </div>
   </div>
-</div>

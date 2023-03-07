@@ -1,7 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
 @model CentreConfigurationViewModel
 
-@{ var showCentreOnMap = Model.ShowCentreOnMap ? "Yes" : "No"; }
+@{
+  var showCentreOnMap = Model.ShowCentreOnMap ? "Yes" : "No";
+}
 
 <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-8">
   <summary class="nhsuk-details__summary">
@@ -80,7 +82,8 @@
     <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" asp-action="EditCentreWebsiteDetails">
       Edit
     </a>
-    @if (Model.ShowCentreOnMap) {
+    @if (Model.ShowCentreOnMap)
+    {
       <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
         Preview on website
       </a>

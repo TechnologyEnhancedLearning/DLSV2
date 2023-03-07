@@ -11,16 +11,19 @@
   <partial name="/Views/TrackingSystem/Shared/_CentreCourseSetupBreadcrumbs.cshtml" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
 
-    <h1 class="nhsuk-heading-xl word-break">@Model.CourseName</h1>
+      <h1 class="nhsuk-heading-xl word-break">@Model.CourseName</h1>
 
-    <div class="nhsuk-inset-text">
-      <span class="nhsuk-u-visually-hidden">Information: </span>
-      @if (Model.Active) {
+      <div class="nhsuk-inset-text">
+        <span class="nhsuk-u-visually-hidden">Information: </span>
+        @if (Model.Active)
+      {
         <p>This is an active course.</p>
-      } else {
+      }
+      else
+      {
         <p>This course is not active.</p>
       }
     </div>

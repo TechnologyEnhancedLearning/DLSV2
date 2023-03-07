@@ -96,7 +96,7 @@
         {
             // Given
             var query = new TrackerEndpointQueryParams
-                { Action = "GetObjectiveArray", CustomisationId = 1, SectionId = 2 };
+            { Action = "GetObjectiveArray", CustomisationId = 1, SectionId = 2 };
 
             // When
             trackerService.ProcessQuery(query, emptySessionVariablesDictionary);
@@ -120,7 +120,7 @@
                 "{\"interactions\":[17,18,19],\"tutorialid\":2,\"possible\":0,\"myscore\":0}]}";
 
             var query = new TrackerEndpointQueryParams
-                { Action = "GetObjectiveArray", CustomisationId = 1, SectionId = 1 };
+            { Action = "GetObjectiveArray", CustomisationId = 1, SectionId = 1 };
             A.CallTo(() => actionService.GetObjectiveArray(1, 1)).Returns(dataToReturn);
 
             // When
@@ -137,7 +137,7 @@
             TrackerObjectiveArray? dataToReturn = null;
 
             var query = new TrackerEndpointQueryParams
-                { Action = "GetObjectiveArray", CustomisationId = 1, SectionId = 1 };
+            { Action = "GetObjectiveArray", CustomisationId = 1, SectionId = 1 };
             A.CallTo(() => actionService.GetObjectiveArray(1, 1)).Returns(dataToReturn);
 
             // When
@@ -164,7 +164,9 @@
             // Given
             var query = new TrackerEndpointQueryParams
             {
-                Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2,
+                Action = "GetObjectiveArrayCc",
+                CustomisationId = 1,
+                SectionId = 2,
                 IsPostLearning = isPostLearningValue,
             };
 

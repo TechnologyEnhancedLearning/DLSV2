@@ -34,7 +34,7 @@
       <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
     </div>
   </details>
-@if (Model.DelegateSelfAssessments.Any())
+  @if (Model.DelegateSelfAssessments.Any())
 {
   <partial name="Shared/_DelegateProfileAssessmentGrid" model="Model.DelegateSelfAssessments" />
 }
@@ -44,7 +44,11 @@ else
 }
 @if (!Model.IsNominatedSupervisor)
 {
-  <a class="nhsuk-button nhsuk-u-margin-top-4" role="button" asp-action="StartEnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+  <a class="nhsuk-button nhsuk-u-margin-top-4"
+   role="button"
+   asp-action="StartEnrolDelegateOnProfileAssessment"
+   asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
+   asp-route-delegateUserId="@Model.SupervisorDelegateDetail.DelegateUserID">
     Enrol on new assessment
   </a>
 }

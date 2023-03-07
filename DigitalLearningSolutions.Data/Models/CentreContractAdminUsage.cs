@@ -7,7 +7,7 @@
 
     public class CentreContractAdminUsage
     {
-        public CentreContractAdminUsage() {}
+        public CentreContractAdminUsage() { }
 
         public CentreContractAdminUsage(Centre centreDetails, List<AdminUser> adminUsers)
         {

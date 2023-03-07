@@ -62,6 +62,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.userService = userService;
         }
 
+        [NoCaching]
         [Route("/TrackingSystem/Delegates/Register")]
         public IActionResult Index()
         {
@@ -195,12 +196,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult Password(PasswordViewModel model)
         {
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            RegistrationPasswordValidator.ValidatePassword(model.Password, data.FirstName, data.LastName, ModelState);
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
             data.PasswordHash = model.Password != null ? cryptoService.GetPasswordHash(model.Password) : null;
 
@@ -263,7 +265,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult Confirmation()
         {
             var delegateNumber = (string?)TempData.Peek("delegateNumber");
-            TempData.Clear();
 
             if (delegateNumber == null)
             {

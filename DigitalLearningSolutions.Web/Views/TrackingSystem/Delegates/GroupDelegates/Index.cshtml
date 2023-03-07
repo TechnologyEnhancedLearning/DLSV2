@@ -11,37 +11,41 @@
   <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateGroupBreadcrumbs.cshtml" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">@Model.GroupName</h1>
-    <partial name="~/Views/Shared/_SecondaryTabsNavMenu.cshtml" model="Model.TabsNavLinks" />
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">@Model.GroupName</h1>
+      <partial name="~/Views/Shared/_SecondaryTabsNavMenu.cshtml" model="Model.TabsNavLinks" />
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds">
-        <h2>Group delegates</h2>
-      </div>
-      <div class="nhsuk-grid-column-one-third heading-button-group">
-        <a class="nhsuk-button heading-button"
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-two-thirds">
+          <h2>Group delegates</h2>
+        </div>
+        <div class="nhsuk-grid-column-one-third heading-button-group">
+          <a class="nhsuk-button heading-button"
            role="button"
            asp-controller="GroupDelegates"
            asp-action="SelectDelegate"
            asp-route-groupId="@Model.GroupId">
-          Add
-        </a>
+            Add
+          </a>
+        </div>
       </div>
-    </div>
 
-    <form method="get">
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          @if (!Model.GroupDelegates.Any()) {
+      <form method="get">
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-full">
+            @if (!Model.GroupDelegates.Any())
+          {
             <p class="nhsuk-u-margin-top-4" role="alert">
               <b>No delegates found.</b>
             </p>
-          } else {
+          }
+          else
+          {
             <partial name="PaginatedPage/_TopPaginationNav" model="Model" />
 
-            @foreach (var groupDelegate in Model.GroupDelegates) {
+            @foreach (var groupDelegate in Model.GroupDelegates)
+            {
               <partial name="_GroupDelegateCard" model="groupDelegate" />
             }
           }

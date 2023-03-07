@@ -7,11 +7,16 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">Delegate welcome emails cued for delivery</h1>
-    @if (Model == 1) {
+    @if (Model == 1)
+    {
       <p>The selected delegate has been sent an enrolment email due for delivery on or after the date specified.</p>
-    } else if (Model == 2) {
+    }
+    else if (Model == 2)
+    {
       <p>Both selected delegates have been sent an enrolment email due for delivery on or after the date specified.</p>
-    } else {
+    }
+    else
+    {
       <p>All @Model selected delegates have been sent an enrolment email due for delivery on or after the date specified.</p>
     }
 

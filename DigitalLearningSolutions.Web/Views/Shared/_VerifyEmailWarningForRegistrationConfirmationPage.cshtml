@@ -13,21 +13,30 @@
 <div class="nhsuk-warning-callout word-break">
   <partial name="_VerifyEmailWarningHeading" model="@Model.NumberOfUnverifiedEmails" />
 
-  @if (primaryEmailIsUnverifiedAndSameAsCentreEmail) {
+  @if (primaryEmailIsUnverifiedAndSameAsCentreEmail)
+  {
     <p>
       You need to verify your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong>
       to access <strong>@Model.CentreName</strong>.
       This is also your centre email address for your account at this centre.
     </p>
-  } else {
+  }
+  else
+  {
     <p>
       You need to verify
-      @if (primaryEmailIsUnverified) {
-        @("your primary email address ")<strong>@Model.PrimaryEmailIfUnverified</strong>
+      @if (primaryEmailIsUnverified)
+      {
+        @("your primary email address ")
+
+        <strong>@Model.PrimaryEmailIfUnverified</strong>
       }
-      @if (centreEmailIsUnverified) {
+      @if (centreEmailIsUnverified)
+      {
         @(primaryEmailIsUnverified ? "and " : "")
-        @("your centre email address ")<strong>@Model.CentreEmailIfUnverified</strong>
+        @("your centre email address ")
+
+        <strong>@Model.CentreEmailIfUnverified</strong>
       }
       to access your account at <strong>@Model.CentreName</strong>.
     </p>

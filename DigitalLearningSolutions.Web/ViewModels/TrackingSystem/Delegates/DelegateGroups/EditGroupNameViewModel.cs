@@ -19,7 +19,7 @@
         [StringLength(100, ErrorMessage = CommonValidationErrorMessages.StringMaxLengthValidation)]
         [Required(ErrorMessage = "Enter a group name")]
         public string GroupName { get; set; }
-        
+
         public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

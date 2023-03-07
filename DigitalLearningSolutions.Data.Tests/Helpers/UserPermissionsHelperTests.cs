@@ -7,7 +7,7 @@
 
     public class UserPermissionsHelperTests
     {
-        
+
         [Test]
         public void LoggedInAdminCanDeactivateUser_centre_manager_should_not_be_able_to_deactivate_their_own_account()
         {

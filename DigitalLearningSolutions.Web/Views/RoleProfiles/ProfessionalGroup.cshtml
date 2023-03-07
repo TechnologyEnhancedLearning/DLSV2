@@ -8,40 +8,41 @@
 @section NavMenuItems {
   <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
   @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Role Profiles</a></li>
-          <li class="nhsuk-breadcrumb__item">Create role profile</li>
-        </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Back to role profiles</a></p>
-      </div>
-    </nav>
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Role Profiles</a></li>
+        <li class="nhsuk-breadcrumb__item">Create role profile</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Back to role profiles</a></p>
+    </div>
+  </nav>
   }
 }
 else
 {
   @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Role Profiles</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.RoleProfileBase.ID" asp-route-tabname="Details">Role Profile Details</a></li>
-          <li class="nhsuk-breadcrumb__item">Name</li>
-        </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.RoleProfileBase.ID" asp-route-tabname="Details">Back to role profile detail</a></p>
-      </div>
-    </nav>
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Role Profiles</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.RoleProfileBase.ID" asp-route-tabname="Details">Role Profile Details</a></li>
+        <li class="nhsuk-breadcrumb__item">Name</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.RoleProfileBase.ID" asp-route-tabname="Details">Back to role profile detail</a></p>
+    </div>
+  </nav>
   }
 }
 <h1>National job profile - professional group</h1>
 <form method="post">
   @if (!ViewData.ModelState.IsValid)
   {
-    <partial name="_ErrorSummary" />}
+    <partial name="_ErrorSummary" />
+  }
   <nhs-form-group nhs-validation-for="RoleProfileBase.NRPProfessionalGroupID">
     <label class="nhsuk-label" for="framework-name-hint">
       <h2>Which professional group does this role profile match to?</h2>
@@ -58,29 +59,29 @@ else
         </div>
       }
       <hr />
-      
+
       <div class="nhsuk-radios__item">
         <input class="nhsuk-radios__input" name="RoleProfileBase.NRPProfessionalGroupID" id="radio-null" checked="@(Model.RoleProfileBase.NRPProfessionalGroupID == null)" type="radio" value="">
         <text class="nhsuk-label nhsuk-radios__label" for="radio-null">
-          @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
-          {
-            <text>
-            Skip professional group and job role linking.
-          </text>
+            @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+            {
+              <text>
+              Skip professional group and job role linking.
+              </text>
 
 
-                }
-          else
-          {
-            <text>
+            }
+            else
+            {
+              <text>
               Don't link to professional group and job role.
-            </text>
+              </text>
 
-          }
+            }
           </label>
-</div>
-
       </div>
+
+    </div>
   </nhs-form-group>
   <input name="ID" type="hidden" asp-for="RoleProfileBase.ID" />
   <input name="ID" type="hidden" asp-for="RoleProfileBase.RoleProfileName" />

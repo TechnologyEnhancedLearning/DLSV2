@@ -12,12 +12,16 @@
   <title></title>
 </head>
 <body>
-@foreach (var completedActivity in Model.CompletedActivities) {
-  @if (completedActivity is CompletedCourseViewModel) {
-    <partial name="Completed/CompletedCourseCard/_CompletedCourseCard" model="completedActivity" />
-  } else {
-    <partial name="Completed/CompletedActionPlanResourceCard/_CompletedActionPlanResourceCard" model="completedActivity" />
+  @foreach (var completedActivity in Model.CompletedActivities)
+  {
+    @if (completedActivity is CompletedCourseViewModel)
+    {
+      <partial name="Completed/CompletedCourseCard/_CompletedCourseCard" model="completedActivity" />
+    }
+    else
+    {
+      <partial name="Completed/CompletedActionPlanResourceCard/_CompletedActionPlanResourceCard" model="completedActivity" />
+    }
   }
-}
 </body>
 </html>

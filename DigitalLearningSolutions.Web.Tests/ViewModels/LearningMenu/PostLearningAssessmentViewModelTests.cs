@@ -525,6 +525,6 @@
 
             // Then
             postLearningAssessmentViewModel.ShowNextButton.Should().Be(expectedShowNextButton);
-        } 
+        }
     }
 }

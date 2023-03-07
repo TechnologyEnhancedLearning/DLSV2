@@ -53,7 +53,7 @@
   <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="EditAssessmentQuestionOptions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
     Back
   </a>
-@if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
+  @if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
 {
   @if (Model.DetailFramework.PublishStatusID == 3)
   {

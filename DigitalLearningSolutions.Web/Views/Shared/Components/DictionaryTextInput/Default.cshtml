@@ -10,7 +10,8 @@
   </div>
 }
 
-@foreach (var (key, (label, value)) in Model.LabelsAndValuesById) {
+@foreach (var (key, (label, value)) in Model.LabelsAndValuesById)
+{
   var textInputViewModel = new TextInputViewModel(
     Model.IdAttributes[key],
     Model.NameAttributes[key],

@@ -38,6 +38,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Common.Faqs
 
         public string SearchableFaqAnswer => DisplayStringHelper.ReplaceNonAlphaNumericSpaceChars(AHtml, " ")!;
 
-        public override string?[] SearchableContent => new [] { SearchableName, SearchableFaqAnswer };
+        public override string?[] SearchableContent => new[] { SearchableName, SearchableFaqAnswer };
     }
 }

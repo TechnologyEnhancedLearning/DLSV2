@@ -114,6 +114,6 @@
             Guid x;
             return Guid.TryParse(value, out x);
         }
-        
+
     }
 }

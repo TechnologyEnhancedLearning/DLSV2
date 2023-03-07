@@ -302,7 +302,7 @@
             var expectedAnswersData = new RegistrationPromptAnswersTempData("Test\r\nAnswer");
 
             var initialTempData = new AddRegistrationPromptTempData
-                { SelectPromptData = initialSelectPromptData, ConfigureAnswersTempData = inputAnswersData };
+            { SelectPromptData = initialSelectPromptData, ConfigureAnswersTempData = inputAnswersData };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
@@ -343,7 +343,7 @@
             var initialAnswersData = new RegistrationPromptAnswersTempData(optionsString, newAnswerInput);
 
             var initialTempData = new AddRegistrationPromptTempData
-                { SelectPromptData = initialSelectPromptData, ConfigureAnswersTempData = initialAnswersData };
+            { SelectPromptData = initialSelectPromptData, ConfigureAnswersTempData = initialAnswersData };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
@@ -378,7 +378,7 @@
             const string action = "delete0";
 
             var initialTempData = new AddRegistrationPromptTempData
-                { SelectPromptData = initialPromptData, ConfigureAnswersTempData = initialAnswersData };
+            { SelectPromptData = initialPromptData, ConfigureAnswersTempData = initialAnswersData };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
@@ -419,7 +419,7 @@
             var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
             var initialAnswersData = new RegistrationPromptAnswersTempData("Test\r\nAnswer");
             var initialTempData = new AddRegistrationPromptTempData
-                { SelectPromptData = initialPromptData, ConfigureAnswersTempData = initialAnswersData };
+            { SelectPromptData = initialPromptData, ConfigureAnswersTempData = initialAnswersData };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
@@ -467,7 +467,7 @@
             var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
             var initialAnswersData = new RegistrationPromptAnswersTempData("Test\r\nAnswer");
             var initialTempData = new AddRegistrationPromptTempData
-                { SelectPromptData = initialPromptData, ConfigureAnswersTempData = initialAnswersData };
+            { SelectPromptData = initialPromptData, ConfigureAnswersTempData = initialAnswersData };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,

@@ -9,7 +9,7 @@
 @section NavMenuItems {
   <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -19,9 +19,9 @@
   </nav>
 }
   @if (Model.IsWorkforceContributor | Model.IsWorkforceManager)
-  {
-    <partial name="_SecondaryTabsNavMenu" model="Model.TabNavLinks"/>
-  }
+{
+  <partial name="_SecondaryTabsNavMenu" model="Model.TabNavLinks" />
+}
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if ((string)ViewContext.RouteData.Values["tabname"] == "Mine")

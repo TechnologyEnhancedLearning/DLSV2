@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Enums
 {
-    public enum  DlsRole
+    public enum DlsRole
     {
         Supervisor,
         NominatedSupervisor,

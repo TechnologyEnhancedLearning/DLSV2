@@ -1,7 +1,6 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Collections.Generic;
-    using System.Configuration;
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
@@ -54,6 +53,8 @@ namespace DigitalLearningSolutions.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+
             services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo($"C:\\keys\\{env.EnvironmentName}"))
                 .SetApplicationName("DLSSharedCookieApp");
@@ -179,6 +180,11 @@ namespace DigitalLearningSolutions.Web
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(typeof(VerifyAdminUserCanProceed));
+            });
+
             // Register services.
             RegisterServices(services);
             RegisterDataServices(services);
@@ -260,6 +266,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IActivityDataService, ActivityDataService>();
             services.AddScoped<ICentreRegistrationPromptsDataService, CentreRegistrationPromptsDataService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
+            services.AddScoped<ICertificateDataService, CertificateDataService>();
             services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
@@ -311,6 +318,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             services.AddHttpClient<ILearningHubApiClient, LearningHubApiClient>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
+            services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
@@ -341,6 +349,24 @@ namespace DigitalLearningSolutions.Web
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
         {
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("content-security-policy",
+                    "default-src 'self'; " +
+                    "script-src 'self' 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='; " +
+                    "style-src 'self' 'unsafe-inline'; " +
+                    "font-src https://assets.nhs.uk/; " +
+                    "connect-src 'self' http: ws:; " +
+                    "img-src 'self' data: https:; " +
+                    "frame-src 'self' https:");
+                context.Response.Headers.Add("Referrer-Policy", "no-referrer");
+                context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("X-Frame-Options", "deny");
+                context.Response.Headers.Add("X-XSS-protection", "0");
+                await next();
+            });
+
             app.UseForwardedHeaders(
                 new ForwardedHeadersOptions
                 {

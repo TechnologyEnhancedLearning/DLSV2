@@ -33,11 +33,14 @@
                      link-text="Support tickets"
                      is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
 
-  @if (Model.CurrentPage == SupportPage.ChangeRequests) {
+  @if (Model.CurrentPage == SupportPage.ChangeRequests)
+  {
     <li class="side-nav__item side-nav__item--selected" aria-current="page">
       <span class="nhsuk-contents-list__current">Change requests</span>
     </li>
-  } else {
+  }
+  else
+  {
     <li class="side-nav__item">
       <a class="side-nav__link" href="@SupportLinksHelper.GetChangeRequestsUrl" target="_blank" rel="noreferrer">
         Change requests

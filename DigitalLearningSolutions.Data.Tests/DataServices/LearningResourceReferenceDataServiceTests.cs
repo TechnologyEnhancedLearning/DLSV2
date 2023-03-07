@@ -48,7 +48,7 @@
         [Test]
         public void GetResourceReferenceDetailsByReferenceIds_gets_expected_records()
         {
-                using var transaction = new TransactionScope();
+            using var transaction = new TransactionScope();
 
             // Given
             var resourceReferenceIds = new[] { 1, 2, 3 };

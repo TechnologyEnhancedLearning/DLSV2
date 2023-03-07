@@ -42,6 +42,22 @@
 
             var userId = User.GetUserIdKnownNotNull();
             var (unverifiedPrimaryEmail, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
+            var unverifiedEmails = new List<string>();
+            if (unverifiedPrimaryEmail != null)
+            {
+                unverifiedEmails.Add(unverifiedPrimaryEmail);
+            }
+
+            if (unverifiedCentreEmails.Any())
+            {
+                unverifiedEmails.AddRange(unverifiedCentreEmails.Select(uce => uce.centreEmail));
+            }
+            var userEntity = userService.GetUserById(userId);
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                userEntity!.UserAccount,
+                unverifiedEmails,
+                config.GetAppRootPath()
+            );
             var model = new VerifyYourEmailViewModel(
                 emailVerificationReason,
                 unverifiedPrimaryEmail,

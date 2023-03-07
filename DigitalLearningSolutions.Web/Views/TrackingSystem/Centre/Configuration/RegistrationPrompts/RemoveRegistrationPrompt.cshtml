@@ -11,9 +11,8 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(RemoveRegistrationPromptViewModel.Confirm) }" />
+      <vc:error-summary order-of-property-names="@(new []{ nameof(RemoveRegistrationPromptViewModel.Confirm) })" />
     }
-
     <h1 class="nhsuk-heading-xl">Remove delegate registration prompt</h1>
   </div>
 </div>
@@ -22,16 +21,20 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (Model.DelegateCount == 1) {
+    @if (Model.DelegateCount == 1)
+    {
       <p class="nhsuk-body-m">@Model.DelegateCount user has responded to this prompt. Deleting the prompt will permanently delete their response.</p>
-    } else {
+    }
+    else
+    {
       <p class="nhsuk-body-m">@Model.DelegateCount users have responded to this prompt. Deleting the prompt will permanently delete their responses.</p>
     }
 
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveRegistrationPrompt">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="confirm-error">
-          @if (confirmError) {
+          @if (confirmError)
+          {
             <span class="nhsuk-error-message" id="confirm-error">
               <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(RemoveRegistrationPromptViewModel.Confirm)].Errors[0].ErrorMessage
             </span>
@@ -40,9 +43,12 @@
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" asp-for="Confirm" />
               <label class="nhsuk-label nhsuk-checkboxes__label" for="confirm">
-                @if (Model.DelegateCount == 1) {
+                @if (Model.DelegateCount == 1)
+                {
                   @:I am sure that I wish to delete this prompt and @Model.DelegateCount delegate response
-                } else {
+                }
+                else
+                {
                   @:I am sure that I wish to delete this prompt and @Model.DelegateCount delegate responses
                 }
               </label>

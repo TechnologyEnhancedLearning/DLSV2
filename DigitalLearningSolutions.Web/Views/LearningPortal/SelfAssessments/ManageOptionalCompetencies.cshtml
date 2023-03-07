@@ -17,26 +17,28 @@
   <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
 }
 
-@section mobilebacklink
-{
+  @section mobilebacklink
+  {
   <p class="nhsuk-breadcrumb__back">
     <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
-       asp-route-vocabulary="@Model.VocabPlural()"
-       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+     asp-route-vocabulary="@Model.VocabPlural()"
+     asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
       Back to @Model.VocabPlural()
     </a>
   </p>
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>Choose optional @Model.VocabPlural().ToLower()</h1>
-@if (errorHasOccurred) {
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+  <h1>Choose optional @Model.VocabPlural().ToLower()</h1>
+  @if (errorHasOccurred)
+{
   <vc:error-summary order-of-property-names="@(new[] { nameof(Model.IncludedSelfAssessmentStructureIds) })" />
 }
 <h2>
   <small>Which optional @Model.VocabPlural().ToLower() would you like to include in your self-assessment?</small>
 </h2>
-@if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null) {
+@if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null)
+{
   <div class="nhsuk-warning-callout">
     <h3 class="nhsuk-warning-callout__label">
       <span role="text">
@@ -49,14 +51,16 @@
 }
 <form method="post">
   <nhs-form-group nhs-validation-for="IncludedSelfAssessmentStructureIds">
-    @foreach (var competencyGroup in Model.CompetencyGroups) {
+    @foreach (var competencyGroup in Model.CompetencyGroups)
+    {
       <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-4">
         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
           <span class="nhsuk-fieldset__heading">
             @competencyGroup.Key
           </span>
         </legend>
-        @if (competencyGroup.Count() > 1) {
+        @if (competencyGroup.Count() > 1)
+        {
           <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
             <div class="nhsuk-grid-column-full">
               <a class="nhsuk-button select-all-button select-all status-tag" role="button" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
@@ -66,7 +70,8 @@
         }
 
         <div class="nhsuk-checkboxes">
-          @foreach (var competency in competencyGroup) {
+          @foreach (var competency in competencyGroup)
+          {
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.Key" id="competency-check-@competency.Id" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.Id) : false)" type="checkbox" value="@competency.Id">
               <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.Id">

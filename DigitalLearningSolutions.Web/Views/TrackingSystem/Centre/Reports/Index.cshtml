@@ -18,7 +18,8 @@
   <div class="nhsuk-grid-column-three-quarters">
     <h1 id="page-heading" class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    @if (Model.HasActivity) {
+    @if (Model.HasActivity)
+    {
       <span class="nhsuk-body-l">View reports for <span class="nhsuk-u-font-weight-bold">@Model.ReportsFilterModel.CourseCategoryName</span> courses.</span>
 
       <partial name="_FilterDisplayCard.cshtml" model="@Model.ReportsFilterModel" />
@@ -30,15 +31,15 @@
       </div>
       <div id="activity-graph-data-error" class="js-only-block" hidden>
         <vc:inset-text text="Too many chart data points to display. Please select a smaller date range or a bigger reporting interval to view data on a chart."
-                       css-class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4" />
+                     css-class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4" />
       </div>
       <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
 
       <a class="nhsuk-button nhsuk-u-margin-top-6"
-         asp-controller="Reports"
-         asp-action="DownloadUsageData"
-         asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
-         role="button">
+       asp-controller="Reports"
+       asp-action="DownloadUsageData"
+       asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
+       role="button">
         Download usage data
       </a>
 
@@ -47,7 +48,8 @@
       <p>Summary of evaluation responses collected from delegates on completion of learning activities.</p>
 
       <ul class="nhsuk-card-group">
-        @foreach (var evaluationSummary in Model.EvaluationSummaryBreakdown) {
+        @foreach (var evaluationSummary in Model.EvaluationSummaryBreakdown)
+        {
           <li class="nhsuk-card-group__item">
             <partial name="_EvaluationSummaryCard.cshtml" model="evaluationSummary" />
           </li>
@@ -55,13 +57,15 @@
       </ul>
 
       <a class="nhsuk-button"
-         asp-controller="Reports"
-         asp-action="DownloadEvaluationSummaries"
-         asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
-         role="button">
+       asp-controller="Reports"
+       asp-action="DownloadEvaluationSummaries"
+       asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
+       role="button">
         Download evaluation summary
       </a>
-    } else {
+    }
+    else
+    {
       var place = Model.Category == "All" ? "at this centre" : $"for course category {Model.Category}";
       <p class="nhsuk-body-l" id="no-activity-message">
         There has not yet been any activity @place.

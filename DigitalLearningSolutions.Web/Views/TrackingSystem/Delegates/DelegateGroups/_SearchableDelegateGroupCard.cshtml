@@ -18,7 +18,8 @@
           <partial name="_SummaryFieldValue" model="Model.Name" />
 
           <dd class="nhsuk-summary-list__actions">
-            @if (Model.LinkedToField == 0) {
+            @if (Model.LinkedToField == 0)
+            {
               <a asp-controller="DelegateGroups" asp-action="EditGroupName" asp-route-groupId="@Model.Id" asp-route-returnPageQuery="@Model.ReturnPageQuery" data-return-page-enabled="true">
                 Edit<span class="nhsuk-u-visually-hidden"> name</span>
               </a>
@@ -117,13 +118,12 @@
         View courses
       </a>
 
-      <a
-        class="nhsuk-button delete-button expander-card__button"
-        role="button"
-        data-return-page-enabled="true"
-        asp-action="DeleteGroup"
-        asp-route-groupId="@Model.Id"
-        asp-route-returnPageQuery="@Model.ReturnPageQuery.ToString()">
+      <a class="nhsuk-button delete-button expander-card__button"
+         role="button"
+         data-return-page-enabled="true"
+         asp-action="DeleteGroup"
+         asp-route-groupId="@Model.Id"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery.ToString()">
         Delete group
       </a>
     </div>

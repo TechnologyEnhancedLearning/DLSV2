@@ -172,7 +172,7 @@
             );
             if (supervisorDelegateId > 0)
             {
-                frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminId());
+                frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminId(), GetCentreId());
             }
         }
 
@@ -181,7 +181,7 @@
             var adminId = GetAdminId();
             if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, 0, adminId))
             {
-                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0);
+                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0, GetCentreId());
             }
 
             return RedirectToAction("MyStaffList");
@@ -231,10 +231,11 @@
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessments")]
-        public IActionResult DelegateProfileAssessments(int supervisorDelegateId)
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/{delegateUserId}/ProfileAssessments")]
+        public IActionResult DelegateProfileAssessments(int supervisorDelegateId, int delegateUserId = 0)
         {
             var adminId = GetAdminId();
-            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
@@ -388,7 +389,8 @@
                     GetAdminId(),
                     supervisorDelegateId,
                     candidateAssessmentId,
-                    resultId
+                    resultId,
+                    GetCentreId()
                 );
             }
 
@@ -489,7 +491,8 @@
                     GetAdminId(),
                     supervisorDelegateId,
                     candidateAssessmentId,
-                    countResults
+                    countResults,
+                    GetCentreId()
                 );
             }
 
@@ -821,7 +824,8 @@
                     GetAdminId(),
                     supervisorDelegateId,
                     candidateAssessmentId,
-                    completeByDate
+                    completeByDate,
+                    GetCentreId()
                 );
             }
             TempData.Clear();
@@ -839,7 +843,8 @@
             frameworkNotificationService.SendReminderDelegateSelfAssessment(
                 GetAdminId(),
                 supervisorDelegateId,
-                candidateAssessmentId
+                candidateAssessmentId,
+                GetCentreId()
             );
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
@@ -901,7 +906,8 @@
                 candidateAssessmentId,
                 model.SupervisorComments,
                 model.SignedOff,
-                GetAdminId()
+                GetAdminId(),
+                GetCentreId()
             );
             return RedirectToAction(
                 "ReviewDelegateSelfAssessment",
@@ -964,14 +970,18 @@
 
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
 
-                var (adminUser, delegateUser) = userService.GetUsersById(GetAdminId(), supervisorDelegateDetail.DelegateUserID);
+                var adminUser = userService.GetAdminUserByAdminId(GetAdminId());
+                var delegateUser = userService.GetDelegateUserByDelegateUserIdAndCentreId(
+                    supervisorDelegateDetail.DelegateUserID,
+                    (int)User.GetCentreId()
+                );
 
                 var centreName = adminUser.CentreName;
 
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
                 if (supervisorDelegateDetail.DelegateUserID != null)
                 {
-                    registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId());
+                    registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId(), true);
 
                     if (delegateUser != null && adminUser != null)
                     {
@@ -1013,7 +1023,7 @@
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(reviewId, GetAdminId(), 0);
             if (reviewId > 0)
             {
-                frameworkNotificationService.SendSupervisorDelegateInvite(reviewId, GetAdminId());
+                frameworkNotificationService.SendSupervisorDelegateReminder(reviewId, GetAdminId(), GetCentreId());
                 supervisorService.UpdateNotificationSent(reviewId);
             }
             return RedirectToAction("MyStaffList");

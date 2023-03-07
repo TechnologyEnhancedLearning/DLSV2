@@ -11,7 +11,7 @@
         public void DelegateUserCard_gets_registration_type_correctly_self_registered()
         {
             // When
-            var result = new DelegateUserCard() {SelfReg = true, ExternalReg = false};
+            var result = new DelegateUserCard() { SelfReg = true, ExternalReg = false };
 
             // Then
             result.RegistrationType.Should().Be(RegistrationType.SelfRegistered);

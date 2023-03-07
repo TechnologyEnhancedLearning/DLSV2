@@ -2,11 +2,14 @@
 @model AllRoleProfilesViewModel
 
 <h1>All Role Profiles</h1>
-@if (!Model.RoleProfiles.Any() && Model.SearchString == null) {
+@if (!Model.RoleProfiles.Any() && Model.SearchString == null)
+{
   <p class="nhsuk-u-margin-top-4" role="alert">
     <b>There are no role profiles in the system.</b>
   </p>
-} else {
+}
+else
+{
   <form method="get" role="search" asp-action="FrameworksViewAll" asp-route-page="@Model.Page">
 
     <partial name="Shared/_RoleProfilesSearchAndSort" model="Model" />

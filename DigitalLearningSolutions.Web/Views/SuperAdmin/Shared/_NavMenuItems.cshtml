@@ -3,20 +3,14 @@
 @using DigitalLearningSolutions.Web.Models.Enums
 
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Admins)">
-  <a class="nhsuk-header__navigation-link" asp-controller="Admins" asp-action="Index">
-    Admins
+  <a class="nhsuk-header__navigation-link" asp-controller="Users" asp-action="Index">
+    Users
     <partial name="_NhsChevronRight" />
   </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Centres)">
   <a class="nhsuk-header__navigation-link" asp-controller="Centres" asp-action="Index">
     Centres
-    <partial name="_NhsChevronRight" />
-  </a>
-</li>
-<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Delegates)">
-  <a class="nhsuk-header__navigation-link" href="#">
-    Delegates
     <partial name="_NhsChevronRight" />
   </a>
 </li>

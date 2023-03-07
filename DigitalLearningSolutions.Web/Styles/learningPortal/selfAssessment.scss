@@ -52,9 +52,11 @@ details.nhsuk-details {
     padding-bottom: 0;
   }
 }
+
 .nhsuk-details__summary-text {
   text-decoration: none;
 }
+
 .score {
   margin-left: 48px;
   color: $color_nhsuk-black;
@@ -216,13 +218,15 @@ details.nhsuk-details {
   border: none
 }
 
-.nhsuk-table__row:hover{
-    background-color: inherit;
+.nhsuk-table__row:hover {
+  background-color: inherit;
 }
+
 .row-outer:target {
   background-color: rgba(255, 249, 146, 1);
   animation: fade 4s forwards;
 }
+
 @keyframes fade {
   from {
     background-color: rgba(255, 249, 146, 1);
@@ -232,6 +236,7 @@ details.nhsuk-details {
     background-color: rgba(255, 249, 146, 0);
   }
 }
+
 .text-area-edit-90 {
   height: 90px
 }

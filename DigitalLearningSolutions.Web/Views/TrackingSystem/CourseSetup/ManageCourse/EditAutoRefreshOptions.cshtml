@@ -10,7 +10,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.RefreshToCustomisationId), nameof(@Model.AutoRefreshMonths) }" />
+      <vc:error-summary order-of-property-names="@(new []{ nameof(@Model.RefreshToCustomisationId), nameof(@Model.AutoRefreshMonths) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit auto-refresh options</h1>
@@ -41,7 +41,7 @@
                         type="text"
                         hint-text="How many months prior to expiry of the previous course should the learner be enrolled on the refresher course?"
                         css-class="nhsuk-input--width-10"
-                        required="false"/>
+                        required="false" />
 
       <vc:single-checkbox asp-for="@nameof(Model.ApplyLpDefaultsToSelfEnrol)"
                           label="Apply to self-enrolments"

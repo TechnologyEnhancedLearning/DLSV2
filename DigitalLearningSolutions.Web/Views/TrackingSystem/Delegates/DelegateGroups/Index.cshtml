@@ -16,7 +16,8 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+    @if (Model.JavascriptSearchSortFilterPaginateEnabled)
+    {
       <vc:loading-spinner page-has-side-nav-menu="true" />
     }
     <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
@@ -36,17 +37,21 @@
 
       <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
 
-      @if (Model.NoDataFound) {
+      @if (Model.NoDataFound)
+      {
         <p class="nhsuk-u-margin-top-4" role="alert">
           <b>No delegate groups found.</b>
         </p>
-      } else {
+      }
+      else
+      {
         <partial name="SearchablePage/_SearchResultsCount" model="Model" />
         <partial name="SearchablePage/_TopPagination" model="Model" />
         <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
         <div id="searchable-elements">
-          @foreach (var groupModel in Model.DelegateGroups) {
+          @foreach (var groupModel in Model.DelegateGroups)
+          {
             <partial name="_SearchableDelegateGroupCard" model="groupModel" />
           }
         </div>
@@ -60,7 +65,9 @@
   </div>
 </div>
 
-@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-@section scripts {
+@if (Model.JavascriptSearchSortFilterPaginateEnabled)
+{
+  @section scripts {
   <script src="@Url.Content("~/js/trackingSystem/delegateGroups.js")" asp-append-version="true"></script>
-}}
+}
+}

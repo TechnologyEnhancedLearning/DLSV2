@@ -13,7 +13,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] {
                                                    nameof(Model.FirstName),
                                                    nameof(Model.LastName),
@@ -65,37 +66,41 @@
                        css-class="nhsuk-u-width-one-half"
                        required="true" />
 
-      <vc:select-list asp-for="@nameof(Model.JobGroupId)"
-                      label="Job group"
-                      value="@Model.JobGroupId.ToString()"
-                      hint-text=""
-                      required="true"
-                      css-class="nhsuk-u-width-one-half"
-                      default-option="Select a job group"
-                      select-list-options="@Model.JobGroups" />
+        <vc:select-list asp-for="@nameof(Model.JobGroupId)"
+                        label="Job group"
+                        value="@Model.JobGroupId.ToString()"
+                        hint-text=""
+                        required="true"
+                        css-class="nhsuk-u-width-one-half"
+                        default-option="Select a job group"
+                        select-list-options="@Model.JobGroups" />
         <partial name="_EditRegistrationNumber" model="@Model" />
       </div>
 
-      @foreach (var customField in Model.CustomFields) {
-        @if (customField.Options.Any()) {
+      @foreach (var customField in Model.CustomFields)
+      {
+        @if (customField.Options.Any())
+        {
           <vc:select-list asp-for="@("Answer" + customField.PromptNumber)"
-                          label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
-                          value="@customField.Answer"
-                          hint-text=""
-                          required="@(customField.Mandatory)"
-                          css-class="nhsuk-u-width-one-half"
-                          default-option="Select a @customField.Prompt.ToLower()"
-                          select-list-options="@customField.Options" />
-        } else {
+                      label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
+                      value="@customField.Answer"
+                      hint-text=""
+                      required="@(customField.Mandatory)"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a @customField.Prompt.ToLower()"
+                      select-list-options="@customField.Options" />
+        }
+        else
+        {
           <vc:text-input asp-for="@("Answer" + customField.PromptNumber)"
-                         label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
-                         populate-with-current-value="true"
-                         type="text"
-                         spell-check="false"
-                         autocomplete=""
-                         hint-text=""
-                         css-class="nhsuk-u-width-one-half"
-                         required="@customField.Mandatory" />
+                     label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     autocomplete=""
+                     hint-text=""
+                     css-class="nhsuk-u-width-one-half"
+                     required="@customField.Mandatory" />
         }
       }
 

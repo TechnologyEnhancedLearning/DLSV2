@@ -11,7 +11,7 @@ namespace DigitalLearningSolutions.Web.Extensions
                 case DlsRole.NominatedSupervisor:
                     return "Nominated supervisor";
                 default:
-                    return role.ToString();                   
+                    return role.ToString();
             }
         }
 
