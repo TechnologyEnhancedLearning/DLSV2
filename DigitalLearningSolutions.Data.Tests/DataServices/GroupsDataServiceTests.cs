@@ -42,7 +42,7 @@
                 GroupId = 34,
                 GroupLabel = "Social care - unspecified",
                 GroupDescription = null,
-                DelegateCount = 0,
+                DelegateCount = 1,
                 CoursesCount = 0,
                 AddedByAdminId = 1,
                 AddedByFirstName = "Kevin",

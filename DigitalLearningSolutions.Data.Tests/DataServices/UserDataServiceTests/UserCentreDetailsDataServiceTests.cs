@@ -316,6 +316,7 @@
             const string delegateOnlyCentreEmail = "centre2@email.com";
             const string adminOnlyCentreEmail = "centre3@email.com";
             const string adminAndDelegateCentreEmail = "centre101@email.com";
+            const string candidateNumber = "AAAAA";
 
             var delegateOnlyCentreName = connection.QuerySingleOrDefault<string>(
                 @"SELECT CentreName FROM Centres WHERE CentreID = @delegateOnlyCentreId",
@@ -343,6 +344,12 @@
                     (@userId, @nullCentreEmailCentreId, 1)",
                 new { userId, adminOnlyCentreId, nullCentreEmailCentreId }
             );
+
+            connection.Execute(
+               @"INSERT INTO DelegateAccounts (UserId, CentreId, DateRegistered, CandidateNumber, Active) VALUES
+                    (@userId, @delegateOnlyCentreId, GETDATE(), @candidateNumber, 1)",
+               new { userId, delegateOnlyCentreId, candidateNumber }
+           );
 
             connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES
