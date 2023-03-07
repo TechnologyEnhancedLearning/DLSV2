@@ -15,6 +15,8 @@
         void StopAdminSession(int? adminId, int adminSessionId);
 
         void StopAllAdminSessions(int? adminId);
+
+        bool hasAdminGotActiveSessions(int? adminId);
     }
 
     public class SessionService : ISessionService
@@ -75,6 +77,15 @@
             {
                 sessionDataService.StopAllAdminSessions((int)adminId);
             }
+        }
+
+        public bool hasAdminGotActiveSessions(int? adminId)
+        {
+            if (adminId != null)
+            {
+                return sessionDataService.HasAdminGotActiveSessions((int)adminId);
+            }
+            return false;
         }
     }
 }
