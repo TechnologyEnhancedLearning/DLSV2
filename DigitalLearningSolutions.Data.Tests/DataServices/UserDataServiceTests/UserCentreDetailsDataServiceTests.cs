@@ -336,7 +336,7 @@
                 @"SELECT CentreName FROM Centres WHERE CentreID = @nullCentreEmailCentreId",
                 new { nullCentreEmailCentreId }
             );
-
+            
             connection.Execute(
                 @"INSERT INTO AdminAccounts (UserID, CentreID, Active) VALUES
                     (@userId, @adminOnlyCentreId, 0),
@@ -365,7 +365,7 @@
             var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
 
             // Then
-            result.Count.Should().Be(3);
+            result.Count.Should().Be(4);
             result.Should()
                 .ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
             result.Should().ContainEquivalentOf((adminOnlyCentreId, adminOnlyCentreName, adminOnlyCentreEmail));
