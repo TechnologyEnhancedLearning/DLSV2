@@ -22,9 +22,18 @@ namespace DigitalLearningSolutions.Data.Migrations
 
         public override void Up()
         {
+            Execute.Sql(@" WITH CTEUpdate AS( SELECT ID, 
+                         RANK() OVER(PARTITION BY CandidateAssessmentID,SupervisorDelegateId,SelfAssessmentSupervisorRoleID ORDER BY id) rank
+                         FROM CandidateAssessmentSupervisors)
+                         UPDATE CandidateAssessmentSupervisorVerifications
+                         SET CandidateAssessmentSupervisorID = C.ID     
+                         FROM CandidateAssessmentSupervisorVerifications CASV
+                              INNER JOIN CTEUpdate C 
+                              ON C.ID  = CASV.CandidateAssessmentSupervisorID
+                         WHERE C.rank =1");
             Execute.Sql(@"DELETE CAS
                           FROM CandidateAssessmentSupervisors CAS
-                          INNER JOIN
+                          INNER JOIN    
                           (
                             SELECT *, 
                             RANK() OVER(PARTITION BY CandidateAssessmentID, 
