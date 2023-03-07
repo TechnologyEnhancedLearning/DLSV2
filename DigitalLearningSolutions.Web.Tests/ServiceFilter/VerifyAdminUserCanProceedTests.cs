@@ -48,14 +48,17 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
         }
 
         [Test]
-        public void OnActionExecuting_returns_without_redirect_if_user_is_not_admin()
+        [TestCase("0", true)]
+        [TestCase("1234", false)]
+        public void OnActionExecuting_returns_without_redirect_if_user_is_not_admin(string userAdminId, bool expectNull)
         {
             // Given
             var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData()
                 .WithMockUser(true, 101);
             var httpContext = new DefaultHttpContext();
-            Claim[] claims = new Claim[1];
-            claims[0] = new Claim("UserUserAdmin", "False");
+            Claim[] claims = new Claim[2];
+            claims[0] = new Claim("UserAdminID", userAdminId);
+            claims[1] = new Claim("UserID", "7");
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims);
             httpContext.User = new ClaimsPrincipal(claimsIdentity);
             context = new ActionExecutingContext(
@@ -74,7 +77,15 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
             filter.OnActionExecuting(context);
 
             // Then
-            context.Result.Should().BeNull();
+            if (expectNull)
+            {
+                context.Result.Should().BeNull();
+            }
+            else
+            {
+                context.Result.Should().NotBeNull();
+                context.Result.Should().Equals(new RedirectToActionResult("Index", "Logout", new { }));
+            }
         }
 
         [Test]
@@ -85,7 +96,7 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
                .WithMockUser(true, 101);
             var httpContext = new DefaultHttpContext();
             Claim[] claims = new Claim[2];
-            claims[0] = new Claim("UserUserAdmin", "True");
+            claims[0] = new Claim("UserAdminID", "1234");
             claims[1] = new Claim("UserID", "7");
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims);
             httpContext.User = new ClaimsPrincipal(claimsIdentity);
@@ -110,14 +121,16 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
         }
 
         [Test]
-        public void OnActionExecuting_returns_without_redirect_if_admin_session_is_active()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void OnActionExecuting_returns_without_redirect_if_admin_session_is_active(bool adminSessionActive)
         {
             //Given
             var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData()
                .WithMockUser(true, 101);
             var httpContext = new DefaultHttpContext();
             Claim[] claims = new Claim[3];
-            claims[0] = new Claim("UserUserAdmin", "True");
+            claims[0] = new Claim("UserAdminID", "54321");
             claims[1] = new Claim("UserID", "7");
             claims[2] = new Claim("AdminSessionID", "123456");
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims);
@@ -133,7 +146,7 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
                homeController
             );
 
-            var adminSession = new Data.Models.AdminSession(123456, 7, DateTime.Now, 0, true);
+            var adminSession = new Data.Models.AdminSession(123456, 7, DateTime.Now, 0, adminSessionActive);
             A.CallTo(() => sessionDataService.GetAdminSessionById(123456)).Returns(adminSession);
 
             // When
@@ -141,43 +154,15 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
             filter.OnActionExecuting(context);
 
             // Then
-            context.Result.Should().BeNull();
-        }
-
-        [Test]
-        public void OnActionExecuting_returns_redirect_to_logout_if_admin_session_is_not_active()
-        {
-            //Given
-            var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData()
-               .WithMockUser(true, 101);
-            var httpContext = new DefaultHttpContext();
-            Claim[] claims = new Claim[3];
-            claims[0] = new Claim("UserUserAdmin", "True");
-            claims[1] = new Claim("UserID", "7");
-            claims[2] = new Claim("AdminSessionID", "123456");
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims);
-            httpContext.User = new ClaimsPrincipal(claimsIdentity);
-            context = new ActionExecutingContext(
-                new ActionContext(
-                    httpContext,
-                    new RouteData(new RouteValueDictionary()),
-                    new ActionDescriptor()
-                ),
-                new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-               homeController
-            );
-
-            var adminSession = new Data.Models.AdminSession(123456, 7, DateTime.Now, 0, false);
-            A.CallTo(() => sessionDataService.GetAdminSessionById(123456)).Returns(adminSession);
-
-            // When
-            VerifyAdminUserCanProceed filter = new VerifyAdminUserCanProceed(sessionDataService);
-            filter.OnActionExecuting(context);
-
-            // Then
-            Assert.AreEqual(((RedirectToActionResult)context.Result).ActionName, "Index");
-            Assert.AreEqual(((RedirectToActionResult)context.Result).ControllerName, "Logout");
+            if (adminSessionActive)
+            {
+                context.Result.Should().BeNull();
+            }
+            else
+            {
+                Assert.AreEqual(((RedirectToActionResult)context.Result).ActionName, "Index");
+                Assert.AreEqual(((RedirectToActionResult)context.Result).ControllerName, "Logout");
+            }
         }
     }
 }
