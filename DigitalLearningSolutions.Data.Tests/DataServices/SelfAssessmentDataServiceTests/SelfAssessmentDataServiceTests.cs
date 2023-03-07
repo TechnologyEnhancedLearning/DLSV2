@@ -11,7 +11,7 @@
     {
         private const int SelfAssessmentId = 1;
         private const int DelegateId = 11;
-        private const int delegateUserId = 281054;
+        private const int delegateUserId = 11486;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
         private SqlConnection connection = null!;
         private CompetencyTestHelper competencyTestHelper = null!;
