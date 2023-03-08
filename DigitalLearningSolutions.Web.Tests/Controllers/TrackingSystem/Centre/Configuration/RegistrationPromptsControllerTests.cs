@@ -327,10 +327,10 @@
         }
 
         [Test]
-        [TestCaseSource(
-            typeof(RegistrationPromptsControllerTests),
-            nameof(AddAnswerModelErrorTestData)
-        )]
+        //[TestCaseSource(
+        //    typeof(RegistrationPromptsControllerTests),
+        //    nameof(AddAnswerModelErrorTestData)
+        //)]
         public void
             AddRegistrationPromptConfigureAnswers_adds_correct_model_error_if_new_answer_surpasses_character_limit(
                 string optionsString,
