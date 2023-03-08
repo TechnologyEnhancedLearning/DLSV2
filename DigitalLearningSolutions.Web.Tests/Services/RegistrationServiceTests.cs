@@ -1104,7 +1104,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, userId, 2);
+            registrationService.PromoteDelegateToAdmin(adminRoles, 1, userId, 2, false);
 
             // Then
             A.CallTo(() => userDataService.ReactivateAdmin(adminAccount.Id)).MustHaveHappenedOnceExactly();
@@ -1147,7 +1147,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId, false);
 
             // Then
             using (new AssertionScope())
@@ -1193,7 +1193,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId, false);
 
             // Then
             using (new AssertionScope())
@@ -1237,7 +1237,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId, false);
 
             // Then
             A.CallTo(
@@ -1258,6 +1258,112 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 )
             ).MustHaveHappened();
             UpdateToExistingAdminAccountMustNotHaveHappened();
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_with_merge_param_calls_data_service_with_merged_admin_roles()
+        {
+            // Given
+            const bool mergeAdminRoles = true;
+
+            var activeAdmin = UserTestHelper.GetDefaultAdminAccount(centreId: 3, active: true);
+            activeAdmin.IsCentreAdmin = true;
+            activeAdmin.IsSupervisor = false;
+            activeAdmin.IsNominatedSupervisor = true;
+            activeAdmin.IsTrainer = false;
+            activeAdmin.IsContentCreator = true;
+            activeAdmin.IsContentManager = false;
+            activeAdmin.ImportOnly = true;
+            activeAdmin.IsCentreManager = false;
+
+            var newAdminRoles = new AdminRoles(
+                isCentreAdmin: true,
+                isSupervisor: true,
+                isNominatedSupervisor: true,
+                isTrainer: true,
+                isContentCreator: false,
+                isContentManager: false,
+                importOnly: false,
+                isCentreManager: false
+            );
+
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(activeAdmin.UserId)).Returns(
+                new[] { activeAdmin }
+            );
+
+            // When
+            registrationService.PromoteDelegateToAdmin(newAdminRoles, activeAdmin.CategoryId, activeAdmin.UserId, activeAdmin.CentreId, mergeAdminRoles);
+
+            // Then
+            A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    activeAdmin.Id,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    false,
+                    true,
+                    activeAdmin.CategoryId,
+                    false
+                )
+            ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._, A<PossibleEmailUpdate>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_without_merge_param_calls_data_service_with_overridden_admin_roles()
+        {
+            // Given
+            const bool mergeAdminRoles = false;
+
+            var activeAdmin = UserTestHelper.GetDefaultAdminAccount(centreId: 3, active: true);
+            activeAdmin.IsCentreAdmin = true;
+            activeAdmin.IsSupervisor = false;
+            activeAdmin.IsNominatedSupervisor = true;
+            activeAdmin.IsTrainer = false;
+            activeAdmin.IsContentCreator = true;
+            activeAdmin.IsContentManager = false;
+            activeAdmin.ImportOnly = true;
+            activeAdmin.IsCentreManager = false;
+
+            var newAdminRoles = new AdminRoles(
+                isCentreAdmin: false,
+                isSupervisor: false,
+                isNominatedSupervisor: false,
+                isTrainer: true,
+                isContentCreator: false,
+                isContentManager: false,
+                importOnly: false,
+                isCentreManager: false
+            );
+
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(activeAdmin.UserId)).Returns(
+                new[] { activeAdmin }
+            );
+
+            // When
+            registrationService.PromoteDelegateToAdmin(newAdminRoles, activeAdmin.CategoryId, activeAdmin.UserId, activeAdmin.CentreId, mergeAdminRoles);
+
+            // Then
+            A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    activeAdmin.Id,
+                    false,
+                    false,
+                    false,
+                    true,
+                    false,
+                    false,
+                    false,
+                    activeAdmin.CategoryId,
+                    false
+                )
+            ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._, A<PossibleEmailUpdate>._)).MustNotHaveHappened();
         }
 
         [Test]
