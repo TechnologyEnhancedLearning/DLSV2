@@ -55,12 +55,13 @@
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
         private const string supervisorDelegateDetailFields = @"
-            sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, u.FirstName, u.LastName, jg.JobGroupName, da.Answer1, da.Answer2, da.Answer3, da.Answer4, da.Answer5,
-            da.Answer6, da.CandidateNumber, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4,
-            cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE (au.CentreID, da.CentreID) AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName,
-            (SELECT COUNT(ca.ID) AS Expr1
+           sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, du.FirstName, du.LastName, jg.JobGroupName, da.Answer1, da.Answer2, da.Answer3, da.Answer4, 
+             da.Answer5, da.Answer6, da.CandidateNumber, du.ProfessionalRegistrationNumber, du.PrimaryEmail AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, 
+             cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE (aa.CentreID, da.CentreID) AS CentreID, u.FirstName + ' ' + u.LastName AS SupervisorName,
+                 (SELECT COUNT(ca.ID) AS Expr1
             FROM CandidateAssessments AS ca INNER JOIN SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID LEFT JOIN CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID 
-            WHERE (ca.DelegateUserID = sd.DelegateUserID) AND (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = sd.ID  OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1))) AS CandidateAssessmentCount, CAST(COALESCE (au2.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.Supervisor, 0) AS Bit) AS DelegateIsSupervisor ";
+            WHERE (ca.DelegateUserID = sd.DelegateUserID) AND (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = sd.ID  OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = aa.CentreID AND sa.[National] = 1))) AS CandidateAssessmentCount, CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) 
+             AS DelegateIsSupervisor ";
         private const string supervisorDelegateDetailTables = @"
             CustomPrompts AS cp2 RIGHT OUTER JOIN
              CustomPrompts AS cp3 RIGHT OUTER JOIN
