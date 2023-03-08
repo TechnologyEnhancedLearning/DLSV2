@@ -267,12 +267,6 @@
             );
 
             connection.Execute(
-                @"INSERT INTO DelegateAccounts (UserId, CentreId, DateRegistered, CandidateNumber, Active) VALUES
-                    (@userId, @delegateOnlyCentreId, GETDATE(), @candidateNumber, 1)",
-                new { userId, delegateOnlyCentreId, candidateNumber }
-            );
-
-            connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES
                     (@userId, @delegateOnlyCentreId, @delegateOnlyCentreEmail),
                     (@userId, @adminOnlyCentreId, @adminOnlyCentreEmail),
@@ -344,12 +338,6 @@
                     (@userId, @nullCentreEmailCentreId, 1)",
                 new { userId, adminOnlyCentreId, nullCentreEmailCentreId }
             );
-
-            connection.Execute(
-               @"INSERT INTO DelegateAccounts (UserId, CentreId, DateRegistered, CandidateNumber, Active) VALUES
-                    (@userId, @delegateOnlyCentreId, GETDATE(), @candidateNumber, 1)",
-               new { userId, delegateOnlyCentreId, candidateNumber }
-           );
 
             connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES
