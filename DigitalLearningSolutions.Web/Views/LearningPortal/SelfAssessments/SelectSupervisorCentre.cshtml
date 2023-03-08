@@ -50,7 +50,7 @@
             @foreach (var centre in Model.Centres)
             {
               <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="supervisor-Centre-@centre.CentreId" asp-for="CentreID" name="CentreID" type="radio" value="@centre.CentreId" aria-describedby="supervisor-centre-@centre.CentreId-item-hint">
+                <input class="nhsuk-radios__input" id="supervisor-centre-@centre.CentreId" asp-for="CentreID" name="CentreID" type="radio" value="@centre.CentreId">
                 <label class="nhsuk-label nhsuk-radios__label" for="supervisor-centre-@centre.CentreId">
                   @centre.CentreName
                 </label>
