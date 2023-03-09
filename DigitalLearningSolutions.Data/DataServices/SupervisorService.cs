@@ -55,7 +55,7 @@
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
         private const string supervisorDelegateDetailFields = @"
-            sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, du.FirstName, du.LastName, jg.JobGroupName, da.Answer1, da.Answer2, da.Answer3, da.Answer4, 
+            sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, du.FirstName, du.LastName, jg.JobGroupName, da.ID AS DelegateID, da.Answer1, da.Answer2, da.Answer3, da.Answer4, 
              da.Answer5, da.Answer6, da.CandidateNumber, du.ProfessionalRegistrationNumber, du.PrimaryEmail AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, 
              cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE (aa.CentreID, da.CentreID) AS CentreID, u.FirstName + ' ' + u.LastName AS SupervisorName,
                  (SELECT COUNT(cas.ID) AS Expr1
@@ -284,11 +284,17 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 
         public SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId)
         {
+            int delegateId= 0;
             var supervisorDelegateDetail = connection.Query<SupervisorDelegateDetail>(
                 $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.ID = @supervisorDelegateId) AND (sd.DelegateUserID = @delegateUserId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateUserId }
             ).FirstOrDefault();
+
+            if (supervisorDelegateDetail != null && supervisorDelegateDetail.DelegateID != null)
+            {
+                delegateId = (int)supervisorDelegateDetail!.DelegateID!;
+            }
 
             if (delegateUserId == 0)
             {
@@ -303,7 +309,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     FROM   Users u
                     INNER JOIN DelegateAccounts da
                         ON da.UserID = u.ID
-                    WHERE u.ID = @delegateUserId AND u.Active = 1 AND da.Active = 1", new { delegateUserId }
+                    WHERE u.ID = @delegateUserId AND u.Active = 1 AND da.Active = 1 AND da.ID = @delegateId", new { delegateUserId, delegateId }
             ).FirstOrDefault();
 
             if (supervisorDelegateDetail != null && delegateDetails != null)
