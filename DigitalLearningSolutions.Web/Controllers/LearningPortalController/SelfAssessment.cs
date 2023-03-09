@@ -652,7 +652,7 @@
                 User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetUserIdKnownNotNull()
-            );
+            ).OrderBy(s => s.Forename).ToList();
 
             if (sessionAddSupervisor?.CentreID != null)
             {
