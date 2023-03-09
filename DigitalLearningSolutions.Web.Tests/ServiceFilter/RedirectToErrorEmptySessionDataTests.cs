@@ -20,6 +20,7 @@
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
+    using GDS.MultiPageFormData;
 
     public class RedirectToErrorEmptySessionDataTests
     {

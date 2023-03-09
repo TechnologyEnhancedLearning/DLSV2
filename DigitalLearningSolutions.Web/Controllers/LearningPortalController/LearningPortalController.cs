@@ -12,6 +12,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using GDS.MultiPageFormData;
 
     [Authorize(Policy = CustomPolicies.UserDelegateOnly)]
     public partial class LearningPortalController : Controller

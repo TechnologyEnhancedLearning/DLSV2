@@ -138,9 +138,9 @@
             sessionAssessmentQuestion.LevelDescriptors = levelDescriptors;
             multiPageFormService.SetMultiPageFormData(
                 sessionAssessmentQuestion,
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             return RedirectToAction("EditAssessmentQuestion", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
         }
 
@@ -149,7 +149,7 @@
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+            Arguments = new object[] { nameof(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion) }
         )]
         public IActionResult EditAssessmentQuestion(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
@@ -160,9 +160,9 @@
                 return StatusCode(403);
             }
             SessionAssessmentQuestion sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionAssessmentQuestion == null)
             {
                 return StatusCode(404);
@@ -170,9 +170,9 @@
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             multiPageFormService.SetMultiPageFormData(
                 sessionAssessmentQuestion,
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             string name = null;
             if (frameworkCompetencyId > 0)
             {
@@ -212,7 +212,7 @@
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+            Arguments = new object[] { nameof(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion) }
         )]
         public IActionResult EditAssessmentQuestion(AssessmentQuestionDetail assessmentQuestionDetail, int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
@@ -277,17 +277,17 @@
                 assessmentQuestionDetail.MinValue = 0;
                 assessmentQuestionDetail.MaxValue = 1;
                 var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 if (sessionAssessmentQuestion != null)
                 {
                     sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
                     multiPageFormService.SetMultiPageFormData(
                         sessionAssessmentQuestion,
-                        MultiPageFormDataFeature.EditAssessmentQuestion,
+                        GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                         TempData
-                    );
+                    ).GetAwaiter().GetResult();
                 }
                 else
                 {
@@ -300,17 +300,17 @@
             else
             {
                 SessionAssessmentQuestion sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 if (sessionAssessmentQuestion != null)
                 {
                     sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
                     multiPageFormService.SetMultiPageFormData(
                         sessionAssessmentQuestion,
-                        MultiPageFormDataFeature.EditAssessmentQuestion,
+                        GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                         TempData
-                    );
+                    ).GetAwaiter().GetResult();
                 }
                 else
                 {
@@ -324,7 +324,7 @@
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+            Arguments = new object[] { nameof(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion) }
         )]
         public IActionResult EditAssessmentQuestionScoring(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
@@ -334,17 +334,17 @@
                 return StatusCode(403);
             }
             var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionAssessmentQuestion != null)
             {
                 var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
                 multiPageFormService.SetMultiPageFormData(
                     sessionAssessmentQuestion,
-                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
                 if (detailFramework != null)
                 {
@@ -372,7 +372,7 @@
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+            Arguments = new object[] { nameof(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion) }
         )]
         public IActionResult EditAssessmentQuestionScoring(AssessmentQuestionDetail assessmentQuestionDetail, int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
@@ -386,17 +386,17 @@
                 return StatusCode(403);
             }
             var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionAssessmentQuestion != null)
             {
                 sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
                 multiPageFormService.SetMultiPageFormData(
                     sessionAssessmentQuestion,
-                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
             }
 
             if (assessmentQuestionDetail.AssessmentQuestionInputTypeID == 1)
@@ -413,7 +413,7 @@
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+            Arguments = new object[] { nameof(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion) }
         )]
         public IActionResult EditAssessmentQuestionOptions(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
@@ -423,9 +423,9 @@
                 return StatusCode(403);
             }
             var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionAssessmentQuestion == null)
             {
                 return StatusCode(404);
@@ -433,9 +433,9 @@
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             multiPageFormService.SetMultiPageFormData(
                 sessionAssessmentQuestion,
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
             if (detailFramework == null)
             {
@@ -460,17 +460,17 @@
             }
             assessmentQuestionDetail.ScoringInstructions = SanitizerHelper.SanitizeHtmlData(assessmentQuestionDetail.ScoringInstructions);
             SessionAssessmentQuestion sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionAssessmentQuestion != null)
             {
                 sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
                 multiPageFormService.SetMultiPageFormData(
                     sessionAssessmentQuestion,
-                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
             }
             else
             {
@@ -482,7 +482,7 @@
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+            Arguments = new object[] { nameof(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion) }
         )]
         public IActionResult AssessmentQuestionLevelDescriptor(int frameworkId, int level, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
@@ -492,16 +492,16 @@
                 return StatusCode(403);
             }
             var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             multiPageFormService.SetMultiPageFormData(
                 sessionAssessmentQuestion,
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (level < assessmentQuestionDetail.MinValue)
             {
                 return RedirectToAction("EditAssessmentQuestionScoring", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
@@ -532,9 +532,9 @@
         public IActionResult AssessmentQuestionLevelDescriptor(LevelDescriptor levelDescriptor, int frameworkId, int level, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(LevelDescriptor.LevelLabel));
@@ -559,9 +559,9 @@
             sessionAssessmentQuestion.LevelDescriptors.Add(levelDescriptor);
             multiPageFormService.SetMultiPageFormData(
                 sessionAssessmentQuestion,
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
 
             if (level >= assessmentQuestionDetail.MaxValue)
@@ -583,7 +583,7 @@
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+            Arguments = new object[] { nameof(GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion) }
         )]
         public IActionResult AssessmentQuestionConfirm(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
@@ -593,17 +593,17 @@
                 return StatusCode(403);
             }
             var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             var levelDescriptors = sessionAssessmentQuestion.LevelDescriptors;
             multiPageFormService.SetMultiPageFormData(
                 sessionAssessmentQuestion,
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var assessmentQuestion = new Data.Models.SelfAssessments.AssessmentQuestion()
             {
                 Id = assessmentQuestionDetail.ID,
@@ -635,9 +635,9 @@
         {
             var adminId = GetAdminId();
             var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
-                MultiPageFormDataFeature.EditAssessmentQuestion,
+                GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestion = sessionAssessmentQuestion.AssessmentQuestionDetail;
             var newId = assessmentQuestion.ID;

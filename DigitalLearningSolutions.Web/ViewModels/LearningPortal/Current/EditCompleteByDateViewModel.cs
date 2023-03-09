@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
     using System;
-    using DigitalLearningSolutions.Data.Enums;
+   using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-
+   
     public class EditCompleteByDateViewModel : EditCompleteByDateFormData
     {
         public EditCompleteByDateViewModel() { }
@@ -11,7 +11,7 @@
         public EditCompleteByDateViewModel(
             int id,
             string name,
-            LearningItemType type,
+           LearningItemType type,
             DateTime? completeByDate,
             ReturnPageQuery returnPageQuery,
             int? progressId = null,

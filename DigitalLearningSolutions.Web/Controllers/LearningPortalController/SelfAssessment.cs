@@ -6,8 +6,7 @@
     using System.Net;
     using System.Text.Json;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+      using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments;
     using DigitalLearningSolutions.Data.Utilities;
@@ -22,7 +21,8 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-
+    //using DigitalLearningSolutions.Data.Enums;
+    using GDS.MultiPageFormData.Enums;
     public partial class LearningPortalController
     {
         private const string CookieName = "DLSSelfAssessmentService";
@@ -368,14 +368,14 @@
                     model,
                     MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
             }
             else
             {
                 var session = multiPageFormService.GetMultiPageFormData<SearchSelfAssessmentOvervieviewViewModel>(
                     MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 model.AppliedFilters = session.AppliedFilters;
             }
             return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model);
@@ -389,7 +389,7 @@
                 string tagClass = string.Empty;
                 if (model.SelectedFilter < 0)
                 {
-                    description = ((SelfAssessmentCompetencyFilter)model.SelectedFilter).GetDescription(model.IsSupervisorResultsReviewed);
+                    description = ((DigitalLearningSolutions.Data.Enums.SelfAssessmentCompetencyFilter)model.SelectedFilter).GetDescription(model.IsSupervisorResultsReviewed);
                 }
                 else
                 {
@@ -404,7 +404,7 @@
                 model,
                 MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             return RedirectToAction("FilteredSelfAssessmentGroups", new { model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model.SearchText });
         }
 
@@ -532,7 +532,7 @@
             var model = new EditCompleteByDateViewModel(
                 selfAssessmentId,
                 assessment.Name,
-                LearningItemType.SelfAssessment,
+              DigitalLearningSolutions.Data.Enums.  LearningItemType.SelfAssessment,
                 assessment.CompleteByDate,
                 returnPageQuery
             );
@@ -614,7 +614,7 @@
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             return RedirectToAction("AddNewSupervisor", new { selfAssessmentId });
         }
 
@@ -628,13 +628,13 @@
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
 
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
                 User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
@@ -657,7 +657,7 @@
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (!ModelState.IsValid)
             {
                 var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
@@ -683,7 +683,7 @@
                     sessionAddSupervisor,
                     MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 return RedirectToAction("SetSupervisorRole", new { model.SelfAssessmentID });
             }
 
@@ -697,7 +697,7 @@
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
         }
 
@@ -715,7 +715,7 @@
                 var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
                     MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 if (sessionAddSupervisor == null)
                 {
                     return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -725,7 +725,7 @@
                     sessionAddSupervisor,
                     MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 supervisorAdminId = sessionAddSupervisor.SupervisorAdminId;
                 selfAssessmentName = sessionAddSupervisor.SelfAssessmentName;
                 selfAssessmentSupervisorRoleId = sessionAddSupervisor.SelfAssessmentSupervisorRoleId;
@@ -786,7 +786,7 @@
                 var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
                     MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 if (sessionAddSupervisor == null)
                 {
                     return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -797,7 +797,7 @@
                     sessionAddSupervisor,
                     MultiPageFormDataFeature.AddNewSupervisor,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
             }
 
@@ -821,7 +821,7 @@
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionAddSupervisor == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -831,7 +831,7 @@
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
             var summaryModel = new AddSupervisorSummaryViewModel
@@ -857,7 +857,7 @@
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
 
 
             if (sessionAddSupervisor == null)
@@ -870,7 +870,7 @@
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var candidateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
             var delegateEntity = userDataService.GetDelegateById(candidateId);
@@ -936,7 +936,7 @@
                 sessionRequestVerification,
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             return RedirectToAction("VerificationPickSupervisor", new { selfAssessmentId });
         }
 
@@ -975,7 +975,7 @@
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -985,7 +985,7 @@
                 sessionRequestVerification,
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var delegateUserId = User.GetUserIdKnownNotNull();
             var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
             var supervisors = selfAssessmentService
@@ -1007,7 +1007,7 @@
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1017,7 +1017,7 @@
                 sessionRequestVerification,
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var delegateUserId = User.GetUserIdKnownNotNull();
             if (!ModelState.IsValid)
             {
@@ -1039,7 +1039,7 @@
                 sessionRequestVerification,
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             return RedirectToAction("VerificationPickResults", new { sessionRequestVerification.SelfAssessmentID });
         }
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/PickResults")]
@@ -1053,7 +1053,7 @@
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1063,7 +1063,7 @@
                 sessionRequestVerification,
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var competencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
                     selfAssessmentId,
@@ -1089,7 +1089,7 @@
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1114,7 +1114,7 @@
                 sessionRequestVerification,
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             return RedirectToAction("VerificationSummary", new { sessionRequestVerification.SelfAssessmentID });
         }
 
@@ -1129,7 +1129,7 @@
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1139,7 +1139,7 @@
                 sessionRequestVerification,
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var supervisor =
                 selfAssessmentService.GetSelfAssessmentSupervisorByCandidateAssessmentSupervisorId(
                     sessionRequestVerification.CandidateAssessmentSupervisorId
@@ -1197,7 +1197,7 @@
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1207,7 +1207,7 @@
                 sessionRequestVerification,
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             if (sessionRequestVerification.ResultIds == null)
             {
                 return RedirectToAction(

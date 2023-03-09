@@ -4,6 +4,7 @@
     using System.Net;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -13,7 +14,7 @@
     /// </summary>
     public class RedirectToErrorEmptySessionData : IActionFilter
     {
-        private readonly MultiPageFormDataFeature _feature;
+        private readonly GDS.MultiPageFormData.Enums.MultiPageFormDataFeature _feature;
         private readonly IMultiPageFormService _multiPageFormService;
 
         public RedirectToErrorEmptySessionData(
@@ -48,7 +49,7 @@
                 var tempDataKey = controller.TempData.Peek(_feature.TempDataKey);
                 var tempDataGuid = Guid.Parse(tempDataKey.ToString()!);
 
-                if (!_multiPageFormService.FormDataExistsForGuidAndFeature(_feature, tempDataGuid))
+                if (!_multiPageFormService.FormDataExistsForGuidAndFeature(_feature, tempDataGuid).GetAwaiter().GetResult())
                 {
                     return;
                 }

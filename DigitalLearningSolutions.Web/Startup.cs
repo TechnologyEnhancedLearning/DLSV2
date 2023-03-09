@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web
     using System.Threading.Tasks;
     using System.Transactions;
     using System.Web;
+    using AngleSharp;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
@@ -28,6 +29,8 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentMigrator.Runner;
+  //  using GDS.MultiPageFormData;
+    using LearningHub.Nhs.Caching;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
@@ -40,13 +43,13 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Serilog;
-
+     using GDS.MultiPageFormData;
     public class Startup
     {
-        private readonly IConfiguration config;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration config;
         private readonly IHostEnvironment env;
 
-        public Startup(IConfiguration config, IHostEnvironment env)
+        public Startup(Microsoft.Extensions.Configuration.IConfiguration config, IHostEnvironment env)
         {
             this.config = config;
             this.env = env;
@@ -121,7 +124,12 @@ namespace DigitalLearningSolutions.Web
             services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
 
             services.AddDistributedMemoryCache();
-
+            services.AddDistributedCache(opt =>
+            {
+                opt.RedisConnectionString = config.GetConnectionString("DLSRedis");
+                opt.KeyPrefix = $"{env.EnvironmentName}_DLSUI";
+                opt.DefaultExpiryInMinutes = 60;
+            });
             services.AddSession(
                 options =>
                 {
@@ -226,6 +234,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<IMultiPageFormService, MultiPageFormService>();
+            // services.AddScoped<IMultiPageFormService, MultiPageFormService>();
+            services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
