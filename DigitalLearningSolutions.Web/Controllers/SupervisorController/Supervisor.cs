@@ -99,8 +99,8 @@
             var supervisorEmail = GetUserEmail();
 
             ModelState.Remove("Page");
-
-            if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
+            //if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
+            if (ModelState.IsValid)
             {
                 string delegateEmail = model.DelegateEmail ?? String.Empty;
                 int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
@@ -110,10 +110,7 @@
             }
             else
             {
-                if (supervisorEmail == model.DelegateEmail)
-                {
-                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with.");
-                }
+                // if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
@@ -139,7 +136,8 @@
                 var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
                 foreach (var delegateEmail in delegateEmailsList)
                 {
-                    if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
+                    //if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
+                    if (delegateEmail.Length > 0)
                     {
                         if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
                         {
