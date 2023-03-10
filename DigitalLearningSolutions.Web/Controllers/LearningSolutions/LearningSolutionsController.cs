@@ -1,12 +1,16 @@
 namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Primitives;
 
     public class LearningSolutionsController : Controller
     {
@@ -64,6 +68,49 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             return View(model);
         }
 
+        public IActionResult CookiePolicy()
+        {
+            var contactText = configDataService.GetConfigValue(ConfigDataService.ContactText);
+            if (contactText == null)
+            {
+                logger.LogError("Contact text from Config table is null");
+                return StatusCode(500);
+            }
+
+            var model = new CookieConsentViewModel();
+            return View(model);
+        }
+
+        public void CookieBannerConfirmation(string consent)
+        {
+            if (!string.IsNullOrEmpty(consent))
+            {
+                if (consent == "Yes")
+                    Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
+                else if (consent == "No")
+                    Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
+
+                ViewData["consent"] = consent;
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CookieConfirmation(CookieConsentViewModel model)
+        {
+            var consent = model.UserConsent;
+
+            if (!string.IsNullOrEmpty(consent))
+            {
+                if (consent == "Yes")
+                    Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
+                else if (consent == "No")
+                    Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
+
+                ViewData["consent"] = consent;
+            }
+
+            return View();
+        }
         public IActionResult Error()
         {
             var model = GetErrorModel();

@@ -22,6 +22,7 @@
     <ItemGroup>
         <None Remove="Scripts\checkboxes.ts" />
         <None Remove="Scripts\common.ts" />
+        <None Remove="Scripts\cookiesbanner.ts" />
         <None Remove="Scripts\frameworks\branding.ts" />
         <None Remove="Scripts\helpers\constants.ts" />
         <None Remove="Scripts\index.d.ts" />
@@ -85,6 +86,7 @@
         <TypeScriptCompile Include="Scripts\checkboxes.ts" />
         <TypeScriptCompile Include="Scripts\common.ts" />
         <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
+        <TypeScriptCompile Include="Scripts\cookiesbanner.ts" />
         <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
         <TypeScriptCompile Include="Scripts\learningContent\brands.ts" />
         <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
