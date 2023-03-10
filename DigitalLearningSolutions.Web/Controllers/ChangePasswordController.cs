@@ -1,16 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using System.Threading.Tasks;
 
     [Route("/{dlsSubApplication}/ChangePassword", Order = 1)]
     [Route("/ChangePassword", Order = 2)]
@@ -43,7 +44,8 @@
         public async Task<IActionResult> Index(ChangePasswordFormData formData, DlsSubApplication dlsSubApplication)
         {
             var userId = User.GetUserId();
-            var password = formData.CurrentPassword;
+            var user = userVerificationService.GetUserAccountById((int)userId);
+            RegistrationPasswordValidator.ValidatePassword(formData.Password, user.FirstName, user.LastName, ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -51,7 +53,7 @@
                 return View(model);
             }
 
-            if (!userVerificationService.IsPasswordValid(password, userId))
+            if (!userVerificationService.IsPasswordValid(formData.CurrentPassword, userId))
             {
                 ModelState.AddModelError(
                     nameof(ChangePasswordFormData.CurrentPassword),

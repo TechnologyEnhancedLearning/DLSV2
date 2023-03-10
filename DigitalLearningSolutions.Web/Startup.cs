@@ -1,7 +1,6 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Collections.Generic;
-    using System.Configuration;
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
@@ -181,6 +180,11 @@ namespace DigitalLearningSolutions.Web
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(typeof(VerifyAdminUserCanProceed));
+            });
+
             // Register services.
             RegisterServices(services);
             RegisterDataServices(services);
@@ -262,6 +266,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IActivityDataService, ActivityDataService>();
             services.AddScoped<ICentreRegistrationPromptsDataService, CentreRegistrationPromptsDataService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
+            services.AddScoped<ICertificateDataService, CertificateDataService>();
             services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
@@ -313,6 +318,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             services.AddHttpClient<ILearningHubApiClient, LearningHubApiClient>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
+            services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)

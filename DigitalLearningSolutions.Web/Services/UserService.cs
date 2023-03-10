@@ -483,11 +483,18 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 if (!string.Equals(email, userCentreDetails.SingleOrDefault(ucd => ucd.CentreId == centreId)?.Email))
                 {
-                    var emailVerified = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email)
-                        ? currentTime
-                        : (DateTime?)null;
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        var emailVerified = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email)
+                            ? currentTime
+                            : (DateTime?)null;
 
-                    userDataService.SetCentreEmail(userId, centreId, email, emailVerified);
+                        userDataService.SetCentreEmail(userId, centreId, email, emailVerified);
+                    }
+                    else
+                    {
+                        userDataService.DeleteUserCentreDetail(userId, centreId);
+                    }
                 }
             }
         }

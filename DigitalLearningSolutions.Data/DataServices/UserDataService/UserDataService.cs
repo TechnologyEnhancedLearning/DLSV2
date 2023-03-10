@@ -207,6 +207,8 @@
         void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime);
 
         void SetCentreEmailVerified(int userId, string email, DateTime verifiedDateTime);
+
+        void DeleteUserCentreDetail(int userId, int centreId);
     }
 
     public partial class UserDataService : IUserDataService

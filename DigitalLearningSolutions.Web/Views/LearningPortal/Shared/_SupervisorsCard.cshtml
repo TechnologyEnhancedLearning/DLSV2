@@ -9,9 +9,13 @@
       @if (Model.Any())
       {
         <ul>
-          @foreach (var supervisor in Model)
+          @foreach (var supervisor in Model.Take(3))
           {
             <li>@supervisor.SupervisorName, @supervisor.RoleName (@supervisor.CentreName)</li>
+          }
+          @if(Model.Count()>3)
+          {
+            <li style="list-style-type: none">+@(Model.Count() - 3) more</li>
           }
         </ul>
       }
