@@ -15,12 +15,12 @@
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.SuperAdmin))]
     [SetSelectedTab(nameof(NavMenuTab.Admins))]
-    [Route("SuperAdmin/Users/AdminUserSetPassword/{userId:int}")]
-    public class AdminUserSetPasswordController : Controller
+    [Route("SuperAdmin/Users/SuperAdminUserSetPassword/{userId:int}")]
+    public class SuperAdminUserSetPasswordController : Controller
     {
         private readonly IPasswordService passwordService;
         private readonly IUserService userService;
-        public AdminUserSetPasswordController(IPasswordService passwordService, IUserService userService)
+        public SuperAdminUserSetPasswordController(IPasswordService passwordService, IUserService userService)
         {
             this.passwordService = passwordService;
             this.userService = userService;
@@ -31,12 +31,12 @@
             var userEntity = userService.GetUserById(userId);
             TempData["UserID"] = userId;
             TempData["UserName"] = userEntity.UserAccount.FirstName + " " + userEntity.UserAccount.LastName + " (" + userEntity.UserAccount.PrimaryEmail + ")";
-            var model = new SetAdminUserPasswordViewModel(dlsSubApplication);
-            return View("AdminUserSetPassword", model);
+            var model = new SetSuperAdminUserPasswordViewModel(dlsSubApplication);
+            return View("SuperAdminUserSetPassword", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(SetPasswordFormData formData, DlsSubApplication dlsSubApplication)
+        public async Task<IActionResult> Index(SetSuperAdminUserPasswordFormData formData, DlsSubApplication dlsSubApplication)
         {
             TempData.Peek("UserID");
             var userId = TempData["UserID"];
@@ -44,8 +44,8 @@
 
             if (!ModelState.IsValid)
             {
-                var model = new SetAdminUserPasswordViewModel(formData, dlsSubApplication);
-                return View("AdminUserSetPassword", model);
+                var model = new SetSuperAdminUserPasswordViewModel(formData, dlsSubApplication);
+                return View("SuperAdminUserSetPassword", model);
             }
 
             var newPassword = formData.Password!;

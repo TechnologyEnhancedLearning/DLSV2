@@ -1,11 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users
 {
     using DigitalLearningSolutions.Web.ViewModels.Common;
-    public class SetPasswordFormData : ConfirmPasswordViewModel
+    public class SetSuperAdminUserPasswordFormData : ConfirmPasswordViewModel
     {
-        public SetPasswordFormData() { }
+        public SetSuperAdminUserPasswordFormData() { }
 
-        protected SetPasswordFormData(SetPasswordFormData formData)
+        protected SetSuperAdminUserPasswordFormData(SetSuperAdminUserPasswordFormData formData)
         {
             Password = formData.Password;
             ConfirmPassword = formData.ConfirmPassword;
