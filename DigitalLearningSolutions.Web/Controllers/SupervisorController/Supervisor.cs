@@ -826,7 +826,7 @@
                     GetCentreId()
                 );
             }
-
+            TempData.Clear();
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
 
