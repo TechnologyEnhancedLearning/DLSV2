@@ -132,11 +132,11 @@
                 </div>
             </dl>
             <a class="nhsuk-button nhsuk-button--secondary" role="button">Edit details</a>
-            @*TODO: This feature will work after TD-994 is merged. This comment should be removed after the merge*@
+            @*This feature will work after TD-994 is merged *@
             <a class="nhsuk-button nhsuk-button--secondary" asp-controller="users" asp-action="CentreAccounts" asp-route-userId="@Model.Id" role="button">
                 View Centre Accounts
             </a>
-            @*TODO: This feature will work after TD-997 is merged. This comment should be removed after the merge *@
+            @*This feature will work after TD-997 is merged *@
             <a class="nhsuk-button nhsuk-button--secondary" asp-controller="SuperAdminUserSetPassword" asp-action="Index" asp-route-userId="@Model.Id" role="button">Set password</a>
         </div>
     </details>
