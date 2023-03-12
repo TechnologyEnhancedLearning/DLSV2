@@ -1,0 +1,40 @@
+﻿@model int
+@switch (Model)
+{
+    case 0:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--green">
+                Active
+            </strong>
+        </text>
+        break;
+    case 1:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--red">
+                Inactive
+            </strong>
+        </text>
+        break;
+    case 2:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--red">
+                Locked
+            </strong>
+        </text>
+        break;
+    case 3:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--green">
+                Verified
+            </strong>
+        </text>
+        break;
+    case 4:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--red">
+                Unverified
+            </strong>
+        </text>
+        break;
+}
+
