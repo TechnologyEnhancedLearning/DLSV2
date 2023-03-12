@@ -16,8 +16,7 @@
             IEnumerable<string> errorMessages,
             string? cssClass = null,
             string? hintText = null,
-            bool required = false,
-            string? placeholder=null
+            bool required = false
         )
         {
             var errorMessageList = errorMessages.ToList();
@@ -34,7 +33,6 @@
             Required = required;
             ErrorMessages = errorMessageList;
             HasError = errorMessageList.Any();
-            PlaceHolder = placeholder;
         }
 
         public string Id { get; set; }
@@ -49,6 +47,5 @@
         public bool Required { get; set; }
         public IEnumerable<string> ErrorMessages { get; set; }
         public readonly bool HasError;
-        public string? PlaceHolder { get;set; }
     }
 }
