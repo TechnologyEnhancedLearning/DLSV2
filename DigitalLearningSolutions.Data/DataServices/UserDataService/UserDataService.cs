@@ -7,7 +7,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
@@ -210,10 +209,6 @@
         void SetCentreEmailVerified(int userId, string email, DateTime verifiedDateTime);
 
         void DeleteUserCentreDetail(int userId, int centreId);
-
-        (IEnumerable<UserAccountEntity>, int recordCount) GetUserAccounts(
-            string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
-            );
     }
 
     public partial class UserDataService : IUserDataService
@@ -226,6 +221,7 @@
                 u.FirstName,
                 u.LastName,
                 u.JobGroupID,
+                jg.JobGroupName,
                 u.ProfessionalRegistrationNumber,
                 u.ProfileImage,
                 u.Active,
@@ -236,25 +232,7 @@
                 u.LearningHubAuthId,
                 u.HasDismissedLhLoginWarning,
                 u.EmailVerified,
-                u.DetailsLastChecked,
-                jg.JobGroupID,
-                jg.JobGroupName
-            FROM Users AS u
-            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
-
-        private const string BaseSelectUserAccountsQuery =
-            @"SELECT
-                u.ID,
-                u.PrimaryEmail,
-                u.EmailVerified,
-                u.FirstName,
-                u.LastName,
-                u.FirstName + ' ' + u.LastName + ' (' + u.PrimaryEmail +')' AS DisplayName,
-                u.JobGroupID,
-                jg.JobGroupName,
-                u.ProfessionalRegistrationNumber,
-                u.Active,
-                u.LearningHubAuthId
+                u.DetailsLastChecked
             FROM Users AS u
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
 
@@ -397,40 +375,6 @@
                     {(userId == null ? "" : "AND Id <> @userId")}",
                 new { email, userId }
             ) > 0;
-        }
-
-        public (IEnumerable<UserAccountEntity>, int) GetUserAccounts(
-        string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
-        )
-        {
-            string condition = $@" WHERE ((@userId = 0) OR (u.ID = @userId)) AND 
-            (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%') AND 
-            ((u.JobGroupID = @jobGroupId) OR (@jobGroupId = 0)) AND 
-            ((@userStatus = 'Any') OR (@userStatus = 'Active' AND u.Active = 1) OR (@userStatus = 'Inactive' AND u.Active = 0) OR (@userStatus = 'Locked' AND u.FailedLoginCount >= @failedLoginThreshold)) AND 
-            ((@emailStatus = 'Any') OR (@emailStatus = 'Verified' AND u.EmailVerified IS NOT NULL) OR (@emailStatus = 'Unverified' AND u.EmailVerified IS NULL))
-            ";
-
-            string sql = @$"{BaseSelectUserQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
-                OFFSET @offset ROWS
-                FETCH NEXT @rows ROWS ONLY";
-
-            IEnumerable<UserAccountEntity> userAccountEntity = connection.Query<UserAccount, JobGroup, UserAccountEntity>(
-                sql,
-                (userAccount, jobGroup) => new UserAccountEntity(
-                    userAccount, jobGroup),
-                new { userId, search, jobGroupId, userStatus, failedLoginThreshold, emailStatus, offset, rows },
-                splitOn: "JobGroupID",
-                commandTimeout: 3000
-            );
-
-            int ResultCount = connection.ExecuteScalar<int>(
-                @$"SELECT COUNT(ID) AS Matches
-                            FROM   Users AS u INNER JOIN
-                            JobGroups AS jg ON u.JobGroupID = jg.JobGroupID {condition}",
-                new { userId, search, jobGroupId, userStatus, failedLoginThreshold, emailStatus },
-                commandTimeout: 3000
-            );
-            return (userAccountEntity, ResultCount);
         }
     }
 }
