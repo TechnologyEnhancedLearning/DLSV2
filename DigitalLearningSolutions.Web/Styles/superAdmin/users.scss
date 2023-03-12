@@ -1,0 +1,32 @@
+@use "nhsuk-frontend/packages/core/all" as *;
+@use "../shared/searchableElements/searchableElements" as *;
+@use "../shared/breakpoints" as *;
+
+button.nhsuk-pagination__link {
+  &.nhsuk-pagination__link--next {
+    @include mq($until: $xl-desktop) {
+      flex-direction: column;
+    }
+  }
+
+  &.nhsuk-pagination__link--prev {
+    @include mq($until: $xl-desktop) {
+      flex-direction: column-reverse;
+    }
+  }
+}
+
+.nhsuk-pagination-item--next .nhsuk-pagination__title {
+  @include mq($until: $xl-desktop) {
+    padding-right: 0;
+  }
+}
+
+.nhsuk-pagination-item--previous .nhsuk-pagination__title {
+  @include mq($until: $xl-desktop) {
+    padding-left: 0;
+  }
+}
+#maincontentwrapper{
+    display:block;
+}
