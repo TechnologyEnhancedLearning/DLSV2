@@ -346,7 +346,7 @@
         }
 
         [HttpPost]
-        public IActionResult SearchInSelfAssessmentOverviewGroups(SearchSelfAssessmentOvervieviewViewModel model)
+        public IActionResult SearchInSelfAssessmentOverviewGroups(SearchSelfAssessmentOverviewViewModel model)
         {
             TempData.Clear();
             multiPageFormService.SetMultiPageFormData(
@@ -357,31 +357,19 @@
             return RedirectToAction("FilteredSelfAssessmentGroups", model);
         }
 
-        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}/Filtered")]
-        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/Filtered")]
-        public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOvervieviewViewModel model, bool clearFilters = false)
+        //[Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}/Filtered")]
+        //[Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/Filtered")]
+        public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOverviewViewModel model)
         {
-            if (clearFilters)
-            {
-                model.AppliedFilters.Clear();
-                multiPageFormService.SetMultiPageFormData(
-                    model,
-                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
-                    TempData
-                );
-            }
-            else
-            {
-                var session = multiPageFormService.GetMultiPageFormData<SearchSelfAssessmentOvervieviewViewModel>(
-                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
-                    TempData
-                );
-                model.AppliedFilters = session.AppliedFilters;
-            }
+            var session = multiPageFormService.GetMultiPageFormData<SearchSelfAssessmentOverviewViewModel>(
+                MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                TempData
+            );
+            model.AppliedFilters = session.AppliedFilters;
             return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model);
         }
 
-        public IActionResult AddSelfAssessmentOverviewFilter(SearchSelfAssessmentOvervieviewViewModel model)
+        public IActionResult AddSelfAssessmentOverviewFilter(SearchSelfAssessmentOverviewViewModel model)
         {
             if (!model.AppliedFilters.Any(f => f.FilterValue == model.SelectedFilter.ToString()))
             {
@@ -405,13 +393,16 @@
                 MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                 TempData
             );
-            return RedirectToAction("FilteredSelfAssessmentGroups", new { model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model.SearchText });
+
+            //return RedirectToAction("Current");
+            return RedirectToAction("FilteredSelfAssessmentGroups", model);
+            //return RedirectToAction("FilteredSelfAssessmentGroups", new { model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model.SearchText });
         }
 
         [NoCaching]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/{competencyGroupId}")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}")]
-        public IActionResult SelfAssessmentOverview(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, SearchSelfAssessmentOvervieviewViewModel searchModel = null)
+        public IActionResult SelfAssessmentOverview(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, SearchSelfAssessmentOverviewViewModel searchModel = null)
         {
             var delegateUserId = User.GetUserIdKnownNotNull();
             var delegateId = User.GetCandidateIdKnownNotNull();
@@ -454,7 +445,7 @@
             }
 
             var searchViewModel = searchModel == null ?
-                new SearchSelfAssessmentOvervieviewViewModel(searchModel?.SearchText, assessment.Id, vocabulary, assessment.IsSupervisorResultsReviewed, assessment.IncludeRequirementsFilters, null, null)
+                new SearchSelfAssessmentOverviewViewModel(searchModel?.SearchText, assessment.Id, vocabulary, assessment.IsSupervisorResultsReviewed, assessment.IncludeRequirementsFilters, null, null)
                 : searchModel.Initialise(searchModel.AppliedFilters, competencyFlags.ToList(), assessment.IsSupervisorResultsReviewed, assessment.IncludeRequirementsFilters);
             var model = new SelfAssessmentOverviewViewModel
             {
