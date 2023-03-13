@@ -51,7 +51,7 @@ if (consentNo != null) {
   });
 }
 function setUserConsent(value: string) {
-  var userConsent = document.getElementById("UserConsent");
+  var userConsent = <HTMLInputElement>document.getElementById("UserConsent"); 
   if (userConsent != null) {
     userConsent.value = value;
   }  
