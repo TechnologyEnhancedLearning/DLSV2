@@ -21,9 +21,7 @@ namespace DigitalLearningSolutions.Web.ServiceFilter
                 return;
             }
 
-            // If user does not have an AdminID then they must be a delegate user, so no need to check for concurrency.
-            var adminId = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserAdminID");
-            if (adminId == null || int.Parse(adminId.Value) == 0)
+            if (context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserUserAdmin" && c.Value == "True") == null)
             {
                 return;
             }
