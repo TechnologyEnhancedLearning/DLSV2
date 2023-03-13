@@ -1,12 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Mvc;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class LogoutController : Controller
     {
@@ -24,22 +23,23 @@
         public async Task<IActionResult> Index()
         {
             await HttpContext.Logout();
-            int adminId = 0;
-            try
+            int? adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
+            if (adminId != null)
             {
-                adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
-            }
-            catch (ArgumentNullException)
-            {
-                adminId = 0;
-            }
-            if (adminId > 0)
-            {
-                var adminSessionId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "AdminSessionID");
-                if (adminSessionId != null)
+                try
                 {
-                    sessionService.StopAdminSession(adminId, int.Parse(adminSessionId.Value.ToString()));
+                    if(TempData.Peek("AdminSession") != null)
+                    {
+                        int adminSessionId = int.Parse(TempData.Peek("AdminSessionID").ToString());
+
+                        sessionService.StopAdminSession(adminId.Value, adminSessionId);
+                    }
                 }
+                catch(InvalidCastException ex)
+                {
+                    Serilog.Log.Error(ex.Message);
+                }
+               
             }
             return RedirectToAction("Index", "Home");
         }

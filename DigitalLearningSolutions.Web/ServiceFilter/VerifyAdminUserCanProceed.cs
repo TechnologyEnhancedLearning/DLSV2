@@ -1,7 +1,7 @@
-﻿using DigitalLearningSolutions.Data.DataServices;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
+using DigitalLearningSolutions.Data.DataServices;
 
 namespace DigitalLearningSolutions.Web.ServiceFilter
 {
@@ -35,11 +35,11 @@ namespace DigitalLearningSolutions.Web.ServiceFilter
 
             if (adminUserId > 0)
             {
-                var adminSessionId = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "AdminSessionID");
-                if (adminSessionId != null)
+
+                if (controller.TempData.Peek("AdminSessionID") != null)
                 {
-                    var session = sessionDataService.GetAdminSessionById(int.Parse(adminSessionId.Value));
-                    if (session != null && session.Active)
+                    var session = sessionDataService.GetAdminSessionById((int)controller.TempData.Peek("AdminSessionID"));
+                    if (session.Active)
                     {
                         return;
                     }

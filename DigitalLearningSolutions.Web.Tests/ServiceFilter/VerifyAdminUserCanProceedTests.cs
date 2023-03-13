@@ -116,10 +116,9 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
             var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData()
                .WithMockUser(true, 101);
             var httpContext = new DefaultHttpContext();
-            Claim[] claims = new Claim[3];
+            Claim[] claims = new Claim[2];
             claims[0] = new Claim("UserUserAdmin", "True");
             claims[1] = new Claim("UserID", "7");
-            claims[2] = new Claim("AdminSessionID", "123456");
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims);
             httpContext.User = new ClaimsPrincipal(claimsIdentity);
             context = new ActionExecutingContext(
@@ -133,6 +132,7 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
                homeController
             );
 
+            homeController.TempData["AdminSessionID"] = 123456;
             var adminSession = new Data.Models.AdminSession(123456, 7, DateTime.Now, 0, true);
             A.CallTo(() => sessionDataService.GetAdminSessionById(123456)).Returns(adminSession);
 
@@ -151,10 +151,9 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
             var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData()
                .WithMockUser(true, 101);
             var httpContext = new DefaultHttpContext();
-            Claim[] claims = new Claim[3];
+            Claim[] claims = new Claim[2];
             claims[0] = new Claim("UserUserAdmin", "True");
             claims[1] = new Claim("UserID", "7");
-            claims[2] = new Claim("AdminSessionID", "123456");
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims);
             httpContext.User = new ClaimsPrincipal(claimsIdentity);
             context = new ActionExecutingContext(
@@ -168,6 +167,7 @@ namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
                homeController
             );
 
+            homeController.TempData["AdminSessionID"] = 123456;
             var adminSession = new Data.Models.AdminSession(123456, 7, DateTime.Now, 0, false);
             A.CallTo(() => sessionDataService.GetAdminSessionById(123456)).Returns(adminSession);
 

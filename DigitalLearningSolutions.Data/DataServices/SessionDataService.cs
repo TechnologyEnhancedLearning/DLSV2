@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using Dapper;
-    using DigitalLearningSolutions.Data.Models;
     using System;
     using System.Data;
+    using Dapper;
+    using DigitalLearningSolutions.Data.Models;
 
     public interface ISessionDataService
     {
@@ -20,8 +20,6 @@
         void StopAllAdminSessions(int adminId);
 
         bool HasAdminGotSessions(int adminId);
-
-        bool HasAdminGotActiveSessions(int adminId);
 
         bool HasDelegateGotSessions(int delegateId);
 
@@ -107,14 +105,6 @@
                 "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
                 new { adminId }
             );
-        }
-
-        public bool HasAdminGotActiveSessions(int adminId)
-        {
-            return connection.ExecuteScalar<bool>(
-                "SELECT 1 WHERE EXISTS (SELECT adminSessionId FROM AdminSessions WHERE AdminID = @adminId AND Active = 1)",
-                new { adminId }
-                );
         }
 
         public bool HasDelegateGotSessions(int delegateId)
