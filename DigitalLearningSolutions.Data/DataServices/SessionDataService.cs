@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using Dapper;
-    using DigitalLearningSolutions.Data.Models;
     using System;
     using System.Data;
+    using Dapper;
+    using DigitalLearningSolutions.Data.Models;
 
     public interface ISessionDataService
     {
@@ -15,19 +15,11 @@
 
         int StartAdminSession(int adminId);
 
-        void StopAdminSession(int adminId, int adminSessionId);
-
-        void StopAllAdminSessions(int adminId);
-
         bool HasAdminGotSessions(int adminId);
-
-        bool HasAdminGotActiveSessions(int adminId);
 
         bool HasDelegateGotSessions(int delegateId);
 
         Session? GetSessionById(int sessionId);
-
-        AdminSession? GetAdminSessionById(int sessionId);
 
         void AddTutorialTimeToSessionDuration(int sessionId, int tutorialTime);
     }
@@ -37,15 +29,6 @@
         private const string StopSessionsSql =
             @"UPDATE Sessions SET Active = 0
                WHERE CandidateId = @candidateId;";
-
-        private const string StopAdminSql =
-            @"UPDATE AdminSessions SET Active = 0
-                WHERE AdminID = @adminId
-                AND AdminSessionID = @adminSessionId;";
-
-        private const string StopAllAdminSql =
-            @"UPDATE AdminSessions SET Active = 0
-                WHERE AdminID = @adminId;";
 
         private readonly IDbConnection connection;
 
@@ -84,21 +67,11 @@
         {
             return connection.QueryFirst<int>(
                 @"INSERT INTO AdminSessions (AdminID, LoginTime, Duration, Active)
-                  VALUES (@adminId, GetUTCDate(), 0, 1);
+                  VALUES (@adminId, GetUTCDate(), 0, 0);
 
                   SELECT SCOPE_IDENTITY();",
                 new { adminId }
             );
-        }
-
-        public void StopAdminSession(int adminId, int adminSessionId)
-        {
-            connection.Query(StopAdminSql, new { adminId, adminSessionId });
-        }
-
-        public void StopAllAdminSessions(int adminId)
-        {
-            connection.Query(StopAllAdminSql, new { adminId });
         }
 
         public bool HasAdminGotSessions(int adminId)
@@ -107,14 +80,6 @@
                 "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
                 new { adminId }
             );
-        }
-
-        public bool HasAdminGotActiveSessions(int adminId)
-        {
-            return connection.ExecuteScalar<bool>(
-                "SELECT 1 WHERE EXISTS (SELECT adminSessionId FROM AdminSessions WHERE AdminID = @adminId AND Active = 1)",
-                new { adminId }
-                );
         }
 
         public bool HasDelegateGotSessions(int delegateId)
@@ -135,19 +100,6 @@
                         Duration,
                         Active
                     FROM Sessions WHERE SessionID = @sessionId",
-                new { sessionId }
-            );
-        }
-
-        public AdminSession? GetAdminSessionById(int sessionId)
-        {
-            return connection.QueryFirstOrDefault<AdminSession>(
-                @"SELECT AdminSessionID,
-                        AdminID,
-                        LoginTime,
-                        Duration,
-                        Active
-                    FROM AdminSessions WHERE AdminSessionID = @sessionId",
                 new { sessionId }
             );
         }

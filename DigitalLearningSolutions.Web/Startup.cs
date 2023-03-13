@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
@@ -179,11 +180,6 @@ namespace DigitalLearningSolutions.Web
 
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
-
-            services.AddControllersWithViews(options =>
-            {
-                options.Filters.Add(typeof(VerifyAdminUserCanProceed));
-            });
 
             // Register services.
             RegisterServices(services);
