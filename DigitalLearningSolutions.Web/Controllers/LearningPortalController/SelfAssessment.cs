@@ -357,8 +357,6 @@
             return RedirectToAction("FilteredSelfAssessmentGroups", model);
         }
 
-        //[Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}/Filtered")]
-        //[Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/Filtered")]
         public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOverviewViewModel model)
         {
             var session = multiPageFormService.GetMultiPageFormData<SearchSelfAssessmentOverviewViewModel>(
@@ -394,9 +392,7 @@
                 TempData
             );
 
-            //return RedirectToAction("Current");
             return RedirectToAction("FilteredSelfAssessmentGroups", model);
-            //return RedirectToAction("FilteredSelfAssessmentGroups", new { model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model.SearchText });
         }
 
         [NoCaching]
