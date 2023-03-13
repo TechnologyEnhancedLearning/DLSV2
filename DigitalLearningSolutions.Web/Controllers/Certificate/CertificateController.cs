@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace DigitalLearningSolutions.Web.Controllers.Certificate
 {
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
-    [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    //[Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     public class CertificateController : Controller
     {
         private readonly ICentresDataService centresDataService;
