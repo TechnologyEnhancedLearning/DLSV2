@@ -13,9 +13,8 @@
         public void SetCookieBanner_creates_cookie_with_correct_content()
         {
             // Given
-            const int adminId = 42;
             var testDate = new DateTime(2021, 8, 23);
-            var expectedExpiry = testDate.AddHours(24);
+            var expectedExpiry = testDate.AddDays(365);
             var cookies = A.Fake<IResponseCookies>();
 
             // When
@@ -24,8 +23,8 @@
             // Then
             A.CallTo(
                 () => cookies.Append(
-                    SystemNotificationCookieHelper.CookieName,
-                    "42",
+                    CookieBannerHelper.CookieName,
+                    "Yes",
                     A<CookieOptions>.That.Matches(co => co.Expires == expectedExpiry)
                 )
             ).MustHaveHappened();
