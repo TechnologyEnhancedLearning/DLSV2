@@ -5,6 +5,7 @@
     {
         public int ID { get; set; }
         public int SelfAssessmentID { get; set; }
+        public int DelegateUserID { get; set; }
         public string? RoleName { get; set; }
         public bool SupervisorSelfAssessmentReview { get; set; }
         public bool SupervisorResultsReview { get; set; }
@@ -25,5 +26,6 @@
         public int SignOffRequested { get; set; }
         public int ResultsVerificationRequests { get; set; }
         public bool IsSupervisorResultsReviewed { get; set; }
+        public bool IsAssignedToSupervisor { get; set; }
     }
 }

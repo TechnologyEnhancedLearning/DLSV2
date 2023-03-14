@@ -5,16 +5,19 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="ClosedXML" Version="0.95.4" />
-        <PackageReference Include="Dapper" Version="2.0.123" />
-        <PackageReference Include="Dapper.FluentMap" Version="2.0.0" />
-        <PackageReference Include="FuzzySharp" Version="2.0.2" />
-        <PackageReference Include="MailKit" Version="2.8.0" />
-        <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.5.1" />
-        <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
-        <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Models\Certificates\Certificates.cs" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.95.4" />
+    <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="Dapper.FluentMap" Version="2.0.0" />
+    <PackageReference Include="FuzzySharp" Version="2.0.2" />
+    <PackageReference Include="MailKit" Version="2.8.0" />
+    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+  </ItemGroup>
 
 </Project>

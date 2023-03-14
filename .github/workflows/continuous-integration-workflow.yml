@@ -14,7 +14,7 @@ jobs:
           source-url: https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json
         env:
           NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PAT}}
-          
+
       - name: Dotnet build
         run: dotnet build DigitalLearningSolutions.sln
 
