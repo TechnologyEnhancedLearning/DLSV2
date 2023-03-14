@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
     using System;
-   // using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Services;
     using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Mvc;
