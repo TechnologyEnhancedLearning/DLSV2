@@ -357,13 +357,35 @@
             return RedirectToAction("FilteredSelfAssessmentGroups", model);
         }
 
-        public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOverviewViewModel model)
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}/Filtered")]
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/Filtered")]
+        public IActionResult FilteredSelfAssessmentGroupsBookmark(
+            SearchSelfAssessmentOverviewViewModel model,
+            bool clearFilters = false
+        )
         {
-            var session = multiPageFormService.GetMultiPageFormData<SearchSelfAssessmentOverviewViewModel>(
-                MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
-                TempData
-            );
-            model.AppliedFilters = session.AppliedFilters;
+            return FilteredSelfAssessmentGroups(model);
+        }
+
+        public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOverviewViewModel model, bool clearFilters = false)
+        {
+            if (clearFilters)
+            {
+                model.AppliedFilters.Clear();
+                multiPageFormService.SetMultiPageFormData(
+                    model,
+                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                    TempData
+                );
+            }
+            else
+            {
+                var session = multiPageFormService.GetMultiPageFormData<SearchSelfAssessmentOverviewViewModel>(
+                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                    TempData
+                );
+                model.AppliedFilters = session.AppliedFilters;
+            }
             return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model);
         }
 
