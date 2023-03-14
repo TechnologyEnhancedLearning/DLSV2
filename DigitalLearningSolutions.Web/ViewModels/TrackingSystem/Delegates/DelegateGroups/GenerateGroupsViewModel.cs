@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc.Rendering;
+    using NHSUKViewComponents.Web.ViewModels;
 
     public class GenerateGroupsViewModel
     {

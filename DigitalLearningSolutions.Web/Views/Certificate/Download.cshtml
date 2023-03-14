@@ -1,0 +1,258 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
+@model PreviewCertificateViewModel
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head id="Head1">
+    <title>
+        Digital Learning Solutions Certificate
+    </title>
+    <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/previewCertificate.css")" asp-append-version="true">
+    <link rel="stylesheet" href="@Url.Content("~/css/nhsuk.css")" asp-append-version="true">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
+    <style type="text/css">
+
+        body, html {
+            background-color: #D9ECFF !important;
+        }
+
+        .style1 {
+            color: #000000;
+            font-family: Verdana, Arial, Helvetica, sans-serif !important;
+            font-size: 30px;
+        }
+
+        .style2 {
+            color: #000000;
+            font-family: Verdana, Arial, Helvetica, sans-serif !important;
+            font-weight: bold;
+            font-size: 30px;
+        }
+
+        .style3 {
+            color: #000000;
+            font-family: Verdana, Arial, Helvetica, sans-serif !important;
+            font-size: 24px;
+            margin-left: 30px;
+            margin-right: 30px;
+        }
+
+        .style4 {
+            color: #000000;
+            font-family: Verdana, Arial, Helvetica, sans-serif !important;
+            font-size: 16px;
+        }
+
+        .style7 {
+            color: #000000;
+            font-family: Verdana, Arial, Helvetica, sans-serif !important;
+            font-size: 12px;
+        }
+
+        .col {
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .row {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+            width: 100%;
+        }
+
+        .container {
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -ms-flex-align: center;
+            align-items: center;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            flex-direction: column;
+            max-width: 1140px;
+        }
+
+        .card {
+            position: relative;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid rgba(0,0,0,.125);
+            border-radius: .25rem
+        }
+
+        .card-body {
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            min-height: 1px;
+            padding: 1.25rem
+        }
+
+        .card-default {
+            border-color: #00529E !important;
+            border-style: solid !important;
+            border-width: 3px !important;
+        }
+
+        .text-center {
+            text-align: center !important
+        }
+
+        .clearfix::after {
+            display: block;
+            clear: both;
+            content: ""
+        }
+
+        .float-right {
+            float: right !important
+        }
+
+        .p-4 {
+            padding: 1.5rem !important
+        }
+
+        #Logo {
+            max-width: 500px;
+            max-height: 90px;
+            height: auto;
+            width: auto;
+        }
+
+        #header,
+        #footer {
+            display: none !important;
+        }
+
+        .no-print, .no-print * {
+            display: none !important;
+        }
+
+        *,
+        *::before,
+        *::after {
+            text-shadow: none !important;
+            box-shadow: none !important;
+        }
+
+        img {
+            page-break-inside: avoid;
+        }
+
+        p {
+            orphans: 3;
+            widows: 3;
+        }
+
+        body {
+            min-width: 992px !important;
+        }
+
+        .container {
+            min-width: 992px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="maincontentcontainer">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="card card-default">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="p-4 float-right">
+                    @if (Model.CentreLogo != null)
+                    {
+                                          <img id="Logo" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Image" />
+                    }
+                    else
+                    {
+                                          <img id="Logo" src="~/images/itspCertificateLogo.png" alt="Organisation Logo" />
+                    }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center style1">
+                                <div class="clearfix"></div>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style3">This is to certify that </p>
+                            </div>
+                            <div class="text-center style4">
+                                <p class="style2">
+                  @Model.DelegateName
+                                </p>
+                            </div>
+                            <div class="text-center style4">
+                                <p>&nbsp;</p>
+                                <p class="style3">has completed</p>
+                                <p class="style2">
+                  @Model.CourseName
+                                </p>
+                                <p class="style3">
+                                    Meeting the completion criteria defined for this course
+                                </p>
+                                <p class="style2">
+                                </p>
+                            </div>
+                            <div class="text-center ">
+                                <p class="style4">&nbsp;</p>
+                                <p class="style3">
+                                    on
+                  @Model.CompletionDate.ToString("dddd, dd MMMM yyyy")
+                                </p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4 nhsuk-u-font-size-16">
+                  @Model.CentreContactName, Digital Learning Solutions Centre Manager
+                                </p>
+
+                                <p class="style4 nhsuk-u-font-size-16">
+                  @Model.CentreName
+                                </p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">
+                  @if (Model.SignatureImage != null)
+                  {
+                                      <img src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Manager Signature Image" />
+                  }
+                                </p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style4">&nbsp;</p>
+                                <p class="style7">This certificate does not signify completion of BCS qualifications or MOST exams.</p>
+                                <p class="style4">&nbsp;</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
