@@ -35,12 +35,6 @@
       }
       <nhs-form-group nhs-validation-for="SupervisorAdminID">
         <fieldset class="nhsuk-fieldset">
-          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-            <span class="nhsuk-fieldset__heading">
-              Add a supervisor
-            </span>
-          </legend>
-
           <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
           <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
           <input type="hidden" asp-for="Supervisors" value="@Model.Supervisors" />

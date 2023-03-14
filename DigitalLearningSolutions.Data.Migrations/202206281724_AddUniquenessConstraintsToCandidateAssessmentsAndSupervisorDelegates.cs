@@ -35,6 +35,14 @@ WHERE (CandidateAssessments.ID <
                  FROM    CandidateAssessments AS CA1
                  WHERE (CandidateAssessments.SelfAssessmentID = SelfAssessmentID) AND (CandidateAssessments.DelegateUserID = DelegateUserID)))
 
+DELETE FROM CandidateAssessmentLearningLogItems
+FROM   CandidateAssessments INNER JOIN
+             CandidateAssessmentLearningLogItems ON CandidateAssessments.ID = CandidateAssessmentLearningLogItems.CandidateAssessmentID
+WHERE (CandidateAssessments.ID <
+                 (SELECT MAX(ID) AS Expr1
+                 FROM    CandidateAssessments AS CA1
+                 WHERE (CandidateAssessments.SelfAssessmentID = SelfAssessmentID) AND (CandidateAssessments.DelegateUserID = DelegateUserID)))
+
 DELETE FROM CandidateAssessmentSupervisors
 FROM   CandidateAssessments INNER JOIN
              CandidateAssessmentSupervisors ON CandidateAssessments.ID = CandidateAssessmentSupervisors.CandidateAssessmentID
@@ -74,6 +82,8 @@ WHERE (SupervisorDelegates.ID <
                  (SELECT MAX(ID) AS Expr1
                  FROM    SupervisorDelegates AS SupervisorDelegates_1
                  WHERE (SupervisorDelegates.DelegateUserID = DelegateUserID) AND (SupervisorDelegates.SupervisorAdminID = SupervisorAdminID)))
+
+
 
 DELETE FROM SupervisorDelegates
 WHERE (ID <

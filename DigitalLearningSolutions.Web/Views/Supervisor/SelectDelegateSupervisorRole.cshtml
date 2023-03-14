@@ -1,0 +1,100 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+@model EnrolDelegateSupervisorRoleViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Select Supervisor Role for Profile Assessment" : "Select Supervisor Role for Profile Assessment";
+    ViewData["Application"] = "Supervisor";
+    ViewData["HeaderPathName"] = "Supervisor";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+    @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
+                   asp-action="DelegateProfileAssessments"
+                   asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+                        @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+                    </a>
+                </li>
+                <li class="nhsuk-breadcrumb__item">
+                    Supervise
+                </li>
+            </ol>
+        </div>
+        <p class="nhsuk-breadcrumb__back">
+            <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+           asp-action="DelegateProfileAssessments"
+           asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+                Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+            </a>
+        </p>
+    </nav>
+}
+    <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+            <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+                @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+            </h1>
+        </summary>
+        <div class="nhsuk-details__text">
+            <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+        </div>
+    </details>
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelfAssessmentSupervisorRoleId) })" />
+}
+<form method="post">
+    <div class="nhsuk-form-group">
+        <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                <h2 class="nhsuk-fieldset__heading">
+                    Choose your supervisor role
+                </h2>
+            </legend>
+            <nhs-form-group nhs-validation-for="SelfAssessmentSupervisorRoleId">
+                <div class="nhsuk-radios">
+                    @foreach (var role in Model.SelfAssessmentSupervisorRoles)
+                    {
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="role-@role.ID" name="SelfAssessmentSupervisorRoleId" asp-for="SelfAssessmentSupervisorRoleId" type="radio" value="@role.ID">
+                            <label class="nhsuk-label nhsuk-radios__label" for="role-@role.ID">
+                                @role.RoleName
+                            </label>
+                            @if (role.RoleDescription != null)
+                            {
+                                <div class="nhsuk-hint nhsuk-radios__hint" id="role-@role.ID-hint">
+                                    @role.RoleDescription
+                                </div>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+            </nhs-form-group>
+        </fieldset>
+        <div class=" nhsuk-u-margin-top-5">
+
+            <button class="nhsuk-button" id="save-button" type="submit">Submit</button>
+        </div>
+    </div>
+</form>
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-controller="Supervisor"
+       asp-action="DelegateProfileAssessments"
+       asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
+</div>
