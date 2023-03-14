@@ -44,13 +44,8 @@
         public async Task<IActionResult> Index(ChangePasswordFormData formData, DlsSubApplication dlsSubApplication)
         {
             var userId = User.GetUserId();
-            var password = formData.CurrentPassword;
-            if (TempData != null)
-            { 
-                var data = TempData.Peek<DelegateRegistrationData>()!;
-                var user = userVerificationService.GetUserAccountById((int)userId);
-                RegistrationPasswordValidator.ValidatePassword(password, user.FirstName, user.LastName, ModelState);
-            }
+            var user = userVerificationService.GetUserAccountById((int)userId);
+            RegistrationPasswordValidator.ValidatePassword(formData.Password, user.FirstName, user.LastName, ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -58,7 +53,7 @@
                 return View(model);
             }
 
-            if (!userVerificationService.IsPasswordValid(password, userId))
+            if (!userVerificationService.IsPasswordValid(formData.CurrentPassword, userId))
             {
                 ModelState.AddModelError(
                     nameof(ChangePasswordFormData.CurrentPassword),
