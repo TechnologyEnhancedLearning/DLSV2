@@ -14,6 +14,7 @@
             ErrorMessage = CommonValidationErrorMessages.PasswordInvalidCharacters
         )]
         [CommonPasswords(CommonValidationErrorMessages.PasswordTooCommon)]
+        [UserName(CommonValidationErrorMessages.PasswordSimilarUsername)]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 

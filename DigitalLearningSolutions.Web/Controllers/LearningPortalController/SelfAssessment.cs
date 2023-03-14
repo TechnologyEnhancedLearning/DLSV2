@@ -6,9 +6,7 @@
     using System.Net;
     using System.Text.Json;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+      using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments;
     using DigitalLearningSolutions.Data.Utilities;
@@ -617,17 +615,6 @@
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
             ).GetAwaiter().GetResult();
-            
-            var distinctSupervisorCentres = selfAssessmentService.GetValidSupervisorsForActivity(
-               User.GetCentreIdKnownNotNull(),
-               selfAssessmentId,
-               User.GetUserIdKnownNotNull()
-           ).Select(c => new { c.CentreID, c.CentreName }).Distinct().ToList();
-
-            if (distinctSupervisorCentres.Count() > 1)
-            {
-                return RedirectToAction("SelectSupervisorCentre", new { selfAssessmentId });
-            }
             return RedirectToAction("AddNewSupervisor", new { selfAssessmentId });
         }
 
@@ -652,13 +639,7 @@
                 User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetUserIdKnownNotNull()
-            ).OrderBy(s => s.Forename).ToList();
-
-            if (sessionAddSupervisor?.CentreID != null)
-            {
-                supervisors = supervisors.Where(s => s.CentreID == sessionAddSupervisor.CentreID).ToList();
-            }
-            
+            );
             var model = new AddSupervisorViewModel
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
@@ -684,10 +665,6 @@
                sessionAddSupervisor.SelfAssessmentID,
                User.GetUserIdKnownNotNull()
            );
-                if(sessionAddSupervisor?.CentreID != null)
-                {
-                    supervisors = supervisors.Where(s => s.CentreID == sessionAddSupervisor.CentreID);
-                }
                 model.Supervisors = supervisors;
                 return View("SelfAssessments/AddSupervisor", model);
             }
@@ -722,92 +699,6 @@
                 TempData
             ).GetAwaiter().GetResult();
             return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
-        }
-
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Centre")]
-        public IActionResult SelectSupervisorCentre(int selfAssessmentId)
-        {
-            if (TempData[MultiPageFormDataFeature.AddNewSupervisor.TempDataKey] == null)
-            {
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Forbidden });
-            }
-            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
-
-            multiPageFormService.SetMultiPageFormData(
-                sessionAddSupervisor,
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
-            var distinctCentres = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreIdKnownNotNull(),
-                selfAssessmentId,
-                User.GetUserIdKnownNotNull()
-            ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
-
-            var supervisorCentres = new List<Centre>();
-
-            foreach (var centre in distinctCentres)
-            {
-                var cn = new Centre
-                {
-                    CentreId = centre.CentreID,
-                    CentreName = centre.CentreName
-                };
-                supervisorCentres.Add(cn);
-            }
-            var model = new SupervisorCentresViewModel
-            {
-                SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
-                SelfAssessmentName = sessionAddSupervisor.SelfAssessmentName,
-                Centres = supervisorCentres
-            };
-
-            return View("SelfAssessments/SelectSupervisorCentre", model);
-        }
-
-        [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Centre")]
-        public IActionResult SelectSupervisorCentre(SupervisorCentresViewModel model)
-        {
-            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
-            sessionAddSupervisor.CentreID = model.CentreID;
-
-            if (!ModelState.IsValid)
-            {
-                var distinctCentres = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreIdKnownNotNull(),
-                model.SelfAssessmentID,
-                User.GetUserIdKnownNotNull()
-                ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
-
-                var supervisorCentres = new List<Centre>();
-
-                foreach (var centre in distinctCentres)
-                {
-                    var cn = new Centre
-                    {
-                        CentreId = centre.CentreID,
-                        CentreName = centre.CentreName
-                    };
-                    supervisorCentres.Add(cn);
-                }
-
-                model.Centres = supervisorCentres;
-                return View("SelfAssessments/SelectSupervisorCentre", model);
-            }
-            
-            multiPageFormService.SetMultiPageFormData(
-                sessionAddSupervisor,
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
-            return RedirectToAction("AddNewSupervisor", new { model.SelfAssessmentID});
         }
 
         [Route(
@@ -870,7 +761,6 @@
                 SelfAssessmentSupervisorRoles = roles,
                 Supervisor = supervisor,
                 SelfAssessmentName = selfAssessmentName,
-                CentreID = supervisor.CentreID
             };
             if (selfAssessmentSupervisorRoleId != null)
             {

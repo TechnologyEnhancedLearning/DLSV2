@@ -12,8 +12,6 @@
         );
 
         bool IsPasswordValid(string? password, int? userId);
-
-        UserAccount GetUserAccountById(int userId);
     }
 
     public class UserVerificationService : IUserVerificationService
@@ -56,11 +54,6 @@
             var user = userDataService.GetUserAccountById((int)userId);
 
             return user != null && cryptoService.VerifyHashedPassword(user.PasswordHash, password);
-        }
-
-        public UserAccount GetUserAccountById(int userId)
-        {
-            return userDataService.GetUserAccountById(userId);
         }
     }
 }

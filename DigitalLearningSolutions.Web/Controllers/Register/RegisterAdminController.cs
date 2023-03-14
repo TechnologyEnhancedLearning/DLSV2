@@ -161,14 +161,12 @@
         [HttpPost]
         public IActionResult Password(ConfirmPasswordViewModel model)
         {
-            var data = TempData.Peek<RegistrationData>()!;
-            RegistrationPasswordValidator.ValidatePassword(model.Password, data.FirstName, data.LastName, ModelState);
-
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
+            var data = TempData.Peek<RegistrationData>()!;
             data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
 

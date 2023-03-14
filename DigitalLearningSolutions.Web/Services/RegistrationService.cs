@@ -48,7 +48,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         void CreateCentreManagerForExistingUser(int userId, int centreId, string? centreSpecificEmail);
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId, bool mergeWithExistingRoles);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId);
 
         (int delegateId, string candidateNumber, int delegateUserId) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
@@ -426,54 +426,30 @@ namespace DigitalLearningSolutions.Web.Services
             transaction.Complete();
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles newAdminRoles, int? categoryId, int userId, int centreId, bool mergeWithExistingRoles = true)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId)
         {
-            var existingAdminDetails = userDataService.GetAdminAccountsByUserId(userId)
+            var adminAtCentre = userDataService.GetAdminAccountsByUserId(userId)
                 .SingleOrDefault(a => a.CentreId == centreId);
 
-            if (existingAdminDetails != null)
+            if (adminAtCentre != null)
             {
-                if (existingAdminDetails.Active == false)
+                if (adminAtCentre.Active)
                 {
-                    userDataService.ReactivateAdmin(existingAdminDetails.Id);
+                    throw new AdminCreationFailedException("Active admin already exists for this user at this centre");
                 }
 
-                var mergedAdminDetails = existingAdminDetails;
-
-                if (mergeWithExistingRoles)
-                {
-                    mergedAdminDetails.IsCentreAdmin = existingAdminDetails.IsCentreAdmin || newAdminRoles.IsCentreAdmin;
-                    mergedAdminDetails.IsSupervisor = existingAdminDetails.IsSupervisor || newAdminRoles.IsSupervisor;
-                    mergedAdminDetails.IsNominatedSupervisor = existingAdminDetails.IsNominatedSupervisor || newAdminRoles.IsNominatedSupervisor;
-                    mergedAdminDetails.IsTrainer = existingAdminDetails.IsTrainer || newAdminRoles.IsTrainer;
-                    mergedAdminDetails.IsContentCreator = existingAdminDetails.IsContentCreator || newAdminRoles.IsContentCreator;
-                    mergedAdminDetails.IsContentManager = existingAdminDetails.IsContentManager || newAdminRoles.IsContentManager;
-                    mergedAdminDetails.ImportOnly = existingAdminDetails.ImportOnly || newAdminRoles.ImportOnly;
-                    mergedAdminDetails.IsCentreManager = existingAdminDetails.IsCentreManager || newAdminRoles.IsCentreManager;
-                }
-                else
-                {
-                    mergedAdminDetails.IsCentreAdmin = newAdminRoles.IsCentreAdmin;
-                    mergedAdminDetails.IsSupervisor = newAdminRoles.IsSupervisor;
-                    mergedAdminDetails.IsNominatedSupervisor = newAdminRoles.IsNominatedSupervisor;
-                    mergedAdminDetails.IsTrainer = newAdminRoles.IsTrainer;
-                    mergedAdminDetails.IsContentCreator = newAdminRoles.IsContentCreator;
-                    mergedAdminDetails.IsContentManager = newAdminRoles.IsContentManager;
-                    mergedAdminDetails.ImportOnly = newAdminRoles.ImportOnly;
-                    mergedAdminDetails.IsCentreManager = newAdminRoles.IsCentreManager;
-                }
-
+                userDataService.ReactivateAdmin(adminAtCentre.Id);
                 userDataService.UpdateAdminUserPermissions(
-                    existingAdminDetails.Id,
-                    mergedAdminDetails.IsCentreAdmin,
-                    mergedAdminDetails.IsSupervisor,
-                    mergedAdminDetails.IsNominatedSupervisor,
-                    mergedAdminDetails.IsTrainer,
-                    mergedAdminDetails.IsContentCreator,
-                    mergedAdminDetails.IsContentManager,
-                    mergedAdminDetails.ImportOnly,
+                    adminAtCentre.Id,
+                    adminRoles.IsCentreAdmin,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor,
+                    adminRoles.IsTrainer,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsContentManager,
+                    adminRoles.ImportOnly,
                     categoryId,
-                    mergedAdminDetails.IsCentreManager
+                    adminRoles.IsCentreManager
                 );
             }
             else
@@ -483,14 +459,14 @@ namespace DigitalLearningSolutions.Web.Services
                     null,
                     centreId,
                     categoryId,
-                    newAdminRoles.IsCentreAdmin,
-                    newAdminRoles.IsCentreManager,
-                    newAdminRoles.IsContentManager,
-                    newAdminRoles.IsContentCreator,
-                    newAdminRoles.IsTrainer,
-                    newAdminRoles.ImportOnly,
-                    newAdminRoles.IsSupervisor,
-                    newAdminRoles.IsNominatedSupervisor,
+                    adminRoles.IsCentreAdmin,
+                    adminRoles.IsCentreManager,
+                    adminRoles.IsContentManager,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsTrainer,
+                    adminRoles.ImportOnly,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor,
                     true
                 );
 

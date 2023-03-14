@@ -15,6 +15,5 @@
         [Range(1, int.MaxValue, ErrorMessage = "Please choose a supervisor role")]
         public int SelfAssessmentSupervisorRoleId { get; set; }
         public IEnumerable<SelfAssessmentSupervisorRole>? SelfAssessmentSupervisorRoles { get; set; }
-        public int? CentreID { get; set; }
     }
 }

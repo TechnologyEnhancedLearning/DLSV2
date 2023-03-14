@@ -65,6 +65,15 @@
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreIdKnownNotNull();
+            if (config.GetValue<string>("LegacyLearningMenu") != "")
+            {
+                if ((config.GetValue<bool>("LegacyLearningMenu") && !configDataService.GetCentreBetaTesting(centreId)) | (!config.GetValue<bool>("LegacyLearningMenu") && configDataService.GetCentreBetaTesting(centreId)))
+                {
+                    string baseUrl = config.GetValue<string>("CurrentSystemBaseUrl");
+                    string url = $"{baseUrl}/tracking/learn?customisationid={customisationId}&lp=1";
+                    return Redirect(url);
+                }
+            }
             var candidateId = User.GetCandidateIdKnownNotNull();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
             if (courseContent == null)

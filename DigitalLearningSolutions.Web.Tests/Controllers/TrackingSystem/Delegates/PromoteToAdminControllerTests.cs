@@ -70,7 +70,7 @@
                 UserId = 2,
                 CentreId = 101,
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._, A<int>._, false))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._, A<int>._))
                 .DoesNothing();
 
             DelegateEntity delegateEntity = A.Fake<DelegateEntity>();
@@ -116,8 +116,7 @@
                             ),
                             null,
                             formData.UserId,
-                            formData.CentreId,
-                            false
+                            formData.CentreId
                         )
                 )
                 .MustHaveHappened();
@@ -140,7 +139,7 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
                 LearningCategory = 0
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._, A<int>._, A<bool>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._, A<int>._))
                 .Throws(new AdminCreationFailedException());
 
             // When

@@ -11,7 +11,6 @@
         [TestCase("kducj&123JUJJJ", true)]
         [TestCase("monkey", false)]
         [TestCase("OpenSunshine123", false)]
-        [TestCase("", false)]
         public void Password_might_contain_common_element(string password, bool expectedResult)
         {
             // Given

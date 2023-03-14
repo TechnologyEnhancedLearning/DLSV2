@@ -134,8 +134,7 @@
                     adminRoles,
                     AdminCategoryHelper.AdminCategoryToCategoryId(formData.LearningCategory),
                     formData.UserId,
-                    formData.CentreId,
-                    false
+                    formData.CentreId
                 );
 
                 var delegateUserEmailDetails = userDataService.GetDelegateById(delegateId);

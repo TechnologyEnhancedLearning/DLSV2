@@ -1,49 +1,38 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
     using System;
-    using Castle.Core.Logging;
-    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Certificates;
-    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
-    using DocumentFormat.OpenXml.Wordprocessing;
     using FakeItEasy;
     using FluentAssertions;
-    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class CertificateServiceTests
     {
         private ICentresDataService centresDataService = null!;
         private ICertificateService certificateService = null!;
-        private ICertificateDataService certificateDataService = null!;
-        private ILearningHubReportApiClient learningHubReportApiClient = null!;
-        private ILogger<ILearningHubReportApiClient> logger = null!;
+
         [SetUp]
         public void Setup()
         {
             centresDataService = A.Fake<ICentresDataService>();
-            certificateDataService = A.Fake<ICertificateDataService>();
-            learningHubReportApiClient = A.Fake<ILearningHubReportApiClient>();
-            logger = A.Fake<ILogger<ILearningHubReportApiClient>>();
-            certificateService = new CertificateService(certificateDataService, learningHubReportApiClient, logger);
+            certificateService = new CertificateService(centresDataService);
         }
 
         [Test]
         public void GetPreviewCertificateForCentre_returns_null_when_data_service_returns_null()
         {
             // Given
-            const int centreId = 0;
+            const int centreId = 2;
             A.CallTo(() => centresDataService.GetCentreDetailsById(centreId)).Returns(null);
 
             // When
-            var result = certificateDataService.GetPreviewCertificateForCentre(centreId);
+            var result = certificateService.GetPreviewCertificateForCentre(centreId);
 
             // Then
-            result.Should().NotBeNull();
+            result.Should().BeNull();
         }
 
         [Test]
@@ -52,15 +41,21 @@
         {
             // Given
             var centre = CentreTestHelper.GetDefaultCentre();
-            var certificateInfo = CertificateTestHelper.GetDefaultCertificate();
             A.CallTo(() => centresDataService.GetCentreDetailsById(centre.CentreId)).Returns(centre);
-            A.CallTo(() => certificateDataService.GetPreviewCertificateForCentre(centre.CentreId)).Returns(certificateInfo);
 
             // When
             var result = certificateService.GetPreviewCertificateForCentre(centre.CentreId);
 
-            result.Should().BeEquivalentTo(certificateInfo);
+            // Then
+            var expectedCertificateInformation = new CertificateInformation(
+                centre,
+                "Joseph",
+                "Bloggs",
+                "Level 2 - ITSP Course Name",
+                new DateTime(2014, 4, 1),
+                "Passing online Digital Learning Solutions post learning assessments"
+            );
+            result.Should().BeEquivalentTo(expectedCertificateInformation);
         }
     }
 }
-

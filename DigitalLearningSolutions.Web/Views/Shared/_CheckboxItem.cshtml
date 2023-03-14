@@ -1,4 +1,4 @@
-﻿@using NHSUKViewComponents.Web.ViewModels
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model CheckboxItemViewModel
 @{
   var describedBy = "";
@@ -37,7 +37,7 @@
     </label>
     @if (Model.HintText != null)
     {
-      <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.Id-item-hint">
+      <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.Id-hint">
         @Model.HintText
       </div>
     }

@@ -1088,92 +1088,28 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
         [Test]
         public void
-            PromoteDelegateToAdmin_reactivates_admin_record_if_inactive_admin_already_exists()
+            PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_active_admin_already_exists()
         {
             // Given
-            const int categoryId = 1;
             const int userId = 2;
-            var adminAccount = UserTestHelper.GetDefaultAdminAccount(
-                active: false,
-                categoryId: categoryId,
-                userId: userId
-            );
-
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(userId: userId);
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
 
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, userId, 2, false);
+            Action action = () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, userId, 2);
 
             // Then
-            A.CallTo(() => userDataService.ReactivateAdmin(adminAccount.Id)).MustHaveHappenedOnceExactly();
+            action.Should().Throw<AdminCreationFailedException>();
+            UpdateToExistingAdminAccountMustNotHaveHappened();
             A.CallTo(
-                () => userDataService.UpdateAdminUserPermissions(
-                    adminAccount.Id,
-                    adminRoles.IsCentreAdmin,
-                    adminRoles.IsSupervisor,
-                    adminRoles.IsNominatedSupervisor,
-                    adminRoles.IsTrainer,
-                    adminRoles.IsContentCreator,
-                    adminRoles.IsContentManager,
-                    adminRoles.ImportOnly,
-                    categoryId,
-                    adminRoles.IsCentreManager
-                )
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => registrationDataService.RegisterAdmin(
-                    A<AdminAccountRegistrationModel>._,
-                    A<PossibleEmailUpdate>._
-                )
-            ).MustNotHaveHappened();
-        }
-
-        [Test]
-        public void PromoteDelegateToAdmin_updates_existing_active_admin_if_admin_at_same_centre_already_exists()
-        {
-            // Given
-            const int categoryId = 1;
-            const int userId = 2;
-            const int centreId = 2;
-            var adminAccount = UserTestHelper.GetDefaultAdminAccount(
-                active: true,
-                categoryId: categoryId,
-                userId: userId
-            );
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
-
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
-
-            // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId, false);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => userDataService.ReactivateAdmin(adminAccount.Id)).MustNotHaveHappened();
-                A.CallTo(
-                    () => userDataService.UpdateAdminUserPermissions(
-                        adminAccount.Id,
-                        adminRoles.IsCentreAdmin,
-                        adminRoles.IsSupervisor,
-                        adminRoles.IsNominatedSupervisor,
-                        adminRoles.IsTrainer,
-                        adminRoles.IsContentCreator,
-                        adminRoles.IsContentManager,
-                        adminRoles.ImportOnly,
-                        categoryId,
-                        adminRoles.IsCentreManager
-                    )
-                ).MustHaveHappenedOnceExactly();
-                A.CallTo(
                     () => registrationDataService.RegisterAdmin(
                         A<AdminAccountRegistrationModel>._,
                         A<PossibleEmailUpdate>._
                     )
-                ).MustNotHaveHappened();
-            }
+                )
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -1193,7 +1129,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId, false);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
 
             // Then
             using (new AssertionScope())
@@ -1237,7 +1173,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId, false);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
 
             // Then
             A.CallTo(
@@ -1258,112 +1194,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 )
             ).MustHaveHappened();
             UpdateToExistingAdminAccountMustNotHaveHappened();
-        }
-
-        [Test]
-        public void PromoteDelegateToAdmin_with_merge_param_calls_data_service_with_merged_admin_roles()
-        {
-            // Given
-            const bool mergeAdminRoles = true;
-
-            var activeAdmin = UserTestHelper.GetDefaultAdminAccount(centreId: 3, active: true);
-            activeAdmin.IsCentreAdmin = true;
-            activeAdmin.IsSupervisor = false;
-            activeAdmin.IsNominatedSupervisor = true;
-            activeAdmin.IsTrainer = false;
-            activeAdmin.IsContentCreator = true;
-            activeAdmin.IsContentManager = false;
-            activeAdmin.ImportOnly = true;
-            activeAdmin.IsCentreManager = false;
-
-            var newAdminRoles = new AdminRoles(
-                isCentreAdmin: true,
-                isSupervisor: true,
-                isNominatedSupervisor: true,
-                isTrainer: true,
-                isContentCreator: false,
-                isContentManager: false,
-                importOnly: false,
-                isCentreManager: false
-            );
-
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(activeAdmin.UserId)).Returns(
-                new[] { activeAdmin }
-            );
-
-            // When
-            registrationService.PromoteDelegateToAdmin(newAdminRoles, activeAdmin.CategoryId, activeAdmin.UserId, activeAdmin.CentreId, mergeAdminRoles);
-
-            // Then
-            A.CallTo(
-                () => userDataService.UpdateAdminUserPermissions(
-                    activeAdmin.Id,
-                    true,
-                    true,
-                    true,
-                    true,
-                    true,
-                    false,
-                    true,
-                    activeAdmin.CategoryId,
-                    false
-                )
-            ).MustHaveHappenedOnceExactly();
-
-            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._, A<PossibleEmailUpdate>._)).MustNotHaveHappened();
-        }
-
-        [Test]
-        public void PromoteDelegateToAdmin_without_merge_param_calls_data_service_with_overridden_admin_roles()
-        {
-            // Given
-            const bool mergeAdminRoles = false;
-
-            var activeAdmin = UserTestHelper.GetDefaultAdminAccount(centreId: 3, active: true);
-            activeAdmin.IsCentreAdmin = true;
-            activeAdmin.IsSupervisor = false;
-            activeAdmin.IsNominatedSupervisor = true;
-            activeAdmin.IsTrainer = false;
-            activeAdmin.IsContentCreator = true;
-            activeAdmin.IsContentManager = false;
-            activeAdmin.ImportOnly = true;
-            activeAdmin.IsCentreManager = false;
-
-            var newAdminRoles = new AdminRoles(
-                isCentreAdmin: false,
-                isSupervisor: false,
-                isNominatedSupervisor: false,
-                isTrainer: true,
-                isContentCreator: false,
-                isContentManager: false,
-                importOnly: false,
-                isCentreManager: false
-            );
-
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(activeAdmin.UserId)).Returns(
-                new[] { activeAdmin }
-            );
-
-            // When
-            registrationService.PromoteDelegateToAdmin(newAdminRoles, activeAdmin.CategoryId, activeAdmin.UserId, activeAdmin.CentreId, mergeAdminRoles);
-
-            // Then
-            A.CallTo(
-                () => userDataService.UpdateAdminUserPermissions(
-                    activeAdmin.Id,
-                    false,
-                    false,
-                    false,
-                    true,
-                    false,
-                    false,
-                    false,
-                    activeAdmin.CategoryId,
-                    false
-                )
-            ).MustHaveHappenedOnceExactly();
-
-            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._, A<PossibleEmailUpdate>._)).MustNotHaveHappened();
         }
 
         [Test]

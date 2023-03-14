@@ -221,14 +221,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult Password(ConfirmPasswordViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationData>()!;
-            RegistrationPasswordValidator.ValidatePassword(model.Password, data.FirstName, data.LastName, ModelState);
-
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
+            var data = TempData.Peek<DelegateRegistrationData>()!;
             data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
 
