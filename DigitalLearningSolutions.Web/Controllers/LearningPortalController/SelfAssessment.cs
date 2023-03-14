@@ -6,7 +6,6 @@
     using System.Net;
     using System.Text.Json;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -23,7 +22,6 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    //using DigitalLearningSolutions.Data.Enums;
     using GDS.MultiPageFormData.Enums;
     public partial class LearningPortalController
     {
@@ -353,7 +351,7 @@
             TempData.Clear();
             multiPageFormService.SetMultiPageFormData(
                 model,
-                MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+               GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                 TempData
             );
             return RedirectToAction("FilteredSelfAssessmentGroups", model);
@@ -368,14 +366,14 @@
                 model.AppliedFilters.Clear();
                 multiPageFormService.SetMultiPageFormData(
                     model,
-                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                   GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                     TempData
                 ).GetAwaiter().GetResult();
             }
             else
             {
                 var session = multiPageFormService.GetMultiPageFormData<SearchSelfAssessmentOvervieviewViewModel>(
-                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                    GDS.MultiPageFormData.Enums.MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                     TempData
                 ).GetAwaiter().GetResult();
                 model.AppliedFilters = session.AppliedFilters;
@@ -734,13 +732,13 @@
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult() ;
 
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var distinctCentres = selfAssessmentService.GetValidSupervisorsForActivity(
                 User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
@@ -775,7 +773,7 @@
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult() ;
             sessionAddSupervisor.CentreID = model.CentreID;
 
             if (!ModelState.IsValid)
