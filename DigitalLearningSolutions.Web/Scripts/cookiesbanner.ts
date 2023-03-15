@@ -1,9 +1,11 @@
-﻿var divCookieBanner = document.getElementById('cookiebanner');
-var bannerConfirm = document.getElementById('nhsuk-cookie-confirmation-banner');
-var bannerCookieAccept = document.getElementById('nhsuk-cookie-banner__link_accept_analytics');
-var bannerCookieReject = document.getElementById('nhsuk-cookie-banner__link_accept');
-var divCookieBannerNoJSstyling = document.getElementById('cookie-banner-no-js-styling');
-var divCookieBannerJSstyling = document.getElementById('cookie-banner-js-styling');
+﻿const divCookieBanner = document.getElementById('cookiebanner');
+const divCookieBannerNoJSstyling = document.getElementById('cookie-banner-no-js-styling');
+const divCookieBannerJSstyling = document.getElementById('cookie-banner-js-styling');
+const bannerConfirm = document.getElementById('nhsuk-cookie-confirmation-banner');
+const bannerCookieAccept = document.getElementById('nhsuk-cookie-banner__link_accept_analytics');
+const bannerCookieReject = document.getElementById('nhsuk-cookie-banner__link_accept');
+
+const path = '/LearningSolutions/ConfirmCookieConsent';
 
 if (divCookieBannerNoJSstyling != null) {
   divCookieBannerNoJSstyling.setAttribute("style", "display:none;");
@@ -37,14 +39,15 @@ function bannerAccept(consentValue: string) {
 
 function changeConsent(consent: string) {
   var params = 'consent=' + consent;
-  var request = new XMLHttpRequest();
-  var path = '/LearningSolutions/CookieBannerConfirmation'
+  var request = new XMLHttpRequest();  
 
   request.open('GET', path + '?' + params, true);
   request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
   request.send();
 };
 
+/*[BY] Handled the following in MVC Post**************************/
+/*
 var consentYes = document.getElementById("input-statistics-1");
 var consentNo = document.getElementById("input-statistics-2");
 
@@ -64,4 +67,4 @@ function setUserConsent(value: string) {
   if (userConsent != null) {
     userConsent.value = value;
   }  
-}
+}*/
