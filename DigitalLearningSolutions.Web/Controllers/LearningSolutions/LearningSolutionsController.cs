@@ -8,9 +8,12 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Primitives;
+    using System;
+    using System.Reflection.PortableExecutable;
 
     public class LearningSolutionsController : Controller
     {
@@ -78,39 +81,66 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             }
 
             var model = new CookieConsentViewModel();
+            if (Request.Cookies.HasDLSBannerCookie("true"))
+                model.UserConsent = "true";
+            else if (Request.Cookies.HasDLSBannerCookie("false"))
+                model.UserConsent = "false";
             return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult CookiePolicy(CookieConsentViewModel model)
+        {
+            string consent =  model.UserConsent?.ToString();
+            if (!string.IsNullOrEmpty(consent))
+                CookieBannerConfirmation(consent);
+
+            return View("CookieConfirmation");
+        }
+
+        // [HttpPost]
+        public IActionResult CookieBannerConfirmationPath(string path, string consent)
+        {
+            if (!string.IsNullOrEmpty(consent))
+                CookieBannerConfirmation(consent);
+
+            string controllerName = string.Empty;
+            string actionName = "Index";
+            string routing = string.Empty;
+
+            string[] strTemp = path.Split('/');
+
+            for (int i = 0; i < strTemp.Length; i++)
+            {
+                if (i == 1) controllerName = strTemp[i];
+                if (i == 2) actionName = strTemp[i];
+                if (i == 3) routing = strTemp[i];
+            }
+
+            //var restPath = path.Split('/')[2];
+            //DlsSubApplication.TryGetFromUrlSegment(dlsSubAppSection, out var dlsSubApplication);
+            //return RedirectToAction(
+            //    "EditDetails",
+            //    "MyAccount",
+            //    new { returnUrl, dlsSubApplication, isCheckDetailsRedirect }
+            //);
+
+            return RedirectToAction(actionName, controllerName);
+            //return Redirect(returnAddress);
         }
 
         public void CookieBannerConfirmation(string consent)
         {
-            if (!string.IsNullOrEmpty(consent))
-            {
-                if (consent == "Yes")
-                    Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
-                else if (consent == "No")
-                    Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
+            if (consent == "true")
+                Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
+            else if (consent == "false")
+                Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
 
-                ViewData["consent"] = consent;
-            }
+            ViewData["consent"] = consent;
         }
 
-        [HttpPost]
-        public IActionResult CookieConfirmation(CookieConsentViewModel model)
-        {
-            var consent = model.UserConsent;
+       
 
-            if (!string.IsNullOrEmpty(consent))
-            {
-                if (consent == "Yes")
-                    Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
-                else if (consent == "No")
-                    Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
-
-                ViewData["consent"] = consent;
-            }
-
-            return View();
-        }
         public IActionResult Error()
         {
             var model = GetErrorModel();

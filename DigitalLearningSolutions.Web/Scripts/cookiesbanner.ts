@@ -2,16 +2,25 @@
 var bannerConfirm = document.getElementById('nhsuk-cookie-confirmation-banner');
 var bannerCookieAccept = document.getElementById('nhsuk-cookie-banner__link_accept_analytics');
 var bannerCookieReject = document.getElementById('nhsuk-cookie-banner__link_accept');
+var divCookieBannerNoJSstyling = document.getElementById('cookie-banner-no-js-styling');
+var divCookieBannerJSstyling = document.getElementById('cookie-banner-js-styling');
+
+if (divCookieBannerNoJSstyling != null) {
+  divCookieBannerNoJSstyling.setAttribute("style", "display:none;");
+}
+if (divCookieBannerJSstyling != null) {
+  divCookieBannerJSstyling.setAttribute("style", "display:block;");
+}
 
 if (bannerCookieAccept != null) {
   bannerCookieAccept.addEventListener('click', function () {
-    return bannerAccept("Yes");
+    return bannerAccept("true");
   });
 }
 
 if (bannerCookieReject != null) {
   bannerCookieReject.addEventListener('click', function () {
-    return bannerAccept("No");
+    return bannerAccept("false");
   });
 }
 
@@ -41,13 +50,13 @@ var consentNo = document.getElementById("input-statistics-2");
 
 if (consentYes != null) {
   consentYes.addEventListener('click', function () {
-    return setUserConsent('Yes');
+    return setUserConsent('true');
   });
 }
 
 if (consentNo != null) {
   consentNo.addEventListener('click', function () {
-    return setUserConsent('No');
+    return setUserConsent('false');
   });
 }
 function setUserConsent(value: string) {

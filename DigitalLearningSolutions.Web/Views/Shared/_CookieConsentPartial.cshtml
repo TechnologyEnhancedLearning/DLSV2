@@ -3,19 +3,38 @@
     var consentViaTemp = ViewData["consent"];
     // var showCookieBanner = !consentViaTemp?.Equals("Yes") ?? true & !value?.Equals("Yes") ?? true;
     var showCookieBanner = consentViaTemp == null & value == null; // show banner only both are null
+    var path = Context.Request.Path; // @(Configuration["CurrentSystemBaseUrl"]
+    var actionLinkRouteData = new Dictionary<string, string> { { "path", path }, { "consent", "true" } };
+    var actionLinkRouteDataNo = new Dictionary<string, string> { { "path", path }, { "consent", "false" } };
 }
 @if (showCookieBanner)
 {
     <div id="nhsuk-cookie-banner">
         <div class="nhsuk-cookie-banner1" id="cookiebanner">
             <div class="nhsuk-width-container">
-                <h2>Cookies on the NHS digital service manual</h2>
+              <br>
+                <h2>Cookies on the Digital Learning Solutions</h2>
                 <p>We've put some small files called cookies on your device to make our site work.</p>
-                <p>We'd also like to use analytics cookies. These send anonymous information about how our site is used to a service called Adobe Analytics. We use this information to improve our site.</p>
-                <p>Let us know if this is OK. We'll use a cookie to save your choice. You can <a id="nhsuk-cookie-banner__link" href="@Url.Action( "CookiePolicy","LearningSolutions")" tabindex="1">read more about our cookies</a> before you choose.</p>
+                <p>We'd also like to use analytics cookies. These send anonymous information about how our site is used to a service called Google Analytics & Hotjar Analytics. We use this information to improve our site.</p>
+                <p>Let us know if this is OK. We'll use a cookie to save your choice. You can <a id="nhsuk-cookie-banner__link" target="_blank" href="@Url.Action( "CookiePolicy","LearningSolutions")" tabindex="1">read more about our cookies</a> before you choose.</p>
                 <p>
-                    <button id="nhsuk-cookie-banner__link_accept_analytics" class="nhsuk-button"> I'm OK with analytics cookies</button>
-                    <button id="nhsuk-cookie-banner__link_accept" class="nhsuk-button"> Do not use analytics cookies</button>
+                    <div id="cookie-banner-no-js-styling">
+                        <a href="@Url.Action( "CookieBannerConfirmationPath","LearningSolutions", new { path = path, consent="false"})" class="nhsuk-button">Do not use analytics cookies</a>
+                        <a href="@Url.Action( "CookieBannerConfirmationPath","LearningSolutions", new { path = path, consent="true"})" class="nhsuk-button">I'm OK with analytics cookies</a>
+
+                        @*   <form method="post" asp-controller="LearningSolutions" asp-action="CookieBannerConfirmationPath" asp-all-route-data="@actionLinkRouteDataNo">
+                            <button id="nhsuk-cookie-banner__link_accept_yes" class="nhsuk-button"> Do not use analytics cookies</button>
+                        </form>
+                        <form method="post" asp-controller="LearningSolutions" asp-action="CookieBannerConfirmationPath" asp-all-route-data="@actionLinkRouteData">
+                            <button id="nhsuk-cookie-banner__link_accept_analytics_yes" class="nhsuk-button"> I'm OK with analytics cookies</button>
+                        </form>
+                        *@
+                        
+                    </div>
+                    <div id="cookie-banner-js-styling" style="display:none;">
+                        <button id="nhsuk-cookie-banner__link_accept" class="nhsuk-button"> Do not use analytics cookies</button>
+                        <button id="nhsuk-cookie-banner__link_accept_analytics" class="nhsuk-button"> I'm OK with analytics cookies</button>
+                    </div>
                 </p>
             </div>
         </div>

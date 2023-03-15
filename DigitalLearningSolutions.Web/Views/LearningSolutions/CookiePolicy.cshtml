@@ -4,8 +4,8 @@
     ViewData["Title"] = "Digital Learning Solutions - Cookie policy";
     ViewData["DoNotDisplayNavBar"] = true;
 }
-<form method="post" asp-action="CookieConfirmation">
-    <input type="hidden" asp-for="UserConsent" />
+<form method="post" asp-action="CookiePolicy">
+    @*<input type="hidden" asp-for="UserConsent" />*@
 
     <div class="nhsuk-width-container app-width-container">
         <div class="nhsuk-grid-row">
@@ -127,13 +127,21 @@
                     <fieldset class="nhsuk-fieldset" id="cookie-statistics-form" aria-describedby="cookie-statistics">
                         <div class="nhsuk-radios nhsuk-radios--inline nhsuk-u-margin-bottom-6">
                             <div class="nhsuk-radios__item">
-                                <input class="nhsuk-radios__input" id="input-statistics-1" name="input-statistics" type="radio" value="on">
+                                <input class="nhsuk-radios__input"
+                                       id="input-statistics-1"
+                                       asp-for="UserConsent"
+                                       type="radio"
+                                       value="true">
                                 <label class="nhsuk-label nhsuk-radios__label" for="input-statistics-1">
                                     Use cookies to measure my website use
                                 </label>
                             </div>
                             <div class="nhsuk-radios__item">
-                                <input class="nhsuk-radios__input" id="input-statistics-2" name="input-statistics" type="radio" value="yes">
+                                <input class="nhsuk-radios__input"
+                                       id="input-statistics-2"
+                                       asp-for="UserConsent"
+                                       type="radio"
+                                       value="false" />
                                 <label class="nhsuk-label nhsuk-radios__label" for="input-statistics-2">
                                     Do not use cookies to measure my website use
                                 </label>

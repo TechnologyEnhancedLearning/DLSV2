@@ -28,6 +28,16 @@ namespace DigitalLearningSolutions.Web.Helpers
             );
         }
 
+        public static bool HasDLSBannerCookie(this IRequestCookieCollection cookies, string value)
+        {
+            if (cookies.ContainsKey(CookieName))
+            {
+                return cookies[CookieName] == value;
+            }
+
+            return false;
+        }
+
         public static void DeleteDLSBannerCookie(this IResponseCookies cookies)
         {
             cookies.Delete(CookieName);
