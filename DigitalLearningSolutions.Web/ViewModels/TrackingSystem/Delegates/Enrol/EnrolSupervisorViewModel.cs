@@ -3,7 +3,6 @@ using DigitalLearningSolutions.Data.Models.Supervisor;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using NHSUKViewComponents.Web.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 
