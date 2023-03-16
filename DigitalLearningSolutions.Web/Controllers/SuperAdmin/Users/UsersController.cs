@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,11 @@
     [SetSelectedTab(nameof(NavMenuTab.Admins))]
     public class UsersController : Controller
     {
+        private readonly IUserService userService;
+        public UsersController(IUserService userService)
+        {
+            this.userService = userService;
+        }
         [Route("SuperAdmin/Users")]
         public IActionResult Index()
         {
@@ -28,6 +34,12 @@
         {
             var model = new AdministratorsViewModel();
             return View(model);
+        }
+        [Route("SuperAdmin/Users/{UserId:int}/UnlockAccount")]
+        public IActionResult UnlockAccount(int UserId)
+        {
+            userService.ResetFailedLoginCountByUserId(UserId);
+            return RedirectToAction("Index");
         }
     }
 }
