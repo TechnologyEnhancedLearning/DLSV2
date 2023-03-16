@@ -34,7 +34,7 @@
                 <vc:single-checkbox asp-for="@nameof(Model.IsChecked)" label="I am sure that I wish to inactivate this user" hint-text="This action will inactivate all related delegate and admin accounts for this user and prevent them from logging in to the system. The user will be unable to register to use the system with this email address in future. To access the system again, their account will need to be reactivated by a super administrator."></vc:single-checkbox>
             </p>
         </div>
-        <button class="nhsuk-button" type="submit">
+        <button class="nhsuk-button nhsuk-button--danger" type="submit">
             Inactivate user
         </button>
     </form>
