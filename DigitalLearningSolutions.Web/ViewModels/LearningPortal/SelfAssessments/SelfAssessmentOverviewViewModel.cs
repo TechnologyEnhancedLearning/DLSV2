@@ -14,7 +14,7 @@
         public int PreviousCompetencyNumber { get; set; }
         public int NumberOfOptionalCompetencies { get; set; }
         public bool AllQuestionsVerifiedOrNotRequired { get; set; }
-        public SearchSelfAssessmentOvervieviewViewModel SearchViewModel { get; set; }
+        public SearchSelfAssessmentOverviewViewModel SearchViewModel { get; set; }
         public string VocabPlural()
         {
             return FrameworkVocabularyHelper.VocabularyPlural(SelfAssessment.Vocabulary);
