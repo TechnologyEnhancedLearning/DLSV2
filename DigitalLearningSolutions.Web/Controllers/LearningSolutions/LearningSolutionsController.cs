@@ -121,8 +121,12 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         private string? GetBannerText()
         {
-            var centreId = User.GetCentreIdKnownNotNull();
-            var bannerText = centresDataService.GetBannerText(centreId);
+            string? bannerText = null;
+            var centreId = User.GetCentreId();
+            if(centreId != null)
+            {
+                bannerText = centresDataService.GetBannerText((int)centreId);
+            }
             return bannerText;
         }
     }
