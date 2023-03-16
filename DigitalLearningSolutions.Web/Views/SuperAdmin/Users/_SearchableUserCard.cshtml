@@ -54,7 +54,7 @@
                                         <partial name="_StatusTag" model="@Model.IsActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
                                     </span>
                                     <span>
-                                    @if (Model.IsLocked)
+                                        @if (Model.IsLocked)
                                     {
                                         <partial name="_StatusTag" model="(int)UserCard.Locked" />
                                     }
@@ -120,9 +120,7 @@
                     <dt class="nhsuk-summary-list__key">
                         PRN
                     </dt>
-                    <span class="searchable-element-prn">
-                        <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
-                    </span>
+                    <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
