@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.User;
+    using Microsoft.Extensions.Logging;
 
     public interface IUserDataService
     {
@@ -214,10 +215,15 @@
         (IEnumerable<UserAccountEntity>, int recordCount) GetUserAccounts(
             string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
             );
+
+        string GetUserDisplayName(int userId);
+
+        void InactivateUser(int userId);
     }
 
     public partial class UserDataService : IUserDataService
     {
+        private readonly ILogger<UserDataService> logger;
         private const string BaseSelectUserQuery =
             @"SELECT
                 u.ID,
@@ -431,6 +437,54 @@
                 commandTimeout: 3000
             );
             return (userAccountEntity, ResultCount);
+        }
+
+        public string GetUserDisplayName(int userId)
+        {
+            return connection.Query<string>(
+                    @"SELECT
+                       u.FirstName + ' ' + u.LastName + ' (' + u.PrimaryEmail +')'
+                       FROM Users u
+                       WHERE u.ID = @userId",
+                    new { userId }
+                ).Single();
+        }
+
+        public void InactivateUser(int userId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+            @"
+               BEGIN TRY
+               BEGIN TRANSACTION
+                        UPDATE Users SET Active=0 WHERE ID=@UserID
+
+                        UPDATE AdminAccounts SET Active=0 WHERE UserID=@UserID
+
+                        UPDATE DelegateAccounts SET Active=0 WHERE UserID=@UserID
+
+                        DELETE FROM NotificationUsers WHERE AdminUserID IN (SELECT ID FROM AdminAccounts WHERE UserID=@UserID)
+
+                        DELETE FROM NotificationUsers WHERE CandidateID IN (SELECT ID FROM DelegateAccounts WHERE UserID=@UserID)
+
+                    COMMIT TRANSACTION
+                END TRY
+                BEGIN CATCH
+                    ROLLBACK TRANSACTION
+                END CATCH
+                ",
+                new
+                {
+                    UserID = userId
+                }
+            );
+
+            if (numberOfAffectedRows == 0)
+            {
+                string message =
+                $"db insert/update failed for User ID: {userId}";
+                logger.LogWarning(message);
+                throw new InactivateUserUpdateException(message);
+            }
         }
     }
 }
