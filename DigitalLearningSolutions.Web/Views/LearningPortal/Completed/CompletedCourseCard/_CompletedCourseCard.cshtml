@@ -33,15 +33,30 @@
     }
     @if (Model.HasFinaliseButton())
     {
-          <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+      @if (Model.FinaliseButtonAriaLabel() == "Evaluate course")
+      {
+            <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+           aria-describedby="@Model.Id-name"
+           aria-label="@Model.FinaliseButtonAriaLabel()"
+           href="@Model.EvaluateUrl"
+           role="button">
+                <span aria-hidden="true">
+            @Model.FinaliseButtonText()  <span class="nhsuk-u-visually-hidden">@Model.Name</span>
+                </span>
+            </a>
+      }
+      else
+      {
+            <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
            aria-describedby="@Model.Id-name"
            aria-label="@Model.FinaliseButtonAriaLabel()"
            asp-route-progressId=@Model.ProgressId asp-controller="Certificate" asp-action="ViewCertificate"
            role="button" target="_blank">
-              <span aria-hidden="true">
-          @Model.FinaliseButtonText()  <span class="nhsuk-u-visually-hidden">@Model.Name</span>
-              </span>
-          </a>
+                <span aria-hidden="true">
+            @Model.FinaliseButtonText()  <span class="nhsuk-u-visually-hidden">@Model.Name</span>
+                </span>
+            </a>
+      }
     }
     </div>
 </div>
