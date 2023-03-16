@@ -38,9 +38,52 @@
             this.jobGroupsDataService = jobGroupsDataService;
         }
 
+        [Route("SuperAdmin/Users/{userId=0:int}/InactivateUserConfirmation")]
+        public IActionResult InactivateUserConfirmation(int userId = 0)
+        {
+            InactivateUserViewModel inactivateUserViewModel = new InactivateUserViewModel();
+            inactivateUserViewModel.UserId = userId;
+            inactivateUserViewModel.DisplayName = this.userDataService.GetUserDisplayName(userId);
+
+            if (TempData["SearchString"] != null)
+            {
+                inactivateUserViewModel.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                inactivateUserViewModel.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                inactivateUserViewModel.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            TempData["UserId"] = userId;
+            TempData.Keep();
+            return View(inactivateUserViewModel);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Users/{userId=0:int}/InactivateUserConfirmation")]
+        public IActionResult InactivateUserConfirmation(InactivateUserViewModel inactivateUserViewModel, int userId = 0)
+        {
+            TempData["UserId"] = userId;
+            if (inactivateUserViewModel.IsChecked)
+            {
+                this.userDataService.InactivateUser(userId);
+                return RedirectToAction("Index", "Users", new { UserId = userId });
+            }
+            else
+            {
+                inactivateUserViewModel.Error = true;
+                ModelState.Clear();
+                ModelState.AddModelError("IsChecked", "You must check the checkbox to continue");
+            }
+            return View(inactivateUserViewModel);
+        }
+
         [Route("SuperAdmin/Users/{page=0:int}")]
         public IActionResult Index(
-          int page=1,
+          int page = 1,
           string? Search = "",
           int UserId = 0,
           string? UserStatus = "",
@@ -55,7 +98,7 @@
             UserStatus = (string.IsNullOrEmpty(UserStatus) ? "Any" : UserStatus);
             EmailStatus = (string.IsNullOrEmpty(EmailStatus) ? "Any" : EmailStatus);
 
-            if(string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
+            if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
                 page = 1;
             }
@@ -109,8 +152,6 @@
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             jobGroups.Insert(0, (0, "Any"));
 
-            var loggedInUser = userDataService.GetUserAccountById(User.GetUserId()!.Value);
-
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
                 new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
@@ -134,8 +175,11 @@
             {
                 result.SearchString = "SearchQuery|" + Search + "-UserId|" + UserId;
                 result.FilterString = "UserStatus|" + UserStatus + "-EmailStatus|" + EmailStatus + "-JobGroup|" + JobGroupId;
-            }
 
+                TempData["SearchString"] = result.SearchString;
+                TempData["FilterString"] = result.FilterString;
+            }
+            TempData["Page"] = result.Page;
 
             var model = new UserAccountsViewModel(
                 result
@@ -164,6 +208,8 @@
 
             model.JavascriptSearchSortFilterPaginateEnabled = false;
             ModelState.ClearAllErrors();
+
+            ViewBag.UserId = TempData["UserId"];
             return View(model);
         }
 
