@@ -69,66 +69,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
             var model = new ContactViewModel(contactText);
             return View(model);
-        }
-
-        public IActionResult CookiePolicy()
-        {
-            var contactText = configDataService.GetConfigValue(ConfigDataService.ContactText);
-            if (contactText == null)
-            {
-                logger.LogError("Contact text from Config table is null");
-                return StatusCode(500);
-            }
-
-            var model = new CookieConsentViewModel();
-            if (Request.Cookies.HasDLSBannerCookie("true"))
-                model.UserConsent = "true";
-            else if (Request.Cookies.HasDLSBannerCookie("false"))
-                model.UserConsent = "false";
-            return View(model);
-        }
-
-        [HttpPost]
-        public IActionResult CookiePolicy(CookieConsentViewModel model)
-        {
-            string consent = model.UserConsent?.ToString();
-            if (!string.IsNullOrEmpty(consent))
-                ConfirmCookieConsent(consent);
-
-            return View("CookieConfirmation");
-        }
-
-        // [HttpPost]
-        public IActionResult CookieConsentConfirmation(string consent, string path)
-        {
-            if (!string.IsNullOrEmpty(consent))
-                ConfirmCookieConsent(consent);
-
-            string controllerName = string.Empty;
-            string actionName = string.Empty;
-            string routeValue = string.Empty;
-
-            string[] strTemp = path.Split('/');
-
-            for (int i = 0; i < strTemp.Length; i++)
-            {
-                if (i == 1) controllerName = strTemp[i] ?? "Home";
-                if (i == 2) actionName = strTemp[i] ?? "Index";
-                if (i == 3) routeValue = strTemp[i];
-            }        
-
-            return RedirectToAction(actionName, controllerName);            
-        }
-
-        public void ConfirmCookieConsent(string consent)
-        {
-            if (consent == "true")
-                Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
-            else if (consent == "false")
-                Response.Cookies.SetDLSBannerCookie(consent, System.DateTime.Now);
-
-            ViewData["consent"] = consent;
-        }
+        }        
 
         public IActionResult Error()
         {

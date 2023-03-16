@@ -2,17 +2,19 @@
 const divCookieBannerNoJSstyling = document.getElementById('cookie-banner-no-js-styling');
 const divCookieBannerJSstyling = document.getElementById('cookie-banner-js-styling');
 const bannerConfirm = document.getElementById('nhsuk-cookie-confirmation-banner');
+const bannerConfirmOnPost = document.getElementById('nhsuk-cookie-confirmation-banner-post');
 const bannerCookieAccept = document.getElementById('nhsuk-cookie-banner__link_accept_analytics');
 const bannerCookieReject = document.getElementById('nhsuk-cookie-banner__link_accept');
 
-const path = '/LearningSolutions/ConfirmCookieConsent';
+const path = '/CookieConsent/ConfirmCookieConsent';
 
 if (divCookieBannerNoJSstyling != null) {
   divCookieBannerNoJSstyling.setAttribute("style", "display:none;");
 }
 if (divCookieBannerJSstyling != null) {
-  divCookieBannerJSstyling.setAttribute("style", "display:block;");
+  divCookieBannerJSstyling.setAttribute("style", "display:block;");  
 }
+bannerConfirmOnPost?.setAttribute("style", "display:none;");
 
 if (bannerCookieAccept != null) {
   bannerCookieAccept.addEventListener('click', function () {
