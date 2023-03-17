@@ -288,6 +288,104 @@
         }
 
         [Test]
+        public void SelfAssessmentCompetency_Post_result_overriding_signedoff_question_should_redirect_to_confirmation_route()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+
+            var existingAssessmentQuestions = new List<AssessmentQuestion>
+            {
+                new AssessmentQuestion
+                {
+                    Id = 1,
+                    Result = 0,
+                    SignedOff = true,
+                },
+            };
+            var competency = new Competency();
+            competency.AssessmentQuestions = existingAssessmentQuestions;
+
+            var userUpdatedAssessmentQuestions = new Collection<AssessmentQuestion>
+            {
+                new AssessmentQuestion
+                {
+                    Id = 1,
+                    Result = 1,
+                    SignedOff = true,
+                },
+            };
+
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
+                .Returns(selfAssessment);
+
+
+            A.CallTo(() => selfAssessmentService.GetNthCompetency(A<int>._, A<int>._, A<int>._))
+                .Returns(competency);
+            
+            // When
+            var result = controller.SelfAssessmentCompetency(1, userUpdatedAssessmentQuestions, 1, 1, 1);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithActionName("ConfirmOverwriteSelfAssessment");
+        }
+
+        [Test]
+        public void SelfAssessmentCompetency_Post_result_not_overriding_signedoff_question_should_redirect_to_confirmation_route()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+
+            var existingAssessmentQuestions = new List<AssessmentQuestion>
+            {
+                new AssessmentQuestion
+                {
+                    Id = 1,
+                    Result = 1,
+                    SignedOff = true,
+                },
+                new AssessmentQuestion
+                {
+                    Id = 2,
+                    Result = 0,
+                    SignedOff = false,
+                },
+            };
+            var competency = new Competency();
+            competency.AssessmentQuestions = existingAssessmentQuestions;
+
+            var userUpdatedAssessmentQuestions = new Collection<AssessmentQuestion>
+            {
+                new AssessmentQuestion
+                {
+                    Id = 1,
+                    Result = 1,
+                },
+                new AssessmentQuestion
+                {
+                    Id = 1,
+                    Result = 1,
+                },
+            };
+
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
+                .Returns(selfAssessment);
+
+
+            A.CallTo(() => selfAssessmentService.GetNthCompetency(A<int>._, A<int>._, A<int>._))
+                .Returns(competency);
+
+            // When
+            var result = controller.SelfAssessmentCompetency(1, userUpdatedAssessmentQuestions, 1, 1, 1);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithActionName("SelfAssessmentCompetency");
+        }
+
+        [Test]
         public void SelfAssessmentOverview_Should_Return_View()
         {
             // Given

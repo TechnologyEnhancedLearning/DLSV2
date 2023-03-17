@@ -22,6 +22,7 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.Extensions.Logging;
 
     public partial class LearningPortalController
@@ -144,7 +145,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
         public IActionResult SelfAssessmentCompetency(
             int selfAssessmentId,
-            ICollection<AssessmentQuestion> assessmentQuestions,
+            ICollection<AssessmentQuestion> updatedAssessmentQuestions,
             int competencyNumber,
             int competencyId,
             int? competencyGroupId
@@ -161,20 +162,26 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
             var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, delegateId);
-            if (competency.AssessmentQuestions.Any(x => x.SignedOff == true))
-            {
 
-                TempData["assessmentQuestions"] = JsonSerializer.Serialize(assessmentQuestions);
-                TempData["competencyId"] = competencyId;
-                TempData["competencyGroupId"] = competencyGroupId;
-                TempData["competencyName"] = competency.Name;
-
-                return RedirectToAction("ConfirmOverwriteSelfAssessment", new { selfAssessmentId = selfAssessmentId, competencyNumber = competencyId });
-            }
-            else
+            foreach (var updatedAssessmentQuestion in updatedAssessmentQuestions)
             {
-                return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, assessmentQuestions, delegateUserId, delegateId);
+                foreach (var originalAssessmentQuestion in competency.AssessmentQuestions)
+                {
+                    if (originalAssessmentQuestion.Id == updatedAssessmentQuestion.Id
+                        && originalAssessmentQuestion.SignedOff == true
+                        && updatedAssessmentQuestion.Result != originalAssessmentQuestion.Result)
+                    {
+                        TempData["assessmentQuestions"] = JsonSerializer.Serialize(updatedAssessmentQuestions);
+                        TempData["competencyId"] = competencyId;
+                        TempData["competencyGroupId"] = competencyGroupId;
+                        TempData["competencyName"] = competency.Name;
+
+                        return RedirectToAction("ConfirmOverwriteSelfAssessment", new { selfAssessmentId = selfAssessmentId, competencyNumber = competencyId });
+                    }
+                }
             }
+
+            return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, updatedAssessmentQuestions, delegateUserId, delegateId);
         }
 
         [Route(
@@ -667,7 +674,7 @@
             {
                 supervisors = supervisors.Where(s => s.CentreID == sessionAddSupervisor.CentreID).ToList();
             }
-            
+
             var model = new AddSupervisorViewModel
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
@@ -693,7 +700,7 @@
                sessionAddSupervisor.SelfAssessmentID,
                User.GetUserIdKnownNotNull()
            );
-                if(sessionAddSupervisor?.CentreID != null)
+                if (sessionAddSupervisor?.CentreID != null)
                 {
                     supervisors = supervisors.Where(s => s.CentreID == sessionAddSupervisor.CentreID);
                 }
@@ -810,13 +817,13 @@
                 model.Centres = supervisorCentres;
                 return View("SelfAssessments/SelectSupervisorCentre", model);
             }
-            
+
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
             );
-            return RedirectToAction("AddNewSupervisor", new { model.SelfAssessmentID});
+            return RedirectToAction("AddNewSupervisor", new { model.SelfAssessmentID });
         }
 
         [Route(
