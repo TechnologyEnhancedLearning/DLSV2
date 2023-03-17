@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
@@ -143,6 +144,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/Signposting/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/SuperAdmin/Users/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{0}.cshtml");
@@ -179,11 +181,6 @@ namespace DigitalLearningSolutions.Web
 
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
-
-            services.AddControllersWithViews(options =>
-            {
-                options.Filters.Add(typeof(VerifyAdminUserCanProceed));
-            });
 
             // Register services.
             RegisterServices(services);

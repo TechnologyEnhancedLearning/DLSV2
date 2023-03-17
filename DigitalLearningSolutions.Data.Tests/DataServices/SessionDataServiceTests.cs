@@ -168,42 +168,6 @@
         }
 
         [Test]
-        public void StopAdminSession_Should_Stop_Specified_Admin_Session()
-        {
-            using (new TransactionScope())
-            {
-                // Given
-                var addedSessionId = sessionDataService.StartAdminSession(7);
-
-                // When
-                sessionDataService.StopAdminSession(7, addedSessionId);
-
-                // Then
-                var recoveredAdminSession = sessionTestHelper.GetAdminSession(addedSessionId);
-                recoveredAdminSession.Active.Should().BeFalse();
-            }
-        }
-
-        [Test]
-        public void StopAllAdminSessions_Should_Stop_All_Admin_Sessions()
-        {
-            using (new TransactionScope())
-            {
-                // Given
-                var addedSessionId = sessionDataService.StartAdminSession(7);
-
-                // When
-                sessionDataService.StopAllAdminSessions(7);
-
-                // Then
-                var recoveredAdminSession = sessionTestHelper.GetAdminSession(addedSessionId);
-                recoveredAdminSession.Active.Should().BeFalse();
-
-            }
-        }
-
-
-        [Test]
         public void HasAdminGotSessions_returns_true_when_admin_has_sessions()
         {
             // When
@@ -269,22 +233,6 @@
                 result.LoginTime.Should().Be(expectedLoginTime);
                 result.Duration.Should().Be(51);
                 result.Active.Should().BeFalse();
-            }
-        }
-
-        [Test]
-        public void GetAdminSessionById_gets_correct_session()
-        {
-            using (new TransactionScope())
-            {
-                // Given
-                var addedSessionId = sessionDataService.StartAdminSession(7);
-
-                // When
-                var recoveredSession = sessionDataService.GetSessionById(addedSessionId);
-
-                // Then
-                recoveredSession.SessionId.Should().Be(addedSessionId);
             }
         }
 

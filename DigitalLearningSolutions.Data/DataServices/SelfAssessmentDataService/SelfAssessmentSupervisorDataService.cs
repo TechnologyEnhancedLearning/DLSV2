@@ -239,7 +239,8 @@
                         Email,
                         ProfileImage,
                         IsFrameworkDeveloper,
-                        CentreName
+                        CentreName,
+                        CentreID
                         FROM AdminUsers
                         WHERE 
                         CentreID IN (SELECT DA.CentreID FROM DelegateAccounts DA
