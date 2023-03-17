@@ -24,8 +24,8 @@
             var certificateInfo = connection.QueryFirstOrDefault<CertificateInformation>(
                 @"SELECT
                   p.ProgressID,
-                  da.FirstName_deprecated AS DelegateFirstName,
-	                da.LastName_deprecated AS DelegateLastName,
+                  u.FirstName AS DelegateFirstName,
+	                u.LastName AS DelegateLastName,
 	                ce.ContactForename,
                 	ce.ContactSurname,
 	                ce.CentreName,

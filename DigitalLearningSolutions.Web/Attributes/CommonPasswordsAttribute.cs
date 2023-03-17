@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Attributes
 {
-    using Microsoft.AspNetCore.Http;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
@@ -16,6 +15,10 @@
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
+            if (value == null || (string)value == string.Empty)
+            {
+                return ValidationResult.Success;
+            }
             string lowerCasePassword = value.ToString().ToLower();
             foreach (var commonPassword in CommonPasswords.passwords)
             {

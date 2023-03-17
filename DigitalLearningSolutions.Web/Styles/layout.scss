@@ -1,4 +1,5 @@
 ﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "shared/breakpoints" as *;
 
 html {
   height: 100%;
@@ -341,5 +342,11 @@ nav, .nhsuk-header__navigation, #header-navigation {
 @media only screen and (max-width: 767px) {
   .section-card-result {
     margin-top: 10px;
+  }
+}
+
+@media only screen and (max-width: $mq-tablet) {
+  .nhsuk-table-responsive .nhsuk-table__body .nhsuk-table__row td li {
+    text-align: justify;
   }
 }

@@ -175,7 +175,7 @@
         {
             var user = connection.Query<AdminUser>(
                 @$"{BaseSelectAdminQuery}
-                    WHERE au.AdminID = @id",
+                    WHERE au.AdminID = @id AND au.Active = 1",
                 new { id }
             ).SingleOrDefault();
 

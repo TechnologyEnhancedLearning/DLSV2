@@ -4,9 +4,6 @@
 @inject IClockUtility ClockUtility
 @model SupervisorDelegateDetail
 
-@{
-  bool IsSupervisor = (bool)(ViewData["isSupervisor"] ?? false);
-}
 
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
@@ -19,17 +16,16 @@
     <dd class="nhsuk-summary-list__actions">
     </dd>
   </div>
-  @if (IsSupervisor)
-  {
+  
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
-        PRN
+        Professional Registration Number
       </dt>
       <dd class="nhsuk-summary-list__value">
         @(Model.ProfessionalRegistrationNumber == null ? "Not Recorded" : Model.ProfessionalRegistrationNumber)
       </dd>
     </div>
-  }
+
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Delegate ID
@@ -38,17 +34,16 @@
       @Model.CandidateNumber
     </dd>
   </div>
-  @if (Model.CustomPrompt2 != null)
-  {
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Job Group
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.JobGroupName
-      </dd>
-    </div>
-  }
+  
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Job Group
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.JobGroupName
+    </dd>
+  </div>
+
   @if (Model.CustomPrompt1 != null)
   {
     <div class="nhsuk-summary-list__row">
