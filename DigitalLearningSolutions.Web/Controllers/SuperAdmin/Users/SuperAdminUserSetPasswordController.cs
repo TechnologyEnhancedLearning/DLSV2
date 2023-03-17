@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
+    using DocumentFormat.OpenXml.Presentation;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -53,8 +54,12 @@
             await passwordService.ChangePasswordAsync((int)userId, newPassword);
 
             //Reload user account page here.Waiting for TD-992 to completed
-            var model1 = new UserAccountsViewModel();
-            return View("Index", model1);
+            //var model1 = new UserAccountsViewModel();
+            //return View("Index", model1);
+
+            //TODO: This feature will work after TD-995 is merged.This comment should be removed after the merge.
+            TempData["UserId"] = userId;
+            return RedirectToAction("Index", "Users", new { UserId = userId });
         }
     }
 }

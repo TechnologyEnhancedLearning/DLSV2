@@ -53,7 +53,7 @@
         public void GetPreviewCertificates_should_return_notnull_when_the_centre_does_not_exist()
         {
             // When
-            var result = certificateDataService.GetCertificateDetailsById(2);
+            var result = certificateDataService.GetCertificateDetailsById(3);
 
             // Then
             result.Should().NotBeNull();
@@ -62,7 +62,7 @@
         public void GetCertificates_should_contain_an_active_centre()
         {
             // When
-            var result = certificateDataService.GetCertificateDetailsById(2);
+            var result = certificateDataService.GetCertificateDetailsById(3);
 
             // Then
             result.CentreName.Should().NotBeNull();
@@ -71,7 +71,7 @@
         public void GetCertificates_should_contain_an_course_name()
         {
             // When
-            var result = certificateDataService.GetCertificateDetailsById(2);
+            var result = certificateDataService.GetCertificateDetailsById(3);
 
             // Then
             result.CourseName.Should().NotBeNull();

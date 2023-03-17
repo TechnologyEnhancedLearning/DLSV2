@@ -1,12 +1,19 @@
 namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Primitives;
+    using System;
+    using System.Reflection.PortableExecutable;
 
     public class LearningSolutionsController : Controller
     {
@@ -62,7 +69,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
             var model = new ContactViewModel(contactText);
             return View(model);
-        }
+        }        
 
         public IActionResult Error()
         {
@@ -121,8 +128,12 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         private string? GetBannerText()
         {
-            var centreId = User.GetCentreIdKnownNotNull();
-            var bannerText = centresDataService.GetBannerText(centreId);
+            string? bannerText = null;
+            var centreId = User.GetCentreId();
+            if(centreId != null)
+            {
+                bannerText = centresDataService.GetBannerText((int)centreId);
+            }
             return bannerText;
         }
     }
