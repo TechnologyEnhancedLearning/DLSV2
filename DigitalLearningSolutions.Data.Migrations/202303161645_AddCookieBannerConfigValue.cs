@@ -23,6 +23,8 @@ namespace DigitalLearningSolutions.Data.Migrations
 
         public override void Down()
         {
+            Execute.Sql(@"DELETE FROM Config
+`                           WHERE ConfigName = N'CookiePolicyUpdatedDate'");
         }
     }
 }

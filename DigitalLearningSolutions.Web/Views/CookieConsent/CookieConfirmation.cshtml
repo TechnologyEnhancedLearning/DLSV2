@@ -3,6 +3,23 @@
     ViewData["DoNotDisplayNavBar"] = true;
 }
 
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader"
+                   asp-action="CookiePolicy"
+                   asp-controller="CookieConsent">Cookie Policy</a>
+                </li>              
+                <li class="nhsuk-breadcrumb__item">Cookie Consent</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__backlink">Back to Signposting</a>
+            </p>
+        </div>
+    </nav>
+}
 <div class="nhsuk-width-container app-width-container">
     <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
@@ -15,8 +32,7 @@
                     <li>we add any new cookies or change the cookies we use</li>
                 </ul>
                 <p>You can also <a href="@Url.Action("CookiePolicy","CookieConsent")">choose which cookies we use</a> at any time.</p>
-            </div>
-            <p class="nhsuk-body-s nhsuk-u-secondary-text-color nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-0">Updated: tbc ???????</p>
+            </div>            
         </div>
     </div>
 </div>
