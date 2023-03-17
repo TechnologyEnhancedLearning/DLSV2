@@ -2,14 +2,13 @@
     Context.Request.Cookies.TryGetValue("Dls-cookie-consent", out string showCookieBanner);
     var validateCookieBannerViaTempData = TempData["userConsentCookieOption"]; // To avoid inconsistencies. First consent from policy page causes issues.
     var consentViaBannerPostTemp = TempData["consentViaBannerPost"];  // To display confirmation banner (nhsuk-cookie-confirmation-banner-post) after post
-    var path = Context.Request.Path; // @(Configuration["CurrentSystemBaseUrl"]    
+    var path = Context.Request.Path; // @(Configuration["CurrentSystemBaseUrl"]
 }
 @if (showCookieBanner == null && validateCookieBannerViaTempData == null) // [BY] Show cookie banner when the value is null. if the user consent yes or no then we dont display the banner
 {
     <div id="nhsuk-cookie-banner">
-        <div class="nhsuk-cookie-banner1" id="cookiebanner">
-            <div class="nhsuk-width-container">
-              <br>
+        <div class="nhsuk-cookie-banner  nhsuk-u-margin-top-3" id="cookiebanner">
+            <div class="nhsuk-width-container ">
                 <h2>Cookies on the Digital Learning Solutions</h2>
                 <p>We've put some small files called cookies on your device to make our site work.</p>
                 <p>We'd also like to use analytics cookies. These send anonymous information about how our site is used to a service called Google Analytics & Hotjar Analytics. We use this information to improve our site.</p>
@@ -27,7 +26,7 @@
             </div>
         </div>
 
-        <div class="nhsuk-success-banner" id="nhsuk-cookie-confirmation-banner" style="display:none;">
+        <div class="nhsuk-success-banner  nhsuk-u-margin-top-3" id="nhsuk-cookie-confirmation-banner" style="display:none;">
             <div class="nhsuk-width-container">
                 <p id="nhsuk-success-banner__message">You can change your cookie settings at any time using our <a href="@Url.Action( "CookiePolicy","CookieConsent")">cookies page</a>.</p>
             </div>
@@ -36,7 +35,7 @@
 }
 @if (consentViaBannerPostTemp != null)
 {
-    <div class="nhsuk-success-banner" id="nhsuk-cookie-confirmation-banner-post">
+    <div class="nhsuk-success-banner  nhsuk-u-margin-top-3" id="nhsuk-cookie-confirmation-banner-post">
         <div class="nhsuk-width-container">
             <p id="nhsuk-success-banner__message">You can change your cookie settings at any time using our <a href="@Url.Action( "CookiePolicy","CookieConsent")">cookies page</a>.</p>
         </div>

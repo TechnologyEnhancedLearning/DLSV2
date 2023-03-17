@@ -8,18 +8,19 @@ namespace DigitalLearningSolutions.Web.Helpers
 {
     public static class CookieBannerHelper
     {
-        public static readonly int CookieExpiryDays = 365;
-        public static readonly string CookieName = "Dls-cookie-consent";
+        //public static readonly int CookieExpiryDays = 365;
+        //public static readonly string CookieName = "Dls-cookie-consent";
 
         public static void SetDLSBannerCookie(
             this IResponseCookies cookies,
+            string cookieName,
             string value,
-            DateTime currentDateTime
+            DateTime expiry
         )
         {
-            var expiry = currentDateTime.AddDays(CookieExpiryDays);
+            //var expiry = currentDateTime.AddDays(CookieExpiryDays);
             cookies.Append(
-                CookieName,
+                cookieName,
                 value,
                 new CookieOptions
                 {
@@ -28,19 +29,14 @@ namespace DigitalLearningSolutions.Web.Helpers
             );
         }
 
-        public static bool HasDLSBannerCookie(this IRequestCookieCollection cookies, string value)
+        public static bool HasDLSBannerCookie(this IRequestCookieCollection cookies, string cookieName, string value)
         {
-            if (cookies.ContainsKey(CookieName))
+            if (cookies.ContainsKey(cookieName))
             {
-                return cookies[CookieName] == value;
+                return cookies[cookieName] == value;
             }
 
             return false;
-        }
-
-        public static void DeleteDLSBannerCookie(this IResponseCookies cookies)
-        {
-            cookies.Delete(CookieName);
-        }
+        }       
     }
 }

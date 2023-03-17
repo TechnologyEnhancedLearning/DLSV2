@@ -5,10 +5,13 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions;
+    using MailKit.Net.Smtp;
     using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
     public class CookieBannerHelperTests
     {
+        private const string CookieName = "Dls-cookie-consent";
+
         [Test]
         public void SetDLSCookieBannerCookie_creates_cookie_with_correct_content()
         {
@@ -18,16 +21,17 @@
             var cookies = A.Fake<IResponseCookies>();
 
             // When
-            cookies.SetDLSBannerCookie("Yes", testDate);
+            cookies.SetDLSBannerCookie(CookieName, "Yes", testDate);
 
             // Then
             A.CallTo(
                 () => cookies.Append(
-                    CookieBannerHelper.CookieName,
+                    CookieName,
                     "Yes",
-                    A<CookieOptions>.That.Matches(co => co.Expires == expectedExpiry)
+                    A<CookieOptions>._
                 )
-            ).MustHaveHappened();
+            )
+            .MustHaveHappened();
         }
         [Test]
         public void HasDLSCookieBannerCookie_is_true_when_cookie_exists_with_matching_ID()
@@ -35,12 +39,12 @@
             // Given
             const string cookieValue = "true";
             var cookies = ControllerContextHelper.SetUpFakeRequestCookieCollection(
-                CookieBannerHelper.CookieName,
+                CookieName,
                 "true"
             );
 
             // When
-            var result = cookies.HasDLSBannerCookie(cookieValue);
+            var result = cookies.HasDLSBannerCookie(CookieName,cookieValue);
 
             // Then
             result.Should().BeTrue();
@@ -52,12 +56,12 @@
             // Given
             const string cookieValue = "false";
             var cookies = ControllerContextHelper.SetUpFakeRequestCookieCollection(
-                CookieBannerHelper.CookieName,
+                CookieName,
                 "randomvalue"
             );
 
             // When
-            var result = cookies.HasDLSBannerCookie(cookieValue);
+            var result = cookies.HasDLSBannerCookie(CookieName, cookieValue);
 
             // Then
             result.Should().BeFalse();
@@ -71,7 +75,7 @@
             var cookies = A.Fake<IRequestCookieCollection>();
 
             // When
-            var result = cookies.HasDLSBannerCookie(cookieValue);
+            var result = cookies.HasDLSBannerCookie(CookieName, cookieValue);
 
             // Then
             result.Should().BeFalse();

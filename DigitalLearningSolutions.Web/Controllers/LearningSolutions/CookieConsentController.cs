@@ -1,32 +1,54 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Data.Extensions;
 using DigitalLearningSolutions.Data.Utilities;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.ViewModels.Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
     public class CookieConsentController : Controller
     {
+        private readonly IConfigDataService configDataService;
+        private readonly IConfiguration configuration;
         private readonly IClockUtility clockUtility;
         private readonly ILogger<CookieConsentController> logger;
+        private string CookieBannerConsentCookieName = "";
+        private int CookieBannerConsentCookieExpiryDays=0;
+
         public CookieConsentController(
+            IConfigDataService configDataService,
+            IConfiguration configuration,
             IClockUtility clockUtility,
-           ILogger<CookieConsentController> logger
+            ILogger<CookieConsentController> logger
        )
         {
+            this.configDataService = configDataService;
+            this.configuration = configuration;
             this.clockUtility = clockUtility;
             this.logger = logger;
+            CookieBannerConsentCookieName = configuration.GetCookieBannerConsentCookieName();
+            CookieBannerConsentCookieExpiryDays = configuration.GetCookieBannerConsentExpiryDays();
         }
         public IActionResult CookiePolicy()
         {
-            var model = new CookieConsentViewModel();
+            var cookiePolicyContent = configDataService.GetConfigValue(ConfigDataService.CookiePolicyContent);
+            var policyLastUpdatedDate = configDataService.GetConfigValue(ConfigDataService.CookiePolicyUpdatedDate);
+            if (cookiePolicyContent == null)
+            {
+                logger.LogError("Cookie policy content from Config table is null");
+                return StatusCode(500);
+            }
+
+            var model = new CookieConsentViewModel(cookiePolicyContent);
+            model.PolicyUpdatedDate = policyLastUpdatedDate;
             if (Request != null)
             {
-                if (Request.Cookies.HasDLSBannerCookie("true"))
+                if (Request.Cookies.HasDLSBannerCookie(CookieBannerConsentCookieName,"true"))
                     model.UserConsent = "true";
-                else if (Request.Cookies.HasDLSBannerCookie("false"))
+                else if (Request.Cookies.HasDLSBannerCookie(CookieBannerConsentCookieName, "false"))
                     model.UserConsent = "false";
             }
             return View(model);
@@ -46,7 +68,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
         public IActionResult CookieConsentConfirmation(string consent, string path)
         {
             if (!string.IsNullOrEmpty(consent))
-                ConfirmCookieConsent(consent,true);
+                ConfirmCookieConsent(consent, true);
 
             string controllerName = string.Empty;
             string actionName = string.Empty;
@@ -66,17 +88,20 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         public void ConfirmCookieConsent(string consent, bool setTempDataConsentViaBannerPost = false)
         {
-            if(Response!=null)
+            if (Response != null)
             {
                 if (consent == "true")
-                    Response.Cookies?.SetDLSBannerCookie(consent, clockUtility.UtcNow);
+                    Response.Cookies?.SetDLSBannerCookie(CookieBannerConsentCookieName, consent,
+                        clockUtility.UtcNow.AddDays(CookieBannerConsentCookieExpiryDays));
+
                 else if (consent == "false")
-                    Response.Cookies?.SetDLSBannerCookie(consent, clockUtility.UtcNow);
+                    Response.Cookies?.SetDLSBannerCookie(CookieBannerConsentCookieName, consent,
+                        clockUtility.UtcNow.AddDays(CookieBannerConsentCookieExpiryDays));
 
                 TempData["userConsentCookieOption"] = consent;
 
-               if (setTempDataConsentViaBannerPost) TempData["consentViaBannerPost"] = consent; // Need this tempdata to display the confirmation banner
-            }          
+                if (setTempDataConsentViaBannerPost) TempData["consentViaBannerPost"] = consent; // Need this tempdata to display the confirmation banner
+            }
         }
     }
 }

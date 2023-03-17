@@ -47,26 +47,3 @@ function changeConsent(consent: string) {
   request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
   request.send();
 };
-
-/*[BY] Handled the following in MVC Post**************************/
-/*
-var consentYes = document.getElementById("input-statistics-1");
-var consentNo = document.getElementById("input-statistics-2");
-
-if (consentYes != null) {
-  consentYes.addEventListener('click', function () {
-    return setUserConsent('true');
-  });
-}
-
-if (consentNo != null) {
-  consentNo.addEventListener('click', function () {
-    return setUserConsent('false');
-  });
-}
-function setUserConsent(value: string) {
-  var userConsent = <HTMLInputElement>document.getElementById("UserConsent"); 
-  if (userConsent != null) {
-    userConsent.value = value;
-  }  
-}*/
