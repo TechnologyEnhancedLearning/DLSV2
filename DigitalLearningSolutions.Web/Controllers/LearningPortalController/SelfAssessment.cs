@@ -176,7 +176,7 @@
                         TempData["competencyGroupId"] = competencyGroupId;
                         TempData["competencyName"] = competency.Name;
 
-                        return RedirectToAction("ConfirmOverwriteSelfAssessment", new { selfAssessmentId = selfAssessmentId, competencyNumber = competencyId });
+                        return RedirectToAction("ConfirmOverwriteSelfAssessment", new { selfAssessmentId = selfAssessmentId, competencyNumber = competencyNumber });
                     }
                 }
             }
