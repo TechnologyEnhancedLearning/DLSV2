@@ -22,15 +22,40 @@ namespace DigitalLearningSolutions.Data.Migrations
 
         public override void Up()
         {
-            Execute.Sql(@" WITH CTEUpdate AS( SELECT ID, 
-                         RANK() OVER(PARTITION BY CandidateAssessmentID,SupervisorDelegateId,SelfAssessmentSupervisorRoleID ORDER BY id) rank
-                         FROM CandidateAssessmentSupervisors)
-                         UPDATE CandidateAssessmentSupervisorVerifications
-                         SET CandidateAssessmentSupervisorID = C.ID     
-                         FROM CandidateAssessmentSupervisorVerifications CASV
-                              INNER JOIN CTEUpdate C 
-                              ON C.ID  = CASV.CandidateAssessmentSupervisorID
-                         WHERE C.rank =1");
+            Execute.Sql(@" WITH CTEUpdate AS (SELECT CASV.ID,CASV.CandidateAssessmentID, CASV.SupervisorDelegateId,CASV.SelfAssessmentSupervisorRoleID,CASVTemp.ID AS Original_CASVId
+                           FROM CandidateAssessmentSupervisors CASV
+                           INNER JOIN
+                            (
+                             SELECT MIN(ID) AS ID, CandidateAssessmentID,SelfAssessmentSupervisorRoleID,SupervisorDelegateId 
+                             FROM CandidateAssessmentSupervisors
+                             GROUP BY CandidateAssessmentID,SelfAssessmentSupervisorRoleID,SupervisorDelegateId 
+                             HAVING COUNT(id) > 1
+                            ) CASVTemp 
+                           ON CASV.ID > CASVTemp.ID AND CASV.CandidateAssessmentID=CASVTemp.CandidateAssessmentID 
+                               AND CASV.SelfAssessmentSupervisorRoleID=CASVTemp.SelfAssessmentSupervisorRoleID 
+                               AND CASV.SupervisorDelegateId=CASVTemp.SupervisorDelegateId) 
+                           UPDATE SelfAssessmentResultSupervisorVerifications
+                                 SET CandidateAssessmentSupervisorID = C.Original_CASVId     					
+                           FROM SelfAssessmentResultSupervisorVerifications CASV
+                           INNER JOIN CTEUpdate C
+						   ON CASV.CandidateAssessmentSupervisorID=C.ID ");
+            Execute.Sql(@" WITH CTEUpdate AS (SELECT CASV.ID,CASV.CandidateAssessmentID, CASV.SupervisorDelegateId,CASV.SelfAssessmentSupervisorRoleID,CASVTemp.ID AS Original_CASVId
+                           FROM CandidateAssessmentSupervisors CASV
+                           INNER JOIN
+                            (
+                             SELECT MIN(ID) AS ID, CandidateAssessmentID,SelfAssessmentSupervisorRoleID,SupervisorDelegateId 
+                             FROM CandidateAssessmentSupervisors
+                             GROUP BY CandidateAssessmentID,SelfAssessmentSupervisorRoleID,SupervisorDelegateId 
+                             HAVING COUNT(id) > 1
+                            ) CASVTemp 
+                           ON CASV.ID > CASVTemp.ID AND CASV.CandidateAssessmentID=CASVTemp.CandidateAssessmentID 
+                               AND CASV.SelfAssessmentSupervisorRoleID=CASVTemp.SelfAssessmentSupervisorRoleID 
+                               AND CASV.SupervisorDelegateId=CASVTemp.SupervisorDelegateId) 
+                           UPDATE CandidateAssessmentSupervisorVerifications
+                              SET CandidateAssessmentSupervisorID = C.Original_CASVId     					
+                           FROM CandidateAssessmentSupervisorVerifications CASV
+                           INNER JOIN CTEUpdate C
+						   ON CASV.CandidateAssessmentSupervisorID=C.ID ");
             Execute.Sql(@"DELETE CAS
                           FROM CandidateAssessmentSupervisors CAS
                           INNER JOIN    

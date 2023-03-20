@@ -1,4 +1,4 @@
-﻿@using NHSUKViewComponents.Web.ViewModels
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model DateInputViewModel
 
 @{
@@ -8,21 +8,25 @@
   var yearErrorCss = Model.HasYearError ? "nhsuk-input--error" : "";
 }
 
-<div class="@Model.CssClass @errorCss" id="@Model.Id">
+<div class="@Model.CssClass @errorCss" id="@Model.Id-hint">
   <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-hint" role="group">
     <legend class="nhsuk-fieldset__legend nhsuk-label">
       @Model.Label
     </legend>
-    @if (Model.HintTextLines != null) {
-      @foreach (var hintText in Model.HintTextLines) {
+    @if (Model.HintTextLines != null)
+    {
+      @foreach (var hintText in Model.HintTextLines)
+      {
         <div class="nhsuk-hint">
           @hintText
         </div>
       }
     }
 
-    @if (Model.HasError) {
-      @foreach (var message in Model.ErrorMessages) {
+    @if (Model.HasError)
+    {
+      @foreach (var message in Model.ErrorMessages)
+      {
         <span class="error-message--margin-bottom-1 nhsuk-error-message">
           <span class="nhsuk-u-visually-hidden">Error:</span> @message
         </span>

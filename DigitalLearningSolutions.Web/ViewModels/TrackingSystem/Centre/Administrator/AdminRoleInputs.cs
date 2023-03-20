@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 {
     using DigitalLearningSolutions.Web.Models.Enums;
-    using NHSUKViewComponents.Web.ViewModels;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
 
     public class AdminRoleInputs
     {

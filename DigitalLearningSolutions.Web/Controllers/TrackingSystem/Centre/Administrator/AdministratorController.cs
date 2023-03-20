@@ -106,6 +106,7 @@
             return View(model);
         }
 
+        [NoCaching]
         [Route("AllAdmins")]
         public IActionResult AllAdmins()
         {
