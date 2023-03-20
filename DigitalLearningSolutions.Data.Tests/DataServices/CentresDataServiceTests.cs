@@ -328,7 +328,7 @@
             var summaries = centresDataService.GetAllCentreSummariesForFindCentre().ToList();
 
             //Then
-            summaries.Should().HaveCount(315);
+            summaries.Should().HaveCount(371);
             summaries.Single(s => s.CentreId == 8)!.CentreName.Should().Be("Buckinghamshire Healthcare NHS Trust");
             summaries.Single(s => s.CentreId == 2)!.RegionName.Should().Be("North West");
             summaries.Single(s => s.CentreId == 190)!.Email.Should().BeNull();

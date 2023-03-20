@@ -5,7 +5,7 @@
 
     public class CurrentFiltersViewModel
     {
-        [Obsolete("This is currently only used in SearchSelfAssessmentOvervieviewViewModel.cs, " +
+        [Obsolete("This is currently only used in SearchSelfAssessmentOverviewViewModel.cs, " +
                   "but this version has been superseded by the version with sortBy etc. " +
                   "parameters to fix a bug with Clear Filters resetting Sort and Items per page")]
         public CurrentFiltersViewModel(

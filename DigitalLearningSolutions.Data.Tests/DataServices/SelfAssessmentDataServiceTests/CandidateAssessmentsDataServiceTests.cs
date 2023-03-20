@@ -290,7 +290,7 @@
             // Given
             var expectedCandidateAssessment = new CandidateAssessment
             {
-                Id = 1,
+                Id = 2,
                 DelegateUserID = delegateUserId,
                 SelfAssessmentId = SelfAssessmentId,
                 CompletedDate = null,

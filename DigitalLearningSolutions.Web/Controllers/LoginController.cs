@@ -1,5 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System;
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
@@ -15,10 +19,6 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using System;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
@@ -209,17 +209,8 @@
 
             if (adminAccount?.Active == true)
             {
-                if (sessionService.hasAdminGotActiveSessions(adminAccount.Id))
-                {
-                    logger.LogWarning($"Concurrent login detected for admin user {adminAccount.Id}.");
-                    sessionService.StopAllAdminSessions(adminAccount.Id);
-                }
-                var adminSessionId = sessionService.StartAdminSession(adminAccount.Id);
-                Claim adminSessionClaim = new Claim("AdminSessionID", adminSessionId.ToString());
-                claimsIdentity.AddClaim(adminSessionClaim);
+                sessionService.StartAdminSession(adminAccount.Id);
             }
-
-
 
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 

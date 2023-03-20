@@ -605,7 +605,8 @@
                         AssessmentQuestionID,
                         Result,
                         DateTime,
-                        SupportingComments
+                        SupportingComments,
+                        DelegateUserId
                     FROM SelfAssessmentResults
                     WHERE CompetencyID = @competencyId
                         AND SelfAssessmentID = @selfAssessmentId
