@@ -354,6 +354,7 @@ nav, .nhsuk-header__navigation, #header-navigation {
 .dls-alert-banner {
   background-color: $color_nhsuk-dark-pink;
   color: #FFFFFF;
+
   a {
     color: #FFFFFF;
 
@@ -365,4 +366,14 @@ nav, .nhsuk-header__navigation, #header-navigation {
       color: #FFFFFF;
     }
   }
+}
+
+/*Feedback button*/
+.button-inline {
+  padding: 5px 20px 5px 20px;
+  margin: 10px 10px 10px 0;
+  background-color: #005eb8;
+  box-shadow: none;
+  display: inline-block;
+  vertical-align: middle;
 }
