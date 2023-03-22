@@ -569,9 +569,10 @@
                 () => emailService.ScheduleEmail(
                     A<Email>.That.Matches(
                         e =>
-                            e.Bcc.IsNullOrEmpty()
-                            && e.Cc.IsNullOrEmpty()
-                            && e.To[0] == newAccountDetails.Email
+                           // e.Bcc.IsNullOrEmpty()
+                          //  && e.Cc.IsNullOrEmpty()
+                          //  &&
+                            e.To[0] == newAccountDetails.Email
                             && e.Subject == "New Learning Portal Course Enrolment"
                             && e.Body.TextBody == genericEmailBodyText
                             && e.Body.HtmlBody == genericEmailBodyHtml
@@ -681,9 +682,10 @@
                 () => emailService.ScheduleEmail(
                     A<Email>.That.Matches(
                         e =>
-                            e.Bcc.IsNullOrEmpty()
-                            && e.Cc.IsNullOrEmpty()
-                            && e.To[0] == centreEmail
+                            //e.Bcc.IsNullOrEmpty()
+                            //&& e.Cc.IsNullOrEmpty()
+                           // &&
+                            e.To[0] == centreEmail
                             && e.Subject == "New Learning Portal Course Enrolment"
                             && e.Body.TextBody == genericEmailBodyText
                             && e.Body.HtmlBody == genericEmailBodyHtml

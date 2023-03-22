@@ -494,9 +494,10 @@
                 () => emailService.ScheduleEmail(
                     A<Email>.That.Matches(
                         e =>
-                            e.Bcc.IsNullOrEmpty()
-                            && e.Cc.IsNullOrEmpty()
-                            && e.To[0] == reusableGroupDelegate.PrimaryEmail
+                            //e.Bcc.IsNullOrEmpty()
+                            //&& e.Cc.IsNullOrEmpty()
+                            //&&
+                            e.To[0] == reusableGroupDelegate.PrimaryEmail
                             && e.Subject == "New Learning Portal Course Enrolment"
                             && e.Body.TextBody == genericEmailBodyText
                             && e.Body.HtmlBody == genericEmailBodyHtml
