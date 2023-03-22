@@ -281,7 +281,7 @@
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, true);
             if (assessment.LinearNavigation)
             {
-                return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
+                return RedirectToAction("SelfAssessmentCompetency", new { selfAssessmentId = selfAssessmentId, competencyNumber = competencyNumber + 1 });
             }
 
             return new RedirectResult(
