@@ -4,6 +4,9 @@
     var consentViaBannerPostTemp = TempData["consentViaBannerPost"];  // To display confirmation banner (nhsuk-cookie-confirmation-banner-post) after post
     var path = Context.Request.Path; // @(Configuration["CurrentSystemBaseUrl"]
 }
+
+<a href="@Url.Action("ConfirmCookieConsent","CookieConsent")" id="CookieConsentPostPath" style="display:none"></a>
+
 @if (showCookieBanner == null && validateCookieBannerViaTempData == null) // [BY] Show cookie banner when the value is null. if the user consent yes or no then we dont display the banner
 {
     <div id="nhsuk-cookie-banner">

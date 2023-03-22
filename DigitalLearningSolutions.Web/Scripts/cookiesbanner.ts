@@ -6,7 +6,8 @@ const bannerConfirmOnPost = document.getElementById('nhsuk-cookie-confirmation-b
 const bannerCookieAccept = document.getElementById('nhsuk-cookie-banner__link_accept_analytics');
 const bannerCookieReject = document.getElementById('nhsuk-cookie-banner__link_accept');
 
-const path = getFullURL('/CookieConsent/ConfirmCookieConsent');
+const path = document.getElementById('CookieConsentPostPath');
+//const path = getFullURL('/CookieConsent/ConfirmCookieConsent');
 
 if (divCookieBannerNoJSstyling != null) {
   divCookieBannerNoJSstyling.setAttribute("style", "display:none;");
