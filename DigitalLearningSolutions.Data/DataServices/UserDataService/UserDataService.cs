@@ -219,6 +219,8 @@
         string GetUserDisplayName(int userId);
 
         void InactivateUser(int userId);
+
+        void ActivateUser(int userId);
     }
 
     public partial class UserDataService : IUserDataService
@@ -485,6 +487,17 @@
                 logger.LogWarning(message);
                 throw new InactivateUserUpdateException(message);
             }
+        }
+
+        public void ActivateUser(int userId)
+        {
+            connection.Execute(
+            @"UPDATE Users SET Active=1 WHERE ID=@UserID",
+                new
+                {
+                    UserID = userId
+                }
+            );
         }
     }
 }
