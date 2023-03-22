@@ -43,7 +43,7 @@
                                                    placeholder-text="Search name, email, PRN" />
                                 </div>
                                 <div class="nhsuk-grid-column-one-quarter">
-                                    <button class="nhsuk-button items-per-page-submit nhsuk-u-margin-top-5" type="submit">Search</button>
+                                    <button class="nhsuk-button nhsuk-u-margin-top-4" type="submit">Search</button>
                                 </div>
                             </div>
                             <div class="filter-container nhsuk-u-margin-top-5">
@@ -109,9 +109,3 @@
         </div>
     </div>
 </div>
-@if (Model.JavascriptSearchSortFilterPaginateEnabled)
-{
-    @section scripts {
-    <script src="@Url.Content("~/js/superadmin/users/userAccount.js")" asp-append-version="true"></script>
-}
-}

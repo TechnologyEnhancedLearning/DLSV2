@@ -30,12 +30,14 @@
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private const string UserAccountFilterCookieName = "UserAccountFilter";
-        public UsersController(IUserDataService userDataService, ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsDataService jobGroupsDataService)
+        private readonly IUserService userService;
+        public UsersController(IUserDataService userDataService, ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsDataService jobGroupsDataService,IUserService userService)
         {
             this.userDataService = userDataService;
             this.centreRegistrationPromptsDataService = centreRegistrationPromptsDataService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.userService = userService;
         }
 
         [Route("SuperAdmin/Users/{userId=0:int}/InactivateUserConfirmation")]
@@ -228,6 +230,12 @@
         {
             var model = new AdministratorsViewModel();
             return View(model);
+        }
+        [Route("SuperAdmin/Users/{UserId:int}/UnlockAccount")]
+        public IActionResult UnlockAccount(int UserId)
+        {
+            userService.ResetFailedLoginCountByUserId(UserId);
+            return RedirectToAction("Index");
         }
     }
 }

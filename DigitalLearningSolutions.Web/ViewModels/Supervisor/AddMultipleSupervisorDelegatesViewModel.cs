@@ -1,4 +1,6 @@
-﻿using DigitalLearningSolutions.Web.Helpers;
+﻿using DigitalLearningSolutions.Web.Attributes;
+using DigitalLearningSolutions.Web.Helpers;
+using FluentMigrator.Infrastructure;
 using System.ComponentModel.DataAnnotations;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
@@ -13,6 +15,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 
         [Required(ErrorMessage = "Enter an email")]
         [RegularExpression(CommonValidationErrorMessages.EmailsRegexWithNewLineSeparator, ErrorMessage = CommonValidationErrorMessages.InvalidMultiLineEmail)]
+        [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? DelegateEmails { get; set; }
     }
 }

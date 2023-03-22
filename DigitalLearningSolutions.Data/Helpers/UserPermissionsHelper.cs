@@ -18,7 +18,6 @@
             if (loggedInAdminAccount.IsCentreManager)
             {
                 return !adminAccount.IsSuperAdmin
-                       && !adminAccount.IsCentreManager
                        && adminAccount.Id != loggedInAdminAccount.Id;
             }
 

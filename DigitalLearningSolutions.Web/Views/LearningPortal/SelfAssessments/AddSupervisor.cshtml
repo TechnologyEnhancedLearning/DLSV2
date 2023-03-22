@@ -3,87 +3,91 @@
 
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  Layout = "SelfAssessments/_Layout";
-  ViewData["Title"] = "Self Assessment";
-  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    Layout = "SelfAssessments/_Layout";
+    ViewData["Title"] = "Self Assessment";
+    ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item">
-    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@Model.SelfAssessmentName</a>
-  </li>
-  <li class="nhsuk-breadcrumb__item">
-    <a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a>
-  </li>
-  <li class="nhsuk-breadcrumb__item">Add</li>
+    <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@Model.SelfAssessmentName</a>
+    </li>
+    <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a>
+    </li>
+    <li class="nhsuk-breadcrumb__item">Add</li>
 }
-  @section mobilebacklink
-  {
-  <p class="nhsuk-breadcrumb__back">
-    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
-     asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">Back</a>
-  </p>
+@section mobilebacklink
+    {
+    <p class="nhsuk-breadcrumb__back">
+        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
+       asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">Back</a>
+    </p>
 }
-  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-  <h1>New activity supervisor</h1>
-  <div class="nhsuk-grid-row">
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+<h1>New activity supervisor</h1>
+<div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <form method="post">
-        @if (errorHasOccurred)
-      {
-        <vc:error-summary order-of-property-names="@(new[] {nameof(Model.SupervisorAdminID) })" />
-      }
-      <nhs-form-group nhs-validation-for="SupervisorAdminID">
-        <fieldset class="nhsuk-fieldset">
-          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-            <span class="nhsuk-fieldset__heading">
-              Add a supervisor
-            </span>
-          </legend>
-
-          <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
-          <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
-          <input type="hidden" asp-for="Supervisors" value="@Model.Supervisors" />
-          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-            <h2 class="nhsuk-fieldset__heading">
-              Choose a supervisor
-            </h2>
-          </legend>
-          <div class="nhsuk-hint" id="contact-hint">
-            Select your supervisor from the list below. If your supervisor is not listed, they will need to be given supervisor access by an administrator.
-          </div>
-          <div class="nhsuk-radios">
-            @foreach (var supervisor in Model.Supervisors)
+        <form method="post">
+            @if (errorHasOccurred)
             {
-              <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
-                <label class="nhsuk-label nhsuk-radios__label" for="supervisor-@supervisor.AdminID">
-                  @supervisor.Forename @supervisor.Surname (@supervisor.CentreName)
-                </label>
-                <div class="nhsuk-hint nhsuk-radios__hint" id="supervisor-@supervisor.AdminID-item-hint">
-                  @supervisor.Email
-                </div>
-              </div>
+                <vc:error-summary order-of-property-names="@(new[] {nameof(Model.SupervisorAdminID) })" />
             }
-          </div>
-        </fieldset>
-      </nhs-form-group>
-      @if (Model.Supervisors.Count() > 0)
-      {
-        <button class="nhsuk-button" type="submit">
-          Next
-        </button>
-      }
-    </form>
-  </div>
+            <nhs-form-group nhs-validation-for="SupervisorAdminID">
+                <fieldset class="nhsuk-fieldset">
+                    <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
+                    <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
+                    <input type="hidden" asp-for="Supervisors" value="@Model.Supervisors" />
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                        <h2 class="nhsuk-fieldset__heading">
+                            Choose a supervisor
+                        </h2>
+                    </legend>
+                    <div class="nhsuk-hint" id="contact-hint">
+                        Select your supervisor from the list below. If your supervisor is not listed, they will need to be given supervisor access by an administrator.
+                    </div>
+
+                    @if (errorHasOccurred)
+                    {
+                        <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+                            <span class="error-message--margin-bottom-1 nhsuk-error-message">
+                                <span>@Html.ValidationMessageFor(x=>x.SupervisorAdminID)</span>
+                            </span>
+                        </div>
+                    }
+
+                    <div id="SupervisorAdminID" class="nhsuk-radios">
+                        @foreach (var supervisor in Model.Supervisors)
+                        {
+                            <div class="nhsuk-radios__item">
+                                <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
+                                <label class="nhsuk-label nhsuk-radios__label" for="supervisor-@supervisor.AdminID">
+                                    @supervisor.Forename @supervisor.Surname (@supervisor.CentreName)
+                                </label>
+                                <div class="nhsuk-hint nhsuk-radios__hint" id="supervisor-@supervisor.AdminID-item-hint">
+                                    @supervisor.Email
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+            </nhs-form-group>
+            @if (Model.Supervisors.Count() > 0)
+            {
+                <button class="nhsuk-button" type="submit">
+                    Next
+                </button>
+            }
+        </form>
+    </div>
 </div>
 <div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link"
-     asp-action="ManageSupervisors"
-     asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-    </svg>
-    Cancel
-  </a>
+    <a class="nhsuk-back-link__link"
+       asp-action="ManageSupervisors"
+       asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
 </div>

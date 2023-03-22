@@ -10,7 +10,7 @@ namespace DigitalLearningSolutions.Web.Helpers
 {
     public class CompetencyFilterHelper
     {
-        public static IEnumerable<Competency> FilterCompetencies(IEnumerable<Competency> competencies, IEnumerable<Data.Models.Frameworks.CompetencyFlag> competencyFlags, SearchSelfAssessmentOvervieviewViewModel search)
+        public static IEnumerable<Competency> FilterCompetencies(IEnumerable<Competency> competencies, IEnumerable<Data.Models.Frameworks.CompetencyFlag> competencyFlags, SearchSelfAssessmentOverviewViewModel search)
         {
             var filteredCompetencies = competencies;
             if (search != null)
@@ -73,7 +73,7 @@ namespace DigitalLearningSolutions.Web.Helpers
             competencies = filteredCompetencies;
         }
 
-        private static void ApplyCompetencyGroupFilters(ref IEnumerable<Competency> competencies, SearchSelfAssessmentOvervieviewViewModel search)
+        private static void ApplyCompetencyGroupFilters(ref IEnumerable<Competency> competencies, SearchSelfAssessmentOverviewViewModel search)
         {
             var filteredCompetencies = competencies;
             var appliedCompetencyGroupFilters = search.AppliedFilters?.Select(f => int.Parse(f.FilterValue)).Where(f => IsCompetencyFlagFilter(f)) ?? Enumerable.Empty<int>();
@@ -84,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Helpers
             competencies = filteredCompetencies;
         }
 
-        private static void UpdateRequirementsFilterDropdownOptionsVisibility(SearchSelfAssessmentOvervieviewViewModel search, IEnumerable<Competency> competencies)
+        private static void UpdateRequirementsFilterDropdownOptionsVisibility(SearchSelfAssessmentOverviewViewModel search, IEnumerable<Competency> competencies)
         {
             var filteredQuestions = competencies.SelectMany(c => c.AssessmentQuestions);
             if (search != null)
