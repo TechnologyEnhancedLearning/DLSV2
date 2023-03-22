@@ -5,11 +5,13 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -96,14 +98,14 @@
           string? ExistingFilterString = ""
         )
         {
-            int offSet = ((page - 1) * itemsPerPage) ?? 0;
-            UserStatus = (string.IsNullOrEmpty(UserStatus) ? "Any" : UserStatus);
-            EmailStatus = (string.IsNullOrEmpty(EmailStatus) ? "Any" : EmailStatus);
-
             if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
                 page = 1;
             }
+
+            int offSet = ((page - 1) * itemsPerPage) ?? 0;
+            UserStatus = (string.IsNullOrEmpty(UserStatus) ? "Any" : UserStatus);
+            EmailStatus = (string.IsNullOrEmpty(EmailStatus) ? "Any" : EmailStatus);
 
             if (!string.IsNullOrEmpty(SearchString))
             {
@@ -223,6 +225,62 @@
         public List<string> GetEmailStatus()
         {
             return new List<string>(new string[] { "Any", "Verified", "Unverified" });
+        }
+
+        [Route("SuperAdmin/Users/{userId=0:int}/EditUserDetails")]
+        public IActionResult EditUserDetails(int userId)
+        {
+            UserAccount userAccount = this.userDataService.GetUserAccountById(userId);
+            EditUserDetailsViewModel editUserDetailsViewModel = new EditUserDetailsViewModel(userAccount);
+
+            if (TempData["SearchString"] != null)
+            {
+                editUserDetailsViewModel.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                editUserDetailsViewModel.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                editUserDetailsViewModel.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            TempData["UserId"] = userId;
+            TempData.Keep();
+
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            ViewBag.JobGroups = SelectListHelper.MapOptionsToSelectListItems(
+                jobGroups, userAccount.JobGroupId
+            );
+            return View(editUserDetailsViewModel);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Users/{userId=0:int}/EditUserDetails")]
+        public IActionResult EditUserDetails(EditUserDetailsViewModel editUserDetailsViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (!this.userDataService.PrimaryEmailIsInUseByOtherUser(editUserDetailsViewModel.PrimaryEmail, editUserDetailsViewModel.Id))
+                {
+                    this.userDataService.UpdateUserDetailsAccount(editUserDetailsViewModel.FirstName, editUserDetailsViewModel.LastName, editUserDetailsViewModel.PrimaryEmail, editUserDetailsViewModel.JobGroupId, editUserDetailsViewModel.ProfessionalRegistrationNumber,
+                        ((editUserDetailsViewModel.ResetEmailVerification) ? null : editUserDetailsViewModel.EmailVerified),
+                        editUserDetailsViewModel.Id);
+                    return RedirectToAction("Index", "Users", new { UserId = editUserDetailsViewModel.Id });
+                }
+                else
+                {
+                    ModelState.AddModelError(
+                        nameof(EditUserDetailsViewModel.PrimaryEmail),
+                        CommonValidationErrorMessages.EmailInUse
+                    );
+                }
+            }
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            ViewBag.JobGroups = SelectListHelper.MapOptionsToSelectListItems(
+                jobGroups, editUserDetailsViewModel.JobGroupId
+            );
+            return View(editUserDetailsViewModel);
         }
 
         [Route("SuperAdmin/Users/Administrators")]
