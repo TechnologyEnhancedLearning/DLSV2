@@ -154,27 +154,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
             <div class="visual-separator @visualSeparatorNoNavBar"></div>
 
-
-
-
+            
 
             @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayFeedbackBar] != true)
             {
               <div class="nhsuk-width-container">
-                <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" href="/feedback">
+                <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="Index">
                   Feedback
                 </a>
-                <a>Give website feedback</a>
+                <a>Give page or website feedback</a>
                 or
                 <a>join our research panel</a>
-                - your feedback will help us improve this platform.
+                - this website is in <a>Beta</a>, your feedback will help us improve this platform.
               </div>
             }
-
-
-
-
-
+            
 
         </header>
 
