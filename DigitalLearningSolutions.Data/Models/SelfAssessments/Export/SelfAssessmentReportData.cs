@@ -14,7 +14,7 @@
         public DateTime? Registered { get; set; }
         public DateTime? Started { get; set; }
         public DateTime? LastAccessed { get; set; }
-        public int? OptionalProficiencies { get; set; }
+        public int?OptionalProficienciesAssessed { get; set; }
         public int? SelfAssessedAchieved { get; set; }
         public int? ConfirmedResults { get; set; }
         public DateTime? SignOffRequested { get; set; }

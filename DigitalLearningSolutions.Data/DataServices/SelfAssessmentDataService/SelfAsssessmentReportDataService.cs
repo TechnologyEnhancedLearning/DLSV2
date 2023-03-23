@@ -76,9 +76,9 @@
                     	, can.DateRegistered AS Registered
                         , ca.StartedDate AS Started
                         , ca.LastAccessed
-                    	, COALESCE(COUNT(DISTINCT LAR.Optional), 0) AS [OptionalProficiencies]
-                    	, COALESCE(COUNT(DISTINCT LAR.SelfAssessed),0) AS [SelfAssessedAchieved]
-                    	, COALESCE(COUNT(DISTINCT LAR.Confirmed), 0) AS [ConfirmedResults]
+                    	, COALESCE(COUNT(DISTINCT LAR.Optional), NULL) AS [OptionalProficienciesAssessed]
+                    	, COALESCE(COUNT(DISTINCT LAR.SelfAssessed), NULL) AS [SelfAssessedAchieved]
+                    	, COALESCE(COUNT(DISTINCT LAR.Confirmed), NULL) AS [ConfirmedResults]
                         , max(casv.Requested) AS SignOffRequested
                         , max(1*casv.SignedOff) AS SignOffAchieved
                         , min(casv.Verified) AS ReviewedDate
