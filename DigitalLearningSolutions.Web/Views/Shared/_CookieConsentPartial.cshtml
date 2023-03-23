@@ -5,7 +5,7 @@
     var path = Context.Request.Path; // @(Configuration["CurrentSystemBaseUrl"]
 }
 
-<a href="@Url.Action("ConfirmCookieConsent","CookieConsent")" id="CookieConsentPostPath" style="display:none"></a>
+<input type="hidden" id="CookieConsentPostPath" value="@Url.Action("ConfirmCookieConsent","CookieConsent")" />
 
 @if (showCookieBanner == null && validateCookieBannerViaTempData == null) // [BY] Show cookie banner when the value is null. if the user consent yes or no then we dont display the banner
 {
