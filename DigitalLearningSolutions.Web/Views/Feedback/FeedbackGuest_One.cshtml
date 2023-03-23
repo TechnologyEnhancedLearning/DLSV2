@@ -1,0 +1,65 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Feedback
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FeedbackViewModel;
+
+@{
+  ViewData["Title"] = "Feedback";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/feedback/feedback.css")" asp-append-version="true">
+
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <div class="welcome-page-button-container">
+
+      <p>Give page or website feedback</p>
+
+      <h2>Give us feedback about what you are trying to achieve?</h2>
+
+      <p>What task did you come to do today?</p>
+
+      <p>Please describe in detail your experience and what you came here to achieve.</p>
+
+      <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="FeedbackGuest_Two">
+        Submit feedback >
+      </a>
+
+
+
+
+
+
+    @*<partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />*@
+    
+
+
+@*      @if (Model.UserIsLoggedIn)
+      {
+        @if (Model.UserIsLoggedInCentre)
+        {
+          <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="ApplicationSelector" asp-action="Index">
+            Switch application
+          </a>
+        }
+      }
+      else
+      {
+        <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="Index">
+          Log in
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary auth-button" role="button" asp-controller="Register" asp-action="Start">
+          Register
+        </a>
+      }*@
+    </div>
+
+    @*<partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />*@
+
+    @*<p class="nhsuk-body-m">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>*@
+
+    @*<partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />*@
+  </div>
+</div>
+
