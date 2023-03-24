@@ -194,7 +194,7 @@
             var mockTempDataDictionary = new Mock<ITempDataDictionary>();
 
             // When
-         //   Action act = () => mockFromService.Object.GetMultiPageFormData<int>(MultiPageFormDataFeature.AddNewCourse, tempDataDictionary).GetAwaiter().GetResult();
+      
             mockFromService.Setup(A => A.GetMultiPageFormData<int>(MultiPageFormDataFeature.AddNewCourse, tempDataDictionary));
             Action act = () => mockFromService.Object.GetMultiPageFormData<int>(MultiPageFormDataFeature.AddNewCourse, tempDataDictionary).GetAwaiter().GetResult();
           

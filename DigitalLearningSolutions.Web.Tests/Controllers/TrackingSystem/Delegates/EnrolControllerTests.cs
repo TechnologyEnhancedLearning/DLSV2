@@ -73,8 +73,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
                 mockFromService.Setup(A => A.SetMultiPageFormData(It.IsAny<SessionEnrolDelegate>(), MultiPageFormDataFeature.EnrolDelegateInActivity, enrolController.TempData)).Verifiable();
 
                 mockFromService.Verify(A => A.SetMultiPageFormData(It.IsAny<SessionEnrolDelegate>(), MultiPageFormDataFeature.EnrolDelegateInActivity, enrolController.TempData), Moq.Times.Never);
-               // A.CallTo(() => multiPageFormService.SetMultiPageFormData(A<SessionEnrolDelegate>._, MultiPageFormDataFeature.EnrolDelegateInActivity, enrolController.TempData).GetAwaiter().GetResult()).MustHaveHappenedOnceExactly();
-
+              
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
 
                 Assert.AreEqual(0, tempDataDictionary.Keys.Count);
