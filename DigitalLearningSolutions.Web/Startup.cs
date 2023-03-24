@@ -301,7 +301,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IBrandsDataService, BrandsDataService>();
             services.AddScoped<IDCSAReportDataService, DCSAReportDataService>();
             services.AddScoped<IEmailVerificationDataService, EmailVerificationDataService>();
-        }
+            services.AddScoped<IUserCentreAccountsService, UserCentreAccountsService>();
+    }
 
         private static void RegisterHelpers(IServiceCollection services)
         {

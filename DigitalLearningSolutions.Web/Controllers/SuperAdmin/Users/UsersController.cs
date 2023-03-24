@@ -13,13 +13,13 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
+    using DigitalLearningSolutions.Web.ViewModels.UserCentreAccounts;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
 
@@ -33,13 +33,15 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private const string UserAccountFilterCookieName = "UserAccountFilter";
         private readonly IUserService userService;
-        public UsersController(IUserDataService userDataService, ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsDataService jobGroupsDataService,IUserService userService)
+        private readonly IUserCentreAccountsService userCentreAccountsService;
+        public UsersController(IUserDataService userDataService, ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsDataService jobGroupsDataService,IUserCentreAccountsService userCentreAccountsService, IUserService userService)
         {
             this.userDataService = userDataService;
             this.centreRegistrationPromptsDataService = centreRegistrationPromptsDataService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
+            this.userCentreAccountsService = userCentreAccountsService;
         }
 
         [Route("SuperAdmin/Users/{userId=0:int}/InactivateUserConfirmation")]
@@ -288,6 +290,20 @@
         {
             var model = new AdministratorsViewModel();
             return View(model);
+        }
+        [Route("SuperAdmin/Users/{userId:int}/CentreAccounts")]
+        public IActionResult CentreAccounts(int userId)
+        {
+            TempData["UserID"] = userId;
+            var userEntity = userService.GetUserById(userId);
+            var UserCentreAccountsRoleViewModel =
+                userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity);
+            var model = new UserCentreAccountRoleViewModel(
+                     UserCentreAccountsRoleViewModel.OrderByDescending(account => account.IsActiveAdmin)
+                         .ThenBy(account => account.CentreName).ToList(),
+                     userEntity
+                 );
+            return View("UserCentreAccounts", model);
         }
         [Route("SuperAdmin/Users/{UserId:int}/UnlockAccount")]
         public IActionResult UnlockAccount(int UserId)
