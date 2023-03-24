@@ -77,21 +77,6 @@
                 mockFromDataService.Verify(x => x.InsertMultiPageFormData(It.Is<MultiPageFormData>(d =>  d.Json == objectToInsert.ToString() && d.Feature == feature.Name && d.CreatedDate == currentTime)),Moq.Times.Once);
                 Assert.That(tempDataDictionary[feature.TempDataKey], Is.Not.InstanceOf<Guid>());
 
-                //A.CallTo(
-                //    () => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(A<Guid>._, A<string>._)
-                //).MustNotHaveHappened();
-                //A.CallTo(() => multiPageFormDataService.UpdateJsonByGuid(A<Guid>._, A<string>._))
-                //    .MustNotHaveHappened();
-                //A.CallTo(
-                //    () => multiPageFormDataService.InsertMultiPageFormData(
-                //        A<MultiPageFormData>.That.Matches(
-                //            d => d.Json == objectToInsert.ToString() &&
-                //                 d.Feature == feature.Name &&
-                //                 d.CreatedDate == currentTime
-                //        )
-                //    )
-                //).MustHaveHappenedOnceExactly();
-                // tempDataDictionary[feature.TempDataKey].Should().BeOfType<Guid>();
             }
         }
 
@@ -117,18 +102,16 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             var guid = Guid.NewGuid();
             tempDataDictionary[feature.TempDataKey] = guid;
-            //A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
-            //    .Returns(null);
+          
             mockFromDataService.Setup(A => A.GetMultiPageFormDataByGuidAndFeature(It.IsAny<Guid>(), It.IsAny<string>())).Returns(actual);
             //Act
             var result = mockFromDataService.Object.GetMultiPageFormDataByGuidAndFeature(guid,feature.Name);
             //Assert
             mockFromDataService.Verify(x => x.GetMultiPageFormDataByGuidAndFeature(It.IsAny<Guid>(), It.IsAny<string>()), Moq.Times.Once);
             Assert.IsNull(result);
-          //  mockFromDataService.Setup(A => A.GetMultiPageFormDataByGuidAndFeature(It.IsAny<Guid>(), It.IsAny<string>())).Callback<Guid, string>((guid, str) => { actual = new MultiPageFormData(); }).Returns(() => actual);
-            // When
+             // When
 
-            //  multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
+         
             mockFromService.Setup(A => A.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary));
 
             mockFromDataService.Object.InsertMultiPageFormData(data);
@@ -143,8 +126,6 @@
                 mockFromDataService.Verify(A => A.UpdateJsonByGuid(It.IsAny<Guid>(), It.IsAny<string>()), Moq.Times.Never());
                 mockFromDataService.Verify(x => x.InsertMultiPageFormData(It.Is<MultiPageFormData>(d => d.Json == objectToInsert.ToString() && d.Feature == feature.Name && d.CreatedDate == currentTime)), Moq.Times.Once);
                 
-                // tempDataDictionary[feature.TempDataKey].Should().BeOfType<Guid>();
-                // tempDataDictionary[feature.TempDataKey].Should().NotBe(guid);
                 Assert.IsInstanceOf<Guid>(guid);
             }
            
@@ -171,17 +152,7 @@
             data.CreatedDate = currentTime;
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             tempDataDictionary[feature.TempDataKey] = guid;
-            //A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
-            //    .Returns(
-            //        new MultiPageFormData
-            //        {
-            //            Id = 1,
-            //            TempDataGuid = guid,
-            //            Json = "67890",
-            //            Feature = feature.Name,
-            //            CreatedDate = currentTime,
-            //        }
-            //    );
+           
             mockFromDataService.Setup(A => A.UpdateJsonByGuid(It.IsAny<Guid>(), It.IsAny<string>()));
             mockFromDataService.Setup(A => A.GetMultiPageFormDataByGuidAndFeature(It.IsAny<Guid>(), It.IsAny<string>())).Returns(new MultiPageFormData
             {
@@ -210,17 +181,6 @@
                 mockFromDataService.Setup(A => A.InsertMultiPageFormData(It.IsAny<MultiPageFormData>())).Verifiable();
                 mockFromDataService.Verify(A => A.InsertMultiPageFormData(It.IsAny<MultiPageFormData>()),Moq.Times.Never  );
 
-                //mockFromDataService.Verify(x => x.InsertMultiPageFormData(It.Is<MultiPageFormData>(d => d.Json == objectToInsert.ToString() && d.Feature == feature.Name && d.CreatedDate == currentTime)), Moq.Times.Once);
-
-                //A.CallTo(
-                //    () => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name)
-                //).MustHaveHappenedOnceExactly();
-                //A.CallTo(() => multiPageFormDataService.UpdateJsonByGuid(guid, objectToInsert.ToString()))
-                //    .MustHaveHappenedOnceExactly();
-                //A.CallTo(
-                //    () => multiPageFormDataService.InsertMultiPageFormData(A<MultiPageFormData>._)
-                //).MustNotHaveHappened();
-                // tempDataDictionary[feature.TempDataKey].Should().Be(guid);
                 Assert.IsInstanceOf<Guid>(guid);
 
 
@@ -237,15 +197,11 @@
          //   Action act = () => mockFromService.Object.GetMultiPageFormData<int>(MultiPageFormDataFeature.AddNewCourse, tempDataDictionary).GetAwaiter().GetResult();
             mockFromService.Setup(A => A.GetMultiPageFormData<int>(MultiPageFormDataFeature.AddNewCourse, tempDataDictionary));
             Action act = () => mockFromService.Object.GetMultiPageFormData<int>(MultiPageFormDataFeature.AddNewCourse, tempDataDictionary).GetAwaiter().GetResult();
-            //Action act = () => multiPageFormService.GetMultiPageFormData<int>(
-            //    MultiPageFormDataFeature.AddNewCourse,
-            //    tempDataDictionary
-            //).GetAwaiter().GetResult();
+          
 
             // Then
             act.Should().Throw<MultiPageFormDataException>();
-            //act.Should().Throw<MultiPageFormDataException>()
-            //    .WithMessage("Attempted to get data with no Guid identifier");
+            
             mockFromService.Verify(d => d.GetMultiPageFormData<int>(null, null), Moq.Times.Once);
         }
 
@@ -296,26 +252,12 @@
                 Feature = feature.Name,
                 CreatedDate = DateTime.UtcNow,
             });
-            //A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
-            //    .Returns(
-            //        new MultiPageFormData
-            //        {
-            //            Id = 1,
-            //            TempDataGuid = guid,
-            //            Json = expectedValue.ToString(),
-            //            Feature = feature.Name,
-            //            CreatedDate = DateTime.UtcNow,
-            //        }
-            //    );
+           
            mockFromService.Setup(x => x.GetMultiPageFormData<int>(feature, tempDataDictionary));
 
             var result = mockFromService.Object.GetMultiPageFormData<int>(feature, tempDataDictionary).GetAwaiter().GetResult()  ;
             // When
-            //var result = multiPageFormService.GetMultiPageFormData<int>(
-            //    feature,
-            //    tempDataDictionary
-            //).GetAwaiter().GetResult();
-
+          
             // Then
             using (new AssertionScope())
             {
@@ -335,11 +277,7 @@
             // When
             Action act = () => mockFromService.Object.ClearMultiPageFormData(MultiPageFormDataFeature.AddNewCourse,
                 tempDataDictionary);
-            //Action act = () => multiPageFormService.ClearMultiPageFormData(
-            //    MultiPageFormDataFeature.AddNewCourse,
-            //    tempDataDictionary
-            //).GetAwaiter().GetResult();
-
+           
             // Then
             act.Should().Throw<MultiPageFormDataException>()
                 .WithMessage("Attempted to clear data with no Guid identifier");
@@ -358,10 +296,7 @@
             // When
             mockFromService.Setup(x => x.ClearMultiPageFormData(feature,
                 tempDataDictionary));
-            //multiPageFormService.ClearMultiPageFormData(
-            //    feature,
-            //    tempDataDictionary
-            //).GetAwaiter().GetResult();
+          
              mockFromDataService.Object.DeleteByGuid(guid);
 
             // Then
@@ -370,9 +305,7 @@
                 mockFromDataService.Setup(A => A.DeleteByGuid(It.IsAny<Guid>())).Verifiable();
 
                 mockFromDataService.Verify(A => A.DeleteByGuid(It.IsAny<Guid>()), Moq.Times.Once);
-                //A.CallTo(() => multiPageFormDataService.DeleteByGuid(guid)).MustHaveHappenedOnceExactly();
-              //  tempDataDictionary[feature.TempDataKey].Should().BeNull();
-               Assert.IsNotNull(tempDataDictionary[feature.TempDataKey]);
+                Assert.IsNotNull(tempDataDictionary[feature.TempDataKey]);
 
             }
         }
@@ -398,29 +331,8 @@
             //Assert
             mockFromDataService.Verify(x => x.GetMultiPageFormDataByGuidAndFeature(It.IsAny<Guid>(), It.IsAny<string>()), Moq.Times.Once);
             Assert.IsNotNull(result);
-            //A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
-            //    .Returns(
-            //        new MultiPageFormData
-            //        {
-            //            Id = 1,
-            //            TempDataGuid = guid,
-            //            Json = "123",
-            //            Feature = feature.Name,
-            //            CreatedDate = DateTime.UtcNow,
-            //        }
-            //    );
-
             if (result != null)
-                Assert.IsTrue(true);
-
-            // When
-            //var result = multiPageFormService.FormDataExistsForGuidAndFeature(
-            //    feature,
-            //    guid
-            //).GetAwaiter().GetResult();
-
-            //// Then
-            //result.Should().BeTrue();
+             Assert.IsTrue(true);
         }
 
        [Test]
@@ -440,17 +352,7 @@
             mockFromDataService.Verify(x => x.GetMultiPageFormDataByGuidAndFeature(It.IsAny<Guid>(), It.IsAny<string>()), Moq.Times.Once);
            if (result == null )
             Assert.IsFalse(false);
-           //A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
-            //    .Returns(null);
-
-            //// When
-            //var result = multiPageFormService.FormDataExistsForGuidAndFeature(
-            //    feature,
-            //    guid
-            //).GetAwaiter().GetResult();
-
-            //// Then
-            //result.Should().BeFalse();
+          
         }
     }
 }

@@ -218,13 +218,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<EditAdminFieldTempData>(MultiPageFormDataFeature.EditAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<EditAdminFieldTempData>(MultiPageFormDataFeature.EditAdminField, controller.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
-            //        MultiPageFormDataFeature.EditAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
-
+           
             A.CallTo(() => courseService.VerifyAdminUserCanManageCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(true);
 
@@ -246,19 +240,7 @@
                         ),
                         MultiPageFormDataFeature.EditAdminField,
                         controller.TempData),Moq.Times.Never);
-                //A.CallTo(
-                //    () => multiPageFormService.SetMultiPageFormData(
-                //        A<EditAdminFieldTempData>.That.Matches(
-                //            d => d.PromptNumber == initialTempData.PromptNumber &&
-                //                 d.Prompt == initialTempData.Prompt &&
-                //                 d.Answer == initialTempData.Answer &&
-                //                 d.IncludeAnswersTableCaption == initialTempData.IncludeAnswersTableCaption &&
-                //                 d.OptionsString == inputViewModel.OptionsString
-                //        ),
-                //        MultiPageFormDataFeature.EditAdminField,
-                //        controller.TempData
-                //    ).GetAwaiter().GetResult()
-                //).MustHaveHappenedOnceExactly();
+               
                 result.Should().BeRedirectToActionResult().WithActionName("EditAdminField");
             }
         }
@@ -286,12 +268,6 @@
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
 
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
 
             A.CallTo(
                 () => courseAdminFieldsService.AddAdminFieldToCourse(
@@ -309,12 +285,6 @@
             mockFromService.Object.ClearMultiPageFormData(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
             mockFromService.Verify(A => A.ClearMultiPageFormData(MultiPageFormDataFeature.AddAdminField, controller.TempData), Moq.Times.Once);
 
-            //A.CallTo(
-            //    () => multiPageFormService.ClearMultiPageFormData(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -329,13 +299,6 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
-
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
 
             A.CallTo(
                 () => courseAdminFieldsService.AddAdminFieldToCourse(
@@ -363,13 +326,6 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
-
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
 
             A.CallTo(
                 () => courseAdminFieldsService.AddAdminFieldToCourse(
@@ -403,13 +359,6 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
-
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
 
             var expectedData = new AddAdminFieldTempData
             {
@@ -448,13 +397,6 @@
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
 
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
-
             const string action = "addPrompt";
 
             // When
@@ -482,12 +424,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
+          
             const string action = "addPrompt";
 
             // When
@@ -513,13 +450,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
-
+          
             // When
             var result = controller.AddAdminField(1, model, action);
 
@@ -541,13 +472,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
-
+           
             // When
             var result = controller.AddAdminField(1, model, action);
 
@@ -576,13 +501,6 @@
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
 
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
-
             // When
             var result = controller.AddAdminField(1, model, action);
 
@@ -605,13 +523,6 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
-
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
 
             // When
             var result = controller.AddAdminField(1, model, action);
@@ -636,13 +547,6 @@
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.EditAdminField, controller.TempData).GetAwaiter().GetResult();
 
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
-
             // When
             var result = controller.AddAdminField(1, model, action);
 
@@ -662,13 +566,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.EditAdminField, controller.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
-
+           
             // When
             var result = controller.AddAdminFieldAnswersBulk(1, inputViewModel);
 
@@ -744,12 +642,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
+           
             const string action = "save";
 
             A.CallTo(() => courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(A<int>._))
@@ -777,12 +670,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, controller.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
+          
             const string action = "addPrompt";
 
             // When
@@ -808,12 +696,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<EditAdminFieldTempData>(MultiPageFormDataFeature.EditAdminField, controller.TempData));
             mockFromService.Object.GetMultiPageFormData<EditAdminFieldTempData>(MultiPageFormDataFeature.EditAdminField, controller.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
-            //        MultiPageFormDataFeature.EditAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
+           
             const string action = "addPrompt";
 
             // When
@@ -895,19 +778,6 @@
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData), Moq.Times.Once); 
 
-            //A.CallTo(
-            //    () => multiPageFormService.SetMultiPageFormData(
-            //        A<AddAdminFieldTempData>.That.Matches(
-            //            d => d.AdminFieldId == expectedTempData.AdminFieldId &&
-            //                 d.OptionsString == expectedTempData.OptionsString &&
-            //                 d.Answer == expectedTempData.Answer &&
-            //                 d.IncludeAnswersTableCaption ==
-            //                 expectedTempData.IncludeAnswersTableCaption
-            //        ),
-            //        MultiPageFormDataFeature.AddAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).MustHaveHappened();
         }
 
         private void AssertEditAdminFieldMultiPageFormDataIsUpdatedCorrectly(
@@ -932,20 +802,7 @@
                     ),
                     MultiPageFormDataFeature.EditAdminField,
                     controller.TempData), Moq.Times.Never);
-            //A.CallTo(
-            //    () => multiPageFormService.SetMultiPageFormData(
-            //        A<EditAdminFieldTempData>.That.Matches(
-            //            d => d.PromptNumber == expectedTempData.PromptNumber &&
-            //                 d.Prompt == expectedTempData.Prompt &&
-            //                 d.OptionsString == expectedTempData.OptionsString &&
-            //                 d.Answer == expectedTempData.Answer &&
-            //                 d.IncludeAnswersTableCaption ==
-            //                 expectedTempData.IncludeAnswersTableCaption
-            //        ),
-            //        MultiPageFormDataFeature.EditAdminField,
-            //        controller.TempData
-            //    ).GetAwaiter().GetResult()
-            //).MustHaveHappened();
+           
         }
     }
 }

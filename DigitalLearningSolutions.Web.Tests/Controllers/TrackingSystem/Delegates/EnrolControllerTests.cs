@@ -62,10 +62,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
         {
             var mockFromService = new Mock<IMultiPageFormService>();
             //Given
-            //A.CallTo(() => multiPageFormService.SetMultiPageFormData(sessionEnrolDelegate,
-            //    MultiPageFormDataFeature.EnrolDelegateInActivity,
-            //    tempDataDictionary).GetAwaiter().GetResult());
-            mockFromService.Setup(A => A.SetMultiPageFormData(sessionEnrolDelegate, MultiPageFormDataFeature.EnrolDelegateInActivity, tempDataDictionary));
+           mockFromService.Setup(A => A.SetMultiPageFormData(sessionEnrolDelegate, MultiPageFormDataFeature.EnrolDelegateInActivity, tempDataDictionary));
             //When
             var result = enrolController.StartEnrolProcess(1, 1, "DelegateName");
 
