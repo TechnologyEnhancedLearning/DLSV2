@@ -5,8 +5,9 @@ const bannerConfirm = document.getElementById('nhsuk-cookie-confirmation-banner'
 const bannerConfirmOnPost = document.getElementById('nhsuk-cookie-confirmation-banner-post');
 const bannerCookieAccept = document.getElementById('nhsuk-cookie-banner__link_accept_analytics');
 const bannerCookieReject = document.getElementById('nhsuk-cookie-banner__link_accept');
+const cookieConsentPostPath = <HTMLInputElement>document.getElementById('CookieConsentPostPath');
 
-const path = getFullURL('/CookieConsent/ConfirmCookieConsent');
+const path = cookieConsentPostPath?.value;
 
 if (divCookieBannerNoJSstyling != null) {
   divCookieBannerNoJSstyling.setAttribute("style", "display:none;");
@@ -47,11 +48,3 @@ function changeConsent(consent: string) {
   request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
   request.send();
 };
-
-
-function getFullURL(endpoint: string): string {
-  const currentHref = window.location.href;
-  const currentPath = window.location.pathname;
-  const fullDomain = currentHref.replace(currentPath, "");
-  return `${fullDomain}${endpoint}`;
-}
