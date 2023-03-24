@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
+    using DocumentFormat.OpenXml.Wordprocessing;
 
     public interface IUserDataService
     {
@@ -219,6 +220,8 @@
         string GetUserDisplayName(int userId);
 
         void InactivateUser(int userId);
+
+        void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
 
         void ActivateUser(int userId);
     }
@@ -497,6 +500,22 @@
                 {
                     UserID = userId
                 }
+            );
+        }
+
+        public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
+        {
+            connection.Execute(
+                @"UPDATE Users
+                  SET
+                  FirstName = @firstName,
+                  LastName = @lastName,
+                  PrimaryEmail = @primaryEmail,
+                  JobGroupId = @jobGroupId,
+                  ProfessionalRegistrationNumber = @prnNumber,
+                  EmailVerified = @emailVerified
+                WHERE ID = @userId",
+                new { firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId }
             );
         }
     }
