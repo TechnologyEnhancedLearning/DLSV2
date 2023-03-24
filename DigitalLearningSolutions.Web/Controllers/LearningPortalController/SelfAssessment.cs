@@ -139,7 +139,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
         public IActionResult SelfAssessmentCompetency(
             int selfAssessmentId,
-            ICollection<AssessmentQuestion> assessmentQuestions,
+            ICollection<AssessmentQuestion> updatedAssessmentQuestions,
             int competencyNumber,
             int competencyId,
             int? competencyGroupId
@@ -155,20 +155,26 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
             var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, candidateId);
-            if (competency.AssessmentQuestions.Any(x => x.SignedOff == true))
-            {
 
-                TempData["assessmentQuestions"] = JsonSerializer.Serialize(assessmentQuestions);
-                TempData["competencyId"] = competencyId;
-                TempData["competencyGroupId"] = competencyGroupId;
-                TempData["competencyName"] = competency.Name;
-
-                return RedirectToAction("ConfirmOverwriteSelfAssessment", new { selfAssessmentId = selfAssessmentId, competencyNumber = competencyId });
-            }
-            else
+            foreach (var updatedAssessmentQuestion in updatedAssessmentQuestions)
             {
-                return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, candidateId, assessmentQuestions);
+                foreach (var originalAssessmentQuestion in competency.AssessmentQuestions)
+                {
+                    if (originalAssessmentQuestion.Id == updatedAssessmentQuestion.Id
+                        && originalAssessmentQuestion.SignedOff == true
+                        && updatedAssessmentQuestion.Result != originalAssessmentQuestion.Result)
+                    {
+                        TempData["assessmentQuestions"] = JsonSerializer.Serialize(updatedAssessmentQuestions);
+                        TempData["competencyId"] = competencyId;
+                        TempData["competencyGroupId"] = competencyGroupId;
+                        TempData["competencyName"] = competency.Name;
+
+                        return RedirectToAction("ConfirmOverwriteSelfAssessment", new { selfAssessmentId = selfAssessmentId, competencyNumber = competencyNumber });
+                    }
+                }
             }
+
+            return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, candidateId, updatedAssessmentQuestions);
         }
 
         [Route(
@@ -275,7 +281,7 @@
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, true);
             if (assessment.LinearNavigation)
             {
-                return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
+                return RedirectToAction("SelfAssessmentCompetency", new { selfAssessmentId = selfAssessmentId, competencyNumber = competencyNumber + 1 });
             }
 
             return new RedirectResult(
