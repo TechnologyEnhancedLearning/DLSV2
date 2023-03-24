@@ -53,11 +53,6 @@
                 unverifiedEmails.AddRange(unverifiedCentreEmails.Select(uce => uce.centreEmail));
             }
             var userEntity = userService.GetUserById(userId);
-            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                userEntity!.UserAccount,
-                unverifiedEmails,
-                config.GetAppRootPath()
-            );
             var model = new VerifyYourEmailViewModel(
                 emailVerificationReason,
                 unverifiedPrimaryEmail,
@@ -67,6 +62,7 @@
             return View(model);
         }
 
+        [Route("/VerifyYourEmail/ResendVerificationEmails")]
         public IActionResult ResendVerificationEmails()
         {
             var userId = User.GetUserIdKnownNotNull();

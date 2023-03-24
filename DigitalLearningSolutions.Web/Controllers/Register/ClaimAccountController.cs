@@ -1,8 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System.Collections.Generic;
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -11,8 +15,11 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
+    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
+    using static Org.BouncyCastle.Math.EC.ECCurve;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class ClaimAccountController : Controller
@@ -20,16 +27,22 @@
         private readonly IUserService userService;
         private readonly IUserDataService userDataService;
         private readonly IClaimAccountService claimAccountService;
+        private readonly IConfiguration config;
+        private readonly IEmailVerificationService emailVerificationService;
 
         public ClaimAccountController(
             IUserService userService,
             IUserDataService userDataService,
-            IClaimAccountService claimAccountService
+            IClaimAccountService claimAccountService,
+            IConfiguration config,
+            IEmailVerificationService emailVerificationService
         )
         {
             this.userService = userService;
             this.userDataService = userDataService;
             this.claimAccountService = claimAccountService;
+            this.config = config;
+            this.emailVerificationService = emailVerificationService;
         }
 
         [HttpGet]
@@ -151,6 +164,13 @@
                     CandidateNumber = model.CandidateNumber,
                     WasPasswordSetByAdmin = password == null,
                 }
+            );
+
+            var userEntity = userService.GetUserById(model.UserId);
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                userEntity!.UserAccount,
+                new List<String>(new string[] { model.Email }),
+                config.GetAppRootPath()
             );
 
             return RedirectToAction("Confirmation");
