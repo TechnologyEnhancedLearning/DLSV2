@@ -24,6 +24,9 @@
         private const string LearningHubSsoByteLengthKey = "ByteLength";
         private const string LearningHubSsoSecretKey = "SecretKey";
 
+        private const string CookieBannerConsentCookieName = "CookieBannerConsent:CookieName";
+        private const string CookieBannerConsentExpiryDays = "CookieBannerConsent:ExpiryDays";
+
         private const string JavascriptSearchSortFilterPaginateItemLimitKey =
             "JavascriptSearchSortFilterPaginateItemLimit";
 
@@ -135,5 +138,16 @@
         {
             return config[LearningHubReportAPIClientIdentityKey];
         }
+        public static string GetCookieBannerConsentCookieName(this IConfiguration config)
+        {
+            return config[CookieBannerConsentCookieName];
+        }
+
+        public static int GetCookieBannerConsentExpiryDays(this IConfiguration config)
+        {
+            int.TryParse(config[CookieBannerConsentExpiryDays], out int expiryDays);
+            return expiryDays;
+        }
+
     }
 }
