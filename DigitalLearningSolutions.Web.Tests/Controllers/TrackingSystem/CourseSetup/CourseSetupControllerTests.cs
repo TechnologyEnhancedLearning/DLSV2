@@ -21,8 +21,10 @@
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
 
-    public class CourseSetupControllerTests
+  public class CourseSetupControllerTests
     {
         private const string CookieName = "CourseFilter";
 

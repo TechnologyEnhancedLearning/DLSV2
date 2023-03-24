@@ -19,8 +19,10 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
 
-    public class RegistrationPromptsControllerTests
+  public class RegistrationPromptsControllerTests
     {
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private HttpRequest httpRequest = null!;

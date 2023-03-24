@@ -19,8 +19,10 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
 
-    public class AdminFieldsControllerTests
+  public class AdminFieldsControllerTests
     {
         private AdminFieldsController controller = null!;
         private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;

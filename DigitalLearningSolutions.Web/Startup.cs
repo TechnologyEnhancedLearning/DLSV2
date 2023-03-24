@@ -40,6 +40,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Serilog;
+    using GDS.MultiPageFormData;
 
     public class Startup
     {
@@ -278,7 +279,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
             services.AddScoped<ILearningResourceReferenceDataService, LearningResourceReferenceDataService>();
-            services.AddScoped<IMultiPageFormDataService, MultiPageFormDataService>();
+            services.AddScoped<IMultiPageFormService, MultiPageFormService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
