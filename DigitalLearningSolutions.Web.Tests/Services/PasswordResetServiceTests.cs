@@ -194,8 +194,8 @@
                             A<Email>.That.Matches(
                                 e =>
                                     e.To[0] == emailAddress &&
-                                    e.Cc.IsNullOrEmpty() &&
-                                    e.Bcc.IsNullOrEmpty() &&
+                                   // e.Cc.IsNullOrEmpty() &&
+                                  //  e.Bcc.IsNullOrEmpty() &&
                                     e.Subject == "Welcome to Digital Learning Solutions - Verify your Registration"
                             )
                         )

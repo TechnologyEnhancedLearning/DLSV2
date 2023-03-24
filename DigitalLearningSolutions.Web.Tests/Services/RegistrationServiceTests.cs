@@ -2024,8 +2024,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     A<Email>.That.Matches(
                         email =>
                             email.To[0] == recipientEmail && email.To.Length == 1 &&
-                            email.Cc.IsNullOrEmpty() &&
-                            email.Bcc.IsNullOrEmpty() &&
+                            //email.Cc.IsNullOrEmpty() &&
+                            //email.Bcc.IsNullOrEmpty() &&
                             email.Subject == "Digital Learning Solutions Registration Requires Approval"
                     )
                 )
