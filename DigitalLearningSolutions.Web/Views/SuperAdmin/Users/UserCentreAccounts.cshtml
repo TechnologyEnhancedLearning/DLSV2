@@ -54,7 +54,7 @@
                     <div class="centre-role-tags">
               @if (centreRow.IsActiveAdmin)
               {
-                                            <a class=""asp-controller="Users" asp-action="Administrators">Admin</a>
+                                            <a class="" asp-controller="AdminAccounts" asp-action="Index" asp-route-AdminId="@Model.UserEntity.UserAccount.Id">Admin</a>
               }
               @if (centreRow.IsDelegate)
               {
