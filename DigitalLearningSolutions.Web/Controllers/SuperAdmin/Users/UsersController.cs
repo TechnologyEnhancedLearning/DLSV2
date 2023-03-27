@@ -285,12 +285,6 @@
             return View(editUserDetailsViewModel);
         }
 
-        [Route("SuperAdmin/Users/Administrators")]
-        public IActionResult Administrators()
-        {
-            var model = new AdministratorsViewModel();
-            return View(model);
-        }
         [Route("SuperAdmin/Users/{userId:int}/CentreAccounts")]
         public IActionResult CentreAccounts(int userId)
         {
@@ -306,9 +300,13 @@
             return View("UserCentreAccounts", model);
         }
         [Route("SuperAdmin/Users/{UserId:int}/UnlockAccount")]
-        public IActionResult UnlockAccount(int UserId)
+        public IActionResult UnlockAccount(int UserId, string RequestUrl= null)
         {
             userService.ResetFailedLoginCountByUserId(UserId);
+
+            if (RequestUrl != null)
+                return Redirect(RequestUrl);
+
             return RedirectToAction("Index");
         }
     }

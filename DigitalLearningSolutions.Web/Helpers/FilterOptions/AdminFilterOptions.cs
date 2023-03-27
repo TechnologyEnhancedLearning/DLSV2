@@ -58,6 +58,18 @@
             FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsCmsManager), "true"),
             FilterStatus.Default
         );
+
+        public static readonly FilterOptionModel SuperAdmin = new FilterOptionModel(
+            "Super admin",
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsSuperAdmin), "true"),
+            FilterStatus.Default
+        );
+
+        public static readonly FilterOptionModel ReportsViewer = new FilterOptionModel(
+            "Report viewer",
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsReportsViewer), "true"),
+            FilterStatus.Default
+        );
     }
 
     public static class AdminAccountStatusFilterOptions

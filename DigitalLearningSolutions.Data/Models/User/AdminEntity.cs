@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class AdminEntity : BaseSearchableItem
@@ -23,9 +24,27 @@
             UserCentreDetails = userCentreDetails;
         }
 
+        public AdminEntity(
+            AdminAccount adminAccount,
+            UserAccount userAccount,
+            Centre? centre,
+            UserCentreDetails? userCentreDetails,
+            int? adminSessions
+        )
+        {
+            AdminAccount = adminAccount;
+            UserAccount = userAccount;
+            UserCentreDetails = userCentreDetails;
+            Centre = centre;
+            AdminSessions = adminSessions;
+
+        }
+
         public AdminAccount AdminAccount { get; }
         public UserAccount UserAccount { get; }
         public UserCentreDetails? UserCentreDetails { get; }
+        public Centre? Centre { get; }
+        public int? AdminSessions { get; }
 
         public override string SearchableName
         {
@@ -48,5 +67,7 @@
         public bool IsNominatedSupervisor => AdminAccount.IsNominatedSupervisor;
         public bool IsTrainer => AdminAccount.IsTrainer;
         public bool IsContentCreator => AdminAccount.IsContentCreator;
+        public bool IsSuperAdmin => AdminAccount.IsSuperAdmin;
+        public bool IsReportsViewer => AdminAccount.IsReportsViewer;
     }
 }
