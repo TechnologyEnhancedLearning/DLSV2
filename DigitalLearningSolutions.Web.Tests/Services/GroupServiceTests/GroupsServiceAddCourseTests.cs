@@ -494,7 +494,7 @@
                 () => emailService.ScheduleEmail(
                     A<Email>.That.Matches(
                         e =>
-                            //e.Bcc.IsNullOrEmpty()
+                                                    //e.Bcc.IsNullOrEmpty()
                             //&& e.Cc.IsNullOrEmpty()
                             //&&
                             e.To[0] == reusableGroupDelegate.PrimaryEmail

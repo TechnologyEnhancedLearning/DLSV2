@@ -284,12 +284,7 @@
             mockFromService.Setup(A => A.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData));
             mockFromService.Object.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData).GetAwaiter().GetResult();
 
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-            //        MultiPageFormDataFeature.AddRegistrationPrompt,
-            //        registrationPromptsController.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
+            
             var expectedAnswerData = new RegistrationPromptAnswersTempData("Test");
             var inputViewModel = new RegistrationPromptAnswersViewModel("Test");
             const string action = "next";
@@ -317,12 +312,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData));
             mockFromService.Object.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-            //        MultiPageFormDataFeature.AddRegistrationPrompt,
-            //        registrationPromptsController.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
+           
             var inputAnswersViewModel = new RegistrationPromptAnswersViewModel("Test", "Answer");
 
             const string action = "addPrompt";
@@ -362,12 +352,7 @@
             mockFromService.Setup(A => A.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData));
             mockFromService.Object.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData).GetAwaiter().GetResult();
 
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-            //        MultiPageFormDataFeature.AddRegistrationPrompt,
-            //        registrationPromptsController.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
+          
 
             const string action = "addPrompt";
             var inputAnswersViewModel = new RegistrationPromptAnswersViewModel(optionsString, newAnswerInput);
@@ -401,12 +386,7 @@
             mockFromService.Setup(A => A.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData));
             mockFromService.Object.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData).GetAwaiter().GetResult();
 
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-            //        MultiPageFormDataFeature.AddRegistrationPrompt,
-            //        registrationPromptsController.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
+          
             var inputViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
 
             // When
@@ -590,13 +570,7 @@
             var mockFromService = new Mock<IMultiPageFormService>();
             mockFromService.Setup(A => A.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData));
             mockFromService.Object.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, registrationPromptsController.TempData).GetAwaiter().GetResult();
-            //A.CallTo(
-            //    () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-            //        MultiPageFormDataFeature.AddRegistrationPrompt,
-            //        registrationPromptsController.TempData
-            //    ).GetAwaiter().GetResult()
-            //).Returns(initialTempData);
-
+           
             // When
             var result = registrationPromptsController.AddRegistrationPromptBulkPost(inputViewModel);
 
