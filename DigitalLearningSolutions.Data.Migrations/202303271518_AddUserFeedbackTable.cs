@@ -2,7 +2,7 @@
 {
     using FluentMigrator;
 
-    [Migration(202303241252)]
+    [Migration(202303271518)]
     public class AddUserFeedbackTable : Migration
     {
         public override void Up()
@@ -17,6 +17,9 @@
                 .WithColumn("TaskAttempted").AsString(255).NotNullable()
                 .WithColumn("FeedbackText").AsString(5000).NotNullable()
                 .WithColumn("TaskRating").AsInt32().Nullable();
+
+            Alter.Table("UserFeedback")
+                .AlterColumn("SubmittedDate").AsDateTime().NotNullable().WithDefaultValue(SystemMethods.CurrentDateTime);
         }
 
         public override void Down()

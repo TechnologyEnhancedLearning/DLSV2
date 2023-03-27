@@ -1,16 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
-    using System.Collections.Generic;
     using System.Data;
-    using System.Linq;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.Email;
 
     public interface IUserFeedbackDataService
     {
         public void SaveUserFeedback(
-            DateTime submitted,
             int? userID,
             string sourcePageUrl,
             bool? taskAchieved,
@@ -30,7 +25,6 @@
         }
 
         public void SaveUserFeedback(
-                DateTime submitted,
                 int? userID,
                 string sourcePageUrl,
                 bool? taskAchieved,
@@ -41,7 +35,6 @@
         {
             var userFeedbackParams = new
             {
-                submitted = submitted,
                 userID = userID,
                 sourcePageUrl = sourcePageUrl,
                 taskAchieved = taskAchieved,
@@ -51,12 +44,12 @@
             };
 
             connection.Execute(
-                @"INSERT INTO UserFeedback
-                        (Submitted, UserID, SourcePageUrl, TaskAchieved, TaskAttempted, FeedbackText, TaskRating)
+               @"INSERT INTO UserFeedback
+                        (UserID, SourcePageUrl, TaskAchieved, TaskAttempted, FeedbackText, TaskRating)
                         VALUES (
-                        @submitted, @userID, @sourcePageUrl, @taskAchieved, @taskAttempted, @feedbackText, @taskRating)",
-                userFeedbackParams
-            );
+                        @userID, @sourcePageUrl, @taskAchieved, @taskAttempted, @feedbackText, @taskRating)",
+               userFeedbackParams
+           );
         }
     }
 }

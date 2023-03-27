@@ -22,16 +22,26 @@
 
       <p>Please describe in detail your experience and what you came here to achieve.</p>
 
-      <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="FeedbackGuest_Two">
+      @*<a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="FeedbackGuest_Two">*@
+@*      <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="SaveFeedback">
         Submit feedback >
       </a>
+*@
+
+      <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SaveFeedback">
+
+        <input type="text" asp-for="UserId" placeholder="UserId" />
+        <input type="text" asp-for="SourcePageUrl" placeholder="SourcePageUrl" />
+        <input type="text" asp-for="TaskAchieved" placeholder="TaskAchieved" />
+        <input type="text" asp-for="TaskAttempted" placeholder="TaskAttempted" />
+        <input type="text" asp-for="FeedbackText" placeholder="FeedbackText" />
+        <input type="text" asp-for="TaskRating" placeholder="TaskRating" />
+
+        <button class="nhsuk-button" type="submit">Submit Feedback</button>
+      </form>
 
 
-
-
-
-
-    @*<partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />*@
+      @*<partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />*@
     
 
 
