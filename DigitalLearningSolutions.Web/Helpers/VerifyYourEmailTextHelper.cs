@@ -31,7 +31,7 @@
             };
 
             return
-                $" If you have not received the {numSpecificPhrases.email} after a few minutes, check your Junk {numSpecificPhrases.folder}," +
+                $" If you have not received the {numSpecificPhrases.email} , check your Junk {numSpecificPhrases.folder}," +
                 $" or you can resend {numSpecificPhrases.it} by visiting the My account page.";
         }
 
