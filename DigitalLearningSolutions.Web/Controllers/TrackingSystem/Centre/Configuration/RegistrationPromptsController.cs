@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -15,9 +13,13 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System.Collections.Generic;
+    using System.Linq;
+    using GDS.MultiPageFormData.Enums;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -100,7 +102,7 @@
             var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(
                 MultiPageFormDataFeature.EditRegistrationPrompt,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
 
             return View(new EditRegistrationPromptViewModel(data));
         }
@@ -135,10 +137,7 @@
         )]
         public IActionResult EditRegistrationPromptBulk()
         {
-            var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(
-                MultiPageFormDataFeature.EditRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(MultiPageFormDataFeature.EditRegistrationPrompt, TempData).GetAwaiter().GetResult();
 
             var model = new BulkRegistrationPromptAnswersViewModel(
                 data.OptionsString,
@@ -163,10 +162,7 @@
                 return View("BulkRegistrationPromptAnswers", model);
             }
 
-            var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(
-                MultiPageFormDataFeature.EditRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(MultiPageFormDataFeature.EditRegistrationPrompt, TempData).GetAwaiter().GetResult();
             data.OptionsString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             multiPageFormService.SetMultiPageFormData(
                 data,
@@ -200,10 +196,7 @@
         )]
         public IActionResult AddRegistrationPromptSelectPrompt()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, TempData).GetAwaiter().GetResult();
 
             SetViewBagCustomPromptNameOptions(data.SelectPromptData.CustomPromptId);
             return View(new AddRegistrationPromptSelectPromptViewModel(data.SelectPromptData));
@@ -244,10 +237,7 @@
         )]
         public IActionResult AddRegistrationPromptConfigureAnswers()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, TempData).GetAwaiter().GetResult();
             var viewModel = new RegistrationPromptAnswersViewModel(data);
 
             return View(viewModel);
@@ -286,10 +276,7 @@
         )]
         public IActionResult AddRegistrationPromptBulk()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, TempData).GetAwaiter().GetResult();
             var model = new BulkRegistrationPromptAnswersViewModel(
                 data.ConfigureAnswersTempData.OptionsString,
                 true,
@@ -313,10 +300,7 @@
                 return View("BulkRegistrationPromptAnswers", model);
             }
 
-            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, TempData).GetAwaiter().GetResult();
             data.ConfigureAnswersTempData!.OptionsString =
                 NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             multiPageFormService.SetMultiPageFormData(
@@ -336,10 +320,7 @@
         )]
         public IActionResult AddRegistrationPromptSummary()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, TempData).GetAwaiter().GetResult();
             var promptName = centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList()
                 .Single(c => c.id == data.SelectPromptData.CustomPromptId).value;
             var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
@@ -355,10 +336,7 @@
         )]
         public IActionResult AddRegistrationPromptSummaryPost()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, TempData).GetAwaiter().GetResult();
 
             if (data.SelectPromptData.CustomPromptIdIsInPromptIdList(GetPromptIdsAlreadyAtUserCentre())
                 || data.ConfigureAnswersTempData.OptionsStringContainsDuplicates())
@@ -597,10 +575,7 @@
             AddRegistrationPromptSelectPromptViewModel model
         )
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, TempData).GetAwaiter().GetResult();
             var promptName = centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList()
                 .Single(c => c.id == model.CustomPromptId).value;
             data.SelectPromptData = new AddRegistrationPromptSelectPromptData(model.CustomPromptId, model.Mandatory, promptName);
@@ -613,10 +588,7 @@
 
         private void UpdateMultiPageFormDataWithAnswersModelValues(RegistrationPromptAnswersViewModel model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
-                MultiPageFormDataFeature.AddRegistrationPrompt,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(MultiPageFormDataFeature.AddRegistrationPrompt, TempData).GetAwaiter().GetResult();
             data.ConfigureAnswersTempData = model.ToDataConfigureAnswersTempData();
             multiPageFormService.SetMultiPageFormData(
                 data,

@@ -1,11 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
-    using System;
-    using System.Net;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Web.Services;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
+    using System;
+    using System.Net;
+    using GDS.MultiPageFormData.Enums;
 
     /// <summary>
     ///     Redirects to 410 error page if there is no
@@ -48,7 +48,7 @@
                 var tempDataKey = controller.TempData.Peek(_feature.TempDataKey);
                 var tempDataGuid = Guid.Parse(tempDataKey.ToString()!);
 
-                if (!_multiPageFormService.FormDataExistsForGuidAndFeature(_feature, tempDataGuid))
+                if (!_multiPageFormService.FormDataExistsForGuidAndFeature(_feature, tempDataGuid).GetAwaiter().GetResult())
                 {
                     return;
                 }
