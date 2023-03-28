@@ -48,5 +48,10 @@
         public bool IsNominatedSupervisor => AdminAccount.IsNominatedSupervisor;
         public bool IsTrainer => AdminAccount.IsTrainer;
         public bool IsContentCreator => AdminAccount.IsContentCreator;
+        public bool IsCentreManager => AdminAccount.IsCentreManager;
+        public bool IsSuperAdmin => AdminAccount.IsSuperAdmin;
+        public bool IsReportsViewer => AdminAccount.IsReportsViewer;
+
+
     }
 }
