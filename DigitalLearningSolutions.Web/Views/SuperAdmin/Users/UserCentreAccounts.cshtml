@@ -1,0 +1,79 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.UserCentreAccounts
+@using DigitalLearningSolutions.Web.ViewComponents
+@model UserCentreAccountRoleViewModel
+@{
+  ViewData["Title"] = "User Centre Accounts";
+}
+
+@section NavBreadcrumbs {
+ <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+              <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="Index" asp-controller="Users">User accounts</a></li>
+      </ol>
+    </div>
+  </nav>
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+<h1>User centre roles</h1>
+<h2>@Model.UserEntity.UserAccount.FirstName @Model.UserEntity.UserAccount.LastName (@Model.UserEntity.UserAccount.PrimaryEmail)</h2>
+
+@if (Model.CentreUserDetails.Count > 0)
+{
+  <div class="nhsuk-u-margin-bottom-6">
+  <table role="table" class="nhsuk-table-responsive">
+      <thead role="rowgroup" class="nhsuk-table__head">
+          <tr role="row">
+              <th role="columnheader" scope="col">
+                  Centre
+              </th>
+              <th role="columnheader" scope="col" class="centre-status-th">
+                  Status
+              </th>
+              <th role="columnheader" scope="col">
+                  Roles
+              </th>
+          </tr>
+      </thead>
+
+      <tbody class="nhsuk-table__body">
+      @foreach (var centreRow in Model.CentreUserDetails)
+      {
+            <tr role="row" class="nhsuk-table__row">
+                <td role="cell" class="nhsuk-table__cell choose-centre-td">
+                    <span class="nhsuk-table-responsive__heading">Centre: </span>
+                    <span class="word-break">@centreRow.CentreName</span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell choose-centre-td">
+                    <span class="nhsuk-table-responsive__heading">Status: </span>
+                    <strong class="nhsuk-tag nhsuk-tag--@centreRow.Status.TagColour">@centreRow.Status.TagLabel</strong>
+                </td>
+                <td role="cell" class="nhsuk-table__cell choose-centre-td">
+                    <span class="nhsuk-table-responsive__heading">Roles: </span>
+                    <div class="centre-role-tags">
+              @if (centreRow.IsActiveAdmin)
+              {
+                          <a class="" href="">Admin</a>
+              }
+              @if (centreRow.IsDelegate)
+              {
+                          <a class="">Delegate</a>
+              }
+                    </div>
+                </td>
+            </tr>
+      }
+      </tbody>
+  </table>
+  </div>
+}
+else
+{
+          <p>This user has no centre accounts.</p>
+}
+
+<vc:cancel-link asp-controller="Users" asp-action="Index" />
+
+    </div>
+</div>

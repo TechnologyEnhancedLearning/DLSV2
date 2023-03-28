@@ -26,6 +26,7 @@
         <None Remove="Scripts\frameworks\branding.ts" />
         <None Remove="Scripts\helpers\constants.ts" />
         <None Remove="Scripts\index.d.ts" />
+        <None Remove="Scripts\keepAlive.ts" />
         <None Remove="Scripts\learningContent\brands.ts" />
         <None Remove="Scripts\learningMenu\contentViewer.ts" />
         <None Remove="Scripts\learningMenu\diagnosticContentViewer.ts" />
@@ -43,7 +44,6 @@
         <None Remove="Scripts\searchSortFilterAndPaginate\sort.ts" />
         <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
         <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
-        <None Remove="Scripts\superadmin\users\userAccount.ts" />
         <None Remove="Scripts\supervisor\assessmentVerify.ts" />
         <None Remove="Scripts\supervisor\staffList.ts" />
         <None Remove="Scripts\supervisor\verify.ts" />
@@ -90,6 +90,7 @@
         <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
         <TypeScriptCompile Include="Scripts\cookiesbanner.ts" />
         <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
+        <TypeScriptCompile Include="Scripts\keepAlive.ts" />
         <TypeScriptCompile Include="Scripts\learningContent\brands.ts" />
         <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
         <TypeScriptCompile Include="Scripts\learningMenu\keepSessionAlive.ts" />
@@ -116,7 +117,6 @@
         <TypeScriptCompile Include="Scripts\spec\search.spec.ts" />
         <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
         <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
-        <TypeScriptCompile Include="Scripts\superadmin\users\userAccount.ts" />
         <TypeScriptCompile Include="Scripts\supervisor\assessmentVerify.ts" />
         <TypeScriptCompile Include="Scripts\supervisor\verify.ts" />
         <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />

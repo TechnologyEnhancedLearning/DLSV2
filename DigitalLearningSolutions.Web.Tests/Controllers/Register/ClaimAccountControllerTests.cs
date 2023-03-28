@@ -14,6 +14,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class ClaimAccountControllerTests
@@ -29,6 +30,8 @@
         private IUserService userService = null!;
         private IUserDataService userDataService = null!;
         private IClaimAccountService claimAccountService = null!;
+        private IConfiguration config = null!;
+        private IEmailVerificationService emailVerificationService = null!;
         private ClaimAccountController controller = null!;
         private ClaimAccountController controllerWithLoggedInUser = null!;
 
@@ -38,6 +41,8 @@
             userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
             claimAccountService = A.Fake<IClaimAccountService>();
+            config= A.Fake<IConfiguration>();
+            emailVerificationService= A.Fake<IEmailVerificationService>();
             controller = GetClaimAccountController();
             controllerWithLoggedInUser = GetClaimAccountController().WithMockUser(
                 true,
@@ -886,7 +891,7 @@
 
         private ClaimAccountController GetClaimAccountController()
         {
-            return new ClaimAccountController(userService, userDataService, claimAccountService)
+            return new ClaimAccountController(userService, userDataService, claimAccountService,config,emailVerificationService)
                 .WithDefaultContext()
                 .WithMockTempData();
         }

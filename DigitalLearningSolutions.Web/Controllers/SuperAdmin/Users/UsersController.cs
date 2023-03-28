@@ -5,19 +5,21 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
+    using DigitalLearningSolutions.Web.ViewModels.UserCentreAccounts;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
 
@@ -30,17 +32,64 @@
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private const string UserAccountFilterCookieName = "UserAccountFilter";
-        public UsersController(IUserDataService userDataService, ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsDataService jobGroupsDataService)
+        private readonly IUserService userService;
+        private readonly IUserCentreAccountsService userCentreAccountsService;
+        public UsersController(IUserDataService userDataService, ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsDataService jobGroupsDataService,IUserCentreAccountsService userCentreAccountsService, IUserService userService)
         {
             this.userDataService = userDataService;
             this.centreRegistrationPromptsDataService = centreRegistrationPromptsDataService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.userService = userService;
+            this.userCentreAccountsService = userCentreAccountsService;
+        }
+
+        [Route("SuperAdmin/Users/{userId=0:int}/InactivateUserConfirmation")]
+        public IActionResult InactivateUserConfirmation(int userId = 0)
+        {
+            InactivateUserViewModel inactivateUserViewModel = new InactivateUserViewModel();
+            inactivateUserViewModel.UserId = userId;
+            inactivateUserViewModel.DisplayName = this.userDataService.GetUserDisplayName(userId);
+
+            if (TempData["SearchString"] != null)
+            {
+                inactivateUserViewModel.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                inactivateUserViewModel.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                inactivateUserViewModel.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            TempData["UserId"] = userId;
+            TempData.Keep();
+            return View(inactivateUserViewModel);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Users/{userId=0:int}/InactivateUserConfirmation")]
+        public IActionResult InactivateUserConfirmation(InactivateUserViewModel inactivateUserViewModel, int userId = 0)
+        {
+            TempData["UserId"] = userId;
+            if (inactivateUserViewModel.IsChecked)
+            {
+                this.userDataService.InactivateUser(userId);
+                return RedirectToAction("Index", "Users", new { UserId = userId });
+            }
+            else
+            {
+                inactivateUserViewModel.Error = true;
+                ModelState.Clear();
+                ModelState.AddModelError("IsChecked", "You must check the checkbox to continue");
+            }
+            return View(inactivateUserViewModel);
         }
 
         [Route("SuperAdmin/Users/{page=0:int}")]
         public IActionResult Index(
-          int page=1,
+          int page = 1,
           string? Search = "",
           int UserId = 0,
           string? UserStatus = "",
@@ -51,14 +100,14 @@
           string? ExistingFilterString = ""
         )
         {
-            int offSet = ((page - 1) * itemsPerPage) ?? 0;
-            UserStatus = (string.IsNullOrEmpty(UserStatus) ? "Any" : UserStatus);
-            EmailStatus = (string.IsNullOrEmpty(EmailStatus) ? "Any" : EmailStatus);
-
-            if(string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
+            if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
                 page = 1;
             }
+
+            int offSet = ((page - 1) * itemsPerPage) ?? 0;
+            UserStatus = (string.IsNullOrEmpty(UserStatus) ? "Any" : UserStatus);
+            EmailStatus = (string.IsNullOrEmpty(EmailStatus) ? "Any" : EmailStatus);
 
             if (!string.IsNullOrEmpty(SearchString))
             {
@@ -109,8 +158,6 @@
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             jobGroups.Insert(0, (0, "Any"));
 
-            var loggedInUser = userDataService.GetUserAccountById(User.GetUserId()!.Value);
-
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
                 new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
@@ -134,8 +181,11 @@
             {
                 result.SearchString = "SearchQuery|" + Search + "-UserId|" + UserId;
                 result.FilterString = "UserStatus|" + UserStatus + "-EmailStatus|" + EmailStatus + "-JobGroup|" + JobGroupId;
-            }
 
+                TempData["SearchString"] = result.SearchString;
+                TempData["FilterString"] = result.FilterString;
+            }
+            TempData["Page"] = result.Page;
 
             var model = new UserAccountsViewModel(
                 result
@@ -164,6 +214,8 @@
 
             model.JavascriptSearchSortFilterPaginateEnabled = false;
             ModelState.ClearAllErrors();
+
+            ViewBag.UserId = TempData["UserId"];
             return View(model);
         }
 
@@ -177,11 +229,87 @@
             return new List<string>(new string[] { "Any", "Verified", "Unverified" });
         }
 
+        [Route("SuperAdmin/Users/{userId=0:int}/EditUserDetails")]
+        public IActionResult EditUserDetails(int userId)
+        {
+            UserAccount userAccount = this.userDataService.GetUserAccountById(userId);
+            EditUserDetailsViewModel editUserDetailsViewModel = new EditUserDetailsViewModel(userAccount);
+
+            if (TempData["SearchString"] != null)
+            {
+                editUserDetailsViewModel.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                editUserDetailsViewModel.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                editUserDetailsViewModel.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            TempData["UserId"] = userId;
+            TempData.Keep();
+
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            ViewBag.JobGroups = SelectListHelper.MapOptionsToSelectListItems(
+                jobGroups, userAccount.JobGroupId
+            );
+            return View(editUserDetailsViewModel);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Users/{userId=0:int}/EditUserDetails")]
+        public IActionResult EditUserDetails(EditUserDetailsViewModel editUserDetailsViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (!this.userDataService.PrimaryEmailIsInUseByOtherUser(editUserDetailsViewModel.PrimaryEmail, editUserDetailsViewModel.Id))
+                {
+                    this.userDataService.UpdateUserDetailsAccount(editUserDetailsViewModel.FirstName, editUserDetailsViewModel.LastName, editUserDetailsViewModel.PrimaryEmail, editUserDetailsViewModel.JobGroupId, editUserDetailsViewModel.ProfessionalRegistrationNumber,
+                        ((editUserDetailsViewModel.ResetEmailVerification) ? null : editUserDetailsViewModel.EmailVerified),
+                        editUserDetailsViewModel.Id);
+                    return RedirectToAction("Index", "Users", new { UserId = editUserDetailsViewModel.Id });
+                }
+                else
+                {
+                    ModelState.AddModelError(
+                        nameof(EditUserDetailsViewModel.PrimaryEmail),
+                        CommonValidationErrorMessages.EmailInUse
+                    );
+                }
+            }
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            ViewBag.JobGroups = SelectListHelper.MapOptionsToSelectListItems(
+                jobGroups, editUserDetailsViewModel.JobGroupId
+            );
+            return View(editUserDetailsViewModel);
+        }
+
         [Route("SuperAdmin/Users/Administrators")]
         public IActionResult Administrators()
         {
             var model = new AdministratorsViewModel();
             return View(model);
+        }
+        [Route("SuperAdmin/Users/{userId:int}/CentreAccounts")]
+        public IActionResult CentreAccounts(int userId)
+        {
+            TempData["UserID"] = userId;
+            var userEntity = userService.GetUserById(userId);
+            var UserCentreAccountsRoleViewModel =
+                userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity);
+            var model = new UserCentreAccountRoleViewModel(
+                     UserCentreAccountsRoleViewModel.OrderByDescending(account => account.IsActiveAdmin)
+                         .ThenBy(account => account.CentreName).ToList(),
+                     userEntity
+                 );
+            return View("UserCentreAccounts", model);
+        }
+        [Route("SuperAdmin/Users/{UserId:int}/UnlockAccount")]
+        public IActionResult UnlockAccount(int UserId)
+        {
+            userService.ResetFailedLoginCountByUserId(UserId);
+            return RedirectToAction("Index");
         }
     }
 }
