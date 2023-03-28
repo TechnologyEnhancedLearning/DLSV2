@@ -223,6 +223,8 @@
 
         void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
 
+        void ActivateUser(int userId);
+
         (IEnumerable<AdminEntity>, int) GetAllAdmins(
        string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
        );
@@ -492,6 +494,17 @@
                 logger.LogWarning(message);
                 throw new InactivateUserUpdateException(message);
             }
+        }
+
+        public void ActivateUser(int userId)
+        {
+            connection.Execute(
+            @"UPDATE Users SET Active=1 WHERE ID=@UserID",
+                new
+                {
+                    UserID = userId
+                }
+            );
         }
 
         public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
