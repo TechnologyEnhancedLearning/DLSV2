@@ -41,6 +41,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.FeatureManagement;
     using Serilog;
     using GDS.MultiPageFormData;
+    using LearningHub.Nhs.Caching;
 
     public class Startup
     {
@@ -183,6 +184,8 @@ namespace DigitalLearningSolutions.Web
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
+            MultiPageFormService.InitConnection(new SqlConnection(defaultConnectionString));
+            
             // Register services.
             RegisterServices(services);
             RegisterDataServices(services);
@@ -227,7 +230,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
-            services.AddScoped<IMultiPageFormService, MultiPageFormService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
@@ -279,7 +281,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
             services.AddScoped<ILearningResourceReferenceDataService, LearningResourceReferenceDataService>();
-            services.AddScoped<IMultiPageFormService, MultiPageFormService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
@@ -303,6 +304,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDCSAReportDataService, DCSAReportDataService>();
             services.AddScoped<IEmailVerificationDataService, EmailVerificationDataService>();
             services.AddScoped<IUserCentreAccountsService, UserCentreAccountsService>();
+            services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<RedisCacheOptions, RedisCacheOptions>();
+            services.AddScoped<IMultiPageFormService, MultiPageFormService>();
     }
 
         private static void RegisterHelpers(IServiceCollection services)
