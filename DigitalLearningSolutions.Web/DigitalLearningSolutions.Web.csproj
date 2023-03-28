@@ -26,10 +26,12 @@
         <None Remove="Scripts\frameworks\branding.ts" />
         <None Remove="Scripts\helpers\constants.ts" />
         <None Remove="Scripts\index.d.ts" />
+        <None Remove="Scripts\keepAlive.ts" />
         <None Remove="Scripts\learningContent\brands.ts" />
         <None Remove="Scripts\learningMenu\contentViewer.ts" />
         <None Remove="Scripts\learningMenu\diagnosticContentViewer.ts" />
         <None Remove="Scripts\learningMenu\fullscreen.ts" />
+        <None Remove="Scripts\learningMenu\keepSessionAlive.ts" />
         <None Remove="Scripts\learningMenu\postLearningContentViewer.ts" />
         <None Remove="Scripts\learningPortal\dlscommon.ts" />
         <None Remove="Scripts\learningPortal\recommendedLearning.ts" />
@@ -88,8 +90,10 @@
         <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
         <TypeScriptCompile Include="Scripts\cookiesbanner.ts" />
         <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
+        <TypeScriptCompile Include="Scripts\keepAlive.ts" />
         <TypeScriptCompile Include="Scripts\learningContent\brands.ts" />
         <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
+        <TypeScriptCompile Include="Scripts\learningMenu\keepSessionAlive.ts" />
         <TypeScriptCompile Include="Scripts\learningMenu\postLearningContentViewer.ts" />
         <TypeScriptCompile Include="Scripts\learningMenu\diagnosticContentViewer.ts" />
         <TypeScriptCompile Include="Scripts\learningMenu\contentViewer.ts" />

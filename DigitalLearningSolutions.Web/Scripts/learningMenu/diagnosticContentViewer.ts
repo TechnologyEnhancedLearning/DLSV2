@@ -1,4 +1,5 @@
 import { setupFullscreen } from './fullscreen';
+import { keepSessionAlive, heartbeatInterval } from './keepSessionAlive';
 
 // So Typescript knows window has closeMpe property
 declare global {
@@ -20,3 +21,6 @@ function diagnosticCloseMpe(): void {
 
 window.closeMpe = diagnosticCloseMpe;
 setupFullscreen();
+
+// send out a heartbeat, to keep this session alive, once a minute
+setInterval(keepSessionAlive, heartbeatInterval);

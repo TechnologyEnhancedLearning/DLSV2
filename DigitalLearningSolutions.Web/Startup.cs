@@ -45,6 +45,7 @@ namespace DigitalLearningSolutions.Web
     {
         private readonly IConfiguration config;
         private readonly IHostEnvironment env;
+        private const int sessionTimeoutMinutes = 15;
 
         public Startup(IConfiguration config, IHostEnvironment env)
         {
@@ -118,7 +119,12 @@ namespace DigitalLearningSolutions.Web
                 }
             );
 
-            services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = ".AspNet.SharedCookie";
+                options.ExpireTimeSpan = System.TimeSpan.FromMinutes(sessionTimeoutMinutes);
+                options.SlidingExpiration = true;
+            });
 
             services.AddDistributedMemoryCache();
 
