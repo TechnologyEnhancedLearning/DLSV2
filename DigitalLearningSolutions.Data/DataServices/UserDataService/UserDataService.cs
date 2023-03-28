@@ -222,6 +222,8 @@
         void InactivateUser(int userId);
 
         void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
+
+        void ActivateUser(int userId);
     }
 
     public partial class UserDataService : IUserDataService
@@ -488,6 +490,17 @@
                 logger.LogWarning(message);
                 throw new InactivateUserUpdateException(message);
             }
+        }
+
+        public void ActivateUser(int userId)
+        {
+            connection.Execute(
+            @"UPDATE Users SET Active=1 WHERE ID=@UserID",
+                new
+                {
+                    UserID = userId
+                }
+            );
         }
 
         public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)

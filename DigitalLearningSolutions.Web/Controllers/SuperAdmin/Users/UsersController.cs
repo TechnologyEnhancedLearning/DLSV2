@@ -311,5 +311,13 @@
             userService.ResetFailedLoginCountByUserId(UserId);
             return RedirectToAction("Index");
         }
+
+        [Route("SuperAdmin/Users/{userId=0:int}/ActivateUser")]
+        public IActionResult ActivateUser(int userId = 0)
+        {
+            userDataService.ActivateUser(userId);
+            TempData["UserId"] = userId;
+            return RedirectToAction("Index", "Users", new { UserId = userId });
+        }
     }
 }
