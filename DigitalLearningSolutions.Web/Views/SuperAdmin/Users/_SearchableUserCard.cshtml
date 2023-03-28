@@ -65,13 +65,13 @@
                             <div class="nhsuk-grid-column-one-half nhsuk-u-one-half nhsuk-u-float-right">
                                 @if (Model.IsActive)
                                 {
-                                    <a class="nhsuk-u-float-right" asp-controller="users" asp-action="InactivateUserConfirmation" asp-route-userId="@Model.Id">
+                                    <a class="nhsuk-u-float-right nhsuk-u-margin-left-3" asp-controller="users" asp-action="InactivateUserConfirmation" asp-route-userId="@Model.Id">
                                         <u>Inactivate</u>
                                     </a>
                                 }
                                 else
                                 {
-                                    <a class="nhsuk-u-float-right" asp-controller="users" asp-action="ActivateUser" asp-route-userId="@Model.Id">
+                                    <a class="nhsuk-u-float-right nhsuk-u-margin-left-3" asp-controller="users" asp-action="ActivateUser" asp-route-userId="@Model.Id">
                                         <u>Reactivate</u>
                                     </a>
                                 }
