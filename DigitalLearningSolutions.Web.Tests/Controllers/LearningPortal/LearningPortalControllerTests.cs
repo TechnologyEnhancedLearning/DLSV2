@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     using NUnit.Framework;
     using GDS.MultiPageFormData;
 
-  public partial class LearningPortalControllerTests
+    public partial class LearningPortalControllerTests
     {
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 11;

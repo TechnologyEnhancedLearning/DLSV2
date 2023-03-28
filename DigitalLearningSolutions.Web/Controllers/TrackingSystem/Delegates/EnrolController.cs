@@ -17,10 +17,10 @@ using GDS.MultiPageFormData.Enums;
 
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-  using DigitalLearningSolutions.Data.Utilities;
-  using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.ServiceFilter;
 
-  [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
+    [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [Route("TrackingSystem/Delegates/{delegateId:int}/Enrol/{action}")]

@@ -1,9 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
@@ -17,12 +14,14 @@
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
-    using Microsoft.AspNetCore.Mvc;
-    using NUnit.Framework;
     using GDS.MultiPageFormData;
     using GDS.MultiPageFormData.Enums;
+    using Microsoft.AspNetCore.Mvc;
+    using NUnit.Framework;
+    using System.Collections.Generic;
+    using System.Linq;
 
-  public class AdminFieldsControllerTests
+    public class AdminFieldsControllerTests
     {
         private AdminFieldsController controller = null!;
         private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;

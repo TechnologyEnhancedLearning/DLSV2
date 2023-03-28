@@ -6,11 +6,11 @@
     using System;
     using GDS.MultiPageFormData.Enums;
 
-  /// <summary>
-  ///     Redirects to the Index action of the current controller if there is no
-  ///     TempData Guid or MultiPageFormData for the feature set.
-  /// </summary>
-  public class RedirectMissingMultiPageFormData : IActionFilter
+    /// <summary>
+    ///     Redirects to the Index action of the current controller if there is no
+    ///     TempData Guid or MultiPageFormData for the feature set.
+    /// </summary>
+    public class RedirectMissingMultiPageFormData : IActionFilter
     {
         private readonly MultiPageFormDataFeature feature;
         private readonly IMultiPageFormService multiPageFormService;
