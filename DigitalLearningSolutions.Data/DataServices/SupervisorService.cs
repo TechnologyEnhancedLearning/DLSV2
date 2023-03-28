@@ -139,7 +139,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         {
             return connection.Query<SupervisorDelegateDetail>(
                 $@"SELECT sd.ID, 
-		                sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID,
+		                sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID,da.Active,
                         sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, 
 		                u.FirstName, u.LastName, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail,
 		                jg.JobGroupName, 
