@@ -93,14 +93,14 @@
                         UserStatus = adminStatusFilter.Split("|")[1];
                     }
 
-                    string roleFilter = selectedFilters[2];
+                    string roleFilter = selectedFilters[1];
                     if (roleFilter.Contains("Role|"))
                     {
                         Role = roleFilter.Split("|")[1];
                     }
 
                     string centreFilter = selectedFilters[2];
-                    if (centreFilter.Contains("Centre|"))
+                    if (centreFilter.Contains("CentreID|"))
                     {
                         CentreId = Convert.ToInt16(centreFilter.Split("|")[1]);
                     }
