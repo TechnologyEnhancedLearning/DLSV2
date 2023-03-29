@@ -32,6 +32,7 @@
                       </div>
                     </div>
                     <form class="nhsuk-u-margin-bottom-3" method="get" role="search" asp-controller="AdminAccounts" asp-action="Index" asp-route-page="@Model.Page">
+                      <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
                         <div class="nhsuk-grid-row">
                             <div id="search">
                                 <div class="nhsuk-grid-column-one-quarter">
