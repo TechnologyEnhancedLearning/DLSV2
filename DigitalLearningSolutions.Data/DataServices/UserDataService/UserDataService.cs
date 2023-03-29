@@ -414,6 +414,10 @@
         string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
         )
         {
+            if(!string.IsNullOrEmpty(search))
+            {
+                search= search.Trim();
+            }
             string condition = $@" WHERE ((@userId = 0) OR (u.ID = @userId)) AND 
             (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%') AND 
             ((u.JobGroupID = @jobGroupId) OR (@jobGroupId = 0)) AND 
