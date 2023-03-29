@@ -3,100 +3,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
 
-  <title>@ViewData["Title"] - Digital Learning Solutions</title>
+    <title>@ViewData["Title"] - Digital Learning Solutions</title>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="@Url.Content("~/css/nhsuk.css")" asp-append-version="true">
-  <link rel="stylesheet" href="@Url.Content("~/css/index.css")" asp-append-version="true">
-  <link rel="stylesheet" href="@Url.Content("~/css/layout.css")" asp-append-version="true">
-  @await RenderSectionAsync("styles", false)
+    <!-- Styles -->
+    <link rel="stylesheet" href="@Url.Content("~/css/nhsuk.css")" asp-append-version="true">
+    <link rel="stylesheet" href="@Url.Content("~/css/index.css")" asp-append-version="true">
+    <link rel="stylesheet" href="@Url.Content("~/css/layout.css")" asp-append-version="true">
+    @await RenderSectionAsync("styles", false)
 
-  <!-- Scripts -->
-  <script src="@Url.Content("~/js/nhsuk.js")" asp-append-version="true"></script>
+    <!-- Scripts -->
+    <script src="@Url.Content("~/js/nhsuk.js")" asp-append-version="true"></script>
 
-  <!-- Favicons -->
-  <link rel="icon" href="@Url.Content("~/favicon.ico")">
+    <!-- Favicons -->
+    <link rel="icon" href="@Url.Content("~/favicon.ico")">
 
-  <!-- Open Graph -->
-  <meta property="og:url" content="@Context.Request.GetDisplayUrl()">
-  <meta property="og:title" content="@(ViewData["og:title"] ?? ViewData["Title"] ?? "Digital Learning Solutions")">
-  <meta property="og:description" content="@(ViewData["og:description"] ?? "")">
-  <meta property="og:type" content="@(ViewData["og:type"] ?? "article")">
-  <meta property="og:site_name" content="Digital Learning Solutions">
+    <!-- Open Graph -->
+    <meta property="og:url" content="@Context.Request.GetDisplayUrl()">
+    <meta property="og:title" content="@(ViewData["og:title"] ?? ViewData["Title"] ?? "Digital Learning Solutions")">
+    <meta property="og:description" content="@(ViewData["og:description"] ?? "")">
+    <meta property="og:type" content="@(ViewData["og:type"] ?? "article")">
+    <meta property="og:site_name" content="Digital Learning Solutions">
 
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="@(ViewData["twitter:title"] ?? ViewData["Title"] ?? "Digital Learning Solutions")">
-  <meta name="twitter:description" content="@(ViewData["twitter:description"] ?? "")">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="@(ViewData["twitter:title"] ?? ViewData["Title"] ?? "Digital Learning Solutions")">
+    <meta name="twitter:description" content="@(ViewData["twitter:description"] ?? "")">
 </head>
 
 <body>
-  <div id="pagewrapper">
-    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+    <div id="pagewrapper">
+        <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 
-    <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
+        <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
 
-    <header class="nhsuk-header nhsuk-header--transactional">
-      <div class="nhsuk-width-container nhsuk-header__container">
-        <div class="nhsuk-header__logo nhsuk-u-margin-right-3">
-          <svg class="nhsuk-logo" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NHS Logo" focusable="false" viewBox="0 0 40 16">
-            <title>NHS</title>
-            <path class="nhsuk-logo__background" d="M0 0h40v16H0z"></path>
-            <path class="nhsuk-logo__text" d="M3.9 1.5h4.4l2.6 9h.1l1.8-9h3.3l-2.8 13H9l-2.7-9h-.1l-1.8 9H1.1M17.3 1.5h3.6l-1 4.9h4L25 1.5h3.5l-2.7 13h-3.5l1.1-5.6h-4.1l-1.2 5.6h-3.4M37.7 4.4c-.7-.3-1.6-.6-2.9-.6-1.4 0-2.5.2-2.5 1.3 0 1.8 5.1 1.2 5.1 5.1 0 3.6-3.3 4.5-6.4 4.5-1.3 0-2.9-.3-4-.7l.8-2.7c.7.4 2.1.7 3.2.7s2.8-.2 2.8-1.5c0-2.1-5.1-1.3-5.1-5 0-3.4 2.9-4.4 5.8-4.4 1.6 0 3.1.2 4 .6"></path>
-            <image src="https://assets.nhs.uk/images/nhs-logo.png" width="40" height="16" xlink:href=""></image>
-          </svg>
+        <header class="nhsuk-header nhsuk-header--transactional">
+            <div class="nhsuk-width-container nhsuk-header__container">
+                <div class="nhsuk-header__logo nhsuk-u-margin-right-3">
+                    <svg class="nhsuk-logo" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NHS Logo" focusable="false" viewBox="0 0 40 16">
+                        <title>NHS</title>
+                        <path class="nhsuk-logo__background" d="M0 0h40v16H0z"></path>
+                        <path class="nhsuk-logo__text" d="M3.9 1.5h4.4l2.6 9h.1l1.8-9h3.3l-2.8 13H9l-2.7-9h-.1l-1.8 9H1.1M17.3 1.5h3.6l-1 4.9h4L25 1.5h3.5l-2.7 13h-3.5l1.1-5.6h-4.1l-1.2 5.6h-3.4M37.7 4.4c-.7-.3-1.6-.6-2.9-.6-1.4 0-2.5.2-2.5 1.3 0 1.8 5.1 1.2 5.1 5.1 0 3.6-3.3 4.5-6.4 4.5-1.3 0-2.9-.3-4-.7l.8-2.7c.7.4 2.1.7 3.2.7s2.8-.2 2.8-1.5c0-2.1-5.1-1.3-5.1-5 0-3.4 2.9-4.4 5.8-4.4 1.6 0 3.1.2 4 .6"></path>
+                        <image src="https://assets.nhs.uk/images/nhs-logo.png" width="40" height="16" xlink:href=""></image>
+                    </svg>
+                </div>
+                <div class="nhsuk-header__service-name">
+                    <span class="nhsuk-header__transactional-service-name--link">@ViewData["SelfAssessmentTitle"]</span>
+                    <sup class="header-beta">Beta</sup>
+                </div>
+            </div>
+        </header>
+        <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+            <div class="nhsuk-width-container">
+                <ol class="nhsuk-breadcrumb__list">
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="LearningPortal" asp-action="Current">Current activities</a></li>
+                    @RenderSection("breadcrumbs", required: false)
+                </ol>
+                @RenderSection("mobilebacklink", required: false)
+            </div>
+        </nav>
+        <div class="nhsuk-width-container" id="maincontentwrapper">
+            <main class="nhsuk-main-wrapper" id="maincontent" tabindex="-1">
+                @RenderBody()
+
+            </main>
+            <partial name="/Views/LearningPortal/Shared/_LoadingSpinner.cshtml" />
         </div>
-        <div class="nhsuk-header__service-name">
-          <span class="nhsuk-header__transactional-service-name--link">@ViewData["SelfAssessmentTitle"]</span>
-          <sup class="header-beta">Beta</sup>
-        </div>
-      </div>
-    </header>
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="LearningPortal" asp-action="Current">Current activities</a></li>
-          @RenderSection("breadcrumbs", required: false)
-        </ol>
-        @RenderSection("mobilebacklink", required: false)
-      </div>
-    </nav>
-    <div class="nhsuk-width-container" id="maincontentwrapper">
-      <main class="nhsuk-main-wrapper" id="maincontent" tabindex="-1">
-        @RenderBody()
+        <partial name="_DlsFooter" />
+        @await RenderSectionAsync("scripts", false)
 
-      </main>
-      <partial name="/Views/LearningPortal/Shared/_LoadingSpinner.cshtml" />
     </div>
-    <footer>
-      <div class="nhsuk-footer" id="nhsuk-footer">
-        <div class="nhsuk-width-container">
-          <h2 class="nhsuk-u-visually-hidden">Support links</h2>
-          <ul class="nhsuk-footer__list">
-            <li class="nhsuk-footer__list-item">
-              <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="Contact">Contact us <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-            </li>
-            <li class="nhsuk-footer__list-item">
-              <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="Terms">Terms of use <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-            </li>
-            <li class="nhsuk-footer__list-item">
-              <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="AccessibilityHelp">Accessibility <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-            </li>
-            <li class="nhsuk-footer__list-item">
-              <a class="nhsuk-footer__list-item-link" href="https://www.hee.nhs.uk/about/privacy-notice">Privacy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-            </li>
-          </ul>
-          <p class="nhsuk-footer__copyright">&copy; Digital Learning Solutions, Health Education England @DateTime.Now.Year</p>
-        </div>
-      </div>
-    </footer>
-    @await RenderSectionAsync("scripts", false)
-
-  </div>
 
 </body>
 </html>
