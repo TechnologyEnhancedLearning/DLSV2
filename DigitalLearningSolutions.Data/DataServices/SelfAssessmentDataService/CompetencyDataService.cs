@@ -478,7 +478,7 @@
                     INNER JOIN CandidateAssessments AS CA
                         ON CAOC.CandidateAssessmentID = CA.ID
                     INNER JOIN SelfAssessmentStructure AS SAS
-                        ON CA.SelfAssessmentID = SAS.SelfAssessmentID AND CAOC.CompetencyID = SAS.CompetencyID
+                        ON CA.SelfAssessmentID = SAS.SelfAssessmentID AND CAOC.CompetencyID = SAS.CompetencyID AND CA.SelfAssessmentID = @selfAssessmentId
                             AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
                     WHERE (CA.CandidateID = @candidateId) AND (CA.RemovedDate IS NULL)
                                     ",
