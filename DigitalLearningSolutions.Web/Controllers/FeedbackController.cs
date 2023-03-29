@@ -6,59 +6,59 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Feedback;
     using Microsoft.AspNetCore.Mvc;
+    using System.Web;
 
     public class FeedbackController : Controller
     {
-        private readonly IUserFeedbackDataService feedbackDataService;
+        private readonly IUserFeedbackDataService _feedbackDataService;
+        private FeedbackViewModel _feedbackViewModel;
+        //private string _sourceUrl;
 
         public FeedbackController(
             IUserFeedbackDataService feedbackDataService
             )
         {
-            this.feedbackDataService = feedbackDataService;
+            this._feedbackDataService = feedbackDataService;
         }
 
         [Route("/Index")]
-        public async Task<IActionResult> Index(
-        )
+        public async Task<IActionResult> Index(string sourceUrl)
         {
-            ViewData[LayoutViewDataKeys.DoNotDisplayFeedbackBar] = false;
+            ViewData[LayoutViewDataKeys.DoNotDisplayFeedbackBar] = true;
 
-            var feedbackModel = new FeedbackViewModel();
+            //this._sourceUrl = sourceUrl;
 
-            return View("Feedback", feedbackModel);
+            _feedbackViewModel = new FeedbackViewModel();
+
+            _feedbackViewModel.SourceUrl = sourceUrl;
+
+            return View("FeedbackGuest", _feedbackViewModel);
         }
 
-        [Route("/FeedbackGuest_One")]
-        public async Task<IActionResult> FeedbackGuest_One(
+        [Route("/FeedbackComplete")]
+        public async Task<IActionResult> FeedbackComplete(
         )
         {
+            ViewData[LayoutViewDataKeys.DoNotDisplayFeedbackBar] = true;
+
             var feedbackModel = new FeedbackViewModel();
 
-            return View("FeedbackGuest_One", feedbackModel);
-        }
-
-        [Route("/FeedbackGuest_Two")]
-        public async Task<IActionResult> FeedbackGuest_Two(
-        )
-        {
-            var feedbackModel = new FeedbackViewModel();
-
-            return View("FeedbackGuest_Two", feedbackModel);
+            return View("FeedbackComplete", feedbackModel);
         }
 
         public async Task<IActionResult> SaveFeedback(
-            int? userID,
             string feedbackText,
-            string sourcePageUrl,
             bool? taskAchieved,
             string? taskAttempted,
-            int? taskRating
+            int? taskRating,
+            string sourceUrl
         )
         {
-            this.feedbackDataService.SaveUserFeedback(
-                 userID,
-                 sourcePageUrl,
+            var userId = User.GetUserId();
+
+            _feedbackDataService.SaveUserFeedback(
+                 userId,
+                 sourceUrl,
                  taskAchieved,
                  taskAttempted,
                  feedbackText,
@@ -66,7 +66,7 @@
              );
 
             //TODO: Probs need error handling here with associated user error message.
-            return Ok();
+            return RedirectToAction("FeedbackComplete");
         }
     }
 }

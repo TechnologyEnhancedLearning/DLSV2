@@ -1,13 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using Microsoft.Extensions.Logging;
 
     public interface IUserFeedbackDataService
     {
         public void SaveUserFeedback(
             int? userID,
-            string sourcePageUrl,
+            string sourceUrl,
             bool? taskAchieved,
             string? taskAttempted,
             string feedbackText,
@@ -18,6 +21,7 @@
     public class UserFeedbackDataService : IUserFeedbackDataService
     {
         private readonly IDbConnection connection;
+        private readonly ILogger<UserDataService.UserDataService> logger;
 
         public UserFeedbackDataService(IDbConnection connection)
         {
@@ -26,7 +30,7 @@
 
         public void SaveUserFeedback(
                 int? userID,
-                string sourcePageUrl,
+                string sourceUrl,
                 bool? taskAchieved,
                 string? taskAttempted,
                 string feedbackText,
@@ -36,20 +40,41 @@
             var userFeedbackParams = new
             {
                 userID = userID,
-                sourcePageUrl = sourcePageUrl,
+                sourceUrl = sourceUrl,
                 taskAchieved = taskAchieved,
                 taskAttempted = taskAttempted,
                 feedbackText = feedbackText,
                 taskRating = taskRating
             };
 
-            connection.Execute(
-               @"INSERT INTO UserFeedback
+            var numberOfAffectedRows = 0;
+            
+            try
+            {
+                numberOfAffectedRows = connection.Execute(
+                    @"INSERT INTO UserFeedback
                         (UserID, SourcePageUrl, TaskAchieved, TaskAttempted, FeedbackText, TaskRating)
                         VALUES (
-                        @userID, @sourcePageUrl, @taskAchieved, @taskAttempted, @feedbackText, @taskRating)",
-               userFeedbackParams
-           );
+                        @userID, @sourceUrl, @taskAchieved, @taskAttempted, @feedbackText, @taskRating)",
+                    userFeedbackParams
+                );
+            }
+            catch (Exception e)
+            {
+                string message = $"User feedback db insert failed ('{e.Message}')";
+                logger.LogWarning(message);
+                throw new UserFeedbackFailedException(message);
+            }
+            finally
+            {
+                if (numberOfAffectedRows == 0)
+                {
+                    string message = $"User feedback db insert failed.";
+                    logger.LogWarning(message);
+                    throw new UserFeedbackFailedException(message);
+                }
+
+            }
         }
     }
 }

@@ -9,15 +9,15 @@
 
         public FeedbackViewModel(
             int? userId,
-            string sourcePageUrl,
-            bool? taskAchieved,
+            string sourceUrl,
+            bool taskAchieved,
             string taskAttempted,
             string feedbackText,
             string? taskRating
             )
         {
             UserId = userId;
-            SourcePageUrl = sourcePageUrl;
+            SourceUrl = sourceUrl;
             TaskAchieved = taskAchieved;
             TaskAttempted = taskAttempted;
             FeedbackText = feedbackText;
@@ -26,15 +26,14 @@
 
         public int? UserId { get; set; }
 
-        [Required(ErrorMessage = "Please enter SourcePageUrl")]
-        public string SourcePageUrl { get; set; }
+        public string SourceUrl { get; set; }
 
-        public bool? TaskAchieved { get; set; }
+        public bool TaskAchieved { get; set; }
 
-        [Required(ErrorMessage = "Please enter TaskAttempted")]
+        [Required(ErrorMessage = "Please enter the task you were attempting to perform.")]
         public string TaskAttempted { get; set; }
 
-        [Required(ErrorMessage = "Please enter FeedbackText")]
+        [Required(ErrorMessage = "Please enter your feedback text.")]
         public string FeedbackText { get; set; }
 
         public string? TaskRating { get; set; }

@@ -3,6 +3,10 @@
 @using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @inject IClockUtility ClockUtility
@@ -159,7 +163,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayFeedbackBar] != true)
             {
               <div class="nhsuk-width-container">
-                <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="Index">
+                <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()">
                   Feedback
                 </a>
                 <a>Give page or website feedback</a>
