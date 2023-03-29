@@ -468,6 +468,27 @@
             List<int> resultChecked
         )
         {
+            if (resultChecked.Count == 0)
+            {
+                var adminId = GetAdminId();
+                var superviseDelegate =
+                    supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
+                var delegateSelfAssessment =
+                    supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
+                    selfAssessmentService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId)
+                        .ToList()
+                );
+                var model = new ReviewSelfAssessmentViewModel()
+                {
+                    SupervisorDelegateDetail = superviseDelegate,
+                    DelegateSelfAssessment = delegateSelfAssessment,
+                    CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup)
+                };
+                ModelState.Clear();
+                ModelState.AddModelError("CheckboxError", $"Please choose at least one result to confirm.");
+                return View("VerifyMultipleResults", model);
+            }
             int countResults = 0;
             foreach (var result in resultChecked)
             {
