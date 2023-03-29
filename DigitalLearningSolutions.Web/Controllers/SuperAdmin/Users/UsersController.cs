@@ -123,7 +123,7 @@
                     string userIdFilter = searchFilters[1];
                     if (userIdFilter.Contains("UserId|"))
                     {
-                        UserId = Convert.ToInt16(userIdFilter.Split("|")[1]);
+                        UserId = Convert.ToInt32(userIdFilter.Split("|")[1]);
                     }
                 }
             }
