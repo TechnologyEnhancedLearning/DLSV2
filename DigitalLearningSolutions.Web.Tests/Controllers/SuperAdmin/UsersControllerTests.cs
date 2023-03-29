@@ -60,14 +60,15 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             // Given
             var userEntity = userService.GetUserById(10);
             var UserCentreAccountsRoleViewModel =
-               userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity);
+               userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity, A<List<int>>._);
             // Then
             using (new AssertionScope())
             {
 
                 A.CallTo(
                         () => userCentreAccountsService.GetUserCentreAccountsRoleViewModel(
-                                    userEntity
+                                    userEntity,
+                                    A<List<int>>._
                                 )
                         )
 
