@@ -1,18 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Feedback;
     using Microsoft.AspNetCore.Mvc;
-    using System.Web;
 
     public class FeedbackController : Controller
     {
         private readonly IUserFeedbackDataService _feedbackDataService;
         private FeedbackViewModel _feedbackViewModel;
-        //private string _sourceUrl;
 
         public FeedbackController(
             IUserFeedbackDataService feedbackDataService
@@ -26,13 +23,20 @@
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayFeedbackBar] = true;
 
-            //this._sourceUrl = sourceUrl;
-
             _feedbackViewModel = new FeedbackViewModel();
 
             _feedbackViewModel.SourceUrl = sourceUrl;
 
-            return View("FeedbackGuest", _feedbackViewModel);
+            var userId = User.GetUserId();
+
+            if (userId == null || userId == 0)
+            {
+                return View("FeedbackGuest", _feedbackViewModel);
+            }
+            else
+            {
+                return View("FeedbackLoggedIn_One", _feedbackViewModel);
+            }
         }
 
         [Route("/FeedbackComplete")]

@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Feedback
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
 
     public class FeedbackViewModel
     {
@@ -37,5 +39,33 @@
         public string FeedbackText { get; set; }
 
         public string? TaskRating { get; set; }
+
+        public readonly List<RadiosListItemViewModel> Radios = new List<RadiosListItemViewModel>();
+
+        //    private void SetUpCheckboxesAndRadioButtons()
+        //    {
+        //        var radiosList = new List<RadiosListItemViewModel>
+        //        {
+        //            new RadiosListItemViewModel(
+        //                nameof(),
+        //                "Content creator license",
+        //                "Assigned a Content Creator license number and has access to download and install Content Creator in CMS."
+        //            )
+        //        };
+
+        //        //Checkboxes.Add(AdminRoleInputs.TrainerCheckbox);
+        //        Radios.Add()
+
+        //    //public static CheckboxListItemViewModel ContentCreatorCheckbox = new CheckboxListItemViewModel(
+        //    //    nameof(EditRolesViewModel.IsContentCreator),
+        //    //    "Content creator license",
+        //    //    "Assigned a Content Creator license number and has access to download and install Content Creator in CMS."
+        //    //);
+
+        //    //public static RadiosListItemViewModel NoCmsPermissionsRadioButton = new RadiosListItemViewModel(
+        //    //    ContentManagementRole.NoContentManagementRole,
+        //    //    "No CMS permissions"
+        //    //);
+        //}
     }
 }
