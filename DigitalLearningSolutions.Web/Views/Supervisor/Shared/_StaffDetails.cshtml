@@ -35,6 +35,7 @@
         </dd>
     </div>
 
+    @if (!string.IsNullOrEmpty(Model.JobGroupName)) {
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
             Job Group
@@ -43,6 +44,7 @@
             @Model.JobGroupName
         </dd>
     </div>
+    }
 
     @if (Model.CustomPrompt1 != null)
     {
