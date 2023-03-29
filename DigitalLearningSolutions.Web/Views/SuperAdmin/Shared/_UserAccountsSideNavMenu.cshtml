@@ -8,10 +8,10 @@
                      link-text="User Accounts"
                      is-current-page="@(Model == SuperAdminUserAccountsPage.UserAccounts)" />
 
-  <vc:side-menu-link asp-action="Administrators"
-                     asp-controller="Users"
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="AdminAccounts"
                      link-text="Administrators"
-                     is-current-page="@(Model == SuperAdminUserAccountsPage.Administrators)" />
+                     is-current-page="@(Model == SuperAdminUserAccountsPage.AdminAccounts)" />
 
   <vc:side-menu-link asp-action="Delegates"
                      asp-controller="Users"
