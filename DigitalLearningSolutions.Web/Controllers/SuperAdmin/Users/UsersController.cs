@@ -290,8 +290,12 @@
         {
             TempData["UserID"] = userId;
             var userEntity = userService.GetUserById(userId);
+            var (_, unverifiedCentreEmails) =
+             userService.GetUnverifiedEmailsForUser(userId);
+            var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
+
             var UserCentreAccountsRoleViewModel =
-                userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity);
+                userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity, idsOfCentresWithUnverifiedEmails);
             var model = new UserCentreAccountRoleViewModel(
                      UserCentreAccountsRoleViewModel.OrderByDescending(account => account.IsActiveAdmin)
                          .ThenBy(account => account.CentreName).ToList(),
