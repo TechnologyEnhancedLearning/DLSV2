@@ -299,6 +299,7 @@
             }
             else
             {
+                ValidateCentreEmailIsSameAsPrimaryIfCentreIsNotSelected(formData);
                 ValidateCentreEmailsDictionary(formData.CentreSpecificEmailsByCentreId, userId);
             }
         }
@@ -609,6 +610,19 @@
                     CommonValidationErrorMessages.CenterEmailIsSameAsPrimary
                 );
                 formData.CentreSpecificEmail = null;
+            }
+        }
+        private void ValidateCentreEmailIsSameAsPrimaryIfCentreIsNotSelected(MyAccountEditDetailsFormData formData)
+        {
+            foreach (var centreIdAndEmail in formData.AllCentreSpecificEmailsDictionary)
+            {
+                if (centreIdAndEmail.Value == formData.Email)
+                {
+                    ModelState.AddModelError(
+                    "AllCentreSpecificEmailsDictionary_" + centreIdAndEmail.Key,
+                CommonValidationErrorMessages.CenterEmailIsSameAsPrimary);
+                    break;
+                }
             }
         }
     }
