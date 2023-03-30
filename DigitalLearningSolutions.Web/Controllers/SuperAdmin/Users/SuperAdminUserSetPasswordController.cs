@@ -46,6 +46,7 @@
             {
                 model.Page = Convert.ToInt16(TempData["Page"]);
             }
+            model.userId = userId;
             return View("SuperAdminUserSetPassword", model);
         }
 
