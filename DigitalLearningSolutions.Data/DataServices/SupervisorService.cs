@@ -763,8 +763,20 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         public bool RemoveCandidateAssessment(int candidateAssessmentId)
         {
             var numberOfAffectedRows = connection.Execute(
-         @"UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2
-            WHERE ID = @candidateAssessmentId AND RemovedDate IS NULL",
+         @"
+                BEGIN TRY
+                    BEGIN TRANSACTION
+                        UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2
+                            WHERE ID = @candidateAssessmentId AND RemovedDate IS NULL
+
+                        UPDATE CandidateAssessmentSupervisors SET Removed = getUTCDate()
+                            WHERE CandidateAssessmentID = @candidateAssessmentId AND Removed IS NULL
+
+                        COMMIT TRANSACTION
+                END TRY
+                BEGIN CATCH
+                    ROLLBACK TRANSACTION
+                END CATCH",
         new { candidateAssessmentId });
             if (numberOfAffectedRows < 1)
             {
