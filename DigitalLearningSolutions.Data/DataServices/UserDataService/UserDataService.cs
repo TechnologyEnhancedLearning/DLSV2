@@ -224,6 +224,10 @@
         void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
 
         void ActivateUser(int userId);
+
+        (IEnumerable<AdminEntity>, int) GetAllAdmins(
+       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
+       );
     }
 
     public partial class UserDataService : IUserDataService

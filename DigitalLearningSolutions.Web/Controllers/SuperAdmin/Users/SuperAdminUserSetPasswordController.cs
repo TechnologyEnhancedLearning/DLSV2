@@ -39,7 +39,7 @@
         [HttpPost]
         public async Task<IActionResult> Index(SetSuperAdminUserPasswordFormData formData, DlsSubApplication dlsSubApplication)
         {
-            TempData.Peek("UserID");
+            TempData.Keep("UserID");
             var userId = TempData["UserID"];
 
 
@@ -52,10 +52,6 @@
             var newPassword = formData.Password!;
 
             await passwordService.ChangePasswordAsync((int)userId, newPassword);
-
-            //Reload user account page here.Waiting for TD-992 to completed
-            //var model1 = new UserAccountsViewModel();
-            //return View("Index", model1);
 
             //TODO: This feature will work after TD-995 is merged.This comment should be removed after the merge.
             TempData["UserId"] = userId;
