@@ -86,7 +86,7 @@
                 result,
                 centreRegistrationPrompts
             );
-            ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
+            ModelState.ClearErrorsForAllFieldsExcept("DelegateEmailAddress");
             return View("MyStaffList", model);
         }
 
@@ -102,16 +102,21 @@
             //if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             if (ModelState.IsValid)
             {
-                string delegateEmail = model.DelegateEmail ?? String.Empty;
+                string delegateEmail = model.DelegateEmailAddress ?? String.Empty;
                 int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
-
+                int existingId = supervisorService.IsSupervisorDelegateExistAndReturnId(adminId,delegateEmail, centreId);
+                if (existingId > 0)
+                {
+                    ModelState.AddModelError("DelegateEmailAddress", "User is already registered as a supervisor with other email");
+                    return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
+                }
                 AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else
             {
                 // if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
-                ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
+                ModelState.ClearErrorsForAllFieldsExcept("DelegateEmailAddress");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
         }
@@ -131,25 +136,39 @@
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !model.DelegateEmails.StartsWith(" "))
             {
                 var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
-                foreach (var delegateEmail in delegateEmailsList)
+                string registeredSupervisorEmails = IsMemberAlreadySupervisor(adminId, delegateEmailsList, centreId);
+                if (string.IsNullOrEmpty(registeredSupervisorEmails))
                 {
-                    //if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
-                    if (delegateEmail.Length > 0)
+                    foreach (var delegateEmail in delegateEmailsList)
                     {
-                        if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
+                        //if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
+                        if (delegateEmail.Length > 0)
                         {
-                            AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
+                            if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
+                            {
+                                AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
+                            }
                         }
                     }
                 }
+                else
+                {
+                    ModelState.AddModelError("DelegateEmails", "User(s) with " + registeredSupervisorEmails + " email are already registered as supervisor") ;
+                    return View("AddMultipleSupervisorDelegates", model);
+                }
+
                 return RedirectToAction("MyStaffList");
             }
             else
             {
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmails");
+                if (model.DelegateEmails != null && model.DelegateEmails.StartsWith(" "))
+                {
+                    ModelState.AddModelError("DelegateEmails", CommonValidationErrorMessages.WhitespaceInEmail);
+                }
                 return View("AddMultipleSupervisorDelegates", model);
             }
         }
@@ -172,6 +191,33 @@
             {
                 frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminId(), GetCentreId());
             }
+        }
+
+        private string IsMemberAlreadySupervisor(int adminId,
+            List<string> delegateEmails,
+            int centreId)
+        {
+            List<string> alreadyExistDelegateEmail = new List<string>();
+            if (delegateEmails.Count > 0)
+            {
+                foreach (string email in delegateEmails)
+                {
+                    int existingId = supervisorService.IsSupervisorDelegateExistAndReturnId(
+                        adminId,
+                        email,
+                        centreId
+                    );
+                    if (existingId > 0)
+                    {
+                        alreadyExistDelegateEmail.Add(email);
+                    }
+                }
+            }
+            if (alreadyExistDelegateEmail.Count > 0)
+            {
+                return string.Join(", ", alreadyExistDelegateEmail);
+            }
+            return string.Empty;
         }
 
         public IActionResult ConfirmSupervise(int supervisorDelegateId)
