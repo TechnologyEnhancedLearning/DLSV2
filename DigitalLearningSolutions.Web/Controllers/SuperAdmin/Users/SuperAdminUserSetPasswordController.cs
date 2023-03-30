@@ -10,6 +10,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System;
     using System.Threading.Tasks;
 
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
@@ -33,6 +34,19 @@
             TempData["UserID"] = userId;
             TempData["UserName"] = userEntity.UserAccount.FirstName + " " + userEntity.UserAccount.LastName + " (" + userEntity.UserAccount.PrimaryEmail + ")";
             var model = new SetSuperAdminUserPasswordViewModel(dlsSubApplication);
+            if (TempData["SearchString"] != null)
+            {
+                model.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                model.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                model.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            model.userId = userId;
             return View("SuperAdminUserSetPassword", model);
         }
 

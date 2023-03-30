@@ -133,7 +133,7 @@
             </dl>
             <a class="nhsuk-button nhsuk-button--secondary" asp-controller="users" asp-action="EditUserDetails" asp-route-userId="@Model.Id" role="button">Edit details</a>
             @*TODO: This feature will work after TD-994 is merged. This comment should be removed after the merge. *@
-            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="users" asp-action="CentreAccounts" asp-route-userId="@Model.Id" role="button">
+            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="users" asp-action="CentreAccounts" asp-route-userId="@Model.Id" role="button" asp-fragment="@Model.Id-name">
                 View Centre Accounts
             </a>
             @*TODO: This feature will work after TD-997 is merged. This comment should be removed after the merge. *@

@@ -297,6 +297,18 @@
                          .ThenBy(account => account.CentreName).ToList(),
                      userEntity
                  );
+            if (TempData["SearchString"] != null)
+            {
+                model.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                model.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                model.Page = Convert.ToInt16(TempData["Page"]);
+            }
             return View("UserCentreAccounts", model);
         }
         [Route("SuperAdmin/Users/{UserId:int}/UnlockAccount")]
