@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Globalization;
@@ -616,7 +617,7 @@
         {
             foreach (var centreIdAndEmail in formData.AllCentreSpecificEmailsDictionary)
             {
-                if (centreIdAndEmail.Value == formData.Email)
+                if (string.Compare(centreIdAndEmail.Value, formData.Email, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     ModelState.AddModelError(
                     "AllCentreSpecificEmailsDictionary_" + centreIdAndEmail.Key,
