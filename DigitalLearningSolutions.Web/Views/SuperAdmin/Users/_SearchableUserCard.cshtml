@@ -66,20 +66,20 @@
                                 @if (Model.IsActive)
                                 {
                                     <a class="nhsuk-u-float-right nhsuk-u-margin-left-3" asp-controller="users" asp-action="InactivateUserConfirmation" asp-route-userId="@Model.Id">
-                                        <u>Inactivate</u>
+                                        Inactivate
                                     </a>
                                 }
                                 else
                                 {
                                     <a class="nhsuk-u-float-right nhsuk-u-margin-left-3" asp-controller="users" asp-action="ActivateUser" asp-route-userId="@Model.Id">
-                                        <u>Reactivate</u>
+                                        Reactivate
                                     </a>
                                 }
 
                                 @if (Model.IsLocked)
                                 {
                                     <a class="nhsuk-u-float-right" asp-controller="users" asp-action="UnlockAccount" asp-route-userId="@Model.Id">
-                                        <u>Unlock</u>
+                                        Unlock
                                     </a>
                                 }
                             </div>
@@ -111,7 +111,7 @@
                                 @if (!Model.IsEmailVerified)
                                 {
                                     <a class="nhsuk-u-float-right">
-                                        <u>Verify</u>
+                                        Verify
                                     </a>
                                 }
                             </div>
