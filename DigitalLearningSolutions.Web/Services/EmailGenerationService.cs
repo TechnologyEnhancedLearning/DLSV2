@@ -57,15 +57,15 @@
 
             builder.HtmlBody += "<ul>";
 
-            if (isCentreAdmin)
-            {
-                builder.TextBody += " Centre administrator";
-                builder.HtmlBody += "<li>Centre administrator</li>";
-            }
             if (isCentreManager)
             {
                 builder.TextBody += " Centre manager";
                 builder.HtmlBody += "<li>Centre manager</li>";
+            }
+            if (isCentreAdmin)
+            {
+                builder.TextBody += " Centre administrator";
+                builder.HtmlBody += "<li>Centre administrator</li>";
             }
             if (isSupervisor)
             {
@@ -84,8 +84,8 @@
             }
             if (isContentCreator)
             {
-                builder.TextBody += " Content Creator licence";
-                builder.HtmlBody += "<li>Content Creator licence</li>";
+                builder.TextBody += " Content creator licence";
+                builder.HtmlBody += "<li>Content creator licence</li>";
             }
             if (isCmsAdmin)
             {
