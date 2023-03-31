@@ -49,6 +49,7 @@
         bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
         bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId);
+        int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId,string delegateEmail,int centreId);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -1055,6 +1056,39 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
 	                    AND (sasrv.SignedOff = 1)
                     GROUP BY AdminUsers.Forename, AdminUsers.Surname, AdminUsers.Email, caoc1.CandidateAssessmentID, ca1.ID
                     ORDER BY AdminUsers.Surname, AdminUsers.Forename", new { candidateAssessmentId });
+        }
+
+        public int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId, string delegateEmail, int centreId)
+        {
+            int? delegateUserId = (int?)connection.ExecuteScalar(
+                 @"SELECT da.UserID AS DelegateUserID 
+                            FROM Users u
+                            INNER JOIN DelegateAccounts da
+                            ON da.UserID = u.ID
+	                        LEFT JOIN UserCentreDetails ucd
+	                        ON ucd.UserID = u.ID
+                            AND ucd.CentreID = da.CentreID
+                            WHERE (ucd.Email = @delegateEmail OR u.PrimaryEmail = @delegateEmail)
+                            AND u.Active = 1 
+                            AND da.CentreID = @centreId", new { delegateEmail, centreId });
+
+            if (delegateUserId != null)
+            {
+                int? existingId = (int?)connection.ExecuteScalar(
+                    @"
+                    SELECT ID
+                        FROM    SupervisorDelegates sd
+                        WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
+                        ",
+                    new
+                    {
+                        supervisorAdminId = supervisorAdminId ?? 0,
+                        delegateUserId = delegateUserId ?? 0,
+                    }
+                );
+                return existingId ?? 0;
+            }
+            return 0;
         }
     }
 }
