@@ -268,5 +268,16 @@
                 new { userId, centreId }
             );
         }
+
+        public bool PrimaryEmailIsInUseAtCentre(string email, int centreId)
+        {
+            return connection.QueryFirst<int>(
+                @$"SELECT COUNT(*)
+                                FROM Users AS u
+                                INNER JOIN UserCentreDetails AS ucd ON u.ID = ucd.UserID
+                                WHERE ucd.CentreId = @centreId AND u.PrimaryEmail = @email",
+                new { email, centreId }
+            ) > 0;
+        }
     }
 }

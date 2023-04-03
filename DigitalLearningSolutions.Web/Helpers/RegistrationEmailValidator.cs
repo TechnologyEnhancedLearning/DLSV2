@@ -36,12 +36,19 @@
         {
             if (
                 centreId.HasValue &&
-                IsValidationNecessary(centreEmail, nameOfFieldToValidate, modelState) &&
-                userDataService.CentreSpecificEmailIsInUseAtCentre(centreEmail!, centreId.Value)
-            )
-            {
-                modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);
-            }
+                IsValidationNecessary(centreEmail, nameOfFieldToValidate, modelState)
+                )
+                {
+                    if (userDataService.CentreSpecificEmailIsInUseAtCentre(centreEmail!, centreId.Value))
+                    {
+                        modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);
+                    }
+                    else if (userDataService.PrimaryEmailIsInUseAtCentre(centreEmail!, centreId.Value))
+                    {
+                        modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.PrimaryEmailInUseDuringDelegateRegistration);
+                    }
+                }
+
         }
 
         public static void ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
