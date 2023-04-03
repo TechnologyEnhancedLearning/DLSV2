@@ -335,3 +335,18 @@ nav, .nhsuk-header__navigation, #header-navigation {
     color: $color_nhsuk-dark-pink;
   }
 }
+.dls-alert-banner {
+  background-color: $color_nhsuk-dark-pink;
+  color: #FFFFFF;
+  a {
+    color: #FFFFFF;
+
+    &:hover {
+      color: #FFFFFF;
+    }
+
+    &:visited {
+      color: #FFFFFF;
+    }
+  }
+}
