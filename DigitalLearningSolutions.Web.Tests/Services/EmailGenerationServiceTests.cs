@@ -134,13 +134,13 @@
 
             if (isContentCreator)
             {
-                returnedEmail.Body.HtmlBody.Should().Contain("<li>Content creator licence</li>");
-                returnedEmail.Body.TextBody.Should().Contain("Content creator licence");
+                returnedEmail.Body.HtmlBody.Should().Contain("<li>Content Creator licence</li>");
+                returnedEmail.Body.TextBody.Should().Contain("Content Creator licence");
             }
             else
             {
-                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Content creator licence</li>");
-                returnedEmail.Body.TextBody.Should().NotContain("Content creator licence");
+                returnedEmail.Body.HtmlBody.Should().NotContain("<li>Content Creator licence</li>");
+                returnedEmail.Body.TextBody.Should().NotContain("Content Creator licence");
             }
 
             if (isCmsAdministrator)
