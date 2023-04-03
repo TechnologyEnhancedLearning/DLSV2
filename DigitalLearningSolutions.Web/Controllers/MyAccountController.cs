@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Globalization;
@@ -299,6 +300,7 @@
             }
             else
             {
+                ValidateCentreEmailIsSameAsPrimaryIfCentreIsNotSelected(formData);
                 ValidateCentreEmailsDictionary(formData.CentreSpecificEmailsByCentreId, userId);
             }
         }
@@ -609,6 +611,19 @@
                     CommonValidationErrorMessages.CenterEmailIsSameAsPrimary
                 );
                 formData.CentreSpecificEmail = null;
+            }
+        }
+        private void ValidateCentreEmailIsSameAsPrimaryIfCentreIsNotSelected(MyAccountEditDetailsFormData formData)
+        {
+            foreach (var centreIdAndEmail in formData.AllCentreSpecificEmailsDictionary)
+            {
+                if (string.Compare(centreIdAndEmail.Value, formData.Email, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    ModelState.AddModelError(
+                    "AllCentreSpecificEmailsDictionary_" + centreIdAndEmail.Key,
+                CommonValidationErrorMessages.CenterEmailIsSameAsPrimary);
+                    break;
+                }
             }
         }
     }
