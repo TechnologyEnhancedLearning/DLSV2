@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using System;
     using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -31,15 +32,31 @@
         }
         public IActionResult Index()
         {
-            return View();
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId();
+            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, categoryId));
+            return View(model);
         }
         [HttpGet]
-        [Route("Download")]
+        [Route("DownloadDcsa")]
         public IActionResult DownloadDigitalCapabilityToExcel()
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var dataFile = selfAssessmentReportService.GetDigitalCapabilityExcelExportForCentre(centreId);
             var fileName = $"DLS DCSA Report - Centre {centreId} - downloaded {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
+            return File(
+                dataFile,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
+        }
+        [HttpGet]
+        [Route("DownloadReport")]
+        public IActionResult DownloadSelfAssessmentReport(int selfAssessmentId)
+        {
+            var centreId = User.GetCentreId();
+            var dataFile = selfAssessmentReportService.GetSelfAssessmentExcelExportForCentre((int)centreId, selfAssessmentId);
+            var fileName = $"Competency Self Assessment Report - Centre {centreId} - downloaded {DateTime.Today:yyyy-MM-dd}.xlsx";
             return File(
                 dataFile,
                 FileHelper.GetContentTypeFromFileName(fileName),
