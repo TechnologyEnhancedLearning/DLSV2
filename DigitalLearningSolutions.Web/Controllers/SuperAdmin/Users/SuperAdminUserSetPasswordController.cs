@@ -47,6 +47,7 @@
                 model.Page = Convert.ToInt16(TempData["Page"]);
             }
             model.userId = userId;
+            TempData.Keep();
             return View("SuperAdminUserSetPassword", model);
         }
 
@@ -54,6 +55,7 @@
         public async Task<IActionResult> Index(SetSuperAdminUserPasswordFormData formData, DlsSubApplication dlsSubApplication)
         {
             TempData.Keep("UserID");
+            TempData.Keep("UserName");
             var userId = TempData["UserID"];
 
 
@@ -69,6 +71,7 @@
 
             //TODO: This feature will work after TD-995 is merged.This comment should be removed after the merge.
             TempData["UserId"] = userId;
+            TempData.Keep();
             return RedirectToAction("Index", "Users", new { UserId = userId });
         }
     }
