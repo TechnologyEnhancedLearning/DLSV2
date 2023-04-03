@@ -14,6 +14,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
+    using GDS.MultiPageFormData;
 
     public partial class LearningPortalControllerTests
     {

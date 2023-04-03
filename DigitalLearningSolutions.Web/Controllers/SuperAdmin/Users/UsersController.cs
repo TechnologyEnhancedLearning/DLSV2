@@ -123,7 +123,7 @@
                     string userIdFilter = searchFilters[1];
                     if (userIdFilter.Contains("UserId|"))
                     {
-                        UserId = Convert.ToInt16(userIdFilter.Split("|")[1]);
+                        UserId = Convert.ToInt32(userIdFilter.Split("|")[1]);
                     }
                 }
             }
@@ -285,31 +285,53 @@
             return View(editUserDetailsViewModel);
         }
 
-        [Route("SuperAdmin/Users/Administrators")]
-        public IActionResult Administrators()
-        {
-            var model = new AdministratorsViewModel();
-            return View(model);
-        }
         [Route("SuperAdmin/Users/{userId:int}/CentreAccounts")]
         public IActionResult CentreAccounts(int userId)
         {
             TempData["UserID"] = userId;
             var userEntity = userService.GetUserById(userId);
+            var (_, unverifiedCentreEmails) =
+             userService.GetUnverifiedEmailsForUser(userId);
+            var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
+
             var UserCentreAccountsRoleViewModel =
-                userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity);
+                userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity, idsOfCentresWithUnverifiedEmails);
             var model = new UserCentreAccountRoleViewModel(
                      UserCentreAccountsRoleViewModel.OrderByDescending(account => account.IsActiveAdmin)
                          .ThenBy(account => account.CentreName).ToList(),
                      userEntity
                  );
+            if (TempData["SearchString"] != null)
+            {
+                model.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                model.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                model.Page = Convert.ToInt16(TempData["Page"]);
+            }
             return View("UserCentreAccounts", model);
         }
         [Route("SuperAdmin/Users/{UserId:int}/UnlockAccount")]
-        public IActionResult UnlockAccount(int UserId)
+        public IActionResult UnlockAccount(int UserId, string RequestUrl= null)
         {
             userService.ResetFailedLoginCountByUserId(UserId);
+
+            if (RequestUrl != null)
+                return Redirect(RequestUrl);
+
             return RedirectToAction("Index");
+        }
+
+        [Route("SuperAdmin/Users/{userId=0:int}/ActivateUser")]
+        public IActionResult ActivateUser(int userId = 0)
+        {
+            userDataService.ActivateUser(userId);
+            TempData["UserId"] = userId;
+            return RedirectToAction("Index", "Users", new { UserId = userId });
         }
     }
 }

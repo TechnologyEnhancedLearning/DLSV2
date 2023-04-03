@@ -11,6 +11,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
+    using GDS.MultiPageFormData;
 
     public partial class FrameworkControllerTests
     {

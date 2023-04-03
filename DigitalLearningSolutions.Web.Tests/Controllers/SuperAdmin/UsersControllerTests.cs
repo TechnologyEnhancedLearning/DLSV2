@@ -32,6 +32,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         private ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService=null;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService=null;
         private IJobGroupsDataService jobGroupsDataService=null;
+        private static readonly List<int> EmptyListOfCentreIds = new List<int>();
         [SetUp]
         public void Setup()
         {
@@ -60,14 +61,15 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             // Given
             var userEntity = userService.GetUserById(10);
             var UserCentreAccountsRoleViewModel =
-               userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity);
+               userCentreAccountsService.GetUserCentreAccountsRoleViewModel(userEntity, EmptyListOfCentreIds);
             // Then
             using (new AssertionScope())
             {
 
                 A.CallTo(
                         () => userCentreAccountsService.GetUserCentreAccountsRoleViewModel(
-                                    userEntity
+                                    userEntity,
+                                    EmptyListOfCentreIds
                                 )
                         )
 

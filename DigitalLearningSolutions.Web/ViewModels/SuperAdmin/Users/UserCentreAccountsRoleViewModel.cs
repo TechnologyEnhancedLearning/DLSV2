@@ -15,5 +15,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.UserCentreAccounts
         }
         public List<UserCentreAccountsRoleViewModel> CentreUserDetails { get; set; }
         public UserEntity UserEntity { get; set; }
+        public string? SearchString { get; set; }
+
+        public string? ExistingFilterString { get; set; }
+
+        public int Page { get; set; }
     }
 }

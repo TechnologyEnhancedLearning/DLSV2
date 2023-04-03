@@ -40,11 +40,14 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Serilog;
+    using GDS.MultiPageFormData;
+    using LearningHub.Nhs.Caching;
 
     public class Startup
     {
         private readonly IConfiguration config;
         private readonly IHostEnvironment env;
+        private const int sessionTimeoutMinutes = 15;
 
         public Startup(IConfiguration config, IHostEnvironment env)
         {
@@ -118,7 +121,12 @@ namespace DigitalLearningSolutions.Web
                 }
             );
 
-            services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = ".AspNet.SharedCookie";
+                options.ExpireTimeSpan = System.TimeSpan.FromMinutes(sessionTimeoutMinutes);
+                options.SlidingExpiration = true;
+            });
 
             services.AddDistributedMemoryCache();
 
@@ -182,6 +190,8 @@ namespace DigitalLearningSolutions.Web
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
+            MultiPageFormService.InitConnection(new SqlConnection(defaultConnectionString));
+            
             // Register services.
             RegisterServices(services);
             RegisterDataServices(services);
@@ -226,7 +236,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
-            services.AddScoped<IMultiPageFormService, MultiPageFormService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
@@ -256,6 +265,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IClaimAccountService, ClaimAccountService>();
             services.AddScoped<IEmailVerificationService, EmailVerificationService>();
             services.AddScoped<IEmailGenerationService, EmailGenerationService>();
+            services.AddScoped<IAdminDownloadFileService, AdminDownloadFileService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -278,7 +288,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
             services.AddScoped<ILearningResourceReferenceDataService, LearningResourceReferenceDataService>();
-            services.AddScoped<IMultiPageFormDataService, MultiPageFormDataService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
@@ -302,7 +311,11 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDCSAReportDataService, DCSAReportDataService>();
             services.AddScoped<IEmailVerificationDataService, EmailVerificationDataService>();
             services.AddScoped<IUserCentreAccountsService, UserCentreAccountsService>();
-    }
+            services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<RedisCacheOptions, RedisCacheOptions>();
+            services.AddScoped<IMultiPageFormService, MultiPageFormService>();
+            services.AddScoped<ISelfAssessmentReportDataService, SelfAssessmentReportDataService>();
+        }
 
         private static void RegisterHelpers(IServiceCollection services)
         {

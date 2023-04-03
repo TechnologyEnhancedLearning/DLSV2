@@ -17,9 +17,7 @@
     }
     var headerExtension = (string)ViewData[LayoutViewDataKeys.Application];
     var shouldDisplayHelpMenuItem = dlsSubApplication?.DisplayHelpMenuItem ?? headerExtension != DlsSubApplication.TrackingSystem.HeaderExtension;
-
-}
-
+    }
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,35 +172,10 @@
             </main>
             <partial name="/Views/LearningPortal/Shared/_LoadingSpinner.cshtml" />
         </div>
-
-        <footer>
-            <div class="nhsuk-footer" id="nhsuk-footer">
-                <div class="nhsuk-width-container">
-                    <h2 class="nhsuk-u-visually-hidden">Support links</h2>
-                    <ul class="nhsuk-footer__list">
-                        <li class="nhsuk-footer__list-item">
-                            <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="Contact">Contact us <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                        </li>
-                        <li class="nhsuk-footer__list-item">
-                            <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="Terms">Terms of use <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                        </li>
-                        <li class="nhsuk-footer__list-item">
-                            <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="AccessibilityHelp">Accessibility <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                        </li>
-                        <li class="nhsuk-footer__list-item">
-                            <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="CookieConsent" asp-action="CookiePolicy">Cookie policy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                        </li>
-                        <li class="nhsuk-footer__list-item">
-                            <a class="nhsuk-footer__list-item-link" href="https://www.hee.nhs.uk/about/privacy-notice">Privacy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                        </li>
-                    </ul>
-                    <p class="nhsuk-footer__copyright">&copy; Digital Learning Solutions, Health Education England @ClockUtility.UtcNow.Year</p>
-                </div>
-            </div>
-        </footer>
-
+        <partial name="_DlsFooter" />
         @await RenderSectionAsync("scripts", false)
         <script src="@Url.Content("~/js/learningPortal/dlscommon.js")" asp-append-version="true"></script>
+
         <script src="@Url.Content("~/js/cookiesbanner.js")" asp-append-version="true"></script>
         <!-- Google Tag Manager -->
         <script>
@@ -215,6 +188,7 @@
                         'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
             })(window, document, 'script', 'dataLayer', 'GTM-5SKPRFQ');</script>
         <!-- End Google Tag Manager -->
+
     </div>
 
 </body>

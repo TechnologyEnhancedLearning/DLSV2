@@ -39,7 +39,7 @@
 <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
   @if (errorHasOccurred)
   {
-    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.DelegateEmail) })" />
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.DelegateEmailAddress) })" />
   }
   <h1>My Staff</h1>
   <div class="nhsuk-grid-row">
@@ -93,7 +93,7 @@
           </label>
           <div class="nhsuk-form-group">
             <div class=" sort-select-container">
-              <vc:text-input asp-for="DelegateEmail"
+              <vc:text-input asp-for="DelegateEmailAddress"
                            label="User email address"
                            populate-with-current-value="false"
                            type="text"

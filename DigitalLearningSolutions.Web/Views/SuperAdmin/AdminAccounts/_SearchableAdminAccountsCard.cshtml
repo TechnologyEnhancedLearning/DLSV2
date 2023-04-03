@@ -1,0 +1,137 @@
+﻿@using DigitalLearningSolutions.Data.Helpers;
+@using DigitalLearningSolutions.Data.Models.User;
+@using DigitalLearningSolutions.Web.Helpers;
+@using DigitalLearningSolutions.Web.Models.Enums;
+@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Administrators;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model SearchableAdminAccountsViewModel;
+
+<div class="searchable-element nhsuk-expander-group word-break" id="@Model.Id-card">
+
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text" id="@Model.Id-name">
+        <span class="searchable-element-title" name="name">@Model.Name</span>
+        <span class="searchable-element-centre">
+          - @Model.Centre
+        </span>
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Admin ID
+        </dt>
+        <dd class="nhsuk-summary-list__value status-tag">
+          <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-one-third nhsuk-u-one-third">
+              <span>
+                  @Model.Id
+              </span>
+            </div>
+            <div class="nhsuk-grid-column-one-third nhsuk-u-one-third">
+              <span class="complete">
+                <partial name="_StatusTag" model="@Model.IsAdminActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
+              </span>
+            </div>
+            <div class="nhsuk-grid-column-one-third nhsuk-u-one-third nhsuk-u-float-right">
+                @if (!Model.IsAdminActive)
+                {
+                <a class="nhsuk-u-float-right">
+                  Reactivate
+                </a>
+                }
+            </div>
+          </div>
+        </dd>
+    </div>
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        First name
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.FirstName" />
+    </div>
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        Last name
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.LastName" />
+    </div>
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        Primary Email
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.PrimaryEmail" />
+    </div>
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        User Account
+      </dt>
+      <dd class="nhsuk-summary-list__value status-tag">
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-half nhsuk-u-one-third">
+            <span>
+              ID: @Model.UserAccountID
+            </span>
+          </div>
+          <div class="nhsuk-grid-column-one-third nhsuk-u-one-third">
+            <span class="complete">
+              <partial name="_StatusTag" model="@Model.IsUserActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
+            </span>
+          </div>
+          <div class="nhsuk-grid-column-one-third nhsuk-u-one-third nhsuk-u-float-right">
+                @if (Model.IsLocked)
+                {
+              <a asp-controller="Users" asp-action="UnlockAccount" asp-route-UserId="@Model.UserAccountID" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Unlock</a>
+                }
+            <a asp-controller="Users" asp-action="Index" asp-route-UserId="@Model.UserAccountID" class="nhsuk-u-float-right">View</a>
+          </div>
+        </div>
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        Centre
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.Centre" />
+    </div>
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+      <dt class="nhsuk-summary-list__key">
+        Centre Email
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.CentreEmail" />
+    </div>
+    </dl>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-controller="ViewRoles" asp-action="Index" asp-route-delegateId="@Model.Id" role="button">Manage roles</a>
+
+      @if (Model.CanShowDeleteAdminButton)
+      {
+      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
+       role="button"
+       aria-label="Delete unused account"
+       data-return-page-enabled="true"
+       asp-controller="AdminAccounts"
+       asp-action="DeactivateOrDeleteAdmin"
+       asp-route-adminId="@Model.Id"
+       asp-route-returnPageQuery="@Model.ReturnPageQuery">
+        Delete unused account
+      </a>
+      }
+      @if (Model.CanShowDeactivateAdminButton)
+      {
+      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
+       role="button"
+       aria-label="Delete unused account"
+       data-return-page-enabled="true"
+       asp-controller="AdminAccounts"
+       asp-action="DeactivateOrDeleteAdmin"
+       asp-route-adminId="@Model.Id"
+       asp-route-returnPageQuery="@Model.ReturnPageQuery">
+        Deactivate admin account
+      </a>
+      }
+    </details>
+</div>

@@ -15,7 +15,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 
         [Required(ErrorMessage = "Enter an email")]
         [RegularExpression(CommonValidationErrorMessages.EmailsRegexWithNewLineSeparator, ErrorMessage = CommonValidationErrorMessages.InvalidMultiLineEmail)]
-        [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? DelegateEmails { get; set; }
     }
 }

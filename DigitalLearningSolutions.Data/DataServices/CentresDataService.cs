@@ -53,6 +53,7 @@
         void SetCentreAutoRegistered(int centreId);
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
+        IEnumerable<(int, string)> GetAllCentres();
     }
 
     public class CentresDataService : ICentresDataService
@@ -398,6 +399,17 @@
                 WHERE CentreId = @centreId",
                 new { centreId }
             );
+        }
+
+        public IEnumerable<(int, string)> GetAllCentres()
+        {
+            var centres = connection.Query<(int, string)>
+            (
+                @"SELECT CentreID, CentreName
+                        FROM Centres
+                        ORDER BY CentreName"
+            );
+            return centres;
         }
     }
 }

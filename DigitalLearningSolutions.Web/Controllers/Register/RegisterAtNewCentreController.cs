@@ -130,7 +130,7 @@
                 int? approvedDelegateId = supervisorService.ValidateDelegate(model.Centre.Value, model.CentreSpecificEmail);
                 if (approvedDelegateId != null && approvedDelegateId > 0)
                 {
-                    ModelState.AddModelError("DelegateEmail", "The email address must not match the email address which has approved delegate account.");
+                    ModelState.AddModelError("CentreSpecificEmail", "A user with this email address is already registered.");
                 }
             }
 

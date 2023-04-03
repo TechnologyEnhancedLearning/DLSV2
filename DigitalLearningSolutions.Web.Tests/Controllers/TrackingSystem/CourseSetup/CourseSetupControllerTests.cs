@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
-    using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
@@ -17,10 +15,13 @@
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using System.Collections.Generic;
 
     public class CourseSetupControllerTests
     {
