@@ -314,7 +314,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<RedisCacheOptions, RedisCacheOptions>();
             services.AddScoped<IMultiPageFormService, MultiPageFormService>();
-    }
+            services.AddScoped<ISelfAssessmentReportDataService, SelfAssessmentReportDataService>();
+        }
 
         private static void RegisterHelpers(IServiceCollection services)
         {
