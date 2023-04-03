@@ -96,6 +96,7 @@
                       {
                           x.SelfAssessment,
                           x.Learner,
+                          x.LearnerActive,
                           x.PRN,
                           x.JobGroup,
                           x.ProgrammeCourse,
@@ -105,7 +106,7 @@
                           x.Registered,
                           x.Started,
                           x.LastAccessed,
-                          x.OptionalProficiencies,
+                          x.OptionalProficienciesAssessed,
                           x.SelfAssessedAchieved,
                           x.ConfirmedResults,
                           x.SignOffRequested,
