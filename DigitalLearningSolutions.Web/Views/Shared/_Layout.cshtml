@@ -21,6 +21,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YVQ5NMPX7P"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-YVQ5NMPX7P');</script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -49,11 +53,11 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="@(ViewData["twitter:title"] ?? ViewData[LayoutViewDataKeys.Title] ?? "Digital Learning Solutions")">
     <meta name="twitter:description" content="@(ViewData["twitter:description"] ?? "")">
+   
 </head>
 
 <body>
 
-    
     <div id="pagewrapper">
         <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
         <partial name="_CookieConsentPartial" />
@@ -177,7 +181,20 @@
         <partial name="_DlsFooter" />
         @await RenderSectionAsync("scripts", false)
         <script src="@Url.Content("~/js/learningPortal/dlscommon.js")" asp-append-version="true"></script>
-		<script src="@Url.Content("~/js/cookiesbanner.js")" asp-append-version="true"></script>
+
+        <script src="@Url.Content("~/js/cookiesbanner.js")" asp-append-version="true"></script>
+        <!-- Google Tag Manager -->
+        <script>
+            (function (w, d, s, l, i) {
+                w[l] = w[l] || []; w[l].push({
+                    'gtm.start':
+                        new Date().getTime(), event: 'gtm.js'
+                }); var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                        'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dataLayer', 'GTM-5SKPRFQ');</script>
+        <!-- End Google Tag Manager -->
+
     </div>
 
 </body>
