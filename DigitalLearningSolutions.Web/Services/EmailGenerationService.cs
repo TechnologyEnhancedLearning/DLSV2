@@ -57,15 +57,15 @@
 
             builder.HtmlBody += "<ul>";
 
-            if (isCentreAdmin)
-            {
-                builder.TextBody += " Centre administrator";
-                builder.HtmlBody += "<li>Centre administrator</li>";
-            }
             if (isCentreManager)
             {
                 builder.TextBody += " Centre manager";
                 builder.HtmlBody += "<li>Centre manager</li>";
+            }
+            if (isCentreAdmin)
+            {
+                builder.TextBody += " Centre administrator";
+                builder.HtmlBody += "<li>Centre administrator</li>";
             }
             if (isSupervisor)
             {
