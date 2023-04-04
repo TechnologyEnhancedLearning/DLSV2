@@ -20,7 +20,8 @@
         public string? ExistingFilterString { get; set; }
 
         public int Page { get; set; }
-        public int userId { get; set; }
+        public int UserId { get; set; }
+        public new string UserName { get; set; }
     }
 
 }
