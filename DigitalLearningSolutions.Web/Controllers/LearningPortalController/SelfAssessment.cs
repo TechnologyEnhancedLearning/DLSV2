@@ -368,14 +368,6 @@
 
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}/Filtered")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/Filtered")]
-        public IActionResult FilteredSelfAssessmentGroupsBookmark(
-            SearchSelfAssessmentOverviewViewModel model,
-            bool clearFilters = false
-        )
-        {
-            return FilteredSelfAssessmentGroups(model);
-        }
-
         public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOverviewViewModel model, bool clearFilters = false)
         {
             if (clearFilters)
@@ -422,7 +414,6 @@
                 MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                 TempData
             );
-
             return RedirectToAction("FilteredSelfAssessmentGroups", model);
         }
 
