@@ -91,6 +91,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                          INNER JOIN Sections
                          ON Tutorials.SectionID = Sections.SectionID
                             AND Sections.ArchivedDate IS NULL
+							AND Sections.ApplicationID = Customisations.ApplicationID
 
                          INNER JOIN CustomisationTutorials
                          ON CustomisationTutorials.CustomisationID = @customisationId
