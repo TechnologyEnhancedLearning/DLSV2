@@ -31,5 +31,7 @@
         public const string CenterEmailIsSameAsPrimary = "Centre email is the same as primary email";
         public const string PasswordTooCommon = "Enter a less common password";
         public const string PasswordSimilarUsername = "Enter a password which is less similar to your user name";
+        public const string PrimaryEmailInUseDuringDelegateRegistration =
+            "A user with this email address is already registered";
     }
 }

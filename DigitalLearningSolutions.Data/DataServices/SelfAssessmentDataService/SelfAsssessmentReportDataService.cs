@@ -45,9 +45,7 @@
         public IEnumerable<SelfAssessmentReportData> GetSelfAssessmentReportDataForCentre(int centreId, int selfAssessmentId)
         {
             return connection.Query<SelfAssessmentReportData>(
-                @"DECLARE @selfAssessmentId int = 4;
-                    DECLARE @centreId int = 101;
-                    WITH LatestAssessmentResults AS
+                @"WITH LatestAssessmentResults AS
                                 (
                     SELECT	s.DelegateUserID
                     		, CASE WHEN COALESCE (rr.LevelRAG, 0) = 3 THEN s.ID ELSE NULL END AS SelfAssessed
