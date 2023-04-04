@@ -228,6 +228,8 @@
         (IEnumerable<AdminEntity>, int) GetAllAdmins(
        string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
        );
+
+        bool PrimaryEmailIsInUseAtCentre(string email, int centreId);
     }
 
     public partial class UserDataService : IUserDataService
