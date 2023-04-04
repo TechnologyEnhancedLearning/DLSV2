@@ -110,7 +110,7 @@
                     x.Answer5,
                     x.Answer6,
                     x.Active,
-                    x.EmailAddress,
+                    EmailAddress = (Guid.TryParse(x.EmailAddress, out _) ? string.Empty : x.EmailAddress),
                     HasPRN = PrnHelper.GetHasPrnForDelegate(x.HasBeenPromptedForPrn, x.ProfessionalRegistrationNumber),
                     PRN = x.HasBeenPromptedForPrn ? x.ProfessionalRegistrationNumber : null,
                 }
@@ -118,7 +118,6 @@
 
             ClosedXmlHelper.AddSheetToWorkbook(workbook, DelegatesSheetName, delegates, TableTheme);
         }
-
         private void PopulateJobGroupsSheet(IXLWorkbook workbook)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical()
