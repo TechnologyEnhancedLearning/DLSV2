@@ -37,8 +37,8 @@
 
         public static CheckboxListItemViewModel ContentCreatorCheckbox = new CheckboxListItemViewModel(
             nameof(EditRolesViewModel.IsContentCreator),
-            "Content creator license",
-            "Assigned a Content Creator license number and has access to download and install Content Creator in CMS."
+            "Content Creator licence",
+            "Assigned a Content Creator licence number and has access to download and install Content Creator in CMS."
         );
 
         public static RadiosListItemViewModel NoCmsPermissionsRadioButton = new RadiosListItemViewModel(
