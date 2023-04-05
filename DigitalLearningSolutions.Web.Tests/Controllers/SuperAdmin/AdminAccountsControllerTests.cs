@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Administrators;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -54,6 +55,10 @@
         [Test]
         public void Index_calls_expected_methods_and_returns_view()
         {
+            // Given
+            var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
+            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
+
             // When
             var result = administratorsController.Index();
 
