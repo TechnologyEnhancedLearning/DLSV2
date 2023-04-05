@@ -498,3 +498,18 @@ MigrationBackup/
 
 DigitalLearningSolutions.Web/logs/*
 DigitalLearningSolutions.Web/appsettings.Development.json
+DigitalLearningSolutions.Web/Views/Shared/_CheckboxItem.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/ActionLink/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/BackLink/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/CancelLink/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/Checkboxes/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/DateInput/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/DateRangeInput/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/ErrorSummary/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/FileInput/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/NumericInput/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/Radios/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/SelectList/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/SingleCheckbox/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/TextArea/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/TextInput/Default.cshtml
