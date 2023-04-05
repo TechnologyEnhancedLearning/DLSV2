@@ -1,5 +1,4 @@
-﻿using DigitalLearningSolutions.Data.Enums;
-using DigitalLearningSolutions.Data.Models.Supervisor;
+﻿using DigitalLearningSolutions.Data.Models.Supervisor;
 using DigitalLearningSolutions.Web.Helpers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NHSUKViewComponents.Web.ViewModels;
