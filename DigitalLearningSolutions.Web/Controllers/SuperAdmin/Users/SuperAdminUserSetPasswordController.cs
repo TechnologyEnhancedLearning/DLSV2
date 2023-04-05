@@ -32,7 +32,6 @@
         {
             var userEntity = userService.GetUserById(userId);
             TempData["UserID"] = userId;
-            TempData["UserName"] = userEntity.UserAccount.FirstName + " " + userEntity.UserAccount.LastName + " (" + userEntity.UserAccount.PrimaryEmail + ")";
             var model = new SetSuperAdminUserPasswordViewModel(dlsSubApplication);
             if (TempData["SearchString"] != null)
             {
@@ -46,7 +45,8 @@
             {
                 model.Page = Convert.ToInt16(TempData["Page"]);
             }
-            model.userId = userId;
+            model.UserId = userId;
+            model.UserName = userEntity.UserAccount.FirstName + " " + userEntity.UserAccount.LastName + " (" + userEntity.UserAccount.PrimaryEmail + ")";
             return View("SuperAdminUserSetPassword", model);
         }
 
@@ -56,10 +56,10 @@
             TempData.Keep("UserID");
             var userId = TempData["UserID"];
 
-
             if (!ModelState.IsValid)
             {
                 var model = new SetSuperAdminUserPasswordViewModel(formData, dlsSubApplication);
+                model.UserName = formData.UserName;
                 return View("SuperAdminUserSetPassword", model);
             }
 
