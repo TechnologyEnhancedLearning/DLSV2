@@ -47,7 +47,6 @@
             }
             model.UserId = userId;
             model.UserName = userEntity.UserAccount.FirstName + " " + userEntity.UserAccount.LastName + " (" + userEntity.UserAccount.PrimaryEmail + ")";
-            TempData.Keep();
             return View("SuperAdminUserSetPassword", model);
         }
 
@@ -70,7 +69,6 @@
 
             //TODO: This feature will work after TD-995 is merged.This comment should be removed after the merge.
             TempData["UserId"] = userId;
-            TempData.Keep();
             return RedirectToAction("Index", "Users", new { UserId = userId });
         }
     }
