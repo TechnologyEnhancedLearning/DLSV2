@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -34,7 +35,8 @@
         private const string UserAccountFilterCookieName = "UserAccountFilter";
         private readonly IUserService userService;
         private readonly IUserCentreAccountsService userCentreAccountsService;
-        public UsersController(IUserDataService userDataService, ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsDataService jobGroupsDataService,IUserCentreAccountsService userCentreAccountsService, IUserService userService)
+        private readonly IClockUtility clockUtility;
+        public UsersController(IUserDataService userDataService, ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsDataService jobGroupsDataService,IUserCentreAccountsService userCentreAccountsService, IUserService userService, IClockUtility clockUtility)
         {
             this.userDataService = userDataService;
             this.centreRegistrationPromptsDataService = centreRegistrationPromptsDataService;
@@ -42,6 +44,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
             this.userCentreAccountsService = userCentreAccountsService;
+            this.clockUtility = clockUtility;
         }
 
         [Route("SuperAdmin/Users/{userId=0:int}/InactivateUserConfirmation")]
@@ -330,6 +333,14 @@
         public IActionResult ActivateUser(int userId = 0)
         {
             userDataService.ActivateUser(userId);
+            TempData["UserId"] = userId;
+            return RedirectToAction("Index", "Users", new { UserId = userId });
+        }
+
+        [Route("SuperAdmin/Users/{userId=0:int}/{email='':string}/VerifyEmail")]
+        public IActionResult VerifyEmail(int userId = 0,string email="")
+        {
+            userDataService.SetPrimaryEmailVerified(userId,email, clockUtility.UtcNow);
             TempData["UserId"] = userId;
             return RedirectToAction("Index", "Users", new { UserId = userId });
         }
