@@ -1,6 +1,7 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.DataServices.UserDataService;
 using DigitalLearningSolutions.Data.Models.Support;
+using DigitalLearningSolutions.Data.Utilities;
 using DigitalLearningSolutions.Data.ViewModels.UserCentreAccount;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Users;
@@ -32,6 +33,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         private ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService=null;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService=null;
         private IJobGroupsDataService jobGroupsDataService=null;
+        private IClockUtility clockUtility=null;
         private static readonly List<int> EmptyListOfCentreIds = new List<int>();
         [SetUp]
         public void Setup()
@@ -40,7 +42,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             userCentreAccountsService = A.Fake<IUserCentreAccountsService>();
 
             controller = new UsersController(userDataService, centreRegistrationPromptsDataService,
-                                            searchSortFilterPaginateService, jobGroupsDataService,userCentreAccountsService, userService)
+                                            searchSortFilterPaginateService, jobGroupsDataService,userCentreAccountsService, userService, clockUtility)
                 .WithDefaultContext()
                 .WithMockHttpContextSession()
                 .WithMockTempData();
