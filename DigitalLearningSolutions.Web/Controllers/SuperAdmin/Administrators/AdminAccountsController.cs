@@ -118,8 +118,6 @@
             var centres = centresDataService.GetAllCentres().ToList();
             centres.Insert(0, (0, "Any"));
 
-            //var loggedInSuperAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
-
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
                 new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
