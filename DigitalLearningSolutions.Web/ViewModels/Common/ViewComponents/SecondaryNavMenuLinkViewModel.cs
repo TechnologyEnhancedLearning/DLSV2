@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
+    using NHSUKViewComponents.Web.ViewModels;
     using System.Collections.Generic;
 
     public class SecondaryNavMenuLinkViewModel : LinkViewModel

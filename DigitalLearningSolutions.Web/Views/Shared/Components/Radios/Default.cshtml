@@ -1,9 +1,10 @@
-﻿@using DigitalLearningSolutions.Web.Extensions
-@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+﻿@using NHSUKViewComponents.Web.Extensions
+@using NHSUKViewComponents.Web.ViewModels
 @model RadiosViewModel
 
 <div class="nhsuk-form-group">
-  <fieldset class="nhsuk-fieldset">
+
+  <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Label.RemoveWhitespace()-hint">
     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
       <label class="nhsuk-fieldset__heading">
         @Model.Label
@@ -32,14 +33,12 @@
           <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
             @radio.Label
           </label>
-
-          <div class="nhsuk-hint nhsuk-radios__hint" id="@radio.Value-item-hint">
-            @if (radio.HintText != null)
-            {
+          @if (radio.HintText != null)
+          {
+            <div class="nhsuk-hint nhsuk-radios__hint" id="@radio.Value-item-hint">
               @radio.HintText
-            }
-          </div>
-
+            </div>
+          }
         </div>
       }
 
