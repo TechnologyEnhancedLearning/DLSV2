@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -78,7 +79,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult PersonalInformation()
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
-
+            var delegateRegistered = TempData.Peek("delegateRegistered")!;
+            if (Convert.ToBoolean(delegateRegistered))
+            {
+                TempData.Clear();
+                return RedirectToAction("LearningSolutions", "StatusCode", new { code = 410 });
+            }
             var model = new RegisterDelegatePersonalInformationViewModel(data);
 
             ValidateEmailAddress(model);
@@ -188,7 +194,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult Password()
         {
             var model = new PasswordViewModel();
-
             return View(model);
         }
 
@@ -241,6 +246,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 TempData.Clear();
                 TempData.Add("delegateNumber", candidateNumber);
                 TempData.Add("passwordSet", data.IsPasswordSet);
+                TempData.Add("delegateRegistered", true);
                 return RedirectToAction("Confirmation");
             }
             catch (DelegateCreationFailedException e)
