@@ -50,7 +50,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            var groupDelegates = groupsService.GetGroupDelegates(groupId,false);
+            var groupDelegates = groupsService.GetGroupDelegates(groupId);
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
