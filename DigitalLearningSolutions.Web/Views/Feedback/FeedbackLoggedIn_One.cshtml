@@ -15,14 +15,20 @@
   </div>
   <div class="nhsuk-grid-column-two-thirds">
 
-
-    <p>We do not reply to this inbox.</p>
-    <p>If you need support please <a>contact your centre</a>. This might be your Centre Manager or Clinical Centre Manager.</p>
+    <div class="nhsuk-warning-callout">
+      <h3 class="nhsuk-warning-callout__label">
+        <span role="text">
+          <span class="nhsuk-u-visually-hidden">Important: </span>
+          We do not reply to this inbox.
+        </span>
+      </h3>
+      <p>If you need support please <a>contact your centre</a>. This might be your Centre Manager or Clinical Centre Manager.</p>
+    </div>
 
     <p>Step 1 of 5</p>
     <hr/>
 
-    <form method="post" asp-action="SaveFeedback">
+    <form method="post" asp-action="FeedbackLoggedInStepOneSave">
 
       @*<div class="nhsuk-form-group float-right">*@
 
@@ -33,38 +39,62 @@
       required="false"
       errormessage="" />*@
 
-      <vc:radios asp-for=""
+@*      <vc:radios asp-for=""
                  label="Please select an option"
                  populate-with-current-values="true"
                  radios="@Model.Radios"
                  hint-text=""
                  required="true" />
+*@
 
+      <div class="nhsuk-hint" id="contact-hint">
+        Did you achieve everything you came to do today?
+      </div>
+      <div class="nhsuk-radios">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="" name="" type="radio" value=""> 
+          <label class="nhsuk-label nhsuk-radios__label" for="">
+            Yes
+            @*asp-for="" *@
+          </label>
+        </div>
+
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="" name="" type="radio" value=""> 
+          <label class="nhsuk-label nhsuk-radios__label" for="">
+            No
+            @*asp-for="" *@
+          </label>
+        </div>
+      </div>
+
+
+@*
       <div class="nhsuk-radios nhsuk-radios--conditional">
-      <div class="nhsuk-radios__item">
-        <input name="@nameof(Model.TaskAchieved)"
-               class="nhsuk-radios__input"
-               id="TaskAchieved_No"
-               type="radio"
-               value="false"
-        <label class="nhsuk-label nhsuk-radios__label" for="TaskAchieved_No">
-          No
-        </label>
+        <div class="nhsuk-radios__item">
+          <input name="@nameof(Model.TaskAchieved)"
+                 class="nhsuk-radios__input"
+                 id="TaskAchieved_No"
+                 type="radio"
+                 value="false"
+          <label class="nhsuk-label nhsuk-radios__label" for="TaskAchieved_No">
+            No
+          </label>
+        </div>
+
+        <div class="nhsuk-radios__item">
+          <input name="@nameof(Model.TaskAchieved)"
+                 class="nhsuk-radios__input"
+                 id="TaskAchieved_Yes"
+                 type="radio"
+                 value="true"
+          <label class="nhsuk-label nhsuk-radios__label" for="TaskAchieved_Yes">
+            Yes
+          </label>
+        </div>
       </div>
-
-      <div class="nhsuk-radios__item">
-        <input name="@nameof(Model.TaskAchieved)"
-               class="nhsuk-radios__input"
-               id="TaskAchieved_Yes"
-               type="radio"
-               value="true"
-        <label class="nhsuk-label nhsuk-radios__label" for="TaskAchieved_Yes">
-          Yes
-        </label>
-      </div>
-
-
-      <vc:text-input asp-for="TaskAttempted"
+*@
+@*      <vc:text-input asp-for="TaskAttempted"
                      label="What task did you come to do today?"
                      populate-with-current-value="false"
                      type="text"
@@ -84,16 +114,22 @@
                     autocomplete="off"
                     css-class="nhsuk-u-width-full"
                     character-count="null"
-                    required="true" />
+                    required="true" />*@
 
       @*<input type="text" asp-for="TaskRating" placeholder="TaskRating" />*@
 
       <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
 
-      <div class="nhsuk-u-float-right">
+@*      <div class="nhsuk-u-float-right">
         <button class="nhsuk-button" type="submit">Submit Feedback</button>
       </div>
-      @*</div>*@
+*@      @*</div>*@
+
+      <div class="nhsuk-u-float-right">
+        <button class="nhsuk-button" type="submit">Continue</button>
+      </div>
+
+
 
     </form>
 

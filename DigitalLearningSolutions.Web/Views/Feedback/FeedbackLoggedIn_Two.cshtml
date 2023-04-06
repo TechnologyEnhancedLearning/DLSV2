@@ -2,27 +2,53 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model FeedbackViewModel;
+
 @{
   ViewData["Title"] = "Feedback";
-  ViewData["Application"] = "Feedback";
-  ViewData["HeaderPathName"] = "Feedback";
 }
-<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/feedback/feedback.css")" asp-append-version="true">
 
-@*@section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
-}
-*@
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h2 class="nhsuk-heading-s">Give page or website feedback</h2>
+    <h1 id="page-heading" class="nhsuk-heading-xl">Did you achieve everything you came to do today?</h1>
+  </div>
+  <div class="nhsuk-grid-column-two-thirds">
 
-@*@section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">Feedback</li>
-      </ol>
-    </div>
-  </nav>
-}
-*@
 
-<h1>Feedback</h1>
+    <form method="post" asp-action="FeedbackLoggedInStepTwoSave">
+
+      <div class="nhsuk-hint" id="contact-hint">
+        Give us feedback about what you were trying to achieve?
+      </div>
+
+      <p>Step 2 of 5</p>
+      <hr/>
+
+      <vc:text-input asp-for="TaskAttempted"
+                     label="What task did you come to do today?"
+                     populate-with-current-value="false"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="off"
+                     css-class="nhsuk-input"
+                     required="true" />
+
+      <vc:text-area asp-for="FeedbackText"
+                    label="Please describe in detail your experience and what you came here to achieve."
+                    populate-with-current-value="false"
+                    rows="5"
+                    type="text"
+                    spell-check="false"
+                    hint-text=""
+                    autocomplete="off"
+                    css-class="nhsuk-u-width-full"
+                    character-count="null"
+                    required="true" />
+
+      <div class="nhsuk-u-float-right">
+        <button class="nhsuk-button" type="submit">Continue</button>
+      </div>
+    </form>
+  </div>
