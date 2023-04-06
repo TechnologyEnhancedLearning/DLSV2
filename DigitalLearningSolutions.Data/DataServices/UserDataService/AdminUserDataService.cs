@@ -314,7 +314,7 @@
 		                                aa.IsWorkforceManager, aa.IsWorkforceContributor, aa.IsLocalWorkforceManager, aa.IsNominatedSupervisor,
 		                                u.ID, u.PrimaryEmail, u.FirstName, u.LastName, u.Active, u.FailedLoginCount,
 		                                c.CentreID, c.CentreName,
-		                                ucd.ID, ucd.Email AS CentreEmail, ucd.EmailVerified AS CentreEmailVerified,
+		                                ucd.ID, ucd.Email, ucd.EmailVerified, ucd.CentreID,
                                         (SELECT COUNT(*) FROM AdminSessions WHERE AdminID = aa.ID) AS AdminSessions
                                     FROM   AdminAccounts AS aa INNER JOIN
                                     Users AS u ON aa.UserID = u.ID INNER JOIN

@@ -54,6 +54,12 @@
           string? ExistingFilterString = ""
         )
         {
+            var loggedInSuperAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
+            if(loggedInSuperAdmin.AdminAccount.Active == false)
+            {
+                return NotFound();
+            }
+
             if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
                 page = 1;
@@ -111,8 +117,6 @@
 
             var centres = centresDataService.GetAllCentres().ToList();
             centres.Insert(0, (0, "Any"));
-
-            var loggedInSuperAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,

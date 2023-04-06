@@ -44,20 +44,24 @@
                                                       css-class=""
                                                       required="true" />
                                 </div>
-                                <div class="nhsuk-grid-column-one-half">
-                                    <vc:text-input asp-for="@nameof(Model.Search)"
-                                                   label="Search"
-                                                   populate-with-current-value="true"
-                                                   type="text"
-                                                   spell-check="false"
-                                                   hint-text=""
-                                                   autocomplete=""
-                                                   css-class=""
-                                                   required="true"
-                                                   placeholder-text="Search name, email, PRN" />
-                                </div>
-                                <div class="nhsuk-grid-column-one-quarter">
-                                    <button class="nhsuk-button nhsuk-u-margin-top-4" type="submit">Search</button>
+                                <div class="nhsuk-grid-column-three-quarters">
+                                    <div class="nhsuk-grid-row">
+                                        <div class="nhsuk-grid-column-three-quarters">
+                                            <vc:text-input asp-for="@nameof(Model.Search)"
+                                                           label="Search"
+                                                           populate-with-current-value="true"
+                                                           type="text"
+                                                           spell-check="false"
+                                                           hint-text=""
+                                                           autocomplete=""
+                                                           css-class=""
+                                                           required="true"
+                                                           placeholder-text="Search name, email, PRN" />
+                                        </div>
+                                        <div class="nhsuk-grid-column-one-quarter">
+                                            <button class="nhsuk-button nhsuk-u-width-full nhsuk-u-margin-top-4 nhsuk-u-float-right" type="submit">Search</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="filter-container nhsuk-u-margin-top-5">

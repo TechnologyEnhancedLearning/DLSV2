@@ -18,7 +18,7 @@
         )
         {
             Id = admin.AdminAccount.Id;
-            Name = admin.SearchableName;
+            Name = admin.UserAccount?.FirstName + " " + admin.UserAccount?.LastName;
             FirstName = admin.UserAccount?.FirstName;
             LastName = admin.UserAccount?.LastName;
             PrimaryEmail = admin.UserAccount?.PrimaryEmail;

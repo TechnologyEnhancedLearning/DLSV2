@@ -110,7 +110,7 @@
                             <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
                                 @if (!Model.IsEmailVerified)
                                 {
-                                    <a class="nhsuk-u-float-right">
+                                    <a class="nhsuk-u-float-right" asp-controller="users" asp-action="VerifyEmail" asp-route-userId="@Model.Id" asp-route-email="@Model.Email">
                                         Verify
                                     </a>
                                 }

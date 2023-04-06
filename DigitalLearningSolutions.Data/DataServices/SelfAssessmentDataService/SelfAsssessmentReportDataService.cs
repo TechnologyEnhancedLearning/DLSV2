@@ -54,9 +54,9 @@
                     FROM   SelfAssessmentResults AS s INNER JOIN
                                      (SELECT MAX(sar1.ID) AS ID
                                      FROM    SelfAssessmentResults as sar1 INNER JOIN
-                    				 DelegateAccounts AS da ON sar1.DelegateUserID = da.UserID AND da.CentreID = @centreId
+                    				 DelegateAccounts AS da1 ON sar1.DelegateUserID = da1.UserID AND da1.CentreID = @centreId
                                      WHERE (SelfAssessmentID = @selfAssessmentId)
-                                     GROUP BY da.ID, CompetencyID, AssessmentQuestionID) AS t ON s.ID = t.ID INNER JOIN
+                                     GROUP BY da1.ID, CompetencyID, AssessmentQuestionID) AS t ON s.ID = t.ID INNER JOIN
                                  SelfAssessmentStructure AS sas ON s.SelfAssessmentID = sas.SelfAssessmentID AND s.CompetencyID = sas.CompetencyID LEFT OUTER JOIN
                                  SelfAssessmentResultSupervisorVerifications AS sv ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0 LEFT OUTER JOIN
                                  CompetencyAssessmentQuestionRoleRequirements AS rr ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
@@ -65,7 +65,7 @@
                     SELECT 
                         sa.Name AS SelfAssessment
                     	, u.LastName + ', ' + u.FirstName AS Learner
-						, da.Active
+						, da.Active AS LearnerActive
                     	, u.ProfessionalRegistrationNumber AS PRN
                         , jg.JobGroupName AS JobGroup
                     	, CASE WHEN c.CustomField1PromptID = 10 THEN da.Answer1 WHEN c.CustomField2PromptID = 10 THEN da.Answer2 WHEN c.CustomField3PromptID = 10 THEN da.Answer3 WHEN c.CustomField4PromptID = 10 THEN da.Answer4 WHEN c.CustomField5PromptID = 10 THEN da.Answer5 WHEN c.CustomField6PromptID = 10 THEN da.Answer6 ELSE '' END AS 'ProgrammeCourse'
@@ -81,7 +81,7 @@
                     	, da.DateRegistered AS Registered
                         , ca.StartedDate AS Started
                         , ca.LastAccessed
-                    	, COALESCE(COUNT(DISTINCT LAR.Optional), NULL) AS [OptionalProficiencies]
+                    	, COALESCE(COUNT(DISTINCT LAR.Optional), NULL) AS [OptionalProficienciesAssessed]
                     	, COALESCE(COUNT(DISTINCT LAR.SelfAssessed), NULL) AS [SelfAssessedAchieved]
                     	, COALESCE(COUNT(DISTINCT LAR.Confirmed), NULL) AS [ConfirmedResults]
                         , max(casv.Requested) AS SignOffRequested
@@ -99,7 +99,7 @@
                         CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID left JOIN
                         CandidateAssessmentSupervisorVerifications AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID LEFT JOIN
 	                    SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID 
-	                    LEFT OUTER JOIN LatestAssessmentResults AS LAR ON LAR.DelegateUserID = da.ID
+	                    LEFT OUTER JOIN LatestAssessmentResults AS LAR ON LAR.DelegateUserID = ca.DelegateUserID
                     WHERE
                         (sa.ID = @SelfAssessmentID) AND (sa.ArchivedDate IS NULL) AND (c.Active = 1) AND (ca.RemovedDate IS NULL)
                     Group by sa.Name

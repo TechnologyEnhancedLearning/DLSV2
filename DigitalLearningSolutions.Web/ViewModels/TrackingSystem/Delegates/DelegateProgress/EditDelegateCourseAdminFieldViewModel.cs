@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
+    using NHSUKViewComponents.Web.ViewModels;
 
     public class EditDelegateCourseAdminFieldViewModel : EditDelegateCourseAdminFieldFormData
     {
