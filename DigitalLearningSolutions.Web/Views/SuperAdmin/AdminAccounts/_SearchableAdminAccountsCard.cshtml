@@ -114,9 +114,8 @@
        aria-label="Delete unused account"
        data-return-page-enabled="true"
        asp-controller="AdminAccounts"
-       asp-action="DeactivateOrDeleteAdmin"
-       asp-route-adminId="@Model.Id"
-       asp-route-returnPageQuery="@Model.ReturnPageQuery">
+       asp-action="DeleteAdmin"
+       asp-route-adminId="@Model.Id">
         Delete unused account
       </a>
       }

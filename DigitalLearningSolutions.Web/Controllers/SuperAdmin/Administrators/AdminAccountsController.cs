@@ -210,6 +210,11 @@
             return roles;
         }
 
-        
+        [Route("SuperAdmin/AdminAccounts/{adminId=0:int}/DeleteAdmin")]
+        public IActionResult DeleteAdmin(int adminId = 0)
+        {
+            userDataService.DeleteAdminAccount(adminId);
+            return RedirectToAction("Index", "AdminAccounts");
+        }
     }
 }
