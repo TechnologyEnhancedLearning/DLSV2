@@ -54,7 +54,13 @@
                     <div class="centre-role-tags">
               @if (centreRow.IsActiveAdmin)
               {
-                 <a class="" asp-controller="AdminAccounts" asp-action="Index" asp-route-AdminId="@Model.UserEntity.UserAccount.Id">Admin</a>
+                 foreach (var admin in Model.UserEntity.AdminAccounts)
+                 {
+                    if (admin.UserId == @Model.UserEntity.UserAccount.Id)
+                    {
+                         <a class="" asp-controller="AdminAccounts" asp-action="Index" asp-route-AdminId="@admin.Id">Admin</a>
+                    }
+                 }
               }
               @if (centreRow.IsDelegate)
               {
