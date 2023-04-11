@@ -250,4 +250,10 @@
   <data name="CookiePolicy" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CookiePolicy.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+    <data name="TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>..\Scripts\TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    </data>
+    <data name="TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>..\Scripts\TD-1220-RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    </data>
 </root>
