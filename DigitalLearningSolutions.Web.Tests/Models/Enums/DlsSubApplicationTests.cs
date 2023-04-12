@@ -82,7 +82,7 @@
                     5,
                     "SuperAdmin",
                     "Super Admin",
-                    "/SuperAdmin/Admins",
+                    "/SuperAdmin/Users",
                     "Super Admin - System Configuration",
                     "SuperAdmin",
                     null,
