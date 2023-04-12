@@ -230,6 +230,8 @@
        );
 
         bool PrimaryEmailIsInUseAtCentre(string email, int centreId);
+
+        void UpdateAdminStatus(int adminId, bool active);
     }
 
     public partial class UserDataService : IUserDataService
