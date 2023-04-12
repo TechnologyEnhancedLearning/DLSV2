@@ -6,8 +6,19 @@
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1>Contact us</h1>
-    @Model.ContactText
-  </div>
+    <div class="nhsuk-grid-column-full">
+        <h1>Contact us</h1>
+        @if (Model.CentreSummary == null)
+        {
+            <p>If you are interested in accessing learning content, please&nbsp;<strong><a href="https://www.dls.nhs.uk/v2/findyourcentre">Find Your Centre</a></strong>&nbsp;and contact them for more information.</p>
+        }
+        else
+        {
+            <p>If you are a learner or supervisor, please contact your centre, @Model.CentreSummary.CentreName:</p>
+            <div class="nhsuk-details__text nhsuk-u-margin-bottom-4">
+                <partial name="_CentreDetails" model="@Model.CentreSummary" />
+            </div>
+        }
+        @Model.ContactText
+    </div>
 </div>
