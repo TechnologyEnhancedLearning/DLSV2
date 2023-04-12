@@ -89,6 +89,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             return View("Error/UnknownError", model);
         }
 
+        [NoCaching]
         [Route("/LearningSolutions/StatusCode/{code:int}")]
         [IgnoreAntiforgeryToken]
         public new IActionResult StatusCode(int code)
