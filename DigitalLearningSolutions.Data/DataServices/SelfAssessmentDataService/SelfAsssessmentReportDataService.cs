@@ -95,7 +95,7 @@
                         CentreSelfAssessments AS csa ON sa.ID = csa.SelfAssessmentID INNER JOIN
                         Centres AS c ON csa.CentreID = c.CentreID ON da.CentreID = c.CentreID AND ca.SelfAssessmentID = sa.ID INNER JOIN
                         JobGroups AS jg ON u.JobGroupID = jg.JobGroupID LEFT OUTER JOIN
-                        AdminAccounts AS aa ON da.UserID = aa.UserID AND aa.CentreID = da.CentreID LEFT OUTER JOIN
+                        AdminAccounts AS aa ON da.UserID = aa.UserID AND aa.CentreID = da.CentreID AND aa.Active = 1 LEFT OUTER JOIN
                         CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID left JOIN
                         CandidateAssessmentSupervisorVerifications AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID LEFT JOIN
 	                    SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID 
