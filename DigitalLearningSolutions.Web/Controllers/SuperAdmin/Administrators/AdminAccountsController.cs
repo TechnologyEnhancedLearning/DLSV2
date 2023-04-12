@@ -170,6 +170,7 @@
 
 
             model.JavascriptSearchSortFilterPaginateEnabled = false;
+            ViewBag.AdminId = TempData["AdminId"];
             ModelState.ClearAllErrors();
             return View(model);
         }
@@ -215,6 +216,14 @@
         {
             userDataService.DeleteAdminAccount(adminId);
             return RedirectToAction("Index", "AdminAccounts");
+        }
+
+        [Route("SuperAdmin/AdminAccounts/{adminId=0:int}/{actionType='':string}/UpdateAdminStatus")]
+        public IActionResult UpdateAdminStatus(int adminId,string actionType)
+        {
+            userDataService.UpdateAdminStatus(adminId,(actionType == "Reactivate"));
+            TempData["AdminId"] = adminId;
+            return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
         }
     }
 }
