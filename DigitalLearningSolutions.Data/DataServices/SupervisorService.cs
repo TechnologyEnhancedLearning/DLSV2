@@ -166,7 +166,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 		                au.Forename + ' ' + au.Surname AS SupervisorName,                 
 		                (SELECT COUNT(ca.ID) AS Expr1
                         FROM CandidateAssessments AS ca INNER JOIN SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID LEFT JOIN CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID
-                        WHERE (ca.DelegateUserID = sd.DelegateUserID) AND (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = sd.ID  OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1))) AS CandidateAssessmentCount, 
+                        WHERE (ca.DelegateUserID = sd.DelegateUserID) AND ((sa.SupervisorSelfAssessmentReview = 1) OR
+                         (sa.SupervisorResultsReview = 1)) AND (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = sd.ID  OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1))) AS CandidateAssessmentCount, 
 		                CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, 
 		                CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) AS DelegateIsSupervisor,             
 		                da.ID AS Expr1
