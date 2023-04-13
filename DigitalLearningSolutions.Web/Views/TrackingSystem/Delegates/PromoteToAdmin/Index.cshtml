@@ -52,8 +52,8 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="Index">
       <input type="hidden" asp-for="UserId" />
       <input type="hidden" asp-for="CentreId" />
-
-
+            <input type="hidden" asp-for="IsContentManager" />
+            <input type="hidden" asp-for="ImportOnly" />
       <vc:checkboxes label="Please select all the roles this user has."
                      populate-with-current-values="true"
                      checkboxes="@Model.Checkboxes"

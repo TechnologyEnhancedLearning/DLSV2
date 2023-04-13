@@ -21,8 +21,10 @@
             int userId,
             int centreId,
             IEnumerable<Category> categories,
-            CentreContractAdminUsage numberOfAdmins
-        ) : base(firstName, lastName, centreId, userId)
+            CentreContractAdminUsage numberOfAdmins,
+            bool isContentManager,
+            bool importOnly
+        ) : base(firstName, lastName, centreId, userId, isContentManager, importOnly)
         {
             DelegateId = delegateId;
 

@@ -16,11 +16,13 @@
             CentreId = centreId;
         }
 
-        public AdminRolesFormData(string firstName, string lastName, int centreId, int userId)
+        public AdminRolesFormData(string firstName, string lastName, int centreId, int userId, bool isContentManager, bool importOnly)
         {
             FullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(firstName, lastName);
             CentreId = centreId;
             UserId = userId;
+            IsContentManager = isContentManager;
+            ImportOnly = importOnly;
         }
 
         public string? FullName { get; set; }
@@ -35,7 +37,8 @@
         public ContentManagementRole ContentManagementRole { get; set; }
         public int LearningCategory { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; set; }
-
+        public bool IsContentManager { get; set; }
+        public bool ImportOnly { get; set; }
         public AdminRoles GetAdminRoles()
         {
             return new AdminRoles(
@@ -44,8 +47,8 @@
                 IsNominatedSupervisor,
                 IsContentCreator,
                 IsTrainer,
-                ContentManagementRole.IsContentManager,
-                ContentManagementRole.ImportOnly,
+                IsContentManager,
+                ImportOnly,
                 IsCenterManager
             );
         }

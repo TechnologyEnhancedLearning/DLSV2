@@ -81,7 +81,9 @@
                 userId,
                 centreId,
                 categories,
-                numberOfAdmins
+                numberOfAdmins,
+                 ContentManagementRole.NoContentManagementRole.IsContentManager,
+                 ContentManagementRole.NoContentManagementRole.ImportOnly
             );
             return View(model);
         }
@@ -114,7 +116,9 @@
                                 userId,
                                 centreId,
                                 categories,
-                                numberOfAdmins
+                                numberOfAdmins,
+                                ContentManagementRole.NoContentManagementRole.IsContentManager,
+                                ContentManagementRole.NoContentManagementRole.ImportOnly
                             );
                 model.ContentManagementRole = formData.ContentManagementRole;
                 ModelState.Clear();
