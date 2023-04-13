@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -14,9 +12,13 @@
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System.Collections.Generic;
+    using System.Linq;
+    using GDS.MultiPageFormData.Enums;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -96,7 +98,7 @@
             var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
 
             return View(new EditAdminFieldViewModel(data));
         }
@@ -137,10 +139,7 @@
         )]
         public IActionResult EditAdminFieldAnswersBulk(int customisationId)
         {
-            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
-                MultiPageFormDataFeature.EditAdminField,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(MultiPageFormDataFeature.EditAdminField, TempData).GetAwaiter().GetResult();
 
             var model = new BulkAdminFieldAnswersViewModel(
                 data.OptionsString
@@ -167,10 +166,7 @@
                 return View("BulkAdminFieldAnswers", model);
             }
 
-            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
-                MultiPageFormDataFeature.EditAdminField,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(MultiPageFormDataFeature.EditAdminField, TempData).GetAwaiter().GetResult();
             data.OptionsString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             multiPageFormService.SetMultiPageFormData(
                 data,
@@ -204,10 +200,7 @@
         )]
         public IActionResult AddAdminField(int customisationId)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                MultiPageFormDataFeature.AddAdminField,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, TempData).GetAwaiter().GetResult();
 
             SetViewBagAdminFieldNameOptions(data.AdminFieldId);
             return View(new AddAdminFieldViewModel(data));
@@ -248,10 +241,7 @@
         )]
         public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                MultiPageFormDataFeature.AddAdminField,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, TempData).GetAwaiter().GetResult();
             var model = new AddBulkAdminFieldAnswersViewModel(
                 data.OptionsString
             );
@@ -277,10 +267,7 @@
                 return View("AddBulkAdminFieldAnswers", model);
             }
 
-            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                MultiPageFormDataFeature.AddAdminField,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, TempData).GetAwaiter().GetResult();
             data.OptionsString =
                 NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             multiPageFormService.SetMultiPageFormData(
@@ -534,10 +521,7 @@
 
         private void UpdateTempDataWithAddAdminFieldModelValues(AddAdminFieldViewModel model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
-                MultiPageFormDataFeature.AddAdminField,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(MultiPageFormDataFeature.AddAdminField, TempData).GetAwaiter().GetResult();
             data.OptionsString = model.OptionsString;
             data.AdminFieldId = model.AdminFieldId;
             data.Answer = model.Answer;

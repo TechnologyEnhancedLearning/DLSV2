@@ -67,6 +67,6 @@
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
-        public string? DelegateEmail { get; set; }
+        public string? DelegateEmailAddress { get; set; }
     }
 }

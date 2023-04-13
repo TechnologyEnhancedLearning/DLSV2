@@ -222,6 +222,16 @@
         void InactivateUser(int userId);
 
         void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
+
+        void ActivateUser(int userId);
+
+        (IEnumerable<AdminEntity>, int) GetAllAdmins(
+       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
+       );
+
+        bool PrimaryEmailIsInUseAtCentre(string email, int centreId);
+
+        void UpdateAdminStatus(int adminId, bool active);
     }
 
     public partial class UserDataService : IUserDataService
@@ -412,6 +422,10 @@
         string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
         )
         {
+            if(!string.IsNullOrEmpty(search))
+            {
+                search= search.Trim();
+            }
             string condition = $@" WHERE ((@userId = 0) OR (u.ID = @userId)) AND 
             (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%') AND 
             ((u.JobGroupID = @jobGroupId) OR (@jobGroupId = 0)) AND 
@@ -488,6 +502,17 @@
                 logger.LogWarning(message);
                 throw new InactivateUserUpdateException(message);
             }
+        }
+
+        public void ActivateUser(int userId)
+        {
+            connection.Execute(
+            @"UPDATE Users SET Active=1 WHERE ID=@UserID",
+                new
+                {
+                    UserID = userId
+                }
+            );
         }
 
         public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)

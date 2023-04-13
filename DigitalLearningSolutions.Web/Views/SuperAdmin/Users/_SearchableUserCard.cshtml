@@ -65,21 +65,21 @@
                             <div class="nhsuk-grid-column-one-half nhsuk-u-one-half nhsuk-u-float-right">
                                 @if (Model.IsActive)
                                 {
-                                    <a class="nhsuk-u-float-right" asp-controller="users" asp-action="InactivateUserConfirmation" asp-route-userId="@Model.Id">
-                                        <u>Inactivate</u>
+                                    <a class="nhsuk-u-float-right nhsuk-u-margin-left-3" asp-controller="users" asp-action="InactivateUserConfirmation" asp-route-userId="@Model.Id">
+                                        Inactivate
                                     </a>
                                 }
                                 else
                                 {
-                                    <a class="nhsuk-u-float-right">
-                                        <u>Reactivate</u>
+                                    <a class="nhsuk-u-float-right nhsuk-u-margin-left-3" asp-controller="users" asp-action="ActivateUser" asp-route-userId="@Model.Id">
+                                        Reactivate
                                     </a>
                                 }
 
                                 @if (Model.IsLocked)
                                 {
-                                    <a class="nhsuk-u-float-right">
-                                        <u>Unlock</u>
+                                    <a class="nhsuk-u-float-right" asp-controller="users" asp-action="UnlockAccount" asp-route-userId="@Model.Id">
+                                        Unlock
                                     </a>
                                 }
                             </div>
@@ -110,8 +110,8 @@
                             <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
                                 @if (!Model.IsEmailVerified)
                                 {
-                                    <a class="nhsuk-u-float-right">
-                                        <u>Verify</u>
+                                    <a class="nhsuk-u-float-right" asp-controller="users" asp-action="VerifyEmail" asp-route-userId="@Model.Id" asp-route-email="@Model.Email">
+                                        Verify
                                     </a>
                                 }
                             </div>
@@ -133,7 +133,7 @@
             </dl>
             <a class="nhsuk-button nhsuk-button--secondary" asp-controller="users" asp-action="EditUserDetails" asp-route-userId="@Model.Id" role="button">Edit details</a>
             @*TODO: This feature will work after TD-994 is merged. This comment should be removed after the merge. *@
-            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="users" asp-action="CentreAccounts" asp-route-userId="@Model.Id" role="button">
+            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="users" asp-action="CentreAccounts" asp-route-userId="@Model.Id" role="button" asp-fragment="@Model.Id-name">
                 View Centre Accounts
             </a>
             @*TODO: This feature will work after TD-997 is merged. This comment should be removed after the merge. *@

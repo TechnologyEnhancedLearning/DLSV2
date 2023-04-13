@@ -78,7 +78,8 @@
       && !Model.SupervisorDelegateDetail.DelegateIsNominatedSupervisor
       && Model.SupervisorDelegateDetail.DelegateUserID != null)
       && !(Model.SupervisorDelegateDetail.DelegateEmail == String.Empty || Guid.TryParse(Model.SupervisorDelegateDetail.DelegateEmail, out _))
-      && !Guid.TryParse(Model.SupervisorDelegateDetail.CandidateEmail, out _))
+      && !Guid.TryParse(Model.SupervisorDelegateDetail.CandidateEmail, out _)
+      && Model.SupervisorDelegateDetail.Active != false)
       {
         <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 button-small"
          data-return-page-enabled="true"
@@ -115,7 +116,7 @@
       }
     </div>
   </details>
-  @if (Model.SupervisorDelegateDetail.DelegateUserID != null)
+    @if (Model.SupervisorDelegateDetail.DelegateUserID != null && Model.SupervisorDelegateDetail.Active != false)
   {
     <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
      aria-describedby="@Model.SupervisorDelegateDetail.ID-name"

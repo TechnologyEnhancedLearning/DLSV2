@@ -354,14 +354,17 @@
                 .ValidationState.Should().Be
                     (ModelValidationState.Invalid);
 
-            myAccountController.ModelState.Count.Should().Be(1); // The values for centres 2 and 3 are not invalid
-
+            //myAccountController.ModelState.Count.Should().Be(1); // The values for centres 2 and 3 are not invalid
+            myAccountController.ModelState.Count().Should().Be(2); //Since we are expecting 2 errors
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()
                 .BeEquivalentTo(expectedModel);
 
-            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+            var errorMessageSameEmail = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
                 .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
-            errorMessage.Should().BeEquivalentTo("This email is already in use by another user at the centre");
+            var errorMessageEmailAlreadyInUse = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0).ToList().Last().Last().ErrorMessage;
+            errorMessageSameEmail.Should().BeEquivalentTo("Centre email is the same as primary email");
+            errorMessageEmailAlreadyInUse.Should().BeEquivalentTo("This email is already in use by another user at the centre");
         }
 
         [Test]

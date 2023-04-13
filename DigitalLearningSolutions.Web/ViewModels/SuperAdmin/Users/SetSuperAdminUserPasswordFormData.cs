@@ -9,6 +9,8 @@
         {
             Password = formData.Password;
             ConfirmPassword = formData.ConfirmPassword;
+            UserName = formData.UserName;
         }
+        public string UserName { get; set; }
     }
 }

@@ -11,14 +11,16 @@ namespace DigitalLearningSolutions.Web.Services
     {
 
         IEnumerable<UserCentreAccountsRoleViewModel> GetUserCentreAccountsRoleViewModel(
-            UserEntity? userEntity
+            UserEntity? userEntity,
+            List<int> idsOfCentresWithUnverifiedEmails
         );
 
     }
     public class UserCentreAccountsService : IUserCentreAccountsService
     {
         public IEnumerable<UserCentreAccountsRoleViewModel> GetUserCentreAccountsRoleViewModel(
-               UserEntity? userEntity
+               UserEntity? userEntity,
+               List<int> idsOfCentresWithUnverifiedEmails
            )
         {
             return userEntity!.CentreAccountSetsByCentreId.Values.Where(
@@ -32,7 +34,8 @@ namespace DigitalLearningSolutions.Web.Services
                     centreAccountSet.AdminAccount?.Active == true,
                     centreAccountSet.DelegateAccount != null,
                     centreAccountSet.DelegateAccount?.Approved ?? false,
-                    centreAccountSet.DelegateAccount?.Active ?? false
+                    centreAccountSet.DelegateAccount?.Active ?? false,
+                    idsOfCentresWithUnverifiedEmails.Contains(centreAccountSet.CentreId)
                 )
             );
         }

@@ -10,6 +10,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System;
     using System.Threading.Tasks;
 
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
@@ -31,31 +32,40 @@
         {
             var userEntity = userService.GetUserById(userId);
             TempData["UserID"] = userId;
-            TempData["UserName"] = userEntity.UserAccount.FirstName + " " + userEntity.UserAccount.LastName + " (" + userEntity.UserAccount.PrimaryEmail + ")";
             var model = new SetSuperAdminUserPasswordViewModel(dlsSubApplication);
+            if (TempData["SearchString"] != null)
+            {
+                model.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                model.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                model.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            model.UserId = userId;
+            model.UserName = userEntity.UserAccount.FirstName + " " + userEntity.UserAccount.LastName + " (" + userEntity.UserAccount.PrimaryEmail + ")";
             return View("SuperAdminUserSetPassword", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Index(SetSuperAdminUserPasswordFormData formData, DlsSubApplication dlsSubApplication)
         {
-            TempData.Peek("UserID");
+            TempData.Keep("UserID");
             var userId = TempData["UserID"];
-
 
             if (!ModelState.IsValid)
             {
                 var model = new SetSuperAdminUserPasswordViewModel(formData, dlsSubApplication);
+                model.UserName = formData.UserName;
                 return View("SuperAdminUserSetPassword", model);
             }
 
             var newPassword = formData.Password!;
 
             await passwordService.ChangePasswordAsync((int)userId, newPassword);
-
-            //Reload user account page here.Waiting for TD-992 to completed
-            //var model1 = new UserAccountsViewModel();
-            //return View("Index", model1);
 
             //TODO: This feature will work after TD-995 is merged.This comment should be removed after the merge.
             TempData["UserId"] = userId;

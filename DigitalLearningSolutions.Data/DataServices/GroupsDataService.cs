@@ -148,8 +148,9 @@
                         GroupDescription,
                         (SELECT COUNT(*) FROM GroupDelegates as gd 
                         INNER JOIN DelegateAccounts AS da ON gd.DelegateID = da.ID
-                        INNER JOIN Users AS u ON da.UserID=u.ID AND TRY_CAST(u.PrimaryEmail AS UNIQUEIDENTIFIER) IS NULL
-                        where gd.GroupID = g.GroupID) AS DelegateCount,
+                        INNER JOIN Users AS u ON da.UserID=u.ID 
+                        LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
+                        where gd.GroupID = g.GroupID AND (TRY_CAST(u.PrimaryEmail AS UNIQUEIDENTIFIER) IS NULL OR ucd.Email IS NOT NULL)) AS DelegateCount,
                         ({CourseCountSql}) AS CoursesCount,
                         g.CreatedByAdminUserID AS AddedByAdminId,
                         au.Forename AS AddedByFirstName,

@@ -15,6 +15,13 @@
         }
 
         public DlsSubApplication DlsSubApplication { get; set; }
+        public string? SearchString { get; set; }
+
+        public string? ExistingFilterString { get; set; }
+
+        public int Page { get; set; }
+        public int UserId { get; set; }
+        public new string UserName { get; set; }
     }
 
 }

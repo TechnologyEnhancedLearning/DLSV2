@@ -1,5 +1,4 @@
 ﻿using DigitalLearningSolutions.Web.Services;
-using DigitalLearningSolutions.Data.Enums;
 using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
 using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -10,6 +9,8 @@ using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using NUnit.Framework;
+using GDS.MultiPageFormData;
+using GDS.MultiPageFormData.Enums;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {

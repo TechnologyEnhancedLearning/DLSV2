@@ -63,6 +63,16 @@
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CmsManager));
             }
 
+            if (admin.AdminAccount.IsSuperAdmin)
+            {
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.SuperAdmin));
+            }
+
+            if (admin.AdminAccount.IsReportsViewer)
+            {
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.ReportsViewer));
+            }
+
             return tags;
         }
 

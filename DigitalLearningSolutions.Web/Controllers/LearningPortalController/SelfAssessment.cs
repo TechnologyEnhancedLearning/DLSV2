@@ -11,19 +11,17 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.Extensions.Logging;
+    using GDS.MultiPageFormData.Enums;
 
     public partial class LearningPortalController
     {
@@ -372,7 +370,7 @@
             bool clearFilters = false
         )
         {
-            return FilteredSelfAssessmentGroups(model);
+            return FilteredSelfAssessmentGroups(model, clearFilters);
         }
 
         public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOverviewViewModel model, bool clearFilters = false)
@@ -391,7 +389,7 @@
                 var session = multiPageFormService.GetMultiPageFormData<SearchSelfAssessmentOverviewViewModel>(
                     MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                     TempData
-                );
+                ).GetAwaiter().GetResult();
                 model.AppliedFilters = session.AppliedFilters;
             }
             return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model);
@@ -421,13 +419,9 @@
                 MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                 TempData
             );
-
-            return RedirectToAction("FilteredSelfAssessmentGroups", model);
+            return RedirectToAction("FilteredSelfAssessmentGroupsBookmark", model);
         }
 
-        [NoCaching]
-        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/{competencyGroupId}")]
-        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}")]
         public IActionResult SelfAssessmentOverview(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, SearchSelfAssessmentOverviewViewModel searchModel = null)
         {
             var delegateUserId = User.GetUserIdKnownNotNull();
@@ -654,10 +648,7 @@
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Forbidden });
             }
-            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
+            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
 
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
@@ -689,10 +680,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult SetSupervisorName(AddSupervisorViewModel model)
         {
-            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
+            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
             if (!ModelState.IsValid)
             {
                 var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
@@ -747,10 +735,7 @@
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Forbidden });
             }
-            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
+            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
 
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
@@ -788,10 +773,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Centre")]
         public IActionResult SelectSupervisorCentre(SupervisorCentresViewModel model)
         {
-            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
+            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
             sessionAddSupervisor.CentreID = model.CentreID;
 
             if (!ModelState.IsValid)
@@ -837,10 +819,7 @@
             var supervisorAdminId = 0;
             if (supervisorDelegateId == null)
             {
-                var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                    MultiPageFormDataFeature.AddNewSupervisor,
-                    TempData
-                );
+                var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
                 if (sessionAddSupervisor == null)
                 {
                     return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -909,10 +888,7 @@
 
             if (model.SupervisorDelegateId == null)
             {
-                var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                    MultiPageFormDataFeature.AddNewSupervisor,
-                    TempData
-                );
+                var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
                 if (sessionAddSupervisor == null)
                 {
                     return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -944,10 +920,7 @@
         )]
         public IActionResult AddSupervisorSummary(int selfAssessmentId)
         {
-            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
+            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
             if (sessionAddSupervisor == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -980,10 +953,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
         public async Task<IActionResult> SubmitSummary()
         {
-            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
-                MultiPageFormDataFeature.AddNewSupervisor,
-                TempData
-            );
+            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
 
 
             if (sessionAddSupervisor == null)
@@ -1098,10 +1068,7 @@
         )]
         public IActionResult VerificationPickSupervisor(int selfAssessmentId)
         {
-            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
-                TempData
-            );
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification, TempData).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1130,10 +1097,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/ChooseSupervisor")]
         public IActionResult VerificationPickSupervisor(VerificationPickSupervisorViewModel model)
         {
-            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
-                TempData
-            );
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification, TempData).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1176,10 +1140,7 @@
         )]
         public IActionResult VerificationPickResults(int selfAssessmentId)
         {
-            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
-                TempData
-            );
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification, TempData).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1212,10 +1173,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/PickResults")]
         public IActionResult VerificationPickResults(VerificationPickResultsViewModel model, int selfAssessmentId)
         {
-            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
-                TempData
-            );
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification, TempData).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1252,10 +1210,7 @@
         )]
         public IActionResult VerificationSummary(int selfAssessmentId)
         {
-            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
-                TempData
-            );
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification, TempData).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1320,10 +1275,7 @@
         [HttpPost]
         public IActionResult SubmitVerification()
         {
-            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
-                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
-                TempData
-            );
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification, TempData).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });

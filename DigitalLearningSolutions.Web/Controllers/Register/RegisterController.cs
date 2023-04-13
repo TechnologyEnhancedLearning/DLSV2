@@ -411,6 +411,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void ValidateEmailAddresses(PersonalInformationViewModel model)
         {
+            if (!string.IsNullOrEmpty(model.PrimaryEmail) &&
+                string.Compare(model.CentreSpecificEmail, model.PrimaryEmail, StringComparison.OrdinalIgnoreCase) == 0) //Ignoring the case since email addresses are case insensitive
+            {
+                ModelState.AddModelError("CentreSpecificEmail",
+                CommonValidationErrorMessages.CenterEmailIsSameAsPrimary);
+            }
             RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
                 model.PrimaryEmail,
                 nameof(PersonalInformationViewModel.PrimaryEmail),

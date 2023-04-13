@@ -286,5 +286,34 @@
                 new { email, emailVerificationHashesId }
             );
         }
+
+        [Test]
+        public void SetUserActive_set_Active()
+        {
+            int userId = connection.QuerySingle<int>(
+                @"INSERT INTO Users (
+                        FirstName,
+                        LastName,
+                        PrimaryEmail,
+                        PasswordHash,
+                        Active,
+                        JobGroupID
+                    )
+                    OUTPUT Inserted.ID
+                    VALUES ('Inactive','', 'expected_inactive_user@email.com', 'password', 0, 1)");
+
+            // When
+            this.userDataService.ActivateUser(userId);
+
+            // Then
+            var active = connection.QuerySingle<bool>(
+                @"SELECT Active FROM Users WHERE ID = @userId",
+                new { userId }
+            );
+
+            active.Should().BeTrue();
+
+            userDataService.DeleteUser(userId);
+        }
     }
 }

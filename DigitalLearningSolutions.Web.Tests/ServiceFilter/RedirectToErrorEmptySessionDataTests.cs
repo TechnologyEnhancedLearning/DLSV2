@@ -20,6 +20,8 @@
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
 
     public class RedirectToErrorEmptySessionDataTests
     {

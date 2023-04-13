@@ -56,7 +56,7 @@
         );
 
         public static readonly ChooseACentreStatus EmailUnverified = new ChooseACentreStatus(
-            5,
+            6,
             nameof(EmailUnverified),
             "Email unverified",
             RedCssClassName,

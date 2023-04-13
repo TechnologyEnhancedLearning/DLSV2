@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
     using Microsoft.AspNetCore.Http;
@@ -13,23 +14,27 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Primitives;
     using System;
+    using System.Linq;
     using System.Reflection.PortableExecutable;
 
     public class LearningSolutionsController : Controller
     {
         private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
         private readonly IConfigDataService configDataService;
         private readonly ILogger<LearningSolutionsController> logger;
 
         public LearningSolutionsController(
             IConfigDataService configDataService,
             ILogger<LearningSolutionsController> logger,
-            ICentresDataService centresDataService
+            ICentresDataService centresDataService,
+            ICentresService centresService
         )
         {
             this.configDataService = configDataService;
             this.logger = logger;
             this.centresDataService = centresDataService;
+            this.centresService = centresService;
         }
 
         public IActionResult AccessibilityHelp()
@@ -66,7 +71,13 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 logger.LogError("Contact text from Config table is null");
                 return StatusCode(500);
             }
-
+            var centreId = User.GetCentreId();
+            if (centreId.GetValueOrDefault() > 0)
+            {
+                var centreSummary = centresService.GetAllCentreSummariesForFindCentre().First(x=>x.CentreId == centreId);
+                return View(new ContactViewModel(contactText, centreSummary));
+            }
+     
             var model = new ContactViewModel(contactText);
             return View(model);
         }        
