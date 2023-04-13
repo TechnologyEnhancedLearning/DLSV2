@@ -431,7 +431,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
                  RIGHT OUTER JOIN SupervisorDelegates AS sd ON sd.ID=@supervisorDelegateId
                  RIGHT OUTER JOIN AdminAccounts AS au ON au.ID = sd.SupervisorAdminID
-                 WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = @supervisorDelegateId OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1 ))", new { supervisorDelegateId }
+                 WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = @supervisorDelegateId OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1 )  AND ((sa.SupervisorSelfAssessmentReview = 1) OR
+                         (sa.SupervisorResultsReview = 1)))", new { supervisorDelegateId }
                 );
         }
         public DelegateSelfAssessment GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId)
@@ -597,26 +598,25 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         {
             return connection.Query<RoleProfile>(
                 $@"SELECT rp.ID, rp.Name AS RoleProfileName, rp.Description, rp.BrandID, rp.ParentSelfAssessmentID, rp.[National], rp.[Public], rp.CreatedByAdminID AS OwnerAdminID, rp.NRPProfessionalGroupID, rp.NRPSubGroupID, rp.NRPRoleID, rp.PublishStatusID, 0 AS UserRole, rp.CreatedDate,
-                 (SELECT BrandName
-                 FROM    Brands
-                 WHERE (BrandID = rp.BrandID)) AS Brand,
-                 '' AS ParentSelfAssessment,
-                 '' AS Owner, rp.Archived, rp.LastEdit,
-                 (SELECT ProfessionalGroup
-                 FROM    NRPProfessionalGroups
-                 WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup,
-                 (SELECT SubGroup
-                 FROM    NRPSubGroups
-                 WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup,
-                 (SELECT RoleProfile
-                 FROM    NRPRoles
-                 WHERE (ID = rp.NRPRoleID)) AS NRPRole, 0 AS SelfAssessmentReviewID
-FROM   SelfAssessments AS rp INNER JOIN
-             CentreSelfAssessments AS csa ON rp.ID = csa.SelfAssessmentID AND csa.CentreID = @centreId
-WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
-                 (SELECT SelfAssessmentID
-                 FROM    CandidateAssessments AS CA
-                 WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))", new { delegateUserId, centreId }
+                            (SELECT BrandName
+                             FROM    Brands
+                             WHERE (BrandID = rp.BrandID)) AS Brand, '' AS ParentSelfAssessment, '' AS Owner, rp.Archived, rp.LastEdit,
+                             (SELECT ProfessionalGroup
+                             FROM    NRPProfessionalGroups
+                             WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup,
+                            (SELECT SubGroup
+                             FROM    NRPSubGroups
+                             WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup,
+                             (SELECT RoleProfile
+                             FROM    NRPRoles
+                             WHERE (ID = rp.NRPRoleID)) AS NRPRole, 0 AS SelfAssessmentReviewID
+                FROM   SelfAssessments AS rp INNER JOIN
+                         CentreSelfAssessments AS csa ON rp.ID = csa.SelfAssessmentID AND csa.CentreID = @centreId
+                WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
+                             (SELECT SelfAssessmentID
+                             FROM    CandidateAssessments AS CA
+                             WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL))) AND ((rp.SupervisorSelfAssessmentReview = 1) OR
+                         (rp.SupervisorResultsReview = 1))", new { delegateUserId, centreId }
                 );
         }
 
