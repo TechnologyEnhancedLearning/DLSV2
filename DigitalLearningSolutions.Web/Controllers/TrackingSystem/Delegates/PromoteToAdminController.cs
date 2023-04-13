@@ -120,7 +120,8 @@
                                 ContentManagementRole.NoContentManagementRole.IsContentManager,
                                 ContentManagementRole.NoContentManagementRole.ImportOnly
                             );
-                model.ContentManagementRole = formData.ContentManagementRole;
+                model.IsContentManager = formData.IsContentManager;
+                model.ImportOnly= formData.ImportOnly;
                 ModelState.Clear();
                 ModelState.AddModelError("IsCenterManager", $"Delegate must have one role to be promoted to Admin.");
                 ViewBag.RequiredCheckboxMessage = "Delegate must have one role to be promoted to Admin.";
