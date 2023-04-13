@@ -364,7 +364,7 @@ namespace DigitalLearningSolutions.Web
             {
                 context.Response.Headers.Add("content-security-policy",
                     "default-src 'self'; " +
-                    "script-src 'self' 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='; " +
+                   "script-src 'self' 'sha256-/n13APBYdqlQW71ZpWflMB/QoXNSUKDxZk1rgZc+Jz8=' https://script.hotjar.com https://www.google-analytics.com https://static.hotjar.com https://www.googletagmanager.com 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=' 'sha256-VQKp2qxuvQmMpqE/U/ASQ0ZQ0pIDvC3dgQPPCqDlvBo=';" +
                     "style-src 'self' 'unsafe-inline'; " +
                     "font-src https://assets.nhs.uk/; " +
                     "connect-src 'self' http: ws:; " +
