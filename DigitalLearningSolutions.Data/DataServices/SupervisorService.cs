@@ -230,11 +230,10 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             int existingId = (int)connection.ExecuteScalar(
                 @"
                     SELECT COALESCE
-                    ((SELECT ID
+                    ((SELECT Top 1 ID
                         FROM    SupervisorDelegates sd
-                        WHERE(SupervisorEmail = @supervisorEmail) AND(DelegateEmail = @delegateEmail)
-                            AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
-                            AND(sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
+                        WHERE ((sd.SupervisorAdminID = @supervisorAdminID) OR (sd.SupervisorAdminID > 0 AND SupervisorEmail = @supervisorEmail))
+		                      AND((sd.DelegateUserID = @delegateUserId) OR (sd.DelegateUserID > 0 AND DelegateEmail = @delegateEmail)) ORDER BY sd.DelegateUserID Desc
                         ), 0) AS ID",
                 new
                 {
@@ -247,7 +246,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 
             if (existingId > 0)
             {
-                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId WHERE (SupervisorAdminID = @supervisorAdminId) AND (DelegateEmail = @delegateEmail) AND (Removed IS NOT NULL)", new { supervisorAdminId, delegateEmail, delegateUserId });
+                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId WHERE ID = @existingId", new { delegateUserId, existingId });
                 return existingId;
             }
             else
