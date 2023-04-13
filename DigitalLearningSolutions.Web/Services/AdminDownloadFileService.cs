@@ -204,12 +204,6 @@
                     new DataColumn(IsSuperAdmin),
                     new DataColumn(IsReportsViewer),
 
-                    new DataColumn(IsFrameworkDeveloper),
-                    new DataColumn(IsFrameworkContributor),
-                    new DataColumn(IsWorkforceManager),
-                    new DataColumn(IsWorkforceContributor),
-                    new DataColumn(IsLocalWorkforceManager),
-
                     new DataColumn(UserID),
                     new DataColumn(CentreID),
                     new DataColumn(CategoryID)
@@ -248,12 +242,6 @@
             row[IsSuperAdmin] = adminRecord.AdminAccount?.IsSuperAdmin;
             row[IsReportsViewer] = adminRecord.AdminAccount?.IsReportsViewer;
 
-            row[IsFrameworkDeveloper] = adminRecord.AdminAccount?.IsFrameworkDeveloper;
-            row[IsFrameworkContributor] = adminRecord.AdminAccount?.IsFrameworkContributor;
-            row[IsWorkforceManager] = adminRecord.AdminAccount?.IsWorkforceManager;
-            row[IsWorkforceContributor] = adminRecord.AdminAccount?.IsWorkforceContributor;
-            row[IsLocalWorkforceManager] = adminRecord.AdminAccount?.IsLocalWorkforceManager;
-
             row[UserID] = adminRecord.AdminAccount?.UserId;
             row[CentreID] = adminRecord.AdminAccount?.CentreId;
             row[CategoryID] = adminRecord.AdminAccount?.CategoryId;
@@ -270,8 +258,7 @@
             }
             var boolColumns = new[] { IsCentreAdmin, IsReportsViewer, IsSuperAdmin,
                                         IsCentreManager, IsContentCreator, IsSupervisor,
-                                        IsCMSManager,IsCMSAdministrator, IsFrameworkDeveloper, IsFrameworkContributor,
-                                        IsWorkforceManager, IsWorkforceContributor, IsLocalWorkforceManager,
+                                        IsCMSManager,IsCMSAdministrator,
                                         IsTrainer, IsNominatedSupervisor,Locked,IsCMSManager,IsCMSAdministrator
                                     };
             foreach (var columnName in boolColumns)
