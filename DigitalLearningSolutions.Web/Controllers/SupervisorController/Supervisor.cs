@@ -104,7 +104,7 @@
             {
                 string delegateEmail = model.DelegateEmailAddress ?? String.Empty;
                 int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
-                int existingId = supervisorService.IsSupervisorDelegateExistAndReturnId(adminId,delegateEmail, centreId);
+                int existingId = IsSupervisorDelegateExistAndActive(adminId, delegateEmail, centreId);
                 if (existingId > 0)
                 {
                     ModelState.AddModelError("DelegateEmailAddress", "User is already registered as a supervisor with other email");
@@ -202,11 +202,7 @@
             {
                 foreach (string email in delegateEmails)
                 {
-                    int existingId = supervisorService.IsSupervisorDelegateExistAndReturnId(
-                        adminId,
-                        email,
-                        centreId
-                    );
+                    int existingId = IsSupervisorDelegateExistAndActive(adminId, email, centreId);
                     if (existingId > 0)
                     {
                         alreadyExistDelegateEmail.Add(email);
@@ -1174,6 +1170,21 @@
                 supervisorService.UpdateNotificationSent(reviewId);
             }
             return RedirectToAction("MyStaffList");
+        }
+
+        private int IsSupervisorDelegateExistAndActive(int adminId, string delegateEmail, int centreId)
+        {
+            int existingId = supervisorService.IsSupervisorDelegateExistAndReturnId(adminId, delegateEmail, centreId);
+            if (existingId > 0)
+            {
+                var supervisorDelegate = supervisorService.GetSupervisorDelegateById(existingId);
+                if (supervisorDelegate != null && supervisorDelegate.Removed != null)
+                {
+                    return 0;
+                }
+
+            }
+            return existingId;
         }
     }
 }
