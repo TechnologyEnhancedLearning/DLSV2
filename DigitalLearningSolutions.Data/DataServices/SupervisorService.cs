@@ -50,6 +50,7 @@
         //DELETE DATA
         bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId);
         int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId,string delegateEmail,int centreId);
+        SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -1089,6 +1090,19 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
                 return existingId ?? 0;
             }
             return 0;
+        }
+
+        public SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId)
+        {
+            var supervisorDelegate = connection.Query<SupervisorDelegate>(
+                $@"SELECT ID, SupervisorAdminID, DelegateEmail, CandidateID, Added
+                            ,NotificationSent, Removed, SupervisorEmail, AddedByDelegate
+                            ,InviteHash, DelegateUserID
+                    FROM SupervisorDelegates
+                    WHERE ID = @supervisorDelegateId", new { supervisorDelegateId }
+            ).FirstOrDefault();
+
+            return supervisorDelegate!;
         }
     }
 }
