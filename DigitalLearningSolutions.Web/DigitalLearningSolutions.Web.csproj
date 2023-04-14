@@ -79,7 +79,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="C:\Users\Oluwatobi.awe\source\repos\TechnologyEnhancedLearning\DLSV2\DigitalLearningSolutions.Web\.editorconfig" />
         <None Include="wwwroot\favicon.ico" />
         <None Include="wwwroot\images\itSkillsPathwayLogo.png" />
         <None Include="wwwroot\images\nhsDigitalLogo.png" />
