@@ -72,13 +72,14 @@
         <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.5.1" />
         <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
-        <PackageReference Include="NHSUKViewComponents.Web" Version="1.0.7" />
+        <PackageReference Include="NHSUKViewComponents.Web" Version="1.0.8" />
         <PackageReference Include="Npm" Version="3.5.2" />
         <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.5.0" />
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="C:\Users\Oluwatobi.awe\source\repos\TechnologyEnhancedLearning\DLSV2\DigitalLearningSolutions.Web\.editorconfig" />
         <None Include="wwwroot\favicon.ico" />
         <None Include="wwwroot\images\itSkillsPathwayLogo.png" />
         <None Include="wwwroot\images\nhsDigitalLogo.png" />
@@ -164,5 +165,9 @@
             <UserProperties />
         </VisualStudio>
     </ProjectExtensions>
+
+    <ItemGroup>
+      <EditorConfigFiles Remove="C:\Users\Oluwatobi.awe\source\repos\TechnologyEnhancedLearning\DLSV2\DigitalLearningSolutions.Web\.editorconfig" />
+    </ItemGroup>
 
 </Project>
