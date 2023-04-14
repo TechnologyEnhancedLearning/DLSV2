@@ -165,8 +165,4 @@
         </VisualStudio>
     </ProjectExtensions>
 
-    <ItemGroup>
-      <EditorConfigFiles Remove="C:\Users\Oluwatobi.awe\source\repos\TechnologyEnhancedLearning\DLSV2\DigitalLearningSolutions.Web\.editorconfig" />
-    </ItemGroup>
-
 </Project>
