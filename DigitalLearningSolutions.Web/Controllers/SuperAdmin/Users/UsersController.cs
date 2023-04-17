@@ -319,14 +319,14 @@
             return View("UserCentreAccounts", model);
         }
         [Route("SuperAdmin/Users/{UserId:int}/UnlockAccount")]
-        public IActionResult UnlockAccount(int UserId, string RequestUrl= null)
+        public IActionResult UnlockAccount(int userId, string RequestUrl= null)
         {
-            userService.ResetFailedLoginCountByUserId(UserId);
-
+            userService.ResetFailedLoginCountByUserId(userId);
+            TempData["UserId"] = userId;
             if (RequestUrl != null)
                 return Redirect(RequestUrl);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Users", new { UserId = userId });
         }
 
         [Route("SuperAdmin/Users/{userId=0:int}/ActivateUser")]
