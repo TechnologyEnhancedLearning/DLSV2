@@ -17,6 +17,8 @@
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
+        CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
+
         void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
@@ -206,6 +208,18 @@
                         WHERE c.Active = 1 AND c.ShowOnMap = 1"
             );
         }
+
+        public CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId)
+        {
+            return connection.QueryFirstOrDefault<CentreSummaryForContactDisplay>(
+                @"SELECT CentreID,CentreName,pwTelephone AS Telephone,pwEmail AS Email,pwWebURL AS WebUrl,pwHours AS Hours
+                         FROM Centres
+                         WHERE Active = 1 AND CentreID = @centreId",
+                new { centreId }
+            );
+        }
+
+
 
         public void UpdateCentreManagerDetails(
             int centreId,

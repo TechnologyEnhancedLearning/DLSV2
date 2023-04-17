@@ -116,6 +116,21 @@
         }
 
         [Test]
+        public void GetCentreSummaryForFindContactDislay_calls_dataService_and_returns_one_summary_detail()
+        {
+            // Given
+            var expectedCentres = Builder<CentreSummaryForContactDisplay>.CreateListOfSize(10).Build();
+            int selectedCenter = expectedCentres.OrderBy(r => Guid.NewGuid()).Last().CentreId;
+            A.CallTo(() => centresDataService.GetCentreSummaryForContactDisplay(selectedCenter));
+
+            // When
+            var result = centresService.GetCentreSummaryForContactDisplay(selectedCenter);
+
+            // Then
+            result.Should().Equals(1);
+        }
+
+        [Test]
         [TestCase("primary@email")]
         [TestCase("PRIMARY@EMAIL")]
         public void

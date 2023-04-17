@@ -74,7 +74,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             var centreId = User.GetCentreId();
             if (centreId.GetValueOrDefault() > 0)
             {
-                var centreSummary = centresService.GetAllCentreSummariesForFindCentre().FirstOrDefault(x=>x.CentreId == centreId);
+                var centreSummary = centresService.GetCentreSummaryForContactDisplay(centreId.Value);
                 return View(new ContactViewModel(contactText, centreSummary));
             }
      
