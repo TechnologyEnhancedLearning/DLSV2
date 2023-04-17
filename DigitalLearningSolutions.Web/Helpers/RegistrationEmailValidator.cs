@@ -43,7 +43,7 @@
                     {
                         modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);
                     }
-                    else if (userDataService.PrimaryEmailIsInUseAtCentre(centreEmail!, centreId.Value))
+                    else if (userDataService.PrimaryEmailIsInUse(centreEmail!))
                     {
                         modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.PrimaryEmailInUseDuringDelegateRegistration);
                     }

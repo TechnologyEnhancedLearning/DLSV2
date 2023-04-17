@@ -365,14 +365,6 @@
 
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}/Filtered")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/Filtered")]
-        public IActionResult FilteredSelfAssessmentGroupsBookmark(
-            SearchSelfAssessmentOverviewViewModel model,
-            bool clearFilters = false
-        )
-        {
-            return FilteredSelfAssessmentGroups(model, clearFilters);
-        }
-
         public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOverviewViewModel model, bool clearFilters = false)
         {
             if (clearFilters)
@@ -419,9 +411,10 @@
                 MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
                 TempData
             );
-            return RedirectToAction("FilteredSelfAssessmentGroupsBookmark", model);
+            return RedirectToAction("FilteredSelfAssessmentGroups", model);
         }
-
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}")]
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}")]
         public IActionResult SelfAssessmentOverview(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, SearchSelfAssessmentOverviewViewModel searchModel = null)
         {
             var delegateUserId = User.GetUserIdKnownNotNull();

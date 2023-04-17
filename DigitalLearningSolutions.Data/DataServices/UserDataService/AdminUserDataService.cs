@@ -337,7 +337,7 @@
                             OFFSET @offset ROWS
                             FETCH NEXT @rows ROWS ONLY";
 
-            IEnumerable<AdminEntity> adminEntity = connection.Query<AdminAccount, UserAccount,Centre, UserCentreDetails,int, AdminEntity>(
+            IEnumerable<AdminEntity> adminEntity = connection.Query<AdminAccount, UserAccount, Centre, UserCentreDetails, int, AdminEntity>(
                 sql,
                 (adminAccount, userAccount, centre, userCentreDetails, adminSessions) => new AdminEntity(
                     adminAccount,
@@ -362,5 +362,17 @@
             );
             return (adminEntity, ResultCount);
         }
+
+        public void UpdateAdminStatus(int adminId, bool active)
+        {
+            connection.Execute(
+                @"UPDATE AdminAccounts SET
+                        Active = @active
+                    WHERE ID = @adminId",
+                new { active, adminId }
+            );
+        }
     }
+
+
 }

@@ -74,6 +74,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("PersonalInformation");
         }
 
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpGet]
         public IActionResult PersonalInformation()
@@ -83,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             if (Convert.ToBoolean(delegateRegistered))
             {
                 TempData.Clear();
-                return RedirectToAction("LearningSolutions", "StatusCode", new { code = 410 });
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var model = new RegisterDelegatePersonalInformationViewModel(data);
 

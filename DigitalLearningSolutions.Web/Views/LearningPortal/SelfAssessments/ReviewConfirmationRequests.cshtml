@@ -79,22 +79,28 @@
                             <span class="nhsuk-table-responsive__heading">Request </span>
                             @competency.SupervisorName<br />
                             @competency.SupervisorVerificationRequested?.ToString("dd/MM/yyyy")<br />
-                            <div class="nhsuk-grid-row" style="white-space: nowrap;">
-                                @if (competency.EmailSent.HasValue && clockUtility.UtcNow.Subtract(competency.EmailSent.Value) > TimeSpan.FromHours(1))
-                                {
-                                    <div class="nhsuk-grid-column-one-quarter nhsuk-u-one-quarter-tablet">
-                                        <a asp-action="ResendSupervisorVerificationRequest"
-                                           asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-                                           asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
-                                           asp-route-candidateAssessmentSupervisorId="@competency.CandidateAssessmentSupervisorId"
-                                           asp-route-selfAssessmentResultId="@question.ResultId"
-                                           asp-route-supervisorVerificationId="@competency.SupervisorVerificationId">Resend</a>
+                            <div class="nhsuk-grid-column-two-thirds" style="white-space: nowrap;">
+                                <div class="nhsuk-grid-row nhsuk-u-padding-0">
+                                    @if (competency.EmailSent.HasValue && clockUtility.UtcNow.Subtract(competency.EmailSent.Value) > TimeSpan.FromHours(1))
+                                    {
+                                        <div class="nhsuk-grid-column-one-half nhsuk-u-padding-0">
+                                            <a asp-action="ResendSupervisorVerificationRequest"
+                               asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+                               asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
+                               asp-route-candidateAssessmentSupervisorId="@competency.CandidateAssessmentSupervisorId"
+                               asp-route-selfAssessmentResultId="@question.ResultId"
+                               asp-route-supervisorVerificationId="@competency.SupervisorVerificationId">
+                                                Resend
+                                            </a>
+                                        </div>
+                                    }
+                                    <div class="nhsuk-grid-column-one-half nhsuk-u-padding-0">
+                                        <a asp-action="WithdrawSupervisorVerificationRequest"
+                               asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+                               asp-route-supervisorVerificationId="@competency.SupervisorVerificationId">
+                                            Withdraw
+                                        </a>
                                     </div>
-                                }
-                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-one-quarter-tablet">
-                                    <a asp-action="WithdrawSupervisorVerificationRequest"
-                                       asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-                                       asp-route-supervisorVerificationId="@competency.SupervisorVerificationId">Withdraw</a>
                                 </div>
                             </div>
                         </td>

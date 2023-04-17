@@ -53,7 +53,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             5,
             nameof(SuperAdmin),
             "Super Admin",
-            "/SuperAdmin/Admins",
+            "/SuperAdmin/Users",
             "Super Admin - System Configuration",
             "SuperAdmin"
         );

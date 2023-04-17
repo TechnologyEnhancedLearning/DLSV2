@@ -28,7 +28,8 @@
         private const string LastName = "Last name";
         private const string FirstName = "First name";
 
-        private const string UserActive = "User Active";
+        private const string Active = "Active";
+        private const string Locked = "Locked";
         private const string CentreID = "Centre ID";
         private const string CentreName = "Centre Name";
         private const string CentreEmail = "Centre Email";
@@ -51,6 +52,8 @@
         private const string IsWorkforceContributor = "Workforce Contributor";
         private const string IsLocalWorkforceManager = "Local Workforce Manager";
         private const string IsNominatedSupervisor = "Nominated Supervisor";
+        private const string IsCMSManager = "CMS Manager";
+        private const string IsCMSAdministrator = "CMS Administrator";
         private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
         private readonly IUserDataService userDataService;
 
@@ -180,34 +183,36 @@
                 new[]
                 {
                     new DataColumn(AdminID),
-                    new DataColumn(UserID),
-                    new DataColumn(PrimaryEmail),
                     new DataColumn(FirstName),
                     new DataColumn(LastName),
-
-                    new DataColumn(UserActive),
-                    new DataColumn(CentreID),
-                    new DataColumn(CentreName),
+                    new DataColumn(PrimaryEmail),
                     new DataColumn(CentreEmail),
-                    new DataColumn(CentreEmailVerified),
+                    new DataColumn(Active),
+                    new DataColumn(Locked),
 
+                    new DataColumn(CentreName),
                     new DataColumn(IsCentreAdmin),
-                    new DataColumn(IsReportsViewer),
-                    new DataColumn(IsSuperAdmin),
                     new DataColumn(IsCentreManager),
-                    new DataColumn(IsContentManager),
 
-                    new DataColumn(IsContentCreator),
                     new DataColumn(IsSupervisor),
+                    new DataColumn(IsNominatedSupervisor),
                     new DataColumn(IsTrainer),
-                    new DataColumn(CategoryID),
+                    new DataColumn(IsContentCreator),
+
+                    new DataColumn(IsCMSAdministrator),
+                    new DataColumn(IsCMSManager),
+                    new DataColumn(IsSuperAdmin),
+                    new DataColumn(IsReportsViewer),
+
                     new DataColumn(IsFrameworkDeveloper),
                     new DataColumn(IsFrameworkContributor),
                     new DataColumn(IsWorkforceManager),
-
                     new DataColumn(IsWorkforceContributor),
                     new DataColumn(IsLocalWorkforceManager),
-                    new DataColumn(IsNominatedSupervisor),
+
+                    new DataColumn(UserID),
+                    new DataColumn(CentreID),
+                    new DataColumn(CategoryID)
                 }
             );
         }
@@ -220,52 +225,54 @@
             var row = dataTable.NewRow();
 
             row[AdminID] = adminRecord.AdminAccount?.Id;
-            row[UserID] = adminRecord.AdminAccount?.UserId;
-            row[PrimaryEmail] = adminRecord.UserAccount?.PrimaryEmail;
             row[FirstName] = adminRecord.UserAccount?.FirstName;
             row[LastName] = adminRecord.UserAccount?.LastName;
-
-            row[UserActive] = adminRecord.UserAccount?.Active;
-            row[CentreID] = adminRecord.AdminAccount?.CentreId;
-            row[CentreName] = adminRecord.Centre?.CentreName;
+            row[PrimaryEmail] = adminRecord.UserAccount?.PrimaryEmail;
             row[CentreEmail] = adminRecord.UserCentreDetails?.Email;
+            row[Active] = adminRecord.AdminAccount?.Active;
 
-            row[CentreEmailVerified] = adminRecord.UserCentreDetails?.EmailVerified;
+            row[Locked] = adminRecord.UserAccount?.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
+            row[CentreName] = adminRecord.Centre?.CentreName;
             row[IsCentreAdmin] = adminRecord.AdminAccount?.IsCentreAdmin;
-            row[IsReportsViewer] = adminRecord.AdminAccount?.IsReportsViewer;
-            row[IsSuperAdmin] = adminRecord.AdminAccount?.IsSuperAdmin;
             row[IsCentreManager] = adminRecord.AdminAccount?.IsCentreManager;
-            row[IsContentManager] = adminRecord.AdminAccount?.IsContentManager;
+
+            row[IsSupervisor] = adminRecord.AdminAccount?.IsSupervisor;
+            row[IsNominatedSupervisor] = adminRecord.AdminAccount?.IsNominatedSupervisor;
+            row[IsTrainer] = adminRecord.AdminAccount?.IsTrainer;
 
             row[IsContentCreator] = adminRecord.AdminAccount?.IsContentCreator;
-            row[IsSupervisor] = adminRecord.AdminAccount?.IsSupervisor;
-            row[IsTrainer] = adminRecord.AdminAccount?.IsTrainer;
-            row[CategoryID] = adminRecord.AdminAccount?.CategoryId;
+
+            row[IsCMSAdministrator] = adminRecord.AdminAccount.IsContentManager && adminRecord.AdminAccount.ImportOnly;
+            row[IsCMSManager] = adminRecord.AdminAccount.IsContentManager && !adminRecord.AdminAccount.ImportOnly;
+            
+            row[IsSuperAdmin] = adminRecord.AdminAccount?.IsSuperAdmin;
+            row[IsReportsViewer] = adminRecord.AdminAccount?.IsReportsViewer;
+
             row[IsFrameworkDeveloper] = adminRecord.AdminAccount?.IsFrameworkDeveloper;
             row[IsFrameworkContributor] = adminRecord.AdminAccount?.IsFrameworkContributor;
             row[IsWorkforceManager] = adminRecord.AdminAccount?.IsWorkforceManager;
-
             row[IsWorkforceContributor] = adminRecord.AdminAccount?.IsWorkforceContributor;
             row[IsLocalWorkforceManager] = adminRecord.AdminAccount?.IsLocalWorkforceManager;
-            row[IsNominatedSupervisor] = adminRecord.AdminAccount?.IsNominatedSupervisor;
+
+            row[UserID] = adminRecord.AdminAccount?.UserId;
+            row[CentreID] = adminRecord.AdminAccount?.CentreId;
+            row[CategoryID] = adminRecord.AdminAccount?.CategoryId;
 
             dataTable.Rows.Add(row);
         }
 
         private static void FormatAllDelegateWorksheetColumns(IXLWorkbook workbook, DataTable dataTable)
         {
-            ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, CentreEmailVerified, XLDataType.DateTime);
-
             var integerColumns = new[] { AdminID, UserID, CentreID, CategoryID};
             foreach (var columnName in integerColumns)
             {
                 ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Number);
             }
-            var boolColumns = new[] { CentreEmailVerified, IsCentreAdmin, IsReportsViewer, IsSuperAdmin,
-                                        IsCentreManager, IsContentManager, IsContentCreator, IsSupervisor,
-                                        IsTrainer, IsFrameworkDeveloper, IsFrameworkContributor,
+            var boolColumns = new[] { IsCentreAdmin, IsReportsViewer, IsSuperAdmin,
+                                        IsCentreManager, IsContentCreator, IsSupervisor,
+                                        IsCMSManager,IsCMSAdministrator, IsFrameworkDeveloper, IsFrameworkContributor,
                                         IsWorkforceManager, IsWorkforceContributor, IsLocalWorkforceManager,
-                                        IsNominatedSupervisor
+                                        IsTrainer, IsNominatedSupervisor,Locked,IsCMSManager,IsCMSAdministrator
                                     };
             foreach (var columnName in boolColumns)
             {
