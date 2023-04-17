@@ -406,9 +406,16 @@
                                 [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
                         ELSE
+                        BEGIN
                             UPDATE SelfAssessmentResults
                             SET [Result] = @result
                             WHERE ID = @existentResultId
+
+                            DELETE SARS FROM   SelfAssessmentResultSupervisorVerifications  sars INNER JOIN
+                             CandidateAssessmentSupervisors  cas ON SARS.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+                             SupervisorDelegates  sd ON cas.SupervisorDelegateId = sd.ID
+                            WHERE  sd.SupervisorAdminID = @delegateUserId AND SARS.SelfAssessmentResultId=@existentResultId
+                        END
                     END",
                 new { competencyId, selfAssessmentId, delegateUserId, assessmentQuestionId, result, supportingComments }
             );
