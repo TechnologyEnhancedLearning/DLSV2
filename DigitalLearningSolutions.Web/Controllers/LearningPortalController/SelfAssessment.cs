@@ -798,6 +798,7 @@
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
             );
+            TempData["CentreID"]=model.CentreID.ToString();
             return RedirectToAction("AddNewSupervisor", new { model.SelfAssessmentID });
         }
 
