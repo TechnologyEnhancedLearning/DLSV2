@@ -1009,7 +1009,7 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
 	                    ON sas1.SelfAssessmentID = ca1.SelfAssessmentID 
                     INNER JOIN CompetencyAssessmentQuestions AS caq1 
 	                    ON sas1.CompetencyID = caq1.CompetencyID 
-	                    ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID
+	                    ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
                     LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS caoc1 
 	                    ON sas1.CompetencyID = caoc1.CompetencyID 
 	                    AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID 
