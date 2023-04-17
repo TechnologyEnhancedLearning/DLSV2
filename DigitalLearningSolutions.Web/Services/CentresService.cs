@@ -18,6 +18,8 @@
 
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
+        CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
+
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
 
         bool IsAnEmailValidForCentreManager(string? primaryEmail, string? centreSpecificEmail, int centreId);
@@ -59,6 +61,11 @@
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
         {
             return centresDataService.GetAllCentreSummariesForFindCentre();
+        }
+
+        public CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId)
+        {
+            return centresDataService.GetCentreSummaryForContactDisplay(centreId);
         }
 
         public IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap()

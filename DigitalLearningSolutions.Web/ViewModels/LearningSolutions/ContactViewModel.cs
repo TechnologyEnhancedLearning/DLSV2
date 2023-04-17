@@ -7,14 +7,14 @@
     {
         public HtmlString ContactText { get; }
 
-        public CentreSummaryForFindYourCentre CentreSummary { get; }
+        public CentreSummaryForContactDisplay CentreSummary { get; }
 
         public ContactViewModel(string contactText)
         {
             ContactText = new HtmlString(contactText);
 
         }
-        public ContactViewModel(string contactText, CentreSummaryForFindYourCentre centreSummary)
+        public ContactViewModel(string contactText, CentreSummaryForContactDisplay centreSummary)
         {
             ContactText = new HtmlString(contactText);
             CentreSummary = centreSummary;
