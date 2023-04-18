@@ -119,7 +119,7 @@
                 @"SELECT DATEPART(month, caa.StartedDate) AS EnrolledMonth, DATEPART(yyyy, caa.StartedDate) AS EnrolledYear, ca.FirstName, ca.LastName, ca.EmailAddress AS Email, ca.Answer1 AS CentreField1, ca.Answer2 AS CentreField2, ca.Answer3 AS CentreField3, CASE WHEN (caa.SubmittedDate IS NOT NULL) 
                              THEN 'Submitted' WHEN (caa.UserBookmark LIKE N'/LearningPortal/SelfAssessment/1/Review' AND caa.SubmittedDate IS NULL) THEN 'Reviewing' ELSE 'Incomplete' END AS Status
                 FROM   Candidates AS ca INNER JOIN
-                             CandidateAssessments AS caa ON ca.CandidateID = caa.CandidateID INNER JOIN
+                             CandidateAssessments AS caa ON ca.UserID = caa.DelegateUserID AND ca.CentreID = caa.CentreID INNER JOIN
                              JobGroups AS jg ON ca.JobGroupID = jg.JobGroupID
                 WHERE (ca.Active = 1) AND (ca.CentreID = @centreId) AND (caa.SelfAssessmentID = 1)
                 ORDER BY EnrolledYear DESC, EnrolledMonth DESC, ca.LastName, ca.FirstName",
