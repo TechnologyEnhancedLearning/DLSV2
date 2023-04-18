@@ -6,6 +6,7 @@ using DigitalLearningSolutions.Web.ViewModels.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
@@ -16,7 +17,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
         private readonly IClockUtility clockUtility;
         private readonly ILogger<CookieConsentController> logger;
         private string CookieBannerConsentCookieName = "";
-        private int CookieBannerConsentCookieExpiryDays=0;
+        private int CookieBannerConsentCookieExpiryDays = 0;
 
         public CookieConsentController(
             IConfigDataService configDataService,
@@ -46,7 +47,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             model.PolicyUpdatedDate = policyLastUpdatedDate;
             if (Request != null)
             {
-                if (Request.Cookies.HasDLSBannerCookie(CookieBannerConsentCookieName,"true"))
+                if (Request.Cookies.HasDLSBannerCookie(CookieBannerConsentCookieName, "true"))
                     model.UserConsent = "true";
                 else if (Request.Cookies.HasDLSBannerCookie(CookieBannerConsentCookieName, "false"))
                     model.UserConsent = "false";
@@ -95,12 +96,31 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                         clockUtility.UtcNow.AddDays(CookieBannerConsentCookieExpiryDays));
 
                 else if (consent == "false")
+                {
                     Response.Cookies?.SetDLSBannerCookie(CookieBannerConsentCookieName, consent,
                         clockUtility.UtcNow.AddDays(CookieBannerConsentCookieExpiryDays));
-
+                    RemoveGaAndHjCookies();
+                }
                 TempData["userConsentCookieOption"] = consent;
 
                 if (setTempDataConsentViaBannerPost) TempData["consentViaBannerPost"] = consent; // Need this tempdata to display the confirmation banner
+            }
+        }
+
+        private void RemoveGaAndHjCookies()
+        {
+            // List and delete all "google analytics" cookies
+            var gaCookies = Request.Cookies.Where(c => c.Key.StartsWith("_ga")).ToList();
+            foreach (var cookie in gaCookies)
+            {
+                Response.Cookies.Delete(cookie.Key);
+            }
+
+            // List and delete all "hotjar" cookies
+            var hjCookies = Request.Cookies.Where(c => c.Key.StartsWith("_hj")).ToList();
+            foreach (var cookie in hjCookies)
+            {
+                Response.Cookies.Delete(cookie.Key);
             }
         }
     }
