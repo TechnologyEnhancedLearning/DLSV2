@@ -1,7 +1,7 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Feedback
+﻿@using DigitalLearningSolutions.Web.ViewModels.UserFeedback
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
-@model FeedbackViewModel;
+@model UserFeedbackViewModel;
 
 @{
   ViewData["Title"] = "Feedback";
@@ -28,7 +28,7 @@
     <p>Step 1 of 5</p>
     <hr/>
 
-    <form method="post" asp-action="FeedbackLoggedInStepOneSave">
+    <form method="post" asp-action="UserFeedbackLoggedInStepOneSave">
       <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
       <div class="nhsuk-hint" id="contact-hint">
         Did you achieve everything you came to do today?

@@ -1,15 +1,15 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Feedback
+﻿namespace DigitalLearningSolutions.Web.ViewModels.UserFeedback
 {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
 
-    public class FeedbackViewModel
+    public class UserFeedbackViewModel
     {
-        public FeedbackViewModel() { }
+        public UserFeedbackViewModel() { }
 
-        public FeedbackViewModel(
+        public UserFeedbackViewModel(
             int? userId,
             string sourceUrl,
             bool taskAchieved,

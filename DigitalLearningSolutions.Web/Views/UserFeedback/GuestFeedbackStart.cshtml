@@ -1,7 +1,7 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Feedback
+﻿@using DigitalLearningSolutions.Web.ViewModels.UserFeedback
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
-@model FeedbackViewModel;
+@model UserFeedbackViewModel;
 
 @{
   ViewData["Title"] = "Feedback";
@@ -23,7 +23,7 @@
       <div class="nhsuk-grid-column-two-thirds">
 
       @*<form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SaveFeedback">*@
-      <form method="post" asp-action="SaveFeedback">
+      <form method="post" asp-action="SaveUserFeedback">
 
           @*<div class="nhsuk-form-group float-right">*@
 
