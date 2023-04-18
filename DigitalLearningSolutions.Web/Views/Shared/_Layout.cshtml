@@ -169,6 +169,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         <script src="@Url.Content("~/js/cookiesbanner.js")" asp-append-version="true"></script>
 
+        <input type="hidden" id="keepAlivePingPath" value="@Url.Action("ping","keepSessionAlive")" />
+
     </div>
 
 </body>
