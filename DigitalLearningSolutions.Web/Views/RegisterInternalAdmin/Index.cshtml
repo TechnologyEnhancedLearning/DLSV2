@@ -1,0 +1,52 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model InternalAdminInformationViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register" : "Register";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full word-break">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
+
+      @if (errorHasOccurred)
+      {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CentreSpecificEmail) })" />
+      }
+
+      <div class="nhsuk-u-margin-bottom-8">
+        <h1 class="nhsuk-heading-xl">Register</h1>
+
+        <p class="nhsuk-body-l">
+          You have chosen to register as an admin at <b>@Model.CentreName</b>. You may set a centre email for this account.
+        </p>
+        <input type="hidden" asp-for="Centre" />
+        <input type="hidden" asp-for="PrimaryEmail" />
+      </div>
+
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label">
+          Primary email
+        </label>
+        <div class="nhsuk-hint">
+          This will be used for logging into the system. All communications will be sent to this email by default. You can change your primary email on the My Account page.
+        </div>
+        <p class="nhsuk-body-m nhsuk-u-margin-top-2">@Model.PrimaryEmail</p>
+      </div>
+
+      <vc:text-input asp-for="CentreSpecificEmail"
+                     label="Centre email (optional)"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text="If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address. Your primary email address will still be used for logging in and notifications for managing your account."
+                     autocomplete="email"
+                     css-class="nhsuk-u-width-one-half" />
+
+      <button class="nhsuk-button" type="submit">Submit</button>
+    </form>
+
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
+  </div>
+</div>

@@ -1,0 +1,49 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Register
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ConfirmationVerifyEmailWarningViewModel
+
+@{
+  var primaryEmailIsUnverified = Model.PrimaryEmailIfUnverified != null;
+  var centreEmailIsUnverified = Model.CentreEmailIfUnverified != null;
+  var primaryEmailIsUnverifiedAndSameAsCentreEmail = primaryEmailIsUnverified && Model.PrimaryEmailIfUnverified == Model.CentreEmailIfUnverified;
+  var multipleEmailsAreUnverified = primaryEmailIsUnverified && centreEmailIsUnverified && !primaryEmailIsUnverifiedAndSameAsCentreEmail;
+}
+
+<div class="nhsuk-warning-callout word-break">
+  <partial name="_VerifyEmailWarningHeading" model="@Model.NumberOfUnverifiedEmails" />
+
+  @if (primaryEmailIsUnverifiedAndSameAsCentreEmail)
+  {
+    <p>
+      You need to verify your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong>
+      to access <strong>@Model.CentreName</strong>.
+      This is also your centre email address for your account at this centre.
+    </p>
+  }
+  else
+  {
+    <p>
+      You need to verify
+      @if (primaryEmailIsUnverified)
+      {
+        @("your primary email address ")
+
+        <strong>@Model.PrimaryEmailIfUnverified</strong>
+      }
+      @if (centreEmailIsUnverified)
+      {
+        @(primaryEmailIsUnverified ? "and " : "")
+        @("your centre email address ")
+
+        <strong>@Model.CentreEmailIfUnverified</strong>
+      }
+      to access your account at <strong>@Model.CentreName</strong>.
+    </p>
+  }
+
+  <p>
+    @VerifyYourEmailTextHelper.VerifyEmailLinkCommonInfo(multipleEmailsAreUnverified)
+    @VerifyYourEmailTextHelper.DirectionsToResendLinkByVisitingMyAccountPage(multipleEmailsAreUnverified)
+  </p>
+</div>

@@ -31,8 +31,7 @@
             // Then
             var expectedUnlockData = new UnlockData
             {
-                DelegateEmail = "hcta@egviomklw.",
-                DelegateName = "xxxxx xxxxxxxxx",
+                DelegateId = 1,
                 ContactForename = "xxxxx",
                 ContactEmail = "e@1htrnkisv.wa",
                 CourseName = "Office 2013 Essentials for the Workplace - Erin Test 01",
@@ -60,7 +59,7 @@
             {
                 CentreId = 237,
                 CourseName = "Entry Level - Win XP, Office 2003/07 OLD - Standard",
-                AdminEmail = null,
+                AdminId = null,
                 CourseNotificationEmail = courseNotificationEmail,
                 SessionId = 429,
             };
@@ -73,14 +72,14 @@
         }
 
         [Test]
-        public void GetProgressCompletionData_returns_admin_email_when_there_is_one()
+        public void GetProgressCompletionData_returns_admin_id_when_there_is_one()
         {
             // Given
             var progressCompletionData = new ProgressCompletionData
             {
                 CentreId = 374,
                 CourseName = "Level 3 - Microsoft Word 2010  - LH TEST NEW COURSE PUBLISHED",
-                AdminEmail = "hcoayru@lmgein.",
+                AdminId = 4106,
                 CourseNotificationEmail = null,
                 SessionId = 0,
             };

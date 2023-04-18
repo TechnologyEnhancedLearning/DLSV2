@@ -1,0 +1,19 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount
+@model ClaimAccountViewModel
+
+@{
+  ViewData["Title"] = "Link delegate record - Delegate record linked";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Delegate record linked</h1>
+
+    <p class="nhsuk-body-m word-break">
+      Your new delegate record has been linked to your DLS login.
+      Please switch centre to access <b>@Model.CentreName</b>.
+    </p>
+
+    <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+  </div>
+</div>

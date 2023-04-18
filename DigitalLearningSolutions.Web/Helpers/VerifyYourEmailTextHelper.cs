@@ -1,0 +1,51 @@
+﻿namespace DigitalLearningSolutions.Web.Helpers
+{
+    public static class VerifyYourEmailTextHelper
+    {
+        public const string UnverifiedCentreEmailConsequences =
+            "You will not be able to access that account until you verify the address.";
+
+        public const string UnverifiedPrimaryEmailConsequences =
+            "You can edit your account details, but you will not be able to access any centre accounts or register at new centres until it is verified.";
+
+        public static string VerifyEmailLinkCommonInfo(bool multipleEmailsAreUnverified)
+        {
+            var numSpecificPhrases = new
+            {
+                address = multipleEmailsAreUnverified ? "addresses" : "address",
+                thisAddress = multipleEmailsAreUnverified ? "each of the addresses above" : "this address",
+                link = multipleEmailsAreUnverified ? "links" : "link",
+            };
+
+            return $"An email with a verification link has been sent to {numSpecificPhrases.thisAddress}." +
+                   $" Please click the {numSpecificPhrases.link} to verify your email {numSpecificPhrases.address}.";
+        }
+
+        public static string DirectionsToResendLinkByVisitingMyAccountPage(bool multipleEmailsAreUnverified)
+        {
+            var numSpecificPhrases = new
+            {
+                folder = multipleEmailsAreUnverified ? "folders" : "folder",
+                it = multipleEmailsAreUnverified ? "them" : "it",
+                email = multipleEmailsAreUnverified ? "emails" : "email",
+            };
+
+            return
+                $" If you have not received the {numSpecificPhrases.email} , check your Junk {numSpecificPhrases.folder}," +
+                $" or you can resend {numSpecificPhrases.it} by visiting the My account page.";
+        }
+
+        public static string DirectionsToResendLinkByClickingButtonBelow(bool multipleEmailsAreUnverified)
+        {
+            var numSpecificPhrases = new
+            {
+                folder = multipleEmailsAreUnverified ? "folders" : "folder",
+                it = multipleEmailsAreUnverified ? "them" : "it",
+                email = multipleEmailsAreUnverified ? "emails" : "email",
+            };
+
+            return $"Check your Junk {numSpecificPhrases.folder} if you can’t find {numSpecificPhrases.it}," +
+                   $" or you can resend {numSpecificPhrases.it} by clicking the button below.";
+        }
+    }
+}

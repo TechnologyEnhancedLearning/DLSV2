@@ -6,8 +6,8 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.Signposting;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.Signposting;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -184,12 +184,12 @@
         }
 
         [Test]
-        public  async Task ViewResource_returns_redirect_to_login_result_when_user_linked()
+        public async Task ViewResource_returns_redirect_to_login_result_when_user_linked()
         {
             // Given
             var authId = 1;
             var resourceUrl = "De/Humani/Corporis/Fabrica";
-            var resourceDetails = new ResourceReferenceWithResourceDetails{Link = resourceUrl};
+            var resourceDetails = new ResourceReferenceWithResourceDetails { Link = resourceUrl };
 
             A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(authId);
             A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(5))

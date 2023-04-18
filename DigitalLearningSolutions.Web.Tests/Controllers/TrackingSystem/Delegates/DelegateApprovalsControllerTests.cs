@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
@@ -22,7 +22,6 @@
             delegateApprovalsController = new DelegateApprovalsController(delegateApprovalsService, userDataService)
                 .WithDefaultContext()
                 .WithMockUser(true);
-            ;
         }
 
         [Test]

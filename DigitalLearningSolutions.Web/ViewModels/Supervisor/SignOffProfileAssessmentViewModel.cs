@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using static DigitalLearningSolutions.Web.Helpers.RequiredWhenValidationHelper;
 
     public class SignOffProfileAssessmentViewModel

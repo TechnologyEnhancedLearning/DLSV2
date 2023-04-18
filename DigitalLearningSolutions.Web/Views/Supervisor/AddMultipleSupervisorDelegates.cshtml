@@ -25,9 +25,9 @@
   </nav>
 }
 
-@if (errorHasOccurred)
+  @if (errorHasOccurred)
 {
-  <vc:error-summary order-of-property-names="@new []{ nameof(AddMultipleSupervisorDelegatesViewModel.DelegateEmails) }" />
+  <vc:error-summary order-of-property-names="@(new []{ nameof(AddMultipleSupervisorDelegatesViewModel.DelegateEmails) })" />
 }
 <h1>Add staff members to your team</h1>
 <form method="post" novalidate>

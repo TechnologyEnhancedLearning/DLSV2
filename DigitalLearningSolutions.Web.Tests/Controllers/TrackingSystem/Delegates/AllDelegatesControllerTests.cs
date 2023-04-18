@@ -5,9 +5,10 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
@@ -96,7 +97,7 @@
             const string sortBy = "Discipline";
             const string sortDirection = "The Sheltering Sky";
             const string filters = "Indiscipline";
-            var centreId = allDelegatesController.User.GetCentreId();
+            var centreId = allDelegatesController.User.GetCentreIdKnownNotNull();
 
             // When
             allDelegatesController.Export(searchString, sortBy, sortDirection, filters);

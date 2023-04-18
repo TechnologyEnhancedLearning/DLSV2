@@ -14,7 +14,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(EditAdminFieldViewModel.OptionsString), nameof(EditAdminFieldViewModel.Answer)}" />
+      <vc:error-summary order-of-property-names="@(new []{ nameof(EditAdminFieldViewModel.OptionsString), nameof(EditAdminFieldViewModel.Answer)})" />
     }
     <h1 class="nhsuk-heading-xl">Edit course admin field</h1>
 
@@ -29,9 +29,12 @@
 
       <vc:field-name-value-display display-name="Field" field-value="@Model.Prompt" />
 
-      @if (string.IsNullOrEmpty(Model.OptionsString)) {
+      @if (string.IsNullOrEmpty(Model.OptionsString))
+      {
         <partial name="_NoConfiguredAnswers" />
-      } else {
+      }
+      else
+      {
         <partial name="_AdminFieldAnswerTable" model="Model" />
       }
 

@@ -1,75 +1,66 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model SimilarCompetencyViewModel
 @{
-    ViewData["Title"] = $"Similar {Model.VocabSingular()}";
-    ViewData["Application"] = "Framework Service";
-    ViewData["HeaderPathName"] = "Framework Service";
+  ViewData["Title"] = "Similar Competency";
+  ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 
 @section NavMenuItems {
-<partial name="Shared/_NavMenuItems" />
+  <partial name="Shared/_NavMenuItems" />
 }
-<h1>Duplicate @Model.VocabSingular() name</h1>
-<div class="nhsuk-form-group nhsuk-form-group--error">
+  <h1>Duplicate competency name</h1>
+  <div class="nhsuk-form-group nhsuk-form-group--error">
     <p class="nhsuk-error-message">
-        The item you are trying to add "<span class="nhsuk-u-font-weight-bold">@Model.Competency.Name</span>" has the same name as an existing @Model.VocabSingular().
+      The item you are trying to add "<span class="nhsuk-u-font-weight-bold">@Model.Competency.Name</span>" has the same name as an existing competency.
     </p>
     <p class="nhsuk-u-margin-top-6">
-        You can still create this item but we recommend that you give it a distinct name.
+      You can still create this item but we recommend that you give it a distinct name.
     </p>
-</div>
+  </div>
 
-<h2>Duplicates</h2>
-<table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-6">
+  <h2>Duplicates</h2>
+  <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-6">
     <caption class="nhsuk-table__caption nhsuk-u-visually-hidden">
-        @Model.VocabSingular()
+      Competency
     </caption>
     <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-            <th role="columnheader" class="" scope="col">
-                Framework
-            </th>
-            <th role="columnheader" class="" scope="col">
-                Name
-            </th>
-            <th role="columnheader" class="" scope="col">
-                Description
-            </th>
-        </tr>
+      <tr role="row">
+        <th role="columnheader" class="" scope="col">
+          Name
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Description
+        </th>
+      </tr>
     </thead>
     <tbody class="nhsuk-table__body">
-        @foreach (var competency in Model.SameCompetency)
-        {
-            <tr role="row" class="nhsuk-table__row framework-row">
-               <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-19">
-                    <span class="nhsuk-table-responsive__heading">Framework </span>
-                    <span class="framework-brand">
-                       @competency.FrameworkName
-                    </span>
-                </td>
-                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-19">
-                    <span class="nhsuk-table-responsive__heading">Name </span>
-                    <span class="framework-brand">
-                        @competency.Name
-                    </span>
-                </td>
-                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-19">
-                    <span class="nhsuk-table-responsive__heading">Description </span>
-                    <span class="framework-created-date">
-                        @Html.Raw(competency.Description)
-                    </span>
-                </td>
-            </tr>
-        }
-    </tbody>
+      @foreach (var competency in Model.SameCompetency)
+    {
+      <tr role="row" class="nhsuk-table__row framework-row">
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-19">
+          <span class="nhsuk-table-responsive__heading">Name </span>
+          <span class="framework-brand">
+            @competency.Name
+          </span>
+        </td>
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-19">
+          <span class="nhsuk-table-responsive__heading">Description </span>
+          <span class="framework-created-date">
+            @Html.Raw(competency.Description)
+          </span>
+        </td>
+      </tr>
+    }
+  </tbody>
 </table>
 <form asp-action="AddDuplicateCompetency" asp-route-frameworkId="@Model.FrameworkId"
       asp-route-competencyName="@Model.Competency.Name" asp-route-competencyDescription="@Model.Competency.Description"
       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkGroupId="@Model.FrameworkGroupId">
-    <button class="nhsuk-button" type="submit">
-        Confirm save
-    </button>
+  <button class="nhsuk-button" type="submit">
+    Confirm save
+  </button>
 </form>
 <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="ViewFramework" asp-route-tabname="Structure" asp-route-frameworkId="@Model.FrameworkId">
-    Cancel
+  Cancel
 </a>

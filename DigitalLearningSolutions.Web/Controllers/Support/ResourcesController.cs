@@ -2,11 +2,11 @@
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Support.Resources;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -17,7 +17,7 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.Support))]
-    [TypeFilter(typeof(ValidateAllowedDlsSubApplication), Arguments = new object[] { new [] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } })]
+    [TypeFilter(typeof(ValidateAllowedDlsSubApplication), Arguments = new object[] { new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } })]
     public class ResourcesController : Controller
     {
         private readonly IConfiguration configuration;
@@ -43,7 +43,7 @@
                 configuration.GetCurrentSystemBaseUrl(),
                 resourcesService.GetAllResources()
             );
-            return View("Index", model);
+            return View("Resources", model);
         }
     }
 }

@@ -13,12 +13,13 @@
 
       <partial name="_CentreCardDetails" model="@Model" />
 
-      @if (Model.SelfRegister) {
+      @if (Model.SelfRegister)
+      {
         <a class="nhsuk-button nhsuk-u-margin-right-2"
-           role="button"
-           asp-controller="Register"
-           asp-action="Index"
-           asp-route-centreId="@Model.CentreId">
+         role="button"
+         asp-controller="Register"
+         asp-action="Start"
+         asp-route-centreId="@Model.CentreId">
           Register
         </a>
       }

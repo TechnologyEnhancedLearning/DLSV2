@@ -1,9 +1,9 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Supervisor
+@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.Extensions
+@inject IClockUtility ClockUtility
 @model SupervisorDelegateDetail
-@{
-    bool IsSupervisor = (bool)(ViewData["isSupervisor"] ?? false);
-}
+
 
 <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
@@ -11,28 +11,30 @@
             Added
         </dt>
         <dd class="nhsuk-summary-list__value">
-            @(Model.Added.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.Added.ToShortDateString() : "Today")
+            @(Model.Added.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString() ? Model.Added.ToShortDateString() : "Today")
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
         </dd>
     </div>
-    @if (IsSupervisor)
-    {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                PRN
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @(Model.ProfessionalRegistrationNumber == null ? "Not Recorded" : Model.ProfessionalRegistrationNumber)
-            </dd>
-        </div>
-    }
+
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            ID
+            Professional Registration Number
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @(Model.ProfessionalRegistrationNumber == null ? "Not Recorded" : Model.ProfessionalRegistrationNumber)
+        </dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Delegate ID
         </dt>
         <dd class="nhsuk-summary-list__value">
             @Model.CandidateNumber
         </dd>
     </div>
+
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
             Job Group
@@ -41,6 +43,7 @@
             @Model.JobGroupName
         </dd>
     </div>
+
     @if (Model.CustomPrompt1 != null)
     {
         <div class="nhsuk-summary-list__row">
@@ -116,4 +119,30 @@
 
         </dd>
     </div>
+    @if (Model.Active != null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Delegate Status
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @if (Model.Active == true)
+                {
+                    <span class="float-right-additional-information">
+                        <strong class="nhsuk-tag nhsuk-tag--green">
+                            Active
+                        </strong>
+                    </span>
+                }
+                else
+                {
+                    <span class="float-right-additional-information">
+                        <strong class="nhsuk-tag nhsuk-tag--red">
+                            Inactive
+                        </strong>
+                    </span>
+                }
+            </dd>
+        </div>
+    }
 </dl>

@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
@@ -26,7 +25,7 @@
         )
         {
             // Given
-            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("true");
             var completedCourses = new[]
             {
                 CompletedCourseHelper.CreateDefaultCompletedCourse(),
@@ -37,7 +36,7 @@
                 completedActionPlanResources.Select(r => new CompletedActionPlanResource(r));
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId))
                 .Returns((completedActionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
             var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
@@ -71,7 +70,7 @@
         public async Task Completed_action_should_have_banner_text()
         {
             // Given
-            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("true");
             const string bannerText = "Banner text";
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
@@ -87,13 +86,13 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("false");
+            A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("false");
 
             // When
             await controller.Completed();
 
             // Then
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId)).MustNotHaveHappened();
         }
 
         [Test]
@@ -101,13 +100,13 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
             await controller.Completed();
 
             // Then
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -116,13 +115,13 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("false");
+            A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("false");
 
             // When
             await controller.AllCompletedItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId)).MustNotHaveHappened();
         }
 
         [Test]
@@ -130,13 +129,13 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
             await controller.AllCompletedItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
+            A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId))
                 .MustHaveHappenedOnceExactly();
         }
 

@@ -53,7 +53,26 @@
     </p>
   </nav>
 }
-
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+}
+@if (errorHasOccurred)
+{
+    <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+        <h2 class="nhsuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="nhsuk-error-summary__body">
+            <ul class="nhsuk-list nhsuk-error-summary__list">
+                <li>
+                    <span class="error-message--margin-bottom-1 nhsuk-error-message">
+                        <span class="nhsuk-u-visually-hidden">Error:</span> Please choose at least one result to confirm.
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
@@ -65,7 +84,7 @@
     </div>
   </details>
   <h2>Confirm Multiple Results for @Model.DelegateSelfAssessment.RoleName</h2>
-@if (Model.CompetencyGroups.Any())
+  @if (Model.CompetencyGroups.Any())
 {
   <h3>Tick each self assessment result that you wish to confirm and then click Submit</h3>
   <form method="post">

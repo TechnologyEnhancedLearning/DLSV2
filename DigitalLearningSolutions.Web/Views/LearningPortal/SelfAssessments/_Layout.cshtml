@@ -1,4 +1,6 @@
-﻿@using Microsoft.AspNetCore.Http.Extensions
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using Microsoft.AspNetCore.Http.Extensions
+@inject IClockUtility ClockUtility
 
 <!DOCTYPE html>
 <html lang="en">
@@ -74,8 +76,6 @@
         </div>
         <partial name="_DlsFooter" />
         @await RenderSectionAsync("scripts", false)
-
     </div>
-
 </body>
 </html>

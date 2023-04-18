@@ -4,7 +4,7 @@ namespace DigitalLearningSolutions.Web.ViewComponents
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
-    public class CentreContactInfoViewComponent: ViewComponent
+    public class CentreContactInfoViewComponent : ViewComponent
     {
         private readonly ICentresDataService centresDataService;
 

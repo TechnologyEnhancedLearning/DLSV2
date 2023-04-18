@@ -4,9 +4,10 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub;
     using DigitalLearningSolutions.Web.ViewModels.Home;
     using Microsoft.AspNetCore.Mvc;
@@ -63,11 +64,11 @@
         {
             var publicBrands = brandsService.GetPublicBrands()
                 .Select(b => new LearningContentSummary(b));
-
             var model = new LearningContentLandingPageViewModel
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, 2),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
+                UserIsLoggedInCentre = User.GetCentreId() != null,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
                 LearningContentItems = publicBrands,
             };
@@ -81,6 +82,7 @@
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, sectionIndex),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
+                UserIsLoggedInCentre = User.GetCentreId() != null,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
             };
         }

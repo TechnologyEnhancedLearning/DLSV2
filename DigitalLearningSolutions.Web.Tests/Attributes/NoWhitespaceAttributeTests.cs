@@ -11,7 +11,7 @@
         {
             // Given
             const string value = "hello";
-            var attribute = new NoWhitespaceAttribute("error");
+            var attribute = new NoWhitespaceAttribute();
 
             // When
             var result = attribute.IsValid(value);
@@ -25,7 +25,7 @@
         {
             // Given
             var value = string.Empty;
-            var attribute = new NoWhitespaceAttribute("error");
+            var attribute = new NoWhitespaceAttribute();
 
             // When
             var result = attribute.IsValid(value);
@@ -39,7 +39,7 @@
         {
             // Given
             string? value = null;
-            var attribute = new NoWhitespaceAttribute("error");
+            var attribute = new NoWhitespaceAttribute();
 
             // When
             var result = attribute.IsValid(value);
@@ -53,7 +53,7 @@
         {
             // Given
             const int value = 7;
-            var attribute = new NoWhitespaceAttribute("error");
+            var attribute = new NoWhitespaceAttribute();
 
             // When
             var result = attribute.IsValid(value);
@@ -67,7 +67,7 @@
         {
             // Given
             const string value = "good morning";
-            var attribute = new NoWhitespaceAttribute("error");
+            var attribute = new NoWhitespaceAttribute();
 
             // When
             var result = attribute.IsValid(value);

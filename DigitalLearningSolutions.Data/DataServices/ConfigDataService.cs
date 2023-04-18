@@ -25,8 +25,11 @@
         public const string AccessibilityHelpText = "AccessibilityNotice";
         public const string TermsText = "TermsAndConditions";
         public const string ContactText = "ContactUsHtml";
+        public const string CookiePolicyContent = "CookiePolicyContentHtml";
+        public const string CookiePolicyUpdatedDate = "CookiePolicyUpdatedDate";
         public const string AppBaseUrl = "V2AppBaseUrl";
         public const string MaxSignpostedResources = "MaxSignpostedResources";
+        public const string SupportEmail = "SupportEmail";
 
         private readonly IDbConnection connection;
 

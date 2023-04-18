@@ -1,49 +1,68 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
-    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class RegisterAdminController : Controller
     {
         private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
+        private readonly IConfiguration config;
         private readonly ICryptoService cryptoService;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegisterAdminService registerAdminService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
+            ICentresService centresService,
             ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            IRegisterAdminService registerAdminService,
+            IEmailVerificationService emailVerificationService,
+            IUserService userService,
+            IConfiguration config
         )
         {
             this.centresDataService = centresDataService;
+            this.centresService = centresService;
             this.cryptoService = cryptoService;
+            this.emailVerificationService = emailVerificationService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
+            this.registerAdminService = registerAdminService;
+            this.userService = userService;
+            this.config = config;
         }
 
         public IActionResult Index(int? centreId = null)
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "RegisterInternalAdmin", new { centreId });
             }
 
             if (!centreId.HasValue || centresDataService.GetCentreName(centreId.Value) == null)
@@ -51,7 +70,7 @@
                 return NotFound();
             }
 
-            if (!IsRegisterAdminAllowed(centreId.Value))
+            if (!registerAdminService.IsRegisterAdminAllowed(centreId.Value))
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
@@ -70,7 +89,7 @@
             var model = new PersonalInformationViewModel(data);
             SetCentreName(model);
 
-            ValidateEmailAddress(model.Email, model.Centre!.Value);
+            ValidateEmailAddresses(model);
 
             return View(model);
         }
@@ -81,7 +100,7 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            ValidateEmailAddress(model.Email, model.Centre!.Value);
+            ValidateEmailAddresses(model);
 
             if (!ModelState.IsValid)
             {
@@ -142,12 +161,14 @@
         [HttpPost]
         public IActionResult Password(ConfirmPasswordViewModel model)
         {
+            var data = TempData.Peek<RegistrationData>()!;
+            RegistrationPasswordValidator.ValidatePassword(model.Password, data.FirstName, data.LastName, ModelState);
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var data = TempData.Peek<RegistrationData>()!;
             data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
 
@@ -185,29 +206,54 @@
                 return new StatusCodeResult(500);
             }
 
-            var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
-            registrationService.RegisterCentreManager(
-                registrationModel,
-                data.JobGroup!.Value,
-                true
-            );
+            try
+            {
+                var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
+                registrationService.RegisterCentreManager(registrationModel, true);
 
-            return RedirectToAction("Confirmation");
+                CreateEmailVerificationHashesAndSendVerificationEmails(
+                    registrationModel.PrimaryEmail!,
+                    registrationModel.CentreSpecificEmail
+                );
+
+                return RedirectToAction(
+                    "Confirmation",
+                    new
+                    {
+                        primaryEmail = data.PrimaryEmail,
+                        centreId = data.Centre,
+                        centreSpecificEmail = data.CentreSpecificEmail,
+                    }
+                );
+            }
+            catch (DelegateCreationFailedException e)
+            {
+                var error = e.Error;
+
+                if (error.Equals(DelegateCreationError.UnexpectedError))
+                {
+                    return new StatusCodeResult(500);
+                }
+
+                if (error.Equals(DelegateCreationError.EmailAlreadyInUse))
+                {
+                    return RedirectToAction("Index");
+                }
+
+                return new StatusCodeResult(500);
+            }
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(string primaryEmail, int centreId, string? centreSpecificEmail)
         {
             TempData.Clear();
-            return View();
-        }
 
-        private bool IsRegisterAdminAllowed(int centreId)
-        {
-            var adminUsers = userDataService.GetAdminUsersByCentreId(centreId);
-            var hasCentreManagerAdmin = adminUsers.Any(user => user.IsCentreManager);
-            var (autoRegistered, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
-            return !hasCentreManagerAdmin && !autoRegistered && !string.IsNullOrWhiteSpace(autoRegisterManagerEmail);
+            var centreName = centresDataService.GetCentreName(centreId);
+
+            var model = new AdminConfirmationViewModel(primaryEmail, centreSpecificEmail, centreName!);
+
+            return View(model);
         }
 
         private void SetAdminRegistrationData(int centreId)
@@ -217,47 +263,20 @@
             TempData.Set(adminRegistrationData);
         }
 
-        private bool IsEmailUnique(string email)
-        {
-            var adminUser = userDataService.GetAdminUserByEmailAddress(email);
-            return adminUser == null;
-        }
-
-        private bool DoesEmailMatchCentre(string email, int centreId)
-        {
-            var autoRegisterManagerEmail =
-                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
-            return email.Equals(autoRegisterManagerEmail, StringComparison.CurrentCultureIgnoreCase);
-        }
-
         private bool CanProceedWithRegistration(RegistrationData data)
         {
-            return data.Centre.HasValue && data.Email != null && IsRegisterAdminAllowed(data.Centre.Value) &&
-                   DoesEmailMatchCentre(data.Email, data.Centre.Value) && IsEmailUnique(data.Email);
-        }
-
-        private void ValidateEmailAddress(string? email, int centreId)
-        {
-            if (email == null)
-            {
-                return;
-            }
-
-            if (!DoesEmailMatchCentre(email, centreId))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
-                    "This email does not match the one held by the centre"
-                );
-            }
-
-            if (!IsEmailUnique(email))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
-                    "An admin user with this email is already registered"
-                );
-            }
+            return data.Centre.HasValue && data.PrimaryEmail != null &&
+                   registerAdminService.IsRegisterAdminAllowed(data.Centre.Value) &&
+                   centresService.IsAnEmailValidForCentreManager(
+                       data.PrimaryEmail,
+                       data.CentreSpecificEmail,
+                       data.Centre.Value
+                   ) &&
+                   !userDataService.PrimaryEmailIsInUse(data.PrimaryEmail) &&
+                   (data.CentreSpecificEmail == null || !userDataService.CentreSpecificEmailIsInUseAtCentre(
+                       data.CentreSpecificEmail,
+                       data.Centre.Value
+                   ));
         }
 
         private void SetCentreName(PersonalInformationViewModel model)
@@ -277,6 +296,56 @@
         {
             model.Centre = centresDataService.GetCentreName((int)data.Centre!);
             model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
+        }
+
+        private void ValidateEmailAddresses(PersonalInformationViewModel model)
+        {
+            RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
+                model.PrimaryEmail,
+                nameof(RegistrationData.PrimaryEmail),
+                ModelState,
+                userDataService,
+                CommonValidationErrorMessages.EmailInUseDuringAdminRegistration
+            );
+
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                model.CentreSpecificEmail,
+                model.Centre,
+                nameof(RegistrationData.CentreSpecificEmail),
+                ModelState,
+                userDataService
+            );
+
+            RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(
+                model.PrimaryEmail,
+                model.CentreSpecificEmail,
+                model.Centre,
+                model.CentreSpecificEmail == null
+                    ? nameof(PersonalInformationViewModel.PrimaryEmail)
+                    : nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                ModelState,
+                centresService
+            );
+        }
+
+        private void CreateEmailVerificationHashesAndSendVerificationEmails(
+            string primaryEmail,
+            string? centreSpecificEmail
+        )
+        {
+            var userAccount = userService.GetUserAccountByEmailAddress(primaryEmail);
+
+            var unverifiedEmails = new List<string> { primaryEmail };
+            if (centreSpecificEmail != null)
+            {
+                unverifiedEmails.Add(centreSpecificEmail);
+            }
+
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                userAccount!,
+                unverifiedEmails.ToList(),
+                config.GetAppRootPath()
+            );
         }
     }
 }

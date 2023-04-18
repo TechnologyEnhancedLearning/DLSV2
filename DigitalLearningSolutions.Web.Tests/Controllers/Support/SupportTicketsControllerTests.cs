@@ -26,7 +26,7 @@
         }
 
         [Test]
-        public void Index_page_should_be_shown_by_index_method()
+        public void Tickets_page_should_be_shown_by_tickets_method()
         {
             // Given
             var controller = new SupportTicketsController(featureManager, configuration)
@@ -36,7 +36,7 @@
             var result = controller.Index(DlsSubApplication.TrackingSystem);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Index");
+            result.Should().BeViewResult().WithViewName("Tickets");
         }
     }
 }

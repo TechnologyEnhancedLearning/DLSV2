@@ -45,7 +45,7 @@
             A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(defaultTutorialInformation);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
-            A.CallTo(() => clockService.UtcNow).Returns(utcNow);
+            A.CallTo(() => clockUtility.UtcNow).Returns(utcNow);
 
             // When
             await controller.Tutorial(CustomisationId, SectionId, TutorialId);

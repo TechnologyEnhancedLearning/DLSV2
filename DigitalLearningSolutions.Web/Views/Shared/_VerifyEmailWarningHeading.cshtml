@@ -1,0 +1,15 @@
+﻿@model int
+
+@{
+  var numSpecificPhrases = new
+  {
+    address = Model > 1 ? "addresses" : "address",
+  };
+}
+
+<h2 class="nhsuk-warning-callout__label">
+  <span role="text">
+    <span class="nhsuk-u-visually-hidden">Important: </span>
+    Please verify your email @numSpecificPhrases.address
+  </span>
+</h2>

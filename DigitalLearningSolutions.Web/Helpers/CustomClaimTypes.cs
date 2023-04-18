@@ -2,6 +2,7 @@
 {
     public static class CustomClaimTypes
     {
+        public const string UserId = "UserID";
         public const string UserCentreId = "UserCentreID";
         public const string UserCentreManager = "UserCentreManager";
         public const string LearnCandidateId = "learnCandidateID";

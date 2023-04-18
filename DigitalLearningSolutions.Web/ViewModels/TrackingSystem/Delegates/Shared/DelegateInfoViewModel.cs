@@ -16,6 +16,7 @@
         )
         {
             Id = delegateUser.Id;
+            UserId = delegateUser.UserId;
             TitleName = delegateUser.SearchableName;
             Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
                 delegateUser.FirstName,
@@ -31,7 +32,7 @@
             Email = delegateUser.EmailAddress;
             JobGroupId = delegateUser.JobGroupId;
             JobGroup = delegateUser.JobGroupName;
-            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnHelper.GetPrnDisplayString(
                 delegateUser.HasBeenPromptedForPrn,
                 delegateUser.ProfessionalRegistrationNumber
             );
@@ -40,12 +41,11 @@
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
             }
 
-            AliasId = delegateUser.AliasId;
-
             DelegateRegistrationPrompts = delegateRegistrationPrompts;
         }
 
         public int Id { get; set; }
+        public int UserId { get; set; }
         public string TitleName { get; set; }
         public string Name { get; set; }
         public string CandidateNumber { get; set; }
@@ -59,7 +59,6 @@
         public int JobGroupId { get; set; }
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
-        public string? AliasId { get; set; }
         public string ProfessionalRegistrationNumber { get; set; }
 
         public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }

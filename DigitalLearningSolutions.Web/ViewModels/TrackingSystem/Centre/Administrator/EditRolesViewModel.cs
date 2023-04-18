@@ -24,7 +24,7 @@
         {
             IsCentreAdmin = user.IsCentreAdmin;
             IsSupervisor = user.IsSupervisor;
-            IsCenterManager =  user.IsCentreManager;
+            IsCenterManager = user.IsCentreManager;
             IsNominatedSupervisor = user.IsNominatedSupervisor;
             IsTrainer = user.IsTrainer;
             IsContentCreator = user.IsContentCreator;
@@ -43,7 +43,7 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole;
             }
 
-            LearningCategory = user.CategoryId;
+            LearningCategory = AdminCategoryHelper.CategoryIdToAdminCategory(user.CategoryId);
             LearningCategories = SelectListHelper.MapOptionsToSelectListItems(
                 categories.Select(c => (c.CourseCategoryID, c.CategoryName)),
                 user.CategoryId

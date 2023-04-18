@@ -1,0 +1,62 @@
+﻿@using DigitalLearningSolutions.Data.Models.Centres
+@model CentreSummaryForContactDisplay
+
+<dl class="nhsuk-summary-list">
+
+    @if (Model.Telephone != null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Phone Number
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.Telephone
+            </dd>
+        </div>
+    }
+
+    @if (Model.Email != null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Email
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                <a href="@Model.EmailHref" target="_blank">@Model.Email</a>
+            </dd>
+        </div>
+    }
+
+    @if (Model.WebUrl != null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Website
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @if (Model.IsValidUrl(Model.WebUrl))
+                {
+                    <a href="@Model.WebsiteHref" target="_blank">@Model.WebUrl</a>
+                }
+                else
+                {
+                    @Model.WebUrl
+                }
+            </dd>
+        </div>
+    }
+
+    @if (Model.Hours != null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Hours
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.Hours
+            </dd>
+        </div>
+    }
+
+</dl>
+

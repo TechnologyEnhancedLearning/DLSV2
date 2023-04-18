@@ -1,14 +1,13 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
-@using DigitalLearningSolutions.Web.Helpers
+﻿@using NHSUKViewComponents.Web.ViewModels
+@using NHSUKViewComponents.Web.Helpers
 @model FileInputViewModel
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
   <label class="nhsuk-label" for="@Model.Name">
     @Model.Label
   </label>
-  @if (Model.HintText != null)
-  {
+  @if (Model.HintText != null) {
     <div class="nhsuk-hint" id="@Model.Name-hint">
-      @Html.Raw(Model.HintText)
+      @Model.HintText
     </div>
   }
   @if (Model.HasError)
@@ -17,7 +16,7 @@
       <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
     </span>
   }
-  <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+  <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")" 
          id="@Model.Id"
          name="@Model.Name"
          type="file"

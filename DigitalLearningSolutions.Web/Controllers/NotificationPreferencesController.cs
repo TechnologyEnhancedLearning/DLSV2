@@ -3,11 +3,11 @@ namespace DigitalLearningSolutions.Web.Controllers
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -15,6 +15,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
+    [Authorize(Policy = CustomPolicies.CentreUser)]
     public class NotificationPreferencesController : Controller
     {
         private readonly INotificationPreferencesService notificationPreferencesService;
@@ -47,7 +48,6 @@ namespace DigitalLearningSolutions.Web.Controllers
             return View(model);
         }
 
-        [Authorize]
         [HttpGet]
         [Route("/{dlsSubApplication}/NotificationPreferences/Edit/{userType}")]
         [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]
@@ -70,7 +70,6 @@ namespace DigitalLearningSolutions.Web.Controllers
             return View(model);
         }
 
-        [Authorize]
         [HttpPost]
         [Route("/{dlsSubApplication}/NotificationPreferences/Edit/{userType}")]
         [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]

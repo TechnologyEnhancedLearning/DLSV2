@@ -37,7 +37,6 @@
                     course.Active = false;
                 }
 
-
                 if (course.Archived)
                 {
                     course.Archived = true;

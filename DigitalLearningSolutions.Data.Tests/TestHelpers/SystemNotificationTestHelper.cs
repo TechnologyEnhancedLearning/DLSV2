@@ -4,11 +4,13 @@
     using System.Collections.Generic;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Data.SqlClient;
 
     public class SystemNotificationTestHelper
     {
         private readonly SqlConnection connection;
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
 
         public SystemNotificationTestHelper(SqlConnection connection)
         {
@@ -58,7 +60,7 @@
                 subject,
                 bodyHtml,
                 expiryDate,
-                dateAdded ?? DateTime.UtcNow,
+                dateAdded ?? ClockUtility.UtcNow,
                 targetUserRoleId
             );
         }

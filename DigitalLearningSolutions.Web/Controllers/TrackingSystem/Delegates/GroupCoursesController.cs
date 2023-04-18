@@ -5,11 +5,11 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -45,10 +45,10 @@
         [Route("{page:int=1}")]
         public IActionResult Index(int groupId, int page = 1)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var categoryIdFilter = User.GetAdminCategoryId();
 
             var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
 
@@ -72,7 +72,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
         public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId, ReturnPageQuery returnPageQuery)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var groupName = groupsService.GetGroupName(groupId, centreId);
             var groupCourse = groupsService.GetUsableGroupCourseForCentre(groupCustomisationId, groupId, centreId);
 
@@ -122,9 +122,9 @@
                 GroupAddCourseFilterCookieName
             );
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
-            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+            var adminCategoryFilter = User.GetAdminCategoryId();
 
             var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId).ToList();
             var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
@@ -163,9 +163,9 @@
         [Route("AddCourseToGroupSelectCourseAllCourses")]
         public IActionResult AddCourseToGroupSelectCourseAllCourses(int groupId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
-            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+            var adminCategoryFilter = User.GetAdminCategoryId();
 
             var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
             var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
@@ -178,7 +178,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult AddCourseToGroup(int groupId, int customisationId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var groupLabel = groupsService.GetGroupName(groupId, centreId)!;
             var courseCategoryId = courseService.GetCourseCategoryId(customisationId, centreId)!.Value;
             var courseNameInfo = courseService.GetCourseNameAndApplication(customisationId)!;
@@ -191,7 +191,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult AddCourseToGroup(AddCourseFormData formData, int groupId, int customisationId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             if (!ModelState.IsValid)
             {
                 var courseCategoryId = courseService.GetCourseCategoryId(customisationId, centreId)!.Value;

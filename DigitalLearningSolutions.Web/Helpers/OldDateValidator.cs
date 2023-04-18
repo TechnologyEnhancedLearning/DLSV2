@@ -3,12 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Utilities;
 
     // This helper class is currently used in LearningPortal pages
     // Switch over to the new DateValidator class in HEEDLS-560
 
     public static class OldDateValidator
     {
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
+
         public class ValidationResult
         {
             public ValidationResult()
@@ -58,7 +61,7 @@
                 }
 
                 var newDate = new DateTime(year, month, day);
-                if (newDate <= DateTime.Today)
+                if (newDate <= ClockUtility.UtcToday)
                 {
                     return new ValidationResult(day, month, year)
                     {

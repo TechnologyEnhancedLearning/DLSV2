@@ -1,21 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Login;
     using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
@@ -23,19 +24,28 @@
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
     public class LoginController : Controller
     {
+        private readonly IClockUtility clockUtility;
+        private readonly IConfigDataService configDataService;
         private readonly ILogger<LoginController> logger;
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
+        private readonly IUserService userService;
 
         public LoginController(
             ILoginService loginService,
             ISessionService sessionService,
-            ILogger<LoginController> logger
+            ILogger<LoginController> logger,
+            IUserService userService,
+            IClockUtility clockUtility,
+            IConfigDataService configDataService
         )
         {
             this.loginService = loginService;
             this.sessionService = sessionService;
             this.logger = logger;
+            this.userService = userService;
+            this.clockUtility = clockUtility;
+            this.configDataService = configDataService;
         }
 
         public IActionResult Index(string? returnUrl = null)
@@ -58,139 +68,175 @@
             }
 
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
-            var (adminLoginDetails, delegateLoginDetails) = GetLoginDetails(loginResult.Accounts);
+
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.InvalidCredentials:
+                case LoginAttemptResult.UnclaimedDelegateAccount:
                     ModelState.AddModelError("Password", "The credentials you have entered are incorrect");
                     return View("Index", model);
+                case LoginAttemptResult.AccountsHaveMismatchedPasswords:
+                    return View("MismatchingPasswords");
                 case LoginAttemptResult.AccountLocked:
-                    return RedirectToAction("AccountLocked");
-                case LoginAttemptResult.AccountNotApproved:
-                    return View("AccountNotApproved");
-                case LoginAttemptResult.InactiveCentre:
-                    return View("CentreInactive");
+                    return View("AccountLocked");
+                case LoginAttemptResult.InactiveAccount:
+                    var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+                    var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
+                    return View("AccountInactive", inactiveAccountModel);
+                case LoginAttemptResult.UnverifiedEmail:
+                    await this.CentrelessLogInAsync(loginResult.UserEntity!.UserAccount, model.RememberMe);
+                    return RedirectToAction(
+                        "Index",
+                        "VerifyYourEmail",
+                        new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
+                    );
                 case LoginAttemptResult.LogIntoSingleCentre:
-                    sessionService.StartAdminSession(adminLoginDetails?.Id);
-                    return await LogIn(
-                        adminLoginDetails,
-                        delegateLoginDetails.FirstOrDefault(),
+                    return await LogIntoCentreAsync(
+                        loginResult.UserEntity!,
                         model.RememberMe,
-                        model.ReturnUrl
+                        model.ReturnUrl,
+                        loginResult.CentreToLogInto!.Value
                     );
                 case LoginAttemptResult.ChooseACentre:
-                    var chooseACentreViewModel = new ChooseACentreViewModel(loginResult.AvailableCentres);
-                    SetTempDataForChooseACentre(
+                    var idsOfCentresWithUnverifiedEmails = userService.GetUnverifiedEmailsForUser(loginResult.UserEntity!.UserAccount.Id).centreEmails
+                                        .Select(uce => uce.centreId).ToList();
+                    var activeCentres = loginResult.UserEntity!.CentreAccountSetsByCentreId.Values.Where(
+                                            centreAccountSet => (centreAccountSet.AdminAccount?.Active == true ||
+                                            centreAccountSet.DelegateAccount != null) &&
+                                            centreAccountSet.IsCentreActive == true &&
+                                            centreAccountSet.DelegateAccount?.Active == true &&
+                                            centreAccountSet.DelegateAccount?.Approved == true &&
+                                            !idsOfCentresWithUnverifiedEmails.Contains(centreAccountSet.CentreId)).ToList();
+
+                    if (activeCentres.Count() == 1)
+                    {
+                        return await LogIntoCentreAsync(
+                        loginResult.UserEntity!,
                         model.RememberMe,
-                        adminLoginDetails,
-                        delegateLoginDetails,
-                        chooseACentreViewModel,
-                        model.ReturnUrl
-                    );
-                    return RedirectToAction("ChooseACentre", "Login");
+                        model.ReturnUrl,
+                        activeCentres.Select(x => x.CentreId).FirstOrDefault()
+                        );
+                    }
+
+                    await this.CentrelessLogInAsync(loginResult.UserEntity!.UserAccount, model.RememberMe);
+                    return RedirectToAction("ChooseACentre", "Login", new { returnUrl = model.ReturnUrl });
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<List<CentreUserDetails>>))]
         [HttpGet]
+        [Route("/{dlsSubApplication}/Login/ChooseACentre", Order = 1)]
+        [Route("/Login/ChooseACentre", Order = 2)]
+        [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
+        [SetDlsSubApplication]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult ChooseACentre()
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        public IActionResult ChooseACentre(DlsSubApplication dlsSubApplication, string? returnUrl)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            var userEntity = userService.GetUserById(User.GetUserId()!.Value);
 
-            ChooseACentreViewModel model = TempData.Peek<ChooseACentreViewModel>();
+            var (_, unverifiedCentreEmails) =
+                userService.GetUnverifiedEmailsForUser(userEntity!.UserAccount.Id);
+            var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
+
+            var chooseACentreAccountViewModels =
+                loginService.GetChooseACentreAccountViewModels(userEntity, idsOfCentresWithUnverifiedEmails);
+
+            var model = new ChooseACentreViewModel(
+                chooseACentreAccountViewModels.OrderByDescending(account => account.IsActiveAdmin)
+                    .ThenBy(account => account.CentreName).ToList(),
+                returnUrl,
+                userEntity.UserAccount.EmailVerified.HasValue,
+                unverifiedCentreEmails.Count
+            );
+            //For By pass choose while return url is of my account page
+            if (!string.IsNullOrEmpty(returnUrl) && returnUrl.IndexOf("MyAccount") > -1)
+            {
+                return this.RedirectToReturnUrl(returnUrl, logger) ?? View("ChooseACentre", model);
+            }
             return View("ChooseACentre", model);
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<List<DelegateLoginDetails>>))]
-        [HttpGet]
-        public async Task<IActionResult> ChooseCentre(int centreId)
+        [HttpPost]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        [ServiceFilter(typeof(VerifyUserHasVerifiedPrimaryEmail))]
+        public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
-            var rememberMe = (bool)TempData["RememberMe"];
-            var adminLoginDetails = TempData.Peek<AdminLoginDetails>();
-            var delegateLoginDetails = TempData.Peek<List<DelegateLoginDetails>>();
-            var returnUrl = (string?)TempData["ReturnUrl"];
-            TempData.Clear();
+            var userEntity = userService.GetUserById(User.GetUserIdKnownNotNull());
+            var centreAccountSet = userEntity?.GetCentreAccountSet(centreId);
 
-            var adminAccountForChosenCentre = adminLoginDetails?.CentreId == centreId ? adminLoginDetails : null;
-            var delegateAccountForChosenCentre =
-                delegateLoginDetails?.FirstOrDefault(du => du.CentreId == centreId);
+            if (centreAccountSet?.IsCentreActive != true)
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
 
-            sessionService.StartAdminSession(adminAccountForChosenCentre?.Id);
-            return await LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
+            var centreEmailIsUnverified = !loginService.CentreEmailIsVerified(userEntity.UserAccount.Id, centreId);
+
+            if (centreEmailIsUnverified)
+            {
+                return RedirectToAction(
+                    "Index",
+                    "VerifyYourEmail",
+                    new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
+                );
+            }
+
+            var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;
+
+            await HttpContext.Logout();
+
+            return await LogIntoCentreAsync(userEntity!, rememberMe, returnUrl, centreId);
         }
 
-        [HttpGet]
-        public IActionResult AccountLocked()
-        {
-            return View();
-        }
-
-        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
-            UserAccountSet accounts
-        )
-        {
-            var (adminUser, delegateUsers) = accounts;
-            var adminLoginDetails = adminUser != null ? new AdminLoginDetails(adminUser) : null;
-            var delegateLoginDetails = delegateUsers.Select(du => new DelegateLoginDetails(du)).ToList();
-            return (adminLoginDetails, delegateLoginDetails);
-        }
-
-        private void SetTempDataForChooseACentre(
+        private async Task<IActionResult> LogIntoCentreAsync(
+            UserEntity userEntity,
             bool rememberMe,
-            AdminLoginDetails? adminLoginDetails,
-            List<DelegateLoginDetails> delegateLoginDetails,
-            ChooseACentreViewModel chooseACentreViewModel,
-            string? returnUrl
+            string? returnUrl,
+            int centreIdToLogInto
         )
         {
-            TempData.Clear();
-            TempData["RememberMe"] = rememberMe;
-            TempData.Set(adminLoginDetails);
-            TempData.Set(delegateLoginDetails);
-            TempData.Set(chooseACentreViewModel);
-            TempData["ReturnUrl"] = returnUrl;
-        }
-
-        private async Task<IActionResult> LogIn(
-            AdminLoginDetails? adminLoginDetails,
-            DelegateLoginDetails? delegateLoginDetails,
-            bool rememberMe,
-            string? returnUrl
-        )
-        {
-            var claims = LoginClaimsHelper.GetClaimsForSignIn(adminLoginDetails, delegateLoginDetails);
+            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, centreIdToLogInto);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties
             {
                 AllowRefresh = true,
                 IsPersistent = rememberMe,
-                IssuedUtc = DateTime.UtcNow
+                IssuedUtc = clockUtility.UtcNow,
             };
+
+            var adminAccount = userEntity!.GetCentreAccountSet(centreIdToLogInto)?.AdminAccount;
+
+            if (adminAccount?.Active == true)
+            {
+                sessionService.StartAdminSession(adminAccount.Id);
+            }
 
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");
-        }
-
-        private IActionResult? RedirectToReturnUrl(string? returnUrl)
-        {
-            if (!string.IsNullOrEmpty(returnUrl))
+            if (centreIdToLogInto <= 0)
             {
-                if (Url.IsLocalUrl(returnUrl))
-                {
-                    return Redirect(returnUrl);
-                }
-
-                logger.LogWarning($"Attempted login redirect to non-local returnUrl {returnUrl}");
+                return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction("Index", "MyAccount");
             }
 
-            return null;
+            if (!userService.ShouldForceDetailsCheck(userEntity, centreIdToLogInto))
+            {
+                return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction("Index", "Home");
+            }
+
+            const bool isCheckDetailsRedirect = true;
+            if (returnUrl == null)
+            {
+                return RedirectToAction("EditDetails", "MyAccount", new { isCheckDetailsRedirect });
+            }
+
+            var dlsSubAppSection = returnUrl.Split('/')[1];
+            DlsSubApplication.TryGetFromUrlSegment(dlsSubAppSection, out var dlsSubApplication);
+            return RedirectToAction(
+                "EditDetails",
+                "MyAccount",
+                new { returnUrl, dlsSubApplication, isCheckDetailsRedirect }
+            );
         }
     }
 }

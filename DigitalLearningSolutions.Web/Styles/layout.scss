@@ -1,4 +1,5 @@
 ﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "shared/breakpoints" as *;
 
 html {
   height: 100%;
@@ -24,15 +25,6 @@ body {
   align-self: center;
   width: 100%;
   margin: 0;
-  padding: 0 16px;
-
-  @include mq($from: desktop, $until: 1024px) {
-    padding: 0 32px;
-  }
-
-  @include mq($from: 1024px) {
-    padding: 0;
-  }
 }
 
 footer {
@@ -98,10 +90,6 @@ nav .nhsuk-width-container {
 
 nav, .nhsuk-header__navigation, #header-navigation {
   border-bottom: 0;
-
-  @include mq($until: 1024px) {
-    padding: 0 32px;
-  }
 }
 
 .visual-separator {
@@ -300,6 +288,7 @@ nav, .nhsuk-header__navigation, #header-navigation {
   margin: 0;
   clip: auto;
 }
+
 .nhsuk-button--danger {
   background-color: $color_nhsuk-red;
   box-shadow: 0 4px 0 shade($color_nhsuk-red, 50%);
@@ -313,18 +302,22 @@ nav, .nhsuk-header__navigation, #header-navigation {
     background-color: shade($color_nhsuk-red, 50%);
   }
 }
+
 .first-row td {
   border-top: 2px solid #d8dde0;
 }
+
 .status-tag {
   overflow: hidden;
   white-space: nowrap;
 }
+
 .nhsuk-header__link--service {
   @include mq($from: large-desktop) {
-    align-items:unset;
+    align-items: unset;
   }
 }
+
 .header-beta {
   color: #c8e4ff;
   font-family: FrutigerLTW01-55Roman, Arial, sans-serif;
@@ -335,6 +328,29 @@ nav, .nhsuk-header__navigation, #header-navigation {
     color: $color_nhsuk-dark-pink;
   }
 }
+
+.nhsuk-width-container {
+  max-width: 1144px !important;
+  padding-left: $nhsuk-gutter !important;
+  padding-right: $nhsuk-gutter !important;
+}
+
+.nhsuk-width-container {
+  margin: auto !important;
+}
+
+@media only screen and (max-width: 767px) {
+  .section-card-result {
+    margin-top: 10px;
+  }
+}
+
+@media only screen and (max-width: $mq-tablet) {
+  .nhsuk-table-responsive .nhsuk-table__body .nhsuk-table__row td li {
+    text-align: justify;
+  }
+}
+
 .dls-alert-banner {
   background-color: $color_nhsuk-dark-pink;
   color: #FFFFFF;

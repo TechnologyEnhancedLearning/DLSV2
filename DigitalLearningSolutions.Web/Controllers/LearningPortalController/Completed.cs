@@ -25,11 +25,13 @@
             int page = 1
         )
         {
+            TempData["LearningActivity"] = "Completed";
             sortBy ??= CourseSortByOptions.CompletedDate.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var completedCourses = courseDataService.GetCompletedCourses(delegateId);
             var (completedLearningResources, apiIsAccessible) =
-                await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
+                await GetCompletedLearningResourcesIfSignpostingEnabled(delegateUserId);
             var bannerText = GetBannerText();
 
             var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
@@ -59,14 +61,15 @@
         public async Task<IActionResult> AllCompletedItems()
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var completedCourses = courseDataService.GetCompletedCourses(delegateId);
-            var (completedLearningResources, _) = await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
+            var (completedLearningResources, _) = await GetCompletedLearningResourcesIfSignpostingEnabled(delegateUserId);
             var model = new AllCompletedItemsPageViewModel(completedCourses, completedLearningResources, config);
             return View("Completed/AllCompletedItems", model);
         }
 
         private async Task<(IList<CompletedActionPlanResource>, bool apiIsAccessible)>
-            GetCompletedLearningResourcesIfSignpostingEnabled(int delegateId)
+            GetCompletedLearningResourcesIfSignpostingEnabled(int delegateUserId)
         {
             if (!config.IsSignpostingUsed())
             {
@@ -74,7 +77,7 @@
             }
 
             var (resources, apiIsAccessible) =
-                await actionPlanService.GetCompletedActionPlanResources(delegateId);
+                await actionPlanService.GetCompletedActionPlanResources(delegateUserId);
             return (resources.Select(r => new CompletedActionPlanResource(r)).ToList(), apiIsAccessible);
         }
     }

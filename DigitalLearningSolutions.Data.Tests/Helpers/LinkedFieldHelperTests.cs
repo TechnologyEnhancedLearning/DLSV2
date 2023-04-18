@@ -5,8 +5,10 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
@@ -33,8 +35,8 @@
         [Test]
         [TestCaseSource(nameof(GetTestItems))]
         public void Changed_answer_maps_to_linked_field_correctly(
-            CentreAnswersData oldAnswers,
-            CentreAnswersData newAnswers,
+            RegistrationFieldAnswers oldAnswers,
+            RegistrationFieldAnswers newAnswers,
             string expectedLinkedFieldName,
             int expectedLinkedFieldNumber,
             string expectedOldValue,
@@ -73,44 +75,44 @@
         {
             yield return new object[]
             {
-                UserTestHelper.GetDefaultCentreAnswersData(answer1: OldAnswer),
-                UserTestHelper.GetDefaultCentreAnswersData(answer1: NewAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: OldAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: NewAnswer),
                 "prompt 1", 1, OldAnswer, NewAnswer,
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultCentreAnswersData(answer2: OldAnswer),
-                UserTestHelper.GetDefaultCentreAnswersData(answer2: NewAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer2: OldAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer2: NewAnswer),
                 "prompt 2", 2, OldAnswer, NewAnswer,
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultCentreAnswersData(answer3: OldAnswer),
-                UserTestHelper.GetDefaultCentreAnswersData(answer3: NewAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer3: OldAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer3: NewAnswer),
                 "prompt 3", 3, OldAnswer, NewAnswer,
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultCentreAnswersData(jobGroupId: 1),
-                UserTestHelper.GetDefaultCentreAnswersData(jobGroupId: 2),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(jobGroupId: 1),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(jobGroupId: 2),
                 "Job group", 4, OldJobGroupName, NewJobGroupName,
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultCentreAnswersData(answer4: OldAnswer),
-                UserTestHelper.GetDefaultCentreAnswersData(answer4: NewAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer4: OldAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer4: NewAnswer),
                 "prompt 4", 5, OldAnswer, NewAnswer,
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultCentreAnswersData(answer5: OldAnswer),
-                UserTestHelper.GetDefaultCentreAnswersData(answer5: NewAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer5: OldAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer5: NewAnswer),
                 "prompt 5", 6, OldAnswer, NewAnswer,
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultCentreAnswersData(answer6: OldAnswer),
-                UserTestHelper.GetDefaultCentreAnswersData(answer6: NewAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer6: OldAnswer),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(answer6: NewAnswer),
                 "prompt 6", 7, OldAnswer, NewAnswer,
             };
         }

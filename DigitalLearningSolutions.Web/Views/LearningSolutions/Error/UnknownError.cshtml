@@ -8,11 +8,11 @@
   <partial name="_NavMenuItems" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-two-thirds nhsuk-u-reading-width">
-    <h1>Something went wrong</h1>
-    <p>Please refresh the page to try again. You may need to try again later.</p>
-    <p>Or return to the <a href="https://www.dls.nhs.uk/Home">Digital Learning Solutions homepage</a>.</p>
-    <p>@Model.HelpText()</p>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds nhsuk-u-reading-width">
+      <h1>Something went wrong</h1>
+      <p>Please refresh the page to try again. You may need to try again later.</p>
+      <p>Or return to the <a asp-controller="Home" asp-action="Index">Digital Learning Solutions homepage</a>.</p>
+      <p>@Model.HelpText()</p>
+    </div>
   </div>
-</div>

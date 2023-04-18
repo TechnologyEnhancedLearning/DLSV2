@@ -3,12 +3,13 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register Admin - Learner information" : "Register Admin - Learner information";
+  ViewData["Title"] = errorHasOccurred ? "Error: Register admin - Learner information" : "Register admin - Learner information";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroup),nameof(Model.HasProfessionalRegistrationNumber), nameof(Model.ProfessionalRegistrationNumber) })" />
     }
 

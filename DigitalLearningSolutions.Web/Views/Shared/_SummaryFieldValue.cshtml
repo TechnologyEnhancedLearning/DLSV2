@@ -1,10 +1,13 @@
 ﻿@model string?
 
-@if (string.IsNullOrEmpty(Model)) {
+@if (string.IsNullOrEmpty(Model))
+{
   <dd class="nhsuk-summary-list__value">
     - <span class="nhsuk-u-visually-hidden">No value set</span>
   </dd>
-} else {
+}
+else
+{
   <dd class="nhsuk-summary-list__value">
     @Model
   </dd>

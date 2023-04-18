@@ -1,30 +1,32 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Transactions;
+    using GDS.MultiPageFormData.Enums;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -81,8 +83,8 @@
                 CourseStatusFilterOptions.IsActive.FilterValue
             );
 
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
 
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
@@ -119,8 +121,8 @@
         [Route("AllCourseStatistics")]
         public IActionResult AllCourseStatistics()
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
             var model = new AllCourseStatisticsViewModel(details, config);
@@ -154,7 +156,7 @@
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
 
             var model = GetSelectCourseViewModel(
                 categoryFilterString ?? data.CategoryFilter,
@@ -168,8 +170,8 @@
         [Route("AddCourse/SelectCourseAllCourses")]
         public IActionResult SelectCourseAllCourses()
         {
-            var centreId = User.GetCentreId();
-            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var adminCategoryFilter = User.GetAdminCategoryId();
 
             var applications = courseService
                 .GetApplicationOptionsAlphabeticalListForCentre(centreId, adminCategoryFilter);
@@ -191,10 +193,7 @@
             string? topicFilterString = null
         )
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             if (applicationId == null)
             {
@@ -208,8 +207,8 @@
                 );
             }
 
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
 
             var selectedApplication =
                 courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId)
@@ -230,10 +229,7 @@
         )]
         public IActionResult SetCourseDetails()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             if (data.Application == null)
             {
@@ -254,11 +250,8 @@
         )]
         public IActionResult SetCourseDetails(SetCourseDetailsViewModel model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
-            var centreId = User.GetCentreId();
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             CourseDetailsValidator.ValidateCustomisationName(
                 model,
@@ -288,10 +281,7 @@
         )]
         public IActionResult SetCourseOptions()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             if (data.Application == null)
             {
@@ -313,10 +303,7 @@
         )]
         public IActionResult SetCourseOptions(EditCourseOptionsFormData model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             data!.CourseOptionsData = model.ToCourseOptionsTempData();
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
@@ -331,10 +318,7 @@
         )]
         public IActionResult SetCourseContent()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             if (!sectionService.GetSectionsThatHaveTutorialsForApplication(data!.Application!.ApplicationId).Any())
             {
@@ -355,10 +339,7 @@
         )]
         public IActionResult SetCourseContent(SetCourseContentViewModel model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             if (data.Application == null)
             {
@@ -395,10 +376,7 @@
         )]
         public IActionResult SetSectionContent(int sectionIndex)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             if (data.CourseContentData == null || data.Application == null)
             {
@@ -450,10 +428,7 @@
         )]
         public IActionResult Summary()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             var model = new SummaryViewModel(data!);
 
@@ -467,10 +442,7 @@
         )]
         public IActionResult? CreateNewCentreCourse()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             using var transaction = new TransactionScope();
 
@@ -522,8 +494,8 @@
             int? selectedApplicationId = null
         )
         {
-            var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter()!;
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryIdFilter = User.GetAdminCategoryId()!;
 
             var applications = courseService
                 .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter).ToList();
@@ -602,10 +574,7 @@
 
         private IActionResult SaveSectionAndRedirect(SetSectionContentViewModel model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
-                MultiPageFormDataFeature.AddNewCourse,
-                TempData
-            );
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
             if (data!.SectionContentData == null)
             {
@@ -652,7 +621,7 @@
         private Customisation GetCustomisationFromTempData(AddNewCentreCourseTempData tempData)
         {
             return new Customisation(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 tempData!.Application!.ApplicationId,
                 tempData.CourseDetailsData!.CustomisationName ?? string.Empty,
                 tempData.CourseDetailsData.Password,

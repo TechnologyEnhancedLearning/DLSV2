@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Models.Enums
 {
-    using System;
     using DigitalLearningSolutions.Data.Enums;
+    using System;
 
     public class ContentManagementRole : Enumeration
     {

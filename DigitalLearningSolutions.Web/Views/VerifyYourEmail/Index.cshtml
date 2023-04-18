@@ -1,0 +1,35 @@
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.ViewModels.VerifyEmail
+@model VerifyYourEmailViewModel
+
+@{
+  var title = Model.SingleUnverifiedEmail ? "Verify your email address" : "Verify your email addresses";
+  ViewData["Title"] = title;
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full word-break">
+    <h1 class="nhsuk-heading-xl">@title</h1>
+
+    @if (Model.DistinctUnverifiedEmailsCount == 0)
+    {
+      <p class="nhsuk-body-m"> All your email addresses are verified.</p>
+    }
+    else
+    {
+      @if (Model.EmailVerificationReason.Equals(EmailVerificationReason.EmailNotVerified))
+      {
+        <partial name="_EmailNotVerified" />
+      }
+
+      @if (Model.EmailVerificationReason.Equals(EmailVerificationReason.EmailChanged))
+      {
+        <partial name="_EmailChanged" />
+      }
+    }
+
+    <div class="nhsuk-u-margin-top-5">
+      <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="View My account" />
+    </div>
+  </div>
+</div>

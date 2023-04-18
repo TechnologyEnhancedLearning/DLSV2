@@ -1,7 +1,7 @@
 namespace DigitalLearningSolutions.Web.ViewComponents
 {
     using System.Security.Claims;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Web.ViewComponents
 
         public IViewComponentResult Invoke(int? customisationId)
         {
-            var centreId = ((ClaimsPrincipal) User).GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+            var centreId = ((ClaimsPrincipal)User).GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
             if (centreId == null)
             {
                 return View(new LogoViewModel(null));

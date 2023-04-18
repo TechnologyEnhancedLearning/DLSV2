@@ -2,13 +2,15 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public class DelegateRegistrationModel : RegistrationModel
     {
         public DelegateRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
+            string? centreSpecificEmail,
             int centre,
             int jobGroup,
             string? passwordHash,
@@ -19,12 +21,23 @@
             string? answer5,
             string? answer6,
             bool isSelfRegistered,
-            bool active,
+            bool centreAccountIsActive,
+            bool userIsActive,
             string? professionalRegistrationNumber,
             bool approved = false,
-            string? aliasId = null,
             DateTime? notifyDate = null
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(
+            firstName,
+            lastName,
+            primaryEmail,
+            centreSpecificEmail,
+            centre,
+            passwordHash,
+            centreAccountIsActive,
+            approved,
+            professionalRegistrationNumber,
+            jobGroup
+        )
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -32,25 +45,37 @@
             Answer4 = answer4;
             Answer5 = answer5;
             Answer6 = answer6;
-            AliasId = aliasId;
             NotifyDate = notifyDate;
-            JobGroup = jobGroup;
             IsSelfRegistered = isSelfRegistered;
+            UserIsActive = userIsActive;
         }
 
         public DelegateRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
+            string? centreSpecificEmail,
             int centre,
             int jobGroup,
             string? passwordHash,
-            bool active,
+            bool centreAccountIsActive,
+            bool userIsActive,
             bool approved,
             string? professionalRegistrationNumber
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(
+            firstName,
+            lastName,
+            primaryEmail,
+            centreSpecificEmail,
+            centre,
+            passwordHash,
+            centreAccountIsActive,
+            approved,
+            professionalRegistrationNumber,
+            jobGroup
+        )
         {
-            JobGroup = jobGroup;
+            UserIsActive = userIsActive;
         }
 
         public DelegateRegistrationModel(
@@ -60,7 +85,8 @@
         ) : this(
             row.FirstName!,
             row.LastName!,
-            row.Email!,
+            Guid.NewGuid().ToString(),
+            row.Email,
             centreId,
             row.JobGroupId!.Value,
             null,
@@ -72,32 +98,75 @@
             row.Answer6,
             false,
             row.Active!.Value,
-            null,
+            false,
+            row.Prn,
             true,
-            row.AliasId,
             welcomeEmailDate
-        ) { }
+        )
+        { }
 
-        public string? Answer1 { get; set; }
+        public DelegateRegistrationModel(
+            UserAccount userAccount,
+            InternalDelegateRegistrationModel internalDelegateRegistrationModel,
+            bool approved = false,
+            bool isSelfRegistered = true
+        ) : base(
+            userAccount.FirstName,
+            userAccount.LastName,
+            userAccount.PrimaryEmail,
+            internalDelegateRegistrationModel.CentreSpecificEmail,
+            internalDelegateRegistrationModel.Centre,
+            userAccount.PasswordHash,
+            true,
+            approved,
+            userAccount.ProfessionalRegistrationNumber,
+            userAccount.JobGroupId
+        )
+        {
+            Answer1 = internalDelegateRegistrationModel.Answer1;
+            Answer2 = internalDelegateRegistrationModel.Answer2;
+            Answer3 = internalDelegateRegistrationModel.Answer3;
+            Answer4 = internalDelegateRegistrationModel.Answer4;
+            Answer5 = internalDelegateRegistrationModel.Answer5;
+            Answer6 = internalDelegateRegistrationModel.Answer6;
+            IsSelfRegistered = isSelfRegistered;
+            UserIsActive = true;
+        }
 
-        public string? Answer2 { get; set; }
+        public string? Answer1 { get; }
 
-        public string? Answer3 { get; set; }
+        public string? Answer2 { get; }
 
-        public string? Answer4 { get; set; }
+        public string? Answer3 { get; }
 
-        public string? Answer5 { get; set; }
+        public string? Answer4 { get; }
 
-        public string? Answer6 { get; set; }
+        public string? Answer5 { get; }
 
-        public string? AliasId { get; set; }
+        public string? Answer6 { get; }
 
-        public DateTime? NotifyDate { get; set; }
+        public string? RegistrationConfirmationHash { get; }
 
-        public int JobGroup { get; set; }
+        public DateTime? NotifyDate { get; }
 
-        public bool IsSelfRegistered { get; set; }
+        public bool IsSelfRegistered { get; }
+
+        public bool UserIsActive { get; }
 
         public bool IsExternalRegistered => !Approved;
+
+        public RegistrationFieldAnswers GetRegistrationFieldAnswers()
+        {
+            return new RegistrationFieldAnswers(
+                Centre,
+                JobGroup,
+                Answer1,
+                Answer2,
+                Answer3,
+                Answer4,
+                Answer5,
+                Answer6
+            );
+        }
     }
 }

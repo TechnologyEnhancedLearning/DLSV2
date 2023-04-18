@@ -2,6 +2,22 @@
 DigitalLearningSolutions.Web/wwwroot/css/
 DigitalLearningSolutions.Web/wwwroot/js/
 
+# generated cshtml viewcomponent files
+DigitalLearningSolutions.Web/Views/Shared/Components/ActionLink/*
+DigitalLearningSolutions.Web/Views/Shared/Components/BackLink/*
+DigitalLearningSolutions.Web/Views/Shared/Components/CancelLink/*
+DigitalLearningSolutions.Web/Views/Shared/Components/Checkboxes/*
+DigitalLearningSolutions.Web/Views/Shared/Components/DateInput/*
+DigitalLearningSolutions.Web/Views/Shared/Components/DateRangeInput/*
+DigitalLearningSolutions.Web/Views/Shared/Components/ErrorSummary/*
+DigitalLearningSolutions.Web/Views/Shared/Components/FileInput/*
+DigitalLearningSolutions.Web/Views/Shared/Components/NumericInput/*
+DigitalLearningSolutions.Web/Views/Shared/Components/SelectList/*
+DigitalLearningSolutions.Web/Views/Shared/Components/SingleCheckbox/*
+DigitalLearningSolutions.Web/Views/Shared/Components/TextArea/*
+DigitalLearningSolutions.Web/Views/Shared/Components/TextInput/*
+DigitalLearningSolutions.Web/Views/Shared/_CheckboxItem.cshtml
+
 
 # Created by https://www.gitignore.io/api/aspnetcore,visualstudio
 # Edit at https://www.gitignore.io/?templates=aspnetcore,visualstudio
@@ -481,3 +497,18 @@ MigrationBackup/
 
 DigitalLearningSolutions.Web/logs/*
 DigitalLearningSolutions.Web/appsettings.Development.json
+DigitalLearningSolutions.Web/Views/Shared/_CheckboxItem.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/ActionLink/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/BackLink/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/CancelLink/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/Checkboxes/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/DateInput/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/DateRangeInput/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/ErrorSummary/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/FileInput/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/NumericInput/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/Radios/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/SelectList/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/SingleCheckbox/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/TextArea/Default.cshtml
+DigitalLearningSolutions.Web/Views/Shared/Components/TextInput/Default.cshtml

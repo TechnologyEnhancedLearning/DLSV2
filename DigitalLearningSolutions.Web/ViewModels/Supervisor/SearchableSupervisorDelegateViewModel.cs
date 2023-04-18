@@ -6,7 +6,7 @@
         public SearchableSupervisorDelegateViewModel(SupervisorDelegateDetail supervisorDelegateDetail)
         {
             SupervisorDelegateDetail = supervisorDelegateDetail;
-                }
+        }
 
         public SupervisorDelegateDetail SupervisorDelegateDetail { get; set; }
     }

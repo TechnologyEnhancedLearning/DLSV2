@@ -3,10 +3,10 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -33,11 +33,11 @@
 
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var delegates = delegateApprovalsService
                 .GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(centreId)
-                .Select(d => new UnapprovedDelegate(d.delegateUser, d.prompts));
+                .Select(d => new UnapprovedDelegate(d.delegateEntity, d.prompts));
 
             var model = new DelegateApprovalsViewModel(delegates);
             return View(model);
@@ -47,7 +47,7 @@
         [Route("/TrackingSystem/Delegates/Approve")]
         public IActionResult ApproveDelegate(int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             delegateApprovalsService.ApproveDelegate(delegateId, centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
@@ -56,7 +56,7 @@
         [Route("/TrackingSystem/Delegates/Approve/All")]
         public IActionResult ApproveDelegatesForCentre()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
@@ -65,8 +65,8 @@
         [Route("/TrackingSystem/Delegates/Reject")]
         public IActionResult DelegateRejectionPage(int delegateId)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
-            var model = new RejectDelegateViewModel(delegateUser);
+            var delegateEntity = userDataService.GetDelegateById(delegateId);
+            var model = new RejectDelegateViewModel(delegateEntity);
             return View(model);
         }
 
@@ -74,7 +74,7 @@
         [Route("/TrackingSystem/Delegates/ConfirmReject")]
         public IActionResult RejectDelegate(int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             delegateApprovalsService.RejectDelegate(delegateId, centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }

@@ -3,22 +3,23 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class RecommendedLearningControllerTests
     {
         private const int DelegateId = 2;
         private const int SelfAssessmentId = 1;
+        private const int DelegateUserId = 2;
 
         private IActionPlanService actionPlanService = null!;
         private IConfiguration configuration = null!;
@@ -27,6 +28,7 @@
         private IRecommendedLearningService recommendedLearningService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
@@ -37,6 +39,7 @@
             recommendedLearningService = A.Fake<IRecommendedLearningService>();
             actionPlanService = A.Fake<IActionPlanService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            clockUtility = A.Fake<IClockUtility>();
 
             controller = new RecommendedLearningController(
                     filteredApiHelperService,
@@ -44,7 +47,8 @@
                     configuration,
                     recommendedLearningService,
                     actionPlanService,
-                    searchSortFilterPaginateService
+                    searchSortFilterPaginateService,
+                    clockUtility
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, delegateId: DelegateId);
@@ -55,7 +59,7 @@
             SelfAssessmentResults_redirect_to_expected_action_does_not_call_filtered_api_when_using_signposting()
         {
             // Given
-            A.CallTo(() => configuration[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => configuration["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
             var result = await controller.SelfAssessmentResults(SelfAssessmentId);
@@ -76,7 +80,7 @@
         {
             // Given
             var expectedBookmarkString = $"/LearningPortal/SelfAssessment/{SelfAssessmentId}/RecommendedLearning";
-            A.CallTo(() => configuration[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => configuration["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
             var result = await controller.RecommendedLearning(SelfAssessmentId);
@@ -84,16 +88,16 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => selfAssessmentService.SetBookmark(SelfAssessmentId, DelegateId, expectedBookmarkString))
+                A.CallTo(() => selfAssessmentService.SetBookmark(SelfAssessmentId, DelegateUserId, expectedBookmarkString))
                     .MustHaveHappenedOnceExactly();
-                A.CallTo(() => selfAssessmentService.UpdateLastAccessed(SelfAssessmentId, DelegateId))
+                A.CallTo(() => selfAssessmentService.UpdateLastAccessed(SelfAssessmentId, DelegateUserId))
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(() => filteredApiHelperService.GetUserAccessToken<AccessToken>(A<string>._))
                     .MustNotHaveHappened();
                 A.CallTo(
                     () => recommendedLearningService.GetRecommendedLearningForSelfAssessment(
                         SelfAssessmentId,
-                        DelegateId
+                        DelegateUserId
                     )
                 ).MustHaveHappenedOnceExactly();
                 result.Should().BeViewResult().WithViewName("RecommendedLearning");
@@ -105,7 +109,7 @@
         {
             // Given
             const int resourceReferenceId = 1;
-            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateId))
+            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateUserId))
                 .Returns(false);
 
             // When
@@ -127,7 +131,7 @@
         {
             // Given
             const int resourceReferenceId = 1;
-            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateId))
+            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateUserId))
                 .Returns(true);
 
             // When

@@ -1,0 +1,47 @@
+﻿@{
+    Context.Request.Cookies.TryGetValue("Dls-cookie-consent", out string showCookieBanner);
+    var validateCookieBannerViaTempData = TempData["userConsentCookieOption"]; // To avoid inconsistencies. First consent from policy page causes issues.
+    var consentViaBannerPostTemp = TempData["consentViaBannerPost"];  // To display confirmation banner (nhsuk-cookie-confirmation-banner-post) after post
+    var path = Context.Request.Path; // @(Configuration["CurrentSystemBaseUrl"]
+}
+
+<input type="hidden" id="CookieConsentPostPath" value="@Url.Action("ConfirmCookieConsent","CookieConsent")" />
+
+@if (showCookieBanner == null && validateCookieBannerViaTempData == null) // [BY] Show cookie banner when the value is null. if the user consent yes or no then we dont display the banner
+{
+    <div id="nhsuk-cookie-banner">
+        <div class="nhsuk-cookie-banner  nhsuk-u-margin-top-3" id="cookiebanner">
+            <div class="nhsuk-width-container ">
+                <h2>Cookies on the Digital Learning Solutions</h2>
+                <p>We've put some small files called cookies on your device to make our site work.</p>
+                <p>We'd also like to use analytics cookies. These send anonymous information about how our site is used to a service called Google Analytics & Hotjar Analytics. We use this information to improve our site.</p>
+                <p>Let us know if this is OK. We'll use a cookie to save your choice. You can <a id="nhsuk-cookie-banner__link" target="_blank" href="@Url.Action( "CookiePolicy","CookieConsent")" tabindex="1">read more about our cookies</a> before you choose.</p>
+                <p>
+                    <div id="cookie-banner-no-js-styling">
+                        <a href="@Url.Action( "CookieConsentConfirmation","CookieConsent", new { consent="false",path = path})" class="nhsuk-button">Do not use analytics cookies</a>
+                        <a href="@Url.Action( "CookieConsentConfirmation","CookieConsent", new { consent="true",path = path})" class="nhsuk-button">I'm OK with analytics cookies</a>
+                    </div>
+                    <div id="cookie-banner-js-styling" style="display:none;">
+                        <button id="nhsuk-cookie-banner__link_accept" class="nhsuk-button"> Do not use analytics cookies</button>
+                        <button id="nhsuk-cookie-banner__link_accept_analytics" class="nhsuk-button"> I'm OK with analytics cookies</button>
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div class="nhsuk-success-banner  nhsuk-u-margin-top-3" id="nhsuk-cookie-confirmation-banner" style="display:none;">
+            <div class="nhsuk-width-container">
+                <p id="nhsuk-success-banner__message">You can change your cookie settings at any time using our <a href="@Url.Action( "CookiePolicy","CookieConsent")">cookies page</a>.</p>
+            </div>
+        </div>
+    </div>
+}
+@if (consentViaBannerPostTemp != null)
+{
+    <div class="nhsuk-success-banner  nhsuk-u-margin-top-3" id="nhsuk-cookie-confirmation-banner-post">
+        <div class="nhsuk-width-container">
+            <p id="nhsuk-success-banner__message">You can change your cookie settings at any time using our <a href="@Url.Action( "CookiePolicy","CookieConsent")">cookies page</a>.</p>
+        </div>
+    </div>
+    TempData.Remove("consentViaBannerPost"); // This tempdata is used to dispay the banner once after postback, discard after first call.
+}

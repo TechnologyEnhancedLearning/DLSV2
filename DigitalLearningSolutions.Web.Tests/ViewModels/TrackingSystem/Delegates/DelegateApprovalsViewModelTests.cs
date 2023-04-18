@@ -15,26 +15,26 @@
         public void UnapprovedDelegate_delegateUser_and_customPrompts_populate_expected_values()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity();
             var customPrompts = new List<CentreRegistrationPromptWithAnswer>
             {
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
             };
 
             // When
-            var returnedModel = new UnapprovedDelegate(delegateUser, customPrompts);
+            var returnedModel = new UnapprovedDelegate(delegateEntity, customPrompts);
 
             // Then
             using (new AssertionScope())
             {
-                returnedModel.Id.Should().Be(delegateUser.Id);
-                returnedModel.CandidateNumber.Should().Be(delegateUser.CandidateNumber);
+                returnedModel.Id.Should().Be(delegateEntity.DelegateAccount.Id);
+                returnedModel.CandidateNumber.Should().Be(delegateEntity.DelegateAccount.CandidateNumber);
                 returnedModel.TitleName.Should().Be(
-                    $"{delegateUser.FirstName} {delegateUser.LastName}"
+                    $"{delegateEntity.UserAccount.FirstName} {delegateEntity.UserAccount.LastName}"
                 );
-                returnedModel.Email.Should().Be(delegateUser.EmailAddress);
-                returnedModel.DateRegistered.Should().Be(delegateUser.DateRegistered);
-                returnedModel.JobGroup.Should().Be(delegateUser.JobGroupName);
+                returnedModel.Email.Should().Be(delegateEntity.UserAccount.PrimaryEmail);
+                returnedModel.DateRegistered.Should().Be(delegateEntity.DelegateAccount.DateRegistered);
+                returnedModel.JobGroup.Should().Be(delegateEntity.UserAccount.JobGroupName);
                 returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
 
                 var promptModel = returnedModel.DelegateRegistrationPrompts.First();

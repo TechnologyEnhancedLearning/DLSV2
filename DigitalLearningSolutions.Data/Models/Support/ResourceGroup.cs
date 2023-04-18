@@ -11,6 +11,6 @@
         }
 
         public string Category { get; }
-        public IEnumerable<Resource> Resources { get; } 
+        public IEnumerable<Resource> Resources { get; }
     }
 }

@@ -1,0 +1,125 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
+@model EditUserDetailsViewModel;
+@{
+    ViewData["Title"] = "User Accounts";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+}
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new string[] { nameof(Model.FirstName),nameof(Model.LastName),nameof(Model.JobGroupId),nameof(Model.PrimaryEmail) })" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link" asp-controller="Users" asp-action="Index" asp-route-SearchString="@Model.SearchString" asp-route-ExistingFilterString="@Model.ExistingFilterString" asp-route-page="@Model.Page">User Accounts</a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+}
+<div id="form-group">
+    <form method="post" asp-action="EditUserDetails">
+        <div>
+            <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+                Edit user details
+            </h1>
+            <div class="nhsuk-grid-row divider">
+                <div class="nhsuk-grid-column-full">
+                    @Html.HiddenFor(x=>x.Id)
+                    @Html.HiddenFor(x=>x.Page)
+                    @Html.HiddenFor(x=>x.EmailVerified)
+                    @Html.HiddenFor(x=>x.SearchString)
+                    @Html.HiddenFor(x=>x.ExistingFilterString)
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@(nameof(Model.FirstName))"
+                                           label="First Name"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="true" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@(nameof(Model.LastName))"
+                                           label="Last Name"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="true"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="true" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:select-list asp-for="@nameof(Model.JobGroupId)"
+                                            label="Job group"
+                                            value="@Model.JobGroupId.ToString()"
+                                            hint-text=""
+                                            required="true"
+                                            css-class="nhsuk-u-width-full"
+                                            default-option=""
+                                            select-list-options="@ViewBag.JobGroups" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@(nameof(Model.PrimaryEmail))"
+                                           label="Primary email"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="true"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="true" />
+                        </div>
+                        <div class="nhsuk-grid-column-one-half nhsuk-u-margin-top-5">
+                            <vc:single-checkbox asp-for="@nameof(Model.ResetEmailVerification)" label="Reset verification Status" hint-text=""></vc:single-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@(nameof(Model.ProfessionalRegistrationNumber))"
+                                           label="Professional Registration Number"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="true"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="nhsuk-button" type="submit">
+                Save
+            </button>
+        </div>
+    </form>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-controller="Users" asp-action="Index" asp-route-SearchString="@Model.SearchString" asp-route-ExistingFilterString="@Model.ExistingFilterString" asp-route-page="@Model.Page" asp-fragment="@Model.Id-name">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    </div>
+</div>
+
+
+
+

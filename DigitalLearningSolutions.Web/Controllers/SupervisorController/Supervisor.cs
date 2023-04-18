@@ -12,16 +12,15 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Data.Models.RoleProfiles;
+    using GDS.MultiPageFormData.Enums;
 
     public partial class SupervisorController
     {
         public IActionResult Index()
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var dashboardData = supervisorService.GetDashboardDataForAdminId(adminId);
             var signOffRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedSignOffs(adminId);
             var reviewRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedReviews(adminId);
@@ -45,7 +44,7 @@
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var loggedInUserId = User.GetAdminId();
             var centreId = GetCentreId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
@@ -87,7 +86,7 @@
                 result,
                 centreRegistrationPrompts
             );
-            ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
+            ModelState.ClearErrorsForAllFieldsExcept("DelegateEmailAddress");
             return View("MyStaffList", model);
         }
 
@@ -95,7 +94,7 @@
         [Route("/Supervisor/Staff/List/{page=1:int}")]
         public IActionResult AddSuperviseDelegate(MyStaffListViewModel model)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
 
@@ -103,13 +102,21 @@
             //if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             if (ModelState.IsValid)
             {
-                AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
+                string delegateEmail = model.DelegateEmailAddress ?? String.Empty;
+                int? approvedDelegateId = supervisorService.ValidateDelegate(centreId, delegateEmail);
+                int existingId = IsSupervisorDelegateExistAndActive(adminId, delegateEmail, centreId);
+                if (existingId > 0)
+                {
+                    ModelState.AddModelError("DelegateEmailAddress", "User is already registered as a supervisor with other email");
+                    return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
+                }
+                AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else
             {
                 // if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
-                ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
+                ModelState.ClearErrorsForAllFieldsExcept("DelegateEmailAddress");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
         }
@@ -125,29 +132,43 @@
         [Route("/Supervisor/Staff/AddMultiple")]
         public IActionResult AddMultipleSuperviseDelegates(AddMultipleSupervisorDelegatesViewModel model)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !model.DelegateEmails.StartsWith(" "))
             {
                 var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
-                foreach (var delegateEmail in delegateEmailsList)
+                string registeredSupervisorEmails = IsMemberAlreadySupervisor(adminId, delegateEmailsList, centreId);
+                if (string.IsNullOrEmpty(registeredSupervisorEmails))
                 {
-                    //if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
-                    if (delegateEmail.Length > 0)
+                    foreach (var delegateEmail in delegateEmailsList)
                     {
-                        if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
+                        //if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
+                        if (delegateEmail.Length > 0)
                         {
-                            AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
+                            if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
+                            {
+                                AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
+                            }
                         }
                     }
                 }
+                else
+                {
+                    ModelState.AddModelError("DelegateEmails", "User(s) with " + registeredSupervisorEmails + " email are already registered as supervisor") ;
+                    return View("AddMultipleSupervisorDelegates", model);
+                }
+
                 return RedirectToAction("MyStaffList");
             }
             else
             {
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmails");
+                if (model.DelegateEmails != null && model.DelegateEmails.StartsWith(" "))
+                {
+                    ModelState.AddModelError("DelegateEmails", CommonValidationErrorMessages.WhitespaceInEmail);
+                }
                 return View("AddMultipleSupervisorDelegates", model);
             }
         }
@@ -168,22 +189,39 @@
             );
             if (supervisorDelegateId > 0)
             {
-                frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminID());
+                frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminId(), GetCentreId());
             }
         }
-        public IActionResult ResendInvite (int supervisorDelegateId)
+
+        private string IsMemberAlreadySupervisor(int adminId,
+            List<string> delegateEmails,
+            int centreId)
         {
-            frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminID());
-            supervisorService.UpdateNotificationSent(supervisorDelegateId);
-            return RedirectToAction("MyStaffList");
+            List<string> alreadyExistDelegateEmail = new List<string>();
+            if (delegateEmails.Count > 0)
+            {
+                foreach (string email in delegateEmails)
+                {
+                    int existingId = IsSupervisorDelegateExistAndActive(adminId, email, centreId);
+                    if (existingId > 0)
+                    {
+                        alreadyExistDelegateEmail.Add(email);
+                    }
+                }
+            }
+            if (alreadyExistDelegateEmail.Count > 0)
+            {
+                return string.Join(", ", alreadyExistDelegateEmail);
+            }
+            return string.Empty;
         }
 
         public IActionResult ConfirmSupervise(int supervisorDelegateId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, 0, adminId))
             {
-                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0);
+                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0, GetCentreId());
             }
 
             return RedirectToAction("MyStaffList");
@@ -196,7 +234,7 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
-            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             if (superviseDelegate == null)
             {
                 return RedirectToAction("MyStaffList");
@@ -209,14 +247,20 @@
         [HttpPost]
         public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
+            ModelState.ClearErrorsOnField("ActionConfirmed");
+            return View("RemoveConfirm", supervisorDelegate);
+        }
+
+        [HttpPost]
+        public IActionResult RemoveSupervisorDelegateConfirmed(SupervisorDelegateViewModel supervisorDelegate)
+        {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
-                supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.Id, 0, GetAdminID());
+                supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.Id, 0, GetAdminId());
                 return RedirectToAction("MyStaffList");
             }
             else
             {
-
                 if (supervisorDelegate.ConfirmedRemove)
                 {
                     supervisorDelegate.ConfirmedRemove = false;
@@ -227,10 +271,11 @@
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessments")]
-        public IActionResult DelegateProfileAssessments(int supervisorDelegateId)
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/{delegateUserId}/ProfileAssessments")]
+        public IActionResult DelegateProfileAssessments(int supervisorDelegateId, int delegateUserId = 0)
         {
-            var adminId = GetAdminID();
-            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
+            var adminId = GetAdminId();
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
@@ -246,7 +291,7 @@
         [Route("/Supervisor/AllStaffList")]
         public IActionResult AllStaffList()
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var centreId = GetCentreId();
             var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId)
@@ -264,8 +309,9 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Review/{selfAssessmentResultId}")]
         public IActionResult ReviewDelegateSelfAssessment(int supervisorDelegateId, int candidateAssessmentId, int? selfAssessmentResultId = null)
         {
-            var adminId = GetAdminID();
-            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            var adminId = GetAdminId();
+            var superviseDelegate =
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId, selfAssessmentResultId).ToList()
             );
@@ -284,11 +330,11 @@
                 competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
             };
 
-            if (superviseDelegate.CandidateID != null)
+            if (superviseDelegate.DelegateUserID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
-                    (int)superviseDelegate.CandidateID
+                    (int)superviseDelegate.DelegateUserID
                 );
             }
 
@@ -375,15 +421,16 @@
                 resultSupervisorVerificationId,
                 supervisorComments,
                 signedOff,
-                GetAdminID()
+                GetAdminId()
             ))
             {
                 //send notification to delegate:
                 frameworkNotificationService.SendSupervisorResultReviewed(
-                    GetAdminID(),
+                    GetAdminId(),
                     supervisorDelegateId,
                     candidateAssessmentId,
-                    resultId
+                    resultId,
+                    GetCentreId()
                 );
             }
 
@@ -406,9 +453,9 @@
             int resultId
         )
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var competency =
                 selfAssessmentService.GetCompetencyByCandidateAssessmentResultId(
                     resultId,
@@ -437,9 +484,9 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/ConfirmMultiple/")]
         public IActionResult VerifyMultipleResults(int supervisorDelegateId, int candidateAssessmentId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var superviseDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var delegateSelfAssessment =
                 supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
@@ -463,6 +510,27 @@
             List<int> resultChecked
         )
         {
+            if (resultChecked.Count == 0)
+            {
+                var adminId = GetAdminId();
+                var superviseDelegate =
+                    supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
+                var delegateSelfAssessment =
+                    supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
+                    selfAssessmentService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId)
+                        .ToList()
+                );
+                var model = new ReviewSelfAssessmentViewModel()
+                {
+                    SupervisorDelegateDetail = superviseDelegate,
+                    DelegateSelfAssessment = delegateSelfAssessment,
+                    CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup)
+                };
+                ModelState.Clear();
+                ModelState.AddModelError("CheckboxError", $"Please choose at least one result to confirm.");
+                return View("VerifyMultipleResults", model);
+            }
             int countResults = 0;
             foreach (var result in resultChecked)
             {
@@ -470,7 +538,7 @@
                     result,
                     null,
                     true,
-                    GetAdminID()
+                    GetAdminId()
                 ))
                 {
                     countResults += 1;
@@ -481,10 +549,11 @@
             {
                 //Send notification
                 frameworkNotificationService.SendSupervisorMultipleResultsReviewed(
-                    GetAdminID(),
+                    GetAdminId(),
                     supervisorDelegateId,
                     candidateAssessmentId,
-                    countResults
+                    countResults,
+                    GetCentreId()
                 );
             }
 
@@ -527,16 +596,17 @@
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             multiPageFormService.SetMultiPageFormData(
                 sessionEnrolOnRoleProfile,
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
 
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            var supervisorDelegate =
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
-                (int)supervisorDelegate.CandidateID,
+                (int)supervisorDelegate.DelegateUserID,
                 GetCentreId()
             );
             var model = new EnrolDelegateOnProfileAssessmentViewModel()
@@ -555,7 +625,7 @@
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
 
             if (selfAssessmentID < 1)
             {
@@ -565,9 +635,10 @@
                     MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                     TempData
                 );
-                var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                var supervisorDelegate =
+                    supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
-                    (int)supervisorDelegate.CandidateID,
+                    (int)supervisorDelegate.DelegateUserID,
                     GetCentreId()
                 );
                 var model = new EnrolDelegateOnProfileAssessmentViewModel()
@@ -603,14 +674,14 @@
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             multiPageFormService.SetMultiPageFormData(
                 sessionEnrolOnRoleProfile,
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
             var supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
             var model = new EnrolDelegateSetCompletByDateViewModel()
             {
@@ -630,10 +701,7 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/CompleteBy")]
         public IActionResult EnrolDelegateSetCompleteBy(int supervisorDelegateId, int day, int month, int year)
         {
-            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
-                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                TempData
-            );
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
             if (day != 0 | month != 0 | year != 0)
             {
                 var validationResult = OldDateValidator.ValidateDate(day, month, year);
@@ -688,16 +756,14 @@
         )]
         public IActionResult EnrolDelegateSupervisorRole(int supervisorDelegateId)
         {
-            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
-                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                TempData
-            );
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
             multiPageFormService.SetMultiPageFormData(
                 sessionEnrolOnRoleProfile,
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            var supervisorDelegate =
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
             var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
             var model = new EnrolDelegateSupervisorRoleViewModel()
@@ -718,15 +784,12 @@
             int selfAssessmentSupervisorRoleId
         )
         {
-            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
-                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                TempData
-            );
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
             if (!ModelState.IsValid)
             {
                 ModelState.ClearErrorsForAllFieldsExcept("SelfAssessmentSupervisorRoleId");
                 var supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
                 var supervisorRoles =
                     supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
@@ -757,17 +820,14 @@
         )]
         public IActionResult EnrolDelegateSummary(int supervisorDelegateId)
         {
-            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
-                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                TempData
-            );
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
             multiPageFormService.SetMultiPageFormData(
                 sessionEnrolOnRoleProfile,
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
             var supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
             var supervisorRoleName = (sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId == null
                 ? "Supervisor"
@@ -788,41 +848,40 @@
             return View("EnrolDelegateSummary", model);
         }
 
-        public IActionResult EnrolDelegateConfirm(int delegateId, int supervisorDelegateId)
+        public IActionResult EnrolDelegateConfirm(int delegateUserId, int supervisorDelegateId)
         {
-            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
-                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                TempData
-            );
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
             var selfAssessmentId = sessionEnrolOnRoleProfile.SelfAssessmentID;
             var completeByDate = sessionEnrolOnRoleProfile.CompleteByDate;
             var selfAssessmentSupervisorRoleId = sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId;
             var candidateAssessmentId = supervisorService.EnrolDelegateOnAssessment(
-                delegateId,
+                delegateUserId,
                 supervisorDelegateId,
                 selfAssessmentId.Value,
                 completeByDate,
                 selfAssessmentSupervisorRoleId,
-                GetAdminID()
+                GetAdminId(),
+                GetCentreId()
             );
             if (candidateAssessmentId > 0)
             {
                 //send delegate notification:
                 frameworkNotificationService.SendSupervisorEnroledDelegate(
-                    GetAdminID(),
+                    GetAdminId(),
                     supervisorDelegateId,
                     candidateAssessmentId,
-                    completeByDate
+                    completeByDate,
+                    GetCentreId()
                 );
             }
             TempData.Clear();
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
 
-        public IActionResult QuickAddSupervisor(int selfAssessmentId, int supervisorDelegateId, int candidateAssessmentId)
+        public IActionResult QuickAddSupervisor(int selfAssessmentId, int supervisorDelegateId, int delegateUserId)
         {
             var supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
             var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
 
@@ -840,7 +899,7 @@
             else
             {
                 supervisorService.InsertCandidateAssessmentSupervisor(
-                    candidateAssessmentId,
+                    delegateUserId,
                     supervisorDelegateId,
                     selfAssessmentId,
                     supervisorRoles.FirstOrDefault()?.ID
@@ -850,11 +909,11 @@
         }
 
         [HttpPost]
-        public IActionResult QuickAddSupervisor(EnrolDelegateSupervisorRoleViewModel supervisorRole, int selfAssessmentId, int supervisorDelegateId, int candidateAssessmentId)
+        public IActionResult QuickAddSupervisor(EnrolDelegateSupervisorRoleViewModel supervisorRole, int selfAssessmentId, int supervisorDelegateId, int delegateUserId)
         {
             var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
             var supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             if (supervisorRole.SelfAssessmentSupervisorRoleId == null)
             {
                 var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
@@ -885,13 +944,13 @@
 
 
         [HttpGet]
-        public IActionResult QuickAddSupervisorConfirm(int? selfAssessmentSupervisorRoleId, int selfAssessmentId, int supervisorDelegateId, int candidateAssessmentId)
+        public IActionResult QuickAddSupervisorConfirm(int? selfAssessmentSupervisorRoleId, int selfAssessmentId, int supervisorDelegateId, int delegateUserId)
         {
             if (!selfAssessmentSupervisorRoleId.HasValue)
             {
                 var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
                 var supervisorDelegate =
-                    supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                    supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
                 var model = new EnrolDelegateSupervisorRoleViewModel()
                 {
@@ -905,7 +964,7 @@
             else
             {
                 supervisorService.InsertCandidateAssessmentSupervisor(
-                    candidateAssessmentId,
+                    delegateUserId,
                     supervisorDelegateId,
                     selfAssessmentId,
                     selfAssessmentSupervisorRoleId.Value
@@ -925,9 +984,10 @@
         public IActionResult SendReminderDelegateSelfAssessment(int candidateAssessmentId, int supervisorDelegateId)
         {
             frameworkNotificationService.SendReminderDelegateSelfAssessment(
-                GetAdminID(),
+                GetAdminId(),
                 supervisorDelegateId,
-                candidateAssessmentId
+                candidateAssessmentId,
+                GetCentreId()
             );
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
@@ -938,7 +998,7 @@
             SelfAssessmentResultSummary? selfAssessmentSummary =
                 supervisorService.GetSelfAssessmentResultSummary(candidateAssessmentId, supervisorDelegateId);
             SupervisorDelegateDetail? supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             IEnumerable<CandidateAssessmentSupervisorVerificationSummary>? verificationsSummary =
                 supervisorService.GetCandidateAssessmentSupervisorVerificationSummaries(candidateAssessmentId);
             SignOffProfileAssessmentViewModel? model = new SignOffProfileAssessmentViewModel()
@@ -965,7 +1025,7 @@
                 SelfAssessmentResultSummary? selfAssessmentSummary =
                     supervisorService.GetSelfAssessmentResultSummary(candidateAssessmentId, supervisorDelegateId);
                 SupervisorDelegateDetail? supervisorDelegate =
-                    supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                    supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 IEnumerable<CandidateAssessmentSupervisorVerificationSummary>? verificationsSummary =
                     supervisorService.GetCandidateAssessmentSupervisorVerificationSummaries(candidateAssessmentId);
                 SignOffProfileAssessmentViewModel? newModel = new SignOffProfileAssessmentViewModel()
@@ -989,7 +1049,8 @@
                 candidateAssessmentId,
                 model.SupervisorComments,
                 model.SignedOff,
-                GetAdminID()
+                GetAdminId(),
+                GetCentreId()
             );
             return RedirectToAction(
                 "ReviewDelegateSelfAssessment",
@@ -1006,9 +1067,9 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId:int}/ProfileAssessment/{candidateAssessmentId}/SignOffHistory")]
         public IActionResult SignOffHistory(int supervisorDelegateId, int candidateAssessmentId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var superviseDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var delegateSelfAssessment =
                 supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
             var model = new SignOffHistoryViewModel()
@@ -1016,11 +1077,11 @@
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegateDetail = superviseDelegate
             };
-            if (superviseDelegate.CandidateID != null)
+            if (superviseDelegate.DelegateUserID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
                     delegateSelfAssessment.SelfAssessmentID,
-                    (int)superviseDelegate.CandidateID
+                    (int)superviseDelegate.DelegateUserID
                 );
             }
 
@@ -1031,7 +1092,7 @@
         public IActionResult NominateSupervisor(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
             var superviseDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
             if (TempData["NominateSupervisorError"] != null)
             {
@@ -1048,16 +1109,47 @@
         {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
-                var currentAdminUserId = User.GetAdminId();
-                var (currentAdminUser, delegateUser) = userService.GetUsersById(currentAdminUserId, null);
-                var categoryId = User.GetAdminCourseCategoryFilter() ?? 0;
-                var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminID(), 0);
-                var delegateIdToPromote = supervisorDelegateDetail.CandidateID ?? 0;
+                var categoryId = User.GetAdminCategoryId();
+
+                var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
+
+                var adminUser = userService.GetAdminUserByAdminId(GetAdminId());
+                var delegateUser = userService.GetDelegateUserByDelegateUserIdAndCentreId(
+                    supervisorDelegateDetail.DelegateUserID,
+                    (int)User.GetCentreId()
+                );
+
+                var centreName = adminUser.CentreName;
+
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
+                if (supervisorDelegateDetail.DelegateUserID != null)
+                {
+                    registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId(), true);
 
-                registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, delegateIdToPromote, currentAdminUser);
-                supervisorService.UpdateNotificationSent(supervisorDelegate.Id);
+                    if (delegateUser != null && adminUser != null)
+                    {
+                        var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
+                        firstName: delegateUser.FirstName,
+                        supervisorFirstName: adminUser.FirstName!,
+                        supervisorLastName: adminUser.LastName,
+                        supervisorEmail: adminUser.EmailAddress!,
+                        isCentreAdmin: adminRoles.IsCentreAdmin,
+                        isCentreManager: adminRoles.IsCentreManager,
+                        isSupervisor: adminRoles.IsSupervisor,
+                        isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
+                        isTrainer: adminRoles.IsTrainer,
+                        isContentCreator: adminRoles.IsContentCreator,
+                        isCmsAdmin: adminRoles.IsCmsAdministrator,
+                        isCmsManager: adminRoles.IsCmsManager,
+                        primaryEmail: delegateUser.EmailAddress,
+                        centreName: centreName
+                    );
 
+                        emailService.SendEmail(adminRolesEmail);
+
+                        supervisorService.UpdateNotificationSent(supervisorDelegate.Id);
+                    }
+                }
                 return RedirectToAction("MyStaffList");
             }
             else
@@ -1066,6 +1158,33 @@
                 return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
 
             }
+        }
+
+        [Route("/Supervisor/Staff/{reviewId}/ResendInvite")]
+        public IActionResult ResendInvite(int reviewId)
+        {
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(reviewId, GetAdminId(), 0);
+            if (reviewId > 0)
+            {
+                frameworkNotificationService.SendSupervisorDelegateReminder(reviewId, GetAdminId(), GetCentreId());
+                supervisorService.UpdateNotificationSent(reviewId);
+            }
+            return RedirectToAction("MyStaffList");
+        }
+
+        private int IsSupervisorDelegateExistAndActive(int adminId, string delegateEmail, int centreId)
+        {
+            int existingId = supervisorService.IsSupervisorDelegateExistAndReturnId(adminId, delegateEmail, centreId);
+            if (existingId > 0)
+            {
+                var supervisorDelegate = supervisorService.GetSupervisorDelegateById(existingId);
+                if (supervisorDelegate != null && supervisorDelegate.Removed != null)
+                {
+                    return 0;
+                }
+
+            }
+            return existingId;
         }
     }
 }

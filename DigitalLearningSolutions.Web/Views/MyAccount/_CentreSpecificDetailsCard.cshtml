@@ -1,0 +1,67 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@model MyAccountViewModel
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-2">
+    <h2 class="nhsuk-card__heading">
+      Centre-specific details
+    </h2>
+    <div class="nhsuk-card__description">
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Centre
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.CentreName" />
+        </div>
+
+        @{
+          var centreSpecificEmailModel = new CentreSpecificEmailDetailsViewModel(
+          Model.PrimaryEmail,
+          Model.CentreSpecificEmail,
+          null
+          );
+        }
+        <partial name="_CentreSpecificEmailDetailsSection" model="@centreSpecificEmailModel" />
+
+        @if (!string.IsNullOrWhiteSpace(Model.DelegateNumber))
+        {
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Delegate ID
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.DelegateNumber" />
+          </div>
+        }
+
+        @if (Model.DateRegistered != null)
+        {
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Date registered
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.DateRegistered" />
+          </div>
+        }
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Roles
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <ul>
+              @foreach (var role in Model.Roles)
+              {
+                <li>@role</li>
+              }
+            </ul>
+          </dd>
+        </div>
+
+        @foreach (var customField in Model.DelegateRegistrationPrompts)
+        {
+          <partial name="../Shared/_CustomPromptBasicSummaryListRow" model="@customField" />
+        }
+      </dl>
+    </div>
+  </div>
+</div>

@@ -11,6 +11,7 @@
             aria-level="2">
         @Model.Name
       </span>
+
     </summary>
     <div class="nhsuk-details__text nhsuk-u-padding-left-0">
       <div class="nhsuk-u-padding-left-3">
@@ -18,6 +19,14 @@
           <partial name="Shared/_TagRow" model="@Model" />
         </div>
         <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Enrolled at
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.CentreName
+            </dd>
+          </div>
           <partial name="Shared/_Dates" model="@Model" />
         </dl>
       </div>

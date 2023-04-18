@@ -1,0 +1,61 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model InternalLearnerInformationViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information" : "Register - Learner information";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/formElements.css")" asp-append-version="true">
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.Answer1),
+                                                   nameof(Model.Answer2),
+                                                   nameof(Model.Answer3),
+                                                   nameof(Model.Answer4),
+                                                   nameof(Model.Answer5),
+                                                   nameof(Model.Answer6) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Learner information</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="LearnerInformation">
+      @foreach (var customField in Model.DelegateRegistrationPrompts)
+      {
+        if (customField.Options.Any())
+        {
+          <vc:select-list asp-for="@("Answer" + customField.PromptNumber)"
+                      label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
+                      value="@customField.Answer"
+                      hint-text=""
+                      deselectable="@(!customField.Mandatory)"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a @customField.Prompt.ToLower()"
+                      required="true"
+                      select-list-options="@customField.Options" />
+        }
+        else
+        {
+          <vc:text-input asp-for="@("Answer" + customField.PromptNumber)"
+                     label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete=""
+                     required="true"
+                     css-class="nhsuk-u-width-one-half" />
+        }
+      }
+
+      <a class="nhsuk-button nhsuk-button--secondary" asp-action="PersonalInformation" role="button">Back</a>
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
+
+    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" />
+  </div>
+</div>

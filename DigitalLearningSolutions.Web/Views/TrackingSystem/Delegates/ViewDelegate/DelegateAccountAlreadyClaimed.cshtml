@@ -1,0 +1,19 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
+@model WelcomeEmailSentViewModel
+
+@{
+  ViewData["Title"] = "Delegate Account Claimed";
+}
+
+@section NavBreadcrumbs {
+  <partial name="~/Views/TrackingSystem/Delegates/ViewDelegate/_BreadcrumbsToViewDelegatePage.cshtml" model="@Model.Id" />
+}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+
+      <p class="nhsuk-body-m">Delegate account of @Model.Name (@Model.CandidateNumber) has already been claimed.</p>
+
+    </div>
+  </div>

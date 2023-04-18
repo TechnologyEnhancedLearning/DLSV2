@@ -1,13 +1,15 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.Controllers.LearningPortalController
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@inject IClockUtility ClockUtility
 @model EditCompleteByDateViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? $"Error: Learning Portal - {Model.Name} - Set complete by date" : $"Learning Portal - {Model.Name} - Set complete by date";
-  var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
+  var exampleDate = ClockUtility.UtcToday + TimeSpan.FromDays(7);
   var standardHintText = $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.";
   var courseHintText = Model.Type.Equals(LearningItemType.Course) ? "Activities with a complete by date will remain on your 'Current courses' list until completed. Activities with no complete by date will be removed after 6 months of inactivity." : "";
   var hintTextLines = new List<string> { standardHintText, courseHintText };
@@ -16,20 +18,22 @@
     LearningItemType.Course => nameof(LearningPortalController.SetCurrentCourseCompleteByDate),
     LearningItemType.SelfAssessment => nameof(LearningPortalController.SetSelfAssessmentCompleteByDate),
     _ => nameof(LearningPortalController.SetCurrentActionPlanResourceCompleteByDate),
-    };
+  };
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
     }
 
     <h1 class="nhsuk-heading-xl word-break">Enter a complete by date for @Model.Name</h1>
 
-    @if (Model.Type is LearningItemType.Resource && Model.ApiIsAccessible == false) {
+    @if (Model.Type is LearningItemType.Resource && Model.ApiIsAccessible == false)
+    {
       <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
-                                    text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
+                                  text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
     }
 
     <form asp-action="@action"
@@ -39,10 +43,12 @@
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="Type" />
       <input type="hidden" asp-for="ReturnPageQuery" />
-      @if (Equals(Model.Type, LearningItemType.Course)) {
+      @if (Equals(Model.Type, LearningItemType.Course))
+      {
         <input type="hidden" asp-for="@Model.ProgressId" />
       }
-      @if (Equals(Model.Type, LearningItemType.Resource)) {
+      @if (Equals(Model.Type, LearningItemType.Resource))
+      {
         <input type="hidden" asp-for="@Model.ApiIsAccessible" />
       }
 

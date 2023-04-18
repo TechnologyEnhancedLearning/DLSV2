@@ -1,0 +1,78 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@model UnverifiedEmailListViewModel
+
+@{
+  var numSpecificPhrases = new
+  {
+    account = Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail?.Count == 1 ? "account" : "accounts",
+  };
+}
+
+@if (Model.PrimaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail)
+{
+  <p>
+    Your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong> has not been verified yet.
+    This is also your centre email address for your @numSpecificPhrases.account at
+
+    @foreach (var (centreName, centreIndex) in Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail!
+   .Select((centreName, centreIndex) => (centreName, centreIndex)))
+    {
+      var isTheLastCentreNameInList = centreIndex == Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail.Count - 1;
+
+      @(isTheLastCentreNameInList && Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail.Count > 1 ? "and " : "")
+      <strong>
+        @(centreName +
+    (isTheLastCentreNameInList ? "." : "") +
+    (!isTheLastCentreNameInList && Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail.Count > 2 ? ", " : " "))
+      </strong>
+    }
+    @VerifyYourEmailTextHelper.UnverifiedPrimaryEmailConsequences
+  </p>
+}
+else if (!Model.PrimaryEmailIsVerified)
+{
+  <p>
+    Your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong> has not been verified yet.
+    @VerifyYourEmailTextHelper.UnverifiedPrimaryEmailConsequences
+  </p>
+}
+
+@if (Model.AtLeastOneCentreEmailIsUnverified)
+{
+  foreach (var ((email, centreNames), index) in Model.UnverifiedCentreEmailsDifferentFromPrimaryEmail
+    .Select((emailAndCentreNames, index) => (emailAndCentreNames, index)))
+  {
+    var isTheFirstEmailListed = Model.PrimaryEmailIsVerified && index == 0;
+
+    <p>
+      Your centre email address <strong>@email</strong> has @(isTheFirstEmailListed ? "" : "also")
+      not been verified yet. You will not be able to access
+
+      @if (centreNames.Count == 1)
+      {
+        <strong>@centreNames.First()</strong>
+      }
+      else if (centreNames.Count == 2)
+      {
+        <strong>@centreNames.First()</strong>
+        @(" or ")
+
+        <strong>@centreNames.Last()</strong>
+      }
+      else
+      {
+        @foreach (var (centreName, centreIndex) in centreNames
+       .Select((centreName, centreIndex) => (centreName, centreIndex)))
+        {
+          var isTheLastCentreNameInList = centreIndex == centreNames.Count - 1;
+
+          @(isTheLastCentreNameInList ? "or " : "")
+          <strong>@(centreName + (isTheLastCentreNameInList ? " " : ", "))</strong>
+        }
+      }
+
+      until you verify the address.
+    </p>
+  }
+}

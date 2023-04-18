@@ -2,9 +2,12 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public static class CurrentCourseHelper
     {
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
+
         public static CurrentCourse CreateDefaultCurrentCourse(
             int customisationId = 1,
             string courseName = "Course 1",
@@ -37,8 +40,8 @@
                 SupervisorAdminId = supervisorAdminId,
                 GroupCustomisationId = groupCustomisationId,
                 CompleteByDate = completeByDate,
-                StartedDate = startedDate ?? DateTime.UtcNow,
-                LastAccessed = lastAccessed ?? DateTime.UtcNow,
+                StartedDate = startedDate ?? ClockUtility.UtcNow,
+                LastAccessed = lastAccessed ?? ClockUtility.UtcNow,
                 ProgressID = progressId,
                 EnrollmentMethodID = enrollmentMethodId,
                 PLLocked = locked,

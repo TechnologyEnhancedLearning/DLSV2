@@ -14,9 +14,9 @@
   <partial name="Shared/_NavMenuItems" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full word-break">
+      @if (errorHasOccurred)
     {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
     }
@@ -38,7 +38,7 @@
                             label="I am sure that I wish to remove @Model.FirstName @Model.LastName from my staff list"
                             hint-text="This action will remove the staff member from your staff list and you will no longer be able to review their self assessments." />
       </div>
-      <button type="submit" class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveSupervisorDelegate">
+      <button type="submit" class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveSupervisorDelegateConfirmed">
         Remove
       </button>
       @Html.HiddenFor(m => m.Id)

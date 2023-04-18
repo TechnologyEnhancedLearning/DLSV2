@@ -34,7 +34,6 @@
         public string LearningMinutes { get; set; }
         public bool Assessed { get; set; }
         public string? Status { get; set; }
-
         public IEnumerable<CourseAdminFieldWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
 
         public bool HasAdminFields => AdminFieldWithResponseCounts.Any();
@@ -58,12 +57,12 @@
                 return "archived";
             }
             else switch (courseStatistics.Active)
-            {
-                case true:
-                    return "active";
-                case false:
-                    return "inactive";
-            }
+                {
+                    case true:
+                        return "active";
+                    case false:
+                        return "inactive";
+                }
         }
     }
 }

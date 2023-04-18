@@ -1,0 +1,49 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.VerifyEmail
+@model VerifyYourEmailViewModel
+
+@{
+  var primaryEmailIsVerified = Model.PrimaryEmail == null;
+  var endingText = Model.SingleUnverifiedEmail
+    ? VerifyYourEmailTextHelper.DirectionsToResendLinkByVisitingMyAccountPage(false)
+    : VerifyYourEmailTextHelper.VerifyEmailLinkCommonInfo(true) + " " +
+      VerifyYourEmailTextHelper.DirectionsToResendLinkByVisitingMyAccountPage(true);
+}
+
+@if (!primaryEmailIsVerified)
+{
+  var primaryEmailOnlyExplanation = VerifyYourEmailTextHelper.VerifyEmailLinkCommonInfo(false);
+
+  <p class="nhsuk-body-m">
+    You've updated your primary email address: <strong>@Model.PrimaryEmail</strong>.
+    @(Model.SingleUnverifiedEmail ? primaryEmailOnlyExplanation : "")
+    You will not be able to access any centre accounts until it is verified.
+  </p>
+}
+
+@if (primaryEmailIsVerified && Model.SingleUnverifiedEmail)
+{
+  <p>
+    You've updated your email address
+    for your account at <strong>@Model.CentreSpecificEmails.First().centreName</strong>.
+    An email with a verification link has been sent to <strong>@Model.CentreSpecificEmails.First().centreEmail</strong>.
+    Please click the link to verify your email address.
+    @VerifyYourEmailTextHelper.UnverifiedCentreEmailConsequences
+  </p>
+}
+
+@if (Model.CentreSpecificEmails.Count() > 1)
+{
+  foreach (var ((_, centreName, centreEmail), index) in Model.CentreSpecificEmails
+    .Select((emailAndCentreNames, index) => (emailAndCentreNames, index)))
+  {
+    var isTheFirstEmailListed = primaryEmailIsVerified && index == 0;
+    <p>
+      You've @(isTheFirstEmailListed ? "" : "also") updated your email address
+      for your account at <strong>@centreName</strong>: <strong>@centreEmail</strong>.
+      @VerifyYourEmailTextHelper.UnverifiedCentreEmailConsequences
+    </p>
+  }
+
+  <p class="nhsuk-body-m">@endingText</p>
+}

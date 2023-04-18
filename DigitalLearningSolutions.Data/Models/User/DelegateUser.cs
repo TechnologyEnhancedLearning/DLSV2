@@ -5,6 +5,8 @@
 
     public class DelegateUser : User
     {
+        public int Id { get; set; }
+        public int UserId { get; set; }
         public string CandidateNumber { get; set; }
         public DateTime? DateRegistered { get; set; }
         public int JobGroupId { get; set; }
@@ -15,7 +17,6 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
-        public string? AliasId { get; set; }
 
         /// <summary>
         ///     This signifies that the user has either seen the PRN fields themselves
@@ -28,6 +29,7 @@
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool HasDismissedLhLoginWarning { get; set; }
 
+        public string? RegistrationConfirmationHash { get; set; }
         public override string?[] SearchableContent => new[] { SearchableName, CandidateNumber, EmailAddress };
 
         public override UserReference ToUserReference()
@@ -35,9 +37,9 @@
             return new UserReference(Id, UserType.DelegateUser);
         }
 
-        public CentreAnswersData GetCentreAnswersData()
+        public RegistrationFieldAnswers GetRegistrationFieldAnswers()
         {
-            return new CentreAnswersData(
+            return new RegistrationFieldAnswers(
                 CentreId,
                 JobGroupId,
                 Answer1,

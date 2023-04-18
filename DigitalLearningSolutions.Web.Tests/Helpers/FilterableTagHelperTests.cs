@@ -14,10 +14,10 @@
     public class FilterableTagHelperTests
     {
         [Test]
-        public void GetCurrentTagsForAdminUser_should_return_correct_tags()
+        public void GetCurrentTagsForAdmin_should_return_correct_tags()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 5, isContentCreator: true);
+            var admin = UserTestHelper.GetDefaultAdminEntity(failedLoginCount: 5, isContentCreator: true);
             var expectedTags = new List<SearchableTagViewModel>
             {
                 new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsLocked),
@@ -26,11 +26,12 @@
                 new SearchableTagViewModel(AdminRoleFilterOptions.Supervisor),
                 new SearchableTagViewModel(AdminRoleFilterOptions.Trainer),
                 new SearchableTagViewModel(AdminRoleFilterOptions.CmsAdministrator),
-                new SearchableTagViewModel(AdminRoleFilterOptions.ContentCreatorLicense)
+                new SearchableTagViewModel(AdminRoleFilterOptions.ContentCreatorLicense),
+                new SearchableTagViewModel(AdminRoleFilterOptions.SuperAdmin),
             };
 
             // When
-            var result = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser).ToList();
+            var result = FilterableTagHelper.GetCurrentTagsForAdmin(admin).ToList();
 
             // Then
             using (new AssertionScope())
@@ -44,7 +45,7 @@
         {
             // Given
             var delegateUser = new DelegateUserCard
-                { Active = true, AdminId = 1, Password = "some password", SelfReg = true };
+            { Active = true, AdminId = 1, Password = "some password", SelfReg = true };
             var expectedTags = new List<SearchableTagViewModel>
             {
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsActive),
@@ -91,7 +92,7 @@
         {
             // Given
             var delegateUser = new DelegateUserCard
-                { SelfReg = true, ExternalReg = true };
+            { SelfReg = true, ExternalReg = true };
             var expectedTags = new List<SearchableTagViewModel>
             {
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsNotActive),

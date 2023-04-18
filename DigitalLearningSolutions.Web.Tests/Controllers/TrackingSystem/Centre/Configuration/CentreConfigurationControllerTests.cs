@@ -5,10 +5,10 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Certificates;
     using DigitalLearningSolutions.Data.Models.External.Maps;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
     using FakeItEasy;
@@ -214,7 +214,7 @@
                 CentreSignature = new byte[100],
                 CentreSignatureFile = A.Fake<IFormFile>(),
             };
-            var newImage = new byte [200];
+            var newImage = new byte[200];
             A.CallTo(() => imageResizeService.ResizeCentreImage(A<IFormFile>._)).Returns(newImage);
 
             // When
@@ -238,7 +238,7 @@
                 CentreLogo = new byte[100],
                 CentreLogoFile = A.Fake<IFormFile>(),
             };
-            var newImage = new byte [200];
+            var newImage = new byte[200];
             A.CallTo(() => imageResizeService.ResizeCentreImage(A<IFormFile>._)).Returns(newImage);
 
             // When
@@ -340,14 +340,29 @@
         public void PreviewCertificate_returns_view_when_service_returns_object()
         {
             // Given
-            var certificateInformation = new CertificateInformation(
-                CentreTestHelper.GetDefaultCentre(),
-                "Test",
-                "Name",
-                "Course",
-                DateTime.UtcNow,
-                "Modifier"
-            );
+            var centre = CentreTestHelper.GetDefaultCentre();
+            A.CallTo(() => centresDataService.GetCentreDetailsById(centre.CentreId)).Returns(centre);
+            var certificateInformation = CertificateTestHelper.GetDefaultCertificate();
+            //var certificateInformation = new CertificateInformation(
+            //    0,
+            //    "Test",
+            //    "Name",
+            //    centre.ContactForename,
+            //    centre.ContactSurname,
+            //    centre.CentreName,
+            //    centre.CentreId,
+            //    centre.SignatureImage,
+            //    250,
+            //    250,
+            //    centre.CentreLogo,
+            //    250,
+            //    250,
+            //    "",
+            //    "Course",
+            //    DateTime.UtcNow,
+            //    3,
+            //    101
+            //);
             A.CallTo(() => certificateService.GetPreviewCertificateForCentre(A<int>._)).Returns(certificateInformation);
 
             // When

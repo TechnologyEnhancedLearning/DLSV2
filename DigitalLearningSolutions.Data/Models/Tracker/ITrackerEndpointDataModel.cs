@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Tracker
 {
-    interface ITrackerEndpointDataModel
+    public interface ITrackerEndpointDataModel
     {
     }
 }

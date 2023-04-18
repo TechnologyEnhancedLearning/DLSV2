@@ -10,7 +10,7 @@
 
     public class ApplicationSelectorController : Controller
     {
-        [Authorize]
+        [Authorize(Policy = CustomPolicies.UserAdmin)]
         [RedirectDelegateOnlyToLearningPortal]
         [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
         [SetSelectedTab(nameof(NavMenuTab.SwitchApplication))]

@@ -16,7 +16,7 @@
 
         public string LastName { get; set; }
 
-        public string? EmailAddress { get; set; }
+        public string PrimaryEmail { get; set; }
 
         public string CandidateNumber { get; set; }
 
@@ -25,6 +25,13 @@
         public bool HasBeenPromptedForPrn { get; set; }
 
         public string? ProfessionalRegistrationNumber { get; set; }
+
+        public string? CentreEmail { get; set; }
+
+        public string EmailForCentreNotifications => CentreEmailHelper.GetEmailForCentreNotifications(
+            PrimaryEmail,
+            CentreEmail
+        );
 
         public override string SearchableName
         {

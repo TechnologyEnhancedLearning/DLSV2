@@ -10,7 +10,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         IClassFixture<AccessibilityTestsFixture<Startup>>
     {
         public EditLearningPathwayDefaultsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) :
-            base(fixture) { }
+            base(fixture)
+        { }
 
         [Fact]
         public void EditLearningPathwayDefaults_journey_has_no_accessibility_errors()

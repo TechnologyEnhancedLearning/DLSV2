@@ -1,10 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword
 {
-    using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
 
-    public class SetDelegatePasswordViewModel
+    public class SetDelegatePasswordViewModel : IValidatableObject
     {
         public SetDelegatePasswordViewModel() { }
 
@@ -34,9 +37,29 @@
             CommonValidationErrorMessages.PasswordRegex,
             ErrorMessage = CommonValidationErrorMessages.PasswordInvalidCharacters
         )]
+        [CommonPasswords(CommonValidationErrorMessages.PasswordTooCommon)]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 
         public ReturnPageQuery? ReturnPageQuery { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            List<ValidationResult> errors = new List<ValidationResult>();
+            if(Password != null && Password != string.Empty)
+            {
+                var passwordLower = Password.ToLower();
+                var firstnameLower = Name.ToLower().Split(' ').First();
+                var lastnameLower = Name.ToLower().Split(' ').Last();
+
+                if (passwordLower.Contains(firstnameLower) || passwordLower.Contains(lastnameLower))
+                {
+                    errors.Add(new ValidationResult(CommonValidationErrorMessages.PasswordSimilarUsername));
+                }
+            }
+
+            return errors;
+        }
+
     }
 }

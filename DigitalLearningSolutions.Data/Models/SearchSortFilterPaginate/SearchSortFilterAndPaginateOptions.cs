@@ -1,9 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate
 {
-    using DigitalLearningSolutions.Data.Services;
 
     /// <summary>
-    /// Defines the options to be used by the <see cref="SearchSortFilterPaginateService"/>.
+    /// Defines the options to be used by the <see cref="DigitalLearningSolutions.Web.Services.SearchSortFilterPaginateService"/>.
     /// When SearchOptions, SortOptions or FilterOptions is null, that portion of the functionality
     /// will be turned off. PaginationOptions works slightly differently, but should still be set
     /// to null on pages where there is no pagination. In this case, the service will return a

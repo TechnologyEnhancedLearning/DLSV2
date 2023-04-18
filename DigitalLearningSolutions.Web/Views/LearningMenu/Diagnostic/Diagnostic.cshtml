@@ -16,12 +16,15 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+  @{
+  var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");
+}
 
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
         <li class="nhsuk-breadcrumb__item">Diagnostic assessment</li>
@@ -29,7 +32,7 @@
 
       @if (Model.OnlyItemInOnlySection)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close">Return to current activities</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
       }
       else if (Model.OnlyItemInThisSection)
       {
@@ -43,13 +46,13 @@
   </nav>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">
-      <span class="nhsuk-caption-l">Diagnostic assessment</span>
-      @Model.SectionName
-    </h1>
-    @if (Model.OnlyItemInOnlySection)
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 id="page-heading" class="nhsuk-heading-xl">
+        <span class="nhsuk-caption-l">Diagnostic assessment</span>
+        @Model.SectionName
+      </h1>
+      @if (Model.OnlyItemInOnlySection)
     {
       <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>
     }
@@ -62,12 +65,11 @@
 
 <partial name="Diagnostic/_DiagnosticImportantInformation" />
 
-<form
-  class="nhsuk-form-group nhsuk-u-margin-bottom-5"
-  method="get"
-  asp-action="DiagnosticContent"
-  asp-route-customisationId="@Model.CustomisationId"
-  asp-route-sectionId="@Model.SectionId">
+<form class="nhsuk-form-group nhsuk-u-margin-bottom-5"
+      method="get"
+      asp-action="DiagnosticContent"
+      asp-route-customisationId="@Model.CustomisationId"
+      asp-route-sectionId="@Model.SectionId">
   <fieldset class="nhsuk-fieldset">
     @if (Model.CanSelectTutorials)
     {
@@ -99,9 +101,10 @@
         </button>
       </div>
 
-      @if (Model.ShowNextButton) {
+      @if (Model.ShowNextButton)
+      {
         <div>
-          <partial name="Diagnostic/_DiagnosticNextLink" model="Model"/>
+          <partial name="Diagnostic/_DiagnosticNextLink" model="Model" />
         </div>
       }
     </div>

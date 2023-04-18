@@ -7,6 +7,7 @@
         public int ApplicationId { get; set; }
         public bool Active { get; set; }
         public bool Archived { get; set; }
+
         public string CourseNameWithInactiveFlag => !Active ? "Inactive - " + CourseName : CourseName;
 
         public override bool Equals(object? obj)

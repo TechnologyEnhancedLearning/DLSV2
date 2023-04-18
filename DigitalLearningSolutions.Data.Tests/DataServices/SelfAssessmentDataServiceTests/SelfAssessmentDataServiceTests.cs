@@ -10,7 +10,8 @@
     public partial class SelfAssessmentDataServiceTests
     {
         private const int SelfAssessmentId = 1;
-        private const int CandidateId = 11;
+        private const int DelegateId = 11;
+        private const int delegateUserId = 11486;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
         private SqlConnection connection = null!;
         private CompetencyTestHelper competencyTestHelper = null!;

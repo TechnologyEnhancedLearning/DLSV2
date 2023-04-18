@@ -4,17 +4,21 @@
 <nav class="nhsuk-contents-list" role="navigation" aria-label="Pages in this guide">
   <h2 class="nhsuk-u-visually-hidden">Contents</h2>
   <ol class="nhsuk-contents-list__list">
-    @for (var sectionIndex = 0; sectionIndex < @Model.Sections.Count; sectionIndex++) {
+    @for (var sectionIndex = 0; sectionIndex < @Model.Sections.Count; sectionIndex++)
+    {
       var isCurrentSection = Model.CurrentSectionIndex == sectionIndex;
       var sectionToLinkTo = Model.Sections[sectionIndex];
 
       <li class="nhsuk-contents-list__item" aria-current="@(isCurrentSection ? "page" : null)">
-        @if (isCurrentSection) {
+        @if (isCurrentSection)
+        {
           <span class="nhsuk-contents-list__current">@sectionToLinkTo.SectionTitle</span>
-        } else {
+        }
+        else
+        {
           <a class="nhsuk-contents-list__link"
-             asp-controller="@sectionToLinkTo.ControllerName"
-             asp-action="@sectionToLinkTo.ActionName">
+         asp-controller="@sectionToLinkTo.ControllerName"
+         asp-action="@sectionToLinkTo.ActionName">
             @sectionToLinkTo.SectionTitle
           </a>
         }

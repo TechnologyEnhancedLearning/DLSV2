@@ -11,9 +11,12 @@
     {
         SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash);
 
-        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email);
+        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
+            int centreId,
+            IEnumerable<string> emails
+        );
 
-        void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId);
+        void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int delegateUserId);
     }
 
     public class SupervisorDelegateDataService : ISupervisorDelegateDataService
@@ -36,7 +39,7 @@
                         sd.ID,
                         sd.SupervisorAdminID,
                         sd.SupervisorEmail,
-                        sd.CandidateID,
+                        sd.DelegateUserID,
                         sd.DelegateEmail,
                         sd.Added,
                         sd.AddedByDelegate,
@@ -56,14 +59,17 @@
             }
         }
 
-        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email)
+        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
+            int centreId,
+            IEnumerable<string> emails
+        )
         {
             return connection.Query<SupervisorDelegate>(
                 @"SELECT
                         sd.ID,
                         sd.SupervisorAdminID,
                         sd.SupervisorEmail,
-                        sd.CandidateID,
+                        sd.DelegateUserID,
                         sd.DelegateEmail,
                         sd.Added,
                         sd.AddedByDelegate,
@@ -73,20 +79,21 @@
                     FROM SupervisorDelegates sd
                     INNER JOIN AdminUsers au ON sd.SupervisorAdminID = au.AdminID
                     WHERE au.CentreID = @centreId
-                      AND sd.DelegateEmail = @email
-                      AND sd.CandidateID IS NULL
+                      AND sd.DelegateEmail IN @emails
+                      AND sd.DelegateUserID IS NULL
                       AND sd.Removed IS NULL",
-                new { centreId, email }
+                new { centreId, emails }
             );
         }
 
-        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId)
+        // TODO: HEEDLS-1014 - Change CandidateID to UserID
+        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int delegateUserId)
         {
             connection.Execute(
                 @"UPDATE SupervisorDelegates
-                    SET CandidateID = @candidateId
+                    SET DelegateUserID = @delegateUserId
                     WHERE ID IN @supervisorDelegateIds",
-                new { supervisorDelegateIds, candidateId }
+                new { supervisorDelegateIds, delegateUserId }
             );
         }
     }

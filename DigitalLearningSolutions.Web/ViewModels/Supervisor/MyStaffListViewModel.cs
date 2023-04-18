@@ -41,7 +41,8 @@
                 null
             ),
             new CentreRegistrationPrompts()
-        ) { }
+        )
+        { }
 
         public IEnumerable<SupervisorDelegateDetailViewModel> SuperviseDelegateDetailViewModels { get; set; }
 
@@ -65,7 +66,7 @@
         [Required(ErrorMessage = "Enter an email")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
-        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
-        public string? DelegateEmail { get; set; }
+        [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
+        public string? DelegateEmailAddress { get; set; }
     }
 }

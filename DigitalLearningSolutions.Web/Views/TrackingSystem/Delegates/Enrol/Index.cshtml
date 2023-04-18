@@ -1,33 +1,33 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
 @model EnrolCurrentLearningViewModel
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    var errorClass = Model.SelectedActivity < 1 ? "nhsuk-input--error" : "";
-    var routeParamsForCancelLink = new Dictionary<string, string> {
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var errorClass = Model.SelectedActivity < 1 ? "nhsuk-input--error" : "";
+  var routeParamsForCancelLink = new Dictionary<string, string> {
     { "delegateId", Model.DelegateId.ToString() },
   };
 }
 <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-        @if (errorHasOccurred)
-        {
-            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedActivity) })" />
-        }
-        <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 1</h1>
-        <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
-        <form method="post" class="nhsuk-u-margin-bottom-3">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedActivity) })" />
+    }
+    <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 1</h1>
+    <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
+    <form method="post" class="nhsuk-u-margin-bottom-3">
 
-            <vc:select-list asp-for="@nameof(Model.SelectedActivity)"
-                            label="Choose an activity:"
-                            value="@Model.SelectedActivity"
-                            hint-text=""
-                            required="true"
-                            css-class="nhsuk-u-width-one-half"
-                            default-option="--Select--"
-                            select-list-options="@Model.LearningItems" />
+      <vc:select-list asp-for="@nameof(Model.SelectedActivity)"
+                      label="Choose an activity:"
+                      value="@Model.SelectedActivity"
+                      hint-text=""
+                      required="true"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="--Select--"
+                      select-list-options="@Model.LearningItems" />
 
-            <input class="nhsuk-button" type="submit" value="Next" />
-        </form>
-        <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForCancelLink" />
-    </div>
+      <input class="nhsuk-button" type="submit" value="Next" />
+    </form>
+    <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForCancelLink" />
+  </div>
 </div>

@@ -5,37 +5,23 @@
 
     public class CertificateInformation
     {
-        public CertificateInformation(
-            Centre centreDetails,
-            string? delegateFirstName,
-            string delegateLastName,
-            string courseName,
-            DateTime completionDate,
-            string certificateModifier
-        )
-        {
-            SignatureImage = centreDetails.SignatureImage;
-            CentreLogo = centreDetails.CentreLogo;
-            ContactForename = centreDetails.ContactForename;
-            ContactSurname = centreDetails.ContactSurname;
-            CentreName = centreDetails.CentreName;
-
-            DelegateFirstName = delegateFirstName;
-            DelegateLastName = delegateLastName;
-            CourseName = courseName;
-            CompletionDate = completionDate;
-            CertificateModifier = certificateModifier;
-        }
-
+        public int ProgressID { get; set; }
         public string? DelegateFirstName { get; set; }
-        public string DelegateLastName { get; set; }
-        public string CourseName { get; set; }
-        public byte[]? SignatureImage { get; set; }
-        public byte[]? CentreLogo { get; set; }
+        public string? DelegateLastName { get; set; }
         public string? ContactForename { get; set; }
         public string? ContactSurname { get; set; }
+        public string? CentreName { get; set; }
+        public int CentreID { get; set; }
+        public byte[]? SignatureImage { get; set; }
+        public int SignatureWidth { get; set; }
+        public int SignatureHeight { get; set; }
+        public byte[]? CentreLogo { get; set; }
+        public int LogoWidth { get; set; }
+        public int LogoHeight { get; set; }
+        public string? LogoMimeType { get; set; }
+        public string? CourseName { get; set; }
         public DateTime CompletionDate { get; set; }
-        public string CentreName { get; set; }
-        public string CertificateModifier { get; set; }
+        public int AppGroupID { get; set; }
+        public int CreatedByCentreID { get; set; }
     }
 }

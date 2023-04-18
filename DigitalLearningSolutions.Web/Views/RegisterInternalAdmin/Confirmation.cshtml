@@ -1,0 +1,25 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model AdminConfirmationViewModel
+
+@{
+  ViewData["Title"] = "Admin registration complete";
+  var verifyEmailWarningViewModel = new ConfirmationVerifyEmailWarningViewModel(Model.PrimaryEmailIfUnverified, Model.CentreEmailIfUnverified, Model.CentreName);
+  var centreEmailIsVerified = Model.CentreEmailIfUnverified == null;
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">Admin registration complete</h1>
+
+    <p class="nhsuk-body-l">
+      Your email address matched details stored with the centre, so your centre manager account has successfully been created.
+    </p>
+
+    @if (!centreEmailIsVerified)
+    {
+      <partial name="_VerifyEmailWarningForRegistrationConfirmationPage" model="@verifyEmailWarningViewModel" />
+    }
+
+    <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+  </div>
+</div>

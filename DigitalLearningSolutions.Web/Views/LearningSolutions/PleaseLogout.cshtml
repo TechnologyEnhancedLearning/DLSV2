@@ -1,0 +1,13 @@
+﻿@using DigitalLearningSolutions.Data.Enums
+@{
+  ViewData["Title"] = "Please log out";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds nhsuk-u-reading-width">
+    <h1>@ViewData["Title"]</h1>
+    <p>We recently changed how we store user accounts, so that you can switch between accounts while logged in.</p>
+    <p>Because of these changes, you must log out and in again in order to continue using DLS.</p>
+    <partial name="_LogoutForm" model="@ButtonType.Primary" />
+  </div>
+</div>

@@ -2,10 +2,10 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
@@ -52,7 +52,7 @@
             new VerifyAdminUserCanAccessAdminUser(userDataService).OnActionExecuting(context);
 
             // Then
-            context.Result.Should().BeNotFoundResult();
+            context.Result.Should().BeStatusCodeResult().WithStatusCode(410);
         }
 
         [Test]

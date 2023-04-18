@@ -23,7 +23,7 @@
 
         [StringLength(1000, ErrorMessage = CommonValidationErrorMessages.StringMaxLengthValidation)]
         public string? Description { get; set; }
-        
+
         public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

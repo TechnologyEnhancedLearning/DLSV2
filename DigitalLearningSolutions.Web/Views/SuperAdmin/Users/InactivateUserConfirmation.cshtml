@@ -1,0 +1,53 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
+@model InactivateUserViewModel;
+@{
+    ViewData["Title"] = "User Accounts";
+}
+@if (Model.Error)
+{
+    <vc:error-summary order-of-property-names="@(new string[] { "IsChecked" })" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link" asp-controller="Users" asp-action="Index" asp-route-SearchString="@Model.SearchString" asp-route-ExistingFilterString="@Model.ExistingFilterString" asp-route-page="@Model.Page">User Accounts</a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+}
+<div id="form-group">
+    <form method="post" asp-action="InactivateUserConfirmation">
+        <div>
+            <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+                Inactivate User
+            </h1>
+            @Html.HiddenFor(x=>x.DisplayName)
+            @Html.HiddenFor(x=>x.UserId)
+            @Html.HiddenFor(x=>x.SearchString)
+            @Html.HiddenFor(x=>x.ExistingFilterString)
+            @Html.HiddenFor(x=>x.Page)
+            <h3>User: @Model.DisplayName</h3>
+            <p>
+                <vc:single-checkbox asp-for="@nameof(Model.IsChecked)" label="I am sure that I wish to inactivate this user" hint-text="This action will inactivate all related delegate and admin accounts for this user and prevent them from logging in to the system. The user will be unable to register to use the system with this email address in future. To access the system again, their account will need to be reactivated by a super administrator."></vc:single-checkbox>
+            </p>
+        </div>
+        <button class="nhsuk-button nhsuk-button--danger" type="submit">
+            Inactivate user
+        </button>
+    </form>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-controller="Users" asp-action="Index" asp-route-SearchString="@Model.SearchString" asp-route-ExistingFilterString="@Model.ExistingFilterString" asp-route-page="@Model.Page" asp-fragment="@Model.UserId-name">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    </div>
+</div>
+
+
+
+

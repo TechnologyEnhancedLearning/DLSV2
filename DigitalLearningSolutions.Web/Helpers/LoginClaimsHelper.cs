@@ -1,103 +1,132 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Security.Claims;
-    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public static class LoginClaimsHelper
     {
-        public static List<Claim> GetClaimsForSignIn(
-            AdminLoginDetails? adminLoginDetails,
-            DelegateLoginDetails? delegateLoginDetails
+        public static List<Claim> GetClaimsForSignIntoCentre(
+            UserEntity userEntity,
+            int centreIdToLogInto
+        )
+        {
+            var centreAccountSet = userEntity.GetCentreAccountSet(centreIdToLogInto);
+
+            if (!(centreAccountSet is { CanLogInToCentre: true }))
+            {
+                throw new LoginWithNoValidAccountException(
+                    $"No active admin account or active, approved delegate account at centre {centreIdToLogInto} for user {userEntity.UserAccount.Id}"
+                );
+            }
+
+            var userCentreClaims = GetClaimsForUserCentre(centreAccountSet);
+
+            var adminAccount = centreAccountSet.CanLogIntoAdminAccount ? centreAccountSet.AdminAccount : null;
+            var delegateAccount = centreAccountSet.CanLogIntoDelegateAccount ? centreAccountSet.DelegateAccount : null;
+
+            var basicClaims = GetClaimsForCentrelessSignIn(userEntity.UserAccount);
+            var adminClaims = GetAdminSpecificClaimsForSignIn(adminAccount);
+            var delegateClaims = GetDelegateSpecificClaimsForSignIn(delegateAccount);
+            var permissionClaims = GetPermissionClaimsForSignIn(adminAccount, delegateAccount);
+
+            return basicClaims
+                .Concat(userCentreClaims)
+                .Concat(adminClaims)
+                .Concat(delegateClaims)
+                .Concat(permissionClaims)
+                .ToList();
+        }
+
+        public static List<Claim> GetClaimsForCentrelessSignIn(
+            UserAccount userAccount
         )
         {
             var claims = new List<Claim>
             {
-                new Claim(
-                    ClaimTypes.Email,
-                    adminLoginDetails?.EmailAddress ?? delegateLoginDetails?.EmailAddress ?? string.Empty
-                ),
-                new Claim(
-                    CustomClaimTypes.UserCentreId,
-                    adminLoginDetails?.CentreId.ToString() ?? delegateLoginDetails?.CentreId.ToString()
-                ),
-                new Claim(CustomClaimTypes.UserCentreManager, adminLoginDetails?.IsCentreManager.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserCentreAdmin, adminLoginDetails?.IsCentreAdmin.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserUserAdmin, adminLoginDetails?.IsUserAdmin.ToString() ?? "False"),
-                new Claim(
-                    CustomClaimTypes.UserContentCreator,
-                    adminLoginDetails?.IsContentCreator.ToString() ?? "False"
-                ),
-                new Claim(
-                    CustomClaimTypes.UserAuthenticatedCm,
-                    adminLoginDetails?.IsContentManager.ToString() ?? "False"
-                ),
-                new Claim(CustomClaimTypes.UserPublishToAll, adminLoginDetails?.PublishToAll.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserCentreReports, adminLoginDetails?.SummaryReports.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateLoginDetails != null).ToString()),
-                new Claim(CustomClaimTypes.IsSupervisor, adminLoginDetails?.IsSupervisor.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsNominatedSupervisor, adminLoginDetails?.IsNominatedSupervisor.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsTrainer, adminLoginDetails?.IsTrainer.ToString() ?? "False"),
+                new Claim(ClaimTypes.Email, userAccount.PrimaryEmail),
+                new Claim(CustomClaimTypes.UserId, userAccount.Id.ToString()),
+                new Claim(CustomClaimTypes.UserForename, userAccount.FirstName),
+                new Claim(CustomClaimTypes.UserSurname, userAccount.LastName),
+            };
+
+            return claims;
+        }
+
+        private static List<Claim> GetPermissionClaimsForSignIn(
+            AdminAccount? adminAccount,
+            DelegateAccount? delegateAccount
+        )
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(CustomClaimTypes.UserCentreManager, adminAccount?.IsCentreManager.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserCentreAdmin, adminAccount?.IsCentreAdmin.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserUserAdmin, adminAccount?.IsSuperAdmin.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserContentCreator, adminAccount?.IsContentCreator.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserAuthenticatedCm, adminAccount?.IsContentManager.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserPublishToAll, adminAccount?.PublishToAll.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserCentreReports, adminAccount?.IsReportsViewer.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateAccount != null).ToString()),
+                new Claim(CustomClaimTypes.IsSupervisor, adminAccount?.IsSupervisor.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.IsTrainer, adminAccount?.IsTrainer.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.IsNominatedSupervisor, adminAccount?.IsNominatedSupervisor.ToString() ?? "False"),
                 new Claim(
                     CustomClaimTypes.IsFrameworkDeveloper,
-                    adminLoginDetails?.IsFrameworkDeveloper.ToString() ?? "False"
-                ),
-                new Claim(
-                    CustomClaimTypes.UserCentreName,
-                    adminLoginDetails?.CentreName ?? delegateLoginDetails?.CentreName
+                    adminAccount?.IsFrameworkDeveloper.ToString() ?? "False"
                 ),
                 new Claim(
                     CustomClaimTypes.IsFrameworkContributor,
-                    adminLoginDetails?.IsFrameworkContributor.ToString() ?? "False"
+                    adminAccount?.IsFrameworkContributor.ToString() ?? "False"
                 ),
-                new Claim(
-                    CustomClaimTypes.IsWorkforceManager,
-                    adminLoginDetails?.IsWorkforceManager.ToString() ?? "False"
-                ),
+                new Claim(CustomClaimTypes.IsWorkforceManager, adminAccount?.IsWorkforceManager.ToString() ?? "False"),
                 new Claim(
                     CustomClaimTypes.IsWorkforceContributor,
-                    adminLoginDetails?.IsWorkforceContributor.ToString() ?? "False"
+                    adminAccount?.IsWorkforceContributor.ToString() ?? "False"
                 ),
                 new Claim(
                     CustomClaimTypes.IsLocalWorkforceManager,
-                    adminLoginDetails?.IsLocalWorkforceManager.ToString() ?? "False"
-                )
+                    adminAccount?.IsLocalWorkforceManager.ToString() ?? "False"
+                ),
             };
-
-            var firstName = adminLoginDetails?.FirstName ?? delegateLoginDetails?.FirstName;
-            var surname = adminLoginDetails?.LastName ?? delegateLoginDetails?.LastName;
-
-            if (firstName != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.UserForename, firstName));
-            }
-
-            if (surname != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.UserSurname, surname));
-            }
-
-            if (delegateLoginDetails?.CandidateNumber != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.LearnCandidateNumber, delegateLoginDetails.CandidateNumber));
-            }
-
-            if (adminLoginDetails?.Id != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.UserAdminId, adminLoginDetails.Id.ToString()));
-            }
-
-            if (delegateLoginDetails?.Id != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.LearnCandidateId, delegateLoginDetails.Id.ToString()));
-            }
-
-            if (adminLoginDetails != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.AdminCategoryId, adminLoginDetails.CategoryId.ToString()));
-            }
-
             return claims;
+        }
+
+        private static IEnumerable<Claim> GetClaimsForUserCentre(CentreAccountSet centreAccountSet)
+        {
+            return new List<Claim>
+            {
+                new Claim(CustomClaimTypes.UserCentreId, centreAccountSet.CentreId.ToString()),
+                new Claim(CustomClaimTypes.UserCentreName, centreAccountSet.CentreName),
+            };
+        }
+
+        private static IEnumerable<Claim> GetDelegateSpecificClaimsForSignIn(
+            DelegateAccount? delegateAccount
+        )
+        {
+            return delegateAccount != null
+                ? new List<Claim>
+                {
+                    new Claim(CustomClaimTypes.LearnCandidateNumber, delegateAccount.CandidateNumber),
+                    new Claim(CustomClaimTypes.LearnCandidateId, delegateAccount.Id.ToString()),
+                }
+                : new List<Claim>();
+        }
+
+        private static IEnumerable<Claim> GetAdminSpecificClaimsForSignIn(
+            AdminAccount? adminAccount
+        )
+        {
+            return adminAccount != null
+                ? new List<Claim>
+                {
+                    new Claim(CustomClaimTypes.UserAdminId, adminAccount.Id.ToString()),
+                    new Claim(CustomClaimTypes.AdminCategoryId, (adminAccount.CategoryId ?? 0).ToString()),
+                }
+                : new List<Claim>();
         }
     }
 }

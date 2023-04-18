@@ -109,5 +109,11 @@
         {
             return Regex.Replace(input ?? String.Empty, $"<.*?>|&nbsp;", String.Empty);
         }
+        public static bool IsGuid(string value)
+        {
+            Guid x;
+            return Guid.TryParse(value, out x);
+        }
+
     }
 }

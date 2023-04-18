@@ -1,0 +1,35 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model RegisterViewModel
+
+@{
+  ViewData["Title"] = "Register";
+  var actionLinkRouteData = new Dictionary<string, string> {
+    { "centreId", Model.CentreId?.ToString() },
+    { "inviteId", Model.InviteId },
+  };
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full word-break">
+    <h1 class="nhsuk-heading-xl">Register</h1>
+
+    @if (Model.CentreName != null)
+    {
+      <p class="nhsuk-body-l">
+        You have chosen to register for an account at <b>@Model.CentreName</b>.
+      </p>
+    }
+
+    <p class="nhsuk-body-l">
+      If you already have an account on DLS, we recommend that you log in before registering, in order to link your new account to your existing login.
+    </p>
+
+    <vc:action-link asp-controller="RegisterAtNewCentre" asp-action="Index" asp-all-route-data="@actionLinkRouteData" link-text="Register with existing login" />
+
+    <p class="nhsuk-body-l">
+      Otherwise, you can create a new login.
+    </p>
+
+    <vc:action-link asp-controller="Register" asp-action="Start" asp-all-route-data="@actionLinkRouteData" link-text="Create a new login" />
+  </div>
+</div>

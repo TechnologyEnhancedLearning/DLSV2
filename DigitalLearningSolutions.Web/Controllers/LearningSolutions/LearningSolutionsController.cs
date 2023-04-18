@@ -1,28 +1,40 @@
 namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Primitives;
+    using System;
+    using System.Linq;
+    using System.Reflection.PortableExecutable;
 
     public class LearningSolutionsController : Controller
     {
         private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
         private readonly IConfigDataService configDataService;
         private readonly ILogger<LearningSolutionsController> logger;
 
         public LearningSolutionsController(
             IConfigDataService configDataService,
             ILogger<LearningSolutionsController> logger,
-            ICentresDataService centresDataService
+            ICentresDataService centresDataService,
+            ICentresService centresService
         )
         {
             this.configDataService = configDataService;
             this.logger = logger;
             this.centresDataService = centresDataService;
+            this.centresService = centresService;
         }
 
         public IActionResult AccessibilityHelp()
@@ -50,6 +62,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             var model = new TermsViewModel(termsText);
             return View(model);
         }
+
         public IActionResult Contact()
         {
             var contactText = configDataService.GetConfigValue(ConfigDataService.ContactText);
@@ -58,10 +71,16 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 logger.LogError("Contact text from Config table is null");
                 return StatusCode(500);
             }
-
+            var centreId = User.GetCentreId();
+            if (centreId.GetValueOrDefault() > 0)
+            {
+                var centreSummary = centresService.GetCentreSummaryForContactDisplay(centreId.Value);
+                return View(new ContactViewModel(contactText, centreSummary));
+            }
+     
             var model = new ContactViewModel(contactText);
             return View(model);
-        }
+        }        
 
         public IActionResult Error()
         {
@@ -70,6 +89,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             return View("Error/UnknownError", model);
         }
 
+        [NoCaching]
         [Route("/LearningSolutions/StatusCode/{code:int}")]
         [IgnoreAntiforgeryToken]
         public new IActionResult StatusCode(int code)
@@ -98,6 +118,13 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             return View("Error/AccessDenied");
         }
 
+        [Route("/PleaseLogout")]
+        [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
+        public IActionResult PleaseLogout()
+        {
+            return View();
+        }
+
         private ErrorViewModel GetErrorModel()
         {
             try
@@ -113,8 +140,12 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         private string? GetBannerText()
         {
+            string? bannerText = null;
             var centreId = User.GetCentreId();
-            var bannerText = centresDataService.GetBannerText(centreId);
+            if(centreId != null)
+            {
+                bannerText = centresDataService.GetBannerText((int)centreId);
+            }
             return bannerText;
         }
     }

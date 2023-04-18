@@ -88,9 +88,11 @@ AS
 						FROM   SelfAssessments AS SA 
 		INNER JOIN CentreSelfAssessments AS CSA ON SA.Id = CSA.SelfAssessmentID AND CSA.CentreId = @centreId AND CSA.AllowEnrolment = 1
 						WHERE (SA.ID NOT IN
-										 (SELECT SelfAssessmentID
-										 FROM    CandidateAssessments AS CA
-										 WHERE (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)))) AS Q1
+								 (SELECT SelfAssessmentID
+								 FROM   CandidateAssessments AS CA INNER JOIN
+			    Users AS U_1 ON CA.DelegateUserID = U_1.ID INNER JOIN
+			    DelegateAccounts AS DA ON U_1.ID = DA.UserID
+                WHERE (DA.ID = @candidateID) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL)))) AS Q1
 						ORDER BY Q1.CourseName
 		END
 END

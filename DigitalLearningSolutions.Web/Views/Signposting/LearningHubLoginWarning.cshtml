@@ -13,15 +13,16 @@
     <h1 class="nhsuk-heading-xl">View resource "@Model.ResourceTitle"</h1>
 
     <div class="nhsuk-u-margin-bottom-4">
-      @if (!Model.ApiIsAccessible) {
+      @if (!Model.ApiIsAccessible)
+      {
         <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
-                                      text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
+                                    text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
       }
 
-      @if (!Model.LearningHubAccountLinked) {
-        <vc:inset-text
-          css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
-          text="@LearningHubWarningTextHelper.LinkAccount" />
+      @if (!Model.LearningHubAccountLinked)
+      {
+        <vc:inset-text css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+                     text="@LearningHubWarningTextHelper.LinkAccount" />
       }
     </div>
 

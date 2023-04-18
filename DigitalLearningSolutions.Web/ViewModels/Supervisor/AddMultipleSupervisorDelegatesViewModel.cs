@@ -1,4 +1,6 @@
-﻿using DigitalLearningSolutions.Web.Helpers;
+﻿using DigitalLearningSolutions.Web.Attributes;
+using DigitalLearningSolutions.Web.Helpers;
+using FluentMigrator.Infrastructure;
 using System.ComponentModel.DataAnnotations;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Supervisor

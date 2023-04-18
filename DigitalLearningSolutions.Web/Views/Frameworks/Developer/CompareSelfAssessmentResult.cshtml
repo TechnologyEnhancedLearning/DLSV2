@@ -42,7 +42,7 @@
             Don't compare result
           </label>
         </div>
-      @if (Model.SelectedQuestionRoleRequirements > 0)
+        @if (Model.SelectedQuestionRoleRequirements > 0)
       {
         <div class="nhsuk-radios__item">
           <input type="radio" name="compareQuestionType" class="nhsuk-radios__input"
@@ -71,7 +71,7 @@
               {
                 @if (question.ID != Model.SelectedQuestion?.ID)
                 {
-                  <!option value="@question.ID" @(Model.SelectedCompareToQuestion?.ID == question.ID ? "selected" : String.Empty)>@question.Question</!option>
+                  <!option value="@question.ID" @(Model.SelectedCompareToQuestion?.ID == question.ID ? "selected" : String.Empty)>@question.Question </!option>
                 }
               }
             </select>

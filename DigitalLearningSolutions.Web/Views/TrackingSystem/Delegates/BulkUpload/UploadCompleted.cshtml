@@ -18,7 +18,8 @@
       <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "line" : "lines") skipped due to errors</li>
     </ul>
 
-    @if (Model.ErrorCount > 0) {
+    @if (Model.ErrorCount > 0)
+    {
       <div class="nhsuk-warning-callout">
         <h3 class="nhsuk-warning-callout__label">
           <span role="text">
@@ -28,7 +29,8 @@
         </h3>
         <p>The lines below were skipped due to errors during processing:</p>
         <ul>
-          @foreach (var (rowNumber, errorMessage) in Model.Errors) {
+          @foreach (var (rowNumber, errorMessage) in Model.Errors)
+          {
             <li>Line @rowNumber: @errorMessage</li>
           }
         </ul>

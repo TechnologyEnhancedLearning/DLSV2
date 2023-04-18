@@ -17,12 +17,15 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+  @{
+  var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");
+}
 
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="PostLearning" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Post learning assessment</a></li>
@@ -33,17 +36,19 @@
   </nav>
 }
 
-@section scripts {
+  @section scripts {
   <script src="@Url.Content("~/js/learningMenu/postLearningContentViewer.js")" asp-append-version="true"></script>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
+    </div>
   </div>
-</div>
 
-@{ var contentType = "assessment"; }
+  @{
+  var contentType = "assessment";
+}
 <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
 
 <partial name="Shared/_IFrameWithFullscreen" model="@Model.ContentSource" />

@@ -1,9 +1,10 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+@inject IClockUtility ClockUtility
 @model PublishViewModel;
 @{
   ViewData["Title"] = Model.DetailFramework.FrameworkName;
   ViewData["Application"] = "Framework Service";
-  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -23,7 +24,7 @@
 }
   <h1>Publish framework</h1>
   <p>Please ensure that all of the reviewers who are required to approve the framework are listed below.</p>
-@if (Model.FrameworkReviews.Any())
+  @if (Model.FrameworkReviews.Any())
 {
   <table role="table" class="nhsuk-table-responsive">
     <caption class="nhsuk-table__caption">Framework review status</caption>
@@ -51,7 +52,7 @@
             <span class="nhsuk-table-responsive__heading">Reviewer </span>@review.UserEmail
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-            <span class="nhsuk-table-responsive__heading">Requested </span>@(review.ReviewRequested.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? review.ReviewRequested.ToShortDateString() : "Today")
+            <span class="nhsuk-table-responsive__heading">Requested </span>@(review.ReviewRequested.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString() ? review.ReviewRequested.ToShortDateString() : "Today")
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
             <span class="nhsuk-table-responsive__heading">Status </span>
@@ -73,7 +74,7 @@
             }
             @if (review.ReviewComplete == null)
             {
-              @if (review.ReviewRequested.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
+              @if (review.ReviewRequested.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString())
               {
                 <a asp-action="ResendRequest" asp-route-reviewId="@review.ID" asp-route-frameworkId="@review.FrameworkID" asp-route-frameworkCollaboratorId="@review.FrameworkCollaboratorID">
                   Send reminder

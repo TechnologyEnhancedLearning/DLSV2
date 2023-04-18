@@ -7,16 +7,19 @@
     using System.Threading.Tasks;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public static class GroupTestHelper
     {
+        private static ClockUtility clockUtility = new ClockUtility();
+
         public static GroupDelegate GetDefaultGroupDelegate(
             int groupDelegateId = 62,
             int groupId = 5,
             int delegateId = 245969,
             string? firstName = "xxxxx",
             string lastName = "xxxx",
-            string? emailAddress = "gslectik.m@vao",
+            string emailAddress = "gslectik.m@vao",
             string candidateNumber = "KT553",
             bool hasBeenPromptedForPrn = false,
             string? professionalRegistrationNumber = null
@@ -31,7 +34,7 @@
                 DelegateId = delegateId,
                 FirstName = firstName,
                 LastName = lastName,
-                EmailAddress = emailAddress,
+                PrimaryEmail = emailAddress,
                 CandidateNumber = candidateNumber,
                 AddedDate = addedDate,
                 HasBeenPromptedForPrn = hasBeenPromptedForPrn,
@@ -71,7 +74,7 @@
                 CustomisationName = customisationName,
                 IsMandatory = isMandatory,
                 IsAssessed = isAssessed,
-                AddedToGroup = addedToGroup ?? DateTime.Now,
+                AddedToGroup = addedToGroup ?? clockUtility.UtcNow,
                 CurrentVersion = currentVersion,
                 SupervisorAdminId = supervisorAdminId,
                 SupervisorFirstName = supervisorFirstName,

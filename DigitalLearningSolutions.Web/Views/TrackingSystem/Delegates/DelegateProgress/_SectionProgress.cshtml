@@ -22,8 +22,10 @@
       @Model.TotalTime min (average learning time is @Model.AverageTime min)
     </dd>
   </div>
-  @if (Model.PostLearningAssessment) {
-    @if (Model.Attempts > 0) {
+  @if (Model.PostLearningAssessment)
+  {
+    @if (Model.Attempts > 0)
+    {
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Outcome
@@ -46,7 +48,7 @@
         Passed/Failed
       </dt>
       <dt class="nhsuk-summary-list__value">
-        @(Model.Passed ? "Passed" : "Failed")
+        @(Model.Attempts > 0 ? (Model.Passed ? "Passed" : "Failed") : "Not attempted")
       </dt>
     </div>
   }

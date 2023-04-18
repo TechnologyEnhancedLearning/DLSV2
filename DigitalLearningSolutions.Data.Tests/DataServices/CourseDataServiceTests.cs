@@ -57,7 +57,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             20,
             "xxxx",
             "xxxxxx",
-            "",
+            "87487c85-7d35-4b3f-9979-eb734ce90df2",
             101,
             false,
             "HG1",
@@ -165,6 +165,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 HasDiagnostic = true,
                 IsAssessed = true,
                 CurrentVersion = 1,
+                SelfRegister = true,
             };
             result.Should().HaveCountGreaterOrEqualTo(1);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -306,12 +307,12 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void GetNumsOfRecentProgressRecordsForBrand_returns_expected_dict()
         {
             // Given
-            var expectedDict = new Dictionary<int, int> { { 308, 1 } };
+            var expectedDict = new Dictionary<int, int> { { 206, 9 } };
 
             // When
             var dict = courseDataService.GetNumsOfRecentProgressRecordsForBrand(
-                1,
-                new DateTime(2022, 1, 5, 11, 30, 30)
+                2,
+                new DateTime(2020, 1, 5, 11, 30, 30)
             );
 
             // Then

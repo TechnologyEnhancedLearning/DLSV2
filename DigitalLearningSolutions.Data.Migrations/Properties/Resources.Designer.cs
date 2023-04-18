@@ -86,6 +86,25 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        ///                &lt;div class=&quot;nhsuk-u-reading-width&quot;&gt;
+        ///
+        ///                    &lt;h1&gt;Cookie policy&lt;/h1&gt;
+        ///
+        ///                    &lt;h2&gt;What are cookies?&lt;/h2&gt;
+        ///                    &lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;/p&gt;
+        ///                    &lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;/p&gt;
+        ///                    &lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;/p&gt;
+        ///
+        ///             [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CookiePolicy {
+            get {
+                return ResourceManager.GetString("CookiePolicy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -- =============================================
         ///-- Author:		Kevin Whittaker
         ///-- Create date: 04/01/2021
@@ -98,7 +117,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@SingleStep bit
         ///AS
         ///BEGIN
-        ///	-- SET NOCOUNT ON added  [rest of string was truncated]&quot;;.
+        ///	-- SET NOCOUNT ON added to prevent e [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs {
             get {
@@ -123,7 +142,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@Active as bit,
         ///	@ApplicationID as int,
         ///	@CentreID as int,
-        ///	@CustomisationName as nvarch [rest of string was truncated]&quot;;.
+        ///	@CustomisationName as nvarchar(250),
+        ///	@Passw [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_106_CreateOrAlterInsertCustomisation_V3 {
             get {
@@ -157,7 +177,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add t [rest of string was truncated]&quot;;.
+        ///	-- Add the paramete [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_133_AdjustScoresForFilteredSP {
             get {
@@ -177,7 +197,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add t [rest of string was truncated]&quot;;.
+        ///	-- Add the paramete [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_133_UnAdjustScoresForFilteredSP {
             get {
@@ -210,7 +230,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///BEGIN
         ///INSERT INTO @ResTable
         ///	SELECT CompetencyGroupID, [1] AS Confidence, [2] AS Relevance
-        ///FROM    [rest of string was truncated]&quot;;.
+        ///FROM   (SELECT comp.CompetencyG [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_153_DropFilteredFunctionTweak {
             get {
@@ -234,7 +254,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	 [rest of string was truncated]&quot;;.
+        ///	-- Add the para [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_153_DropFilteredSPFixes {
             get {
@@ -490,7 +510,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 26/09/2022
         ///-- Description:	Returns active available customisations for centre v6 adds SelfAssessments.
         ///-- =============================================
-        ///CREATE OR ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsFo [rest of string was truncated]&quot;;.
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilte [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6 {
             get {
@@ -511,7 +531,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///        PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime);
         ///GO
         ///
-        ///ALTER TABLE Framework [rest of string was truncated]&quot;;.
+        ///ALTER TABLE Frameworks
+        ///    SET (S [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_AddSystemVersioning {
             get {
@@ -535,7 +556,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///DROP TABLE dbo.FrameworkCompetencyGroupsHistory;
         ///GO
         ///
-        ///--  [rest of string was truncated]&quot;;.
+        ///-- Remove versioni [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_RemoveSystemVersioning {
             get {
@@ -654,7 +675,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 05/10/2020
         ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
         ///-- =============================================
-        ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreF [rest of string was truncated]&quot;;.
+        ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GetActiveAvailableV5 {
             get {
@@ -697,6 +719,246 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP {
             get {
                 return ResourceManager.GetString("HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 24/01/2023 15:00:41 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- = [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_1043_getactivitiesforenrolment {
+            get {
+                return ResourceManager.GetString("td_1043_getactivitiesforenrolment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 24/01/2023 15:31:20 ******/
+        ///DROP PROCEDURE [dbo].[GetActivitiesForDelegateEnrolment]
+        ///GO
+        ///
+        ///
+        ///.
+        /// </summary>
+        internal static string td_1043_getactivitiesforenrolment_down {
+            get {
+                return ResourceManager.GetString("td_1043_getactivitiesforenrolment_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[Candidates]    Script Date: 2/22/2023 09:29:54 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 22/02/2023
+        ///-- =============================================
+        ///
+        ///ALTER   VIEW [dbo].[Candidates] AS
+        ///SELECT dbo.DelegateAccounts.ID       AS CandidateID,
+        ///       dbo.DelegateAccounts.Active,
+        ///       dbo.DelegateAccounts.CentreID,
+        ///       dbo.Users.FirstName,
+        ///       dbo.Users.LastName,
+        ///       dbo.DelegateA [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_1131_alterviewcandidatesadduserid_down {
+            get {
+                return ResourceManager.GetString("td_1131_alterviewcandidatesadduserid_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[Candidates]    Script Date: 2/22/2023 09:29:54 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 22/02/2023
+        ///-- =============================================
+        ///
+        ///ALTER   VIEW [dbo].[Candidates] AS
+        ///SELECT dbo.DelegateAccounts.ID       AS CandidateID,
+        ///       dbo.DelegateAccounts.Active,
+        ///       dbo.DelegateAccounts.CentreID,
+        ///       dbo.Users.FirstName,
+        ///       dbo.Users.LastName,
+        ///       dbo.DelegateA [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_1131_alterviewcandidatesadduserid_up {
+            get {
+                return ResourceManager.GetString("td_1131_alterviewcandidatesadduserid_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 2/6/2023 22:11:41 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 02/06/2023
+        ///-- Description:	Return the admin user details
+        ///-- =============================================
+        ///
+        ///ALTER VIEW [dbo].[AdminUsers] AS
+        ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
+        ///       null                                    AS Login,
+        ///       dbo.Users.PasswordHash               [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_264_alterviewadminusersaddcentrename_down {
+            get {
+                return ResourceManager.GetString("td_264_alterviewadminusersaddcentrename_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 2/6/2023 22:11:41 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 02/06/2023
+        ///-- Description:	Return the admin user details
+        ///-- =============================================
+        ///
+        ///ALTER VIEW [dbo].[AdminUsers] AS
+        ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
+        ///       null                                    AS Login,
+        ///       dbo.Users.PasswordHash               [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_264_alterviewadminusersaddcentrename_up {
+            get {
+                return ResourceManager.GetString("td_264_alterviewadminusersaddcentrename_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Manish Agarwal
+        ///-- Create date: 26/09/2022
+        ///-- Description:	Returns active available customisations for centre v6 adds SelfAssessments.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFil [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_786_GetSelfRegisteredFlag_DOWN {
+            get {
+                return ResourceManager.GetString("TD-786-GetSelfRegisteredFlag_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 08/12/2022 13:00:15 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 05/10/2020
+        ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_786_GetSelfRegisteredFlag_UP {
+            get {
+                return ResourceManager.GetString("TD-786-GetSelfRegisteredFlag_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DROP VIEW AdminUsers
+        ///    GO
+        ///DROP VIEW Candidates
+        ///    GO
+        ///.
+        /// </summary>
+        internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_DOWN {
+            get {
+                return ResourceManager.GetString("UAR-831-CreateViewsForAdminUsersAndCandidatesTables-DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CREATE VIEW AdminUsers AS
+        ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
+        ///       null                                    AS Login,
+        ///       dbo.Users.PasswordHash                  AS Password,
+        ///       dbo.AdminAccounts.CentreID,
+        ///       dbo.AdminAccounts.IsCentreAdmin         AS CentreAdmin,
+        ///       0                                       AS ConfigAdmin,
+        ///       dbo.AdminAccounts.IsReportsViewer       AS SummaryReports,
+        ///       dbo.AdminAccounts.IsSuperAdmin          AS UserAdmin,
+        ///       dbo.Us [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_UP {
+            get {
+                return ResourceManager.GetString("UAR-831-CreateViewsForAdminUsersAndCandidatesTables-UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @dbName NVARCHAR(128) = DB_NAME()
+        ///DECLARE @defaultPath NVARCHAR(500) = CONVERT(NVARCHAR(500), SERVERPROPERTY(&apos;InstanceDefaultDataPath&apos;))
+        ///DECLARE @snapshotTime NVARCHAR(12) = FORMAT(GETDATE(), &apos;yyyyMMddHHmm&apos;)
+        ///
+        ///DECLARE @snapSql NVARCHAR(4000) = &apos;CREATE DATABASE &apos; + @dbName + &apos;_&apos; + @snapshotTime + &apos; ON 
+        ///( NAME = mbdbx101, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_&apos; + @snapshotTime + &apos;&apos;&apos;),
+        ///( NAME = mbdbx101files, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_filestream1_&apos; + @snapshotTime + &apos;&apos;&apos;)
+        ///A [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string UAR_858_SnapshotData_UP {
+            get {
+                return ResourceManager.GetString("UAR_858_SnapshotData_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @dbName NVARCHAR(128) = DB_NAME()
+        ///DECLARE @snapshotName NVARCHAR(128) = CONVERT(NVARCHAR(128), (SELECT TOP 1 name FROM sys.databases WHERE NAME LIKE @dbName + &apos;_2%&apos; ORDER BY create_date DESC))
+        ///
+        ///DECLARE @adminSql NVARCHAR(4000) = &apos;UPDATE AdminAccounts
+        ///SET 
+        ///    Login_deprecated = snapAA.Login_deprecated,
+        ///    Password_deprecated = snapAA.Password_deprecated,
+        ///    CentreID = snapAA.CentreID,
+        ///    IsCentreAdmin = snapAA.IsCentreAdmin,
+        ///    ConfigAdmin_deprecated = snapAA.ConfigAdmin_deprecated,
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string UAR_859_PopulateUsersTableFromAccountsTables_DOWN {
+            get {
+                return ResourceManager.GetString("UAR_859_PopulateUsersTableFromAccountsTables_DOWN", resourceCulture);
             }
         }
     }

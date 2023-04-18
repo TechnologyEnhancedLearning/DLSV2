@@ -1,12 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     public class PromptsService
@@ -18,6 +21,23 @@
             centreRegistrationPromptsService = registrationPromptsService;
         }
 
+        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
+            DelegateAccount? delegateAccount,
+            int centreId
+        )
+        {
+            return GetEditDelegateRegistrationPromptViewModelsForCentre(
+                centreId,
+                delegateAccount?.Answer1,
+                delegateAccount?.Answer2,
+                delegateAccount?.Answer3,
+                delegateAccount?.Answer4,
+                delegateAccount?.Answer5,
+                delegateAccount?.Answer6
+            );
+        }
+
+        [Obsolete("Use the method that takes a DelegateAccount instead of a DelegateUser as parameter")]
         public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
             DelegateUser? delegateUser,
             int centreId
@@ -35,23 +55,23 @@
         }
 
         public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
-            MyAccountEditDetailsFormData formData,
+            DelegateEntity? delegateEntity,
             int centreId
         )
         {
             return GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
-                formData.Answer1,
-                formData.Answer2,
-                formData.Answer3,
-                formData.Answer4,
-                formData.Answer5,
-                formData.Answer6
+                delegateEntity?.DelegateAccount.Answer1,
+                delegateEntity?.DelegateAccount.Answer2,
+                delegateEntity?.DelegateAccount.Answer3,
+                delegateEntity?.DelegateAccount.Answer4,
+                delegateEntity?.DelegateAccount.Answer5,
+                delegateEntity?.DelegateAccount.Answer6
             );
         }
 
         public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
-            EditDetailsFormData formData,
+            EditAccountDetailsFormDataBase formData,
             int centreId
         )
         {
@@ -158,6 +178,24 @@
 
         public void ValidateCentreRegistrationPrompts(
             EditDetailsFormData formData,
+            int centreId,
+            ModelStateDictionary modelState
+        )
+        {
+            ValidateCentreRegistrationPrompts(
+                centreId,
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6,
+                modelState
+            );
+        }
+
+        public void ValidateCentreRegistrationPrompts(
+            EditDelegateFormData formData,
             int centreId,
             ModelStateDictionary modelState
         )

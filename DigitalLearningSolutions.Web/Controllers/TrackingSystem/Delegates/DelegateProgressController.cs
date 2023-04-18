@@ -1,15 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System;
+    using System.Net;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -70,7 +71,7 @@
             ReturnPageQuery? returnPageQuery
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var delegateCourseProgress =
                 progressService.GetDetailedCourseProgress(progressId);
             var supervisors = userService.GetSupervisorsAtCentreForCategory(
@@ -98,7 +99,7 @@
         {
             if (!ModelState.IsValid)
             {
-                var supervisors = userService.GetSupervisorsAtCentre(User.GetCentreId());
+                var supervisors = userService.GetSupervisorsAtCentre(User.GetCentreIdKnownNotNull());
                 var model = new EditSupervisorViewModel(formData, progressId, accessedVia, supervisors);
                 return View(model);
             }
@@ -251,7 +252,7 @@
             }
 
             progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, formData.Answer?.Trim());
-            
+
             return RedirectToPreviousPage(formData.DelegateId, formData.CustomisationId, accessedVia, formData.ReturnPageQuery);
         }
 
@@ -266,9 +267,9 @@
             var progress = progressService.GetDetailedCourseProgress(progressId);
             if (!courseService.DelegateHasCurrentProgress(progressId) || progress == null)
             {
-                return new NotFoundResult();
+                return StatusCode((int)HttpStatusCode.Gone);
             }
-            
+
             var model = new RemoveFromCourseViewModel(
                 progress,
                 false,

@@ -2,9 +2,12 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public static class CourseDetailsTestHelper
     {
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
+
         public static CourseDetails GetDefaultCourseDetails(
             int customisationId = 100,
             int centreId = 101,
@@ -47,8 +50,8 @@
                 ApplicationName = applicationName,
                 CustomisationName = customisationName,
                 CurrentVersion = currentVersion,
-                CreatedDate = createdDate ?? DateTime.UtcNow,
-                LastAccessed = lastAccessed ?? DateTime.UtcNow,
+                CreatedDate = createdDate ?? ClockUtility.UtcNow,
+                LastAccessed = lastAccessed ?? ClockUtility.UtcNow,
                 Password = password,
                 NotificationEmails = notificationEmails,
                 PostLearningAssessment = postLearningAssessment,

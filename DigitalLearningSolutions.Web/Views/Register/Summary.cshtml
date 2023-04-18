@@ -7,7 +7,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Terms) })" />
     }
 
@@ -24,7 +25,8 @@
           @Model.Centre
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          @if (!Model.IsCentreSpecificRegistration) {
+          @if (!Model.IsCentreSpecificRegistration)
+          {
             <a asp-action="PersonalInformation">
               Change<span class="nhsuk-u-visually-hidden"> centre</span>
             </a>
@@ -59,14 +61,27 @@
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Email
+          Primary email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.Email
+          @Model.PrimaryEmail
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> email</span>
+            Change<span class="nhsuk-u-visually-hidden"> primary email</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre email
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreSpecificEmail
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> centre email</span>
           </a>
         </dd>
       </div>
@@ -94,7 +109,8 @@
           </a>
         </dd>
       </div>
-      @foreach (var customField in Model.DelegateRegistrationPrompts) {
+      @foreach (var customField in Model.DelegateRegistrationPrompts)
+      {
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             @(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))
@@ -109,6 +125,19 @@
           </dd>
         </div>
       }
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Password set
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.IsPasswordSet ? "Yes" : "No")
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="Password">
+            Change<span class="nhsuk-u-visually-hidden"> password settings</span>
+          </a>
+        </dd>
+      </div>
     </dl>
 
     <form method="post" asp-action="Summary">

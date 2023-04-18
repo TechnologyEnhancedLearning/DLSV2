@@ -4,13 +4,13 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -36,8 +36,8 @@
         public IActionResult Index(int customisationId)
         {
             TempData.Clear();
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
@@ -61,8 +61,8 @@
         [Route("LearningPathwayDefaults")]
         public IActionResult EditLearningPathwayDefaults(int customisationId)
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
@@ -120,8 +120,8 @@
         [Route("AutoRefreshOptions")]
         public IActionResult EditAutoRefreshOptions(int customisationId)
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
@@ -180,8 +180,8 @@
         [Route("CourseDetails")]
         public IActionResult EditCourseDetails(int customisationId)
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter()!;
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId()!;
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
@@ -201,7 +201,7 @@
             EditCourseDetailsFormData formData
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             CourseDetailsValidator.ValidateCustomisationName(
                 formData,
@@ -242,8 +242,8 @@
         [Route("EditCourseOptions")]
         public IActionResult EditCourseOptions(int customisationId)
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
 
             var courseOptions = courseService.GetCourseOptionsFilteredByCategory(
                 customisationId,
@@ -282,11 +282,10 @@
 
         private IEnumerable<SelectListItem> GetCourseOptionsSelectList(int customisationId, int? selectedId = null)
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter()!;
-            var categoryIdFilter = categoryId == 0 ? null : categoryId;
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId()!;
 
-            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)
+            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId)
                 .ToList();
             centreCourses.RemoveAll(c => c.id == customisationId);
             centreCourses.Insert(0, (customisationId, "Same course"));

@@ -1,0 +1,29 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Support
+@model SupportTicketsViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Support tickets";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <h1 class="nhsuk-heading-xl">Support tickets</h1>
+
+    <div class="nhsuk-grid-row responsive-iframe-wrapper responsive-iframe-wrapper-padding">
+      <iframe class="responsive-iframe responsive-iframe-min-height" title="Support tickets" src="@SupportLinksHelper.GetSupportTicketsIframeUrl(Model.CurrentSystemBaseUrl)"></iframe>
+    </div>
+
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+    </nav>
+  </div>
+</div>

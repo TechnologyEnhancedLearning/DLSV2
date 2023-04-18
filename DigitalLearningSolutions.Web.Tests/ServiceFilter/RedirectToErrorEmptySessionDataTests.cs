@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Controllers.FrameworksController;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -20,6 +20,8 @@
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
 
     public class RedirectToErrorEmptySessionDataTests
     {

@@ -31,7 +31,7 @@
                 )
                 .ToList();
 
-            ProgressDownloadUrl = OldSystemEndpointHelper.GetDownloadSummaryUrl(config, progress.ProgressId);;
+            ProgressDownloadUrl = OldSystemEndpointHelper.GetDownloadSummaryUrl(config, progress.ProgressId); ;
 
             Sections = progress.Sections.Select(s => new SectionProgressViewModel(s));
         }

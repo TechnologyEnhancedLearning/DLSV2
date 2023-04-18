@@ -1,5 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
-@using DigitalLearningSolutions.Web.Helpers
+﻿@using NHSUKViewComponents.Web.ViewModels
+@using NHSUKViewComponents.Web.Helpers
 @model TextAreaViewModel
 @{
   string? describedBy = ViewComponentDynamicAttributeHelper.GetAriaDescribedByAttribute(Model.Name, Model.HasError, Model.HintText);
@@ -10,7 +10,7 @@
   }
 }
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
-  <label class="nhsuk-label" for="@Model.Name">
+  <label class="nhsuk-label" for="@Model.Id">
     @Model.Label
   </label>
   @if (Model.HintText != null)

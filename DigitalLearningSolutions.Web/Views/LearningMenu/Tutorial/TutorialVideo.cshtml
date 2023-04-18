@@ -16,12 +16,15 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+  @{
+  var learningActivity = TempData["LearningActivity"]?.ToString(); TempData.Keep("LearningActivity");
+}
 
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Tutorial" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId" asp-route-tutorialId="@Model.TutorialId">@Model.TutorialName</a></li>
@@ -32,15 +35,19 @@
   </nav>
 }
 
-<div class="nhsuk-grid-column-full">
-  <div class="nhsuk-grid-row">
-    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
+  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-grid-row">
+      <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
+    </div>
+
+    <div class="nhsuk-grid-row nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-3">
+      <video controls class="tutorial-video" aria-label="@Model.TutorialName video">
+        <source src="@Model.VideoPath">
+        <p>Your browser does not support videos.</p>
+      </video>
+    </div>
   </div>
 
-  <div class="nhsuk-grid-row nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-3">
-    <video controls class="tutorial-video" aria-label="@Model.TutorialName video">
-      <source src="@Model.VideoPath">
-      <p>Your browser does not support videos.</p>
-    </video>
-  </div>
-</div>
+  @section scripts {
+    <script src="@Url.Content("~/js/keepAlive.js")" asp-append-version="true"></script>
+  }

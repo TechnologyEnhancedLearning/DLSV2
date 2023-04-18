@@ -1,0 +1,9 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model DelegateRegistrationPrompt
+
+<div class="nhsuk-summary-list__row details-list-with-button__row">
+  <dt class="nhsuk-summary-list__key">
+    @Model.Prompt@(Model.Mandatory ? "" : " (optional)")
+  </dt>
+  <partial name="_SummaryFieldValue" model="@Model.Answer" />
+</div>

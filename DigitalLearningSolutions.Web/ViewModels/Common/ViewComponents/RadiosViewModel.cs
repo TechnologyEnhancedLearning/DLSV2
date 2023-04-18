@@ -13,7 +13,7 @@
         )
         {
             AspFor = aspFor;
-            Label = (!required && !label.EndsWith("(optional)") ? label + " (optional)" : label);
+            Label = !required && !label.EndsWith("(optional)") ? label + " (optional)" : label;
             HintText = hintText;
             Radios = radios;
             Required = required;

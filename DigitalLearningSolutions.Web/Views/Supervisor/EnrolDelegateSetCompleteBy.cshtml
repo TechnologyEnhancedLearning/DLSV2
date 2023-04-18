@@ -1,4 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+@inject IClockUtility ClockUtility
 @model EnrolDelegateSetCompletByDateViewModel;
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -39,7 +42,7 @@
   </nav>
 }
   @{
-  var exampleDate = @DateTime.Today + TimeSpan.FromDays(7);
+  var exampleDate = ClockUtility.UtcToday + TimeSpan.FromDays(7);
   string prefillDay;
   string prefillMonth;
   string prefillYear;

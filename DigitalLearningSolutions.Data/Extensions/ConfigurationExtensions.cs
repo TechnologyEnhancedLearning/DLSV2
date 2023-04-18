@@ -4,7 +4,7 @@
 
     public static class ConfigurationExtensions
     {
-        public const string UseSignposting = "FeatureManagement:UseSignposting";
+        private const string UseSignposting = "FeatureManagement:UseSignposting";
 
         private const string AppRootPathName = "AppRootPath";
         private const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
@@ -24,10 +24,18 @@
         private const string LearningHubSsoByteLengthKey = "ByteLength";
         private const string LearningHubSsoSecretKey = "SecretKey";
 
+        private const string CookieBannerConsentCookieName = "CookieBannerConsent:CookieName";
+        private const string CookieBannerConsentExpiryDays = "CookieBannerConsent:ExpiryDays";
+
         private const string JavascriptSearchSortFilterPaginateItemLimitKey =
             "JavascriptSearchSortFilterPaginateItemLimit";
 
         private const string ExcelPassword = "ExcelPassword";
+
+        private const string MonthsToPromptUserDetailsCheckKey = "MonthsToPromptUserDetailsCheck";
+        private const string LearningHubReportAPIBaseUrl = "LearningHubReportAPIConfig:BaseUrl";
+        private const string LearningHubReportAPIClientId = "LearningHubReportAPIConfig:ClientId";
+        private const string LearningHubReportAPIClientIdentityKey = "LearningHubReportAPIConfig:ClientIdentityKey";
 
         public static string GetAppRootPath(this IConfiguration config)
         {
@@ -109,9 +117,37 @@
             return int.Parse(config[JavascriptSearchSortFilterPaginateItemLimitKey]);
         }
 
+        public static int GetMonthsToPromptUserDetailsCheck(this IConfiguration config)
+        {
+            return int.Parse(config[MonthsToPromptUserDetailsCheckKey]);
+        }
+
         public static string GetExcelPassword(this IConfiguration config)
         {
             return config[ExcelPassword];
         }
+        public static string GetLearningHubReportApiBaseUrl(this IConfiguration config)
+        {
+            return config[LearningHubReportAPIBaseUrl];
+        }
+        public static string GetLearningHubReportApiClientId(this IConfiguration config)
+        {
+            return config[LearningHubReportAPIClientId];
+        }
+        public static string GetLearningHubReportApiClientIdentityKey(this IConfiguration config)
+        {
+            return config[LearningHubReportAPIClientIdentityKey];
+        }
+        public static string GetCookieBannerConsentCookieName(this IConfiguration config)
+        {
+            return config[CookieBannerConsentCookieName];
+        }
+
+        public static int GetCookieBannerConsentExpiryDays(this IConfiguration config)
+        {
+            int.TryParse(config[CookieBannerConsentExpiryDays], out int expiryDays);
+            return expiryDays;
+        }
+
     }
 }

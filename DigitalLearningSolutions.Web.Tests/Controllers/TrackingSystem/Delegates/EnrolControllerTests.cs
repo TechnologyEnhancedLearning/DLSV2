@@ -1,17 +1,20 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
+﻿using DigitalLearningSolutions.Web.Services;
+using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
+using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
+using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+using FakeItEasy;
+using FluentAssertions.AspNetCore.Mvc;
+using FluentAssertions.Execution;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using NUnit.Framework;
+using GDS.MultiPageFormData;
+using GDS.MultiPageFormData.Enums;
+
+namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
-    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using FakeItEasy;
-    using FluentAssertions.AspNetCore.Mvc;
-    using FluentAssertions.Execution;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    using NUnit.Framework;
 
     public class EnrolControllerTests
     {
@@ -19,6 +22,7 @@
         private ICourseDataService courseDataService = null!;
         private IMultiPageFormService multiPageFormService = null!;
         private ISupervisorService supervisorService = null!;
+        private IProgressDataService progressDataService = null!;
         private IEnrolService enrolService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -33,6 +37,7 @@
             multiPageFormService = A.Fake<IMultiPageFormService>();
             supervisorService = A.Fake<ISupervisorService>();
             enrolService = A.Fake<IEnrolService>();
+            progressDataService = A.Fake<IProgressDataService>();
             sessionEnrolDelegate = A.Fake<SessionEnrolDelegate>();
 
             httpRequest = A.Fake<HttpRequest>();
@@ -44,26 +49,12 @@
                 courseDataService,
                 multiPageFormService,
                 supervisorService,
-                enrolService)
+                enrolService,
+                progressDataService)
                 .WithMockHttpContext(httpRequest, null, null, httpResponse)
                 .WithMockTempData()
                 .WithDefaultContext()
                 .WithMockUser(true);
-        }
-
-        [Test]
-        public void Index_calls_expected_methods_and_returns_view()
-        {
-            //When
-            var result = enrolController.Index(1, "DelegateName");
-
-            //Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => courseDataService.GetAvailableCourses(1, A<int>._, A<int>._)).MustHaveHappened();
-
-                result.Should().BeViewResult().WithDefaultViewName();
-            }
         }
 
         [Test]
@@ -75,7 +66,7 @@
                 tempDataDictionary));
 
             //When
-            var result = enrolController.StartEnrolProcess(1, "DelegateName");
+            var result = enrolController.StartEnrolProcess(1, 1, "DelegateName");
 
             //Then
             using (new AssertionScope())

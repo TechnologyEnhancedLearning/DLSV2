@@ -4,9 +4,9 @@
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates;
     using FakeItEasy;
@@ -34,7 +34,6 @@
                 Answer5 = null,
                 Answer6 = null,
                 Active = true,
-                AliasId = null,
                 JobGroupId = 1,
             },
             new DelegateUserCard
@@ -50,7 +49,6 @@
                 Answer5 = null,
                 Answer6 = null,
                 Active = true,
-                AliasId = null,
                 JobGroupId = 1,
             },
         };
@@ -149,9 +147,9 @@
 
             A.CallTo(
                 () =>
-                    groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(
+                    groupsService.AddDelegateToGroup(
                         A<int>._,
-                        delegateUser,
+                        1,
                         0
                     )
             ).DoesNothing();
@@ -169,7 +167,7 @@
         {
             // Given
             var model = new RemoveGroupDelegateViewModel
-                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = false };
+            { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = false };
 
             const int groupId = 44;
             const int delegateId = 3274;
@@ -199,7 +197,7 @@
         {
             // Given
             var model = new RemoveGroupDelegateViewModel
-                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
+            { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
             A.CallTo(() => groupsService.GetGroupDelegates(1))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
@@ -216,6 +214,32 @@
                     .MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
+        }
+
+        [Test]
+        public void RemoveGroupDelegate_get_returns_NotFound_if_the_delegate_is_not_in_the_group()
+        {
+            // Given
+            const int groupId = 1;
+            const int delegateId = 2;
+            const int delegateIdNotInGroup = 3;
+
+            A.CallTo(() => groupsService.GetGroupName(groupId, 2)).Returns("Group");
+            A.CallTo(() => groupsService.GetGroupDelegates(groupId))
+                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = delegateId } });
+
+            // When
+            var result = groupDelegatesController.RemoveGroupDelegate(
+                groupId,
+                delegateIdNotInGroup,
+                new ReturnPageQuery()
+            );
+
+            // Then
+            result.Should().BeNotFoundResult();
+
+            A.CallTo(() => groupsService.RemoveDelegateFromGroup(A<int>._, A<int>._, A<bool>._))
+                .MustNotHaveHappened();
         }
     }
 }

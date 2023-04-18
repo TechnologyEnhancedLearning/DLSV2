@@ -6,19 +6,22 @@
 
     public class CompletedByDateViewModel : IValidatableObject
     {
-        public CompletedByDateViewModel(){
+        public CompletedByDateViewModel()
+        {
         }
 
-        public CompletedByDateViewModel(int delegateId, string delegateName, int? day, int? month, int? year)
+        public CompletedByDateViewModel(int delegateId, int delegateUserId, string delegateName, int? day, int? month, int? year)
         {
             Day = day;
             Month = month;
             Year = year;
             DelegateId = delegateId;
+            DelegateUserId = delegateUserId;
             DelegateName = delegateName;
         }
 
         public int DelegateId { get; set; }
+        public int DelegateUserId { get; set; }
         public string DelegateName { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }

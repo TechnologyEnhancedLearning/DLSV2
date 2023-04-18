@@ -2,8 +2,8 @@
 {
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningSolutions;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
     using FakeItEasy;
@@ -19,6 +19,7 @@
         private const int CandidateId = 11;
         private const int CentreId = 2;
         private ICentresDataService centresDataService = null!;
+        private ICentresService centresService = null!;
         private IConfigDataService configDataService = null!;
         private LearningSolutionsController controller = null!;
 
@@ -27,6 +28,7 @@
         {
             centresDataService = A.Fake<ICentresDataService>();
             configDataService = A.Fake<IConfigDataService>();
+            centresService= A.Fake<ICentresService>();
             var logger = A.Fake<ILogger<LearningSolutionsController>>();
 
             var user = new ClaimsPrincipal(
@@ -42,11 +44,12 @@
             controller = new LearningSolutionsController(
                 configDataService,
                 logger,
-                centresDataService
+                centresDataService,
+                centresService
             )
             {
                 ControllerContext = new ControllerContext
-                    { HttpContext = new DefaultHttpContext { User = user } },
+                { HttpContext = new DefaultHttpContext { User = user } },
             };
         }
 
@@ -210,6 +213,16 @@
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("LearningPortal")
                 .WithActionName("AccessDenied");
+        }
+
+        [Test]
+        public void PleaseLogout_returns_default_view()
+        {
+            // When
+            var result = controller.PleaseLogout();
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
         }
     }
 }

@@ -1,11 +1,14 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model SideMenuLinkWithHrefViewModel
 
-@if (Model.IsCurrentPage) {
+@if (Model.IsCurrentPage)
+{
   <li class="side-nav__item side-nav__item--selected" aria-current="page">
     <span class="nhsuk-contents-list__current">@Model.LinkText</span>
   </li>
-} else {
+}
+else
+{
   <li class="side-nav__item">
     <a class="side-nav__link" href="@Model.Href" asp-all-route-data="@Model.AspAllRouteData">
       @Model.LinkText

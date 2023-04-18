@@ -1,0 +1,66 @@
+@using DigitalLearningSolutions.Web.ViewModels.Register
+@model InternalPersonalInformationViewModel
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register" : "Register";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
+
+      @if (errorHasOccurred)
+      {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.CentreSpecificEmail) })" />
+      }
+
+      <div class="nhsuk-u-margin-bottom-8">
+        <h1 class="nhsuk-heading-xl">Register</h1>
+        <input type="hidden" asp-for="IsCentreSpecificRegistration" value="@Model.IsCentreSpecificRegistration" />
+
+        @if (Model.IsCentreSpecificRegistration)
+        {
+          <p class="nhsuk-body-l">
+            Please enter your personal details to start the registration process
+            to access all Digital Learning Solutions services at <b>@Model.CentreName</b>.
+            <a class="nhsuk-action-link__link nhsuk-link--no-visited-state nhsuk-u-padding-left-0 nhsuk-body-m nhsuk-u-margin-top-2" asp-action="Index">
+              Not the right centre? Click here to change.
+            </a>
+          </p>
+          <input type="hidden" asp-for="Centre" />
+        }
+        else
+        {
+          <p class="nhsuk-body-l">
+            Please select your centre to start the registration process
+            to access all Digital Learning Solutions services.
+          </p>
+
+          <vc:select-list asp-for="Centre"
+                        label="Centre"
+                        value="@Model.Centre?.ToString()"
+                        hint-text=""
+                        deselectable="false"
+                        css-class="nhsuk-u-width-full"
+                        default-option="Select a centre"
+                        required="true"
+                        select-list-options="@Model.CentreOptions" />
+        }
+      </div>
+
+      <vc:text-input asp-for="CentreSpecificEmail"
+                     label="Centre email (optional)"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text="If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.<br />Your primary email address will still be used for logging in and notifications for managing your account."
+                     autocomplete="email"
+                     required="true"
+                     css-class="nhsuk-u-width-one-half" />
+
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
+
+    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" />
+  </div>
+</div>

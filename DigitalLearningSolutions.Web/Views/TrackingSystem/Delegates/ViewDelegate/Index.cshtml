@@ -1,167 +1,161 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.Common
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ViewDelegateViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/viewDelegate.css")" asp-append-version="true">
 
 @{
-    ViewData["Title"] = "View delegate";
+  ViewData["Title"] = "View delegate";
 }
 
 @section NavBreadcrumbs {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_AllDelegatesBreadcrumbs.cshtml" />
+  <partial name="~/Views/TrackingSystem/Delegates/Shared/_AllDelegatesBreadcrumbs.cshtml" />
 }
 
-    <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-two-thirds">
-            <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">@Model.DelegateInfo.Name</h1>
-        </div>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">@Model.DelegateInfo.Name</h1>
+    </div>
     @if (Model.DelegateInfo.IsActive)
+  {
+    <div class="nhsuk-grid-column-one-third view-delegate-top-button-group">
+      <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" asp-action="SendWelcomeEmail" asp-route-delegateId="@Model.DelegateInfo.Id" role="button">
+        Send welcome email
+      </a>
+    </div>
+  }
+  <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-5">
+    <div class="nhsuk-u-margin-bottom-5">
+      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
+    </div>
+
+    <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Details</h2>
+    <dl class="nhsuk-summary-list details-list-with-button word-break">
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Name
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Name" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Email
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Email" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          ID
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.CandidateNumber" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Registration date
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.RegistrationDate" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Job group
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.JobGroup" />
+      </div>
+
+      @foreach (DelegateRegistrationPrompt delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts)
+      {
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">@delegateRegistrationPrompt.Prompt</dt>
+          <partial name="_SummaryFieldValue" model="@delegateRegistrationPrompt.Answer" />
+        </div>
+      }
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Professional Registration Number
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.ProfessionalRegistrationNumber" />
+      </div>
+    </dl>
+
+    <div class="nhsuk-u-margin-top-4">
+      @if (Model.DelegateInfo.IsActive)
+      {
+        <a class="nhsuk-button view-delegate-button"
+         role="button"
+         asp-controller="EditDelegate"
+         asp-action="Index"
+         asp-route-delegateId="@Model.DelegateInfo.Id">
+          Edit details
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
+         role="button"
+         asp-controller="SetDelegatePassword"
+         asp-action="Index"
+         asp-route-delegateId="@Model.DelegateInfo.Id"
+         asp-route-isFromViewDelegatePage="true">
+          Set password
+        </a>
+        @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin && Model.DelegateInfo.IsPasswordSet && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Email) && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Name))
+        {
+          <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
+         role="button"
+         asp-controller="PromoteToAdmin"
+         asp-action="Index"
+         asp-route-delegateId="@Model.DelegateInfo.Id">
+            Promote to admin
+          </a>
+        }
+        <form asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
+          <button class="nhsuk-button delete-button view-delegate-button"
+                type="submit">
+            Deactivate account
+          </button>
+        </form>
+      }
+      else
+      {
+        <form asp-action="ReactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
+          <button class="nhsuk-button view-delegate-button" type="submit">
+            Reactivate account
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-column-full">
+    <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Courses</h2>
+    @if (!Model.DelegateCourses.Any())
     {
-        <div class="nhsuk-grid-column-one-third view-delegate-top-button-group">
-            <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" asp-action="SendWelcomeEmail" asp-route-delegateId="@Model.DelegateInfo.Id" role="button">
-                Send welcome email
-            </a>
-        </div>
+      <p class="nhsuk-u-margin-top-4">
+        <b>Not currently enrolled on any courses.</b>
+      </p>
     }
-
-    <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-5">
-        <div class="nhsuk-u-margin-bottom-5">
-            <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
-        </div>
-
-        <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Details</h2>
-        <dl class="nhsuk-summary-list details-list-with-button word-break">
-            <div class="nhsuk-summary-list__row details-list-with-button__row">
-                <dt class="nhsuk-summary-list__key">
-                    Name
-                </dt>
-                <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Name" />
-            </div>
-
-            <div class="nhsuk-summary-list__row details-list-with-button__row">
-                <dt class="nhsuk-summary-list__key">
-                    Email
-                </dt>
-                <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Email" />
-            </div>
-
-            <div class="nhsuk-summary-list__row details-list-with-button__row">
-                <dt class="nhsuk-summary-list__key">
-                    ID
-                </dt>
-                <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.CandidateNumber" />
-            </div>
-
-            <div class="nhsuk-summary-list__row details-list-with-button__row">
-                <dt class="nhsuk-summary-list__key">
-                    Alias
-                </dt>
-                <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.AliasId" />
-            </div>
-
-            <div class="nhsuk-summary-list__row details-list-with-button__row">
-                <dt class="nhsuk-summary-list__key">
-                    Registration date
-                </dt>
-                <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.RegistrationDate" />
-            </div>
-
-            <div class="nhsuk-summary-list__row details-list-with-button__row">
-                <dt class="nhsuk-summary-list__key">
-                    Job group
-                </dt>
-                <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.JobGroup" />
-            </div>
-
-            @foreach (DelegateRegistrationPrompt delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts)
-            {
-                <div class="nhsuk-summary-list__row details-list-with-button__row">
-                    <dt class="nhsuk-summary-list__key">@delegateRegistrationPrompt.Prompt</dt>
-                    <partial name="_SummaryFieldValue" model="@delegateRegistrationPrompt.Answer" />
-                </div>
-            }
-
-            <div class="nhsuk-summary-list__row details-list-with-button__row">
-                <dt class="nhsuk-summary-list__key">
-                    Professional Registration Number
-                </dt>
-                <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.ProfessionalRegistrationNumber" />
-            </div>
-        </dl>
-
-        <div class="nhsuk-u-margin-top-4">
-            @if (Model.DelegateInfo.IsActive)
-            {
-                <a class="nhsuk-button view-delegate-button"
-               role="button"
-               asp-controller="EditDelegate"
-               asp-action="Index"
-               asp-route-delegateId="@Model.DelegateInfo.Id">
-                    Edit details
-                </a>
-                <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
-               role="button"
-               asp-controller="SetDelegatePassword"
-               asp-action="Index"
-               asp-route-delegateId="@Model.DelegateInfo.Id"
-               asp-route-isFromViewDelegatePage="true">
-                    Set password
-                </a>
-                @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin && Model.DelegateInfo.IsPasswordSet && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Email) && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Name))
-                {
-                    <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
-               role="button"
-               asp-controller="PromoteToAdmin"
-               asp-action="Index"
-               asp-route-delegateId="@Model.DelegateInfo.Id">
-                        Promote to admin
-                    </a>
-                }
-                <form asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
-                    <button class="nhsuk-button delete-button view-delegate-button"
-                        type="submit">
-                        Deactivate account
-                    </button>
-                </form>
-            }
-            else
-            {
-                <form asp-action="ReactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
-                    <button class="nhsuk-button view-delegate-button" type="submit">
-                        Reactivate account
-                    </button>
-                </form>
-            }
-        </div>
-    </div>
-
-    <div class="nhsuk-grid-column-full">
-        <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Courses</h2>
-        @if (!Model.DelegateCourses.Any())
-        {
-            <p class="nhsuk-u-margin-top-4">
-                <b>Not currently registered for any courses.</b>
-            </p>
-        }
-        else
-        {
-            @foreach (var delegateCourseInfoViewModel in Model.DelegateCourses)
-            {
-                <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
-            }
-        }
-        @if (Model.DelegateInfo.IsActive && !string.IsNullOrEmpty(Model.DelegateInfo.Email))
-        {
-            <a class="nhsuk-button nhsuk-button--secondary"
-           role="button"
-           asp-controller="Enrol"
-           asp-action="StartEnrolProcess"
-           asp-route-delegateId="@Model.DelegateInfo.Id"
-           asp-route-delegateName="@Model.DelegateInfo.Name">
-                Enrol on activity
-            </a>
-        }
-    </div>
+    else
+    {
+      @foreach (var delegateCourseInfoViewModel in Model.DelegateCourses)
+      {
+        <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
+      }
+    }
+    @if (Model.DelegateInfo.IsActive && !string.IsNullOrEmpty(Model.DelegateInfo.Email))
+    {
+      <a class="nhsuk-button nhsuk-button--secondary"
+       role="button"
+       asp-controller="Enrol"
+       asp-action="StartEnrolProcess"
+       asp-route-delegateId="@Model.DelegateInfo.Id"
+       asp-route-delegateUserId="@Model.DelegateInfo.UserId"
+       asp-route-delegateName="@Model.DelegateInfo.Name">
+        Enrol on activity
+      </a>
+    }
+  </div>
 </div>

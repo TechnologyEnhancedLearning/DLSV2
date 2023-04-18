@@ -9,7 +9,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <partial name="_ErrorSummary" />
     }
 
@@ -20,7 +21,8 @@
         <label class="nhsuk-label nhsuk-u-margin-bottom-4" for="EmailAddress">
           Enter your email and we will send you password reset instructions.
         </label>
-        @if (errorHasOccurred) {
+        @if (errorHasOccurred)
+        {
           <span class="nhsuk-error-message" id="EmailAddress-error">
             <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["EmailAddress"].Errors[0].ErrorMessage
           </span>
@@ -37,7 +39,7 @@
     <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Login" asp-action="Index" role="button">
       Log in
     </a>
-    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-2" asp-controller="Register" asp-action="Index" role="button">
+    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-2" asp-controller="Register" asp-action="Start" role="button">
       Register
     </a>
 

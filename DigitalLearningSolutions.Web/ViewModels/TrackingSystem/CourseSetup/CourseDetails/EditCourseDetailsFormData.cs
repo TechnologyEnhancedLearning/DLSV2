@@ -58,7 +58,7 @@
         [Required(ErrorMessage = "Enter an email for receiving the notifications")]
         [MaxLength(500, ErrorMessage = "Email must be 500 characters or fewer")]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
-        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
+        [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? NotificationEmails { get; set; }
 
         public bool PostLearningAssessment { get; set; }

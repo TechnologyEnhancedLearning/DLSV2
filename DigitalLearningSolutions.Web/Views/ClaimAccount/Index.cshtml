@@ -1,0 +1,67 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount
+@model ClaimAccountViewModel
+
+@{
+  ViewData["Title"] = "Complete registration";
+
+  var routeData = new Dictionary<string, string> {
+    { "email", Model.Email },
+    { "code", Model.RegistrationConfirmationHash },
+  };
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <h1 class="nhsuk-heading-x1" id="app-page-heading">
+      Complete registration
+    </h1>
+
+    <p class="nhsuk-body-m">A new delegate record has been created for you by an administrator.</p>
+
+    <partial name="_DelegateRecordSummary" model="@Model" />
+
+    @if (Model.IdOfUserMatchingEmailIfAny != null)
+    {
+      if (Model.UserMatchingEmailIsActive)
+      {
+        <p class="nhsuk-body-m">
+          A DLS user account is already registered with this email address. If that account belongs to you, you can link this delegate record to your login.
+        </p>
+
+        <vc:action-link asp-controller="ClaimAccount"
+                    asp-action="LinkDlsAccount"
+                    asp-all-route-data="@routeData"
+                    link-text="Link this record" />
+      }
+      else
+      {
+        <p class="nhsuk-body-m">
+          There is already an inactive DLS user account associated with this email address. To request reactivation of the user account and link this delegate record to the account, please contact <a href="mailto:@Model.SupportEmail">@Model.SupportEmail</a>.
+        </p>
+      }
+    }
+    else
+    {
+      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">I am an existing DLS user</h2>
+      <p class="nhsuk-hint">
+        If you have used DLS in the past (for example, at another organisation or university), we <b>recommend</b> that you link this record to your existing login.
+      </p>
+
+      <vc:action-link asp-controller="ClaimAccount"
+                    asp-action="LinkDlsAccount"
+                    asp-all-route-data="@routeData"
+                    link-text="Use existing login and link delegate record" />
+
+      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">I am a new DLS user</h2>
+      <p class="nhsuk-hint">
+        If you have never accessed DLS before, please activate this delegate record to log in. A new DLS user account will be created.
+      </p>
+
+      <vc:action-link asp-controller="ClaimAccount"
+                    asp-action="CompleteRegistration"
+                    asp-all-route-data="@routeData"
+                    link-text="Create new login and activate delegate record" />
+    }
+  </div>
+</div>

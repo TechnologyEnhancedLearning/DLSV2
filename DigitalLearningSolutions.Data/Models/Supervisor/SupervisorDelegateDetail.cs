@@ -26,7 +26,10 @@
         public Guid? InviteHash { get; set; }
         public bool DelegateIsNominatedSupervisor { get; set; }
         public bool DelegateIsSupervisor { get; set; }
-        public string ProfessionalRegistrationNumber { get; set; }        
+        public string ProfessionalRegistrationNumber { get; set; }
+        public int? DelegateID { get; set; }
+        public bool? Active { get; set; }
+
         public DlsRole DlsRole
         {
             get

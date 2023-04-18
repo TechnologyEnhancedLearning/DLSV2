@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Digital Learning Solutions - Cookie confirmation";
+    ViewData["DoNotDisplayNavBar"] = true;
+}
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader"
+                   asp-action="CookiePolicy"
+                   asp-controller="CookieConsent">Cookie Policy</a>
+                </li>              
+                <li class="nhsuk-breadcrumb__item">Cookie Consent</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__backlink">Back to Signposting</a>
+            </p>
+        </div>
+    </nav>
+}
+<div class="nhsuk-width-container app-width-container">
+    <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+            <div class="nhsuk-u-reading-width">
+                <h1>Your cookie settings have been saved</h1>
+                <p>We'll save your settings for a year.</p>
+                <p>We'll ask you if you're still OK with us using cookies when either:</p>
+                <ul>
+                    <li>it's been a year since you last saved your settings</li>
+                    <li>we add any new cookies or change the cookies we use</li>
+                </ul>
+                <p>You can also <a href="@Url.Action("CookiePolicy","CookieConsent")">choose which cookies we use</a> at any time.</p>
+            </div>            
+        </div>
+    </div>
+</div>

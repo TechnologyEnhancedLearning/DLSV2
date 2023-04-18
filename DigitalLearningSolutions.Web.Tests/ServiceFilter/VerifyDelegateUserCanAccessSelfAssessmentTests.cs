@@ -1,9 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
@@ -20,12 +21,14 @@
         private const int SelfAssessmentId = 1;
         private ILogger<VerifyDelegateUserCanAccessSelfAssessment> logger = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
         {
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
             logger = A.Fake<ILogger<VerifyDelegateUserCanAccessSelfAssessment>>();
+            clockUtility = A.Fake<IClockUtility>();
         }
 
         [Test]
@@ -68,7 +71,8 @@
                 A.Fake<IConfiguration>(),
                 A.Fake<IRecommendedLearningService>(),
                 A.Fake<IActionPlanService>(),
-                A.Fake<ISearchSortFilterPaginateService>()
+                A.Fake<ISearchSortFilterPaginateService>(),
+                clockUtility
             ).WithDefaultContext().WithMockUser(true, delegateId: DelegateId);
             var context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["selfAssessmentId"] = SelfAssessmentId;

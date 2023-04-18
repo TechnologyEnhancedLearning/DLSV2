@@ -1,0 +1,64 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model InternalSummaryViewModel
+
+@{
+  ViewData["Title"] = "Register - Summary";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-u-margin-bottom-8">
+      <h1 id="page-heading" class="nhsuk-heading-xl">Summary</h1>
+    </div>
+
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Centre
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> centre</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre email
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreSpecificEmail
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> centre email</span>
+          </a>
+        </dd>
+      </div>
+      @foreach (var customField in Model.DelegateRegistrationPrompts)
+      {
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            @(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @customField.Answer
+          </dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="LearnerInformation">
+              Change<span class="nhsuk-u-visually-hidden"> @customField.Prompt.ToLower()</span>
+            </a>
+          </dd>
+        </div>
+      }
+    </dl>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SummaryPost">
+      <button class="nhsuk-button" type="submit">Submit</button>
+    </form>
+    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" />
+  </div>
+</div>

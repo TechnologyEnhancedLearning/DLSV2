@@ -5,12 +5,15 @@ jobs:
     name: Build and test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Setup .NET Core SDK 3.1
-        uses: actions/setup-dotnet@v1
+      - name: Setup .NET Core SDK 6.0
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 3.1.x
+          dotnet-version: 6.0.x
+
+      - name: Add TechnologyEnhancedLearning as nuget package source
+        run: dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text
 
       - name: Dotnet build
         run: dotnet build DigitalLearningSolutions.sln
@@ -19,9 +22,9 @@ jobs:
         run: dotnet test DigitalLearningSolutions.Web.Tests
 
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '12'
+          node-version: 16
 
       - name: Typescript install
         run: yarn install --frozen-lockfile

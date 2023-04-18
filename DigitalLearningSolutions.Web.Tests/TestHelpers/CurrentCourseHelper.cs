@@ -3,12 +3,14 @@
     using System;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
 
     public static class CurrentCourseHelper
     {
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
 
         public static CurrentCourse CreateDefaultCurrentCourse(
             int customisationId = 1,
@@ -29,7 +31,8 @@
             bool locked = false
             )
         {
-            return new CurrentCourse {
+            return new CurrentCourse
+            {
                 Id = customisationId,
                 Name = courseName,
                 HasDiagnostic = hasDiagnostic,
@@ -41,8 +44,8 @@
                 SupervisorAdminId = supervisorAdminId,
                 GroupCustomisationId = groupCustomisationId,
                 CompleteByDate = completeByDate,
-                StartedDate = startedDate ?? DateTime.UtcNow,
-                LastAccessed = lastAccessed ?? DateTime.UtcNow,
+                StartedDate = startedDate ?? ClockUtility.UtcNow,
+                LastAccessed = lastAccessed ?? ClockUtility.UtcNow,
                 ProgressID = progressId,
                 EnrollmentMethodID = enrollmentMethodId,
                 PLLocked = locked

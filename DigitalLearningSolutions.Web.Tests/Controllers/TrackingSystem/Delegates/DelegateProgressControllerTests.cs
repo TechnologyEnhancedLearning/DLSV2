@@ -7,10 +7,10 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using FakeItEasy;
@@ -156,7 +156,9 @@
             // Given
             var formData = new EditCompletionDateFormData
             {
-                Day = 1, Month = 1, Year = 2021,
+                Day = 1,
+                Month = 1,
+                Year = 2021,
                 ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: CardId),
             };
             A.CallTo(() => progressService.UpdateCompletionDate(ProgressId, A<DateTime?>._)).DoesNothing();
@@ -187,7 +189,7 @@
                 options
             );
             var delegateCourseInfo = new DelegateCourseInfo
-                { CourseAdminFields = new List<CourseAdminFieldWithAnswer> { courseAdminFieldWithAnswer } };
+            { CourseAdminFields = new List<CourseAdminFieldWithAnswer> { courseAdminFieldWithAnswer } };
             var delegateCourseDetails = new DetailedCourseProgress(
                 new Progress(),
                 new List<DetailedSectionProgress>(),
@@ -374,7 +376,7 @@
             );
 
             // Then
-            result.Should().BeNotFoundResult();
+            result.Should().BeStatusCodeResult().WithStatusCode(410);
         }
 
         [Test]
@@ -414,7 +416,7 @@
         {
             // Given
             var delegateCourseInfo = new DelegateCourseInfo
-                { DelegateId = DelegateId, CustomisationId = CustomisationId };
+            { DelegateId = DelegateId, CustomisationId = CustomisationId };
             var delegateCourseDetails = new DetailedCourseProgress(
                 new Progress { CandidateId = DelegateId, CustomisationId = CustomisationId },
                 new List<DetailedSectionProgress>(),
@@ -452,7 +454,7 @@
         {
             // Given
             var delegateCourseInfo = new DelegateCourseInfo
-                { DelegateId = DelegateId, CustomisationId = CustomisationId };
+            { DelegateId = DelegateId, CustomisationId = CustomisationId };
             var delegateCourseDetails = new DetailedCourseProgress(
                 new Progress { CandidateId = DelegateId, CustomisationId = CustomisationId },
                 new List<DetailedSectionProgress>(),

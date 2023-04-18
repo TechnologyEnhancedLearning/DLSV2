@@ -1,0 +1,53 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model InternalConfirmationViewModel
+
+@{
+  ViewData["Title"] = "Registration confirmation";
+  var centreEmailIsVerified = Model.CentreEmailIfUnverified == null;
+  var verifyEmailWarningViewModel = new ConfirmationVerifyEmailWarningViewModel(null, Model.CentreEmailIfUnverified, Model.CentreName);
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">
+      Delegate registration complete
+    </h1>
+    <p class="nhsuk-body-l">
+      You should make a note of your delegate number and keep it safe.
+      You can use it to log in to the Learning Portal and any Digital
+      Learning Solutions courses.
+    </p>
+    <div class="nhsuk-inset-text">
+      <span class="nhsuk-u-visually-hidden">Information: </span>
+      <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
+    </div>
+
+    @if (!centreEmailIsVerified)
+    {
+      <partial name="_VerifyEmailWarningForRegistrationConfirmationPage" model="@verifyEmailWarningViewModel" />
+    }
+
+    @if (!Model.Approved)
+    {
+      <partial name="_UnapprovedAccountWarning" />
+    }
+
+    @if (Model.Approved)
+    {
+      if (Model.HasDelegateAccountAtAdminCentre)
+      {
+        <p>Use the Switch centre page to access the learning portal for your new delegate account.</p>
+      }
+      else
+      {
+        <p>You can now log into your new account.</p>
+      }
+      <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+    }
+    else
+    {
+      <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
+      <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+    }
+  </div>
+</div>

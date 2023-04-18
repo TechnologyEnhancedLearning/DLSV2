@@ -11,10 +11,10 @@
     using Newtonsoft.Json;
     using System.Net.Http.Headers;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
-    using DigitalLearningSolutions.Data.Services;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public interface IFilteredApiHelperService
     {
@@ -29,6 +29,7 @@
     public class FilteredApiHelper : IFilteredApiHelperService
     {
         private static readonly HttpClient client = new HttpClient();
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
         public async Task<AccessToken> GetUserAccessToken<T>(string candidateNumber)
         {
             string token = GenerateUserJwt(candidateNumber);
@@ -64,8 +65,8 @@
             return true;
         }
         public async Task<IEnumerable<PlayList>> GetPlayListsPoll<T>(string jwtToken, string method)
-        {            
-           
+        {
+
             //get playlists
             IEnumerable<PlayList> playLists = new List<PlayList>();
             var i = 0;
@@ -103,7 +104,7 @@
             new Claim("userID", "DLS-" + candidateNumber),
                 }),
                 //Issuer = myIssuer,
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = ClockUtility.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256)
             };
 
@@ -133,7 +134,7 @@
             };
             return accessTokenResponse.Result;
         }
-       private async Task<GoalResponse> UpdateGoal<T>(Goal goal, String jwtToken)
+        private async Task<GoalResponse> UpdateGoal<T>(Goal goal, String jwtToken)
         {
             GoalUpdateRequest goalUpdateRequest = new GoalUpdateRequest()
             {
@@ -159,17 +160,17 @@
         {
             PlayListsResponse playListsResponse = new PlayListsResponse();
             string request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("10", method));
-           
+
             string apiResponse = await CallFilteredApi<T>(request, token);
             IEnumerable<PlayList> playLists = new List<PlayList>();
             try
             {
                 playListsResponse = JsonConvert.DeserializeObject<PlayListsResponse>(apiResponse);
-                if(playListsResponse.Result != null)
+                if (playListsResponse.Result != null)
                 {
-playLists = playListsResponse.Result;
+                    playLists = playListsResponse.Result;
                 }
-                
+
             }
             catch (Exception e)
             {
@@ -187,9 +188,9 @@ playLists = playListsResponse.Result;
             }
             else
             {
-request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
+                request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
             }
-            
+
             var playList = new PlayList();
             string apiResponse = await CallFilteredApi<T>(request, token);
             try
@@ -200,21 +201,21 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
             {
                 Console.WriteLine(e.Message);
             }
-            if(playListResponse.Result != null)
+            if (playListResponse.Result != null)
             {
                 try
                 {
                     playList = PopulateLearningAssetsForPlayList(playListResponse.Result);
-                   
-                        var i = 0;
-                        while (playList.LearningAssets.Count() > 0 && i < playList.LearningAssets.Count())
-                        {
-                            
+
+                    var i = 0;
+                    while (playList.LearningAssets.Count() > 0 && i < playList.LearningAssets.Count())
+                    {
+
                         LearningAsset learningAsset = playList.LearningAssets[i];
                         if (learningAsset.Completed)
-                            {
+                        {
                             playList.LearningAssets.Remove(learningAsset);
-                            }
+                        }
                         i++;
                     }
                 }
@@ -222,7 +223,7 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
                 {
                     Console.WriteLine(e.Message);
                 }
-                
+
             }
             if (playList.Id == "") { playList.Id = "1"; }
             return playList;
@@ -265,7 +266,7 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
             {
                 Id = "3",
                 Method = "profile.SetFavouriteAsset",
-                FavouriteAsset = new FavouriteAsset { Id = id, Saved = saved},
+                FavouriteAsset = new FavouriteAsset { Id = id, Saved = saved },
                 JSonRPC = "2.0"
             };
             string request = JsonConvert.SerializeObject(setFavouriteAssetRequest);
@@ -279,7 +280,7 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
             {
                 Id = "3",
                 Method = "profile.SetCompleteAsset",
-                CompleteAsset = new CompleteAsset { Id = id, CompletedStatus = complete},
+                CompleteAsset = new CompleteAsset { Id = id, CompletedStatus = complete },
                 JSonRPC = "2.0"
             };
             string request = JsonConvert.SerializeObject(completeAssetRequest);
@@ -315,7 +316,7 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
                 Id = id,
                 Method = method,
                 JSonRPC = "2.0",
-                ObjectId = new ObjectId() { Id = objectID}
+                ObjectId = new ObjectId() { Id = objectID }
             };
         }
         private ParamAssetIdsRequest GetFilteredParamAssetIdRequestJSON(string id, string method, int assetID)

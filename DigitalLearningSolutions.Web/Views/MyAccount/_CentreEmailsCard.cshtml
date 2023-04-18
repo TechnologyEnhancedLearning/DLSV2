@@ -1,0 +1,24 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@model MyAccountViewModel
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-2">
+    <h2 class="nhsuk-card__heading">
+      Centre emails
+    </h2>
+    <div class="nhsuk-card__description">
+      <dl class="nhsuk-summary-list details-list-with-button">
+        @foreach (var (_, centreName, centreSpecificEmail) in Model.AllCentreSpecificEmails)
+        {
+          var centreSpecificEmailModel = new CentreSpecificEmailDetailsViewModel(
+          Model.PrimaryEmail,
+          centreSpecificEmail,
+          centreName
+          );
+
+          <partial name="_CentreSpecificEmailDetailsSection" model="@centreSpecificEmailModel" />
+        }
+      </dl>
+    </div>
+  </div>
+</div>

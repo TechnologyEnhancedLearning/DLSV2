@@ -96,6 +96,11 @@
             nameof(RolesProfiles)
         );
 
+        public static readonly NavMenuTab LogOut = new NavMenuTab(
+            18,
+            nameof(LogOut)
+        );
+
         private NavMenuTab(int id, string name) : base(id, name) { }
 
         public static implicit operator NavMenuTab(string value)

@@ -13,18 +13,22 @@
   <partial name="/Views/TrackingSystem/CourseSetup/Shared/_BreadcrumbsToManageCoursePage.cshtml" model="Model.CustomisationId" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
 
-    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+      <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <vc:field-name-value-display display-name="Course" field-value="@Model.CourseName" />
+      <vc:field-name-value-display display-name="Course" field-value="@Model.CourseName" />
 
-    @if (Model.CourseHasContent) {
-      @foreach (var section in Model.Sections) {
+      @if (Model.CourseHasContent)
+    {
+      @foreach (var section in Model.Sections)
+      {
         <partial name="_CourseSectionExpandable" model="section" />
       }
-    } else {
+    }
+    else
+    {
       <p>No course content enabled.</p>
     }
 

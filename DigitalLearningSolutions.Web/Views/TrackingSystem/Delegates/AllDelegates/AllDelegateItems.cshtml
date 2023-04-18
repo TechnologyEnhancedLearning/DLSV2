@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
 @model AllDelegateItemsViewModel
 
 @{
@@ -12,11 +13,14 @@
   <title></title>
 </head>
 <body>
-@foreach (var delegateUser in Model.Delegates) {
-  <partial name="_SearchableDelegateCard" model="delegateUser" />
-}
-@foreach (var filter in Model.Filters) {
-  <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
-}
+  @foreach (var delegateUser in Model.Delegates)
+  {
+    if (DisplayStringHelper.IsGuid(delegateUser.DelegateInfo.Email)) delegateUser.DelegateInfo.Email = null;
+    <partial name="_SearchableDelegateCard" model="delegateUser" />
+  }
+  @foreach (var filter in Model.Filters)
+  {
+    <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+  }
 </body>
 </html>

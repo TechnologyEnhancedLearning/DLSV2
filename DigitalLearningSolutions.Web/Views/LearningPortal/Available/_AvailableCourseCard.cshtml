@@ -50,24 +50,39 @@
   @if (Model.EnrolButtonText != null)
   {
     <div class="flex-row">
-      @if (Model.IsSelfAssessment)
+      @if (!Model.SelfRegister)
       {
-        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
-       aria-describedby="@Model.Id-name"
-       aria-label="@Model.EnrolButtonAriaLabel" asp-action="EnrolOnSelfAssessment" asp-route-selfAssessmentId="@Model.Id">
-          @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
-        </a>
+        <div class="nhsuk-warning-callout">
+          <h3 class="nhsuk-warning-callout__label">
+            <span role="text">
+              <span class="nhsuk-u-visually-hidden">Important: </span>
+              Not available for self-enrolment
+            </span>
+          </h3>
+          <p>Only an administrator or supervisor can enrol you on this activity.</p>
+        </div>
       }
       else
       {
-        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
+        @if (Model.IsSelfAssessment)
+        {
+          <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
+       aria-describedby="@Model.Id-name"
+       aria-label="@Model.EnrolButtonAriaLabel" asp-action="EnrolOnSelfAssessment" asp-route-selfAssessmentId="@Model.Id">
+            @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
+          </a>
+        }
+        else
+        {
+          <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
        aria-describedby="@Model.Id-name"
        aria-label="@Model.EnrolButtonAriaLabel"
        asp-controller="LearningMenu"
        asp-action="Index"
        asp-route-customisationId="@Model.Id">
-          @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
-        </a>
+            @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
+          </a>
+        }
       }
 
     </div>

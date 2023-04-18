@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,12 @@
             int page = 1
         )
         {
+            TempData["LearningActivity"] = "Available";
             sortBy ??= CourseSortByOptions.Name.PropertyName;
 
             var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
-                User.GetCentreId()
+                User.GetCentreIdKnownNotNull()
             );
             var bannerText = GetBannerText();
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
@@ -42,11 +44,12 @@
             return View("Available/Available", model);
         }
 
+        [NoCaching]
         public IActionResult AllAvailableItems()
         {
             var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
-                User.GetCentreId()
+                User.GetCentreIdKnownNotNull()
             );
             var model = new AllAvailableItemsPageViewModel(availableCourses);
             return View("Available/AllAvailableItems", model);
@@ -54,7 +57,7 @@
 
         public IActionResult EnrolOnSelfAssessment(int selfAssessmentId)
         {
-            courseDataService.EnrolOnSelfAssessment(selfAssessmentId, User.GetCandidateIdKnownNotNull());
+            courseDataService.EnrolOnSelfAssessment(selfAssessmentId, User.GetUserIdKnownNotNull(), User.GetCentreIdKnownNotNull());
             return RedirectToAction("SelfAssessment", new { selfAssessmentId });
         }
     }

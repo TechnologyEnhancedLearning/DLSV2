@@ -14,17 +14,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
 
         public EnrolCurrentLearningViewModel(
             int delegateId,
+            int delegateUserId,
             string delegateName,
             IEnumerable<AvailableCourse> learningItems,
             int selectedActivity
         )
         {
             DelegateId = delegateId;
+            DelegateUserId = delegateUserId;
             DelegateName = delegateName;
             LearningItems = PopulateItems(learningItems, selectedActivity);
         }
 
         public int DelegateId { get; set; }
+        public int DelegateUserId { get; set; }
         public string? DelegateName { get; set; }
         public int? SelectedActivity { get; set; } = 0;
 

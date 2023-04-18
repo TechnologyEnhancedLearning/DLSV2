@@ -17,6 +17,8 @@
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
+        CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
+
         void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
@@ -53,6 +55,7 @@
         void SetCentreAutoRegistered(int centreId);
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
+        IEnumerable<(int, string)> GetAllCentres();
     }
 
     public class CentresDataService : ICentresDataService
@@ -113,6 +116,7 @@
             var centre = connection.QueryFirstOrDefault<Centre>(
                 @"SELECT c.CentreID,
                             c.CentreName,
+                            c.Active,
                             c.RegionID,
                             r.RegionName,
                             c.NotifyEmail,
@@ -201,9 +205,21 @@
                             c.kbSelfRegister AS SelfRegister
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
-                        WHERE c.Active = 1 AND c.Lat IS NOT NULL AND c.Long IS NOT NULL AND c.ShowOnMap = 1"
+                        WHERE c.Active = 1 AND c.ShowOnMap = 1"
             );
         }
+
+        public CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId)
+        {
+            return connection.QueryFirstOrDefault<CentreSummaryForContactDisplay>(
+                @"SELECT CentreID,CentreName,pwTelephone AS Telephone,pwEmail AS Email,pwWebURL AS WebUrl,pwHours AS Hours
+                         FROM Centres
+                         WHERE Active = 1 AND CentreID = @centreId",
+                new { centreId }
+            );
+        }
+
+
 
         public void UpdateCentreManagerDetails(
             int centreId,
@@ -397,6 +413,17 @@
                 WHERE CentreId = @centreId",
                 new { centreId }
             );
+        }
+
+        public IEnumerable<(int, string)> GetAllCentres()
+        {
+            var centres = connection.Query<(int, string)>
+            (
+                @"SELECT CentreID, CentreName
+                        FROM Centres
+                        ORDER BY CentreName"
+            );
+            return centres;
         }
     }
 }

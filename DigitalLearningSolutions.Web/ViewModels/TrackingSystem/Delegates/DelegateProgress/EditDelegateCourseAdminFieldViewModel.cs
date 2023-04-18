@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
+  
 
     public class EditDelegateCourseAdminFieldViewModel : EditDelegateCourseAdminFieldFormData
     {

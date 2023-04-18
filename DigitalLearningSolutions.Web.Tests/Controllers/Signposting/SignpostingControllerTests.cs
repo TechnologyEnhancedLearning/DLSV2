@@ -2,9 +2,9 @@
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Signposting;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using FakeItEasy;
@@ -14,6 +14,7 @@
     public class SignpostingControllerTests
     {
         private const int DelegateId = 5;
+        private const int DelegateUserId = 2;
         private const int ResourceReferenceId = 10;
         private IActionPlanService actionPlanService = null!;
         private SignpostingController controller = null!;
@@ -52,7 +53,7 @@
             A.CallTo(
                     () => actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(
                         ResourceReferenceId,
-                        DelegateId
+                        DelegateUserId
                     )
                 )
                 .MustHaveHappenedOnceExactly();

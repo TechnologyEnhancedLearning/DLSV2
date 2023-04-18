@@ -52,7 +52,7 @@
       <h2>@Model.DelegateSelfAssessment.RoleName</h2>
     </div>
     <div class="nhsuk-grid-column-one-third">
-    @if (Model.DelegateSelfAssessment.SignOffRequested > 0)
+      @if (Model.DelegateSelfAssessment.SignOffRequested > 0)
     {
       <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>
     }
@@ -83,7 +83,7 @@
           </th>
           <th role="columnheader" class="" scope="col">
             @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :
-                Model.DelegateSelfAssessment.QuestionLabel)
+        Model.DelegateSelfAssessment.QuestionLabel)
           </th>
           <th role="columnheader" class="" scope="col">
             Self-assessment

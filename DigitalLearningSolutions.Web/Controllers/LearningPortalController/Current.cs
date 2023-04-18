@@ -29,14 +29,19 @@
             int page = 1
         )
         {
+            TempData["LearningActivity"] = "Current";
             sortBy ??= CourseSortByOptions.LastAccessed.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var bannerText = GetBannerText();
+
+            var centreId = User.GetCentreIdKnownNotNull();
             var selfAssessments =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId, centreId);
+
             var (learningResources, apiIsAccessible) =
-                await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
+                await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateUserId);
 
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
             allItems.AddRange(selfAssessments);
@@ -65,10 +70,14 @@
         public async Task<IActionResult> AllCurrentItems()
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
+            var centreId = User.GetCentreIdKnownNotNull();
+
             var selfAssessment =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var (learningResources, _) = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId, centreId);
+
+            var (learningResources, _) = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateUserId);
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
             return View("Current/AllCurrentItems", model);
         }
@@ -313,7 +322,7 @@
 
         private async Task<(IList<ActionPlanResource>, bool apiIsAccessible)>
             GetIncompleteActionPlanResourcesIfSignpostingEnabled(
-                int delegateId
+                int delegateUserId
             )
         {
             if (!config.IsSignpostingUsed())
@@ -322,7 +331,7 @@
             }
 
             var (resources, apiIsAccessible) =
-                await actionPlanService.GetIncompleteActionPlanResources(delegateId);
+                await actionPlanService.GetIncompleteActionPlanResources(delegateUserId);
             return (resources.ToList(), apiIsAccessible);
         }
     }

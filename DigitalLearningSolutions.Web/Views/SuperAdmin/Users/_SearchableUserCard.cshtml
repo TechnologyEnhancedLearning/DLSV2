@@ -1,0 +1,143 @@
+﻿@using DigitalLearningSolutions.Data.Helpers;
+@using DigitalLearningSolutions.Data.Models.User;
+@using DigitalLearningSolutions.Web.Helpers;
+@using DigitalLearningSolutions.Web.Models.Enums;
+@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
+@model SearchableUserAccountViewModel;
+@{
+    var expanderOpen = Model.Id == ViewBag.UserId
+    ? "open" : "";
+}
+<div class="searchable-element nhsuk-expander-group word-break" id="@Model.Id-card">
+    <details class="nhsuk-details nhsuk-expander" @(expanderOpen)>
+        <summary class="nhsuk-details__summary">
+            <span class="nhsuk-details__summary-text" id="@Model.Id-name">
+                <span class="searchable-element-title" name="name">@Model.Name</span>
+                <span class="searchable-element-email">
+                    @if (Model.Email == null)
+                        @("(Email address not set)")
+                    else
+                        @DisplayStringHelper.GetEmailDisplayString(Model.Email)
+
+                    </span>
+                </span>
+            </summary>
+
+            <div class="nhsuk-details__text">
+                <dl class="nhsuk-summary-list details-list-with-button">
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            User ID
+                        </dt>
+                        <dd class="nhsuk-summary-list__value status-tag">
+                            @Model.Id
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            First name
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.FirstName" />
+                    </div>
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Last name
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.LastName" />
+                    </div>
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Account Status
+                        </dt>
+                        <dd class="nhsuk-summary-list__value status-tag">
+                            <div class="nhsuk-grid-row">
+                                <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+                                    <span class="complete">
+                                        <partial name="_StatusTag" model="@Model.IsActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
+                                    </span>
+                                    <span>
+                                        @if (Model.IsLocked)
+                                    {
+                                        <partial name="_StatusTag" model="(int)UserCard.Locked" />
+                                    }
+                                </span>
+                            </div>
+                            <div class="nhsuk-grid-column-one-half nhsuk-u-one-half nhsuk-u-float-right">
+                                @if (Model.IsActive)
+                                {
+                                    <a class="nhsuk-u-float-right nhsuk-u-margin-left-3" asp-controller="users" asp-action="InactivateUserConfirmation" asp-route-userId="@Model.Id">
+                                        Inactivate
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="nhsuk-u-float-right nhsuk-u-margin-left-3" asp-controller="users" asp-action="ActivateUser" asp-route-userId="@Model.Id">
+                                        Reactivate
+                                    </a>
+                                }
+
+                                @if (Model.IsLocked)
+                                {
+                                    <a class="nhsuk-u-float-right" asp-controller="users" asp-action="UnlockAccount" asp-route-userId="@Model.Id">
+                                        Unlock
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Job Group
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.JobGroupName" />
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Primary Email
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.Email" />
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Email Status
+                    </dt>
+                    <dd class="nhsuk-summary-list__value status-tag">
+                        <div class="nhsuk-grid-row">
+                            <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+                                <partial name="_StatusTag" model="@Model.IsEmailVerified ? (int)UserCard.Verified : (int)UserCard.Unverified" />
+                            </div>
+                            <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+                                @if (!Model.IsEmailVerified)
+                                {
+                                    <a class="nhsuk-u-float-right" asp-controller="users" asp-action="VerifyEmail" asp-route-userId="@Model.Id" asp-route-email="@Model.Email">
+                                        Verify
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        PRN
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Learning Hub linked
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@(Model.LearningHubAuthId != null ? "TRUE" : "False")" />
+                </div>
+            </dl>
+            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="users" asp-action="EditUserDetails" asp-route-userId="@Model.Id" role="button">Edit details</a>
+            @*TODO: This feature will work after TD-994 is merged. This comment should be removed after the merge. *@
+            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="users" asp-action="CentreAccounts" asp-route-userId="@Model.Id" role="button" asp-fragment="@Model.Id-name">
+                View Centre Accounts
+            </a>
+            @*TODO: This feature will work after TD-997 is merged. This comment should be removed after the merge. *@
+            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="SuperAdminUserSetPassword" asp-action="Index" asp-route-userId="@Model.Id" role="button">Set password</a>
+        </div>
+    </details>
+</div>

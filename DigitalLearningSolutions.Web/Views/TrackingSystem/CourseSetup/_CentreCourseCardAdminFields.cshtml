@@ -4,14 +4,16 @@
 <b>Admin fields and response summary</b>
 
 <dl class="nhsuk-summary-list">
-  @foreach (var prompt in Model.AdminFieldWithResponseCounts) {
+  @foreach (var prompt in Model.AdminFieldWithResponseCounts)
+  {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key nhsuk-u-font-weight-normal">
         @prompt.PromptText
       </dt>
       <dd class="nhsuk-summary-list__value">
         <dl class="nhsuk-summary-list">
-          @foreach (var responseCount in prompt.ResponseCounts) {
+          @foreach (var responseCount in prompt.ResponseCounts)
+          {
             <div class="nhsuk-summary-list__row basic-summary-list__row">
               <dt class="nhsuk-summary-list__key nhsuk-u-font-weight-normal">
                 @responseCount.Response

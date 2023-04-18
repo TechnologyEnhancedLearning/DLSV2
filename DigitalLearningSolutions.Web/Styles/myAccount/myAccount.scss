@@ -1,4 +1,5 @@
 ﻿@use "../shared/formElements.scss";
+@use "../shared/headingButtons" as *;
 
 .profile-picture__label {
   vertical-align: top;
@@ -7,4 +8,10 @@
 .profile-picture__image {
   width: 150px;
   height: 150px;
+}
+
+.centre-email__row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }

@@ -47,7 +47,7 @@
             {
                 return;
             }
-            
+
             if (application == null || await ApplicationIsInaccessibleByPage(application!))
             {
                 SetNotFoundResult(context);
@@ -131,10 +131,27 @@
         )
         {
             var descriptor = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor;
-            var routeValues = new Dictionary<string, object>
+            IDictionary<string, object> routeValues;
+
+            if (context.ActionArguments.Keys.Any())
             {
-                [applicationArgumentName] = DlsSubApplication.LearningPortal,
-            };
+                routeValues = context.ActionArguments;
+                if (routeValues.ContainsKey(applicationArgumentName))
+                {
+                    routeValues[applicationArgumentName] = DlsSubApplication.LearningPortal;
+                }
+                else
+                {
+                    routeValues.Add(applicationArgumentName, DlsSubApplication.LearningPortal);
+                }
+            }
+            else
+            {
+                routeValues = new Dictionary<string, object>
+                {
+                    [applicationArgumentName] = DlsSubApplication.LearningPortal,
+                };
+            }
             context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, routeValues);
         }
 

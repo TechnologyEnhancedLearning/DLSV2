@@ -1,16 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
-    [Authorize(Policy = CustomPolicies.UserOnly)]
+    [Authorize(Policy = CustomPolicies.UserDelegateOnly)]
     [FeatureGate(FeatureFlags.UseSignposting)]
     [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
     [Route("Signposting/LaunchLearningResource/{resourceReferenceId:int}")]
@@ -35,7 +35,8 @@
         public async Task<IActionResult> LaunchLearningResource(int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
-            actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(resourceReferenceId, delegateId);
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(resourceReferenceId, delegateUserId);
 
             var delegateUser = userService.GetDelegateUserById(delegateId);
 

@@ -31,7 +31,7 @@
                 isContentCreator: true,
                 isContentManager: true,
                 importOnly: true,
-                categoryId: 0
+                categoryId: null
             );
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
