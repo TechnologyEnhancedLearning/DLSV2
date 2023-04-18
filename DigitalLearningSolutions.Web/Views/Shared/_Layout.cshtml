@@ -134,28 +134,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             {
                                 <partial name="_AutoNavMenuItems.cshtml" model="@dlsSubApplication" />
                             }
-                            @if (shouldDisplayHelpMenuItem)
-                            {
-                                string helpPage;
-                                if (User.HasClaim(c => c.Type == CustomClaimTypes.UserAdminId))
-                                {
-                                    helpPage = "/help/Introduction.html";
-                                }
-                                else if (User.Identity.IsAuthenticated)
-                                {
-                                    helpPage = "/learningportal/help/LearningPortal.html";
-                                }
-                                else
-                                {
-                                    helpPage = "/help/Introduction.html";
-                                }
-                                <li class="nhsuk-header__navigation-item">
-                                    <a class="nhsuk-header__navigation-link" href="@(Configuration["CurrentSystemBaseUrl"] + helpPage)" target="_blank">
-                                        Help
-                                        <partial name="_NhsChevronRight" />
-                                    </a>
-                                </li>
-                            }
+                            
                             @if (User.IsAdminAccount())
                             {
                                 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
