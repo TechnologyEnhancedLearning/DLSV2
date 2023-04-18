@@ -267,11 +267,22 @@
 
         public void DeleteAdminAccount(int adminId)
         {
-            connection.Execute(
-                @"DELETE AdminAccounts
+            int existingId = (int)connection.ExecuteScalar("SELECT aa.UserID FROM AdminAccounts AS aa INNER JOIN SupervisorDelegates AS sd ON aa.ID = sd.SupervisorAdminID WHERE aa.ID=@adminId", new { adminId });
+
+            if (existingId > 0) {
+                connection.Execute(
+                    @"UPDATE Users SET Active=0 WHERE ID=@existingId",
+                    new { existingId }
+                );
+            }
+            else
+            {
+                connection.Execute(
+                    @"DELETE AdminAccounts
                     WHERE ID = @adminId",
-                new { adminId }
-            );
+                    new { adminId }
+                );
+            }
         }
 
         /// <summary>
