@@ -370,10 +370,14 @@ nav, .nhsuk-header__navigation, #header-navigation {
 
 /*Feedback button*/
 .button-inline {
-  padding: 5px 20px 5px 20px;
-  margin: 10px 10px 10px 0;
+  padding: 0px 8px 0px 8px;
+  margin: 8px 10px 8px 0;
   background-color: #005eb8;
   box-shadow: none;
   display: inline-block;
   vertical-align: middle;
+}
+
+.header-text-small {
+  font-size: small;
 }

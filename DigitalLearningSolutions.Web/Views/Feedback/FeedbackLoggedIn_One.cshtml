@@ -29,139 +29,38 @@
     <hr/>
 
     <form method="post" asp-action="FeedbackLoggedInStepOneSave">
-
-      @*<div class="nhsuk-form-group float-right">*@
-
-      @*        <vc:checkboxes label="Task achieved?"
-      populate-with-current-values="false"
-      checkboxes="@Model.TaskAchieved"
-      hint-text=""
-      required="false"
-      errormessage="" />*@
-
-@*      <vc:radios asp-for=""
-                 label="Please select an option"
-                 populate-with-current-values="true"
-                 radios="@Model.Radios"
-                 hint-text=""
-                 required="true" />
-*@
-
+      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
       <div class="nhsuk-hint" id="contact-hint">
         Did you achieve everything you came to do today?
       </div>
-      <div class="nhsuk-radios">
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="" name="" type="radio" value=""> 
-          <label class="nhsuk-label nhsuk-radios__label" for="">
-            Yes
-            @*asp-for="" *@
-          </label>
+      <fieldset class="nhsuk-fieldset" id="feedback-achieved-form" aria-describedby="feedback-achieved">
+        <div class="nhsuk-radios nhsuk-radios--inline nhsuk-u-margin-bottom-6">
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input"
+                   id="feedback-achieved-yes"
+                   asp-for="TaskAchieved"
+                   type="radio"
+                   value="true">
+            <label class="nhsuk-label nhsuk-radios__label" for="feedback-achieved-yes">
+                Yes
+              </label>
+          </div>
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input"
+                   id="feedback-achieved-yes"
+                   asp-for="TaskAchieved"
+                   type="radio"
+                   value="false" />
+            <label class="nhsuk-label nhsuk-radios__label" for="feedback-achieved-no">
+              No
+            </label>
+          </div>
         </div>
-
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="" name="" type="radio" value=""> 
-          <label class="nhsuk-label nhsuk-radios__label" for="">
-            No
-            @*asp-for="" *@
-          </label>
-        </div>
-      </div>
-
-
-@*
-      <div class="nhsuk-radios nhsuk-radios--conditional">
-        <div class="nhsuk-radios__item">
-          <input name="@nameof(Model.TaskAchieved)"
-                 class="nhsuk-radios__input"
-                 id="TaskAchieved_No"
-                 type="radio"
-                 value="false"
-          <label class="nhsuk-label nhsuk-radios__label" for="TaskAchieved_No">
-            No
-          </label>
-        </div>
-
-        <div class="nhsuk-radios__item">
-          <input name="@nameof(Model.TaskAchieved)"
-                 class="nhsuk-radios__input"
-                 id="TaskAchieved_Yes"
-                 type="radio"
-                 value="true"
-          <label class="nhsuk-label nhsuk-radios__label" for="TaskAchieved_Yes">
-            Yes
-          </label>
-        </div>
-      </div>
-*@
-@*      <vc:text-input asp-for="TaskAttempted"
-                     label="What task did you come to do today?"
-                     populate-with-current-value="false"
-                     type="text"
-                     spell-check="false"
-                     hint-text=""
-                     autocomplete="off"
-                     css-class="nhsuk-input"
-                     required="true" />
-
-      <vc:text-area asp-for="FeedbackText"
-                    label="Please describe in detail your experience and what you came here to achieve."
-                    populate-with-current-value="false"
-                    rows="5"
-                    type="text"
-                    spell-check="false"
-                    hint-text=""
-                    autocomplete="off"
-                    css-class="nhsuk-u-width-full"
-                    character-count="null"
-                    required="true" />*@
-
-      @*<input type="text" asp-for="TaskRating" placeholder="TaskRating" />*@
-
-      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
-
-@*      <div class="nhsuk-u-float-right">
-        <button class="nhsuk-button" type="submit">Submit Feedback</button>
-      </div>
-*@      @*</div>*@
-
+      </fieldset>
       <div class="nhsuk-u-float-right">
         <button class="nhsuk-button" type="submit">Continue</button>
       </div>
-
-
-
     </form>
-
-
-    @*<partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />*@
-
-
-
-    @*      @if (Model.UserIsLoggedIn)
-    {
-    @if (Model.UserIsLoggedInCentre)
-    {
-    <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="ApplicationSelector" asp-action="Index">
-    Switch application
-    </a>
-    }
-    }
-    else
-    {
-    <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="Index">
-    Log in
-    </a>
-    <a class="nhsuk-button nhsuk-button--secondary auth-button" role="button" asp-controller="Register" asp-action="Start">
-    Register
-    </a>
-    }*@
   </div>
-
-  @*<partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />*@
-
-  @*<p class="nhsuk-body-m">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>*@
-
-  @*<partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />*@
 </div>
 

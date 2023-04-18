@@ -76,7 +76,7 @@
         [HttpPost]
         public IActionResult FeedbackLoggedInStepOneSave(FeedbackViewModel feedbackViewModel)
         {
-        //    TempData.Clear();
+            TempData.Clear();
             multiPageFormService.SetMultiPageFormData(
                 feedbackViewModel,
                 MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
