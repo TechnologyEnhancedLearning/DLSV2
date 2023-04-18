@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.ViewModels;
@@ -58,7 +59,7 @@
                 userEntity.UserAccount.FailedLoginCount += 1;
                 userService.UpdateFailedLoginCount(userEntity.UserAccount);
 
-                return userEntity.IsLocked
+                return userEntity.UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold
                     ? new LoginResult(LoginAttemptResult.AccountLocked)
                     : new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
