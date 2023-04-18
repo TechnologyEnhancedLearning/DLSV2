@@ -43,7 +43,7 @@
                 configuration.GetCurrentSystemBaseUrl(),
                 resourcesService.GetAllResources()
             );
-            return View("Index", model);
+            return View("Resources", model);
         }
     }
 }

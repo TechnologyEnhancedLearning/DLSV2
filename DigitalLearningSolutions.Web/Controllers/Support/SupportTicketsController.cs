@@ -39,7 +39,7 @@
                 SupportPage.SupportTickets,
                 configuration.GetCurrentSystemBaseUrl()
             );
-            return View("Index", model);
+            return View("Tickets", model);
         }
     }
 }

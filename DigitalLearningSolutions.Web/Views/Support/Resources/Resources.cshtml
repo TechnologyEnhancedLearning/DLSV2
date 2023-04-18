@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Support.Resources
+@model ResourcesViewModel
+
+@{
+  ViewData["Title"] = "Resources";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <h1 class="nhsuk-heading-xl">Resources</h1>
+
+    @foreach (var category in Model.Categories)
+    {
+      <partial name="_ResourceCategoryExpander" model="category" />
+    }
+
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+    </nav>
+  </div>
+</div>
