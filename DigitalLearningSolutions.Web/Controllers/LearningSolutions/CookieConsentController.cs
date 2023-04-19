@@ -3,6 +3,7 @@ using DigitalLearningSolutions.Data.Extensions;
 using DigitalLearningSolutions.Data.Utilities;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.ViewModels.Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -109,18 +110,23 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         private void RemoveGaAndHjCookies()
         {
+            // Get the domain name from the request URL without protocol or "www" prefix
+            string domainName = HttpContext.Request.Host.Host;
+            if (domainName.StartsWith("www"))
+                domainName = domainName.Substring(3);
+
             // List and delete all "google analytics" cookies
             var gaCookies = Request.Cookies.Where(c => c.Key.StartsWith("_ga")).ToList();
             foreach (var cookie in gaCookies)
             {
-                Response.Cookies.Delete(cookie.Key);
+                Response.Cookies.Delete(cookie.Key, new CookieOptions { Domain = domainName });
             }
 
             // List and delete all "hotjar" cookies
             var hjCookies = Request.Cookies.Where(c => c.Key.StartsWith("_hj")).ToList();
             foreach (var cookie in hjCookies)
             {
-                Response.Cookies.Delete(cookie.Key);
+                Response.Cookies.Delete(cookie.Key, new CookieOptions { Domain = domainName });
             }
         }
     }
