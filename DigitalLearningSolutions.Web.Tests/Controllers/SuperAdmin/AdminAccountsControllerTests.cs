@@ -23,6 +23,11 @@
         private IAdminDownloadFileService adminDownloadFileService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ICentresDataService centresDataService = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private IUserService userService = null!;
+        private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
+        private INotificationPreferencesDataService notificationPreferencesDataService = null!;
+        private INotificationDataService notificationDataService = null!;
         const string CookieName = "AdminFilter";
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -34,9 +39,13 @@
             centresDataService = A.Fake <ICentresDataService>();
             searchSortFilterPaginateService = A.Fake <ISearchSortFilterPaginateService>();
             adminDownloadFileService = A.Fake <IAdminDownloadFileService>();
+            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
+            userService = A.Fake<IUserService>();
+            centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
+            notificationPreferencesDataService = A.Fake<INotificationPreferencesDataService>();
+            notificationDataService = A.Fake<INotificationDataService>();
 
-
-            httpRequest = A.Fake<HttpRequest>();
+        httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieValue = "Role|IsCentreAdmin|true";
 
@@ -44,7 +53,12 @@
                     userDataService,
                     centresDataService,
                     searchSortFilterPaginateService,
-                    adminDownloadFileService
+                    adminDownloadFileService,
+                    courseCategoriesDataService,
+                    userService,
+                    centreContractAdminUsageService,
+                    notificationPreferencesDataService,
+                    notificationDataService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)

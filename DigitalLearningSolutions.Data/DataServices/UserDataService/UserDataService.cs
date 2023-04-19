@@ -232,6 +232,19 @@
         bool PrimaryEmailIsInUseAtCentre(string email, int centreId);
 
         void UpdateAdminStatus(int adminId, bool active);
+
+        void UpdateAdminUserAndSpecialPermissions(
+            int adminId,bool isCentreAdmin,bool isSupervisor,bool isNominatedSupervisor,bool isTrainer,
+            bool isContentCreator,
+            bool isContentManager,
+            bool importOnly,
+            int? categoryId,
+            bool isCentreManager,
+            bool isSuperAdmin,
+            bool isReportsViewer
+        );
+
+        int GetUserIdFromAdminId(int adminId);
     }
 
     public partial class UserDataService : IUserDataService
@@ -422,9 +435,9 @@
         string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
         )
         {
-            if(!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(search))
             {
-                search= search.Trim();
+                search = search.Trim();
             }
             string condition = $@" WHERE ((@userId = 0) OR (u.ID = @userId)) AND 
             (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%') AND 

@@ -113,7 +113,7 @@
                     <partial name="_SummaryFieldValue" model="@Model.CentreEmail" />
                 </div>
             </dl>
-            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="ViewRoles" asp-action="Index" asp-route-delegateId="@Model.Id" role="button">Manage roles</a>
+            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="AdminAccounts" asp-action="ManageRoles" asp-route-adminId="@Model.Id" role="button">Manage roles</a>
 
       @if (Model.CanShowDeleteAdminButton)
       {

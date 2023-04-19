@@ -36,6 +36,8 @@
         public bool ImportOnly { get; set; }
 
         public int FailedLoginCount { get; set; }
+        public bool IsSuperAdmin { get; set; }
+        public bool IsReportsViewer { get; set; }
 
         public bool IsLocked => FailedLoginCount >= AuthHelper.FailedLoginThreshold;
         public bool IsCmsAdministrator => ImportOnly && IsContentManager;
