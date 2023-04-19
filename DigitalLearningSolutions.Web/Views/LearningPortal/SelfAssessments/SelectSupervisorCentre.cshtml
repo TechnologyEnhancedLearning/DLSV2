@@ -20,8 +20,7 @@
   @section mobilebacklink
   {
   <p class="nhsuk-breadcrumb__back">
-    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
-     asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">Back</a>
+    <a class="nhsuk-breadcrumb__backlink" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back</a>
   </p>
 }
   <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
