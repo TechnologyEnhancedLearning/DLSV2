@@ -128,16 +128,7 @@ WHERE (ca.ID = @candidateAssessmentId  AND ca.DelegateUserID  = @delegateUserID)
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM CandidateAssessments ca
                 INNER JOIN SelfAssessmentResults s
-                    ON s.DelegateUserID = ca.DelegateUserID AND s.SelfAssessmentID = ca.SelfAssessmentID
-                INNER JOIN (
-                    SELECT MAX(s1.ID) as ID
-                    FROM SelfAssessmentResults AS s1
-                    INNER JOIN CandidateAssessments AS ca1
-                        ON  s1.DelegateUserID = ca1.DelegateUserID AND s1.SelfAssessmentID = ca1.SelfAssessmentID
-                    WHERE ca1.ID = @candidateAssessmentId
-                    GROUP BY CompetencyID, AssessmentQuestionID
-                ) t
-                    ON s.ID = t.ID
+                    ON s.DelegateUserID = ca.DelegateUserID AND s.SelfAssessmentID = ca.SelfAssessmentID           
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas 
