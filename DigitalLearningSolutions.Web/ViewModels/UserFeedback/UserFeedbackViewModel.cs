@@ -1,10 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.UserFeedback
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
-
     public class UserFeedbackViewModel
     {
         public UserFeedbackViewModel() { }
@@ -15,7 +10,7 @@
             bool taskAchieved,
             string taskAttempted,
             string feedbackText,
-            string? taskRating
+            string? taskDifficulty
             )
         {
             UserId = userId;
@@ -23,7 +18,7 @@
             TaskAchieved = taskAchieved;
             TaskAttempted = taskAttempted;
             FeedbackText = feedbackText;
-            TaskRating = taskRating;
+            TaskDifficulty = taskDifficulty;
         }
 
         public int? UserId { get; set; }
@@ -32,40 +27,12 @@
 
         public bool TaskAchieved { get; set; }
 
-        [Required(ErrorMessage = "Please enter the task you were attempting to perform.")]
+        //[Required(ErrorMessage = "Please enter the task you were attempting to perform.")]
         public string TaskAttempted { get; set; }
 
-        [Required(ErrorMessage = "Please enter your feedback text.")]
+        //[Required(ErrorMessage = "Please enter your feedback text.")]
         public string FeedbackText { get; set; }
 
-        public string? TaskRating { get; set; }
-
-        public readonly List<RadiosListItemViewModel> Radios = new List<RadiosListItemViewModel>();
-
-        //    private void SetUpCheckboxesAndRadioButtons()
-        //    {
-        //        var radiosList = new List<RadiosListItemViewModel>
-        //        {
-        //            new RadiosListItemViewModel(
-        //                nameof(),
-        //                "Content creator license",
-        //                "Assigned a Content Creator license number and has access to download and install Content Creator in CMS."
-        //            )
-        //        };
-
-        //        //Checkboxes.Add(AdminRoleInputs.TrainerCheckbox);
-        //        Radios.Add()
-
-        //    //public static CheckboxListItemViewModel ContentCreatorCheckbox = new CheckboxListItemViewModel(
-        //    //    nameof(EditRolesViewModel.IsContentCreator),
-        //    //    "Content creator license",
-        //    //    "Assigned a Content Creator license number and has access to download and install Content Creator in CMS."
-        //    //);
-
-        //    //public static RadiosListItemViewModel NoCmsPermissionsRadioButton = new RadiosListItemViewModel(
-        //    //    ContentManagementRole.NoContentManagementRole,
-        //    //    "No CMS permissions"
-        //    //);
-        //}
+        public string? TaskDifficulty { get; set; }
     }
 }

@@ -25,16 +25,16 @@
       <p>If you need support please <a>contact your centre</a>. This might be your Centre Manager or Clinical Centre Manager.</p>
     </div>
 
-    <p>Step 1 of 5</p>
+    <p>Step 1 of 3</p>
     <hr/>
 
-    <form method="post" asp-action="UserFeedbackLoggedInStepOneSave">
+    <form method="post" asp-action="UserFeedbackTaskAchievedSet">
       <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
-      <div class="nhsuk-hint" id="contact-hint">
+      <div class="nhsuk-hint" id="task-achieve-hint">
         Did you achieve everything you came to do today?
       </div>
       <fieldset class="nhsuk-fieldset" id="feedback-achieved-form" aria-describedby="feedback-achieved">
-        <div class="nhsuk-radios nhsuk-radios--inline nhsuk-u-margin-bottom-6">
+        <div class="nhsuk-radios nhsuk-u-margin-bottom-6">
           <div class="nhsuk-radios__item">
             <input class="nhsuk-radios__input"
                    id="feedback-achieved-yes"

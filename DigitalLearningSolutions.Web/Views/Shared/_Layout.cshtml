@@ -160,10 +160,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             
 
-            @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayFeedbackBar] != true)
+            @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] != true)
             {
               <div class="nhsuk-width-container">
-                <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()">
+                <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="UserFeedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()">
                   Feedback
                 </a>
                   <span class="header-text-small">

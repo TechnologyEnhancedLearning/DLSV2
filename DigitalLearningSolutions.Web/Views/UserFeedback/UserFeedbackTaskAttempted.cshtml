@@ -16,13 +16,13 @@
   <div class="nhsuk-grid-column-two-thirds">
 
 
-    <form method="post" asp-action="UserFeedbackLoggedInTaskAttemptedSave">
+    <form method="post" asp-action="UserFeedbackTaskAttemptedSet">
 
-      <div class="nhsuk-hint" id="contact-hint">
+      <div class="nhsuk-hint" id="task-attempted-hint">
         Give us feedback about what you were trying to achieve?
       </div>
 
-      <p>Step 2 of 5</p>
+      <p>Step 2 of 3</p>
       <hr/>
 
       <vc:text-input asp-for="TaskAttempted"
@@ -33,7 +33,7 @@
                      hint-text=""
                      autocomplete="off"
                      css-class="nhsuk-input"
-                     required="true" />
+                     required="false" />
 
       <vc:text-area asp-for="FeedbackText"
                     label="Please describe in detail your experience and what you came here to achieve."
@@ -45,7 +45,7 @@
                     autocomplete="off"
                     css-class="nhsuk-u-width-full"
                     character-count="null"
-                    required="true" />
+                    required="false" />
 
       <div class="nhsuk-u-float-right">
         <button class="nhsuk-button" type="submit">Continue</button>
