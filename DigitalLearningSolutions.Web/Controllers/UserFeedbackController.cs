@@ -185,7 +185,7 @@
         }
 
         [HttpPost]
-        public Task<IActionResult> UserFeedbackTaskAttemptedSet(UserFeedbackViewModel userFeedbackViewModel)
+        public IActionResult UserFeedbackTaskAttemptedSet(UserFeedbackViewModel userFeedbackViewModel)
         {
             multiPageFormService.SetMultiPageFormData(
                 userFeedbackViewModel,
@@ -200,14 +200,14 @@
         // Step Three
 
         [HttpGet]
-        public Task<IActionResult> UserFeedbackTaskDifficulty()
+        public IActionResult UserFeedbackTaskDifficulty()
         {
             // TODO: Might need read multipage stuff in here maybe? Or just return view earlier rather than this whole method.
-            return Task.FromResult<IActionResult>(View("UserFeedbackTaskDifficulty"));
+            return View("UserFeedbackTaskDifficulty");
         }
 
         [HttpPost]
-        public Task<IActionResult> UserFeedbackTaskDifficultySet(UserFeedbackViewModel userFeedbackViewModel)
+        public IActionResult UserFeedbackTaskDifficultySet(UserFeedbackViewModel userFeedbackViewModel)
         {
             var session = multiPageFormService.GetMultiPageFormData<UserFeedbackSessionData>(
                 MultiPageFormDataFeature.AddUserFeedback,
@@ -220,7 +220,7 @@
                 TempData
             );
 
-            return Task.FromResult<IActionResult>(View("UserFeedbackTaskDifficulty", userFeedbackViewModel));
+            return View("UserFeedbackTaskDifficulty");
         }
 
         //--------------------------------------------------
@@ -229,7 +229,7 @@
 
         [HttpGet]
         [Route("/UserFeedbackConfirm")]
-        public Task<IActionResult> UserFeedbackConfirm()
+        public IActionResult UserFeedbackConfirm()
         {
 //            Handle submitting the data
 //            The POST method for the summary page, triggered by submitting, should:
@@ -270,23 +270,20 @@
 //                return RedirectToAction("Confirmation");
 //            }
 
-
-
-
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
             var userFeedbackModel = new UserFeedbackViewModel();
 
-            return Task.FromResult<IActionResult>(View("UserFeedbackComplete", userFeedbackModel));
+            return View("UserFeedbackComplete");
         }
 
         [HttpPost]
         public async Task<IActionResult> UserFeedbackComplete(
-            string userFeedbackText,
-            bool? taskAchieved,
-            string? taskAttempted,
-            int? taskRating,
-            string sourceUrl
+            //string userFeedbackText,
+            //bool? taskAchieved,
+            //string? taskAttempted,
+            //int? taskRating,
+            //string sourceUrl
         )
         {
             // TODO: Read this out of the multipage form service and save to db.
@@ -332,14 +329,14 @@
 
             var userId = User.GetUserId();
 
-            _userFeedbackDataService.SaveUserFeedback(
-                userId,
-                sourceUrl,
-                taskAchieved,
-                taskAttempted,
-                userFeedbackText,
-                taskRating
-            );
+            //_userFeedbackDataService.SaveUserFeedback(
+            //    userId,
+            //    sourceUrl,
+            //    taskAchieved,
+            //    taskAttempted,
+            //    userFeedbackText,
+            //    taskRating
+            //);
 
             //TODO: Probs need error handling here with associated user error message.
             return RedirectToAction("UserFeedbackComplete");
