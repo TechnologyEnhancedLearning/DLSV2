@@ -15,8 +15,8 @@
   </div>
   <div class="nhsuk-grid-column-two-thirds">
 
-    <p>Step 3 of 3</p>
-    <hr/>
+    <p>Step 3 of 4</p>
+    <hr />
 
     <form method="post" asp-action="UserFeedbackTaskDifficultySet">
       <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
@@ -28,9 +28,9 @@
           <div class="nhsuk-radios__item">
             <input class="nhsuk-radios__input"
                    id="task-difficulty-veryeasy"
-                   asp-for="TaskDifficulty"
+                   asp-for="TaskRating"
                    type="radio"
-                   value="VeryEasy">
+                   value="1">
             <label class="nhsuk-label nhsuk-radios__label" for="task-difficulty-veryeasy">
               Very Easy
             </label>
@@ -38,9 +38,9 @@
           <div class="nhsuk-radios__item">
             <input class="nhsuk-radios__input"
                    id="task-difficulty-easy"
-                   asp-for="TaskDifficulty"
+                   asp-for="TaskRating"
                    type="radio"
-                   value="Easy">
+                   value="2">
             <label class="nhsuk-label nhsuk-radios__label" for="task-difficulty-easy">
               Easy
             </label>
@@ -48,9 +48,9 @@
           <div class="nhsuk-radios__item">
             <input class="nhsuk-radios__input"
                    id="task-difficulty-difficult"
-                   asp-for="TaskDifficulty"
+                   asp-for="TaskRating"
                    type="radio"
-                   value="Difficult">
+                   value="3">
             <label class="nhsuk-label nhsuk-radios__label" for="task-difficulty-difficult">
               Difficult
             </label>
@@ -58,9 +58,9 @@
           <div class="nhsuk-radios__item">
             <input class="nhsuk-radios__input"
                    id="task-difficulty-verydifficult"
-                   asp-for="TaskDifficulty"
+                   asp-for="TaskRating"
                    type="radio"
-                   value="VeryDifficult">
+                   value="4">
             <label class="nhsuk-label nhsuk-radios__label" for="task-difficulty-verydifficult">
               Very Difficult
             </label>
@@ -73,4 +73,3 @@
     </form>
   </div>
 </div>
-

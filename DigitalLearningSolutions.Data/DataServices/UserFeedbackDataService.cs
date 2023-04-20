@@ -10,10 +10,10 @@
     {
         public void SaveUserFeedback(
             int? userID,
-            string sourceUrl,
+            string? sourceUrl,
             bool? taskAchieved,
             string? taskAttempted,
-            string feedbackText,
+            string? feedbackText,
             int? taskRating
         );
     }
@@ -33,7 +33,7 @@
                 string sourceUrl,
                 bool? taskAchieved,
                 string? taskAttempted,
-                string feedbackText,
+                string? feedbackText,
                 int? taskRating
             )
         {

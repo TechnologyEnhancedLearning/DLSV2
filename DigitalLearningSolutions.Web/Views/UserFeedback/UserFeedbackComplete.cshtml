@@ -2,27 +2,32 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model UserFeedbackViewModel;
+
 @{
   ViewData["Title"] = "Feedback";
-  ViewData["Application"] = "Feedback";
-  ViewData["HeaderPathName"] = "Feedback";
 }
-<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/userFeedback/userFeedback.css")" asp-append-version="true">
 
-@*@section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
-}
-*@
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h2 class="nhsuk-heading-s">Join our user research panel</h2>
+    <h1 id="page-heading" class="nhsuk-heading-xl">Thank you for your feedback</h1>
+  </div>
+  <div class="nhsuk-grid-column-two-thirds">
+    <p>Step 4 of 4</p>
+    <hr />
 
-@*@section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">Feedback</li>
-      </ol>
-    </div>
-  </nav>
-}
-*@
+    <p>Help us improve our website</p>
 
-<h1>Feedback</h1>
+    <p>Would you like to <a>join our research panel</a> and help us improve the experience of our website?</p>
+
+    <p>We will not use your details for any purpose other than to get feedback about our services to help us make improvements in the future. You can opt out at any time.</p>
+
+    <form method="post" asp-action="UserFeedbackReturnToUrl">
+      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+      <div class="nhsuk-u-float-right">
+        <button class="nhsuk-button" type="submit">Back</button>
+      </div>
+    </form>
+  </div>
+</div>
