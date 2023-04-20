@@ -1095,7 +1095,7 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
         public SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId)
         {
             var supervisorDelegate = connection.Query<SupervisorDelegate>(
-                $@"SELECT ID, SupervisorAdminID, DelegateEmail, CandidateID, Added
+                $@"SELECT ID, SupervisorAdminID, DelegateEmail, Added
                             ,NotificationSent, Removed, SupervisorEmail, AddedByDelegate
                             ,InviteHash, DelegateUserID
                     FROM SupervisorDelegates
