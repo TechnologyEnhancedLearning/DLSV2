@@ -31,7 +31,15 @@
                     0 AS UserIsVerifier,
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM SelfAssessmentResults s
-                LEFT OUTER JOIN DelegateAccounts AS da ON s.DelegateUserID = da.UserID
+                INNER JOIN (
+                   SELECT MAX(sar.ID) as ID
+                    FROM SelfAssessmentResults AS sar
+                    INNER JOIN DelegateAccounts AS da ON sar.DelegateUserID = da.UserID
+                    WHERE da.ID = @delegateId AND SelfAssessmentID = @selfAssessmentId
+                    GROUP BY CompetencyID, AssessmentQuestionID
+                ) t
+                    ON s.ID = t.ID
+                INNER JOIN DelegateAccounts AS da ON s.DelegateUserID = da.UserID
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
@@ -62,6 +70,15 @@
                 FROM CandidateAssessments ca
                 INNER JOIN SelfAssessmentResults s
                     ON s.DelegateUserID = ca.DelegateUserID AND s.SelfAssessmentID = ca.SelfAssessmentID
+                INNER JOIN (
+                    SELECT MAX(s1.ID) as ID
+                    FROM SelfAssessmentResults AS s1
+                    INNER JOIN CandidateAssessments AS ca1
+                        ON  s1.DelegateUserID = ca1.DelegateUserID AND s1.SelfAssessmentID = ca1.SelfAssessmentID
+                    WHERE ca1.ID = @candidateAssessmentId
+                    GROUP BY CompetencyID, AssessmentQuestionID
+                ) t
+                    ON s.ID = t.ID
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas 
@@ -406,17 +423,16 @@
                                 [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
                         ELSE
-                            BEGIN
-                            UPDATE SelfAssessmentResults
-                            SET [Result] = @result
-                            WHERE ID = @existentResultId
-
-                            DELETE SARS FROM   SelfAssessmentResultSupervisorVerifications  sars INNER JOIN
-                             CandidateAssessmentSupervisors  cas ON SARS.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
-                             SupervisorDelegates  sd ON cas.SupervisorDelegateId = sd.ID
-                            WHERE  sd.SupervisorAdminID = @delegateUserId AND SARS.SelfAssessmentResultId=@existentResultId
-                        END
-END",
+                            INSERT INTO SelfAssessmentResults
+                                ([SelfAssessmentID]
+                                ,[CompetencyID]
+                                ,[AssessmentQuestionID]
+                                ,[Result]
+                                ,[DateTime]
+                                ,[SupportingComments]
+                                ,[DelegateUserID])
+                            VALUES(@selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments,@delegateUserId)
+                    END",
                 new { competencyId, selfAssessmentId, delegateUserId, assessmentQuestionId, result, supportingComments }
             );
 

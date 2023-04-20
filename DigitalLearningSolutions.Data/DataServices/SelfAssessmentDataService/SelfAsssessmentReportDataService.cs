@@ -51,7 +51,12 @@
                     		, CASE WHEN COALESCE (rr.LevelRAG, 0) = 3 THEN s.ID ELSE NULL END AS SelfAssessed
                     		, CASE WHEN sv.Verified IS NOT NULL AND sv.SignedOff = 1 AND COALESCE (rr.LevelRAG, 0) = 3 THEN s.ID ELSE NULL END AS Confirmed
                     		, CASE WHEN sas.Optional = 1  THEN s.CompetencyID ELSE NULL END AS Optional
-                    FROM   SelfAssessmentResults AS s LEFT OUTER JOIN
+                    FROM   SelfAssessmentResults AS s INNER JOIN
+                                     (SELECT MAX(sar1.ID) AS ID
+                                     FROM    SelfAssessmentResults as sar1 INNER JOIN
+                    				 DelegateAccounts AS da1 ON sar1.DelegateUserID = da1.UserID AND da1.CentreID = @centreId
+                                     WHERE (SelfAssessmentID = @selfAssessmentId)
+                                     GROUP BY da1.ID, CompetencyID, AssessmentQuestionID) AS t ON s.ID = t.ID INNER JOIN
                                  SelfAssessmentStructure AS sas ON s.SelfAssessmentID = sas.SelfAssessmentID AND s.CompetencyID = sas.CompetencyID LEFT OUTER JOIN
                                  SelfAssessmentResultSupervisorVerifications AS sv ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0 LEFT OUTER JOIN
                                  CompetencyAssessmentQuestionRoleRequirements AS rr ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
