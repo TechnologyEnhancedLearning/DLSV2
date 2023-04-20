@@ -218,6 +218,14 @@
             return View("GuestFeedbackComplete", userFeedbackModel);
         }
 
+        [HttpPost]
+        [Route("/GuestFeedbackComplete")]
+        public IActionResult GuestFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
+        {
+
+            return View("GuestFeedbackComplete", userFeedbackViewModel);
+        }
+
         //--------------------------------------------------
         // Return url
 
