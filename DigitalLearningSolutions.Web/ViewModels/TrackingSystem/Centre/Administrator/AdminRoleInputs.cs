@@ -42,6 +42,18 @@
             "Assigned a Content Creator licence number and has access to download and install Content Creator in CMS."
         );
 
+        public static CheckboxListItemViewModel SuperAdministratorCheckbox = new CheckboxListItemViewModel(
+            nameof(EditRolesViewModel.IsSuperAdmin),
+            "Super administrator",
+            "Access to the super admin interface to manage access to the platform and respond to support tickets"
+        );
+
+        public static CheckboxListItemViewModel ReportViewerCheckbox = new CheckboxListItemViewModel(
+            nameof(EditRolesViewModel.IsReportViewer),
+            "Report viewer",
+            "View additional system reports above and beyond those visible to standard administrators"
+        );
+
         public static RadiosListItemViewModel NoCmsPermissionsRadioButton = new RadiosListItemViewModel(
             ContentManagementRole.NoContentManagementRole,
             "No CMS permissions"

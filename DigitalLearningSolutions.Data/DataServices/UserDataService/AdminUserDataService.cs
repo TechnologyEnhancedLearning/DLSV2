@@ -44,7 +44,9 @@
                 au.IsLocalWorkforceManager,
                 au.ImportOnly,
                 au.FailedLoginCount,
-                au.ResetPasswordId
+                au.ResetPasswordId,
+                au.UserAdmin AS IsSuperAdmin,
+                au.SummaryReports AS IsReportsViewer
             FROM AdminUsers AS au
             INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
             LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID";
@@ -381,6 +383,64 @@
                         Active = @active
                     WHERE ID = @adminId",
                 new { active, adminId }
+            );
+        }
+
+
+        public void UpdateAdminUserAndSpecialPermissions(
+            int adminId,
+            bool isCentreAdmin,
+            bool isSupervisor,
+            bool isNominatedSupervisor,
+            bool isTrainer,
+            bool isContentCreator,
+            bool isContentManager,
+            bool importOnly,
+            int? categoryId,
+            bool isCentreManager,
+            bool isSuperAdmin,
+            bool isReportsViewer
+        )
+        {
+            connection.Execute(
+                @"UPDATE AdminAccounts
+                        SET
+                            IsCentreAdmin = @isCentreAdmin,
+                            IsSupervisor = @isSupervisor,
+                            IsNominatedSupervisor = @isNominatedSupervisor,
+                            IsTrainer = @isTrainer,
+                            IsContentCreator = @isContentCreator,
+                            IsContentManager = @isContentManager,
+                            ImportOnly = @importOnly,
+                            CategoryID = @categoryId,
+                            IsCentreManager = @isCentreManager,
+                            IsSuperAdmin = @isSuperAdmin,
+                            IsReportsViewer = @isReportsViewer
+                        WHERE ID = @adminId",
+                new
+                {
+                    isCentreAdmin,
+                    isSupervisor,
+                    isNominatedSupervisor,
+                    isTrainer,
+                    isContentCreator,
+                    isContentManager,
+                    importOnly,
+                    categoryId,
+                    adminId,
+                    isCentreManager,
+                    isSuperAdmin,
+                    isReportsViewer
+                }
+            );
+        }
+
+        public int GetUserIdFromAdminId(int adminId)
+        {
+            return connection.QuerySingle<int>(
+                @"SELECT UserID FROM AdminAccounts
+                    WHERE ID = @adminId",
+                new { adminId }
             );
         }
     }
