@@ -634,8 +634,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(centreId);
             return userHasAdminAccountAtCentre || foundRecordForSupervisorDelegateId ||
-                   centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
-                   userIp == "::1";
+                   centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ;
         }
 
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
@@ -727,6 +726,17 @@ namespace DigitalLearningSolutions.Web.Services
 
                     emailService.SendEmail(approvalEmail);
                 }
+            }
+            var notificationEmailForCentre = centresDataService.GetCentreDetailsById(delegateRegistrationModel.Centre).NotifyEmail;
+            if (notificationEmailForCentre != null)
+            {
+                var approvalEmail = GenerateApprovalEmail(
+                   notificationEmailForCentre,
+                   notificationEmailForCentre,
+                   delegateRegistrationModel.FirstName,
+                   delegateRegistrationModel.LastName,
+                   refactoredTrackingSystemEnabled);
+                emailService.SendEmail(approvalEmail);
             }
         }
 
