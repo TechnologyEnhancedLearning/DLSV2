@@ -634,7 +634,8 @@ namespace DigitalLearningSolutions.Web.Services
 
             var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(centreId);
             return userHasAdminAccountAtCentre || foundRecordForSupervisorDelegateId ||
-                   centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ;
+                   centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
+                   userIp == "::1";
         }
 
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
