@@ -822,6 +822,7 @@
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Gone });
             }
+
             int? selfAssessmentSupervisorRoleId = null;
             string selfAssessmentName;
             var supervisorAdminId = 0;
