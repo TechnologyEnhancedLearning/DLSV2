@@ -1,0 +1,10 @@
+--TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications
+-- Remove versioning from SelfAssessmentResultSupervisorVerifications table
+ALTER TABLE SelfAssessmentResultSupervisorVerifications SET (SYSTEM_VERSIONING = OFF);
+ALTER TABLE SelfAssessmentResultSupervisorVerifications DROP PERIOD FOR SYSTEM_TIME;
+ALTER TABLE [dbo].SelfAssessmentResultSupervisorVerifications DROP CONSTRAINT [DF_SelfAssessmentResultSupervisorVerifications_SysEnd];
+ALTER TABLE [dbo].SelfAssessmentResultSupervisorVerifications DROP CONSTRAINT [DF_SelfAssessmentResultSupervisorVerifications_SysStart];
+ALTER TABLE SelfAssessmentResultSupervisorVerifications DROP COLUMN SysStartTime;
+ALTER TABLE SelfAssessmentResultSupervisorVerifications DROP COLUMN SysEndTime;
+DROP TABLE dbo.SelfAssessmentResultSupervisorVerificationsHistory;
+GO

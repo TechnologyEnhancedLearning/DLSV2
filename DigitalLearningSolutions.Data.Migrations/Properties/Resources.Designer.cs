@@ -961,5 +961,38 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
                 return ResourceManager.GetString("UAR_859_PopulateUsersTableFromAccountsTables_DOWN", resourceCulture);
             }
         }
+        /// <summary>
+        ///   Looks up a localized string similar to --TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications
+        ///--Add versioning in SelfAssessmentResultSupervisorVerifications table
+        ///ALTER TABLE SelfAssessmentResultSupervisorVerifications
+        ///    ADD
+        ///        SysStartTime DATETIME2 GENERATED ALWAYS AS ROW START HIDDEN
+        ///            CONSTRAINT DF_SelfAssessmentResultSupervisorVerifications_SysStart DEFAULT SYSUTCDATETIME()
+        ///      , SysEndTime DATETIME2 GENERATED ALWAYS AS ROW END HIDDEN
+        ///            CONSTRAINT DF_SelfAssessmentResultSupervisorVerif [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications
+        {
+            get
+            {
+                return ResourceManager.GetString("TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to --TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications
+        ///-- Remove versioning from SelfAssessmentResultSupervisorVerifications table
+        ///ALTER TABLE SelfAssessmentResultSupervisorVerifications SET (SYSTEM_VERSIONING = OFF);
+        ///ALTER TABLE SelfAssessmentResultSupervisorVerifications DROP PERIOD FOR SYSTEM_TIME;
+        ///ALTER TABLE [dbo].SelfAssessmentResultSupervisorVerifications DROP CONSTRAINT [DF_SelfAssessmentResultSupervisorVerifications_SysEnd];
+        ///ALTER TABLE [dbo].SelfAssessmentResultSupervisorVe [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications
+        {
+            get
+            {
+                return ResourceManager.GetString("TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications", resourceCulture);
+            }
+        }
     }
 }
