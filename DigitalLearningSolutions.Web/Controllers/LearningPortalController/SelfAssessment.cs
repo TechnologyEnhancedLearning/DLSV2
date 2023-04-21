@@ -603,6 +603,7 @@
                 selfAssessmentId,
                 supervisorRoleId
             );
+            TempData.Clear();
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
 
@@ -924,12 +925,12 @@
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
         [ResponseCache(CacheProfileName = "Never")]
-        [TypeFilter(
-            typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewSupervisor) }
-        )]
         public IActionResult AddSupervisorSummary(int selfAssessmentId)
         {
+            if (TempData[MultiPageFormDataFeature.AddNewSupervisor.TempDataKey] == null)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Gone });
+            }
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
             if (sessionAddSupervisor == null)
             {
@@ -993,6 +994,7 @@
                 sessionAddSupervisor.SelfAssessmentID,
                 sessionAddSupervisor.SelfAssessmentSupervisorRoleId
             );
+            TempData.Clear();
             frameworkNotificationService.SendDelegateSupervisorNominated(
                 supervisorDelegateId,
                 sessionAddSupervisor.SelfAssessmentID,
