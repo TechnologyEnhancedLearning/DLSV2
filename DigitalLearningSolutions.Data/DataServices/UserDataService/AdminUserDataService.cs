@@ -46,7 +46,10 @@
                 au.FailedLoginCount,
                 au.ResetPasswordId,
                 au.UserAdmin AS IsSuperAdmin,
-                au.SummaryReports AS IsReportsViewer
+                au.SummaryReports AS IsReportsViewer,
+                au.IsLocalWorkforceManager,
+                au.IsFrameworkDeveloper,
+                au.IsWorkforceManager
             FROM AdminUsers AS au
             INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
             LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID";
@@ -399,7 +402,10 @@
             int? categoryId,
             bool isCentreManager,
             bool isSuperAdmin,
-            bool isReportsViewer
+            bool isReportsViewer,
+            bool isLocalWorkforceManager,
+            bool isFrameworkDeveloper,
+            bool isWorkforceManager
         )
         {
             connection.Execute(
@@ -415,7 +421,10 @@
                             CategoryID = @categoryId,
                             IsCentreManager = @isCentreManager,
                             IsSuperAdmin = @isSuperAdmin,
-                            IsReportsViewer = @isReportsViewer
+                            IsReportsViewer = @isReportsViewer,
+                            IsLocalWorkforceManager = @isLocalWorkforceManager,
+                            IsFrameworkDeveloper = @isFrameworkDeveloper,
+                            IsWorkforceManager = @isWorkforceManager
                         WHERE ID = @adminId",
                 new
                 {
@@ -430,7 +439,10 @@
                     adminId,
                     isCentreManager,
                     isSuperAdmin,
-                    isReportsViewer
+                    isReportsViewer,
+                    isLocalWorkforceManager,
+                    isFrameworkDeveloper,
+                    isWorkforceManager
                 }
             );
         }

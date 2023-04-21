@@ -7,3 +7,30 @@
 .nhsuk-hint {
   white-space: initial;
 }
+
+/* jquery unbobtrusive validation style over */
+
+ 
+
+.validation-summary-valid {
+    display: none;
+}
+
+ 
+
+.nhsuk-error-summary__list li {
+    @include nhsuk-typography-weight-bold;
+    color: $nhsuk-error-color;
+}
+
+ 
+
+.nhsuk-form-group.input-validation-error {
+    @extend .nhsuk-form-group--error;
+}
+
+ 
+
+.nhsuk-input.input-validation-error {
+    @extend .nhsuk-input--error
+}

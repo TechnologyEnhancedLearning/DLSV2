@@ -54,6 +54,24 @@
             "View additional system reports above and beyond those visible to standard administrators"
         );
 
+        public static CheckboxListItemViewModel LocalWorkforceManagerCheckbox = new CheckboxListItemViewModel(
+            nameof(EditRolesViewModel.IsLocalWorkforceManager),
+            "Local workforce manager",
+            "Manages competency profiles for the organisation"
+        );
+
+        public static CheckboxListItemViewModel FrameworkDeveloperCheckbox = new CheckboxListItemViewModel(
+            nameof(EditRolesViewModel.IsFrameworkDeveloper),
+            "Framework developer",
+            "Creates and manages competency frameworks"
+        );
+
+        public static CheckboxListItemViewModel WorkforceManagerCheckbox = new CheckboxListItemViewModel(
+            nameof(EditRolesViewModel.IsWorkforceManager),
+            "Workforce manager",
+            "Manages national competency profiles"
+        );
+
         public static RadiosListItemViewModel NoCmsPermissionsRadioButton = new RadiosListItemViewModel(
             ContentManagementRole.NoContentManagementRole,
             "No CMS permissions"
