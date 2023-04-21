@@ -139,12 +139,12 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkCompetency.Description = SanitizerHelper.SanitizeHtmlData(frameworkCompetency.Description);
             frameworkCompetency.Description?.Trim();
             var description = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(frameworkCompetency.Description));
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
             if (string.IsNullOrWhiteSpace(description)) { frameworkCompetency.Description = null; }
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(FrameworkCompetency.Name));
                 ModelState.AddModelError(nameof(FrameworkCompetency.Name), "Please enter a valid competency statement (between 3 and 500 characters)");
-                var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
                 var competencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, frameworkCompetency?.CompetencyID).ToList();
                 if (competencyFlags != null)
                     competencyFlags.ForEach(f => f.Selected = selectedFlagIds.Contains(f.FlagId));
@@ -187,6 +187,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     FrameworkId = frameworkId,
                     FrameworkGroupId = frameworkCompetencyGroupId,
                     FrameworkCompetencyId = frameworkCompetencyId,
+                    FrameworkConfig = detailFramework?.FrameworkConfig,
                     Competency = new FrameworkCompetency()
                     {
                         Name = frameworkCompetency.Name,
