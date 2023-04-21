@@ -728,6 +728,17 @@ namespace DigitalLearningSolutions.Web.Services
                     emailService.SendEmail(approvalEmail);
                 }
             }
+            var notificationEmailForCentre = centresDataService.GetCentreDetailsById(delegateRegistrationModel.Centre).NotifyEmail;
+            if (notificationEmailForCentre != null)
+            {
+                var approvalEmail = GenerateApprovalEmail(
+                   notificationEmailForCentre,
+                   notificationEmailForCentre,
+                   delegateRegistrationModel.FirstName,
+                   delegateRegistrationModel.LastName,
+                   refactoredTrackingSystemEnabled);
+                emailService.SendEmail(approvalEmail);
+            }
         }
 
         private Email GenerateApprovalEmail(
