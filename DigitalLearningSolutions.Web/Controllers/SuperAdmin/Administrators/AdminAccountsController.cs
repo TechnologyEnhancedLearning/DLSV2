@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
@@ -309,6 +310,39 @@
         {
             userDataService.UpdateAdminStatus(adminId, (actionType == "Reactivate"));
             TempData["AdminId"] = adminId;
+            return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
+        }
+
+        [Route("SuperAdmin/AdminAccounts/{adminId=0:int}/ChangeCentre")]
+        public IActionResult EditCentre(int adminId)
+        {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            var centres = centresDataService.GetAllCentres(true).ToList();
+            ViewBag.Centres = SelectListHelper.MapOptionsToSelectListItems(
+               centres, adminUser.CentreId
+           );
+            var model = new EditCentreViewModel(adminUser, adminUser.CentreId);
+            if (TempData["SearchString"] != null)
+            {
+                model.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                model.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                model.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            TempData["AdminId"] = adminId;
+            return View(model);
+        }
+        [HttpPost]
+        [Route("SuperAdmin/AdminAccounts/{adminId=0:int}/ChangeCentre")]
+        public IActionResult EditCentre(int adminId, int centreId)
+        {
+            TempData["AdminId"] = adminId;
+            userDataService.UpdateAdminCentre(adminId, centreId);
             return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
         }
     }
