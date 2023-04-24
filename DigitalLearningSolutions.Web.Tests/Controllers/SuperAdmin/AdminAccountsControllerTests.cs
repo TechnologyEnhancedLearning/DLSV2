@@ -91,7 +91,26 @@
                 result.Should().BeViewResult().WithDefaultViewName();
             }
         }
+        [Test]
+        public void EditCentre_calls_expected_methods_and_returns_view()
+        {
+            // Given
+            int adminId = 1;
+            var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
 
+            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
+
+            // When
+            var result = administratorsController.EditCentre(adminId);
+
+            //Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.GetAdminUserById(adminId)).MustHaveHappened();
+                A.CallTo(() => centresDataService.GetAllCentres(true)).MustHaveHappened();
+                result.Should().BeViewResult().WithDefaultViewName();
+            }
+        }
         [Test]
         public void Export_passes_in_used_parameters_to_file()
         {
