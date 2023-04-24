@@ -2,9 +2,8 @@
 {
     public class UserFeedbackTempData
     {
-        public int? UserID { get; set; }
-        public string SourceUrl { get; set; }
-
+        public int? UserId { get; set; }
+        public string? SourceUrl { get; set; }
         public bool? TaskAchieved { get; set; }
 
         // TODO: This probs belongs in the vm not here

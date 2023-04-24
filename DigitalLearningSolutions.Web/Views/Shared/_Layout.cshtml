@@ -160,15 +160,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] != true)
             {
-              <div class="nhsuk-width-container">
-                <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="UserFeedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()">
+              <div class="nhsuk-width-container feedback-header-bar">
+                <a class="nhsuk-button nhsuk-button--secondary feedback-button-inline" role="button" asp-controller="UserFeedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()">
                   Feedback
                 </a>
-                    <a>Give feedback</a>
-                    or
-                    <a>join our research panel</a>
-                    - this website is in <a>Beta</a>, your feedback will help us improve this platform.
-                </div>
+                <a asp-controller="UserFeedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()">Give feedback</a>
+                or <a>join our research panel</a> - this website is in <a>Beta</a>, your feedback will help us improve this platform.
+              </div>
             }
         </header>
 

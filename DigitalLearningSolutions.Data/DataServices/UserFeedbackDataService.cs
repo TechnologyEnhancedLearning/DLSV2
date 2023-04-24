@@ -9,7 +9,7 @@
     public interface IUserFeedbackDataService
     {
         public void SaveUserFeedback(
-            int? userID,
+            int? userId,
             string? sourceUrl,
             bool? taskAchieved,
             string? taskAttempted,
@@ -23,14 +23,15 @@
         private readonly IDbConnection connection;
         private readonly ILogger<UserDataService.UserDataService> logger;
 
-        public UserFeedbackDataService(IDbConnection connection)
+        public UserFeedbackDataService(IDbConnection connection, ILogger<UserDataService.UserDataService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public void SaveUserFeedback(
-                int? userID,
-                string sourceUrl,
+                int? userId,
+                string? sourceUrl,
                 bool? taskAchieved,
                 string? taskAttempted,
                 string? feedbackText,
@@ -39,12 +40,12 @@
         {
             var userFeedbackParams = new
             {
-                userID = userID,
-                sourceUrl = sourceUrl,
-                taskAchieved = taskAchieved,
-                taskAttempted = taskAttempted,
-                feedbackText = feedbackText,
-                taskRating = taskRating
+                userId,
+                sourceUrl,
+                taskAchieved,
+                taskAttempted,
+                feedbackText,
+                taskRating
             };
 
             var numberOfAffectedRows = 0;
@@ -55,7 +56,7 @@
                     @"INSERT INTO UserFeedback
                         (UserID, SourcePageUrl, TaskAchieved, TaskAttempted, FeedbackText, TaskRating)
                         VALUES (
-                        @userID, @sourceUrl, @taskAchieved, @taskAttempted, @feedbackText, @taskRating)",
+                        @userId, @sourceUrl, @taskAchieved, @taskAttempted, @feedbackText, @taskRating)",
                     userFeedbackParams
                 );
             }

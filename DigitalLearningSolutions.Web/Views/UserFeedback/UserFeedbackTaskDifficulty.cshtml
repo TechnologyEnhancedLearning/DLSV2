@@ -6,7 +6,7 @@
 @{
   ViewData["Title"] = "Feedback";
 }
-<link rel="stylesheet" href="@Url.Content("~/css/feedback/feedback.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/userFeedback/userFeedback.css")" asp-append-version="true">
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -18,12 +18,12 @@
     <p>Step 3 of 4</p>
 
     <form method="post" asp-action="UserFeedbackTaskDifficultySet">
-      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl ?? string.Empty ?? string.Empty" />
       <div class="nhsuk-hint" id="select-option-hint">
         Please select an option
       </div>
       <fieldset class="nhsuk-fieldset" id="feedback-achieved-form" aria-describedby="feedback-difficulty">
-        <div class="nhsuk-radios nhsuk-u-margin-bottom-6">
+        <div class="nhsuk-u-margin-bottom-6">
           <div class="nhsuk-radios__item">
             <input class="nhsuk-radios__input"
                    id="task-difficulty-veryeasy"

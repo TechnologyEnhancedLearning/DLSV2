@@ -6,97 +6,45 @@
 @{
   ViewData["Title"] = "Feedback";
 }
-<link rel="stylesheet" href="@Url.Content("~/css/feedback/feedback.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/userFeedback/userFeedback.css")" asp-append-version="true">
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    <h2 class="nhsuk-heading-s">Give page or website feedback</h2>
+    <h1 id="page-heading" class="nhsuk-heading-xl">Give us feedback about what you were trying to achieve?</h1>
+  </div>
+  <div class="nhsuk-grid-column-two-thirds">
 
-      <h2 class="nhsuk-heading-s">Give page or website feedback</h2>
-      <h1 id="page-heading" class="nhsuk-heading-xl">Give us feedback about what you were trying to achieve?</h1>
+    <form method="post" asp-action="GuestFeedbackComplete">
 
-      @*<a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="FeedbackGuest_Two">*@
-@*      <a class="nhsuk-button nhsuk-button--secondary button-inline" role="button" asp-controller="Feedback" asp-action="SaveFeedback">
-        Submit feedback >
-      </a>
-*@
-</div>
-      <div class="nhsuk-grid-column-two-thirds">
+      <vc:text-input asp-for="TaskAttempted"
+                     label="What task did you come to do today?"
+                     populate-with-current-value="false"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="off"
+                     css-class="nhsuk-input"
+                     required="true" />
 
-      @*<form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SaveFeedback">*@
-      <form method="post" asp-action="SaveUserFeedback">
+      <vc:text-area asp-for="FeedbackText"
+                    label="Please describe in detail your experience and what you came here to achieve."
+                    populate-with-current-value="false"
+                    rows="5"
+                    type="text"
+                    spell-check="false"
+                    hint-text=""
+                    autocomplete="off"
+                    css-class="nhsuk-u-width-full"
+                    character-count="null"
+                    required="true" />
 
-          @*<div class="nhsuk-form-group float-right">*@
+      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl ?? string.Empty" />
 
-        @*        <vc:checkboxes label="Task achieved?"
-                         populate-with-current-values="false"
-                         checkboxes="@Model.TaskAchieved"
-                         hint-text=""
-                         required="false"
-                         errormessage="" />*@
-
-
-        <vc:text-input asp-for="TaskAttempted"
-                         label="What task did you come to do today?"
-                         populate-with-current-value="false"
-                         type="text"
-                         spell-check="false"
-                         hint-text=""
-                         autocomplete="off"
-                         css-class="nhsuk-input"
-                         required="true" />
-
-            <vc:text-area asp-for="FeedbackText"
-                          label="Please describe in detail your experience and what you came here to achieve."
-                          populate-with-current-value="false"
-                          rows="5"
-                          type="text"
-                          spell-check="false"
-                          hint-text=""
-                          autocomplete="off"
-                          css-class="nhsuk-u-width-full"
-                          character-count="null"
-                          required="true" />
-
-          @*<input type="text" asp-for="TaskRating" placeholder="TaskRating" />*@
-
-          <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
-
-          <div class="nhsuk-u-float-right">
-          <button class="nhsuk-button" type="submit">Submit Feedback</button>
-        </div>
-        @*</div>*@
-
-          </form>
-
-
-      @*<partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />*@
-    
-
-
-@*      @if (Model.UserIsLoggedIn)
-      {
-        @if (Model.UserIsLoggedInCentre)
-        {
-          <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="ApplicationSelector" asp-action="Index">
-            Switch application
-          </a>
-        }
-      }
-      else
-      {
-        <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="Index">
-          Log in
-        </a>
-        <a class="nhsuk-button nhsuk-button--secondary auth-button" role="button" asp-controller="Register" asp-action="Start">
-          Register
-        </a>
-      }*@
-    </div>
-
-    @*<partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />*@
-
-    @*<p class="nhsuk-body-m">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>*@
-
-    @*<partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />*@
+      <div class="nhsuk-u-float-right">
+        <button class="nhsuk-button" type="submit">Submit Feedback</button>
+      </div>
+    </form>
+  </div>
 </div>
 

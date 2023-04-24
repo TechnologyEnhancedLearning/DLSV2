@@ -6,7 +6,7 @@
 @{
   ViewData["Title"] = "Feedback";
 }
-<link rel="stylesheet" href="@Url.Content("~/css/feedback/feedback.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/userFeedback/userFeedback.css")" asp-append-version="true">
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -28,12 +28,12 @@
     <p>Step 1 of 4</p>
 
     <form method="post" asp-action="UserFeedbackTaskAchievedSet">
-      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl ?? string.Empty" />
       <div class="nhsuk-hint" id="task-achieve-hint">
         Did you achieve everything you came to do today?
       </div>
       <fieldset class="nhsuk-fieldset" id="feedback-achieved-form" aria-describedby="feedback-achieved">
-        <div class="nhsuk-radios nhsuk-u-margin-bottom-6">
+        <div class="nhsuk-u-margin-bottom-6">
           <div class="nhsuk-radios__item">
             <input class="nhsuk-radios__input"
                    id="feedback-achieved-yes"
@@ -46,7 +46,7 @@
           </div>
           <div class="nhsuk-radios__item">
             <input class="nhsuk-radios__input"
-                   id="feedback-achieved-yes"
+                   id="feedback-achieved-no"
                    asp-for="TaskAchieved"
                    type="radio"
                    value="false" />

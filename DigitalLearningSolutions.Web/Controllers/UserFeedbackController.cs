@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.UserFeedback;
@@ -25,7 +24,7 @@
         }
 
         [Route("/Index")]
-        public Task<IActionResult> Index(string sourceUrl)
+        public IActionResult Index(string sourceUrl)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
@@ -37,29 +36,27 @@
 
             if (userFeedbackViewModel.UserId == null || userFeedbackViewModel.UserId == 0)
             {
-                return Task.FromResult<IActionResult>(View("GuestFeedbackStart", userFeedbackViewModel));
+                return GuestFeedbackStart(userFeedbackViewModel);
             }
             else
             {
-                return Task.FromResult(StartUserFeedbackSession(userFeedbackViewModel));
+                return StartUserFeedbackSession(userFeedbackViewModel);
             }
         }
 
-        //--------------------------------------------------
-        // Step Zero
-
         [HttpGet]
+        [Route("/StartUserFeedbackSession")]
         public IActionResult StartUserFeedbackSession(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
             var userFeedbackSessionData = new UserFeedbackTempData()
             {
-                UserID = userFeedbackViewModel.UserId,
+                UserId = userFeedbackViewModel.UserId,
                 SourceUrl = userFeedbackViewModel.SourceUrl,
                 TaskAchieved = null,
-                TaskAttempted = null,
-                FeedbackText = null,
+                TaskAttempted = string.Empty,
+                FeedbackText = string.Empty,
                 TaskRating = null,
             };
 
@@ -72,10 +69,8 @@
             return RedirectToAction("UserFeedbackTaskAchieved", userFeedbackViewModel);
         }
 
-        //--------------------------------------------------
-        // Step One
-        
         [HttpGet]
+        [Route("/UserFeedbackTaskAchieved")]
         public IActionResult UserFeedbackTaskAchieved(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
@@ -84,6 +79,7 @@
         }
 
         [HttpPost]
+        [Route("/UserFeedbackTaskAchievedSet")]
         public IActionResult UserFeedbackTaskAchievedSet(UserFeedbackViewModel userFeedbackViewModel)
         {
             var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
@@ -102,10 +98,8 @@
             return RedirectToAction("UserFeedbackTaskAttempted", userFeedbackViewModel);
         }
 
-        //--------------------------------------------------
-        // Step Two
-
         [HttpGet]
+        [Route("/UserFeedbackTaskAttempted")]
         public IActionResult UserFeedbackTaskAttempted(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
@@ -114,6 +108,7 @@
         }
 
         [HttpPost]
+        [Route("/UserFeedbackTaskAttemptedSet")]
         public IActionResult UserFeedbackTaskAttemptedSet(UserFeedbackViewModel userFeedbackViewModel)
         {
             var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
@@ -133,10 +128,8 @@
             return RedirectToAction("UserFeedbackTaskDifficulty", userFeedbackViewModel);
         }
 
-        //--------------------------------------------------
-        // Step Three
-
         [HttpGet]
+        [Route("/UserFeedbackTaskDifficulty")]
         public IActionResult UserFeedbackTaskDifficulty(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
@@ -145,6 +138,7 @@
         }
 
         [HttpPost]
+        [Route("/UserFeedbackTaskDifficultySet")]
         public IActionResult UserFeedbackTaskDifficultySet(UserFeedbackViewModel userFeedbackViewModel)
         {
             var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
@@ -163,9 +157,6 @@
             return RedirectToAction("UserFeedbackSave", userFeedbackViewModel);
         }
 
-        //--------------------------------------------------
-        // Step Four
-
         public IActionResult UserFeedbackSave(UserFeedbackViewModel userFeedbackViewModel)
         {
             var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
@@ -176,7 +167,7 @@
             using var transaction = new TransactionScope();
 
             _userFeedbackDataService.SaveUserFeedback(
-                data.UserID,
+                data.UserId,
                 data.SourceUrl,
                 data.TaskAchieved,
                 data.TaskAttempted,
@@ -204,16 +195,24 @@
             return View("UserFeedbackComplete", userFeedbackViewModel);
         }
 
-        //--------------------------------------------------
-        // Guest feedback
+        [HttpGet]
+        [Route("/GuestFeedbackStart")]
+        public IActionResult GuestFeedbackStart(UserFeedbackViewModel userFeedbackViewModel)
+        {
+            //var userFeedbackModel = new UserFeedbackViewModel();
+
+            ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
+
+            return View("GuestFeedbackStart", userFeedbackViewModel);
+        }
 
         [HttpGet]
         [Route("/GuestFeedbackComplete")]
         public IActionResult GuestFeedbackComplete()
         {
-            ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
-
             var userFeedbackModel = new UserFeedbackViewModel();
+
+            ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
             return View("GuestFeedbackComplete", userFeedbackModel);
         }
@@ -223,13 +222,22 @@
         public IActionResult GuestFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
         {
 
+            _userFeedbackDataService.SaveUserFeedback(
+                null,
+                userFeedbackViewModel.SourceUrl,
+                null,
+                userFeedbackViewModel.TaskAttempted,
+                userFeedbackViewModel.FeedbackText,
+                null
+            );
+
+            ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
+
             return View("GuestFeedbackComplete", userFeedbackViewModel);
         }
 
-        //--------------------------------------------------
-        // Return url
-
         [HttpPost]
+        [Route("/UserFeedbackReturnToUrl")]
         public IActionResult UserFeedbackReturnToUrl(string sourceUrl)
         {
             return Redirect(sourceUrl);
