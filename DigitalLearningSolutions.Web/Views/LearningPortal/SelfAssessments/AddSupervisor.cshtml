@@ -1,12 +1,16 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @model AddSupervisorViewModel
-
+@*@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration*@
 
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
     ViewData["Title"] = "Self Assessment";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
+
+    //ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/SelfAssessment";
+    //ViewData["HeaderPathName"] = "LearningPortal/SelfAssessment";
 }
 @section breadcrumbs {
     <li class="nhsuk-breadcrumb__item">
@@ -16,6 +20,10 @@
         <a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a>
     </li>
     <li class="nhsuk-breadcrumb__item">Add</li>
+}
+@if (Model.JavascriptSearchSortFilterPaginateEnabled)
+{
+  <vc:loading-spinner page-has-side-nav-menu="false" />
 }
 @section mobilebacklink
     {
@@ -34,11 +42,14 @@
 <h1>New activity supervisor</h1>
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-        <form method="post">
+        <form method="get" role="search" asp-route-page="@Model.Page">
             @if (errorHasOccurred)
             {
                 <vc:error-summary order-of-property-names="@(new[] {nameof(Model.SupervisorAdminID) })" />
             }
+            <div class="nhsuk-grid-row">
+                <partial name="SearchablePage/_Search" model="Model" />
+            </div>
             <nhs-form-group nhs-validation-for="SupervisorAdminID">
                 <fieldset class="nhsuk-fieldset">
                     <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
@@ -61,6 +72,12 @@
                             </span>
                         </div>
                     }
+                    <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+                    <partial name="SearchablePage/_TopPagination" model="Model" />
+                    <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
+
+                    <input type="hidden" aria-hidden="true" id="select-sort-by" value="SearchableName" />
+                    <input type="hidden" aria-hidden="true" id="select-sort-direction" value="Ascending" />
 
                     <div id="SupervisorAdminID" class="nhsuk-radios">
                         @foreach (var supervisor in Model.Supervisors)
@@ -76,14 +93,24 @@
                             </div>
                         }
                     </div>
+                    <partial name="SearchablePage/_BottomPagination" model="Model" />
                 </fieldset>
             </nhs-form-group>
+        </form>
+        <form method="post" >
             @if (Model.Supervisors.Count() > 0)
             {
-                <button class="nhsuk-button" type="submit">
+                @*<button class="nhsuk-button" type="submit">
                     Next
-                </button>
+                </button>*@
+                <button class="nhsuk-button" type="submit" >
+            Submit
+          </button>
             }
+            @Html.HiddenFor(m => m.SearchString)
+            @Html.HiddenFor(m => m.SortBy)
+            @Html.HiddenFor(m => m.SortDirection)
+            @Html.HiddenFor(m => m.Page)
         </form>
     </div>
 </div>
@@ -97,3 +124,9 @@
         Cancel
     </a>
 </div>
+@if (Model.JavascriptSearchSortFilterPaginateEnabled)
+{
+  @section scripts {
+  <script src="@Url.Content("~/js/LearningPortal/supervisorList.js")" asp-append-version="true"></script>
+}
+}

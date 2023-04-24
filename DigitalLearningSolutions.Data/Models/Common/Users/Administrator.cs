@@ -1,6 +1,9 @@
-﻿namespace DigitalLearningSolutions.Data.Models.Common.Users
+﻿using DigitalLearningSolutions.Data.Helpers;
+using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+
+namespace DigitalLearningSolutions.Data.Models.Common.Users
 {
-    public class Administrator
+    public class Administrator : BaseSearchableItem
     {
         public int AdminID { get; set; }
         public int CentreID { get; set; }
@@ -11,5 +14,12 @@
         public bool IsFrameworkDeveloper { get; set; }
         public byte[]? ProfileImage { get; set; }
         public string? CentreName { get; set; }
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? NameQueryHelper.GetSortableFullName(Forename, Surname);
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
+
+        public string? FullName => Forename == null ? Surname : $"{Forename} {Surname}";
     }
 }

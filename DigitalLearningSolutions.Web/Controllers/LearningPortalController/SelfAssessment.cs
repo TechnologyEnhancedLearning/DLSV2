@@ -22,6 +22,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using GDS.MultiPageFormData.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
 
     public partial class LearningPortalController
     {
@@ -644,9 +645,15 @@
             return RedirectToAction("AddNewSupervisor", new { selfAssessmentId });
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
-        public IActionResult AddNewSupervisor(int selfAssessmentId)
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/{page=1:int}")]
+        public IActionResult AddNewSupervisor(int selfAssessmentId,
+            string? searchString = null,
+            string? sortBy = null,
+            string sortDirection = GenericSortingHelper.Ascending,
+            int page = 1
+        )
         {
+
             if (TempData[MultiPageFormDataFeature.AddNewSupervisor.TempDataKey] == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Forbidden });
@@ -669,18 +676,33 @@
                 supervisors = supervisors.Where(s => s.CentreID == sessionAddSupervisor.CentreID).ToList();
             }
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+               new SearchOptions(searchString),
+               new SortOptions(sortBy, sortDirection),
+               null,
+               new PaginationOptions(page)
+           );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                supervisors,
+                searchSortPaginationOptions
+            );
+
             var model = new AddSupervisorViewModel
-            {
-                SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
-                SelfAssessmentName = sessionAddSupervisor.SelfAssessmentName,
-                SupervisorAdminID = sessionAddSupervisor.SupervisorAdminId,
-                Supervisors = supervisors,
-            };
+            (
+               sessionAddSupervisor.SelfAssessmentID,
+                sessionAddSupervisor.SelfAssessmentName,
+                sessionAddSupervisor.SupervisorAdminId,
+                result
+            );
+
+            ModelState.ClearErrorsForAllFieldsExcept("SupervisorAdminID");
+
             return View("SelfAssessments/AddSupervisor", model);
         }
 
         [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/{page=1:int}")]
         public IActionResult SetSupervisorName(AddSupervisorViewModel model)
         {
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
