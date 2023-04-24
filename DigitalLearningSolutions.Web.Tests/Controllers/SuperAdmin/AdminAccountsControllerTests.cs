@@ -80,7 +80,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(() => userDataService.GetAllAdmins(A<string>._, A<int>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int>._)).MustHaveHappened();
-                A.CallTo(() => centresDataService.GetAllCentres()).MustHaveHappened();
+                A.CallTo(() => centresDataService.GetAllCentres(false)).MustHaveHappened();
                 A.CallTo(
                     () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                         A<IEnumerable<AdminEntity>>._,

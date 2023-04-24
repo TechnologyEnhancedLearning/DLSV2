@@ -103,7 +103,7 @@
                     </dt>
                     <partial name="_SummaryFieldValue" model="@Model.Centre" />
                     <dd class="nhsuk-summary-list__actions">
-                        <a asp-controller="AdminAccounts" asp-action="EditCentre" asp-route-UserId="@Model.UserAccountID" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Change</a>
+                        <a asp-controller="AdminAccounts" asp-action="EditCentre" asp-route-adminId="@Model.Id" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Change</a>
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">

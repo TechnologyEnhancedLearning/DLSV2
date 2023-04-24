@@ -4,13 +4,11 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using NHSUKViewComponents.Web.ViewModels;
 
     public class ManageRoleViewModel : AdminRolesViewModel

@@ -234,7 +234,7 @@
         void UpdateAdminStatus(int adminId, bool active);
 
         void UpdateAdminUserAndSpecialPermissions(
-            int adminId,bool isCentreAdmin,bool isSupervisor,bool isNominatedSupervisor,bool isTrainer,
+            int adminId, bool isCentreAdmin, bool isSupervisor, bool isNominatedSupervisor, bool isTrainer,
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
@@ -245,6 +245,7 @@
         );
 
         int GetUserIdFromAdminId(int adminId);
+        void UpdateAdminCentre(int adminId, int centreId);
     }
 
     public partial class UserDataService : IUserDataService

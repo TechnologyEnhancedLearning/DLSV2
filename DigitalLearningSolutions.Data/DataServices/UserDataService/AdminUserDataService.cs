@@ -178,7 +178,7 @@
         {
             var user = connection.Query<AdminUser>(
                 @$"{BaseSelectAdminQuery}
-                    WHERE au.AdminID = @id AND au.Active = 1",
+                    WHERE au.AdminID = @id",
                 new { id }
             ).SingleOrDefault();
 
@@ -271,7 +271,8 @@
         {
             int existingId = (int)connection.ExecuteScalar("SELECT aa.UserID FROM AdminAccounts AS aa INNER JOIN SupervisorDelegates AS sd ON aa.ID = sd.SupervisorAdminID WHERE aa.ID=@adminId", new { adminId });
 
-            if (existingId > 0) {
+            if (existingId > 0)
+            {
                 connection.Execute(
                     @"UPDATE Users SET Active=0 WHERE ID=@existingId",
                     new { existingId }
@@ -442,6 +443,15 @@
                     WHERE ID = @adminId",
                 new { adminId }
             );
+        }
+        public void UpdateAdminCentre(int adminId, int centreId)
+        {
+            connection.Execute(
+            @"UPDATE AdminAccounts
+                        SET
+                            CentreId = @centreId
+                        WHERE ID = @adminId",
+            new { adminId, centreId });
         }
     }
 
