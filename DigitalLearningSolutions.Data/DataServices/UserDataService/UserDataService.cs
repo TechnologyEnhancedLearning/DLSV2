@@ -241,7 +241,10 @@
             int? categoryId,
             bool isCentreManager,
             bool isSuperAdmin,
-            bool isReportsViewer
+            bool isReportsViewer,
+            bool isLocalWorkforceManager,
+            bool isFrameworkDeveloper,
+            bool isWorkforceManager
         );
 
         int GetUserIdFromAdminId(int adminId);
