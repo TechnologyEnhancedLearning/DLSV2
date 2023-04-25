@@ -3,6 +3,7 @@
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -34,7 +35,7 @@
         }
         public byte[] GetDigitalCapabilityExcelExportForCentre(int centreId)
         {
-            var delegateCompletionStatus = dcsaReportDataService.GetDelegateCompletionStatusForCentre(centreId);
+            var delegateCompletionStatus = dcsaReportDataService.GetDelegateCompletionStatusForCentre(centreId).Where(c => !Guid.TryParse(c.Email, out _));
             var outcomeSummary = dcsaReportDataService.GetOutcomeSummaryForCentre(centreId);
             var summary = delegateCompletionStatus.Select(
                 x => new
