@@ -164,8 +164,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <a class="nhsuk-button nhsuk-button--secondary feedback-button-inline" role="button" asp-controller="UserFeedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()">
                   Feedback
                 </a>
-                <a asp-controller="UserFeedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()">Give feedback</a>
-                or <a>join our research panel</a> - this website is in <a>Beta</a>, your feedback will help us improve this platform.
+                <a asp-controller="UserFeedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()" asp-route-sourcepagetitle="@Context.">Give feedback</a>
+                or <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=K5Gn_5ewMUGcD9DoB1Wyqy_N2dia4StEr8rvzDM1MnlUQTdQM0NWR0hEUENaVVFQREtOWEFRSEQwRC4u" target="_blank">join our research panel</a> - this website is in
+                <a href="https://www.gov.uk/help/beta" target="_blank">Beta</a>, your feedback will help us improve this platform.
               </div>
             }
         </header>
