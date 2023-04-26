@@ -30,6 +30,9 @@
             IsContentCreator = user.IsContentCreator;
             IsSuperAdmin = user.IsSuperAdmin;
             IsReportViewer = user.IsReportsViewer;
+            IsLocalWorkforceManager = user.IsLocalWorkforceManager;
+            IsFrameworkDeveloper = user.IsFrameworkDeveloper;
+            IsWorkforceManager = user.IsWorkforceManager;
 
             if (user.IsCmsAdministrator)
             {
@@ -69,9 +72,12 @@
             {
                 Checkboxes.Add(AdminRoleInputs.ContentCreatorCheckbox);
             }
+            Checkboxes.Add(AdminRoleInputs.LocalWorkforceManagerCheckbox);
 
             SpecialPermissions.Add(AdminRoleInputs.SuperAdministratorCheckbox);
             SpecialPermissions.Add(AdminRoleInputs.ReportViewerCheckbox);
+            SpecialPermissions.Add(AdminRoleInputs.FrameworkDeveloperCheckbox);
+            SpecialPermissions.Add(AdminRoleInputs.WorkforceManagerCheckbox);
 
             if (!numberOfAdmins.CmsAdministratorsAtOrOverLimit || user.IsCmsAdministrator)
             {
