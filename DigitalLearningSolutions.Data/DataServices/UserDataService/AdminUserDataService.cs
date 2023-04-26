@@ -332,7 +332,50 @@
 		                                u.ID, u.PrimaryEmail, u.FirstName, u.LastName, u.Active, u.FailedLoginCount,
 		                                c.CentreID, c.CentreName,
 		                                ucd.ID, ucd.Email, ucd.EmailVerified, ucd.CentreID,
-                                        (SELECT COUNT(*) FROM AdminSessions WHERE AdminID = aa.ID) AS AdminSessions
+                         (SELECT count(*)
+                         FROM (
+                                SELECT TOP 1 AdminSessions.AdminID FROM AdminSessions WHERE AdminSessions.AdminID = aa.ID
+                                UNION ALL
+                                SELECT TOP 1 AssessmentQuestionLevels.UpdatedByAdminID FROM AssessmentQuestionLevels WHERE AssessmentQuestionLevels.UpdatedByAdminID = aa.ID
+                                UNION ALL
+                                SELECT TOP 1 AssessmentQuestions.AddedByAdminId FROM AssessmentQuestions WHERE AssessmentQuestions.AddedByAdminId = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 Competencies.UpdatedByAdminID FROM Competencies WHERE Competencies.UpdatedByAdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 CompetencyGroups.UpdatedByAdminID FROM CompetencyGroups WHERE CompetencyGroups.UpdatedByAdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 CompetencyLearningResources.AdminID FROM CompetencyLearningResources WHERE CompetencyLearningResources.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 CompetencyLevelCriteria.UpdatedByAdminID FROM CompetencyLevelCriteria WHERE CompetencyLevelCriteria.UpdatedByAdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 FrameworkCollaborators.AdminID FROM FrameworkCollaborators WHERE FrameworkCollaborators.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 FrameworkComments.AdminID FROM FrameworkComments WHERE FrameworkComments.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 FrameworkCompetencies.UpdatedByAdminID FROM FrameworkCompetencies WHERE FrameworkCompetencies.UpdatedByAdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 FrameworkCompetencyGroups.UpdatedByAdminID FROM FrameworkCompetencyGroups WHERE FrameworkCompetencyGroups.UpdatedByAdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 Frameworks.ID FROM Frameworks WHERE Frameworks.UpdatedByAdminID = aa.ID OR Frameworks.OwnerAdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 GroupCustomisations.AddedByAdminUserID FROM GroupCustomisations WHERE GroupCustomisations.AddedByAdminUserID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 Groups.CreatedByAdminUserID FROM Groups WHERE Groups.CreatedByAdminUserID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 LearningResourceReferences.AdminID FROM LearningResourceReferences WHERE LearningResourceReferences.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 SelfAssessmentCollaborators.AdminID FROM SelfAssessmentCollaborators WHERE SelfAssessmentCollaborators.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 SelfAssessmentComments.AdminID FROM SelfAssessmentComments WHERE SelfAssessmentComments.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 SelfAssessments.ID FROM SelfAssessments WHERE SelfAssessments.CreatedByAdminID = aa.ID OR SelfAssessments.UpdatedByAdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 SupervisorDelegates.SupervisorAdminID FROM SupervisorDelegates WHERE SupervisorDelegates.SupervisorAdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 TicketComments.TCAdminUserID FROM TicketComments WHERE TicketComments.TCAdminUserID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 Tickets.TicketID FROM Tickets WHERE Tickets.AssignedToID = aa.ID OR Tickets.AdminUserID = aa.ID
+                            ) AS tempTable) AS AdminIdReferenceCount
                                     FROM   AdminAccounts AS aa INNER JOIN
                                     Users AS u ON aa.UserID = u.ID INNER JOIN
                                     Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
@@ -356,15 +399,15 @@
 
             IEnumerable<AdminEntity> adminEntity = connection.Query<AdminAccount, UserAccount, Centre, UserCentreDetails, int, AdminEntity>(
                 sql,
-                (adminAccount, userAccount, centre, userCentreDetails, adminSessions) => new AdminEntity(
+                (adminAccount, userAccount, centre, userCentreDetails, adminIdReferenceCount) => new AdminEntity(
                     adminAccount,
                     userAccount,
                     centre,
                     userCentreDetails,
-                    adminSessions
+                    adminIdReferenceCount
                 ),
                 new { adminId, search, centreId, userStatus, failedLoginThreshold, role, offset, rows },
-                splitOn: "ID,ID,CentreID,ID,AdminSessions",
+                splitOn: "ID,ID,CentreID,ID,AdminIdReferenceCount",
                 commandTimeout: 3000
             );
 
