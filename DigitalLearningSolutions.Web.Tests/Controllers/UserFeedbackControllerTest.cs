@@ -20,14 +20,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private const string SourceUrl = "https://www.example.com";
 
         private UserFeedbackController _userFeedbackController;
-
-        public UserFeedbackControllerTests(UserFeedbackController userFeedbackController)
-        {
-            _userFeedbackController = userFeedbackController;
-        }
-
         private IUserFeedbackDataService _userFeedbackDataService = null!;
         private IMultiPageFormService _multiPageFormService = null!;
+        private ITempDataDictionary _tempData = null;
 
         [SetUp]
         public void SetUp()
@@ -37,6 +32,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             _userFeedbackController = new UserFeedbackController(_userFeedbackDataService, _multiPageFormService)
                 .WithDefaultContext()
                 .WithMockUser(true, userId: LoggedInUserId);
+            _tempData = A.Fake<ITempDataDictionary>();
+            _userFeedbackController.TempData = _tempData;
         }
 
         [Test]
@@ -125,37 +122,33 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             result?.ViewName.Should().Be("GuestFeedbackComplete");
             result?.Model.Should().BeOfType<UserFeedbackViewModel>();
         }
-        
+
         [Test]
         public void Index_WithNullUserId_ShouldRedirectToGuestFeedbackStart()
         {
             // Given
+            _userFeedbackController.WithDefaultContext().WithMockUser(false, userId: null);
 
-            //_userFeedbackController.SetFakeAuthenticatedUser(null);
-
-            
             // When
-            var result = _userFeedbackController.Index(sourceUrl: SourceUrl) as RedirectToActionResult;
+            var result = _userFeedbackController.Index(sourceUrl: SourceUrl) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
-            result?.ActionName.Should().Be("GuestFeedbackStart");
+            result?.ViewName.Should().Be("GuestFeedbackStart");
         }
 
         [Test]
         public void Index_WithNonNullUserId_ShouldRedirectToStartUserFeedbackSession()
         {
             // Given
-            _userFeedbackController = new UserFeedbackController(_userFeedbackDataService, _multiPageFormService)
-                .WithDefaultContext()
-                .WithMockUser(false, userId: null);
+            _userFeedbackController.WithDefaultContext().WithMockUser(false, userId: null);
 
             // When
-            var result = _userFeedbackController.Index(sourceUrl: SourceUrl) as RedirectToActionResult;
+            var result = _userFeedbackController.Index(sourceUrl: SourceUrl) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
-            result?.ActionName.Should().Be("StartUserFeedbackSession");
+            result?.ViewName.Should().Be("GuestFeedbackStart");
         }
 
         [Test]
@@ -200,31 +193,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             result?.ActionName.Should().Be("UserFeedbackSave");
         }
 
-        //// Add this helper method to the UserFeedbackControllerTests class
-        //private void SetFakeAuthenticatedUser(this Controller controller, int? userId)
-        //{
-        //    var fakeClaimsPrincipal = new ClaimsPrincipal();
-        //    if (userId.HasValue)
-        //    {
-        //        fakeClaimsPrincipal.AddIdentity(new ClaimsIdentity(new List<Claim>
-        //{
-        //    new Claim(ClaimTypes.NameIdentifier, userId.Value.ToString())
-        //}));
-        //    }
-
-        //    controller.ControllerContext.HttpContext = new DefaultHttpContext
-        //    {
-        //        User = fakeClaimsPrincipal
-        //    };
-        //}
-
         [Test]
         public void UserFeedbackSave_ShouldCallSaveUserFeedbackAndRedirectToUserFeedbackComplete()
         {
             // Given
             var userFeedbackViewModel = new UserFeedbackViewModel();
             A.CallTo(() => _multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
-                    MultiPageFormDataFeature.AddUserFeedback, (ITempDataDictionary)A<IDictionary<string, object>>._))
+                    MultiPageFormDataFeature.AddUserFeedback, _tempData))
                 .Returns(new UserFeedbackTempData());
 
             // When
@@ -272,12 +247,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var userFeedbackViewModel = new UserFeedbackViewModel();
-
+            
             // When
             var result = _userFeedbackController.StartUserFeedbackSession(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
-            A.CallTo(() => _multiPageFormService.SetMultiPageFormData(A<UserFeedbackTempData>._, MultiPageFormDataFeature.AddUserFeedback, (ITempDataDictionary)A<IDictionary<string, object>>._))
+            A.CallTo(() => _multiPageFormService.SetMultiPageFormData(A<UserFeedbackTempData>._, MultiPageFormDataFeature.AddUserFeedback, _tempData))
                 .MustHaveHappenedOnceExactly();
             result.Should().NotBeNull();
             result?.ActionName.Should().Be("UserFeedbackTaskAchieved");
@@ -324,7 +299,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             result.Should().NotBeNull();
             result?.ViewName.Should().Be("UserFeedbackTaskDifficulty");
         }
-        
+
         [Test]
         public void GuestFeedbackStart_ShouldRenderGuestFeedbackStartView()
         {
