@@ -85,9 +85,12 @@
                         <span class="nhsuk-u-margin-right-4">
                             <partial name="_StatusTag" model="@Model.IsUserActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
                         </span>
-                        <span>
-                            <partial name="_StatusTag" model="(int)UserCard.Locked" />
-                        </span>
+                        @if (Model.IsLocked)
+                        {
+                            <span>
+                                <partial name="_StatusTag" model="(int)UserCard.Locked" />
+                            </span>
+                        }
                     </dd>
                     <dd class="nhsuk-summary-list__actions">
                         @if (Model.IsLocked)

@@ -34,6 +34,9 @@
         public bool IsContentCreator { get; set; }
         public bool IsSuperAdmin { get; set; }
         public bool IsReportViewer { get; set; }
+        public bool IsLocalWorkforceManager { get; set; }
+        public bool IsFrameworkDeveloper { get; set; }
+        public bool IsWorkforceManager { get; set; }
         public ContentManagementRole ContentManagementRole { get; set; }
         public int LearningCategory { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; set; }
