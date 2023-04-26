@@ -274,8 +274,6 @@
 
             foreach (var assessmentQuestion in assessmentQuestions)
             {
-                if (assessmentQuestion.Result != null || assessmentQuestion.SupportingComments != null)
-                {
                     selfAssessmentService.SetResultForCompetency(
                         competencyId,
                         assessment.Id,
@@ -284,7 +282,6 @@
                         assessmentQuestion.Result,
                         assessmentQuestion.SupportingComments
                     );
-                }
             }
 
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, delegateUserId, true);
