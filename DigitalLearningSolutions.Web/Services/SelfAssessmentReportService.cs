@@ -2,6 +2,7 @@
 {
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using System;
     using System.Collections.Generic;
@@ -35,7 +36,7 @@
         }
         public byte[] GetDigitalCapabilityExcelExportForCentre(int centreId)
         {
-            var delegateCompletionStatus = dcsaReportDataService.GetDelegateCompletionStatusForCentre(centreId).Where(c => !Guid.TryParse(c.Email, out _));
+            var delegateCompletionStatus = dcsaReportDataService.GetDelegateCompletionStatusForCentre(centreId);
             var outcomeSummary = dcsaReportDataService.GetOutcomeSummaryForCentre(centreId);
             var summary = delegateCompletionStatus.Select(
                 x => new
@@ -44,7 +45,7 @@
                     x.EnrolledYear,
                     x.FirstName,
                     x.LastName,
-                    x.Email,
+                    Email = (Guid.TryParse(x.Email, out _) ? string.Empty : x.Email),
                     x.CentreField1,
                     x.CentreField2,
                     x.CentreField3,
@@ -78,7 +79,7 @@
                 }
                 );
             using var workbook = new XLWorkbook();
-            AddSheetToWorkbook(workbook, "Delegate Completion Status", delegateCompletionStatus);
+            AddSheetToWorkbook(workbook, "Delegate Completion Status", summary);
             AddSheetToWorkbook(workbook, "Assessment Outcome Summary", outcomeSummary);
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
