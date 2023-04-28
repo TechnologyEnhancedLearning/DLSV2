@@ -4,6 +4,17 @@
   @extend .nhsuk-width-container;
   background-color: $nhsuk-lightgrey;
   border-bottom: 1px solid $nhsuk-darkgrey;
+  background-color: hotpink;
+  min-width: 100% !important;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.feedback-bar {
+  background-color: olive;
+  max-width: 1144px;
 }
 
 .nhsuk-width-container--feedback::before {
