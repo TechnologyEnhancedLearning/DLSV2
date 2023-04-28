@@ -2,7 +2,9 @@
 {
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -43,7 +45,7 @@
                     x.EnrolledYear,
                     x.FirstName,
                     x.LastName,
-                    x.Email,
+                    Email = (Guid.TryParse(x.Email, out _) ? string.Empty : x.Email),
                     x.CentreField1,
                     x.CentreField2,
                     x.CentreField3,
@@ -77,7 +79,7 @@
                 }
                 );
             using var workbook = new XLWorkbook();
-            AddSheetToWorkbook(workbook, "Delegate Completion Status", delegateCompletionStatus);
+            AddSheetToWorkbook(workbook, "Delegate Completion Status", summary);
             AddSheetToWorkbook(workbook, "Assessment Outcome Summary", outcomeSummary);
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
