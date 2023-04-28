@@ -1,0 +1,26 @@
+﻿@import 'swatches.scss';
+
+.nhsuk-width-container--feedback {
+  @extend .nhsuk-width-container;
+  background-color: $nhsuk-lightgrey;
+  border-bottom: 1px solid $nhsuk-darkgrey;
+}
+
+.nhsuk-width-container--feedback::before {
+  border-bottom: 1px solid $nhsuk-darkgrey !important;
+  background-color: hotpink !important;
+}
+
+.nhsuk-width-container--feedback::after {
+  border-bottom: 1px solid $nhsuk-darkgrey !important;
+  background-color: orange !important;
+}
+
+.feedback-button-inline {
+  padding: 0px 8px 0px 8px;
+  margin: 8px 10px 8px 0;
+  background-color: $nhsuk-darkblue;
+  box-shadow: none;
+  display: inline-block;
+  vertical-align: middle;
+}

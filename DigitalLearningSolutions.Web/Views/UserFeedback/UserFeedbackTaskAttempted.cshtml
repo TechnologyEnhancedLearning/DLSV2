@@ -33,9 +33,9 @@
     <h1 id="page-heading" class="nhsuk-heading-xl">Did you achieve everything you came to do today?</h1>
   </div>
   <div class="nhsuk-grid-column-two-thirds">
-
-
     <form method="post" asp-action="UserFeedbackTaskAttemptedSet">
+      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+      <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
 
       <div class="nhsuk-hint" id="task-attempted-hint">
         Give us feedback about what you were trying to achieve?

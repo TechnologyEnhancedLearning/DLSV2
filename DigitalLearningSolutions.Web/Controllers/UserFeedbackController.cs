@@ -59,6 +59,7 @@
             {
                 UserId = userFeedbackViewModel.UserId,
                 SourceUrl = userFeedbackViewModel.SourceUrl,
+                SourcePageTitle = userFeedbackViewModel.SourcePageTitle,
                 TaskAchieved = null,
                 TaskAttempted = string.Empty,
                 FeedbackText = string.Empty,

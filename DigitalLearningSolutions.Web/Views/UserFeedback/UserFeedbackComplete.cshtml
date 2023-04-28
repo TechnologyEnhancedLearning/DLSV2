@@ -43,6 +43,7 @@
 
     <form method="post" asp-action="UserFeedbackReturnToUrl">
       <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+      <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
       <div class="nhsuk-u-float-left">
         <button class="nhsuk-button" type="submit">
           @if (Model.SourcePageTitle != String.Empty) {

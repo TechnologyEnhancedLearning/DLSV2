@@ -37,7 +37,9 @@
     <p>Step 3 of 4</p>
 
     <form method="post" asp-action="UserFeedbackTaskDifficultySet">
-      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl ?? string.Empty ?? string.Empty" />
+      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+      <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
+
       <div class="nhsuk-hint" id="select-option-hint">
         Please select an option
       </div>

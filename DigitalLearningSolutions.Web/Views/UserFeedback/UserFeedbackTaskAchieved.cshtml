@@ -47,7 +47,8 @@
     <p>Step 1 of 4</p>
 
     <form method="post" asp-action="UserFeedbackTaskAchievedSet">
-      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl ?? string.Empty" />
+      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+      <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
       <div class="nhsuk-hint" id="task-achieve-hint">
         Did you achieve everything you came to do today?
       </div>

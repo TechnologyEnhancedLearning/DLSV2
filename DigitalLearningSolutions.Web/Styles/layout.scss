@@ -1,5 +1,7 @@
 ﻿@use "nhsuk-frontend/packages/core/all" as *;
 @use "shared/breakpoints" as *;
+@import 'swatches.scss';
+@import 'userFeedback.scss';
 
 html {
   height: 100%;
@@ -366,19 +368,4 @@ nav, .nhsuk-header__navigation, #header-navigation {
       color: #FFFFFF;
     }
   }
-}
-
-
-.nhsuk-width-container--feedback {
-  @extend .nhsuk-width-container;
-  background-color: #f0f4f5 !important;
-}
-
-.feedback-button-inline {
-  padding: 0px 8px 0px 8px;
-  margin: 8px 10px 8px 0;
-  background-color: #005eb8;
-  box-shadow: none;
-  display: inline-block;
-  vertical-align: middle;
 }
