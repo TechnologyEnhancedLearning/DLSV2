@@ -24,7 +24,7 @@
         }
 
         [Route("/Index")]
-        public IActionResult Index(string sourceUrl)
+        public IActionResult Index(string sourceUrl, string sourcePageTitle)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
@@ -32,6 +32,11 @@
             {
                 UserId = User.GetUserId(),
                 SourceUrl = sourceUrl,
+                SourcePageTitle = sourcePageTitle,
+                TaskAchieved = null,
+                TaskAttempted = " test",
+                FeedbackText = " test2",
+                TaskRating = null,
             };
 
             if (userFeedbackViewModel.UserId == null || userFeedbackViewModel.UserId == 0)

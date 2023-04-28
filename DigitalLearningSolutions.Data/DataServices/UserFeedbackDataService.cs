@@ -34,7 +34,7 @@
                 string? sourceUrl,
                 bool? taskAchieved,
                 string? taskAttempted,
-                string? feedbackText,
+                string feedbackText,
                 int? taskRating
             )
         {

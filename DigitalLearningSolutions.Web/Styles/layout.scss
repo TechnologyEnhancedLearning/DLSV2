@@ -369,14 +369,9 @@ nav, .nhsuk-header__navigation, #header-navigation {
 }
 
 
-
-.feedback-header-bar {
-  /*padding-left: 0px !important;*/
-/*  max-width: 1144px !important;
-  padding-left: $nhsuk-gutter !important;
-  padding-right: $nhsuk-gutter !important;
-  margin: auto !important;
-*/
+.nhsuk-width-container--feedback {
+  @extend .nhsuk-width-container;
+  background-color: #f0f4f5 !important;
 }
 
 .feedback-button-inline {
