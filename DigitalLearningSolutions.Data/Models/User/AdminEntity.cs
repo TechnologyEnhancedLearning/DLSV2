@@ -29,22 +29,21 @@
             UserAccount userAccount,
             Centre? centre,
             UserCentreDetails? userCentreDetails,
-            int? adminSessions
+            int? adminIdReferenceCount
         )
         {
             AdminAccount = adminAccount;
             UserAccount = userAccount;
             UserCentreDetails = userCentreDetails;
             Centre = centre;
-            AdminSessions = adminSessions;
-
+            AdminIdReferenceCount = adminIdReferenceCount;
         }
 
         public AdminAccount AdminAccount { get; }
         public UserAccount UserAccount { get; }
         public UserCentreDetails? UserCentreDetails { get; }
         public Centre? Centre { get; }
-        public int? AdminSessions { get; }
+        public int? AdminIdReferenceCount { get; }
 
         public override string SearchableName
         {

@@ -332,7 +332,14 @@
 		                                u.ID, u.PrimaryEmail, u.FirstName, u.LastName, u.Active, u.FailedLoginCount,
 		                                c.CentreID, c.CentreName,
 		                                ucd.ID, ucd.Email, ucd.EmailVerified, ucd.CentreID,
-                                        (SELECT COUNT(*) FROM AdminSessions WHERE AdminID = aa.ID) AS AdminSessions
+                         (SELECT count(*)
+                         FROM (
+                                SELECT TOP 1 AdminSessions.AdminID FROM AdminSessions WHERE AdminSessions.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 FrameworkCollaborators.AdminID FROM FrameworkCollaborators WHERE FrameworkCollaborators.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 SupervisorDelegates.SupervisorAdminID FROM SupervisorDelegates WHERE SupervisorDelegates.SupervisorAdminID = aa.ID
+                            ) AS tempTable) AS AdminIdReferenceCount
                                     FROM   AdminAccounts AS aa INNER JOIN
                                     Users AS u ON aa.UserID = u.ID INNER JOIN
                                     Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
@@ -356,15 +363,15 @@
 
             IEnumerable<AdminEntity> adminEntity = connection.Query<AdminAccount, UserAccount, Centre, UserCentreDetails, int, AdminEntity>(
                 sql,
-                (adminAccount, userAccount, centre, userCentreDetails, adminSessions) => new AdminEntity(
+                (adminAccount, userAccount, centre, userCentreDetails, adminIdReferenceCount) => new AdminEntity(
                     adminAccount,
                     userAccount,
                     centre,
                     userCentreDetails,
-                    adminSessions
+                    adminIdReferenceCount
                 ),
                 new { adminId, search, centreId, userStatus, failedLoginThreshold, role, offset, rows },
-                splitOn: "ID,ID,CentreID,ID,AdminSessions",
+                splitOn: "ID,ID,CentreID,ID,AdminIdReferenceCount",
                 commandTimeout: 3000
             );
 
