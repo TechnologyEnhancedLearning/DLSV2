@@ -44,7 +44,12 @@
                 au.IsLocalWorkforceManager,
                 au.ImportOnly,
                 au.FailedLoginCount,
-                au.ResetPasswordId
+                au.ResetPasswordId,
+                au.UserAdmin AS IsSuperAdmin,
+                au.SummaryReports AS IsReportsViewer,
+                au.IsLocalWorkforceManager,
+                au.IsFrameworkDeveloper,
+                au.IsWorkforceManager
             FROM AdminUsers AS au
             INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
             LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID";
@@ -176,7 +181,7 @@
         {
             var user = connection.Query<AdminUser>(
                 @$"{BaseSelectAdminQuery}
-                    WHERE au.AdminID = @id AND au.Active = 1",
+                    WHERE au.AdminID = @id",
                 new { id }
             ).SingleOrDefault();
 
@@ -269,7 +274,8 @@
         {
             int existingId = (int)connection.ExecuteScalar("SELECT aa.UserID FROM AdminAccounts AS aa INNER JOIN SupervisorDelegates AS sd ON aa.ID = sd.SupervisorAdminID WHERE aa.ID=@adminId", new { adminId });
 
-            if (existingId > 0) {
+            if (existingId > 0)
+            {
                 connection.Execute(
                     @"UPDATE Users SET Active=0 WHERE ID=@existingId",
                     new { existingId }
@@ -326,7 +332,14 @@
 		                                u.ID, u.PrimaryEmail, u.FirstName, u.LastName, u.Active, u.FailedLoginCount,
 		                                c.CentreID, c.CentreName,
 		                                ucd.ID, ucd.Email, ucd.EmailVerified, ucd.CentreID,
-                                        (SELECT COUNT(*) FROM AdminSessions WHERE AdminID = aa.ID) AS AdminSessions
+                         (SELECT count(*)
+                         FROM (
+                                SELECT TOP 1 AdminSessions.AdminID FROM AdminSessions WHERE AdminSessions.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 FrameworkCollaborators.AdminID FROM FrameworkCollaborators WHERE FrameworkCollaborators.AdminID = aa.ID
+	                            UNION ALL
+                                SELECT TOP 1 SupervisorDelegates.SupervisorAdminID FROM SupervisorDelegates WHERE SupervisorDelegates.SupervisorAdminID = aa.ID
+                            ) AS tempTable) AS AdminIdReferenceCount
                                     FROM   AdminAccounts AS aa INNER JOIN
                                     Users AS u ON aa.UserID = u.ID INNER JOIN
                                     Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
@@ -350,15 +363,15 @@
 
             IEnumerable<AdminEntity> adminEntity = connection.Query<AdminAccount, UserAccount, Centre, UserCentreDetails, int, AdminEntity>(
                 sql,
-                (adminAccount, userAccount, centre, userCentreDetails, adminSessions) => new AdminEntity(
+                (adminAccount, userAccount, centre, userCentreDetails, adminIdReferenceCount) => new AdminEntity(
                     adminAccount,
                     userAccount,
                     centre,
                     userCentreDetails,
-                    adminSessions
+                    adminIdReferenceCount
                 ),
                 new { adminId, search, centreId, userStatus, failedLoginThreshold, role, offset, rows },
-                splitOn: "ID,ID,CentreID,ID,AdminSessions",
+                splitOn: "ID,ID,CentreID,ID,AdminIdReferenceCount",
                 commandTimeout: 3000
             );
 
@@ -382,6 +395,82 @@
                     WHERE ID = @adminId",
                 new { active, adminId }
             );
+        }
+
+
+        public void UpdateAdminUserAndSpecialPermissions(
+            int adminId,
+            bool isCentreAdmin,
+            bool isSupervisor,
+            bool isNominatedSupervisor,
+            bool isTrainer,
+            bool isContentCreator,
+            bool isContentManager,
+            bool importOnly,
+            int? categoryId,
+            bool isCentreManager,
+            bool isSuperAdmin,
+            bool isReportsViewer,
+            bool isLocalWorkforceManager,
+            bool isFrameworkDeveloper,
+            bool isWorkforceManager
+        )
+        {
+            connection.Execute(
+                @"UPDATE AdminAccounts
+                        SET
+                            IsCentreAdmin = @isCentreAdmin,
+                            IsSupervisor = @isSupervisor,
+                            IsNominatedSupervisor = @isNominatedSupervisor,
+                            IsTrainer = @isTrainer,
+                            IsContentCreator = @isContentCreator,
+                            IsContentManager = @isContentManager,
+                            ImportOnly = @importOnly,
+                            CategoryID = @categoryId,
+                            IsCentreManager = @isCentreManager,
+                            IsSuperAdmin = @isSuperAdmin,
+                            IsReportsViewer = @isReportsViewer,
+                            IsLocalWorkforceManager = @isLocalWorkforceManager,
+                            IsFrameworkDeveloper = @isFrameworkDeveloper,
+                            IsWorkforceManager = @isWorkforceManager
+                        WHERE ID = @adminId",
+                new
+                {
+                    isCentreAdmin,
+                    isSupervisor,
+                    isNominatedSupervisor,
+                    isTrainer,
+                    isContentCreator,
+                    isContentManager,
+                    importOnly,
+                    categoryId,
+                    adminId,
+                    isCentreManager,
+                    isSuperAdmin,
+                    isReportsViewer,
+                    isLocalWorkforceManager,
+                    isFrameworkDeveloper,
+                    isWorkforceManager
+                }
+            );
+        }
+
+        public int GetUserIdFromAdminId(int adminId)
+        {
+            return connection.QuerySingle<int>(
+                @"SELECT UserID FROM AdminAccounts
+                    WHERE ID = @adminId",
+                new { adminId }
+            );
+        }
+        public void UpdateAdminCentre(int adminId, int centreId)
+        {
+            connection.Execute(
+            @"UPDATE AdminAccounts
+                        SET
+                            CentreId = @centreId
+                        WHERE ID = @adminId",
+            new { adminId, centreId });
         }
     }
 

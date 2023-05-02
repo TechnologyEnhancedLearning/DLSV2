@@ -6,6 +6,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.DbModels;
+    using DocumentFormat.OpenXml.Drawing.Charts;
     using Microsoft.Extensions.Logging;
 
     public interface ICentresDataService
@@ -55,7 +56,7 @@
         void SetCentreAutoRegistered(int centreId);
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
-        IEnumerable<(int, string)> GetAllCentres();
+        IEnumerable<(int, string)> GetAllCentres(bool? activeOnly = false);
     }
 
     public class CentresDataService : ICentresDataService
@@ -415,13 +416,15 @@
             );
         }
 
-        public IEnumerable<(int, string)> GetAllCentres()
+        public IEnumerable<(int, string)> GetAllCentres(bool? activeOnly = false)
         {
             var centres = connection.Query<(int, string)>
             (
                 @"SELECT CentreID, CentreName
                         FROM Centres
-                        ORDER BY CentreName"
+                        WHERE (@activeOnly = 0) OR (Active = 1)
+                        ORDER BY CentreName",
+                new { activeOnly }
             );
             return centres;
         }

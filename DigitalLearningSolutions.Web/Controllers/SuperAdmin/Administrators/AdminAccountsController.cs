@@ -4,12 +4,16 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Administrators;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -29,21 +33,36 @@
         private readonly IAdminDownloadFileService adminDownloadFileService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ICentresDataService centresDataService;
+        private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly IUserService userService;
+        private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
+        private readonly INotificationPreferencesDataService notificationPreferencesDataService;
+        private readonly INotificationDataService notificationDataService;
         public AdminAccountsController(IUserDataService userDataService,
-            ICentresDataService centresDataService, 
+            ICentresDataService centresDataService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IAdminDownloadFileService adminDownloadFileService
+            IAdminDownloadFileService adminDownloadFileService,
+            ICourseCategoriesDataService courseCategoriesDataService,
+            IUserService userService,
+            ICentreContractAdminUsageService centreContractAdminUsageService,
+            INotificationPreferencesDataService notificationPreferencesDataService,
+            INotificationDataService notificationDataService
             )
         {
             this.userDataService = userDataService;
             this.centresDataService = centresDataService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.adminDownloadFileService = adminDownloadFileService;
+            this.courseCategoriesDataService = courseCategoriesDataService;
+            this.userService = userService;
+            this.centreContractAdminUsageService = centreContractAdminUsageService;
+            this.notificationPreferencesDataService = notificationPreferencesDataService;
+            this.notificationDataService = notificationDataService;
         }
 
         [Route("SuperAdmin/AdminAccounts/{page=0:int}")]
         public IActionResult Index(
-          int page=1,
+          int page = 1,
           string? Search = "",
           int AdminId = 0,
           string? UserStatus = "",
@@ -55,7 +74,7 @@
         )
         {
             var loggedInSuperAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
-            if(loggedInSuperAdmin.AdminAccount.Active == false)
+            if (loggedInSuperAdmin.AdminAccount.Active == false)
             {
                 return NotFound();
             }
@@ -141,7 +160,10 @@
             {
                 result.SearchString = "SearchQuery|" + Search + "-AdminID|" + AdminId;
                 result.FilterString = "UserStatus|" + UserStatus + "-Role|" + Role + "-CentreID|" + CentreId;
+                TempData["SearchString"] = result.SearchString;
+                TempData["FilterString"] = result.FilterString;
             }
+            TempData["Page"] = result.Page;
 
             var model = new AdminAccountsViewModel(
                 result,
@@ -175,6 +197,126 @@
             return View(model);
         }
 
+        [Route("SuperAdmin/Admins/{adminId=0:int}/ManageRoles")]
+        public IActionResult ManageRoles(int adminId)
+        {
+            var centreId = User.GetCentreIdKnownNotNull();
+            var adminUser = userDataService.GetAdminUserById(adminId);
+
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+            var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
+
+            var model = new ManageRoleViewModel(adminUser!, centreId, categories, numberOfAdmins);
+            var result = centresDataService.GetCentreDetailsById(centreId);
+            model.CentreName = result.CentreName;
+
+            if (TempData["SearchString"] != null)
+            {
+                model.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                model.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                model.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            TempData["AdminId"] = adminId;
+            TempData.Keep();
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [Route("SuperAdmin/Admins/{adminId=0:int}/ManageRoles")]
+        public IActionResult ManageRoles(AdminRolesFormData formData, int adminId)
+        {
+            if (!(formData.IsCentreAdmin ||
+                formData.IsSupervisor ||
+                formData.IsNominatedSupervisor ||
+                formData.IsContentCreator ||
+                formData.IsTrainer ||
+                formData.IsCenterManager ||
+                formData.IsLocalWorkforceManager))
+            {
+                var centreId = User.GetCentreIdKnownNotNull();
+                var adminUser = userDataService.GetAdminUserById(adminId);
+
+                var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+                categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+                var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
+
+                var model = new ManageRoleViewModel(adminUser!, centreId, categories, numberOfAdmins);
+                var result = centresDataService.GetCentreDetailsById(centreId);
+                model.CentreName = result.CentreName;
+                model.ContentManagementRole = formData.ContentManagementRole;
+                model.IsCentreAdmin = formData.IsCentreAdmin;
+                model.IsSupervisor = formData.IsSupervisor;
+                model.IsNominatedSupervisor = formData.IsNominatedSupervisor;
+                model.IsContentCreator = formData.IsContentCreator;
+                model.IsTrainer = formData.IsTrainer;
+                model.IsCenterManager = formData.IsCenterManager;
+                model.IsLocalWorkforceManager = formData.IsLocalWorkforceManager;
+                model.IsSuperAdmin = formData.IsSuperAdmin;
+                model.IsReportViewer = formData.IsReportViewer;
+                model.IsFrameworkDeveloper = formData.IsFrameworkDeveloper;
+                model.IsWorkforceManager = formData.IsWorkforceManager;
+
+                if (TempData["SearchString"] != null)
+                {
+                    model.SearchString = Convert.ToString(TempData["SearchString"]);
+                }
+                if (TempData["FilterString"] != null)
+                {
+                    model.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+                }
+                if (TempData["Page"] != null)
+                {
+                    model.Page = Convert.ToInt16(TempData["Page"]);
+                }
+                TempData["AdminId"] = adminId;
+                TempData.Keep();
+
+                ModelState.Clear();
+                ModelState.AddModelError("IsCenterManager", $"Delegate must have at least one role to be an Admin.");
+                ViewBag.RequiredCheckboxMessage = "Delegate must have at least one role to be an Admin.";
+                return View(model);
+            }
+
+            TempData["AdminId"] = adminId;
+            int? learningCategory = formData.LearningCategory == 0 ? null : formData.LearningCategory;
+            userDataService.UpdateAdminUserAndSpecialPermissions(
+                adminId,
+                formData.IsCentreAdmin,
+                formData.IsSupervisor,
+                formData.IsNominatedSupervisor,
+                formData.IsTrainer,
+                formData.IsContentCreator,
+                formData.ContentManagementRole.IsContentManager,
+                formData.ContentManagementRole.ImportOnly,
+                learningCategory,
+                formData.IsCenterManager,
+                formData.IsSuperAdmin,
+                formData.IsReportViewer,
+                formData.IsLocalWorkforceManager,
+                formData.IsFrameworkDeveloper,
+                formData.IsWorkforceManager
+            );
+
+            int isCentreManager = formData.IsCenterManager ? 1 : 0;
+            int isCMSManager = (formData.ContentManagementRole.IsContentManager && !formData.ContentManagementRole.ImportOnly) ? 1 : 0;
+            int isContentCreator = formData.IsContentCreator ? 1 : 0;
+
+            IEnumerable<int> notificationIds = notificationDataService.GetRoleBasedNotifications(isCentreManager, isCMSManager, isContentCreator);
+            int userId = userDataService.GetUserIdFromAdminId(adminId);
+
+            notificationPreferencesDataService.SetNotificationPreferencesForAdmin(userId, notificationIds);
+
+            return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
+        }
+
         [Route("Export")]
         public IActionResult Export(
             string? searchString = null,
@@ -201,9 +343,9 @@
 
         public List<string> GetRoles()
         {
-            var roles = new List<string>(new string[]{"Any"});
-            
-            foreach (var role in AdminAccountsViewModelFilterOptions.RoleOptions.Select(r=>r.DisplayText))
+            var roles = new List<string>(new string[] { "Any" });
+
+            foreach (var role in AdminAccountsViewModelFilterOptions.RoleOptions.Select(r => r.DisplayText))
             {
                 roles.Add(role);
             }
@@ -219,10 +361,43 @@
         }
 
         [Route("SuperAdmin/AdminAccounts/{adminId=0:int}/{actionType='':string}/UpdateAdminStatus")]
-        public IActionResult UpdateAdminStatus(int adminId,string actionType)
+        public IActionResult UpdateAdminStatus(int adminId, string actionType)
         {
-            userDataService.UpdateAdminStatus(adminId,(actionType == "Reactivate"));
+            userDataService.UpdateAdminStatus(adminId, (actionType == "Reactivate"));
             TempData["AdminId"] = adminId;
+            return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
+        }
+
+        [Route("SuperAdmin/AdminAccounts/{adminId=0:int}/ChangeCentre")]
+        public IActionResult EditCentre(int adminId)
+        {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            var centres = centresDataService.GetAllCentres(true).ToList();
+            ViewBag.Centres = SelectListHelper.MapOptionsToSelectListItems(
+               centres, adminUser.CentreId
+           );
+            var model = new EditCentreViewModel(adminUser, adminUser.CentreId);
+            if (TempData["SearchString"] != null)
+            {
+                model.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                model.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                model.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            TempData["AdminId"] = adminId;
+            return View(model);
+        }
+        [HttpPost]
+        [Route("SuperAdmin/AdminAccounts/{adminId=0:int}/ChangeCentre")]
+        public IActionResult EditCentre(int adminId, int centreId)
+        {
+            TempData["AdminId"] = adminId;
+            userDataService.UpdateAdminCentre(adminId, centreId);
             return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
         }
     }

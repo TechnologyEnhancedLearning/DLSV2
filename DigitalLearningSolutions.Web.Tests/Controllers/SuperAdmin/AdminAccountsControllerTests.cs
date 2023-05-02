@@ -23,6 +23,11 @@
         private IAdminDownloadFileService adminDownloadFileService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ICentresDataService centresDataService = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private IUserService userService = null!;
+        private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
+        private INotificationPreferencesDataService notificationPreferencesDataService = null!;
+        private INotificationDataService notificationDataService = null!;
         const string CookieName = "AdminFilter";
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -34,9 +39,13 @@
             centresDataService = A.Fake <ICentresDataService>();
             searchSortFilterPaginateService = A.Fake <ISearchSortFilterPaginateService>();
             adminDownloadFileService = A.Fake <IAdminDownloadFileService>();
+            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
+            userService = A.Fake<IUserService>();
+            centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
+            notificationPreferencesDataService = A.Fake<INotificationPreferencesDataService>();
+            notificationDataService = A.Fake<INotificationDataService>();
 
-
-            httpRequest = A.Fake<HttpRequest>();
+        httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieValue = "Role|IsCentreAdmin|true";
 
@@ -44,7 +53,12 @@
                     userDataService,
                     centresDataService,
                     searchSortFilterPaginateService,
-                    adminDownloadFileService
+                    adminDownloadFileService,
+                    courseCategoriesDataService,
+                    userService,
+                    centreContractAdminUsageService,
+                    notificationPreferencesDataService,
+                    notificationDataService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -66,7 +80,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(() => userDataService.GetAllAdmins(A<string>._, A<int>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int>._)).MustHaveHappened();
-                A.CallTo(() => centresDataService.GetAllCentres()).MustHaveHappened();
+                A.CallTo(() => centresDataService.GetAllCentres(false)).MustHaveHappened();
                 A.CallTo(
                     () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                         A<IEnumerable<AdminEntity>>._,
@@ -77,7 +91,26 @@
                 result.Should().BeViewResult().WithDefaultViewName();
             }
         }
+        [Test]
+        public void EditCentre_calls_expected_methods_and_returns_view()
+        {
+            // Given
+            int adminId = 1;
+            var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
 
+            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
+
+            // When
+            var result = administratorsController.EditCentre(adminId);
+
+            //Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.GetAdminUserById(adminId)).MustHaveHappened();
+                A.CallTo(() => centresDataService.GetAllCentres(true)).MustHaveHappened();
+                result.Should().BeViewResult().WithDefaultViewName();
+            }
+        }
         [Test]
         public void Export_passes_in_used_parameters_to_file()
         {

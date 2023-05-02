@@ -1,0 +1,105 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Administrators;
+@model ManageRoleViewModel;
+
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Edit Administrator roles";
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Checkboxes) })" />
+        }
+        @section NavBreadcrumbs {
+            <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+                <div class="nhsuk-width-container">
+                    <ol class="nhsuk-breadcrumb__list">
+                        <li class="nhsuk-breadcrumb__item">
+                            <a class="nhsuk-breadcrumb__link" asp-controller="AdminAccounts" asp-action="Index" asp-route-SearchString="@Model.SearchString" asp-route-ExistingFilterString="@Model.ExistingFilterString" asp-route-page="@Model.Page">Administrators</a>
+                        </li>
+                    </ol>
+                </div>
+            </nav>
+        }
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-full nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
+                <input type="hidden" asp-for="FullName" />
+                @Model.FullName - @Model.CentreName
+            </div>
+        </div>
+
+        @if (Model.NotAllRolesDisplayed)
+        {
+            <div class="nhsuk-warning-callout nhsuk-u-margin-bottom-4">
+                <h3 class="nhsuk-warning-callout__label">
+                    <span role="text">
+                        <span class="nhsuk-u-visually-hidden">Important: </span>
+                        Some user roles are not available for selection
+                    </span>
+                </h3>
+                <p>
+                    Some user roles already have the maximum number of members assigned and are not available for selection.
+                    Check the "Number of administrators" information to see which roles have reached their limits.
+                </p>
+            </div>
+        }
+
+        <form class="nhsuk-u-margin-bottom-3" method="post">
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="CentreId" />
+
+            <div class="nhsuk-card">
+                <div class="nhsuk-card__content nhsuk-u-padding-bottom-3">
+                    <div class="nhsuk-u-margin-bottom-4">
+                        <vc:number-of-administrators centre-id="Model.CentreId" />
+                    </div>
+                    <vc:checkboxes label="Please select all the roles this user has."
+                                   populate-with-current-values="true"
+                                   checkboxes="@Model.Checkboxes"
+                                   hint-text=""
+                                   required="true"
+                                   errormessage="@ViewBag.RequiredCheckboxMessage" />
+
+                    <div class="@(Model.NoContentManagerOptionsAvailable ? "display-none" : null)">
+                        <vc:radios asp-for="@nameof(Model.ContentManagementRole)"
+                                   label="Please select a content manager role for this user."
+                                   populate-with-current-values="true"
+                                   radios="@Model.Radios"
+                                   hint-text=""
+                                   required="true" />
+                    </div>
+
+                    <h2 class="nhsuk-heading-l nhsuk-u-margin-top-8">Learning category</h2>
+
+                    <vc:select-list asp-for="LearningCategory"
+                                    label="Learning category"
+                                    value="@Model.LearningCategory.ToString()"
+                                    hint-text="Limits the permissions of the administrator to view and manage courses in a particular category."
+                                    required="false"
+                                    css-class="nhsuk-u-width-one-half"
+                                    default-option=""
+                                    select-list-options="@Model.LearningCategories" />
+                </div>
+            </div>
+            <vc:checkboxes label="Special permissions"
+                           populate-with-current-values="true"
+                           checkboxes="@Model.SpecialPermissions"
+                           hint-text=""
+                           required="false"
+                           errormessage="" />
+            <button class="nhsuk-button nhsuk-u-margin-top-2" type="submit" value="save">Save</button>
+        </form>
+
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-controller="AdminAccounts" asp-action="Index" asp-route-SearchString="@Model.SearchString" asp-route-ExistingFilterString="@Model.ExistingFilterString" asp-route-page="@Model.Page">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </div>
+</div>

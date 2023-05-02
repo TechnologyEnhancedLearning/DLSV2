@@ -14,6 +14,8 @@
         ProgressCompletionData? GetProgressCompletionData(int progressId, int candidateId, int customisationId);
 
         IEnumerable<NotificationRecipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId);
+
+        IEnumerable<int> GetRoleBasedNotifications(int isCentreManager, int isContentManager, int isContentCreator);
     }
 
     public class NotificationDataService : INotificationDataService
@@ -94,5 +96,14 @@
                 );
             return recipients;
         }
+
+        public IEnumerable<int> GetRoleBasedNotifications(int isCentreManager, int isContentManager,int isContentCreator)
+        {
+            return connection.Query<int>(
+                    @"SELECT NR.NotificationID from NotificationRoles AS NR INNER JOIN Notifications AS N ON NR.NotificationID = N.NotificationID WHERE ((@isCentreManager = 1 AND NR.RoleID = 2) OR (@isContentManager = 1 AND NR.RoleID = 3) OR (@isContentCreator = 1 AND NR.RoleID = 4) ) AND N.AutoOptIn = 1",
+                    new {isCentreManager,isContentManager,isContentCreator}
+                ).AsEnumerable();
+        }
+
     }
 }

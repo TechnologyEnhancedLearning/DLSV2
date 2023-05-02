@@ -29,8 +29,8 @@
             IsAdminActive = admin.AdminAccount.Active;
             IsUserActive = admin.UserAccount.Active;
 
-            CanShowDeactivateAdminButton = IsAdminActive && admin.AdminSessions > 0;
-            CanShowDeleteAdminButton = admin.AdminSessions == 0;
+            CanShowDeactivateAdminButton = IsAdminActive && admin.AdminIdReferenceCount > 0;
+            CanShowDeleteAdminButton = admin.AdminIdReferenceCount == 0;
 
             Tags = FilterableTagHelper.GetCurrentTagsForAdmin(admin);
             ReturnPageQuery = returnPageQuery;
