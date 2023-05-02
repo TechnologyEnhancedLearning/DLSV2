@@ -10,6 +10,7 @@
     {
         public void SaveUserFeedback(
             int? userId,
+            string? userRoles,
             string? sourceUrl,
             bool? taskAchieved,
             string? taskAttempted,
@@ -31,6 +32,7 @@
 
         public void SaveUserFeedback(
                 int? userId,
+                string userRoles,
                 string? sourceUrl,
                 bool? taskAchieved,
                 string? taskAttempted,
@@ -41,6 +43,7 @@
             var userFeedbackParams = new
             {
                 userId,
+                userRoles,
                 sourceUrl,
                 taskAchieved,
                 taskAttempted,
@@ -54,9 +57,9 @@
             {
                 numberOfAffectedRows = connection.Execute(
                     @"INSERT INTO UserFeedback
-                        (UserID, SourcePageUrl, TaskAchieved, TaskAttempted, FeedbackText, TaskRating)
+                        (UserID, SourcePageUrl, TaskAchieved, TaskAttempted, FeedbackText, TaskRating, UserRoles)
                         VALUES (
-                        @userId, @sourceUrl, @taskAchieved, @taskAttempted, @feedbackText, @taskRating)",
+                        @userId, @sourceUrl, @taskAchieved, @taskAttempted, @feedbackText, @taskRating, @userRoles)",
                     userFeedbackParams
                 );
             }

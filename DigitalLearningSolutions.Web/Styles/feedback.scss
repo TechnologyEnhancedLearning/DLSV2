@@ -4,7 +4,6 @@
   @extend .nhsuk-width-container;
   background-color: $nhsuk-lightgrey;
   border-bottom: 1px solid $nhsuk-darkgrey;
-  background-color: hotpink;
   min-width: 100% !important;
 
   display: flex;
@@ -13,18 +12,18 @@
 }
 
 .feedback-bar {
-  background-color: olive;
+  background-color: $nhsuk-lightgrey;
   max-width: 1144px;
 }
 
 .nhsuk-width-container--feedback::before {
   border-bottom: 1px solid $nhsuk-darkgrey !important;
-  background-color: hotpink !important;
+  background-color: $nhsuk-lightgrey !important;
 }
 
 .nhsuk-width-container--feedback::after {
   border-bottom: 1px solid $nhsuk-darkgrey !important;
-  background-color: orange !important;
+  background-color: $nhsuk-lightgrey !important;
 }
 
 .feedback-button-inline {

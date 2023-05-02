@@ -16,7 +16,8 @@
                 .WithColumn("TaskAchieved").AsBoolean().Nullable()
                 .WithColumn("TaskAttempted").AsString(255).NotNullable()
                 .WithColumn("FeedbackText").AsString(5000).NotNullable()
-                .WithColumn("TaskRating").AsInt32().Nullable();
+                .WithColumn("TaskRating").AsInt32().Nullable()
+                .WithColumn("UserRoles").AsString(255).Nullable();
 
             Alter.Table("UserFeedback")
                 .AlterColumn("SubmittedDate").AsDateTime().NotNullable().WithDefaultValue(SystemMethods.CurrentDateTime);

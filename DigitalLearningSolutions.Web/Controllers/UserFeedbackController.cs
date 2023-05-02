@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Collections.Generic;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.UserFeedback;
@@ -31,6 +32,7 @@
             UserFeedbackViewModel userFeedbackViewModel = new()
             {
                 UserId = User.GetUserId(),
+                UserRoles = DeriveUserRoles(),
                 SourceUrl = sourceUrl,
                 SourcePageTitle = sourcePageTitle,
                 TaskAchieved = null,
@@ -49,6 +51,58 @@
             }
         }
 
+        private string DeriveUserRoles()
+        {
+            List<string> roles = new List<string>();
+
+            if (User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false)
+            {
+                roles.Add("LearningPortalAccess");
+            };
+            if (User.HasCentreAdminPermissions())
+            {
+                roles.Add("TrackingSystemAccess");
+            };
+            if (User.GetCustomClaimAsBool(CustomClaimTypes.UserAuthenticatedCm) ?? false)
+            {
+                roles.Add("ContentManagementSystemAccess");
+            };
+            if (User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false)
+            {
+                roles.Add("Supervisor");
+            };
+            if (User.GetCustomClaimAsBool(CustomClaimTypes.IsNominatedSupervisor) ?? false)
+            {
+                roles.Add("NominatedSupervisor");
+            };
+            if (User.GetCustomClaimAsBool(CustomClaimTypes.UserContentCreator) ?? false)
+            {
+                roles.Add("ContentCreatorAccess");
+            };
+            if (User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) ?? false)
+            {
+                roles.Add("FrameworksAccess ");
+            };
+            if (User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) ?? false)
+            {
+                roles.Add("FrameworkContributor");
+            };
+            if (User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) ?? false)
+            {
+                roles.Add("WorkforceManager");
+            };
+            if (User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) ?? false)
+            {
+                roles.Add("WorkforceContributor");
+            };
+            if (User.HasSuperAdminPermissions())
+            {
+                roles.Add("SuperAdminAccess ");
+            };
+
+            return string.Join(", ", roles);
+        }
+
         [HttpGet]
         [Route("/StartUserFeedbackSession")]
         public IActionResult StartUserFeedbackSession(UserFeedbackViewModel userFeedbackViewModel)
@@ -58,6 +112,7 @@
             var userFeedbackSessionData = new UserFeedbackTempData()
             {
                 UserId = userFeedbackViewModel.UserId,
+                UserRoles = userFeedbackViewModel.UserRoles,
                 SourceUrl = userFeedbackViewModel.SourceUrl,
                 SourcePageTitle = userFeedbackViewModel.SourcePageTitle,
                 TaskAchieved = null,
@@ -174,6 +229,7 @@
 
             _userFeedbackDataService.SaveUserFeedback(
                 data.UserId,
+                data.UserRoles,
                 data.SourceUrl,
                 data.TaskAchieved,
                 data.TaskAttempted,
@@ -229,6 +285,7 @@
         {
 
             _userFeedbackDataService.SaveUserFeedback(
+                null,
                 null,
                 userFeedbackViewModel.SourceUrl,
                 null,
