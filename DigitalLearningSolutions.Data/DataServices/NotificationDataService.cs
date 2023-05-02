@@ -16,6 +16,8 @@
         IEnumerable<NotificationRecipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId);
 
         IEnumerable<int> GetRoleBasedNotifications(int isCentreManager, int isContentManager, int isContentCreator);
+
+        void SubscribeDefaultNotifications(int? candidateId, int? adminUserId);
     }
 
     public class NotificationDataService : INotificationDataService
@@ -103,6 +105,25 @@
                     @"SELECT NR.NotificationID from NotificationRoles AS NR INNER JOIN Notifications AS N ON NR.NotificationID = N.NotificationID WHERE ((@isCentreManager = 1 AND NR.RoleID = 2) OR (@isContentManager = 1 AND NR.RoleID = 3) OR (@isContentCreator = 1 AND NR.RoleID = 4) ) AND N.AutoOptIn = 1",
                     new {isCentreManager,isContentManager,isContentCreator}
                 ).AsEnumerable();
+        }
+
+        public void SubscribeDefaultNotifications(int? candidateId, int? adminUserId)
+        {
+            if (candidateId != null)
+            {
+                connection.Execute(
+                @"INSERT INTO NotificationUsers (
+                    NotificationID,CandidateID)
+                    (SELECT NotificationID,@candidateId FROM NotificationRoles WHERE RoleID = 5)",new {candidateId});
+            }
+
+            if (adminUserId != null)
+            {
+                connection.Execute(
+                @"INSERT INTO NotificationUsers (
+                    NotificationID,AdminUserID)
+                    (SELECT NotificationID,@adminUserId FROM NotificationRoles WHERE RoleID != 5)", new { adminUserId });
+            }
         }
 
     }

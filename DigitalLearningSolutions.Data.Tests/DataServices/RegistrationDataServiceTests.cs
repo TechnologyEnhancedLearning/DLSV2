@@ -24,11 +24,13 @@
         private IClockUtility clockUtility = null!;
         private SqlConnection connection = null!;
         private IUserDataService fakeUserDataService = null!;
+        private INotificationDataService fakeNotificationDataService = null!;
         private ILogger<IRegistrationDataService> logger = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private RegistrationDataService serviceWithFakeUserDataService = null!;
         private IUserDataService userDataService = null!;
+        private INotificationDataService notificationDataService = null!;
 
         [SetUp]
         public void SetUp()
@@ -38,17 +40,20 @@
             fakeUserDataService = A.Fake<IUserDataService>();
             clockUtility = A.Fake<IClockUtility>();
             logger = A.Fake<ILogger<IRegistrationDataService>>();
+            fakeNotificationDataService= A.Fake<INotificationDataService>();
             service = new RegistrationDataService(
                 connection,
                 userDataService,
                 clockUtility,
-                logger
+                logger,
+                notificationDataService
             );
             serviceWithFakeUserDataService = new RegistrationDataService(
                 connection,
                 fakeUserDataService,
                 clockUtility,
-                logger
+                logger,
+                fakeNotificationDataService
             );
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }

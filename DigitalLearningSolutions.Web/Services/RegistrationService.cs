@@ -135,6 +135,8 @@ namespace DigitalLearningSolutions.Web.Services
                 false
             );
 
+            notificationDataService.SubscribeDefaultNotifications(delegateId, null);
+
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
                 delegateRegistrationModel.PasswordHash!
@@ -310,6 +312,8 @@ namespace DigitalLearningSolutions.Web.Services
                 registerJourneyContainsTermsAndConditions,
                 true
             );
+
+            notificationDataService.SubscribeDefaultNotifications(delegateId, null);
 
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
