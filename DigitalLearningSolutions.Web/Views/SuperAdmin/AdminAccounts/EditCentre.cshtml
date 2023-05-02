@@ -1,0 +1,47 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Administrators
+@model EditCentreViewModel
+@{
+    ViewData["Title"] = "Change Administrator Centre";
+}
+
+<h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link" asp-controller="AdminAccounts" asp-action="Index" asp-route-SearchString="@Model.SearchString" asp-route-ExistingFilterString="@Model.ExistingFilterString" asp-route-page="@Model.Page">Administrators</a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+        }
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
+        <input type="hidden" asp-for="FullName" />
+        @Model.FullName - @Model.CentreName
+    </div>
+</div>
+<div id="form-group">
+    <form method="post" asp-action="EditCentre">
+        <vc:select-list asp-for="CentreId"
+                        label="Choose Centre"
+                        value="@Model.AdminCentreId.ToString()"
+                        hint-text="Choose the centre to move this admin account to"
+                        required="true"
+                        default-option=""
+                        css-class="nhsuk-u-width-full"
+                        select-list-options="@ViewBag.Centres" />
+
+
+        <button class="nhsuk-button nhsuk-u-margin-top-2" type="submit" value="save">Submit</button>
+    </form>
+</div>
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-controller="AdminAccounts" asp-action="Index" asp-route-SearchString="@Model.SearchString" asp-route-ExistingFilterString="@Model.ExistingFilterString" asp-route-page="@Model.Page" asp-fragment="@Model.AdminId-name">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
+</div>

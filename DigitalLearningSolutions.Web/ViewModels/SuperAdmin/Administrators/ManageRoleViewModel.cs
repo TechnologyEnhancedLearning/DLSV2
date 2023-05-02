@@ -4,13 +4,11 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using NHSUKViewComponents.Web.ViewModels;
 
     public class ManageRoleViewModel : AdminRolesViewModel
@@ -32,6 +30,9 @@
             IsContentCreator = user.IsContentCreator;
             IsSuperAdmin = user.IsSuperAdmin;
             IsReportViewer = user.IsReportsViewer;
+            IsLocalWorkforceManager = user.IsLocalWorkforceManager;
+            IsFrameworkDeveloper = user.IsFrameworkDeveloper;
+            IsWorkforceManager = user.IsWorkforceManager;
 
             if (user.IsCmsAdministrator)
             {
@@ -71,9 +72,12 @@
             {
                 Checkboxes.Add(AdminRoleInputs.ContentCreatorCheckbox);
             }
+            Checkboxes.Add(AdminRoleInputs.LocalWorkforceManagerCheckbox);
 
             SpecialPermissions.Add(AdminRoleInputs.SuperAdministratorCheckbox);
             SpecialPermissions.Add(AdminRoleInputs.ReportViewerCheckbox);
+            SpecialPermissions.Add(AdminRoleInputs.FrameworkDeveloperCheckbox);
+            SpecialPermissions.Add(AdminRoleInputs.WorkforceManagerCheckbox);
 
             if (!numberOfAdmins.CmsAdministratorsAtOrOverLimit || user.IsCmsAdministrator)
             {

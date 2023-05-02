@@ -56,7 +56,6 @@
                     <div class="nhsuk-u-margin-bottom-4">
                         <vc:number-of-administrators centre-id="Model.CentreId" />
                     </div>
-
                     <vc:checkboxes label="Please select all the roles this user has."
                                    populate-with-current-values="true"
                                    checkboxes="@Model.Checkboxes"
@@ -89,9 +88,9 @@
                            populate-with-current-values="true"
                            checkboxes="@Model.SpecialPermissions"
                            hint-text=""
-                           required="true"
-                           errormessage="@ViewBag.RequiredCheckboxMessage" />
-            <button class="nhsuk-button nhsuk-u-margin-top-2" type="submit" value="save">Submit</button>
+                           required="false"
+                           errormessage="" />
+            <button class="nhsuk-button nhsuk-u-margin-top-2" type="submit" value="save">Save</button>
         </form>
 
         <div class="nhsuk-back-link">
