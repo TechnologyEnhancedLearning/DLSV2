@@ -33,6 +33,7 @@
         SelfAssessmentResultSummary GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
         IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
+        bool IsLoggedInSupervisorIsVerifier(int supervisorDelegateId, int candidateAssessmentId, int adminId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
@@ -1079,6 +1080,18 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
             ).FirstOrDefault();
 
             return supervisorDelegate!;
+        }
+
+        public bool IsLoggedInSupervisorIsVerifier(int supervisorDelegateId, int candidateAssessmentId, int adminId)
+        {
+            return connection.Query<bool>(
+                     @"select CAST(CASE WHEN COALESCE(sd.SupervisorAdminID, 0) = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsVerifier
+	                        from CandidateAssessmentSupervisors cas 
+	                        left outer join SupervisorDelegates sd on cas.SupervisorDelegateId=sd.id
+	                        left outer join SelfAssessmentResultSupervisorVerifications sarv on sarv.CandidateAssessmentSupervisorID=cas.ID 
+	                        left outer join AdminUsers au on au.AdminID=sd.SupervisorAdminID
+	                        where sd.id=@supervisorDelegateId and cas.CandidateAssessmentID=@candidateAssessmentId", new { adminId, supervisorDelegateId, candidateAssessmentId }
+                ).FirstOrDefault();
         }
     }
 }

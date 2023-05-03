@@ -18,7 +18,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
         public int? CompetencyGroupId { get; set; }
         public bool IsSupervisorResultsReviewed { get; set; }
         public bool IncludeRequirementsFilters { get; set; }
-        public string Vocabulary { get; set; }
         public string SearchText { get; set; }
         public int SelectedFilter { get; set; }
         public int Page { get; set; }
@@ -37,7 +36,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
                 var route = new Dictionary<string, string>()
                 {
                     { "CandidateAssessmentId", CandidateAssessmentId.ToString() },
-                    { "Vocabulary", Vocabulary },
                     { "SearchText", SearchText }
                 };
                 return new CurrentFiltersViewModel(AppliedFilters, SearchText, route);
@@ -58,7 +56,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
             }
 
             var dropdownFilterOptions = filterOptions.Select(
-                f => new FilterOptionModel(isSupervisor ? f.GetDescription(isSupervisorResultsReviewed) == "Confirmation requested" ? "Awaiting confirmation" : f.GetDescription(isSupervisorResultsReviewed) : "Pending confirmation",
+                f => new FilterOptionModel(isSupervisor ? f.GetDescription(isSupervisorResultsReviewed) == "Confirmation requested" ? "Pending confirmation" : f.GetDescription(isSupervisorResultsReviewed) : "Awaiting confirmation",
                 ((int)f).ToString(),
                 FilterStatus.Default)).ToList();
 
@@ -85,12 +83,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
             return this;
         }
 
-        public SearchSupervisorCompetencyViewModel(int supervisorDelegateId, string searchText, int candidateAssessmentId, string vocabulary, bool isSupervisorResultsReviewed, bool includeRequirementsFilters, List<AppliedFilterViewModel> appliedFilters, bool isSupervisor, List<CompetencyFlag> competencyFlags = null)
+        public SearchSupervisorCompetencyViewModel(int supervisorDelegateId, string searchText, int candidateAssessmentId,  bool isSupervisorResultsReviewed, bool includeRequirementsFilters, List<AppliedFilterViewModel> appliedFilters, bool isSupervisor, List<CompetencyFlag> competencyFlags = null)
         {
             FilterBy = nameof(SelectedFilter);
             SearchText = searchText ?? string.Empty;
             CandidateAssessmentId = candidateAssessmentId;
-            Vocabulary = vocabulary;
             IncludeRequirementsFilters = includeRequirementsFilters;
             SupervisorDelegateId = supervisorDelegateId;
             Initialise(appliedFilters, competencyFlags, isSupervisorResultsReviewed, includeRequirementsFilters, isSupervisor);
