@@ -15,13 +15,32 @@
             string? selfAssessmentName,
             int supervisorAdminID,
             SearchSortFilterPaginationResult<Administrator> result
-            ) : base(result, false, searchLabel: "Search administrators")
+            ) : base(result, false, searchLabel: "Search supervisors")
         {
             SelfAssessmentID = selfAssessmentID;
             SelfAssessmentName = selfAssessmentName;
             SupervisorAdminID = supervisorAdminID;
             Supervisors = result.ItemsToDisplay; 
         }
+
+        public AddSupervisorViewModel() : this(
+            0,
+            string.Empty,
+            0,
+            new SearchSortFilterPaginationResult<Administrator>(
+                Enumerable.Empty<Administrator>(),
+                1,
+                1,
+                1,
+                0,
+                true,
+                null,
+                string.Empty,
+                string.Empty,
+                null
+            )
+        )
+        { }
 
         public int SelfAssessmentID { get; set; }
         public string? SelfAssessmentName { get; set; }

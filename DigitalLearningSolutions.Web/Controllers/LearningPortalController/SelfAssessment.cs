@@ -647,8 +647,7 @@
         public IActionResult AddNewSupervisor(int selfAssessmentId,
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = GenericSortingHelper.Ascending,
-            int page = 1
+            string sortDirection = GenericSortingHelper.Ascending
         )
         {
 
@@ -679,7 +678,7 @@
                new SearchOptions(searchString),
                new SortOptions(sortBy, sortDirection),
                null,
-               new PaginationOptions(page)
+               null//new PaginationOptions(page)
            );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
@@ -689,7 +688,7 @@
 
             var model = new AddSupervisorViewModel
             (
-               sessionAddSupervisor.SelfAssessmentID,
+                sessionAddSupervisor.SelfAssessmentID,
                 sessionAddSupervisor.SelfAssessmentName,
                 sessionAddSupervisor.SupervisorAdminId,
                 result
@@ -700,25 +699,58 @@
             return View("SelfAssessments/AddSupervisor", model);
         }
 
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/GetAllSupervisors")]
+        public IActionResult GetAllSupervisors(int selfAssessmentId)
+        {
+            var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
+
+            multiPageFormService.SetMultiPageFormData(
+                sessionAddSupervisor,
+                MultiPageFormDataFeature.AddNewSupervisor,
+                TempData
+            );
+            var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
+                User.GetCentreIdKnownNotNull(),
+                selfAssessmentId,
+                User.GetUserIdKnownNotNull()
+            );
+
+            supervisors = supervisors.OrderBy(s => s.Forename).ToList();
+
+            if (sessionAddSupervisor?.CentreID != null)
+            {
+                supervisors = supervisors.Where(s => s.CentreID == sessionAddSupervisor.CentreID).ToList();
+            }
+            var model = new AllSupervisorsViewModel();
+            model.Supervisors = supervisors;
+            model.SupervisorAdminID = sessionAddSupervisor.SupervisorAdminId;
+
+            return View("SelfAssessments/AllSupervisors", model);
+        }
+
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/{page=1:int}")]
         public IActionResult SetSupervisorName(AddSupervisorViewModel model)
         {
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
+            sessionAddSupervisor.SupervisorAdminId = model.SupervisorAdminID;
+
+            string searchString= model.JavascriptSearchSortFilterPaginateEnabled ?
+                                 Request.Query["searchString"].Count>0 ? Request.Query["searchString"][0].ToString(): "":
+                                 Request.Form["SearchString"].Count>0 ? Request.Form["SearchString"][0].ToString():"";
+            
+            if (searchString == "")
+            {
+                searchString = null;
+            }
+            TempData["SearchString"] = searchString;
+
+            ModelState.Remove("Page");
+
             if (!ModelState.IsValid)
             {
-                var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-                                    User.GetCentreIdKnownNotNull(),
-                                    sessionAddSupervisor.SelfAssessmentID,
-                                    User.GetUserIdKnownNotNull()
-                                  );
-                if (sessionAddSupervisor?.CentreID != null)
-                {
-                    supervisors = supervisors.Where(s => s.CentreID == sessionAddSupervisor.CentreID);
-                    TempData["CentreID"] = sessionAddSupervisor.CentreID;
-                }
-                model.Supervisors = supervisors;
-                return View("SelfAssessments/AddSupervisor", model);
+                ModelState.ClearErrorsForAllFieldsExcept("SupervisorAdminID");
+                return AddNewSupervisor(model.SelfAssessmentID, searchString);
             }
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(model.SupervisorAdminID);
             if (sessionAddSupervisor == null)
@@ -846,7 +878,7 @@
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Gone });
             }
-
+            TempData.Keep("SearchString");
             int? selfAssessmentSupervisorRoleId = null;
             string selfAssessmentName;
             var supervisorAdminId = 0;

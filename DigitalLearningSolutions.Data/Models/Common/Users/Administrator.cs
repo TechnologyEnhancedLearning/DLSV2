@@ -16,10 +16,8 @@ namespace DigitalLearningSolutions.Data.Models.Common.Users
         public string? CentreName { get; set; }
         public override string SearchableName
         {
-            get => SearchableNameOverrideForFuzzySharp ?? NameQueryHelper.GetSortableFullName(Forename, Surname);
+            get => SearchableNameOverrideForFuzzySharp ?? $"{Forename} {Surname} {Email}";
             set => SearchableNameOverrideForFuzzySharp = value;
         }
-
-        public string? FullName => Forename == null ? Surname : $"{Forename} {Surname}";
     }
 }
