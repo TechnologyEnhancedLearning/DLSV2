@@ -43,21 +43,18 @@
         private readonly IDbConnection connection;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
-        private readonly INotificationDataService notificationDataService;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
             IClockUtility clockUtility,
-            ILogger<IRegistrationDataService> logger,
-            INotificationDataService notificationDataService
+            ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
             this.clockUtility = clockUtility;
             this.logger = logger;
-            this.notificationDataService = notificationDataService;
         }
 
         public (int delegateId, string candidateNumber, int delegateUserId) RegisterNewUserAndDelegateAccount(
@@ -237,7 +234,15 @@
                 transaction
             );
 
-            notificationDataService.SubscribeDefaultNotifications(null, adminUserId);
+            connection.Execute(
+                @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
+                SELECT N.NotificationId, @adminUserId
+                FROM Notifications N INNER JOIN NotificationRoles NR
+                ON N.NotificationID = NR.NotificationID
+                WHERE RoleID IN @roles AND AutoOptIn = 1",
+                new { adminUserId, roles = registrationModel.GetNotificationRoles() },
+                transaction
+            );
 
             transaction.Commit();
 

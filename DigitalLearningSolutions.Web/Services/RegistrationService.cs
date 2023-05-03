@@ -135,7 +135,7 @@ namespace DigitalLearningSolutions.Web.Services
                 false
             );
 
-            notificationDataService.SubscribeDefaultNotifications(delegateId, null);
+            notificationDataService.SubscribeDefaultNotifications(delegateId);
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
@@ -313,7 +313,7 @@ namespace DigitalLearningSolutions.Web.Services
                 true
             );
 
-            notificationDataService.SubscribeDefaultNotifications(delegateId, null);
+            notificationDataService.SubscribeDefaultNotifications(delegateId);
 
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
