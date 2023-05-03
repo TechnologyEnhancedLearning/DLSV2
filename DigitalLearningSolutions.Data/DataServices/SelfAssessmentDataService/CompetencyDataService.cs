@@ -407,7 +407,7 @@
                                 [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
                             END
-                        ELSE IF (@existentResultId IS NOT NULL AND @existentResult <> @result)
+                        IF (@existentResultId IS NOT NULL AND @existentResult <> @result)
                             BEGIN
                             UPDATE SelfAssessmentResults
                             SET [Result] = @result, [DateTime]  = GETUTCDATE()
@@ -416,7 +416,7 @@
                             DELETE SARS FROM   SelfAssessmentResultSupervisorVerifications  sars
                             WHERE  SARS.SelfAssessmentResultId=@existentResultId
                             END
-                        ELSE
+                         IF (@existentResultId IS NULL)
                             BEGIN
                             INSERT INTO SelfAssessmentResults
                                 ([SelfAssessmentID]
