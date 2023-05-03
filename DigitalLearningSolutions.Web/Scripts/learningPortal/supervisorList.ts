@@ -4,17 +4,19 @@ const selfAssessment = <HTMLInputElement>document.getElementById('SelfAssessment
 const selfAssessmentId = selfAssessment.value;
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(`LearningPortal/SelfAssessment/${selfAssessmentId}/GetAllSupervisors`, true, true, false);
+
 const sInput = <HTMLSelectElement>document.getElementById('search-field');
 if (sInput != null) {
-  sInput.addEventListener('change', spanChanged);
+  sInput.addEventListener('onpaste', handler, false);
+  sInput.addEventListener('oncut', handler, false);
+  sInput.addEventListener('keyup', handler, false);
 }
-function spanChanged() {
+function handler(event:any) {
   const sp = <HTMLSelectElement>document.getElementById('result-count-and-page-number');
   const btnSubmit = <HTMLSelectElement>document.getElementById('btnAddSupervisor');
-  if (sp.innerText.startsWith('0 matching')) {
-    btnSubmit.focus();
-    btnSubmit.disabled = true;
+  if (sp.innerText.includes('0 matching')) {
+    btnSubmit.style.visibility = 'hidden';
   } else {
-    btnSubmit.disabled = false;
+    btnSubmit.style.visibility = 'visible';
   }
 }

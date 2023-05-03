@@ -750,6 +750,12 @@
             if (!ModelState.IsValid)
             {
                 ModelState.ClearErrorsForAllFieldsExcept("SupervisorAdminID");
+                multiPageFormService.SetMultiPageFormData(
+                    sessionAddSupervisor,
+                    MultiPageFormDataFeature.AddNewSupervisor,
+                    TempData
+                    );
+
                 return AddNewSupervisor(model.SelfAssessmentID, searchString);
             }
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(model.SupervisorAdminID);
