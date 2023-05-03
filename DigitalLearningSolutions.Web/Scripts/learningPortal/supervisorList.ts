@@ -1,4 +1,5 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
+
 const selfAssessment = <HTMLInputElement>document.getElementById('SelfAssessmentID');
 const selfAssessmentId = selfAssessment.value;
 // eslint-disable-next-line no-new
@@ -13,10 +14,7 @@ function spanChanged() {
   if (sp.innerText.startsWith('0 matching')) {
     btnSubmit.focus();
     btnSubmit.disabled = true;
-  }
-  else {
+  } else {
     btnSubmit.disabled = false;
   }
 }
-
-
