@@ -401,11 +401,13 @@
                         ORDER BY DateTime DESC
 
                         IF (@existentResultId IS NOT NULL AND @existentResult = @result)
+                            BEGIN
                             UPDATE SelfAssessmentResults
                             SET [DateTime] = GETUTCDATE(),
                                 [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
-                        ELSE
+                            END
+                        ELSE IF (@existentResultId IS NOT NULL AND @existentResult <> @result)
                             BEGIN
                             UPDATE SelfAssessmentResults
                             SET [Result] = @result, [DateTime]  = GETUTCDATE()
@@ -413,8 +415,20 @@
 
                             DELETE SARS FROM   SelfAssessmentResultSupervisorVerifications  sars
                             WHERE  SARS.SelfAssessmentResultId=@existentResultId
-                        END
-END",
+                            END
+                        ELSE
+                            BEGIN
+                            INSERT INTO SelfAssessmentResults
+                                ([SelfAssessmentID]
+                                ,[CompetencyID]
+                                ,[AssessmentQuestionID]
+                                ,[Result]
+                                ,[DateTime]
+                                ,[SupportingComments]
+                                ,[DelegateUserID])
+                            VALUES(@selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments,@delegateUserId)
+                            END
+                        END",
                 new { competencyId, selfAssessmentId, delegateUserId, assessmentQuestionId, result, supportingComments }
             );
 
