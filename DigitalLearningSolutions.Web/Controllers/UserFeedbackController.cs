@@ -261,8 +261,6 @@
         [Route("/GuestFeedbackStart")]
         public IActionResult GuestFeedbackStart(UserFeedbackViewModel userFeedbackViewModel)
         {
-            //var userFeedbackModel = new UserFeedbackViewModel();
-
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
             return View("GuestFeedbackStart", userFeedbackViewModel);

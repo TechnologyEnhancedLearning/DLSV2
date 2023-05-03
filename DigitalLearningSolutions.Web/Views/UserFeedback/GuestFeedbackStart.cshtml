@@ -14,10 +14,12 @@
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
-            @if (Model.SourcePageTitle != String.Empty) {
+            @if (Model.SourcePageTitle != String.Empty)
+            {
               <div>&lt Go back to Welcome page</div>
             }
-            @if (Model.SourcePageTitle == String.Empty) {
+            @if (Model.SourcePageTitle == String.Empty)
+            {
               <div>&lt Go back</div>
             }
           </a>
@@ -27,26 +29,25 @@
   </nav>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h2 class="nhsuk-heading-s">Give page or website feedback</h2>
-    <h1 id="page-heading" class="nhsuk-heading-xl">Give us feedback about what you were trying to achieve?</h1>
-  </div>
-  <div class="nhsuk-grid-column-two-thirds">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h2 class="nhsuk-heading-s">Give page or website feedback</h2>
+      <h1 id="page-heading" class="nhsuk-heading-xl">Give us feedback about what you were trying to achieve?</h1>
+    </div>
+    <div class="nhsuk-grid-column-two-thirds">
 
-    <form method="post" asp-action="GuestFeedbackComplete">
+      <form method="post" asp-action="GuestFeedbackComplete">
 
-      <vc:text-input asp-for="TaskAttempted"
+        <vc:text-input asp-for="TaskAttempted"
                      label="What task did you come to do today?"
                      populate-with-current-value="false"
                      type="text"
                      spell-check="false"
                      hint-text=""
                      autocomplete="off"
-                     css-class="nhsuk-input"
-                     required="true" />
+                     css-class="nhsuk-input" />
 
-      <vc:text-area asp-for="FeedbackText"
+        <vc:text-area asp-for="FeedbackText"
                     label="Please describe in detail your experience and what you came here to achieve."
                     populate-with-current-value="false"
                     rows="5"
@@ -55,15 +56,14 @@
                     hint-text=""
                     autocomplete="off"
                     css-class="nhsuk-u-width-full"
-                    character-count="null"
-                    required="true" />
+                    character-count="null" />
 
-      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl ?? string.Empty" />
+        <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl ?? string.Empty" />
 
-      <div class="nhsuk-u-float-right">
-        <button class="nhsuk-button" type="submit">Submit Feedback ></button>
-      </div>
-    </form>
+        <div class="nhsuk-u-float-right">
+          <button class="nhsuk-button" type="submit">Submit Feedback ></button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
