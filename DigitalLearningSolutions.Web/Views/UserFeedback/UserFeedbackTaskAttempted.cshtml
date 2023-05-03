@@ -38,7 +38,7 @@
       <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
 
       <div class="nhsuk-hint" id="task-attempted-hint">
-        Give us feedback about what you were trying to achieve?
+        Give us feedback about what you were trying to achieve.
       </div>
 
       <p>Step 2 of 4</p>
@@ -50,7 +50,8 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="off"
-                     css-class="nhsuk-input" />
+                     css-class="nhsuk-input"
+                     required = "false" />
 
       <vc:text-area asp-for="FeedbackText"
                     label="Please describe in detail your experience and what you came here to achieve."

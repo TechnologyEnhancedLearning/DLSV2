@@ -14,8 +14,8 @@
                 .ForeignKey("FK_Users_UserID_Users_ID", "Users", "ID").WithDefaultValue(0)
                 .WithColumn("SourcePageUrl").AsString(255).NotNullable()
                 .WithColumn("TaskAchieved").AsBoolean().Nullable()
-                .WithColumn("TaskAttempted").AsString(255).NotNullable()
-                .WithColumn("FeedbackText").AsString(5000).NotNullable()
+                .WithColumn("TaskAttempted").AsString(255).Nullable()
+                .WithColumn("FeedbackText").AsString(5000).Nullable()
                 .WithColumn("TaskRating").AsInt32().Nullable()
                 .WithColumn("UserRoles").AsString(255).Nullable();
 

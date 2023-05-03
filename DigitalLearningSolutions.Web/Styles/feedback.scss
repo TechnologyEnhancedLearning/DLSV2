@@ -5,25 +5,16 @@
   background-color: $nhsuk-lightgrey;
   border-bottom: 1px solid $nhsuk-darkgrey;
   min-width: 100% !important;
-
+  max-width: 100% !important;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .feedback-bar {
   background-color: $nhsuk-lightgrey;
-  max-width: 1144px;
-}
-
-.nhsuk-width-container--feedback::before {
-  border-bottom: 1px solid $nhsuk-darkgrey !important;
-  background-color: $nhsuk-lightgrey !important;
-}
-
-.nhsuk-width-container--feedback::after {
-  border-bottom: 1px solid $nhsuk-darkgrey !important;
-  background-color: $nhsuk-lightgrey !important;
 }
 
 .feedback-button-inline {

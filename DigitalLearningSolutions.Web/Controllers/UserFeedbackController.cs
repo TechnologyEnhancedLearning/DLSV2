@@ -36,8 +36,8 @@
                 SourceUrl = sourceUrl,
                 SourcePageTitle = sourcePageTitle,
                 TaskAchieved = null,
-                TaskAttempted = " test",
-                FeedbackText = " test2",
+                TaskAttempted = string.Empty,
+                FeedbackText = string.Empty,
                 TaskRating = null,
             };
 
@@ -281,16 +281,18 @@
         [Route("/GuestFeedbackComplete")]
         public IActionResult GuestFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
         {
-
-            _userFeedbackDataService.SaveUserFeedback(
-                null,
-                null,
-                userFeedbackViewModel.SourceUrl,
-                null,
-                userFeedbackViewModel.TaskAttempted,
-                userFeedbackViewModel.FeedbackText,
-                null
-            );
+            if (!(userFeedbackViewModel.TaskAchieved == null && userFeedbackViewModel.TaskAttempted == null && userFeedbackViewModel.FeedbackText == null && userFeedbackViewModel.TaskRating == null))
+            {
+                _userFeedbackDataService.SaveUserFeedback(
+                    null,
+                    null,
+                    userFeedbackViewModel.SourceUrl,
+                    null,
+                    userFeedbackViewModel.TaskAttempted,
+                    userFeedbackViewModel.FeedbackText,
+                    null
+                );
+            }
 
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 

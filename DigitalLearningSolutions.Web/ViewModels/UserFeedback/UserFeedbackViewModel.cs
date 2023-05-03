@@ -1,33 +1,26 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.UserFeedback
 {
-    using System.ComponentModel.DataAnnotations;
-
     public class UserFeedbackViewModel
     {
         public UserFeedbackViewModel()
         {
             UserId = null;
             UserRoles = null;
-            SourceUrl = string.Empty;
-            SourcePageTitle = string.Empty;
+            SourceUrl = null;
+            SourcePageTitle = null;
             TaskAchieved = null;
-            TaskAttempted = "TaskAttempted";
-            FeedbackText = "FeedbackText";
+            TaskAttempted = null;
+            FeedbackText = null;
             TaskRating = null;
         }
 
         public int? UserId { get; set; }
-        public string UserRoles { get; set; }
+        public string? UserRoles { get; set; }
         public string? SourceUrl { get; set; }
         public string? SourcePageTitle { get; set; }
         public bool? TaskAchieved { get; set; }
-
-        [Required(ErrorMessage = "[UserFeedbackViewModel] Please enter the task you were attempting to perform.")]
-        public string TaskAttempted { get; set; }
-
-        [Required(ErrorMessage = "[UserFeedbackViewModel] Please enter your feedback text.")]
-        public string FeedbackText { get; set; }
-
+        public string? TaskAttempted { get; set; }
+        public string? FeedbackText { get; set; }
         public int? TaskRating { get; set; }
     }
 }
