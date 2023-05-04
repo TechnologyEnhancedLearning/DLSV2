@@ -19,6 +19,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private const int LoggedInUserId = 1;
         private const string SourceUrl = "https://www.example.com";
         private const string SourcePageTitle = "DLS Example Page Title";
+        private const string FeedbackText = "Example feedback text";
 
         private UserFeedbackController _userFeedbackController;
         private IUserFeedbackDataService _userFeedbackDataService = null!;
@@ -218,6 +219,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var userFeedbackViewModel = new UserFeedbackViewModel();
+            userFeedbackViewModel.FeedbackText = FeedbackText;
 
             // When
             var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as ViewResult;
@@ -225,6 +227,22 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             // Then
             A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
                 .MustHaveHappenedOnceExactly();
+            result.Should().NotBeNull();
+            result?.ViewName.Should().Be("GuestFeedbackComplete");
+        }
+
+        [Test]
+        public void GuestFeedbackComplete_ShouldNotCallSaveUserFeedbackIfNoFeedbackProvided()
+        {
+            // Given
+            var userFeedbackViewModel = new UserFeedbackViewModel();
+
+            // When
+            var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as ViewResult;
+
+            // Then
+            A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
+                .MustNotHaveHappened();
             result.Should().NotBeNull();
             result?.ViewName.Should().Be("GuestFeedbackComplete");
         }
