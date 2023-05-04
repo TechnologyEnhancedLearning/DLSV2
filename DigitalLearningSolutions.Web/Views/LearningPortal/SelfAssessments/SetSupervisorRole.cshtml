@@ -15,7 +15,7 @@
   {
   <p class="nhsuk-breadcrumb__back">
     <a class="nhsuk-breadcrumb__backlink" asp-action="AddNewSupervisor"
-     asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+     asp-route-selfAssessmentId="@Model.SelfAssessmentID" asp-route-searchString=@TempData["SearchString"]>
       Back to Choose a supervisor
     </a>
   </p>
@@ -63,7 +63,7 @@
   <div class=" nhsuk-u-margin-top-5">
     @if (Model.SupervisorDelegateId == null)
     {
-      <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+      <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID" asp-route-searchString=@TempData["SearchString"]>
         Back
       </a>
     }

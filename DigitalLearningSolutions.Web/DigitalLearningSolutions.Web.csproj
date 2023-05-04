@@ -36,6 +36,7 @@
         <None Remove="Scripts\learningPortal\dlscommon.ts" />
         <None Remove="Scripts\learningPortal\recommendedLearning.ts" />
         <None Remove="Scripts\learningPortal\sortCourses.ts" />
+        <None Remove="Scripts\learningPortal\supervisorList.ts" />
         <None Remove="Scripts\learningPortal\verificationPickResults.ts" />
         <None Remove="Scripts\nhsuk.ts" />
         <None Remove="Scripts\searchSortFilterAndPaginate\paginate.ts" />
@@ -106,6 +107,7 @@
         <TypeScriptCompile Include="Scripts\index.d.ts" />
         <TypeScriptCompile Include="Scripts\learningPortal\recommendedLearning.ts" />
         <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
+        <TypeScriptCompile Include="Scripts\learningPortal\supervisorList.ts" />
         <TypeScriptCompile Include="Scripts\learningPortal\verificationPickResults.ts" />
         <TypeScriptCompile Include="Scripts\nhsuk.ts" />
         <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\filter.ts" />
