@@ -34,9 +34,9 @@
     </div>
     <p class="nhsuk-breadcrumb__back">
       <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-       asp-action="DelegateProfileAssessments"
-       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-        Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+           asp-action="EnrolDelegateOnProfileAssessment"
+           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+                Back to Self Assessments
       </a>
     </p>
   </nav>
