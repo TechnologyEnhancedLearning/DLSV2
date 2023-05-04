@@ -321,10 +321,9 @@
             var competencyIds = reviewedCompetencies.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
             var competencies = SupervisorCompetencyFilterHelper.FilterCompetencies(reviewedCompetencies, competencyFlags, searchModel);
-            var isSupervisor = supervisorService.IsLoggedInSupervisorIsVerifier(supervisorDelegateId, candidateAssessmentId, adminId);
             var searchViewModel = searchModel == null ?
-                new SearchSupervisorCompetencyViewModel(supervisorDelegateId, searchModel?.SearchText, delegateSelfAssessment.ID, delegateSelfAssessment.IsSupervisorResultsReviewed, false, null, isSupervisor, null)
-                : searchModel.Initialise(searchModel.AppliedFilters, competencyFlags.ToList(), delegateSelfAssessment.IsSupervisorResultsReviewed, false, isSupervisor);
+                new SearchSupervisorCompetencyViewModel(supervisorDelegateId, searchModel?.SearchText, delegateSelfAssessment.ID, delegateSelfAssessment.IsSupervisorResultsReviewed, false, null, null)
+                : searchModel.Initialise(searchModel.AppliedFilters, competencyFlags.ToList(), delegateSelfAssessment.IsSupervisorResultsReviewed, false);
 
             var model = new ReviewSelfAssessmentViewModel()
             {

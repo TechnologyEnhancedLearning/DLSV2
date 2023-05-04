@@ -9,6 +9,8 @@
         ConfirmationRejected = -4,
         MeetingRequirements = -3,
         PartiallyMeetingRequirements = -2,
-        NotMeetingRequirements = -1
+        NotMeetingRequirements = -1,
+        AwaitingConfirmation = -9,
+        PendingConfirmation = -10
     }
 }
