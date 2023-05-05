@@ -43,6 +43,7 @@
             var model = new SetDelegatePasswordViewModel(
                 DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName),
                 delegateId,
+                delegateUser.RegistrationConfirmationHash,
                 isFromViewDelegatePage,
                 returnPageQuery
             );
@@ -56,7 +57,7 @@
             int delegateId,
             bool isFromViewDelegatePage
         )
-        {
+        {            
             if (!ModelState.IsValid)
             {
                 model.IsFromViewDelegatePage = isFromViewDelegatePage;

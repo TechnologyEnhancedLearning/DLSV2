@@ -14,12 +14,14 @@
         public SetDelegatePasswordViewModel(
             string name,
             int delegateId,
+            string registrationConfirmationHash,
             bool isFromViewDelegatePage = false,
             ReturnPageQuery? returnPageQuery = null
         )
         {
             Name = name;
             DelegateId = delegateId;
+            RegistrationConfirmationHash = registrationConfirmationHash;
             IsFromViewDelegatePage = isFromViewDelegatePage;
             ReturnPageQuery = returnPageQuery;
         }
@@ -29,6 +31,8 @@
         public int DelegateId { get; set; }
 
         public bool IsFromViewDelegatePage { get; set; }
+
+        public string? RegistrationConfirmationHash { get; set; }
 
         [Required(ErrorMessage = CommonValidationErrorMessages.PasswordRequired)]
         [MinLength(8, ErrorMessage = CommonValidationErrorMessages.PasswordMinLength)]
@@ -46,7 +50,12 @@
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             List<ValidationResult> errors = new List<ValidationResult>();
-            if(Password != null && Password != string.Empty)
+
+            if (!string.IsNullOrEmpty(RegistrationConfirmationHash))
+            {
+                errors.Add(new ValidationResult(CommonValidationErrorMessages.UnclaimedDelegateAccountResetPassword));
+            }
+            else if (Password != null && Password != string.Empty)
             {
                 var passwordLower = Password.ToLower();
                 var firstnameLower = Name.ToLower().Split(' ').First();

@@ -33,5 +33,6 @@
         public const string PasswordSimilarUsername = "Enter a password which is less similar to your user name";
         public const string PrimaryEmailInUseDuringDelegateRegistration =
             "A user with this email address is already registered";
+        public const string UnclaimedDelegateAccountResetPassword = "The user will not be able to log into their account until they have claimed it by following the link in their welcome email.";
     }
 }
