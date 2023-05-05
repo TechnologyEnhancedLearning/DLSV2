@@ -407,7 +407,7 @@
                                 [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
                             END
-                        IF (@existentResultId IS NOT NULL AND @existentResult <> @result)
+                        IF (@existentResultId IS NOT NULL AND (@existentResult <> @result OR @result IS NULL))
                             BEGIN
                             UPDATE SelfAssessmentResults
                             SET [Result] = @result, [DateTime]  = GETUTCDATE()
