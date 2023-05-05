@@ -36,9 +36,9 @@ namespace DigitalLearningSolutions.Web.Extensions
                 case SelfAssessmentCompetencyFilter.NotMeetingRequirements:
                     return "Not meeting requirements";
                 case SelfAssessmentCompetencyFilter.PendingConfirmation:
-                    return "Pending Confirmation";
+                    return "Pending confirmation";
                 case SelfAssessmentCompetencyFilter.AwaitingConfirmation:
-                    return "Awaiting Confirmation";
+                    return "Confirmation requested";
                 default:
                     return status.ToString();
             }
