@@ -29,19 +29,15 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h2 class="nhsuk-heading-s">Give page or website feedback</h2>
-    <h1 id="page-heading" class="nhsuk-heading-xl">Give us feedback about what you were trying to achieve.</h1>
+    <h2 class="nhsuk-caption-l">Give page or website feedback</h2>
+    <h1 id="page-heading" class="nhsuk-heading-xl">Give us feedback about what you were trying to achieve</h1>
   </div>
   <div class="nhsuk-grid-column-two-thirds">
     <form method="post" asp-action="UserFeedbackTaskAttemptedSet">
       <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
       <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
 
-      <div class="nhsuk-hint" id="task-attempted-hint">
-        Give us feedback about what you were trying to achieve.
-      </div>
-
-      <p>Step 2 of 4</p>
+      <p class="nhsuk-body-l">Step 2 of 4</p>
 
       <vc:text-input asp-for="TaskAttempted"
                      label="What task did you come to do today?"
@@ -65,7 +61,7 @@
                     character-count="null" />
 
       <div class="nhsuk-u-float-right">
-        <button class="nhsuk-button" type="submit">Continue ></button>
+        <button class="nhsuk-button" type="submit">Continue <partial name="_NhsChevronRight" /></button>
       </div>
     </form>
   </div>

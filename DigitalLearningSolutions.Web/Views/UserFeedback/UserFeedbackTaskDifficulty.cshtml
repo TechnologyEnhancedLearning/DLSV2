@@ -15,10 +15,10 @@
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
             @if (Model.SourcePageTitle != String.Empty) {
-              <div>&lt Go back to @Model.SourcePageTitle</div>
+              <div><partial name="_NhsChevronLeft" /> Go back to @Model.SourcePageTitle</div>
             }
             @if (Model.SourcePageTitle == String.Empty) {
-              <div>&lt Go back</div>
+              <div><partial name="_NhsChevronLeft" /> Go back</div>
             }
           </a>
         </li>
@@ -29,13 +29,12 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h2 class="nhsuk-heading-s">Give page or website feedback</h2>
+    <h2 class="nhsuk-caption-l">Give page or website feedback</h2>
     <h1 id="page-heading" class="nhsuk-heading-xl">How easy or difficult was it to achieve your task?</h1>
   </div>
   <div class="nhsuk-grid-column-two-thirds">
-
-    <p>Step 3 of 4</p>
-
+    <p class="nhsuk-body-l">Step 3 of 4</p>
+    
     <form method="post" asp-action="UserFeedbackTaskDifficultySet">
       <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
       <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
@@ -88,7 +87,7 @@
         </div>
       </fieldset>
       <div class="nhsuk-u-float-right">
-        <button class="nhsuk-button" type="submit">Submit feedback ></button>
+        <button class="nhsuk-button" type="submit">Submit feedback <partial name="_NhsChevronRight" /></button>
       </div>
     </form>
   </div>

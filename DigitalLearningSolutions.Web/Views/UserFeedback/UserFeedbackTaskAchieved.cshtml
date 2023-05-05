@@ -31,7 +31,7 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <h2 class="nhsuk-heading-s">Give page or website feedback</h2>
+      <h2 class="nhsuk-caption-l">Give page or website feedback</h2>
       <h1 id="page-heading" class="nhsuk-heading-xl">Did you achieve everything you came to do today?</h1>
     </div>
     <div class="nhsuk-grid-column-two-thirds">
@@ -46,7 +46,7 @@
         <p>If you need support please contact your centre. This might be your Centre Manager or Clinical Centre Manager.</p>
       </div>
 
-      <p>Step 1 of 4</p>
+      <p class="nhsuk-body-l">Step 1 of 4</p>
 
       <form method="post" asp-action="UserFeedbackTaskAchievedSet">
         <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
@@ -79,7 +79,7 @@
           </div>
         </fieldset>
         <div class="nhsuk-u-float-right">
-          <button class="nhsuk-button" type="submit">Continue ></button>
+          <button class="nhsuk-button" type="submit">Continue <partial name="_NhsChevronRight" /></button>
         </div>
       </form>
     </div>

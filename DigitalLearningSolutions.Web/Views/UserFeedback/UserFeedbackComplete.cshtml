@@ -16,11 +16,11 @@
           <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
             @if (Model.SourcePageTitle != String.Empty)
             {
-              <div>&lt Go back to Welcome page</div>
+              <div><partial name="_NhsChevronLeft" /> Go back to Welcome page</div>
             }
             @if (Model.SourcePageTitle == String.Empty)
             {
-              <div>&lt Go back</div>
+              <div><partial name="_NhsChevronLeft" /> Go back</div>
             }
           </a>
         </li>
@@ -31,11 +31,11 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <h2 class="nhsuk-heading-s">Join our user research panel</h2>
+      <h2 class="nhsuk-caption-l">Join our user research panel</h2>
       <h1 id="page-heading" class="nhsuk-heading-xl">Thank you for your feedback</h1>
     </div>
     <div class="nhsuk-grid-column-two-thirds">
-      <p>Step 4 of 4</p>
+      <p class="nhsuk-body-l">Step 4 of 4</p>
 
       <h3>Help us improve our website</h3>
 

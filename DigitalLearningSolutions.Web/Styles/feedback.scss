@@ -3,7 +3,7 @@
 .nhsuk-width-container--feedback {
   @extend .nhsuk-width-container;
   background-color: $nhsuk-lightgrey;
-  border-bottom: 1px solid $nhsuk-darkgrey;
+  border-bottom: 1px solid $nhsuk-midgrey;
   min-width: 100% !important;
   max-width: 100% !important;
   display: flex;
@@ -22,6 +22,36 @@
   margin: 8px 10px 8px 0;
   background-color: $nhsuk-darkblue;
   box-shadow: none;
-  display: inline-block;
+  /*display: inline-block;*/
   vertical-align: middle;
+  border-radius: 0px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+/*  padding: 10px 20px;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+*/
+
+
+}
+
+
+
+.feedback-chevron {
+  color: $nhsuk-white !important;
+  fill: $nhsuk-white !important;
+  border: 2px solid hotpintk
+/*  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+*/
+
 }
