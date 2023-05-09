@@ -272,7 +272,7 @@
 
         public void DeleteAdminAccount(int adminId)
         {
-            int existingId = (int)connection.ExecuteScalar("SELECT aa.UserID FROM AdminAccounts AS aa INNER JOIN SupervisorDelegates AS sd ON aa.ID = sd.SupervisorAdminID WHERE aa.ID=@adminId", new { adminId });
+            int? existingId = (int?)connection.ExecuteScalar("SELECT aa.UserID FROM AdminAccounts AS aa INNER JOIN SupervisorDelegates AS sd ON aa.ID = sd.SupervisorAdminID WHERE aa.ID=@adminId", new { adminId });
 
             if (existingId > 0)
             {
