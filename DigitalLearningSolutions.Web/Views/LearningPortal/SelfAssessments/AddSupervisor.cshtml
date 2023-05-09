@@ -35,7 +35,7 @@
     </p>
 }
 <h1>New activity supervisor</h1>
-<div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")"  style="display: inline;">
+<div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
     <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
             <form method="get" role="search" asp-route-page="@Model.Page">
@@ -44,7 +44,9 @@
                     <vc:error-summary order-of-property-names="@(new[] {nameof(Model.SupervisorAdminID) })" />
                 }
                 <div class="nhsuk-grid-row">
-                    <partial name="SearchablePage/_Search" model="Model" />
+                    <div class="nhsuk-grid-column-full">
+                      <partial name="SearchablePage/_Search" model="Model" />
+                    </div>
                 </div>
                 <nhs-form-group nhs-validation-for="SupervisorAdminID">
                     <fieldset class="nhsuk-fieldset">
@@ -116,7 +118,6 @@
             </div>
         </div>
     </div>
-    @*@await RenderSectionAsync("scripts", false)*@
 </div>
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled)

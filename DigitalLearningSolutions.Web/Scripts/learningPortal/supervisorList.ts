@@ -1,5 +1,7 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
+import { setItemsPerPage } from '../searchSortFilterAndPaginate/paginate';
 
+setItemsPerPage(9999);
 const selfAssessment = <HTMLInputElement>document.getElementById('SelfAssessmentID');
 const selfAssessmentId = selfAssessment.value;
 // eslint-disable-next-line no-new
@@ -14,7 +16,7 @@ if (sInput != null) {
 function handler(event:any) {
   const sp = <HTMLSelectElement>document.getElementById('result-count-and-page-number');
   const btnSubmit = <HTMLSelectElement>document.getElementById('btnAddSupervisor');
-  if (sp.innerText.includes('0 matching')) {
+  if (sp.innerText.startsWith('0 matching')) {
     btnSubmit.style.visibility = 'hidden';
   } else {
     btnSubmit.style.visibility = 'visible';
