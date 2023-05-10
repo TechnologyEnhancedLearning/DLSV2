@@ -2,49 +2,60 @@
 @model SetDelegatePasswordViewModel
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Set delegate user password" : "Set delegate user password";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Set delegate user password" : "Set delegate user password";
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Password) })" />
-    }
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Password) })" />
+        }
 
-    <h1 class="nhsuk-heading-xl">Set delegate user password</h1>
+        <h1 class="nhsuk-heading-xl">Set delegate user password</h1>
+        @if (Model.RegistrationConfirmationHash != null)
+        {
+            <div class="nhsuk-warning-callout">
+                <h3 class="nhsuk-warning-callout__label">
+                    <span role="text">
+                        Unclaimed account
+                    </span>
+                </h3>
+                <p>The user will not be able to log into their account until they have claimed it by following the link in their welcome email.</p>
+            </div>
+        }
 
-    <vc:field-name-value-display display-name="User" field-value="@Model.Name" />
+        <vc:field-name-value-display display-name="User" field-value="@Model.Name" />
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
-      <input type="hidden" asp-for="Name" />
-      <input type="hidden" asp-for="DelegateId" />
-      <input type="hidden" asp-for="RegistrationConfirmationHash" />
-      <input type="hidden" asp-for="IsFromViewDelegatePage" />
-      <input type="hidden" asp-for="ReturnPageQuery" />
-      <vc:text-input asp-for="@nameof(Model.Password)"
-                     label="Password"
-                     populate-with-current-value="false"
-                     type="text"
-                     spell-check="false"
-                     autocomplete="off"
-                     hint-text="Password should have a minimum of 8 characters with at least 1 uppercase and 1 lowercase letter, 1 number and 1 symbol."
-                     css-class="nhsuk-u-width-one-half"
-                     required="true" />
+        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
+            <input type="hidden" asp-for="Name" />
+            <input type="hidden" asp-for="DelegateId" />
+            <input type="hidden" asp-for="RegistrationConfirmationHash" />
+            <input type="hidden" asp-for="IsFromViewDelegatePage" />
+            <input type="hidden" asp-for="ReturnPageQuery" />
+            <vc:text-input asp-for="@nameof(Model.Password)"
+                           label="Password"
+                           populate-with-current-value="false"
+                           type="text"
+                           spell-check="false"
+                           autocomplete="off"
+                           hint-text="Password should have a minimum of 8 characters with at least 1 uppercase and 1 lowercase letter, 1 number and 1 symbol."
+                           css-class="nhsuk-u-width-one-half"
+                           required="true" />
 
-      <button class="nhsuk-button" type="submit">Save</button>
-    </form>
+            <button class="nhsuk-button" type="submit">Save</button>
+        </form>
 
-    @if (Model.IsFromViewDelegatePage)
-    {
-      var routeData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
-      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeData" />
-    }
-    else
-    {
-      <vc:cancel-link-with-return-page-query asp-controller="AllDelegates" asp-action="Index" return-page-query="@Model.ReturnPageQuery!.Value" />
-    }
+        @if (Model.IsFromViewDelegatePage)
+        {
+            var routeData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
+            <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeData" />
+        }
+        else
+        {
+            <vc:cancel-link-with-return-page-query asp-controller="AllDelegates" asp-action="Index" return-page-query="@Model.ReturnPageQuery!.Value" />
+        }
 
-  </div>
+    </div>
 </div>

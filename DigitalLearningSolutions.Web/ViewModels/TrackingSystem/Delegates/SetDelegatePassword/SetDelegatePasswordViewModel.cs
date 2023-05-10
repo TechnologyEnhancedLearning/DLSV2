@@ -51,11 +51,7 @@
         {
             List<ValidationResult> errors = new List<ValidationResult>();
 
-            if (!string.IsNullOrEmpty(RegistrationConfirmationHash))
-            {
-                errors.Add(new ValidationResult(CommonValidationErrorMessages.UnclaimedDelegateAccountResetPassword));
-            }
-            else if (Password != null && Password != string.Empty)
+            if (Password != null && Password != string.Empty)
             {
                 var passwordLower = Password.ToLower();
                 var firstnameLower = Name.ToLower().Split(' ').First();
