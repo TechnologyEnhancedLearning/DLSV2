@@ -2,6 +2,8 @@
 {
     public enum SelfAssessmentCompetencyFilter
     {
+        AwaitingConfirmation = -10,
+        PendingConfirmation = -9,
         RequiresSelfAssessment = -8,
         SelfAssessed = -7,
         ConfirmationRequested = -6,
@@ -9,6 +11,6 @@
         ConfirmationRejected = -4,
         MeetingRequirements = -3,
         PartiallyMeetingRequirements = -2,
-        NotMeetingRequirements = -1
+        NotMeetingRequirements = -1        
     }
 }
