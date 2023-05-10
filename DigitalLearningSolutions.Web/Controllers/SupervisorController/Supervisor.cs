@@ -769,6 +769,9 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/CompleteBy")]
         public IActionResult EnrolDelegateSetCompleteBy(int supervisorDelegateId, int day, int month, int year)
         {
+            TempData["completeByDate"] = day;
+            TempData["completeByMonth"] = month;
+            TempData["completeByYear"] = year;
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
             if (day != 0 | month != 0 | year != 0)
             {
@@ -793,6 +796,7 @@
                 supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
             if (supervisorRoles.Count() > 1)
             {
+                TempData["navigatedFrom"] = "EnrolDelegateSupervisorRole";
                 return RedirectToAction(
                     "EnrolDelegateSupervisorRole",
                     "Supervisor",
@@ -841,6 +845,9 @@
                 SelfAssessmentSupervisorRoleId = sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId,
                 SelfAssessmentSupervisorRoles = supervisorRoles
             };
+            ViewBag.completeByDate = TempData["completeByDate"];
+            ViewBag.completeByMonth = TempData["completeByMonth"];
+            ViewBag.completeByYear = TempData["completeByYear"];
             return View("EnrolDelegateSupervisorRole", model);
         }
 
@@ -913,6 +920,10 @@
                 CompleteByDate = sessionEnrolOnRoleProfile.CompleteByDate,
                 SupervisorRoleCount = supervisorRoleCount
             };
+            ViewBag.completeByDate = TempData["completeByDate"];
+            ViewBag.completeByMonth = TempData["completeByMonth"];
+            ViewBag.completeByYear = TempData["completeByYear"];
+            ViewBag.navigatedFrom = TempData["navigatedFrom"];
             return View("EnrolDelegateSummary", model);
         }
 
