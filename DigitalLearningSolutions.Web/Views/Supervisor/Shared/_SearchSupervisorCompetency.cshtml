@@ -1,0 +1,64 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+@using DigitalLearningSolutions.Data.Enums;
+@model SearchSupervisorCompetencyViewModel
+@{
+    var parent = (ReviewSelfAssessmentViewModel)ViewData["parent"];
+}
+<form method="post" asp-controller="SelfAssessment">
+    <div class="search-container">
+        <div class="search-box-container" id="search">
+            <label class="nhsuk-u-visually-hidden" for="search-field">Search</label>
+            <input class="search-box nhsuk-input" id="search-field" name="searchText"
+                   style="border-bottom-right-radius: initial; border-top-right-radius: initial;"
+                   type="search" placeholder="Search" autocomplete="off" value="@Model.SearchText">
+            <button class="nhsuk-button search-submit" type="submit" asp-action="SearchInSupervisorSelfAssessment">
+                <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 20" aria-hidden="true" focusable="false">
+                    <path d="M19.71 18.29l-4.11-4.1a7 7 0 1 0-1.41 1.41l4.1 4.11a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42zM5 10a5 5 0 1 1 5 5 5 5 0 0 1-5-5z"></path>
+                </svg>
+                <span class="nhsuk-u-visually-hidden">Search</span>
+            </button>
+        </div>
+    </div>
+    <div class="filter-value-container">
+        @Html.DropDownListFor(
+        m => m.SelectedFilter,
+        Model.Filters.First().FilterOptions
+        .Where(f => parent.DelegateSelfAssessment.IsSupervisorResultsReviewed
+        || f.FilterValue == ((int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment).ToString()
+        || f.FilterValue == ((int)SelfAssessmentCompetencyFilter.SelfAssessed).ToString())
+        .Select(f => new SelectListItem(
+        text: f.DisplayText,
+        value: f.FilterValue,
+        selected: f.FilterValue == SelfAssessmentCompetencyFilter.RequiresSelfAssessment.ToString())
+        ),
+        new
+        {
+        @class = "nhsuk-select filter-dropdown",
+        aria_label = "ResponseStatus filter"
+        }
+        )
+        <button asp-action="AddSupervisorSelfAssessmentOverviewFilter" type="submit" class="nhsuk-button filter-submit" style="width:20%;">
+            Add filter
+        </button>
+    </div>
+    @Html.HiddenFor(m => m.SelfAssessmentId)
+    @Html.HiddenFor(m => m.CandidateAssessmentId)
+    @Html.HiddenFor(m => m.SupervisorDelegateId)
+    @Html.HiddenFor(m => m.IsSupervisorResultsReviewed)
+    @Html.HiddenFor(m => m.IncludeRequirementsFilters)
+    @Html.HiddenFor(m => m.AnyQuestionPartiallyMeetingRequirements)
+    @Html.Hidden(nameof(Model.SearchText), Model.SearchText)
+    @for (int i = 0; i < Model.AppliedFilters.Count; i++)
+    {
+        @Html.HiddenFor(m => m.AppliedFilters[i].DisplayText)
+        @Html.HiddenFor(m => m.AppliedFilters[i].FilterValue)
+        @Html.HiddenFor(m => m.AppliedFilters[i].TagClass)
+    }
+</form>
+
+@if (Model.AppliedFilters.Count() > 0)
+{
+    <div class="nhsuk-u-margin-bottom-5">
+        <partial name="../Shared/Components/CurrentFilters/Default" model="Model.CurrentFilters" />
+    </div>
+}
