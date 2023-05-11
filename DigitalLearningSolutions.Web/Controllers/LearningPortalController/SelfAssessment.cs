@@ -678,7 +678,7 @@
                new SearchOptions(searchString),
                new SortOptions(sortBy, sortDirection),
                null,
-               null//new PaginationOptions(page)
+               null
            );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
@@ -699,6 +699,7 @@
             return View("SelfAssessments/AddSupervisor", model);
         }
 
+        [NoCaching]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/GetAllSupervisors")]
         public IActionResult GetAllSupervisors(int selfAssessmentId)
         {
