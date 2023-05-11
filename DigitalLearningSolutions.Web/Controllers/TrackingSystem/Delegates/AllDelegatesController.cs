@@ -115,7 +115,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
-            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId).Where(c => !Guid.TryParse(c.EmailAddress, out _));
 
             var model = new AllDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts);
 

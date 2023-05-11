@@ -1,6 +1,11 @@
 import { ISearchableElement } from './searchSortFilterAndPaginate';
 
 export const ITEMS_PER_PAGE_DEFAULT = 10;
+let itemsPerPageDefault: number = ITEMS_PER_PAGE_DEFAULT;
+
+export function setItemsPerPage(numberOfItemsPerPage: number) {
+  itemsPerPageDefault = numberOfItemsPerPage;
+}
 
 export function setUpPagination(
   onNextPressed: VoidFunction,
@@ -85,7 +90,7 @@ export function getItemsPerPageValue(): number {
   const itemsPerPageSelect = getItemsPerPageSelect();
   return itemsPerPageSelect !== null
     ? parseInt((itemsPerPageSelect as HTMLSelectElement).value, 10)
-    : ITEMS_PER_PAGE_DEFAULT;
+    : itemsPerPageDefault;
 }
 
 function getPreviousButtons() {

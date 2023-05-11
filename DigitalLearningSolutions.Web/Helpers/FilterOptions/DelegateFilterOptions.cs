@@ -41,6 +41,23 @@
         );
     }
 
+    public static class AccountStatusFilterOptions
+    {
+        private const string Group = "IsYetToBeClaimed";
+
+        public static readonly FilterOptionModel ClaimedVerifiedAccount = new FilterOptionModel(
+            "Claimed/verified",
+            FilteringHelper.BuildFilterValueString(Group, Group, "false"),
+            FilterStatus.Default
+        );
+
+        public static readonly FilterOptionModel UnclaimedUnverifiedAccount = new FilterOptionModel(
+            "Unclaimed/unverified",
+            FilteringHelper.BuildFilterValueString(Group, Group, "true"),
+            FilterStatus.Default
+        );
+    }
+
     public static class DelegateActiveStatusFilterOptions
     {
         private const string Group = "ActiveStatus";
