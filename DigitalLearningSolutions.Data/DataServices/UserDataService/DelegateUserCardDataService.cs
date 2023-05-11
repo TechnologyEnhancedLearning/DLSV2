@@ -39,8 +39,7 @@
                         WHERE aa.UserID = da.UserID
                             AND aa.CentreID = da.CentreID
                             AND aa.Active = 1
-                ) AS AdminID,
-                da.RegistrationConfirmationHash
+                ) AS AdminID
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS c ON c.CentreID = da.CentreID
             INNER JOIN Users AS u ON u.ID = da.UserID

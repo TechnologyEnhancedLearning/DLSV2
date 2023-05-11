@@ -35,6 +35,12 @@
             DelegateRegistrationTypeFilterOptions.RegisteredByCentre,
         };
 
+        public static readonly IEnumerable<FilterOptionModel> AccountStatusOptions = new[]
+        {
+            AccountStatusFilterOptions.ClaimedVerifiedAccount,
+            AccountStatusFilterOptions.UnclaimedUnverifiedAccount
+        };
+
         public static List<FilterModel> GetAllDelegatesFilterViewModels(
             IEnumerable<(int id, string name)> jobGroups,
             IEnumerable<CentreRegistrationPrompt> promptsWithOptions
@@ -51,6 +57,7 @@
                     DelegatesViewModelFilters.GetJobGroupOptions(jobGroups)
                 ),
                 new FilterModel("RegistrationType", "Registration Type", RegistrationTypeOptions),
+                new FilterModel("AccountStatus", "Account Status", AccountStatusOptions),
             };
             filters.AddRange(
                 promptsWithOptions.Select(
