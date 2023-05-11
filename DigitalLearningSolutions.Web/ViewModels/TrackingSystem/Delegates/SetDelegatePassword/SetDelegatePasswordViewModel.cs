@@ -14,7 +14,7 @@
         public SetDelegatePasswordViewModel(
             string name,
             int delegateId,
-            string registrationConfirmationHash,
+            string? registrationConfirmationHash,
             bool isFromViewDelegatePage = false,
             ReturnPageQuery? returnPageQuery = null
         )
