@@ -170,7 +170,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 frameworkService.UpdateCompetencyFlags(frameworkId, frameworkCompetency.CompetencyID, selectedFlagIds);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + frameworkCompetencyId.ToString());
             }
-            var allCompetenciesWithSimilarName = frameworkService.GetAllCompetenciesForAdminId(frameworkCompetency.Name, adminId);
+            var allCompetenciesWithSimilarName = frameworkService.GetAllCompetenciesForAdminId(frameworkCompetency.Name, 0);
 
             var sortedItems = GenericSortingHelper.SortAllItems(
                allCompetenciesWithSimilarName.AsQueryable(),
