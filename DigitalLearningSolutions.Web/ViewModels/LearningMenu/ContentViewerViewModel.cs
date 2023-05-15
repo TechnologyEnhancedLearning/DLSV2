@@ -54,12 +54,12 @@
                    $"&Version={tutorialContent.Version}" +
                    $"&ProgressID={ProgressId}" +
                    "&type=learn" +
-                   $"&TrackURL={OldSystemEndpointHelper.GetTrackingUrl(config)}";
+                   $"&TrackURL={SystemEndpointHelper.GetTrackingUrl(config)}";
         }
 
         private string GetScormSource(IConfiguration config, TutorialContent tutorialContent)
         {
-            return $"{OldSystemEndpointHelper.GetScormPlayerUrl(config)}" +
+            return $"{SystemEndpointHelper.GetScormPlayerUrl(config)}" +
                    $"?CentreID={CentreId}" +
                    $"&CustomisationID={CustomisationId}" +
                    $"&TutorialID={TutorialId}" +

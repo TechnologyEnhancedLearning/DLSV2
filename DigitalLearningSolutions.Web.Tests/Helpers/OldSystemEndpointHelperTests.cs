@@ -26,7 +26,7 @@
             const string expected = "https://www.dls.nhs.uk/tracking/finalise?ProgressID=1";
 
             // Then
-            OldSystemEndpointHelper.GetEvaluateUrl(config, progressId).Should().Be(expected);
+            SystemEndpointHelper.GetEvaluateUrl(config, progressId).Should().Be(expected);
         }
 
         [Test]
@@ -36,7 +36,7 @@
             const string expected = "https://www.dls.nhs.uk/tracking/tracker";
 
             // Then
-            OldSystemEndpointHelper.GetTrackingUrl(config).Should().Be(expected);
+            SystemEndpointHelper.GetTrackingUrl(config).Should().Be(expected);
         }
 
         [Test]
@@ -46,7 +46,7 @@
             const string expected = "https://www.dls.nhs.uk/scoplayer/sco";
 
             // Then
-            OldSystemEndpointHelper.GetScormPlayerUrl(config).Should().Be(expected);
+            SystemEndpointHelper.GetScormPlayerUrl(config).Should().Be(expected);
         }
 
         [Test]
@@ -57,7 +57,7 @@
             const string expected = "https://www.dls.nhs.uk/tracking/summary?ProgressID=1";
 
             // Then
-            OldSystemEndpointHelper.GetDownloadSummaryUrl(config, progressId).Should().Be(expected);
+            SystemEndpointHelper.GetDownloadSummaryUrl(config, progressId).Should().Be(expected);
         }
 
         [Test]
@@ -68,7 +68,7 @@
             const string expected = "https://www.dls.nhs.uk/tracking/dlconsolidation?client=path";
 
             // Then
-            OldSystemEndpointHelper.GetConsolidationPathUrl(config, consolidationPath).Should().Be(expected);
+            SystemEndpointHelper.GetConsolidationPathUrl(config, consolidationPath).Should().Be(expected);
         }
     }
 }
