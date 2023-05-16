@@ -101,7 +101,8 @@
                 @$"{SelectSelfAssessmentSupervisorQuery}
                     WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @delegateUserId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL)
-                        AND (coalesce(sasr.ResultsReview, 1) = 1)",
+                        AND (coalesce(sasr.ResultsReview, 1) = 1)
+                        AND au.Active = 1",
                 new { selfAssessmentId, delegateUserId }
             );
         }
