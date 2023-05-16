@@ -43,9 +43,9 @@
 
             try
             {
-                if (Enum.TryParse<TrackerEndpointAction>(query.Action, true, out var action))
+                if (Enum.TryParse<TrackerEndpointAction>(query.Action.ToLower(), true, out var action))
                 {
-                    if (action == TrackerEndpointAction.GetObjectiveArray)
+                    if (action == TrackerEndpointAction.getobjectivearray)
                     {
                         var result = trackerActionService.GetObjectiveArray(
                             query.CustomisationId,
@@ -54,7 +54,7 @@
                         return ConvertToJsonString(result);
                     }
 
-                    if (action == TrackerEndpointAction.GetObjectiveArrayCc)
+                    if (action == TrackerEndpointAction.getobjectivearraycc)
                     {
                         var result = trackerActionService.GetObjectiveArrayCc(
                             query.CustomisationId,
@@ -64,7 +64,7 @@
                         return ConvertToJsonString(result);
                     }
 
-                    if (action == TrackerEndpointAction.StoreDiagnosticJson)
+                    if (action == TrackerEndpointAction.storediagnosticjson)
                     {
                         return trackerActionService.StoreDiagnosticJson(
                             query.ProgressId,
@@ -72,7 +72,7 @@
                         );
                     }
 
-                    if (action == TrackerEndpointAction.StoreAspProgressV2)
+                    if (action == TrackerEndpointAction.storeaspprogressv2)
                     {
                         return trackerActionService.StoreAspProgressV2(
                             query.ProgressId,
@@ -86,7 +86,7 @@
                         );
                     }
 
-                    if (action == TrackerEndpointAction.StoreAspProgressNoSession)
+                    if (action == TrackerEndpointAction.storeaspprogressnosession)
                     {
                         return trackerActionService.StoreAspProgressNoSession(
                             query.ProgressId,
@@ -101,7 +101,7 @@
                         );
                     }
 
-                    if (action == TrackerEndpointAction.StoreAspAssessNoSession)
+                    if (action == TrackerEndpointAction.storeaspassessnosession)
                     {
                         return trackerActionService.StoreAspAssessNoSession(
                             query.Version,
