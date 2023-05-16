@@ -12,6 +12,7 @@
         private IConfiguration config = null!;
 
         private const string BaseUrl = "https://example.com";
+        private const string AppRootPathUrl = "https://www.dls.nhs.uk/v2";
         private const int CustomisationId = 37545;
         private const int CentreId = 101;
         private const int SectionId = 3;
@@ -25,6 +26,7 @@
         {
             config = A.Fake<IConfiguration>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
+            A.CallTo(() => config["AppRootPath"]).Returns(AppRootPathUrl);
         }
 
         [Test]
@@ -250,7 +252,7 @@
             const int customisationId = 24861;
             var expectedHtmlUrl = "https://www.dls.nhs.uk/CMS/CMSContent/Course508/Section1904/Tutorials/Intro to Social Media/itspplayer.html"
                                 + "?CentreID=101&CustomisationID=24861&TutorialID=4&CandidateID=254480&Version=2&ProgressID=276837&type=learn"
-                                + $"&TrackURL={BaseUrl}/tracking/tracker";
+                                + $"&TrackURL={AppRootPathUrl}/tracking/tracker";
 
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(

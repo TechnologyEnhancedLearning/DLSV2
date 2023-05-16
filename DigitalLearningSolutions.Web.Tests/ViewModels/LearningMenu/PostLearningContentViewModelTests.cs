@@ -12,6 +12,7 @@
         private IConfiguration config = null!;
 
         private const string BaseUrl = "https://example.com";
+        private const string AppRootPathUrl = "https://www.dls.nhs.uk/v2";
         private const int CustomisationId = 5;
         private const int CentreId = 6;
         private const int SectionId = 7;
@@ -23,6 +24,7 @@
         {
             config = A.Fake<IConfiguration>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
+            A.CallTo(() => config["AppRootPath"]).Returns(AppRootPathUrl);
         }
 
         [Test]
@@ -148,7 +150,7 @@
             postLearningContentViewModel.ContentSource.Should().Be(
                 "https://www.dls.nhs.uk/CMS/CMSContent/Course120/PLAssess/03-PLA-Working-with-files/itspplayer.html" +
                 "?CentreID=6&CustomisationID=5&CandidateID=8&SectionID=7&Version=55&ProgressID=9" +
-                $"&type=pl&TrackURL={BaseUrl}/tracking/tracker&objlist=[1,2,3]&plathresh=77"
+                $"&type=pl&TrackURL={AppRootPathUrl}/tracking/tracker&objlist=[1,2,3]&plathresh=77"
             );
         }
 
