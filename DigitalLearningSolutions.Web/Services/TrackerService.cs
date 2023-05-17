@@ -79,7 +79,7 @@
                             query.Version,
                             sessionVariables[TrackerEndpointSessionVariable.LmGvSectionRow],
                             query.TutorialId,
-                            query.TutorialTime,
+                            Convert.ToInt32(query.TutorialTime),
                             query.TutorialStatus,
                             query.CandidateId,
                             query.CustomisationId
@@ -93,7 +93,7 @@
                             query.Version,
                             sessionVariables[TrackerEndpointSessionVariable.LmGvSectionRow],
                             query.TutorialId,
-                            query.TutorialTime,
+                            Convert.ToInt32(query.TutorialTime),
                             query.TutorialStatus,
                             query.CandidateId,
                             query.CustomisationId,

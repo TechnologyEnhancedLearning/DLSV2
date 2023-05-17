@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
@@ -28,7 +29,7 @@
             ProgressId = 101,
             Version = 1,
             TutorialId = 123,
-            TutorialTime = 2,
+            TutorialTime = 2.123,
             TutorialStatus = 3,
             CandidateId = 456,
             CustomisationId = 1,
@@ -211,7 +212,7 @@
                         query.Version!.Value,
                         DefaultProgressText,
                         query.TutorialId!.Value,
-                        query.TutorialTime!.Value,
+                        Convert.ToInt32(query.TutorialTime!.Value),
                         query.TutorialStatus!.Value,
                         query.CandidateId!.Value,
                         query.CustomisationId!.Value
@@ -254,7 +255,7 @@
                         query.Version!.Value,
                         DefaultProgressText,
                         query.TutorialId!.Value,
-                        query.TutorialTime!.Value,
+                        Convert.ToInt32(query.TutorialTime!.Value),
                         query.TutorialStatus!.Value,
                         query.CandidateId!.Value,
                         query.CustomisationId!.Value,
