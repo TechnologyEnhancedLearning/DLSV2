@@ -8,7 +8,7 @@
     {
         public CompletedCourseViewModel(CompletedLearningItem course, IConfiguration config) : base(course)
         {
-            EvaluateUrl = OldSystemEndpointHelper.GetEvaluateUrl(config, course.ProgressID);
+            EvaluateUrl = SystemEndpointHelper.GetEvaluateUrl(config, course.ProgressID);
         }
 
         public string EvaluateUrl { get; }

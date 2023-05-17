@@ -30,7 +30,7 @@
 
             ContentSource = ContentViewerHelper.IsScormPath(postLearningContent.PostLearningAssessmentPath)
                 ? ContentViewerHelper.GetScormAssessmentSource(
-                    OldSystemEndpointHelper.GetScormPlayerUrl(config),
+                    SystemEndpointHelper.GetScormPlayerUrl(config),
                     centreId,
                     customisationId,
                     candidateId,
@@ -47,7 +47,7 @@
                     postLearningContent.Version,
                     progressId,
                     type,
-                    OldSystemEndpointHelper.GetTrackingUrl(config),
+                    SystemEndpointHelper.GetTrackingUrl(config),
                     postLearningContent.Tutorials,
                     postLearningContent.PassThreshold);
         }

@@ -51,7 +51,8 @@
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsActive),
                 new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsAdmin),
                 new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordSet),
-                new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegistered)
+                new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegistered),
+                new SearchableTagViewModel(AccountStatusFilterOptions.ClaimedVerifiedAccount)
             };
 
             // When
@@ -74,7 +75,8 @@
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsNotActive),
                 new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
                 new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordNotSet),
-                new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.RegisteredByCentre)
+                new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.RegisteredByCentre),
+                new SearchableTagViewModel(AccountStatusFilterOptions.ClaimedVerifiedAccount)
             };
 
             // When
@@ -98,7 +100,8 @@
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsNotActive),
                 new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
                 new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordNotSet),
-                new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegisteredExternal)
+                new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegisteredExternal),
+                new SearchableTagViewModel(AccountStatusFilterOptions.ClaimedVerifiedAccount)
             };
 
             // When

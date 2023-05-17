@@ -35,8 +35,10 @@
                 cd.HasBeenPromptedForPrn,
                 cd.ProfessionalRegistrationNumber,
                 cd.HasDismissedLhLoginWarning,
-                cd.ResetPasswordID
+                cd.ResetPasswordID,
+                da.RegistrationConfirmationHash
             FROM Candidates AS cd
+            INNER JOIN DelegateAccounts AS da ON da.UserID = cd.UserID
             INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID";
 
@@ -215,7 +217,7 @@
                 @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateId = @id",
                 new { id }
-            ).SingleOrDefault();
+            ).FirstOrDefault();
 
             return user;
         }

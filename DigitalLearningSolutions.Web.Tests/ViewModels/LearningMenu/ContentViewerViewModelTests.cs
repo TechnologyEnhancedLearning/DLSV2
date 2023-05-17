@@ -12,6 +12,7 @@
         private IConfiguration config = null!;
 
         private const string BaseUrl = "https://example.com";
+        private const string AppRootPathUrl = "https://www.dls.nhs.uk/v2";
         private const int CustomisationId = 37545;
         private const int CentreId = 101;
         private const int SectionId = 3;
@@ -25,6 +26,7 @@
         {
             config = A.Fake<IConfiguration>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
+            A.CallTo(() => config["AppRootPath"]).Returns(AppRootPathUrl);
         }
 
         [Test]

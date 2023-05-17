@@ -446,11 +446,12 @@
 
         public IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId)
         {
+            var adminFilter = adminId > 0 ? "AND c.UpdatedByAdminID = @adminId" : string.Empty;
             return connection.Query<FrameworkCompetency>(
                 $@"SELECT f.FrameworkName,c.Description,c.UpdatedByAdminID,c.Name from Competencies as c
                     INNER JOIN FrameworkCompetencies AS fc ON c.ID = fc.CompetencyID
                     INNER JOIN Frameworks AS f ON fc.FrameworkID = f.ID
-                    WHERE fc.FrameworkID = f.ID AND c.Name = @name AND c.UpdatedByAdminID = @adminId",
+                    WHERE fc.FrameworkID = f.ID AND c.Name = @name {adminFilter}",
                 new { name, adminId }
             );
         }

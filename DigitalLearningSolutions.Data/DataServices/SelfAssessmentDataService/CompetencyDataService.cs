@@ -400,17 +400,18 @@
                             AND [AssessmentQuestionID] = @assessmentQuestionId
                         ORDER BY DateTime DESC
 
-                        IF (@existentResultId IS NOT NULL AND @existentResult = @result)
+                        IF (@existentResultId IS NOT NULL AND ((@existentResult = @result) OR (@result IS NULL AND @existentResult IS NULL)))
                             BEGIN
                             UPDATE SelfAssessmentResults
                             SET [DateTime] = GETUTCDATE(),
                                 [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
                             END
-                        IF (@existentResultId IS NOT NULL AND (@existentResult <> @result OR @result IS NULL))
+                        IF (@existentResultId IS NOT NULL AND (@existentResult <> @result OR @result IS NULL OR @existentResult IS NULL))
                             BEGIN
                             UPDATE SelfAssessmentResults
-                            SET [Result] = @result, [DateTime]  = GETUTCDATE()
+                            SET [Result] = @result, [DateTime]  = GETUTCDATE(),
+                                [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
 
                             DELETE SARS FROM   SelfAssessmentResultSupervisorVerifications  sars

@@ -678,7 +678,7 @@
                new SearchOptions(searchString),
                new SortOptions(sortBy, sortDirection),
                null,
-               null//new PaginationOptions(page)
+               null
            );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
@@ -699,6 +699,7 @@
             return View("SelfAssessments/AddSupervisor", model);
         }
 
+        [NoCaching]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/GetAllSupervisors")]
         public IActionResult GetAllSupervisors(int selfAssessmentId)
         {
@@ -880,10 +881,6 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
         public IActionResult SetSupervisorRole(int selfAssessmentId, int? supervisorDelegateId)
         {
-            if (TempData[MultiPageFormDataFeature.AddNewSupervisor.TempDataKey] == null)
-            {
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Gone });
-            }
             TempData.Keep("SearchString");
             int? selfAssessmentSupervisorRoleId = null;
             string selfAssessmentName;
@@ -904,6 +901,7 @@
                 supervisorAdminId = sessionAddSupervisor.SupervisorAdminId;
                 selfAssessmentName = sessionAddSupervisor.SelfAssessmentName;
                 selfAssessmentSupervisorRoleId = sessionAddSupervisor.SelfAssessmentSupervisorRoleId;
+                ViewBag.AddNewSupervisor = true;
             }
             else
             {

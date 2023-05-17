@@ -213,6 +213,9 @@
                 new SearchableTagViewModel(
                     DelegateRegistrationTypeFilterOptions.FromRegistrationType(delegateUser.RegistrationType)
                 ),
+                delegateUser.IsYetToBeClaimed
+                    ? new SearchableTagViewModel(AccountStatusFilterOptions.UnclaimedUnverifiedAccount)
+                    : new SearchableTagViewModel(AccountStatusFilterOptions.ClaimedVerifiedAccount)
             };
         }
 

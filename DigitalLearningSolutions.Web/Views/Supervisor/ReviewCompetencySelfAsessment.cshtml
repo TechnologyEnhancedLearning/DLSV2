@@ -124,7 +124,11 @@
   {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
-        Comments
+          @(((Model.Competency.AssessmentQuestions.First().SignedOff == true && Model.Competency.AssessmentQuestions.First().Verified.HasValue)
+                || (Model.Competency.AssessmentQuestions.First().ResultId != null && Model.Competency.AssessmentQuestions.First().Verified == null && Model.Competency.AssessmentQuestions.First().Requested != null && Model.Competency.AssessmentQuestions.First().UserIsVerifier == false)
+                || (Model.Competency.AssessmentQuestions.First().Verified == null && Model.Competency.AssessmentQuestions.First().Requested != null)
+                    && (!String.IsNullOrEmpty(Model.DelegateSelfAssessment.ReviewerCommentsLabel)))
+                    ? Model.DelegateSelfAssessment.ReviewerCommentsLabel : "Comments")
       </dt>
       <dd class="nhsuk-summary-list__value">
         @Html.Raw(Model.Competency.AssessmentQuestions.First().SupportingComments)
@@ -153,7 +157,7 @@
     {
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Verification Requested
+          Confirmation requested date
         </dt>
         <dd class="nhsuk-summary-list__value">
           @{

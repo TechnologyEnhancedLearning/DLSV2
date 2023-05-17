@@ -37,7 +37,6 @@
             SelfReg = delegateEntity.DelegateAccount.SelfReg;
             ExternalReg = delegateEntity.DelegateAccount.ExternalReg;
             AdminId = delegateEntity.AdminId;
-            RegistrationConfirmationHash = delegateEntity.DelegateAccount.RegistrationConfirmationHash;
         }
 
         public bool SelfReg { get; set; }
@@ -45,6 +44,7 @@
         public int? AdminId { get; set; }
         public bool IsPasswordSet => !string.IsNullOrWhiteSpace(Password);
         public bool IsAdmin => AdminId.HasValue;
+        public bool IsYetToBeClaimed => RegistrationConfirmationHash != null;
 
         public RegistrationType RegistrationType => (SelfReg, ExternalReg) switch
         {
