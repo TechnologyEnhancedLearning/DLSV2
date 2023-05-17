@@ -1,4 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Newtonsoft.Json
 @model SearchableDelegateCourseStatisticsViewModel
 
 <div class="searchable-element nhsuk-panel card-with-buttons word-break status-@Model.Status" id="@Model.CustomisationId-card">
@@ -10,13 +12,15 @@
     </summary>
 
     <div class="nhsuk-details__text">
+
+      <code>@Html.Raw(JsonConvert.SerializeObject(Model.Tags))</code>
+
       <partial name="SearchablePage/_StatusTags" model="@Model.Tags" />
 
       <partial name="_CentreCourseCardDetails" model="@Model" />
 
       <input type="hidden" data-filter-value="@Model.HasAdminFieldsFilter" />
-      @if (Model.HasAdminFields)
-      {
+      @if (Model.HasAdminFields) {
         <partial name="_CentreCourseCardAdminFields" model="@Model" />
       }
     </div>
