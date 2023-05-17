@@ -217,7 +217,7 @@
                 @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateId = @id",
                 new { id }
-            ).SingleOrDefault();
+            ).FirstOrDefault();
 
             return user;
         }
