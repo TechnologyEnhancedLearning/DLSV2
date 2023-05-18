@@ -596,10 +596,6 @@
                 roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false)
                                                 .Select(d => d.DisplayText).ToList<string>();
             }
-            if (delegateAccount != null)
-            {
-                roles.Add("Delegate");
-            }
             return roles;
         }
         private void ValidateCentreEmailIsSameAsPrimary(MyAccountEditDetailsFormData formData)
