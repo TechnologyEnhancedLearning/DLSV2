@@ -46,6 +46,8 @@
             DateTime deliveryDate,
             string baseUrl
         );
+
+        Email GenerateDelegateWelcomeEmail(int delegateId, string baseUrl);
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -119,6 +121,17 @@
                 baseUrl
             );
             emailService.SendEmail(welcomeEmail);
+        }
+
+        public Email GenerateDelegateWelcomeEmail(int delegateId, string baseUrl)
+        {
+            var delegateEntity = userService.GetDelegateById(delegateId)!;
+            var welcomeEmail = GenerateWelcomeEmail(
+                delegateEntity,
+                delegateEntity.DelegateAccount.RegistrationConfirmationHash,
+                baseUrl
+            );
+            return welcomeEmail;
         }
 
         public void GenerateAndScheduleDelegateWelcomeEmail(

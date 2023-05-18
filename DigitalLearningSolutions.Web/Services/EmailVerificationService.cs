@@ -18,6 +18,13 @@
             List<string> unverifiedEmails,
             string baseUrl
         );
+
+        Email GenerateVerificationEmail(
+            UserAccount userAccount,
+            string emailVerificationHash,
+            string emailAddress,
+            string baseUrl
+        );
     }
 
     public class EmailVerificationService : IEmailVerificationService
@@ -68,7 +75,7 @@
             emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmails(userId, emailAddress, hashId);
         }
 
-        private static Email GenerateVerificationEmail(
+        public Email GenerateVerificationEmail(
             UserAccount userAccount,
             string emailVerificationHash,
             string emailAddress,

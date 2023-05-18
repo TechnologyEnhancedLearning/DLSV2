@@ -9,5 +9,6 @@
         public int CentreId { get; set; }
         public string? Email { get; set; }
         public DateTime? EmailVerified { get; set; }
+        public int? EmailVerificationHashID { get; set; }
     }
 }
