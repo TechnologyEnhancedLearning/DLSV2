@@ -84,7 +84,7 @@
             }
             if (isContentCreator)
             {
-                builder.TextBody += " Content Creator licence";
+                builder.TextBody += " Content creator licence";
                 builder.HtmlBody += "<li>Content Creator licence</li>";
             }
             if (isCmsAdmin)
