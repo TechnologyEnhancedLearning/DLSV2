@@ -143,7 +143,7 @@
       <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.Competency.AssessmentQuestions.First()" />
     </dd>
   </div>
-  @if (Model.Competency.AssessmentQuestions.First().SelfAssessmentResultSupervisorVerificationId != null && Model.Competency.AssessmentQuestions.First().Verified == null && !(bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
+  @if (Model.Competency.AssessmentQuestions.First().SelfAssessmentResultSupervisorVerificationId != null && Model.Competency.AssessmentQuestions.First().Verified == null)
   {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
