@@ -5,6 +5,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
 
     public partial class UserDataService
@@ -471,6 +472,16 @@
                             CentreId = @centreId
                         WHERE ID = @adminId",
             new { adminId, centreId });
+        }
+
+        public bool IsUserAlreadyAdminAtCentre(int adminId, int centreId)
+        {
+            return connection.QueryFirst<int>(
+                @$"SELECT COUNT(*)
+                     FROM AdminAccounts
+                     WHERE CentreId = @centreId AND ID = @adminId",
+                new { adminId, centreId }
+            ) > 0;
         }
     }
 
