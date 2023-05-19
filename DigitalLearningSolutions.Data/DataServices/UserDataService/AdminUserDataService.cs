@@ -5,7 +5,6 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
 
     public partial class UserDataService
