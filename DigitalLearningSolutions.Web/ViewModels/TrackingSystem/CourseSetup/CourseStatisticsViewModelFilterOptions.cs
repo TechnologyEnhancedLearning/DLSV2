@@ -14,7 +14,7 @@
         {
             CourseStatusFilterOptions.IsActive,
             CourseStatusFilterOptions.IsInactive,
-            //CourseStatusFilterOptions.NotActive,
+            CourseStatusFilterOptions.IsArchived,
         };
 
         private static readonly IEnumerable<FilterOptionModel> CourseVisibilityOptions = new[]
