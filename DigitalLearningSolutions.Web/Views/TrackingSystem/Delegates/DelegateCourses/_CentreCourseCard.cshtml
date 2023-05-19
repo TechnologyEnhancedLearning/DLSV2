@@ -1,5 +1,4 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model SearchableDelegateCourseStatisticsViewModel
 
 <div class="searchable-element nhsuk-panel card-with-buttons word-break status-@Model.Status" id="@Model.CustomisationId-card">
@@ -11,7 +10,6 @@
     </summary>
 
     <div class="nhsuk-details__text">
-
       <partial name="SearchablePage/_StatusTags" model="@Model.Tags" />
 
       <partial name="_CentreCourseCardDetails" model="@Model" />
