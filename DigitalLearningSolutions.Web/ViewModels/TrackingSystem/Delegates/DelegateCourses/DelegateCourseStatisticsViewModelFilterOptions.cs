@@ -14,8 +14,9 @@
         {
             CourseStatusFilterOptions.IsActive,
             CourseStatusFilterOptions.IsInactive,
+            //CourseStatusFilterOptions.NotActive,
         };
-
+    
         private static readonly IEnumerable<FilterOptionModel> CourseHasAdminFieldOptions = new[]
         {
             CourseHasAdminFieldsFilterOptions.HasAdminFields,

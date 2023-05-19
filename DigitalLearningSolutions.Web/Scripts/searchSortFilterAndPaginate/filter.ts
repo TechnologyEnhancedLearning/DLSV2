@@ -103,13 +103,28 @@ function newAppliedFilterFromFilter(filter: string): IAppliedFilter {
   };
 }
 
+const combinedNotActiveFilterValue = 'Status|NotActive|true';
+const notActiveFilterValue = 'Status|Active|false';
+const isArchivedFilterValue = 'Status|Archived|true';
+
 function filterElements(
   searchableElements: ISearchableElement[],
   appliedFilter: IAppliedFilter,
 ): ISearchableElement[] {
-  return searchableElements.filter(
-    (element) => doesElementMatchFilterValue(element, appliedFilter.filterValue),
-  );
+
+  if (appliedFilter.filterValue == combinedNotActiveFilterValue) {
+    const firstSearch = searchableElements.filter(
+      (element) => doesElementMatchFilterValue(element, notActiveFilterValue)
+    );
+    const secondSearch = searchableElements.filter(
+      (element) => doesElementMatchFilterValue(element, isArchivedFilterValue)
+    );
+    return firstSearch.concat(secondSearch);
+  } else {
+    return searchableElements.filter(
+      (element) => doesElementMatchFilterValue(element, appliedFilter.filterValue),
+    );
+  }
 }
 
 function appendNewFilterToExistingFilterString(filterSubmit: HTMLInputElement): string {

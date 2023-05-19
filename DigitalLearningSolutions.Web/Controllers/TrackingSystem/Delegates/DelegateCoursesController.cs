@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -63,6 +65,7 @@
             var categoryId = User.GetAdminCategoryId();
 
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
+            details.Courses = UpdateCoursesNotActiveStatus(details.Courses);
 
             var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
                 .GetFilterOptions(categoryId.HasValue ? new string[] { } : details.Categories, details.Topics).ToList();
@@ -130,6 +133,23 @@
                 FileHelper.GetContentTypeFromFileName(fileName),
                 fileName
             );
+        }
+
+        private static IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> UpdateCoursesNotActiveStatus(IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses)
+        {
+            foreach (var course in courses)
+            {
+                if (course.Archived || course.Active == false)
+                {
+                    course.NotActive = true;
+                }
+                else
+                {
+                    course.NotActive = false;
+                }
+            }
+
+            return courses;
         }
     }
 }
