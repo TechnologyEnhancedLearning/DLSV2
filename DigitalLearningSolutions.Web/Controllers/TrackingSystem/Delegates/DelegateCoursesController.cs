@@ -65,7 +65,7 @@
             var categoryId = User.GetAdminCategoryId();
 
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
-            details.Courses = UpdateCoursesNotActiveStatus(details.Courses);
+            var courses = UpdateCoursesNotActiveStatus(details.Courses);
 
             var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
                 .GetFilterOptions(categoryId.HasValue ? new string[] { } : details.Categories, details.Topics).ToList();
@@ -82,7 +82,7 @@
             );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
-                details.Courses,
+                courses,
                 searchSortPaginationOptions
             );
 
@@ -137,7 +137,9 @@
 
         private static IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> UpdateCoursesNotActiveStatus(IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses)
         {
-            foreach (var course in courses)
+            var updatedCourses = courses.ToList();
+
+            foreach (var course in updatedCourses)
             {
                 if (course.Archived || course.Active == false)
                 {
@@ -149,7 +151,7 @@
                 }
             }
 
-            return courses;
+            return updatedCourses;
         }
     }
 }
