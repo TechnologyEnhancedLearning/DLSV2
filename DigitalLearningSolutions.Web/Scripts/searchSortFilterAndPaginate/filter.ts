@@ -111,20 +111,18 @@ function filterElements(
   searchableElements: ISearchableElement[],
   appliedFilter: IAppliedFilter,
 ): ISearchableElement[] {
-
-  if (appliedFilter.filterValue == combinedNotActiveFilterValue) {
+  if (appliedFilter.filterValue === combinedNotActiveFilterValue) {
     const firstSearch = searchableElements.filter(
-      (element) => doesElementMatchFilterValue(element, notActiveFilterValue)
+      (element) => doesElementMatchFilterValue(element, notActiveFilterValue),
     );
     const secondSearch = searchableElements.filter(
-      (element) => doesElementMatchFilterValue(element, isArchivedFilterValue)
+      (element) => doesElementMatchFilterValue(element, isArchivedFilterValue),
     );
     return firstSearch.concat(secondSearch);
-  } else {
-    return searchableElements.filter(
-      (element) => doesElementMatchFilterValue(element, appliedFilter.filterValue),
-    );
   }
+  return searchableElements.filter(
+    (element) => doesElementMatchFilterValue(element, appliedFilter.filterValue),
+  );
 }
 
 function appendNewFilterToExistingFilterString(filterSubmit: HTMLInputElement): string {
