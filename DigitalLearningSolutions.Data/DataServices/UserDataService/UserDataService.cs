@@ -249,6 +249,7 @@
 
         int GetUserIdFromAdminId(int adminId);
         void UpdateAdminCentre(int adminId, int centreId);
+        bool IsUserAlreadyAdminAtCentre(int adminId, int centreId);
     }
 
     public partial class UserDataService : IUserDataService

@@ -86,17 +86,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///                &lt;div class=&quot;nhsuk-u-reading-width&quot;&gt;
-        ///
-        ///                    &lt;h1&gt;Cookie policy&lt;/h1&gt;
-        ///
-        ///                    &lt;h2&gt;What are cookies?&lt;/h2&gt;
-        ///                    &lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;/p&gt;
-        ///                    &lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;/p&gt;
-        ///                    &lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;/p&gt;
-        ///
-        ///             [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CookiePolicy {
             get {
@@ -117,7 +107,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@SingleStep bit
         ///AS
         ///BEGIN
-        ///	-- SET NOCOUNT ON added to prevent e [rest of string was truncated]&quot;;.
+        ///	-- SET NOCOUNT ON added  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs {
             get {
@@ -142,8 +132,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@Active as bit,
         ///	@ApplicationID as int,
         ///	@CentreID as int,
-        ///	@CustomisationName as nvarchar(250),
-        ///	@Passw [rest of string was truncated]&quot;;.
+        ///	@CustomisationName as nvarch [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_106_CreateOrAlterInsertCustomisation_V3 {
             get {
@@ -177,7 +166,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add the paramete [rest of string was truncated]&quot;;.
+        ///	-- Add t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_133_AdjustScoresForFilteredSP {
             get {
@@ -197,7 +186,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add the paramete [rest of string was truncated]&quot;;.
+        ///	-- Add t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_133_UnAdjustScoresForFilteredSP {
             get {
@@ -230,7 +219,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///BEGIN
         ///INSERT INTO @ResTable
         ///	SELECT CompetencyGroupID, [1] AS Confidence, [2] AS Relevance
-        ///FROM   (SELECT comp.CompetencyG [rest of string was truncated]&quot;;.
+        ///FROM    [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_153_DropFilteredFunctionTweak {
             get {
@@ -254,7 +243,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add the para [rest of string was truncated]&quot;;.
+        ///	 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_153_DropFilteredSPFixes {
             get {
@@ -510,7 +499,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 26/09/2022
         ///-- Description:	Returns active available customisations for centre v6 adds SelfAssessments.
         ///-- =============================================
-        ///CREATE OR ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilte [rest of string was truncated]&quot;;.
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsFo [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6 {
             get {
@@ -531,8 +520,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///        PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime);
         ///GO
         ///
-        ///ALTER TABLE Frameworks
-        ///    SET (S [rest of string was truncated]&quot;;.
+        ///ALTER TABLE Framework [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_AddSystemVersioning {
             get {
@@ -556,7 +544,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///DROP TABLE dbo.FrameworkCompetencyGroupsHistory;
         ///GO
         ///
-        ///-- Remove versioni [rest of string was truncated]&quot;;.
+        ///--  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_RemoveSystemVersioning {
             get {
@@ -675,8 +663,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 05/10/2020
         ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
         ///-- =============================================
-        ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]
-        /// [rest of string was truncated]&quot;;.
+        ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreF [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GetActiveAvailableV5 {
             get {
@@ -733,8 +720,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///-- Author:		Kevin Whittaker
         ///-- Create date: 24/01/2023
-        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
-        ///-- = [rest of string was truncated]&quot;;.
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for cate [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string td_1043_getactivitiesforenrolment {
             get {
@@ -774,7 +760,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///       dbo.DelegateAccounts.CentreID,
         ///       dbo.Users.FirstName,
         ///       dbo.Users.LastName,
-        ///       dbo.DelegateA [rest of string was truncated]&quot;;.
+        ///    [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string td_1131_alterviewcandidatesadduserid_down {
             get {
@@ -800,11 +786,77 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///       dbo.DelegateAccounts.CentreID,
         ///       dbo.Users.FirstName,
         ///       dbo.Users.LastName,
-        ///       dbo.DelegateA [rest of string was truncated]&quot;;.
+        ///    [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string td_1131_alterviewcandidatesadduserid_up {
             get {
                 return ResourceManager.GetString("td_1131_alterviewcandidatesadduserid_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications
+        ///--Add versioning in SelfAssessmentResultSupervisorVerifications table
+        ///ALTER TABLE SelfAssessmentResultSupervisorVerifications
+        ///    ADD
+        ///        SysStartTime DATETIME2 GENERATED ALWAYS AS ROW START HIDDEN
+        ///            CONSTRAINT DF_SelfAssessmentResultSupervisorVerifications_SysStart DEFAULT SYSUTCDATETIME()
+        ///      , SysEndTime DATETIME2 GENERATED ALWAYS AS ROW END HIDDEN
+        ///            CONSTRAINT DF_SelfAssessmentResultSupervisorVerif [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications {
+            get {
+                return ResourceManager.GetString("TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications
+        ///-- Remove versioning from SelfAssessmentResultSupervisorVerifications table
+        ///ALTER TABLE SelfAssessmentResultSupervisorVerifications SET (SYSTEM_VERSIONING = OFF);
+        ///ALTER TABLE SelfAssessmentResultSupervisorVerifications DROP PERIOD FOR SYSTEM_TIME;
+        ///ALTER TABLE [dbo].SelfAssessmentResultSupervisorVerifications DROP CONSTRAINT [DF_SelfAssessmentResultSupervisorVerifications_SysEnd];
+        ///ALTER TABLE [dbo].SelfAssessmentResultSupervisorVe [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications {
+            get {
+                return ResourceManager.GetString("TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 22/05/2023 07:50:40 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ============= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_1610_update_getactivitiesfordelegateenrolment_proc_down {
+            get {
+                return ResourceManager.GetString("td_1610_update_getactivitiesfordelegateenrolment_proc_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 19/05/2023 16:40:12 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ============= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string td_1610_update_getactivitiesfordelegateenrolment_proc_up {
+            get {
+                return ResourceManager.GetString("td_1610_update_getactivitiesfordelegateenrolment_proc_up", resourceCulture);
             }
         }
         
@@ -824,7 +876,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER VIEW [dbo].[AdminUsers] AS
         ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
         ///       null                                    AS Login,
-        ///       dbo.Users.PasswordHash               [rest of string was truncated]&quot;;.
+        ///       dbo.Users.PasswordHas [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string td_264_alterviewadminusersaddcentrename_down {
             get {
@@ -848,7 +900,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER VIEW [dbo].[AdminUsers] AS
         ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
         ///       null                                    AS Login,
-        ///       dbo.Users.PasswordHash               [rest of string was truncated]&quot;;.
+        ///       dbo.Users.PasswordHas [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string td_264_alterviewadminusersaddcentrename_up {
             get {
@@ -959,39 +1011,6 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string UAR_859_PopulateUsersTableFromAccountsTables_DOWN {
             get {
                 return ResourceManager.GetString("UAR_859_PopulateUsersTableFromAccountsTables_DOWN", resourceCulture);
-            }
-        }
-        /// <summary>
-        ///   Looks up a localized string similar to --TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications
-        ///--Add versioning in SelfAssessmentResultSupervisorVerifications table
-        ///ALTER TABLE SelfAssessmentResultSupervisorVerifications
-        ///    ADD
-        ///        SysStartTime DATETIME2 GENERATED ALWAYS AS ROW START HIDDEN
-        ///            CONSTRAINT DF_SelfAssessmentResultSupervisorVerifications_SysStart DEFAULT SYSUTCDATETIME()
-        ///      , SysEndTime DATETIME2 GENERATED ALWAYS AS ROW END HIDDEN
-        ///            CONSTRAINT DF_SelfAssessmentResultSupervisorVerif [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications
-        {
-            get
-            {
-                return ResourceManager.GetString("TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to --TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications
-        ///-- Remove versioning from SelfAssessmentResultSupervisorVerifications table
-        ///ALTER TABLE SelfAssessmentResultSupervisorVerifications SET (SYSTEM_VERSIONING = OFF);
-        ///ALTER TABLE SelfAssessmentResultSupervisorVerifications DROP PERIOD FOR SYSTEM_TIME;
-        ///ALTER TABLE [dbo].SelfAssessmentResultSupervisorVerifications DROP CONSTRAINT [DF_SelfAssessmentResultSupervisorVerifications_SysEnd];
-        ///ALTER TABLE [dbo].SelfAssessmentResultSupervisorVe [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications
-        {
-            get
-            {
-                return ResourceManager.GetString("TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications", resourceCulture);
             }
         }
     }

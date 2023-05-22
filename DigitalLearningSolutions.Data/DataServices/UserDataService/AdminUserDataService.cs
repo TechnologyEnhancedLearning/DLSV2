@@ -327,7 +327,7 @@
             }
 
             string BaseSelectQuery = $@"SELECT aa.ID, aa.UserID, aa.CentreID, aa.Active, aa.IsCentreAdmin, aa.IsReportsViewer, aa.IsSuperAdmin, aa.IsCentreManager, 
-		                                aa.IsContentManager, aa.IsContentCreator, aa.IsSupervisor, aa.IsTrainer, aa.CategoryID, aa.IsFrameworkDeveloper, aa.IsFrameworkContributor, 
+		                                aa.IsContentManager, aa.IsContentCreator, aa.IsSupervisor, aa.IsTrainer, aa.CategoryID, aa.IsFrameworkDeveloper, aa.IsFrameworkContributor,aa.ImportOnly,
 		                                aa.IsWorkforceManager, aa.IsWorkforceContributor, aa.IsLocalWorkforceManager, aa.IsNominatedSupervisor,
 		                                u.ID, u.PrimaryEmail, u.FirstName, u.LastName, u.Active, u.FailedLoginCount,
 		                                c.CentreID, c.CentreName,
@@ -471,6 +471,16 @@
                             CentreId = @centreId
                         WHERE ID = @adminId",
             new { adminId, centreId });
+        }
+
+        public bool IsUserAlreadyAdminAtCentre(int adminId, int centreId)
+        {
+            return connection.QueryFirst<int>(
+                @$"SELECT COUNT(*)
+                     FROM AdminAccounts
+                     WHERE CentreId = @centreId AND ID = @adminId",
+                new { adminId, centreId }
+            ) > 0;
         }
     }
 
