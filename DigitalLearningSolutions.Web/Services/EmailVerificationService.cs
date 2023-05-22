@@ -95,8 +95,7 @@
 
             var body = new BodyBuilder
             {
-                TextBody = $@"Dear {userAccount.FullName},
-                            Please click the following link to verify your email address for Digital Learning Solutions: {verifyEmailUrl.Uri}",
+                TextBody = $@"Dear {userAccount.FullName},%0D Please click the following link to verify your email address for Digital Learning Solutions: {verifyEmailUrl.Uri}",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {userAccount.FullName},</p>
                                 <p>Please <a href=""{verifyEmailUrl.Uri}"">click here to verify your email address for Digital Learning Solutions</a></p>
