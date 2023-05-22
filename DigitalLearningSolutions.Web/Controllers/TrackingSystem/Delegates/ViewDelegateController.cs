@@ -16,7 +16,6 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
-    using Microsoft.VisualBasic;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -83,7 +82,7 @@
             if ((model.DelegateInfo?.IsActive ?? false) && (model.DelegateInfo.RegistrationConfirmationHash != null))
             {
                Email welcomeEmail = passwordResetService.GenerateDelegateWelcomeEmail(delegateId, baseUrl);
-                model.WelcomeEmail = "mailto:"+Strings.Join(welcomeEmail.To,",")+"?subject="+welcomeEmail.Subject+"&body="+welcomeEmail.Body.TextBody.Replace("&", "%26");
+                model.WelcomeEmail = "mailto:" + string.Join(",",welcomeEmail.To) + "?subject=" + welcomeEmail.Subject + "&body=" +welcomeEmail.Body.TextBody.Replace("&", "%26");
             }
             if (delegateEntity.UserCentreDetails?.EmailVerificationHashID != null)
             {
@@ -91,7 +90,7 @@
                 
                 string emailVerificationHash = emailVerificationDataService.GetEmailVerificationHashById(delegateEntity.UserCentreDetails.EmailVerificationHashID ?? 0);
                Email verificationEmail = emailVerificationService.GenerateVerificationEmail(userEntity.UserAccount, emailVerificationHash, delegateEntity.UserCentreDetails.Email, baseUrl);
-                model.VerificationEmail = "mailto:" + Strings.Join(verificationEmail.To, ",") + "?subject=" + verificationEmail.Subject + "&body=" + verificationEmail.Body.TextBody.Replace("&", "%26");
+                model.VerificationEmail = "mailto:" + string.Join(",", verificationEmail.To) + "?subject=" + verificationEmail.Subject + "&body=" + verificationEmail.Body.TextBody.Replace("&", "%26");
             }
             return View(model);
         }
