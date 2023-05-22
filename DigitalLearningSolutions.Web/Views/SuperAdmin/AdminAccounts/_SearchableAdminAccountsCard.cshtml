@@ -27,34 +27,27 @@
                     <dt class="nhsuk-summary-list__key">
                         Admin ID
                     </dt>
-                    <dd class="nhsuk-summary-list__value nhsuk-u-width-full">
-                        <div class="nhsuk-grid-row">
-                            <div class="nhsuk-grid-column-one-third nhsuk-u-one-third">
-                                <span class="nhsuk-u-margin-right-4">
-                                    @Model.Id
-                                </span>
-                            </div>
-                            <div class="nhsuk-grid-column-one-third nhsuk-u-one-third">
-                                <span class="complete">
-                                    <partial name="_StatusTag" model="@Model.IsAdminActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
-                                </span>
-                            </div>
-
-                            <div class="nhsuk-grid-column-one-third nhsuk-u-one-third">
-                                @if (!Model.IsAdminActive)
-                                {
-                                    <a class="nhsuk-u-float-right" asp-controller="AdminAccounts" asp-action="UpdateAdminStatus" asp-route-adminId="@Model.Id" asp-route-actionType="Reactivate">
-                                        Reactivate
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a class="nhsuk-u-float-right" asp-controller="AdminAccounts" asp-action="UpdateAdminStatus" asp-route-adminId="@Model.Id" asp-route-actionType="Inactivate">
-                                        Inactivate
-                                    </a>
-                                }
-                            </div>
-                        </div>
+                    <dd class="nhsuk-summary-list__value">
+                        <span class="nhsuk-u-margin-right-4">
+                            @Model.Id
+                        </span>
+                        <span class="complete">
+                            <partial name="_StatusTag" model="@Model.IsAdminActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
+                        </span>
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                        @if (!Model.IsAdminActive)
+                        {
+                            <a class="nhsuk-u-float-right" asp-controller="AdminAccounts" asp-action="UpdateAdminStatus" asp-route-adminId="@Model.Id" asp-route-actionType="Reactivate">
+                                Reactivate
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="nhsuk-u-float-right" asp-controller="AdminAccounts" asp-action="UpdateAdminStatus" asp-route-adminId="@Model.Id" asp-route-actionType="Inactivate">
+                                Inactivate
+                            </a>
+                        }
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row">
@@ -85,50 +78,36 @@
                     <dt class="nhsuk-summary-list__key">
                         User Account
                     </dt>
-                    <dd class="nhsuk-summary-list__value nhsuk-u-width-full">
-                        <div class="nhsuk-grid-row">
-                            <div class="nhsuk-grid-column-one-third nhsuk-u-one-third">
-                                <span class="nhsuk-u-margin-right-4">
-                                    ID: @Model.UserAccountID
-                                </span>
-                            </div>
-                            <div class="nhsuk-grid-column-one-third nhsuk-u-one-third">
-                                <span class="nhsuk-u-margin-right-1">
-                                    <partial name="_StatusTag" model="@Model.IsUserActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
-                                    @if (Model.IsLocked)
-                                    {
-                                        <partial name="_StatusTag" model="(int)UserCard.Locked" />
-                                    }
-                                </span>
-                            </div>
-                            <div class="nhsuk-grid-column-one-third nhsuk-u-one-third ">
-                                <a class="nhsuk-u-float-right nhsuk-u-margin-left-5" asp-controller="Users" asp-action="Index" asp-route-UserId="@Model.UserAccountID">View</a>
-                                @if (Model.IsLocked)
-                                {
-                                    <a class="nhsuk-u-float-right" asp-controller="Users" asp-action="UnlockAccount" asp-route-UserId="@Model.UserAccountID" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Unlock</a>
-                                }
-                                
-                            </div>
-                        </div>
+                    <dd class="nhsuk-summary-list__value">
+                        <span class="nhsuk-u-margin-right-4">
+                            ID: @Model.UserAccountID
+                        </span>
+                        <span class="nhsuk-u-margin-right-4">
+                            <partial name="_StatusTag" model="@Model.IsUserActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
+                        </span>
+                        @if (Model.IsLocked)
+                        {
+                            <span>
+                                <partial name="_StatusTag" model="(int)UserCard.Locked" />
+                            </span>
+                        }
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                        @if (Model.IsLocked)
+                        {
+                            <a asp-controller="Users" asp-action="UnlockAccount" asp-route-UserId="@Model.UserAccountID" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Unlock</a>
+                        }
+                        <a asp-controller="Users" asp-action="Index" asp-route-UserId="@Model.UserAccountID" class="nhsuk-u-margin-left-2">View</a>
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
                         Centre
                     </dt>
-                    <dd class="nhsuk-summary-list__value  nhsuk-u-width-full">
-                        <div class="nhsuk-grid-row">
-                            <div class="nhsuk-grid-column-two-thirds nhsuk-u-width-two-thirds">
-                                <span class="nhsuk-u-margin-right-4">
-                                    @Model.Centre
-                                </span>
-                            </div>
-                            <div class="nhsuk-grid-column-one-third nhsuk-u-width-one-third">
-                                <a class="nhsuk-u-float-right" asp-controller="AdminAccounts" asp-action="EditCentre" asp-route-adminId="@Model.Id" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Change</a>
-                            </div>
-                        </div>
+                    <partial name="_SummaryFieldValue" model="@Model.Centre" />
+                    <dd class="nhsuk-summary-list__actions">
+                        <a asp-controller="AdminAccounts" asp-action="EditCentre" asp-route-adminId="@Model.Id" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Change</a>
                     </dd>
-
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
