@@ -1,9 +1,13 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Administrators
 @model EditCentreViewModel
 @{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Change Administrator Centre";
 }
-
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CentreId) })" />
+}
 <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 @section NavBreadcrumbs {
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -34,7 +38,7 @@
                         select-list-options="@ViewBag.Centres" />
 
 
-        <button class="nhsuk-button nhsuk-u-margin-top-2" type="submit" value="save">Submit</button>
+        <button class="nhsuk-button nhsuk-u-margin-top-2" type="submit" value="save">Save</button>
     </form>
 </div>
 <div class="nhsuk-back-link">

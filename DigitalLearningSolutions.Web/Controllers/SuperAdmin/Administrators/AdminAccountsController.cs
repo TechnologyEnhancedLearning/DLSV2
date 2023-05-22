@@ -390,6 +390,11 @@
                 model.Page = Convert.ToInt16(TempData["Page"]);
             }
             TempData["AdminId"] = adminId;
+            if (TempData["CentreId"] != null)
+            {
+                ModelState.AddModelError("CentreId", "User is already admin for the centre.");
+                TempData.Remove("CentreId");
+            }
             return View(model);
         }
         [HttpPost]
@@ -397,8 +402,16 @@
         public IActionResult EditCentre(int adminId, int centreId)
         {
             TempData["AdminId"] = adminId;
-            userDataService.UpdateAdminCentre(adminId, centreId);
-            return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
+            if (userDataService.IsUserAlreadyAdminAtCentre(adminId, centreId))
+            {
+                userDataService.UpdateAdminCentre(adminId, centreId);
+                return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
+            }
+            else
+            {
+                TempData["CentreId"] = centreId;
+                return RedirectToAction("EditCentre", "AdminAccounts", new { AdminId = adminId });
+            }
         }
     }
 }
