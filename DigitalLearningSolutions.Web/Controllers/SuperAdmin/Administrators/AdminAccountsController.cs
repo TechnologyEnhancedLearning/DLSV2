@@ -413,5 +413,10 @@
                 return RedirectToAction("EditCentre", "AdminAccounts", new { AdminId = adminId });
             }
         }
+
+        public IActionResult RedirectToUser(int UserId) {
+            TempData["UserId"] = UserId;
+            return RedirectToAction("Index", "Users",new { UserId = UserId });
+        }
     }
 }
