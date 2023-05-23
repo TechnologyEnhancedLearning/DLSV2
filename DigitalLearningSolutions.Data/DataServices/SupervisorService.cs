@@ -647,7 +647,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId)
         {
             return connection.Query<SelfAssessmentSupervisorRole>(
-               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
+               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview,
+                    AllowLearnerRoleSelection, AllowSupervisorRoleSelection
                   FROM   SelfAssessmentSupervisorRoles
                   WHERE (SelfAssessmentID = @selfAssessmentId)
                   ORDER BY RoleName", new { selfAssessmentId }
@@ -656,7 +657,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SelfAssessmentSupervisorRole> GetDelegateNominatableSupervisorRolesForSelfAssessment(int selfAssessmentId)
         {
             return connection.Query<SelfAssessmentSupervisorRole>(
-               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
+               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview,
+                    AllowLearnerRoleSelection, AllowSupervisorRoleSelection
                   FROM   SelfAssessmentSupervisorRoles
                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (AllowDelegateNomination = 1)
                   ORDER BY RoleName", new { selfAssessmentId }

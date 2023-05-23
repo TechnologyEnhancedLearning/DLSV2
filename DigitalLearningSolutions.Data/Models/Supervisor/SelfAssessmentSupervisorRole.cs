@@ -12,5 +12,7 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
         public string? RoleDescription { get; set; }
         public bool SelfAssessmentReview { get; set; }
         public bool ResultsReview { get; set; }
+        public bool AllowLearnerRoleSelection { get; set; }
+        public bool AllowSupervisorRoleSelection { get; set; }
     }
 }
