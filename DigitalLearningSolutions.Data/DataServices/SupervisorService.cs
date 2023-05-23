@@ -1038,7 +1038,7 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
 	                    AND (NOT (sar1.SupportingComments IS NULL)) 
 	                    AND (sasrv.SignedOff = 1)
                     GROUP BY Users.FirstName, Users.LastName, Users.PrimaryEmail, caoc1.CandidateAssessmentID, ca1.ID,Users.Active 
-                    ORDER BY AdminUsers.Surname, AdminUsers.Forename", new { candidateAssessmentId });
+                    ORDER BY Users.LastName, Users.FirstName", new { candidateAssessmentId });
         }
 
         public int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId, string delegateEmail, int centreId)
