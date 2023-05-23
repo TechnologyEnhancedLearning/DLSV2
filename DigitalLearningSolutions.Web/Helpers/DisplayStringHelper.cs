@@ -58,7 +58,7 @@
         public static string? GetPotentiallyInactiveAdminName(string? firstName, string? lastName, bool? active)
         {
             return !string.IsNullOrEmpty(lastName)
-                ? GetNonSortableFullNameForDisplayOnly(firstName, lastName) + (active == true ? "" : "(inactive)")
+                 ? GetNonSortableFullNameForDisplayOnly(firstName, lastName) + (active == true ? "" : " (inactive)")
                 : null;
         }
 
