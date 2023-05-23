@@ -14,6 +14,8 @@
         void UpdateEmailVerificationHashIdForCentreEmails(int userId, string? emailAddress, int hashId);
 
         bool AccountEmailIsVerifiedForUser(int userId, string? email);
+
+        string? GetEmailVerificationHashById(int id);
     }
 
     public class EmailVerificationDataService : IEmailVerificationDataService
@@ -69,6 +71,14 @@
             ).Any(date => date != null);
 
             return isEmailVerifiedAsPrimaryEmail || isEmailVerifiedAsCentreEmail;
+        }
+
+        public string? GetEmailVerificationHashById(int id)
+        {
+            return connection.QuerySingleOrDefault<string?>(
+                @"SELECT EmailVerificationHash FROM EmailVerificationHashes WHERE ID = @id",
+                new { id }
+            );
         }
     }
 }

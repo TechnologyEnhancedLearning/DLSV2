@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -32,5 +33,7 @@
         public DelegateInfoViewModel DelegateInfo { get; set; }
         public IEnumerable<DelegateCourseInfoViewModel> DelegateCourses { get; set; }
         public IEnumerable<SearchableTagViewModel> Tags { get; set; }
+        public string? WelcomeEmail { get; set; }
+        public string? VerificationEmail { get; set; }
     }
 }

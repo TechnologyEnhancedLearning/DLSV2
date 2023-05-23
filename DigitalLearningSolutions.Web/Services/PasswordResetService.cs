@@ -46,6 +46,8 @@
             DateTime deliveryDate,
             string baseUrl
         );
+
+        Email GenerateDelegateWelcomeEmail(int delegateId, string baseUrl);
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -119,6 +121,17 @@
                 baseUrl
             );
             emailService.SendEmail(welcomeEmail);
+        }
+
+        public Email GenerateDelegateWelcomeEmail(int delegateId, string baseUrl)
+        {
+            var delegateEntity = userService.GetDelegateById(delegateId)!;
+            var welcomeEmail = GenerateWelcomeEmail(
+                delegateEntity,
+                delegateEntity.DelegateAccount.RegistrationConfirmationHash,
+                baseUrl
+            );
+            return welcomeEmail;
         }
 
         public void GenerateAndScheduleDelegateWelcomeEmail(
@@ -276,12 +289,7 @@
 
             var body = new BodyBuilder
             {
-                TextBody = $@"Dear {delegateEntity.UserAccount.FullName},
-                            An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.
-                            You have been assigned the unique DLS delegate number {delegateEntity.DelegateAccount.CandidateNumber}.
-                            To complete your registration and access your Digital Learning Solutions content, please click: {completeRegistrationUrl.Uri}
-                            Note that this link can only be used once and it will expire in three days.
-                            Please don't reply to this email as it has been automatically generated.",
+                TextBody = $@"Dear {delegateEntity.UserAccount.FullName},%0D%0DAn administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.%0D%0DYou have been assigned the unique DLS delegate number {delegateEntity.DelegateAccount.CandidateNumber}.%0D%0DTo complete your registration and access your Digital Learning Solutions content, please click: {completeRegistrationUrl.Uri}%0D%0DNote that this link can only be used once and it will expire in three days.%0D%0DPlease don't reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {delegateEntity.UserAccount.FullName},</p>
                                 <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.</p>
@@ -291,7 +299,6 @@
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
                             </body>",
             };
-
             return new Email(emailSubject, body, emailAddress);
         }
     }
