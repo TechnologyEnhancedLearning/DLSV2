@@ -289,7 +289,7 @@
 
             var body = new BodyBuilder
             {
-                TextBody = $@"Dear {delegateEntity.UserAccount.FullName},%0D An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.%0D You have been assigned the unique DLS delegate number{delegateEntity.DelegateAccount.CandidateNumber}.%0D To complete your registration and access your Digital Learning Solutions content, please click: {completeRegistrationUrl.Uri}%0D Note that this link can only be used once and it will expire in three days.%0D Please don't reply to this email as it has been automatically generated.",
+                TextBody = $@"Dear {delegateEntity.UserAccount.FullName},%0D%0DAn administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.%0D%0DYou have been assigned the unique DLS delegate number{delegateEntity.DelegateAccount.CandidateNumber}.%0D%0DTo complete your registration and access your Digital Learning Solutions content, please click: {completeRegistrationUrl.Uri}%0D%0DNote that this link can only be used once and it will expire in three days.%0D%0DPlease don't reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {delegateEntity.UserAccount.FullName},</p>
                                 <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.</p>
