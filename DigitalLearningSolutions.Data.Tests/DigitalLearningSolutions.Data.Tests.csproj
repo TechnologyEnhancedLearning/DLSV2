@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\Sherif.Olaboye\Source\Repos\DLSV2\StyleCop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="TestData\ActivityDataDownloadTest.xlsx" />
     <None Remove="TestData\CourseDelegateExportAllDataDownloadTest.xlsx" />
     <None Remove="TestData\CourseDelegateExportCurrentDataDownloadTest.xlsx" />

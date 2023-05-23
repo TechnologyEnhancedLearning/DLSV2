@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\Sherif.Olaboye\Source\Repos\DLSV2\StyleCop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="6.0.1" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="FluentAssertions.AspNetCore.Mvc" Version="3.2.0" />

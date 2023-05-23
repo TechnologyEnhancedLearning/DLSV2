@@ -16,6 +16,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <AdditionalFiles Remove="C:\Users\Sherif.Olaboye\Source\Repos\DLSV2\StyleCop.json" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Content Remove="wwwroot\README.txt" />
     </ItemGroup>
 
