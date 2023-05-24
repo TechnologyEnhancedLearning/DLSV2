@@ -473,13 +473,13 @@
             new { adminId, centreId });
         }
 
-        public bool IsUserAlreadyAdminAtCentre(int adminId, int centreId)
+        public bool IsUserAlreadyAdminAtCentre(int? userId, int centreId)
         {
             return connection.QueryFirst<int>(
                 @$"SELECT COUNT(*)
                      FROM AdminAccounts
-                     WHERE CentreId = @centreId AND ID = @adminId",
-                new { adminId, centreId }
+                     WHERE CentreId = @centreId AND UserID = @userId",
+                new { userId, centreId }
             ) > 0;
         }
     }

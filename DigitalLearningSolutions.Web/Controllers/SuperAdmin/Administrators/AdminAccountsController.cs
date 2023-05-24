@@ -402,15 +402,16 @@
         public IActionResult EditCentre(int adminId, int centreId)
         {
             TempData["AdminId"] = adminId;
-            if (userDataService.IsUserAlreadyAdminAtCentre(adminId, centreId))
-            {
-                userDataService.UpdateAdminCentre(adminId, centreId);
-                return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
-            }
-            else
+            int? userId = userDataService.GetUserIdByAdminId(adminId);
+            if (userDataService.IsUserAlreadyAdminAtCentre(userId, centreId))
             {
                 TempData["CentreId"] = centreId;
                 return RedirectToAction("EditCentre", "AdminAccounts", new { AdminId = adminId });
+            }
+            else
+            {
+                userDataService.UpdateAdminCentre(adminId, centreId);
+                return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
             }
         }
 
