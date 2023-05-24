@@ -1,9 +1,9 @@
-﻿@import 'swatches.scss';
+﻿@use "nhsuk-frontend/packages/core/all" as *;
 
 .nhsuk-width-container--feedback {
   @extend .nhsuk-width-container;
-  background-color: $nhsuk-lightgrey;
-  border-bottom: 1px solid $nhsuk-midgrey;
+  background-color: $color_nhsuk-grey-5;
+  border-bottom: 1px solid $color_nhsuk-grey-4;
   min-width: 100% !important;
   max-width: 100% !important;
   display: flex;
@@ -14,44 +14,23 @@
 }
 
 .feedback-bar {
-  background-color: $nhsuk-lightgrey;
+  background-color: $color_nhsuk-grey-5;
 }
 
 .feedback-button-inline {
   padding: 0px 8px 0px 8px;
   margin: 8px 10px 8px 0;
-  background-color: $nhsuk-darkblue;
+  background-color: $color_nhsuk-blue;
   box-shadow: none;
-  /*display: inline-block;*/
   vertical-align: middle;
   border-radius: 0px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-/*  padding: 10px 20px;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 5px;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  text-decoration: none;
-  outline: none;
-*/
-
-
 }
 
-
-
 .feedback-chevron {
-  color: $nhsuk-white !important;
-  fill: $nhsuk-white !important;
-  border: 2px solid hotpintk
-/*  width: 20px;
-  height: 20px;
-  margin-right: 5px;
-*/
-
+  color: $color_nhsuk-white !important;
+  fill: $color_nhsuk-white !important;
+  border: 2px solid hotpink
 }

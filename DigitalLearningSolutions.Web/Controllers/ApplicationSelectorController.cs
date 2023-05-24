@@ -18,7 +18,6 @@
         {
             var learningPortalAccess = User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;
             var trackingSystemAccess = User.HasCentreAdminPermissions();
-
             var contentManagementSystemAccess =
                 User.GetCustomClaimAsBool(CustomClaimTypes.UserAuthenticatedCm) ?? false;
             var superviseAccess = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) | User.GetCustomClaimAsBool(CustomClaimTypes.IsNominatedSupervisor) ?? false;
