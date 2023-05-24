@@ -97,7 +97,7 @@
                         {
                             <a asp-controller="Users" asp-action="UnlockAccount" asp-route-UserId="@Model.UserAccountID" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Unlock</a>
                         }
-                        <a asp-controller="Users" asp-action="Index" asp-route-UserId="@Model.UserAccountID" class="nhsuk-u-margin-left-2">View</a>
+                        <a asp-controller="AdminAccounts" asp-action="RedirectToUser" asp-route-UserId="@Model.UserAccountID" class="nhsuk-u-margin-left-2">View</a>
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">

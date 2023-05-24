@@ -344,5 +344,11 @@
             TempData["UserId"] = userId;
             return RedirectToAction("Index", "Users", new { UserId = userId });
         }
+
+        public IActionResult RedirectToAdmin(int AdminId)
+        {
+            TempData["AdminId"] = AdminId;
+            return RedirectToAction("Index", "AdminAccounts", new { AdminId = AdminId });
+        }
     }
 }

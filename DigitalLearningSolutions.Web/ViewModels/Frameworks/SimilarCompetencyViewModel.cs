@@ -12,6 +12,8 @@
         public int FrameworkCompetencyId { get; set; }
         public string FrameworkConfig { get; set; }
         public IEnumerable<FrameworkCompetency> SameCompetency { get; set; }
+        public string selectedFlagIds { get; set; }
+
         public string VocabSingular()
         {
             return FrameworkVocabularyHelper.VocabularySingular(FrameworkConfig);
