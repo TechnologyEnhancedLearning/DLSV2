@@ -1004,7 +1004,7 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
                     INNER JOIN SupervisorDelegates sd
 	                    ON CandidateAssessmentSupervisors.SupervisorDelegateId = sd.ID 
                     INNER JOIN Users 
-	                    ON sd.SupervisorAdminID = Users.ID 
+	                    ON sd.DelegateUserID = Users.ID 
                     RIGHT OUTER JOIN SelfAssessmentStructure AS sas1 
                     INNER JOIN CandidateAssessments AS ca1 
 	                    ON sas1.SelfAssessmentID = ca1.SelfAssessmentID 
