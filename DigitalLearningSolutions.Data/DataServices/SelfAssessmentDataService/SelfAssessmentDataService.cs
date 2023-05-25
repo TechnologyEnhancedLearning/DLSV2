@@ -88,8 +88,6 @@
         // SelfAssessmentSupervisorDataService
         SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int delegateUserId);
 
-        IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int delegateUserId);
-
         IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int delegateUserId);
 
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(

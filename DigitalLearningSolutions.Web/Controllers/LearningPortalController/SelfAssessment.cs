@@ -64,7 +64,7 @@
 
             selfAssessmentService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
-            var supervisors = selfAssessmentService.GetSupervisorsForSelfAssessmentId(
+            var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(
                 selfAssessmentId,
                 delegateUserId
             ).ToList();

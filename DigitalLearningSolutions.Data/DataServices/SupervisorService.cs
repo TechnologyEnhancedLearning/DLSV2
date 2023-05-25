@@ -409,6 +409,18 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 );
                 return false;
             }
+
+            var numberOfAffectedRowsCAS = connection.Execute(
+         @"UPDATE CandidateAssessmentSupervisors SET Removed = getUTCDate()
+            WHERE SupervisorDelegateId = @supervisorDelegateId AND Removed IS NULL",
+        new { supervisorDelegateId });
+            if (numberOfAffectedRowsCAS < 1)
+            {
+                logger.LogWarning(
+                    $"Not removing CandidateAssessmentSupervisors as db update failed. supervisorDelegateId: {supervisorDelegateId}"
+                );
+                return false;
+            }
             return true;
         }
 
