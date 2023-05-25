@@ -6,7 +6,10 @@
     {
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            context.HttpContext.Response.Headers.Add("Cache-Control", "no-store, max-age=0");
+            if (!context.HttpContext.Response.Headers.ContainsKey("Cache-Control"))
+            {
+                context.HttpContext.Response.Headers.Add("Cache-Control", "no-store, max-age=0");
+            }
         }
     }
 }
