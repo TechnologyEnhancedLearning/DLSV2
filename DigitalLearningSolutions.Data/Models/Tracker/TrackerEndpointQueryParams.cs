@@ -9,7 +9,7 @@
         public int? ProgressId { get; set; }
         public string? DiagnosticOutcome { get; set; }
         public int? TutorialStatus { get; set; }
-        public int? TutorialTime { get; set; }
+        public double? TutorialTime { get; set; }
         public int? CandidateId { get; set; }
         public int? Version { get; set; }
         public int? TutorialId { get; set; }

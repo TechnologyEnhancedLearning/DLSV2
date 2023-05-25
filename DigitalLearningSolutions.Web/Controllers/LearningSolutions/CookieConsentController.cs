@@ -88,7 +88,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             return RedirectToAction(actionName, controllerName);
         }
 
-        public void ConfirmCookieConsent(string consent, bool setTempDataConsentViaBannerPost = false)
+        public IActionResult ConfirmCookieConsent(string consent, bool setTempDataConsentViaBannerPost = false)
         {
             if (Response != null)
             {
@@ -106,6 +106,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
                 if (setTempDataConsentViaBannerPost) TempData["consentViaBannerPost"] = consent; // Need this tempdata to display the confirmation banner
             }
+            return Json("OK");
         }
 
         private void RemoveGaAndHjCookies()

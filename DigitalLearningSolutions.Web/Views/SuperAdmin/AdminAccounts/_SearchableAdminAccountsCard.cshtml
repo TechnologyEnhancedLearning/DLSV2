@@ -38,13 +38,13 @@
                     <dd class="nhsuk-summary-list__actions">
                         @if (!Model.IsAdminActive)
                         {
-                            <a class="nhsuk-u-float-right" asp-controller="AdminAccounts" asp-action="UpdateAdminStatus" asp-route-adminId="@Model.Id" asp-route-actionType="Reactivate">
+                            <a asp-controller="AdminAccounts" asp-action="UpdateAdminStatus" asp-route-adminId="@Model.Id" asp-route-actionType="Reactivate">
                                 Reactivate
                             </a>
                         }
                         else
                         {
-                            <a class="nhsuk-u-float-right" asp-controller="AdminAccounts" asp-action="UpdateAdminStatus" asp-route-adminId="@Model.Id" asp-route-actionType="Inactivate">
+                            <a asp-controller="AdminAccounts" asp-action="UpdateAdminStatus" asp-route-adminId="@Model.Id" asp-route-actionType="Inactivate">
                                 Inactivate
                             </a>
                         }
@@ -97,7 +97,7 @@
                         {
                             <a asp-controller="Users" asp-action="UnlockAccount" asp-route-UserId="@Model.UserAccountID" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Unlock</a>
                         }
-                        <a asp-controller="Users" asp-action="Index" asp-route-UserId="@Model.UserAccountID" class="nhsuk-u-margin-left-2">View</a>
+                        <a asp-controller="AdminAccounts" asp-action="RedirectToUser" asp-route-UserId="@Model.UserAccountID" class="nhsuk-u-margin-left-2">View</a>
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">

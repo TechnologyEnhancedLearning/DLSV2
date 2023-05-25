@@ -239,6 +239,8 @@
                 formData.IsContentCreator ||
                 formData.IsTrainer ||
                 formData.IsCenterManager ||
+                formData.ContentManagementRole.IsContentManager && formData.ContentManagementRole.ImportOnly ||
+                formData.ContentManagementRole.IsContentManager && !formData.ContentManagementRole.ImportOnly ||
                 formData.IsLocalWorkforceManager))
             {
                 var centreId = User.GetCentreIdKnownNotNull();
@@ -390,6 +392,11 @@
                 model.Page = Convert.ToInt16(TempData["Page"]);
             }
             TempData["AdminId"] = adminId;
+            if (TempData["CentreId"] != null)
+            {
+                ModelState.AddModelError("CentreId", "User is already admin for the centre.");
+                TempData.Remove("CentreId");
+            }
             return View(model);
         }
         [HttpPost]
@@ -397,8 +404,22 @@
         public IActionResult EditCentre(int adminId, int centreId)
         {
             TempData["AdminId"] = adminId;
-            userDataService.UpdateAdminCentre(adminId, centreId);
-            return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
+            int? userId = userDataService.GetUserIdByAdminId(adminId);
+            if (userDataService.IsUserAlreadyAdminAtCentre(userId, centreId))
+            {
+                TempData["CentreId"] = centreId;
+                return RedirectToAction("EditCentre", "AdminAccounts", new { AdminId = adminId });
+            }
+            else
+            {
+                userDataService.UpdateAdminCentre(adminId, centreId);
+                return RedirectToAction("Index", "AdminAccounts", new { AdminId = adminId });
+            }
+        }
+
+        public IActionResult RedirectToUser(int UserId) {
+            TempData["UserId"] = UserId;
+            return RedirectToAction("Index", "Users",new { UserId = UserId });
         }
     }
 }

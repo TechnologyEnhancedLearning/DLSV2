@@ -400,23 +400,36 @@
                             AND [AssessmentQuestionID] = @assessmentQuestionId
                         ORDER BY DateTime DESC
 
-                        IF (@existentResultId IS NOT NULL AND @existentResult = @result)
+                        IF (@existentResultId IS NOT NULL AND ((@existentResult = @result) OR (@result IS NULL AND @existentResult IS NULL)))
+                            BEGIN
                             UPDATE SelfAssessmentResults
                             SET [DateTime] = GETUTCDATE(),
                                 [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
-                        ELSE
+                            END
+                        IF (@existentResultId IS NOT NULL AND (@existentResult <> @result OR @result IS NULL OR @existentResult IS NULL))
                             BEGIN
                             UPDATE SelfAssessmentResults
-                            SET [Result] = @result
+                            SET [Result] = @result, [DateTime]  = GETUTCDATE(),
+                                [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
 
-                            DELETE SARS FROM   SelfAssessmentResultSupervisorVerifications  sars INNER JOIN
-                             CandidateAssessmentSupervisors  cas ON SARS.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
-                             SupervisorDelegates  sd ON cas.SupervisorDelegateId = sd.ID
-                            WHERE  sd.SupervisorAdminID = @delegateUserId AND SARS.SelfAssessmentResultId=@existentResultId
-                        END
-END",
+                            DELETE SARS FROM   SelfAssessmentResultSupervisorVerifications  sars
+                            WHERE  SARS.SelfAssessmentResultId=@existentResultId
+                            END
+                         IF (@existentResultId IS NULL)
+                            BEGIN
+                            INSERT INTO SelfAssessmentResults
+                                ([SelfAssessmentID]
+                                ,[CompetencyID]
+                                ,[AssessmentQuestionID]
+                                ,[Result]
+                                ,[DateTime]
+                                ,[SupportingComments]
+                                ,[DelegateUserID])
+                            VALUES(@selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments,@delegateUserId)
+                            END
+                        END",
                 new { competencyId, selfAssessmentId, delegateUserId, assessmentQuestionId, result, supportingComments }
             );
 

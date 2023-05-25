@@ -20,7 +20,6 @@
         {
             this.trackerService = trackerService;
         }
-
         public string Index([FromQuery] TrackerEndpointQueryParams queryParams)
         {
             var sessionVariables = GetSessionVariablesDictionary();

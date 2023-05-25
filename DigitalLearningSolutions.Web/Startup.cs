@@ -47,7 +47,7 @@ namespace DigitalLearningSolutions.Web
     {
         private readonly IConfiguration config;
         private readonly IHostEnvironment env;
-        private const int sessionTimeoutMinutes = 15;
+        private const int sessionTimeoutHours = 24;
 
         public Startup(IConfiguration config, IHostEnvironment env)
         {
@@ -124,7 +124,7 @@ namespace DigitalLearningSolutions.Web
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.Name = ".AspNet.SharedCookie";
-                options.ExpireTimeSpan = System.TimeSpan.FromMinutes(sessionTimeoutMinutes);
+                options.ExpireTimeSpan = System.TimeSpan.FromHours(sessionTimeoutHours);
                 options.SlidingExpiration = true;
             });
 
@@ -189,6 +189,7 @@ namespace DigitalLearningSolutions.Web
 
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
+            Dapper.SqlMapper.Settings.CommandTimeout = 360;
 
             MultiPageFormService.InitConnection(new SqlConnection(defaultConnectionString));
 

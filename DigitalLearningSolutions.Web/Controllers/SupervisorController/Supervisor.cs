@@ -15,6 +15,8 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using GDS.MultiPageFormData.Enums;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public partial class SupervisorController
     {
@@ -307,7 +309,7 @@
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Review")]
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Review/{selfAssessmentResultId}")]
-        public IActionResult ReviewDelegateSelfAssessment(int supervisorDelegateId, int candidateAssessmentId, int? selfAssessmentResultId = null)
+        public IActionResult ReviewDelegateSelfAssessment(int supervisorDelegateId, int candidateAssessmentId, int? selfAssessmentResultId = null, SearchSupervisorCompetencyViewModel searchModel = null)
         {
             var adminId = GetAdminId();
             var superviseDelegate =
@@ -316,16 +318,24 @@
                 selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId, selfAssessmentResultId).ToList()
             );
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
+            var competencyIds = reviewedCompetencies.Select(c => c.Id).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            var competencies = SupervisorCompetencyFilterHelper.FilterCompetencies(reviewedCompetencies, competencyFlags, searchModel);
+            var searchViewModel = searchModel == null ?
+                new SearchSupervisorCompetencyViewModel(supervisorDelegateId, searchModel?.SearchText, delegateSelfAssessment.ID, delegateSelfAssessment.IsSupervisorResultsReviewed, false, null, null)
+                : searchModel.Initialise(searchModel.AppliedFilters, competencyFlags.ToList(), delegateSelfAssessment.IsSupervisorResultsReviewed, false);
+
             var model = new ReviewSelfAssessmentViewModel()
             {
                 SupervisorDelegateDetail = superviseDelegate,
                 DelegateSelfAssessment = delegateSelfAssessment,
-                CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup),
-                IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed
+                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
+                IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
+                SearchViewModel = searchModel,
             };
 
             var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
-            foreach (var competency in reviewedCompetencies)
+            foreach (var competency in competencies)
             {
                 competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
             };
@@ -341,7 +351,65 @@
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             return View("ReviewSelfAssessment", model);
         }
-
+        [HttpPost]
+        public IActionResult SearchInSupervisorSelfAssessment(SearchSupervisorCompetencyViewModel model)
+        {
+            TempData.Clear();
+            multiPageFormService.SetMultiPageFormData(
+                model,
+                MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                TempData
+            );
+            return RedirectToAction("FilteredSupervisorSelfAssessment", model);
+        }
+        public IActionResult AddSupervisorSelfAssessmentOverviewFilter(SearchSupervisorCompetencyViewModel model)
+        {
+            if (!model.AppliedFilters.Any(f => f.FilterValue == model.SelectedFilter.ToString()))
+            {
+                string description;
+                string tagClass = string.Empty;
+                if (model.SelectedFilter < 0)
+                {
+                    description = ((SelfAssessmentCompetencyFilter)model.SelectedFilter).GetDescription(model.IsSupervisorResultsReviewed);
+                }
+                else
+                {
+                    var flag = frameworkService.GetCustomFlagsByFrameworkId(null, model.SelectedFilter).First();
+                    description = $"{flag.FlagGroup}: {flag.FlagName}";
+                    tagClass = flag.FlagTagClass;
+                }
+                model.AppliedFilters.Add(new AppliedFilterViewModel(description, null, model.SelectedFilter.ToString(), tagClass));
+            }
+            TempData.Clear();
+            multiPageFormService.SetMultiPageFormData(
+                model,
+                MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                TempData
+            );
+            return RedirectToAction("FilteredSupervisorSelfAssessment", model);
+        }
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Filtered")]
+        public IActionResult FilteredSupervisorSelfAssessment(SearchSupervisorCompetencyViewModel model, bool clearFilters = false)
+        {
+            if (clearFilters)
+            {
+                model.AppliedFilters.Clear();
+                multiPageFormService.SetMultiPageFormData(
+                    model,
+                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                    TempData
+                );
+            }
+            else
+            {
+                var session = multiPageFormService.GetMultiPageFormData<SearchSupervisorCompetencyViewModel>(
+                    MultiPageFormDataFeature.SearchInSelfAssessmentOverviewGroups,
+                    TempData
+                ).GetAwaiter().GetResult();
+                model.AppliedFilters = session.AppliedFilters;
+            }
+            return ReviewDelegateSelfAssessment(model.SupervisorDelegateId, model.CandidateAssessmentId, model.CompetencyGroupId, model);
+        }
         private List<Competency> PopulateCompetencyLevelDescriptors(List<Competency> reviewedCompetencies)
         {
             foreach (var competency in reviewedCompetencies)
@@ -701,6 +769,9 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/CompleteBy")]
         public IActionResult EnrolDelegateSetCompleteBy(int supervisorDelegateId, int day, int month, int year)
         {
+            TempData["completeByDate"] = day;
+            TempData["completeByMonth"] = month;
+            TempData["completeByYear"] = year;
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
             if (day != 0 | month != 0 | year != 0)
             {
@@ -725,6 +796,7 @@
                 supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
             if (supervisorRoles.Count() > 1)
             {
+                TempData["navigatedFrom"] = "EnrolDelegateSupervisorRole";
                 return RedirectToAction(
                     "EnrolDelegateSupervisorRole",
                     "Supervisor",
@@ -773,6 +845,9 @@
                 SelfAssessmentSupervisorRoleId = sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId,
                 SelfAssessmentSupervisorRoles = supervisorRoles
             };
+            ViewBag.completeByDate = TempData["completeByDate"];
+            ViewBag.completeByMonth = TempData["completeByMonth"];
+            ViewBag.completeByYear = TempData["completeByYear"];
             return View("EnrolDelegateSupervisorRole", model);
         }
 
@@ -845,6 +920,10 @@
                 CompleteByDate = sessionEnrolOnRoleProfile.CompleteByDate,
                 SupervisorRoleCount = supervisorRoleCount
             };
+            ViewBag.completeByDate = TempData["completeByDate"];
+            ViewBag.completeByMonth = TempData["completeByMonth"];
+            ViewBag.completeByYear = TempData["completeByYear"];
+            ViewBag.navigatedFrom = TempData["navigatedFrom"];
             return View("EnrolDelegateSummary", model);
         }
 

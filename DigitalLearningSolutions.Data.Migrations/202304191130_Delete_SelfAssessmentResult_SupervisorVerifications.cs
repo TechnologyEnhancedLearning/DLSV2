@@ -7,7 +7,6 @@
     {
         public override void Up()
         {
-
             Execute.Sql(
                    @$"DELETE FROM SelfAssessmentResultSupervisorVerifications
                         WHERE SelfAssessmentResultId NOT IN (SELECT MAX(ID)
@@ -21,6 +20,12 @@
                         FROM SelfAssessmentResults
                         GROUP BY CompetencyID, AssessmentQuestionID, DelegateUserID)"
               );
+            if(Schema.Table("SelfAssessmentResultsHistory").Column("CandidateID").Exists())
+            {
+                Execute.Sql("ALTER TABLE SelfAssessmentResults SET (SYSTEM_VERSIONING = OFF);");
+                Rename.Column("CandidateID").OnTable("SelfAssessmentResultsHistory").To("CandidateID_deprecated");
+                Execute.Sql("ALTER TABLE SelfAssessmentResults SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].[SelfAssessmentResultsHistory]));");
+            }
             Create.UniqueConstraint(
                     "IX_SelfAssessmentResults_DelegateUserID_CompetencyID_AssessmentQuestionID"
                 )

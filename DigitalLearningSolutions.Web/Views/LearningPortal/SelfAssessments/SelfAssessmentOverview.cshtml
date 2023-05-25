@@ -16,7 +16,7 @@
     .Max();
   var competencySummaries = from g in Model.CompetencyGroups
                             let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
-                            let selfAssessedCount = questions.Count(q => q.ResultId.HasValue)
+                            let selfAssessedCount = questions.Count(q => q.Result.HasValue)
                             let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
                             select new ViewDataDictionary(ViewData)
 {

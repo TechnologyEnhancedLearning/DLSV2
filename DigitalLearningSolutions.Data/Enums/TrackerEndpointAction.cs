@@ -2,11 +2,11 @@
 {
     public enum TrackerEndpointAction
     {
-        GetObjectiveArray,
-        GetObjectiveArrayCc,
-        StoreDiagnosticJson,
-        StoreAspProgressV2,
-        StoreAspProgressNoSession,
-        StoreAspAssessNoSession,
+        getobjectivearray,
+        getobjectivearraycc,
+        storediagnosticjson,
+        storeaspprogressv2,
+        storeaspprogressnosession,
+        storeaspassessnosession,
     }
 }

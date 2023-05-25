@@ -65,7 +65,7 @@
 </table>
 <form asp-action="AddDuplicateCompetency" asp-route-frameworkId="@Model.FrameworkId"
       asp-route-competencyName="@Model.Competency.Name" asp-route-competencyDescription="@Model.Competency.Description"
-      asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkGroupId="@Model.FrameworkGroupId">
+      asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkGroupId="@Model.FrameworkGroupId" asp-route-selectedFlagIds="@Model.selectedFlagIds">
     <button class="nhsuk-button" type="submit">
         Confirm save
     </button>

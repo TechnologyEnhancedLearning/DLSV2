@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -29,6 +31,8 @@
         private readonly PromptsService promptsService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly IEmailVerificationService emailVerificationService;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
@@ -36,7 +40,9 @@
             PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
-            IConfiguration config
+            IConfiguration config,
+            IEmailVerificationService emailVerificationService,
+            IEmailVerificationDataService emailVerificationDataService
         )
         {
             this.userDataService = userDataService;
@@ -45,6 +51,8 @@
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.config = config;
+            this.emailVerificationService= emailVerificationService;
+            this.emailVerificationDataService= emailVerificationDataService;
         }
 
         public IActionResult Index(int delegateId)
@@ -70,6 +78,20 @@
             if (DisplayStringHelper.IsGuid(model.DelegateInfo.Email))
                 model.DelegateInfo.Email = null;
 
+            var baseUrl = config.GetAppRootPath();
+            if ((model.DelegateInfo?.IsActive ?? false) && (model.DelegateInfo.RegistrationConfirmationHash != null))
+            {
+               Email welcomeEmail = passwordResetService.GenerateDelegateWelcomeEmail(delegateId, baseUrl);
+                model.WelcomeEmail = "mailto:" + string.Join(",",welcomeEmail.To) + "?subject=" + welcomeEmail.Subject + "&body=" +welcomeEmail.Body.TextBody.Replace("&", "%26");
+            }
+            if (delegateEntity.UserCentreDetails?.EmailVerificationHashID != null)
+            {
+               var userEntity = userService.GetUserById(delegateEntity.DelegateAccount.UserId);
+                
+                string emailVerificationHash = emailVerificationDataService.GetEmailVerificationHashById(delegateEntity.UserCentreDetails.EmailVerificationHashID ?? 0);
+               Email verificationEmail = emailVerificationService.GenerateVerificationEmail(userEntity.UserAccount, emailVerificationHash, delegateEntity.UserCentreDetails.Email, baseUrl);
+                model.VerificationEmail = "mailto:" + string.Join(",", verificationEmail.To) + "?subject=" + verificationEmail.Subject + "&body=" + verificationEmail.Body.TextBody.Replace("&", "%26");
+            }
             return View(model);
         }
 

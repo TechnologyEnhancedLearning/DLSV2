@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -23,6 +24,8 @@
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private ViewDelegateController viewDelegateController = null!;
+        private IEmailVerificationService emailVerificationService = null!;
+        private IEmailVerificationDataService emailVerificationDataService = null!;
 
         [SetUp]
         public void SetUp()
@@ -42,7 +45,9 @@
                     centreCustomPromptsHelper,
                     courseService,
                     passwordResetService,
-                    config
+                    config,
+                    emailVerificationService,
+                    emailVerificationDataService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);

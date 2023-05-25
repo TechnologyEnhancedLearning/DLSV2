@@ -458,9 +458,29 @@ namespace DigitalLearningSolutions.Data.DataServices
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (CompletedDate IS NULL)), 0) AS ID",
                 new { selfAssessmentId, delegateUserId }
             );
+
+            if (enrolmentExists > 0)
+            {
+                var result = connection.QueryFirstOrDefault<DateTime?>(
+                @"SELECT RemovedDate
+                  FROM    CandidateAssessments
+                  WHERE ID = @enrolmentExists",
+                new { enrolmentExists }
+                );
+                DateTime? removedDate = result ?? null;
+                if (removedDate != null)
+                {
+                    connection.Execute(
+                        @"UPDATE CandidateAssessments
+                        SET RemovedDate = NULL
+                        WHERE ID = @enrolmentExists",
+                        new { enrolmentExists }
+                );
+                }
+            }
 
             if (enrolmentExists == 0)
             {

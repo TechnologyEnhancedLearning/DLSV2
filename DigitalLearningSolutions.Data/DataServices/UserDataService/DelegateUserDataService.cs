@@ -35,8 +35,10 @@
                 cd.HasBeenPromptedForPrn,
                 cd.ProfessionalRegistrationNumber,
                 cd.HasDismissedLhLoginWarning,
-                cd.ResetPasswordID
+                cd.ResetPasswordID,
+                da.RegistrationConfirmationHash
             FROM Candidates AS cd
+            INNER JOIN DelegateAccounts AS da ON da.UserID = cd.UserID
             INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID";
 
@@ -122,6 +124,7 @@
                 da.OldPassword,
                 da.UserID,
                 da.CentreSpecificDetailsLastChecked,
+                da.RegistrationConfirmationHash,
                 u.ID,
                 u.PrimaryEmail,
                 u.PasswordHash,
@@ -145,6 +148,7 @@
                 ucd.CentreID,
                 ucd.Email,
                 ucd.EmailVerified,
+                ucd.EmailVerificationHashID,
                 (SELECT ID
                     FROM AdminAccounts aa
                         WHERE aa.UserID = da.UserID
@@ -215,7 +219,7 @@
                 @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateId = @id",
                 new { id }
-            ).SingleOrDefault();
+            ).FirstOrDefault();
 
             return user;
         }
