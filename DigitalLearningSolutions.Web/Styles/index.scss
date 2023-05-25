@@ -356,3 +356,15 @@ ul.no-bullets {
     @include nhsuk-focused-text;
   }
 }
+
+.beta-card__content {
+  margin-right: 75px;
+}
+
+.beta-hub-arrow {
+  display: block;
+  margin-top: -8px;
+  position: absolute;
+  right: 24px;
+  top: 50%;
+}

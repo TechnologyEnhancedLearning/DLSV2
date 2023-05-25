@@ -18,6 +18,13 @@
             List<string> unverifiedEmails,
             string baseUrl
         );
+
+        Email GenerateVerificationEmail(
+            UserAccount userAccount,
+            string emailVerificationHash,
+            string emailAddress,
+            string baseUrl
+        );
     }
 
     public class EmailVerificationService : IEmailVerificationService
@@ -68,7 +75,7 @@
             emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmails(userId, emailAddress, hashId);
         }
 
-        private static Email GenerateVerificationEmail(
+        public Email GenerateVerificationEmail(
             UserAccount userAccount,
             string emailVerificationHash,
             string emailAddress,
@@ -88,11 +95,10 @@
 
             var body = new BodyBuilder
             {
-                TextBody = $@"Dear {userAccount.FullName},
-                            Please click the following link to verify your email address for Digital Learning Solutions: {verifyEmailUrl.Uri}",
+                TextBody = $@"Dear {userAccount.FullName},%0D%0DPlease click the following link to verify your email address for your Digital Learning Solutions account: {verifyEmailUrl.Uri}",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {userAccount.FullName},</p>
-                                <p>Please <a href=""{verifyEmailUrl.Uri}"">click here to verify your email address for Digital Learning Solutions</a></p>
+                                <p>Please <a href=""{verifyEmailUrl.Uri}"">click here to verify your email address for your Digital Learning Solutions account</a></p>
                             </body>",
             };
 

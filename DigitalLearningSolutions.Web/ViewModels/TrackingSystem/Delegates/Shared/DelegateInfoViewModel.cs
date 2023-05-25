@@ -42,6 +42,7 @@
             }
 
             DelegateRegistrationPrompts = delegateRegistrationPrompts;
+            RegistrationConfirmationHash = delegateUser.RegistrationConfirmationHash;
         }
 
         public int Id { get; set; }
@@ -60,6 +61,7 @@
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
         public string ProfessionalRegistrationNumber { get; set; }
+        public string? RegistrationConfirmationHash { get; set; }
 
         public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
     }

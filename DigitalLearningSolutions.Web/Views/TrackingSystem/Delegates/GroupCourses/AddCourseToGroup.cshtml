@@ -45,7 +45,7 @@
                         required="false" />
 
       <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="GroupCourses" asp-action="AddCourseToGroupSelectCourse" asp-route-groupId="@Model.GroupId">Back</a>
-      <button class="nhsuk-button" type="submit">Add course</button>
+            <button class="nhsuk-button trigger-loader" type="submit">Add course</button>
     </form>
 
     <vc:cancel-link asp-controller="GroupCourses" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />

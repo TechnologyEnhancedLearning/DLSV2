@@ -148,6 +148,7 @@
                 ucd.CentreID,
                 ucd.Email,
                 ucd.EmailVerified,
+                ucd.EmailVerificationHashID,
                 (SELECT ID
                     FROM AdminAccounts aa
                         WHERE aa.UserID = da.UserID

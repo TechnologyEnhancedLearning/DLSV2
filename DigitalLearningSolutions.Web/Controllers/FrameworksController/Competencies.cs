@@ -7,6 +7,7 @@ using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -194,7 +195,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                         Description = frameworkCompetency.Description
                     },
                     MatchingSearchResults = matchingSearchResults.Count,
-                    SameCompetency = similarItems
+                    SameCompetency = similarItems,
+                    selectedFlagIds = selectedFlagIds.Any() ? selectedFlagIds.Select(a => a.ToString()).Aggregate((b, c) => b + "," + c) : string.Empty,
                 };
                 return View("Developer/SimilarCompetency", model);
             }
@@ -202,7 +204,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [HttpPost]
-        public IActionResult AddDuplicateCompetency(int frameworkId, string competencyName, string competencyDescription, int frameworkCompetencyId, int frameworkGroupId)
+        public IActionResult AddDuplicateCompetency(int frameworkId, string competencyName, string competencyDescription, int frameworkCompetencyId, int frameworkGroupId, string selectedFlagIds)
         {
             FrameworkCompetency competency = new FrameworkCompetency()
             {
@@ -210,7 +212,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 Description = competencyDescription,
             };
             var adminId = GetAdminId();
-            return SaveCompetency(adminId, frameworkId, competency, frameworkCompetencyId, frameworkGroupId, null);
+            var flags = (!string.IsNullOrWhiteSpace(selectedFlagIds) && selectedFlagIds.Split(',').Any()) ? selectedFlagIds.Split(',').Select(n => Convert.ToInt32(n)).ToArray() : null;
+            return SaveCompetency(adminId, frameworkId, competency, frameworkCompetencyId, frameworkGroupId, flags);
         }
 
         private IActionResult SaveCompetency(int adminId, int frameworkId, FrameworkCompetency frameworkCompetency, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int[]? selectedFlagIds)

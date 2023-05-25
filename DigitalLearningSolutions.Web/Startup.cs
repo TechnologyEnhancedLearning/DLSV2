@@ -189,6 +189,7 @@ namespace DigitalLearningSolutions.Web
 
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
+            Dapper.SqlMapper.Settings.CommandTimeout = 360;
 
             MultiPageFormService.InitConnection(new SqlConnection(defaultConnectionString));
 
