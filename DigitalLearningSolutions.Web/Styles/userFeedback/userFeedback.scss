@@ -1,27 +1,24 @@
 ﻿@use "nhsuk-frontend/packages/core/all" as *;
 
-.feedback-page-button-container {
-  margin-bottom: 32px;
-
-  @include govuk-media-query($until: tablet) {
-    margin-bottom: 26px;
-  }
+.feedback-button-inline {
+  padding: 0px 8px 0px 8px;
+  margin: 8px 10px 8px 0;
+  background-color: $color_nhsuk-blue;
+  box-shadow: none;
+  vertical-align: middle;
+  border-radius: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/*.auth-button {
-  min-width: 160px;
-  // &.nhsuk-button to ensure overrides nhsuk-button styling
-  &.nhsuk-button {
-    margin-top: 0;
-    margin-bottom: 16px;
-  }
+.feedback-chevron {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 24px !important;
 }
 
-.auth-button--left {
-  margin-right: 32px;
-
-  @include govuk-media-query($until: tablet) {
-    margin-right: 8px;
-  }
+.feedback-chevron svg {
+  fill: $color_nhsuk-white !important;
+  height: 24px !important;
 }
-*/

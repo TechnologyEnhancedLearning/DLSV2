@@ -17,11 +17,12 @@
           <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
             @if (Model.SourcePageTitle != String.Empty)
             {
-              <div><partial name="_IconChevronLeft" />  Go back to Welcome page</div>
+              <div><partial name="_NhsChevronLeft" class="feedback-chevron" />  Go back to Welcome page</div>
+
             }
             @if (Model.SourcePageTitle == String.Empty)
             {
-              <div><partial name="_IconChevronLeft" />  Go back</div>
+              <div><partial name="_NhsChevronLeft" class="feedback-chevron" />  Go back</div>
             }
           </a>
         </li>
@@ -63,7 +64,20 @@
         <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
 
         <div class="nhsuk-u-float-right">
-          <button class="nhsuk-button" type="submit">Submit Feedback <span class="feedback-chevron"><partial name="_IconChevronRight" /></span></button>
+          <button class="nhsuk-button" type="submit">
+            Submit Feedback
+            <span class="feedback-chevron">
+              <partial name="_NhsChevronRight" class="feedback-chevron" />
+            </span>
+          </button>
+        </div>
+        <div class="nhsuk-u-float-right">
+          <button class="nhsuk-button" type="submit">
+            Submit Feedback
+            <span class="feedback-chevron">
+              quack
+            </span>
+        </button>
         </div>
       </form>
     </div>
