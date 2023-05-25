@@ -837,8 +837,7 @@
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
-            var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value)
-                .Where(role => role.AllowSupervisorRoleSelection == true);
+            var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
             var model = new EnrolDelegateSupervisorRoleViewModel()
             {
                 SupervisorDelegateDetail = supervisorDelegate,
@@ -868,8 +867,7 @@
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
                 var supervisorRoles =
-                    supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value)
-                    .Where(role => role.AllowSupervisorRoleSelection == true);
+                    supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
                 model.SupervisorDelegateDetail = supervisorDelegate;
                 model.RoleProfile = roleProfile;
                 model.SelfAssessmentSupervisorRoles = supervisorRoles;

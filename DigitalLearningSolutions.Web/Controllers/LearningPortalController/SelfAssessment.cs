@@ -925,8 +925,7 @@
                 }
             }
 
-            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId)
-                .Where( role=> role.AllowLearnerRoleSelection == true);
+            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(supervisorAdminId);
             var setRoleModel = new SetSupervisorRoleViewModel
             {
@@ -952,8 +951,7 @@
             if (!ModelState.IsValid)
             {
                 model.SelfAssessmentSupervisorRoles =
-                    supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID)
-                    .Where(role => role.AllowLearnerRoleSelection == true);
+                    supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
                 return View("SelfAssessments/SetSupervisorRole", model);
             }
 
