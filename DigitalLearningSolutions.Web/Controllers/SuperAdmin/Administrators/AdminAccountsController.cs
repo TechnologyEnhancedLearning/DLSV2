@@ -239,6 +239,8 @@
                 formData.IsContentCreator ||
                 formData.IsTrainer ||
                 formData.IsCenterManager ||
+                formData.ContentManagementRole.IsContentManager && formData.ContentManagementRole.ImportOnly ||
+                formData.ContentManagementRole.IsContentManager && !formData.ContentManagementRole.ImportOnly ||
                 formData.IsLocalWorkforceManager))
             {
                 var centreId = User.GetCentreIdKnownNotNull();
