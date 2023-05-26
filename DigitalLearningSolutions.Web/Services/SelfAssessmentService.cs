@@ -70,7 +70,6 @@
         void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int delegateUserId);
 
         // Supervisor
-        IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int delegateUserId);
 
         IEnumerable<SupervisorSignOff> GetSupervisorSignOffsForCandidateAssessment(
             int selfAssessmentId,
@@ -192,14 +191,6 @@
         public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int delegateId)
         {
             return selfAssessmentDataService.GetResultSupervisorVerifications(selfAssessmentId, delegateId);
-        }
-
-        public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(
-            int selfAssessmentId,
-            int delegateUserId
-        )
-        {
-            return selfAssessmentDataService.GetSupervisorsForSelfAssessmentId(selfAssessmentId, delegateUserId);
         }
 
         public IEnumerable<SupervisorSignOff> GetSupervisorSignOffsForCandidateAssessment(
