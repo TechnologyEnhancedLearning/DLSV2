@@ -20,7 +20,7 @@
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.CompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
         <li class="nhsuk-breadcrumb__item">Confirm Remove Group</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-fragment="fcgroup-@Model.CompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.CompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
     </div>
   </nav>
 }
