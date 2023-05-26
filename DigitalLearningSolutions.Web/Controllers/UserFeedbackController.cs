@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.UserFeedback;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.UserFeedback;
     using GDS.MultiPageFormData;
     using GDS.MultiPageFormData.Enums;
@@ -105,6 +106,11 @@
 
         [HttpGet]
         [Route("/StartUserFeedbackSession")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
+        )]
         public IActionResult StartUserFeedbackSession(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
@@ -141,6 +147,11 @@
 
         [HttpPost]
         [Route("/UserFeedbackTaskAchievedSet")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
+        )]
         public IActionResult UserFeedbackTaskAchievedSet(UserFeedbackViewModel userFeedbackViewModel)
         {
             var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
@@ -170,6 +181,11 @@
 
         [HttpPost]
         [Route("/UserFeedbackTaskAttemptedSet")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
+        )]
         public IActionResult UserFeedbackTaskAttemptedSet(UserFeedbackViewModel userFeedbackViewModel)
         {
             var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
@@ -200,6 +216,11 @@
 
         [HttpPost]
         [Route("/UserFeedbackTaskDifficultySet")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
+        )]
         public IActionResult UserFeedbackTaskDifficultySet(UserFeedbackViewModel userFeedbackViewModel)
         {
             var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
@@ -279,6 +300,11 @@
 
         [HttpPost]
         [Route("/GuestFeedbackComplete")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
+        )]
         public IActionResult GuestFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
         {
             if (!(userFeedbackViewModel.TaskAchieved == null && userFeedbackViewModel.TaskAttempted == null && userFeedbackViewModel.FeedbackText == null && userFeedbackViewModel.TaskRating == null))
