@@ -793,7 +793,7 @@
             }
 
             var supervisorRoles =
-                supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
+                supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
             if (supervisorRoles.Count() > 1)
             {
                 TempData["navigatedFrom"] = "EnrolDelegateSupervisorRole";
