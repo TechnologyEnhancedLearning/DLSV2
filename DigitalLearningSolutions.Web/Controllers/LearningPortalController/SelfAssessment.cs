@@ -64,7 +64,7 @@
 
             selfAssessmentService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
-            var supervisors = selfAssessmentService.GetSupervisorsForSelfAssessmentId(
+            var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(
                 selfAssessmentId,
                 delegateUserId
             ).ToList();
@@ -578,7 +578,7 @@
 
         public IActionResult QuickAddSupervisor(int selfAssessmentId, int supervisorDelegateId)
         {
-            var roles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId).ToArray();
+            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId).ToArray();
             if (roles.Count() > 1)
             {
                 var sessionAddSupervisor = new SessionAddSupervisor()

@@ -67,19 +67,6 @@
             ).FirstOrDefault();
         }
 
-        public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(
-            int selfAssessmentId,
-            int delegateUserId
-        )
-        {
-            return connection.Query<SelfAssessmentSupervisor>(
-                @$"{BaseGetSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @delegateUserId)
-                        AND (ca.SelfAssessmentID = @selfAssessmentId)",
-                new { selfAssessmentId, delegateUserId }
-            );
-        }
-
         public IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
             int delegateUserId

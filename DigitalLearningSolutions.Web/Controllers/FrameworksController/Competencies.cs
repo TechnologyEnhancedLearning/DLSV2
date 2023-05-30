@@ -204,7 +204,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [HttpPost]
-        public IActionResult AddDuplicateCompetency(int frameworkId, string competencyName, string competencyDescription, int frameworkCompetencyId, int frameworkGroupId, string selectedFlagIds)
+        public IActionResult AddDuplicateCompetency(int frameworkId, string competencyName, string competencyDescription, int frameworkCompetencyId, int? frameworkGroupId, string selectedFlagIds)
         {
             FrameworkCompetency competency = new FrameworkCompetency()
             {

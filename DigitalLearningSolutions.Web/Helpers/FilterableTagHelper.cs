@@ -84,15 +84,15 @@
 
             if (courseStatistics.Archived)
             {
-                tags.Add(new SearchableTagViewModel("Archived", string.Empty, CourseStatusFilterOptions.IsArchived.TagStatus));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsArchived));
             }
             else if (courseStatistics.Active)
             {
-                tags.Add(new SearchableTagViewModel("Active", string.Empty, CourseStatusFilterOptions.IsActive.TagStatus));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsActive));
             }
             else
             {
-                tags.Add(new SearchableTagViewModel("Inactive", string.Empty, CourseStatusFilterOptions.IsInactive.TagStatus));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive));
             }
 
             if (courseStatistics.HideInLearnerPortal)
@@ -138,15 +138,15 @@
 
             if (courseStatistics.Archived)
             {
-                tags.Add(new SearchableTagViewModel("Archived", string.Empty, CourseStatusFilterOptions.IsArchived.TagStatus));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsArchived));
             }
             else if (courseStatistics.Active)
             {
-                tags.Add(new SearchableTagViewModel("Active", string.Empty, CourseStatusFilterOptions.IsActive.TagStatus));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsActive));
             }
             else
             {
-                tags.Add(new SearchableTagViewModel("Inactive", string.Empty, CourseStatusFilterOptions.IsInactive.TagStatus));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive));
             }
 
             return tags;

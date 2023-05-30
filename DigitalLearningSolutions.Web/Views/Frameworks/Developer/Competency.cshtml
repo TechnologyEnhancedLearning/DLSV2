@@ -18,7 +18,7 @@
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
         <li class="nhsuk-breadcrumb__item">@Model.VocabSingular()</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Back to framework structure</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Back to framework structure</a></p>
     </div>
   </nav>
 }
