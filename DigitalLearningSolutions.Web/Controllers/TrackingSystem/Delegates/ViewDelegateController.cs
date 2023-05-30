@@ -84,7 +84,8 @@
                Email welcomeEmail = passwordResetService.GenerateDelegateWelcomeEmail(delegateId, baseUrl);
                 model.WelcomeEmail = "mailto:" + string.Join(",",welcomeEmail.To) + "?subject=" + welcomeEmail.Subject + "&body=" +welcomeEmail.Body.TextBody.Replace("&", "%26");
             }
-            if (delegateEntity.UserCentreDetails?.EmailVerificationHashID != null)
+            if (delegateEntity.UserAccount.EmailVerified == null
+                && delegateEntity.UserAccount.EmailVerificationHashID != null)
             {
                var userEntity = userService.GetUserById(delegateEntity.DelegateAccount.UserId);
                 

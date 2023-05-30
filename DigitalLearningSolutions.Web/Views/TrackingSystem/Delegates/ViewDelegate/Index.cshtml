@@ -15,17 +15,32 @@
 }
 
 <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-two-thirds">
+    <div class="nhsuk-grid-column-one-half">
         <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">@Model.DelegateInfo.Name</h1>
     </div>
-    @if (Model.DelegateInfo.IsActive)
-    {
-        <div class="nhsuk-grid-column-one-third view-delegate-top-button-group">
+
+    <div class="nhsuk-grid-column-one-half view-delegate-top-button-group">
+        @if (Model.DelegateInfo.IsActive)
+        {
             <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" asp-action="SendWelcomeEmail" asp-route-delegateId="@Model.DelegateInfo.Id" role="button">
                 Send welcome email
             </a>
-        </div>
-    }
+        }
+        @if (Model.VerificationEmail != null)
+        {
+            <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" href="@Model.VerificationEmail">
+                Open verification email
+            </a>
+        }
+        @if (Model.WelcomeEmail != null)
+        {
+            <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" href="@Model.WelcomeEmail">
+                Open welcome email
+            </a>
+        }
+    </div>
+
+
     <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-5">
         <div class="nhsuk-u-margin-bottom-5">
             <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
@@ -126,18 +141,6 @@
                         Reactivate account
                     </button>
                 </form>
-            }
-            @if (Model.VerificationEmail != null)
-            {
-                <a class="nhsuk-button nhsuk-button--secondary" href="@Model.VerificationEmail">
-                    Generate verification email
-                </a>
-            }
-            @if (Model.WelcomeEmail != null)
-            {
-                <a class="nhsuk-button nhsuk-button--secondary" href="@Model.WelcomeEmail">
-                    Generate welcome email
-                </a>
             }
         </div>
     </div>
