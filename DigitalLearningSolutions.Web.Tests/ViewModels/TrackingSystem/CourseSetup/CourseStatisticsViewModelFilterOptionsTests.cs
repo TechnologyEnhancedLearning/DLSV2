@@ -38,7 +38,7 @@
             new[]
             {
                 new FilterOptionModel(
-                    "Inactive/archived",
+                    "Inactive",
                     "Status" + FilteringHelper.Separator + "Active" + FilteringHelper.Separator +
                     "false",
                     FilterStatus.Warning
@@ -48,6 +48,12 @@
                     "Status" + FilteringHelper.Separator + "Active" + FilteringHelper.Separator +
                     "true",
                     FilterStatus.Success
+                ),
+                new FilterOptionModel(
+                    "Archived",
+                    "Status" + FilteringHelper.Separator + "Archived" + FilteringHelper.Separator +
+                    "true",
+                    FilterStatus.Default
                 ),
             }
         );
