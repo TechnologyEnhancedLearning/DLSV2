@@ -482,7 +482,19 @@
                 new { userId, centreId }
             ) > 0;
         }
+
+        public void LinkAdminAccountToNewUser(
+            int currentUserIdForAdminAccount,
+            int newUserIdForAdminAccount,
+            int centreId
+        )
+        {
+            connection.Execute(
+                @"UPDATE AdminAccounts
+                    SET UserID = @newUserIdForAdminAccount
+                    WHERE UserID = @currentUserIdForAdminAccount AND CentreID = @centreId",
+                new { currentUserIdForAdminAccount, newUserIdForAdminAccount, centreId }
+            );
+        }
     }
-
-
 }

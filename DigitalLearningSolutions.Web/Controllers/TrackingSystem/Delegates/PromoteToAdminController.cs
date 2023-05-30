@@ -64,8 +64,7 @@
             var userId = userDataService.GetUserIdFromDelegateId(delegateId);
             var userEntity = userService.GetUserById(userId);
 
-            if (userEntity!.CentreAccountSetsByCentreId[centreId].CanLogIntoAdminAccount
-                || string.IsNullOrWhiteSpace(userEntity.UserAccount.PasswordHash))
+            if (userEntity!.CentreAccountSetsByCentreId[centreId].CanLogIntoAdminAccount)
             {
                 return NotFound();
             }
