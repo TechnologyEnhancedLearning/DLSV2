@@ -1015,25 +1015,33 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
         {
             return connection.Query<CandidateAssessmentSupervisorVerificationSummary>(
                 @"SELECT	ca1.ID, 
-		                    AdminUsers.Forename, 
-		                    AdminUsers.Surname, 
-		                    AdminUsers.Email, 
-		                    COUNT(sas1.CompetencyID) AS VerifiedCount
-                    FROM   SelfAssessmentResultSupervisorVerifications AS sasrv
-                    INNER JOIN SelfAssessmentResults AS sar1 
-	                    ON sasrv.SelfAssessmentResultId = sar1.ID  AND sasrv.Superceded = 0
-                    INNER JOIN CandidateAssessmentSupervisors 
-	                    ON sasrv.CandidateAssessmentSupervisorID = CandidateAssessmentSupervisors.ID 
-                    INNER JOIN SupervisorDelegates sd
-	                    ON CandidateAssessmentSupervisors.SupervisorDelegateId = sd.ID 
-                    INNER JOIN AdminUsers 
-	                    ON sd.SupervisorAdminID = AdminUsers.AdminID 
-                    RIGHT OUTER JOIN SelfAssessmentStructure AS sas1 
-                    INNER JOIN CandidateAssessments AS ca1 
-	                    ON sas1.SelfAssessmentID = ca1.SelfAssessmentID 
-                    INNER JOIN CompetencyAssessmentQuestions AS caq1 
-	                    ON sas1.CompetencyID = caq1.CompetencyID 
-	                    ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
+		                      u.FirstName AS Forename, 
+                           u.LastName AS Surname, 
+                           u.PrimaryEmail AS Email, 
+                            COUNT(sas1.CompetencyID) AS VerifiedCount, ac.Active AS AdminActive
+                    FROM   SelfAssessmentResultSupervisorVerifications AS sasrv
+                    INNER JOIN SelfAssessmentResults AS sar1 
+                        ON sasrv.SelfAssessmentResultId = sar1.ID  AND sasrv.Superceded = 0
+                    INNER JOIN CandidateAssessmentSupervisors 
+                        ON sasrv.CandidateAssessmentSupervisorID = CandidateAssessmentSupervisors.ID 
+                    INNER JOIN SupervisorDelegates sd
+                        ON CandidateAssessmentSupervisors.SupervisorDelegateId = sd.ID 
+                    INNER JOIN   AdminAccounts AS ac
+                         ON sd.SupervisorAdminID = ac.ID 
+				    INNER JOIN Users AS u 
+					ON ac.UserID = u.ID 
+                    RIGHT OUTER JOIN SelfAssessmentStructure AS sas1 
+                    INNER JOIN CandidateAssessments AS ca1 
+                        ON sas1.SelfAssessmentID = ca1.SelfAssessmentID 
+                    INNER JOIN CompetencyAssessmentQuestions AS caq1 
+                        ON sas1.CompetencyID = caq1.CompetencyID 
+                        ON sar1.ID =
+		                    (SELECT MAX(ID) AS Expr1
+		                    FROM    SelfAssessmentResults AS sar2
+		                    WHERE (CompetencyID = caq1.CompetencyID) 
+			                    AND (AssessmentQuestionID = caq1.AssessmentQuestionID) 
+			                    AND (sd.DelegateUserID = ca1.DelegateUserID) 
+			                    AND (SelfAssessmentID = ca1.SelfAssessmentID)) 
                     LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS caoc1 
 	                    ON sas1.CompetencyID = caoc1.CompetencyID 
 	                    AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID 
@@ -1054,8 +1062,8 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
 	                    AND (caoc1.IncludedInSelfAssessment = 1) 
 	                    AND (NOT (sar1.SupportingComments IS NULL)) 
 	                    AND (sasrv.SignedOff = 1)
-                    GROUP BY AdminUsers.Forename, AdminUsers.Surname, AdminUsers.Email, caoc1.CandidateAssessmentID, ca1.ID
-                    ORDER BY AdminUsers.Surname, AdminUsers.Forename", new { candidateAssessmentId });
+                      GROUP BY u.FirstName, u.LastName, u.PrimaryEmail, caoc1.CandidateAssessmentID, ca1.ID, ac.Active
+                    ORDER BY u.LastName, u.FirstName", new { candidateAssessmentId });
         }
 
         public int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId, string delegateEmail, int centreId)
