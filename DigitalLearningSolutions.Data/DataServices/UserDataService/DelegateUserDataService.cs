@@ -143,6 +143,7 @@
                 u.HasDismissedLhLoginWarning,
                 u.EmailVerified,
                 u.DetailsLastChecked,
+                u.EmailVerificationHashID,
                 ucd.ID,
                 ucd.UserID,
                 ucd.CentreID,

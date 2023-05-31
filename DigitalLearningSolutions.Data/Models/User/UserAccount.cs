@@ -17,6 +17,7 @@
         public int? ResetPasswordId { get; set; }
         public DateTime? TermsAgreed { get; set; }
         public int FailedLoginCount { get; set; }
+        public int? EmailVerificationHashID { get; set; }
 
         /// <summary>
         ///     This signifies that the user has either seen the PRN fields themselves
