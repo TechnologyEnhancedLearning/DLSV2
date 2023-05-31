@@ -102,7 +102,8 @@
                asp-route-isFromViewDelegatePage="true">
                     Set password
                 </a>
-                @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin && Model.DelegateInfo.IsPasswordSet && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Email) && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Name))
+                @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin
+                && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Email) && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Name))
                 {
                     <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
                role="button"
@@ -141,6 +142,7 @@
             }
         </div>
     </div>
+  </div>
 
     <div class="nhsuk-grid-column-full">
         <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Courses</h2>

@@ -90,6 +90,7 @@
         public void LinkAccount(int currentUserIdForAccount, int newUserIdForAccount, int centreId)
         {
             userDataService.LinkDelegateAccountToNewUser(currentUserIdForAccount, newUserIdForAccount, centreId);
+            userDataService.LinkAdminAccountToNewUser(currentUserIdForAccount, newUserIdForAccount, centreId);
             userDataService.LinkUserCentreDetailsToNewUser(currentUserIdForAccount, newUserIdForAccount, centreId);
             userDataService.DeleteUser(currentUserIdForAccount);
         }
