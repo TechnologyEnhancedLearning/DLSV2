@@ -4,6 +4,17 @@
     ViewData["Title"] = "Digital Learning Solutions - Cookie policy";
     ViewData["DoNotDisplayNavBar"] = true;
 }
+<style>
+    @@media only screen and (max-width: 767px) {
+        .nhsuk-details {
+            word-break: break-word;
+        }
+
+        .nhsuk-table-responsive .nhsuk-table__body .nhsuk-table__row td {
+            display: block;
+        }
+    }
+</style>
 <form method="post" asp-action="CookiePolicy">
     @*<input type="hidden" asp-for="UserConsent" />*@
 
@@ -18,7 +29,7 @@
                     <p>We'll only use these cookies if you say it's OK. We'll use a cookie to save your settings.</p>
 
                     <h3>Tell us if we can use analytics cookies</h3>
-                    <fieldset class="nhsuk-fieldset" id="cookie-statistics-form" aria-describedby="cookie-statistics">
+                    <fieldset class="nhsuk-fieldset" id="cookie-statistics" aria-describedby="cookie-statistics">
                         <div class="nhsuk-radios nhsuk-radios--inline nhsuk-u-margin-bottom-6">
                             <div class="nhsuk-radios__item">
                                 <input class="nhsuk-radios__input"
