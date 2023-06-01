@@ -104,7 +104,7 @@
             );
 
             Response.UpdateFilterCookie(DelegateFilterCookieName, result.FilterString);
-
+            TempData.Remove("delegateRegistered");
             return View(model);
         }
 
