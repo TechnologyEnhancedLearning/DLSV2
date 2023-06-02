@@ -311,7 +311,7 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Review/{selfAssessmentResultId}")]
         public IActionResult ReviewDelegateSelfAssessment(int supervisorDelegateId, int candidateAssessmentId, int? selfAssessmentResultId = null, SearchSupervisorCompetencyViewModel searchModel = null)
         {
-            var adminId = GetAdminId();            
+            var adminId = GetAdminId();      
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
