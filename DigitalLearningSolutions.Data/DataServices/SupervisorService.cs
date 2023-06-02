@@ -1015,33 +1015,27 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
         {
             return connection.Query<CandidateAssessmentSupervisorVerificationSummary>(
                 @"SELECT	ca1.ID, 
-		                      u.FirstName AS Forename, 
+		                   u.FirstName AS Forename, 
                            u.LastName AS Surname, 
                            u.PrimaryEmail AS Email, 
                             COUNT(sas1.CompetencyID) AS VerifiedCount, ac.Active AS AdminActive
-                    FROM   SelfAssessmentResultSupervisorVerifications AS sasrv
-                    INNER JOIN SelfAssessmentResults AS sar1 
-                        ON sasrv.SelfAssessmentResultId = sar1.ID  AND sasrv.Superceded = 0
-                    INNER JOIN CandidateAssessmentSupervisors 
-                        ON sasrv.CandidateAssessmentSupervisorID = CandidateAssessmentSupervisors.ID 
-                    INNER JOIN SupervisorDelegates sd
-                        ON CandidateAssessmentSupervisors.SupervisorDelegateId = sd.ID 
-                    INNER JOIN   AdminAccounts AS ac
-                         ON sd.SupervisorAdminID = ac.ID 
-				    INNER JOIN Users AS u 
-					ON ac.UserID = u.ID 
-                    RIGHT OUTER JOIN SelfAssessmentStructure AS sas1 
-                    INNER JOIN CandidateAssessments AS ca1 
-                        ON sas1.SelfAssessmentID = ca1.SelfAssessmentID 
-                    INNER JOIN CompetencyAssessmentQuestions AS caq1 
-                        ON sas1.CompetencyID = caq1.CompetencyID 
-                        ON sar1.ID =
-		                    (SELECT MAX(ID) AS Expr1
-		                    FROM    SelfAssessmentResults AS sar2
-		                    WHERE (CompetencyID = caq1.CompetencyID) 
-			                    AND (AssessmentQuestionID = caq1.AssessmentQuestionID) 
-			                    AND (sd.DelegateUserID = ca1.DelegateUserID) 
-			                    AND (SelfAssessmentID = ca1.SelfAssessmentID)) 
+                    FROM   SelfAssessmentResultSupervisorVerifications AS sasrv
+                    INNER JOIN SelfAssessmentResults AS sar1 
+	                    ON sasrv.SelfAssessmentResultId = sar1.ID  AND sasrv.Superceded = 0
+                    INNER JOIN CandidateAssessmentSupervisors 
+	                    ON sasrv.CandidateAssessmentSupervisorID = CandidateAssessmentSupervisors.ID 
+                    INNER JOIN SupervisorDelegates sd
+	                    ON CandidateAssessmentSupervisors.SupervisorDelegateId = sd.ID 
+                    INNER JOIN AdminAccounts AS ac
+                            ON sd.SupervisorAdminID = ac.ID
+                              INNER JOIN Users AS u
+                                 ON ac.UserID = u.ID
+                    RIGHT OUTER JOIN SelfAssessmentStructure AS sas1 
+                    INNER JOIN CandidateAssessments AS ca1 
+	                    ON sas1.SelfAssessmentID = ca1.SelfAssessmentID 
+                    INNER JOIN CompetencyAssessmentQuestions AS caq1 
+	                    ON sas1.CompetencyID = caq1.CompetencyID 
+	                    ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
                     LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS caoc1 
 	                    ON sas1.CompetencyID = caoc1.CompetencyID 
 	                    AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID 
