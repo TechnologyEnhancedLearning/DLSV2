@@ -3,6 +3,10 @@
 @using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @inject IClockUtility ClockUtility
@@ -160,7 +164,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 var visualSeparatorNoNavBar = (bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] == true ? "visual-separator-no-nav-bar" : string.Empty;
             }
             <div class="visual-separator @visualSeparatorNoNavBar"></div>
+
         </header>
+        
+        <partial name="_UserFeedbackBarPartial"/>
 
         @RenderSection("NavBreadcrumbs", false)
 

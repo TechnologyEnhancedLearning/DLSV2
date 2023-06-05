@@ -1,0 +1,25 @@
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+
+.feedback-button-inline {
+  padding: 0px 8px 0px 8px;
+  margin: 8px 10px 8px 0;
+  background-color: $color_nhsuk-blue;
+  box-shadow: none;
+  vertical-align: middle;
+  border-radius: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedback-chevron {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 24px !important;
+}
+
+.feedback-chevron svg {
+  fill: $color_nhsuk-white !important;
+  height: 24px !important;
+  width: 24px !important;
+}
