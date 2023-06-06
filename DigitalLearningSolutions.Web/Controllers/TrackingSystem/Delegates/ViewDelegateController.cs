@@ -51,8 +51,8 @@
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.config = config;
-            this.emailVerificationService= emailVerificationService;
-            this.emailVerificationDataService= emailVerificationDataService;
+            this.emailVerificationService = emailVerificationService;
+            this.emailVerificationDataService = emailVerificationDataService;
         }
 
         public IActionResult Index(int delegateId)
@@ -81,16 +81,17 @@
             var baseUrl = config.GetAppRootPath();
             if ((model.DelegateInfo?.IsActive ?? false) && (model.DelegateInfo.RegistrationConfirmationHash != null))
             {
-               Email welcomeEmail = passwordResetService.GenerateDelegateWelcomeEmail(delegateId, baseUrl);
-                model.WelcomeEmail = "mailto:" + string.Join(",",welcomeEmail.To) + "?subject=" + welcomeEmail.Subject + "&body=" +welcomeEmail.Body.TextBody.Replace("&", "%26");
+                Email welcomeEmail = passwordResetService.GenerateDelegateWelcomeEmail(delegateId, baseUrl);
+                model.WelcomeEmail = "mailto:" + string.Join(",", welcomeEmail.To) + "?subject=" + welcomeEmail.Subject + "&body=" + welcomeEmail.Body.TextBody.Replace("&", "%26");
             }
             if (delegateEntity.UserAccount.EmailVerified == null
                 && delegateEntity.UserAccount.EmailVerificationHashID != null)
             {
-               var userEntity = userService.GetUserById(delegateEntity.DelegateAccount.UserId);
-                
-                string emailVerificationHash = emailVerificationDataService.GetEmailVerificationHashById(delegateEntity.UserCentreDetails.EmailVerificationHashID ?? 0);
-               Email verificationEmail = emailVerificationService.GenerateVerificationEmail(userEntity.UserAccount, emailVerificationHash, delegateEntity.UserCentreDetails.Email, baseUrl);
+                var userEntity = userService.GetUserById(delegateEntity.DelegateAccount.UserId);
+                string emailVerificationHash = emailVerificationDataService.GetEmailVerificationHashById(delegateEntity.UserAccount.EmailVerificationHashID ?? 0);
+
+                Email verificationEmail = emailVerificationService.GenerateVerificationEmail(userEntity.UserAccount, emailVerificationHash,
+                   delegateEntity.UserAccount.PrimaryEmail, baseUrl);
                 model.VerificationEmail = "mailto:" + string.Join(",", verificationEmail.To) + "?subject=" + verificationEmail.Subject + "&body=" + verificationEmail.Body.TextBody.Replace("&", "%26");
             }
             return View(model);
