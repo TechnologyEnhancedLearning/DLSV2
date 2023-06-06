@@ -1,0 +1,18 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.UserFeedback
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model UserFeedbackViewModel;
+@{
+  ViewData["Title"] = "Feedback";
+  ViewData["Application"] = "Feedback";
+  ViewData["HeaderPathName"] = "Feedback";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+
+<p><a href="https://forms.office.com/Pages/ResponsePage.aspx?id=K5Gn_5ewMUGcD9DoB1Wyqy_N2dia4StEr8rvzDM1MnlUNEhQUDk4UVpHUDc2N0g4OTZGNFRBNktLOC4u" target="_blank">Join our user research panel</a></p>
+
+<h1>Thank you for your feedback</h1>
+
+<a class="nhsuk-button" role="button" asp-controller="Home" asp-action="Index">
+  Back to Welcome page
+</a>

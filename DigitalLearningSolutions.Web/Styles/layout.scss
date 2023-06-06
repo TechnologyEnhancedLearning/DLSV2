@@ -354,6 +354,7 @@ nav, .nhsuk-header__navigation, #header-navigation {
 .dls-alert-banner {
   background-color: $color_nhsuk-dark-pink;
   color: #FFFFFF;
+
   a {
     color: #FFFFFF;
 
@@ -365,4 +366,33 @@ nav, .nhsuk-header__navigation, #header-navigation {
       color: #FFFFFF;
     }
   }
+}
+
+.nhsuk-width-container--feedback {
+  @extend .nhsuk-width-container;
+  background-color: $color_nhsuk-grey-5;
+  border-bottom: 1px solid $color_nhsuk-grey-4;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.feedback-bar {
+  background-color: $color_nhsuk-grey-5;
+}
+
+.feedback-button-inline {
+  padding: 0px 8px 0px 8px;
+  margin: 8px 10px 8px 0;
+  background-color: $color_nhsuk-blue;
+  box-shadow: none;
+  vertical-align: middle;
+  border-radius: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
