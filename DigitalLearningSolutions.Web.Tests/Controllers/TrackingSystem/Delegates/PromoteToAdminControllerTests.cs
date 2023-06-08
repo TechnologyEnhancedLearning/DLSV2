@@ -52,6 +52,7 @@
                     emailService
                 )
                 .WithDefaultContext();
+            controller = controller.WithMockTempData();
         }
 
         [Test]

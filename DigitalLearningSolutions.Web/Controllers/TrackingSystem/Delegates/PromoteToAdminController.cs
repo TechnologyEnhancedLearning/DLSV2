@@ -64,6 +64,11 @@
             var userId = userDataService.GetUserIdFromDelegateId(delegateId);
             var userEntity = userService.GetUserById(userId);
 
+            if(TempData["IsDelegatePromoted"] != null)
+            {
+                TempData.Remove("IsDelegatePromoted");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
             if (userEntity!.CentreAccountSetsByCentreId[centreId].CanLogIntoAdminAccount)
             {
                 return NotFound();
@@ -167,7 +172,7 @@
 
                 return new StatusCodeResult(500);
             }
-
+            TempData["IsDelegatePromoted"] = true;
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
     }
