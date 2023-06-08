@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
-@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewCompetencySelfAsessmentViewModel;
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -235,7 +234,7 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
     else
     {
         <dl class="nhsuk-summary-list">
-            <partial name="_ReviewOutcome" model="@(new AssessmentQuestion{Verified=Model.Verified,SupervisorName=Model.SupervisorName,SignedOff=Model.SignedOff})" />
+            <partial name="_ReviewOutcome"  model="Model"/>
             @if (Model.SupervisorComments != null)
             {
                 <div class="nhsuk-summary-list__row">
@@ -248,7 +247,6 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
 
                 </div>
             }
-
         </dl>
         @if ((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
         {

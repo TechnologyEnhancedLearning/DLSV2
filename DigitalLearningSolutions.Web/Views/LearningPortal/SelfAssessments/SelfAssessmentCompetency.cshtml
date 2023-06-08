@@ -1,5 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model SelfAssessmentCompetencyViewModel
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -86,9 +87,7 @@
                 <p>Your self assessment response against this question has been confirmed. Changing your response will reset confirmation.</p>
                 @if (question.value.Verified != null)
                 {
-                    <dl class="nhsuk-summary-list">
-                        <partial name="_ReviewOutcome" model="question.value" />
-                    </dl>
+                  <partial name="_ReviewOutcome" model="@(new ReviewCompetencySelfAsessmentViewModel{Verified=question.value.Verified,SupervisorName=question.value.SupervisorName,SignedOff=question.value.SignedOff ?? false,SupervisorComments=question.value.SupervisorComments})" />
                 }
             </div>
         }
