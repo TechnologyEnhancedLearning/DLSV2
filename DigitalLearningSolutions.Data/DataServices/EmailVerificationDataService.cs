@@ -4,6 +4,7 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models;
 
     public interface IEmailVerificationDataService
     {
@@ -15,7 +16,7 @@
 
         bool AccountEmailIsVerifiedForUser(int userId, string? email);
 
-        string? GetEmailVerificationHashById(int id);
+        EmailVerificationDetails? GetEmailVerificationDetailsById(int id);
     }
 
     public class EmailVerificationDataService : IEmailVerificationDataService
@@ -73,12 +74,16 @@
             return isEmailVerifiedAsPrimaryEmail || isEmailVerifiedAsCentreEmail;
         }
 
-        public string? GetEmailVerificationHashById(int id)
+        public EmailVerificationDetails? GetEmailVerificationDetailsById(int id)
         {
-            return connection.QuerySingleOrDefault<string?>(
-                @"SELECT EmailVerificationHash FROM EmailVerificationHashes WHERE ID = @id",
+            return connection.Query<EmailVerificationDetails>(
+                @"SELECT
+                        h.EmailVerificationHash,
+                        h.CreatedDate AS EmailVerificationHashCreatedDate
+                    FROM EmailVerificationHashes h
+                    WHERE h.ID = @id",
                 new { id }
-            );
+            ).SingleOrDefault();
         }
     }
 }
