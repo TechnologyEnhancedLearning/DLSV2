@@ -11,5 +11,6 @@
         public DateTime? CompleteByDate { get; set; }
         public string SupervisorRoleName { get; set; }
         public int SupervisorRoleCount { get; set; }
+        public bool AllowSupervisorRoleSelection { get; set; }
     }
 }
