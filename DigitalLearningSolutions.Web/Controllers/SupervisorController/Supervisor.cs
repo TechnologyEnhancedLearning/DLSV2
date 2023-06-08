@@ -925,13 +925,17 @@
                 ? 0
                 : supervisorService
                     .GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value).Count());
+            var allowSupervisorRoleSelection = (sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId == null
+                ? false:supervisorService
+                    .GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value).FirstOrDefault().AllowSupervisorRoleSelection);
             var model = new EnrolDelegateSummaryViewModel()
             {
                 SupervisorDelegateDetail = supervisorDelegate,
                 RoleProfile = roleProfile,
                 SupervisorRoleName = supervisorRoleName,
                 CompleteByDate = sessionEnrolOnRoleProfile.CompleteByDate,
-                SupervisorRoleCount = supervisorRoleCount
+                SupervisorRoleCount = supervisorRoleCount,
+                AllowSupervisorRoleSelection= allowSupervisorRoleSelection
             };
             ViewBag.completeByDate = TempData["completeByDate"];
             ViewBag.completeByMonth = TempData["completeByMonth"];

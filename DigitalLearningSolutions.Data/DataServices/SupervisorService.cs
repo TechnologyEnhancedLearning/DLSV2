@@ -660,9 +660,9 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId)
         {
             return connection.Query<SelfAssessmentSupervisorRole>(
-               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
+               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview,AllowSupervisorRoleSelection
                   FROM   SelfAssessmentSupervisorRoles
-                  WHERE (SelfAssessmentID = @selfAssessmentId)
+                  WHERE (SelfAssessmentID = @selfAssessmentId) 
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
