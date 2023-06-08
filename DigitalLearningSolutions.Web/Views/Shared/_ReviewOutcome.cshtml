@@ -1,0 +1,34 @@
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
+@model AssessmentQuestion
+@{
+  string verifiedString = "";
+}
+<div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+        Reviewed
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+        @if (Model.Verified != null)
+        {
+            DateTime verified = (DateTime)Model.Verified;
+            verifiedString = verified.ToString("dd/MM/yyyy");
+        }
+        @Html.Raw(verifiedString)<text> </text>@Model.SupervisorName
+    </dd>
+</div>
+
+<div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+        Confirmed
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+        @if (Model.SignedOff ?? false)
+        {
+            <span class="nhsuk-tag nhsuk-tag--green">Yes</span>
+        }
+        else
+        {
+            <span class="nhsuk-tag nhsuk-tag--red">No</span>
+        }
+    </dd>
+</div>

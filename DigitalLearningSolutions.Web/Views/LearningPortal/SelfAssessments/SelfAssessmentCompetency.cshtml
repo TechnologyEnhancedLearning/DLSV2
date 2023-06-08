@@ -86,38 +86,8 @@
                 <p>Your self assessment response against this question has been confirmed. Changing your response will reset confirmation.</p>
                 @if (question.value.Verified != null)
                 {
-                    string verifiedString = "";
                     <dl class="nhsuk-summary-list">
-
-                        <div class="nhsuk-summary-list__row">
-                            <dt class="nhsuk-summary-list__key">
-                                Reviewed
-                            </dt>
-                            <dd class="nhsuk-summary-list__value">
-                                @if (question.value.Verified != null)
-                                {
-                                    DateTime verified = (DateTime)question.value.Verified;
-                                    verifiedString = verified.ToString("dd/MM/yyyy");
-                                }
-                                @Html.Raw(verifiedString)<text> </text>@question.value.SupervisorName
-                            </dd>
-                        </div>
-
-                        <div class="nhsuk-summary-list__row">
-                            <dt class="nhsuk-summary-list__key">
-                                Confirmed
-                            </dt>
-                            <dd class="nhsuk-summary-list__value">
-                                @if (question.value.SignedOff ?? false)
-                                {
-                                    <span class="nhsuk-tag nhsuk-tag--green">Yes</span>
-                                }
-                                else
-                                {
-                                    <span class="nhsuk-tag nhsuk-tag--red">No</span>
-                                }
-                            </dd>
-                        </div>
+                        <partial name="_ReviewOutcome" model="question.value" />
                     </dl>
                 }
             </div>
