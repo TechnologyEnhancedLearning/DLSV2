@@ -38,6 +38,7 @@
             userDataService = A.Fake<IUserDataService>();
             courseService = A.Fake<ICourseService>();
             config = A.Fake<IConfiguration>();
+            emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
 
             viewDelegateController = new ViewDelegateController(
                     userDataService,
