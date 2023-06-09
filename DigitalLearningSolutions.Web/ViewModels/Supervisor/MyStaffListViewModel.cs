@@ -61,6 +61,8 @@
             }
         }
 
+        public bool IsActiveSupervisorDelegateExist { get; set; }
+
         public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;
 
         [Required(ErrorMessage = "Enter an email")]
