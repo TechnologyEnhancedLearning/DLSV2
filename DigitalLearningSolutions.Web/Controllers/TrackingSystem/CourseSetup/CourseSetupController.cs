@@ -88,6 +88,8 @@
 
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
+            var courses = UpdateCoursesNotActiveStatus(details.Courses);
+            
             var availableFilters = CourseStatisticsViewModelFilterOptions
                 .GetFilterOptions(categoryId.HasValue ? new string[] { } : details.Categories, details.Topics).ToList();
 
@@ -103,7 +105,7 @@
             );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
-                details.Courses,
+                courses,
                 searchSortPaginationOptions
             );
 
@@ -634,5 +636,25 @@
                 tempData.CourseDetailsData.NotificationEmails
             );
         }
-    }
+
+        private static IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> UpdateCoursesNotActiveStatus(IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses)
+        {
+            var updatedCourses = courses.ToList();
+
+            foreach (var course in updatedCourses)
+            {
+                if (course.Archived || course.Active == false)
+                {
+                  course.NotActive = true;
+                }
+                else
+                {
+                  course.NotActive = false;
+                }
+            }
+
+            return updatedCourses;
+        }
+
+  }
 }
