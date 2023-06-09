@@ -1,0 +1,99 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.UserFeedback
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model UserFeedbackViewModel;
+
+@{
+  ViewData["Title"] = "Feedback";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/userFeedback/userFeedback.css")" asp-append-version="true">
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
+            @if (Model.SourcePageTitle != String.Empty) {
+              <div><partial name="_NhsChevronLeft" /> Go back to @Model.SourcePageTitle</div>
+            }
+            @if (Model.SourcePageTitle == String.Empty) {
+              <div><partial name="_NhsChevronLeft" /> Go back</div>
+            }
+          </a>
+        </li>
+      </ol>
+    </div>
+  </nav>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h2 class="nhsuk-caption-l">Give page or website feedback</h2>
+    <h1 id="page-heading" class="nhsuk-heading-xl">How easy or difficult was it to achieve your task?</h1>
+  </div>
+  <div class="nhsuk-grid-column-two-thirds">
+    <p class="nhsuk-body-l">Step 3 of 4</p>
+    
+    <form method="post" asp-action="UserFeedbackTaskDifficultySet">
+      <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+      <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
+
+      <div class="nhsuk-hint" id="feedback-difficulty-hint">
+        Please select an option
+      </div>
+      <fieldset class="nhsuk-fieldset" id="feedback-achieved-form" aria-describedby="feedback-difficulty-hint">
+        <div class="nhsuk-u-margin-bottom-6">
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input"
+                   id="task-difficulty-veryeasy"
+                   asp-for="TaskRating"
+                   type="radio"
+                   value="1">
+            <label class="nhsuk-label nhsuk-radios__label" for="task-difficulty-veryeasy">
+              Very Easy
+            </label>
+          </div>
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input"
+                   id="task-difficulty-easy"
+                   asp-for="TaskRating"
+                   type="radio"
+                   value="2">
+            <label class="nhsuk-label nhsuk-radios__label" for="task-difficulty-easy">
+              Easy
+            </label>
+          </div>
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input"
+                   id="task-difficulty-difficult"
+                   asp-for="TaskRating"
+                   type="radio"
+                   value="3">
+            <label class="nhsuk-label nhsuk-radios__label" for="task-difficulty-difficult">
+              Difficult
+            </label>
+          </div>
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input"
+                   id="task-difficulty-verydifficult"
+                   asp-for="TaskRating"
+                   type="radio"
+                   value="4">
+            <label class="nhsuk-label nhsuk-radios__label" for="task-difficulty-verydifficult">
+              Very Difficult
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div class="nhsuk-u-float-right">
+        <button class="nhsuk-button" type="submit">
+          Submit feedback
+          <span class="feedback-chevron">
+            <partial name="_NhsChevronRightOffset" class="feedback-chevron" />
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

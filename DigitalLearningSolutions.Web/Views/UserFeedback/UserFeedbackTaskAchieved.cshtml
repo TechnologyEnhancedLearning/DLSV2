@@ -1,0 +1,91 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.UserFeedback
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model UserFeedbackViewModel;
+
+@{
+  ViewData["Title"] = "Feedback";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/userFeedback/userFeedback.css")" asp-append-version="true">
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
+            @if (Model.SourcePageTitle != String.Empty)
+            {
+              <div>&lt Go back to @Model.SourcePageTitle</div>
+            }
+            @if (Model.SourcePageTitle == String.Empty)
+            {
+              <div>&lt Go back</div>
+            }
+          </a>
+        </li>
+      </ol>
+    </div>
+  </nav>
+}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h2 class="nhsuk-caption-l">Give page or website feedback</h2>
+      <h1 id="page-heading" class="nhsuk-heading-xl">Did you achieve everything you came to do today?</h1>
+    </div>
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            We do not reply to this inbox.
+          </span>
+        </h3>
+        <p>If you need support please contact your centre. This might be your Centre Manager or Clinical Centre Manager.</p>
+      </div>
+
+      <p class="nhsuk-body-l">Step 1 of 4</p>
+
+      <form method="post" asp-action="UserFeedbackTaskAchievedSet">
+        <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+        <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
+        <div class="nhsuk-hint" id="task-achieve-hint">
+          Did you achieve everything you came to do today?
+        </div>
+        <fieldset class="nhsuk-fieldset" id="feedback-achieved-form" aria-describedby="task-achieve-hint">
+          <div class="nhsuk-u-margin-bottom-6">
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input"
+                   id="feedback-achieved-yes"
+                   asp-for="TaskAchieved"
+                   type="radio"
+                   value="true">
+              <label class="nhsuk-label nhsuk-radios__label" for="feedback-achieved-yes">
+                Yes
+              </label>
+            </div>
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input"
+                   id="feedback-achieved-no"
+                   asp-for="TaskAchieved"
+                   type="radio"
+                   value="false" />
+              <label class="nhsuk-label nhsuk-radios__label" for="feedback-achieved-no">
+                No
+              </label>
+            </div>
+          </div>
+        </fieldset>
+        <div class="nhsuk-u-float-right">
+          <button class="nhsuk-button" type="submit">Continue
+          <span class="feedback-chevron">
+            <partial name="_NhsChevronRightOffset" class="feedback-chevron" />
+          </span>
+        </button>
+        </div>
+      </form>
+    </div>
+  </div>
+

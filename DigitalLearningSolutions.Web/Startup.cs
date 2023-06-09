@@ -316,6 +316,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedisCacheOptions, RedisCacheOptions>();
             services.AddScoped<IMultiPageFormService, MultiPageFormService>();
             services.AddScoped<ISelfAssessmentReportDataService, SelfAssessmentReportDataService>();
+            services.AddScoped<IUserFeedbackDataService, UserFeedbackDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
