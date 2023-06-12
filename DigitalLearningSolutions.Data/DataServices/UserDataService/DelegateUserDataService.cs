@@ -125,7 +125,6 @@
                 da.UserID,
                 da.CentreSpecificDetailsLastChecked,
                 da.RegistrationConfirmationHash,
-                da.RegistrationConfirmationHashCreationDateTime,
                 u.ID,
                 u.PrimaryEmail,
                 u.PasswordHash,

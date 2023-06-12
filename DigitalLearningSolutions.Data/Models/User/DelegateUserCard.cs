@@ -17,7 +17,6 @@
             Approved = delegateEntity.DelegateAccount.Approved;
             CentreActive = delegateEntity.DelegateAccount.CentreActive;
             RegistrationConfirmationHash = delegateEntity.DelegateAccount.RegistrationConfirmationHash;
-            RegistrationConfirmationHashCreationDateTime = delegateEntity.DelegateAccount.RegistrationConfirmationHashCreationDateTime;
             FirstName = delegateEntity.UserAccount.FirstName;
             LastName = delegateEntity.UserAccount.LastName;
             EmailAddress = delegateEntity.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail;

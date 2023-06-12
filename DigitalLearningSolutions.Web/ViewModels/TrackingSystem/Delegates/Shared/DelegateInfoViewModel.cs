@@ -44,7 +44,6 @@
 
             DelegateRegistrationPrompts = delegateRegistrationPrompts;
             RegistrationConfirmationHash = delegateUser.RegistrationConfirmationHash;
-            RegistrationConfirmationHashCreationDateTime = delegateUser.RegistrationConfirmationHashCreationDateTime;
         }
 
         public int Id { get; set; }
@@ -64,7 +63,6 @@
         public string? RegistrationDate { get; set; }
         public string ProfessionalRegistrationNumber { get; set; }
         public string? RegistrationConfirmationHash { get; set; }
-        public DateTime? RegistrationConfirmationHashCreationDateTime { get; set; }
 
         public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
     }

@@ -30,7 +30,6 @@
         public bool HasDismissedLhLoginWarning { get; set; }
 
         public string? RegistrationConfirmationHash { get; set; }
-        public DateTime? RegistrationConfirmationHashCreationDateTime { get; set; }
         public override string?[] SearchableContent => new[] { SearchableName, CandidateNumber, EmailAddress };
 
         public override UserReference ToUserReference()
