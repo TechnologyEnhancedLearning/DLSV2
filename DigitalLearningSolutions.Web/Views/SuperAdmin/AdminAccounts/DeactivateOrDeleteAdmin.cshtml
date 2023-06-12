@@ -1,0 +1,39 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
+@model DeactivateAdminViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: " : "" + "Deactivate admin account";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
+    }
+    <h1 class="nhsuk-heading-l">Are you sure you would like to deactivate this admin account?</h1>
+  </div>
+</div>
+
+<vc:field-name-value-display display-name="User" field-value="@DisplayStringHelper.GetNameWithEmailForDisplay(Model.FullName, Model.EmailAddress)" />
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="DeactivateOrDeleteAdmin">
+      <div class="nhsuk-form-group">
+
+        <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
+                            label="I am sure that I wish to deactivate this account. I understand that if the user has never logged in, their admin account will be deleted."
+                            hint-text="" />
+      </div>
+      <input type="hidden" asp-for="FullName" />
+      <input type="hidden" asp-for="EmailAddress" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
+      <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Deactivate account</button>
+    </form>
+
+        <vc:cancel-link-with-return-page-query asp-controller="SuperAdmin" asp-action="AdminAccounts" return-page-query="@Model.ReturnPageQuery" />
+  </div>
+</div>
