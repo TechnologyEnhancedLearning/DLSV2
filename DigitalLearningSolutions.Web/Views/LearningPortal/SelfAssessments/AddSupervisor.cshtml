@@ -79,21 +79,19 @@
                         <input type="hidden" aria-hidden="true" id="select-sort-direction" value="Ascending" />
 
                         <form id="frmSubmit" method="post">
-                            <div id="searchable-elements" class="nhsuk-radios">
-                                <div class="searchable-element nhsuk-u-padding-top-3">
-                                    @foreach (var supervisor in Model.Supervisors)
-                                    {
-                                        <div class="nhsuk-radios__item">
-                                            <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
-                                            <label class="nhsuk-label nhsuk-radios__label util-wrap-text" for="supervisor-@supervisor.AdminID">
-                                                @supervisor.Forename @supervisor.Surname (@supervisor.CentreName)
-                                            </label>
-                                            <div class="nhsuk-hint nhsuk-radios__hint util-wrap-text" id="supervisor-@supervisor.AdminID-item-hint">
-                                                @supervisor.Email
-                                            </div>
+                            <div id="searchable-elements" class="searchable-element nhsuk-u-padding-top-3 util-wrap-text">
+                                @foreach (var supervisor in Model.Supervisors)
+                                {
+                                    <div class="nhsuk-radios__item">
+                                        <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
+                                        <label class="nhsuk-label nhsuk-radios__label util-wrap-text" for="supervisor-@supervisor.AdminID">
+                                            @supervisor.Forename @supervisor.Surname (@supervisor.CentreName)
+                                        </label>
+                                        <div class="nhsuk-hint nhsuk-radios__hint util-wrap-text" id="supervisor-@supervisor.AdminID-item-hint">
+                                            @supervisor.Email
                                         </div>
-                                    }
-                                </div>
+                                    </div>
+                                }
                             </div>
                             @if (Model.Supervisors.Count() > 0 || Model.MatchingSearchResults > 0)
                             {
@@ -102,7 +100,6 @@
                                 </button>
                             }
                         </form>
-
                     </fieldset>
                 </nhs-form-group>
             </form>
