@@ -80,9 +80,9 @@
 
                         <form id="frmSubmit" method="post">
                             <div id="searchable-elements" class="nhsuk-radios">
-                                @foreach (var supervisor in Model.Supervisors)
-                                {
-                                    <div Class="searchable-element nhsuk-u-padding-top-3">
+                                <div class="searchable-element nhsuk-u-padding-top-3">
+                                    @foreach (var supervisor in Model.Supervisors)
+                                    {
                                         <div class="nhsuk-radios__item">
                                             <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
                                             <label class="nhsuk-label nhsuk-radios__label util-wrap-text" for="supervisor-@supervisor.AdminID">
@@ -92,8 +92,8 @@
                                                 @supervisor.Email
                                             </div>
                                         </div>
-                                    </div>
-                                }
+                                    }
+                                </div>
                             </div>
                             @if (Model.Supervisors.Count() > 0 || Model.MatchingSearchResults > 0)
                             {
