@@ -82,8 +82,7 @@
 
             var baseUrl = config.GetAppRootPath();
             IClockUtility clockUtility = new ClockUtility();
-            if ((model.DelegateInfo?.IsActive ?? false) && (model.DelegateInfo.RegistrationConfirmationHash != null
-                && model.DelegateInfo.RegistrationConfirmationHashCreationDateTime?.AddDays(2) > clockUtility.UtcNow)
+            if ((model.DelegateInfo?.IsActive ?? false) && (model.DelegateInfo.RegistrationConfirmationHash != null)
                 )
             {
                 Email welcomeEmail = passwordResetService.GenerateDelegateWelcomeEmail(delegateId, baseUrl);
