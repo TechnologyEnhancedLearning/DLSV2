@@ -13,8 +13,7 @@
         private static readonly IEnumerable<FilterOptionModel> CourseStatusOptions = new[]
         {
             CourseStatusFilterOptions.IsActive,
-            CourseStatusFilterOptions.IsInactive,
-            CourseStatusFilterOptions.IsArchived,
+            CourseStatusFilterOptions.NotActive
         };
 
         private static readonly IEnumerable<FilterOptionModel> CourseVisibilityOptions = new[]

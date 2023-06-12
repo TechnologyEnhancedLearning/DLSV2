@@ -38,22 +38,16 @@
             new[]
             {
                 new FilterOptionModel(
-                    "Inactive",
-                    "Status" + FilteringHelper.Separator + "Active" + FilteringHelper.Separator +
-                    "false",
-                    FilterStatus.Warning
-                ),
-                new FilterOptionModel(
                     "Active",
                     "Status" + FilteringHelper.Separator + "Active" + FilteringHelper.Separator +
                     "true",
                     FilterStatus.Success
                 ),
                 new FilterOptionModel(
-                    "Archived",
-                    "Status" + FilteringHelper.Separator + "Archived" + FilteringHelper.Separator +
+                    "Inactive/archived",
+                    "Status" + FilteringHelper.Separator + "NotActive" + FilteringHelper.Separator +
                     "true",
-                    FilterStatus.Default
+                    FilterStatus.Success
                 ),
             }
         );
