@@ -1,12 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
-    using System.Collections.Generic;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -15,11 +10,12 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
-    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
-    using static Org.BouncyCastle.Math.EC.ECCurve;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class ClaimAccountController : Controller
@@ -167,11 +163,8 @@
             );
 
             var userEntity = userService.GetUserById(model.UserId);
-            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                userEntity!.UserAccount,
-                new List<String>(new string[] { model.Email }),
-                config.GetAppRootPath()
-            );
+            IClockUtility clockUtility = new ClockUtility();
+            userDataService.SetPrimaryEmailVerified(userEntity!.UserAccount.Id, model.Email, clockUtility.UtcNow);
 
             return RedirectToAction("Confirmation");
         }
