@@ -116,7 +116,8 @@
 
                 passwordResetService.GenerateAndSendDelegateWelcomeEmail(
                     delegateId,
-                    baseUrl
+                    baseUrl,
+                    delegateUser.RegistrationConfirmationHash
                 );
                 return View("WelcomeEmailSent", model);
             }

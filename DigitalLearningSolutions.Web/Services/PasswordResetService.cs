@@ -32,7 +32,7 @@
 
         Task ResetPasswordAsync(ResetPasswordWithUserDetails passwordReset, string password);
 
-        void GenerateAndSendDelegateWelcomeEmail(int delegateId, string baseUrl);
+        void GenerateAndSendDelegateWelcomeEmail(int delegateId, string baseUrl, string registrationConfirmationHash);
 
         void GenerateAndScheduleDelegateWelcomeEmail(
             int delegateId,
@@ -110,11 +110,10 @@
             userService.ResetFailedLoginCountByUserId(passwordReset.UserId);
         }
 
-        public void GenerateAndSendDelegateWelcomeEmail(int delegateId, string baseUrl)
+        public void GenerateAndSendDelegateWelcomeEmail(int delegateId, string baseUrl, string registrationConfirmationHash)
         {
             var delegateEntity = userService.GetDelegateById(delegateId)!;
 
-            var registrationConfirmationHash = GenerateRegistrationConfirmationHash(delegateId);
             var welcomeEmail = GenerateWelcomeEmail(
                 delegateEntity,
                 registrationConfirmationHash,
