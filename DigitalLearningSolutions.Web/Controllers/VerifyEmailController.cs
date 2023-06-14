@@ -12,7 +12,6 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class VerifyEmailController : Controller
     {
-        private static readonly TimeSpan EmailVerificationHashLifetime = TimeSpan.FromDays(3);
 
         private readonly IClockUtility clockUtility;
         private readonly IUserService userService;
@@ -36,11 +35,6 @@
             if (emailVerificationData == null)
             {
                 return View("VerificationLinkError");
-            }
-
-            if (emailVerificationData.HashCreationDate + EmailVerificationHashLifetime < clockUtility.UtcNow)
-            {
-                return View("VerificationLinkExpired");
             }
 
             using var transaction = new TransactionScope();
