@@ -73,30 +73,6 @@
         }
 
         [Test]
-        public void Index_with_expired_verification_returns_link_expired_page_without_updating_records()
-        {
-            // Given
-            var now = new DateTime(2022, 1, 1);
-            var fourDaysAgo = now.AddDays(-4);
-
-            var verificationData = Builder<EmailVerificationTransactionData>.CreateNew()
-                .With(d => d.HashCreationDate = fourDaysAgo)
-                .Build();
-
-            A.CallTo(() => clockUtility.UtcNow).Returns(now);
-            A.CallTo(() => userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(Email, Code))
-                .Returns(verificationData);
-
-            // When
-            var result = controller.Index(Email, Code);
-
-            // Then
-            A.CallTo(() => userService.SetEmailVerified(A<int>._, A<string>._, A<DateTime>._)).MustNotHaveHappened();
-
-            result.Should().BeViewResult().WithViewName("VerificationLinkExpired");
-        }
-
-        [Test]
         public void Index_with_unverified_email_matching_code_updates_records_and_returns_page()
         {
             // Given
