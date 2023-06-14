@@ -372,18 +372,18 @@ nav, .nhsuk-header__navigation, #header-navigation {
   @extend .nhsuk-width-container;
   background-color: $color_nhsuk-grey-5;
   border-bottom: 1px solid $color_nhsuk-grey-4;
-  min-width: 100% !important;
-  max-width: 100% !important;
+  min-width: 100%;
+  max-width: 100%;
   display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 0 !important;
-  margin: 0 !important;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
 }
 
 .feedback-tag {
   align-items: center;
-  background-color: rgb(0, 94, 184);
+  background-color: $color_nhsuk-blue;
   color: $color_nhsuk-white;
   display: inline-flex;
   font-family: "Frutiger W01", Arial, sans-serif;
@@ -392,14 +392,8 @@ nav, .nhsuk-header__navigation, #header-navigation {
   height: 31.9844px;
   justify-content: center;
   line-height: 27.9999px;
-  margin-bottom: 8px;
-  margin-left: 0px;
-  margin-right: 10px;
-  margin-top: 8px;
-  padding-bottom: 0px;
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-top: 0px;
+  margin: 8px 10px 8px 0px;
+  padding: 0px 8px 0px 8px;
   position: relative;
   text-align: center;
   vertical-align: middle;
