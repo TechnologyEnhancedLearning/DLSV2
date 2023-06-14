@@ -979,24 +979,42 @@
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
-            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
-            multiPageFormService.SetMultiPageFormData(
-                sessionEnrolOnRoleProfile,
-                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                TempData
-            );
+            var supervisorRoles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(selfAssessmentId);
 
-            var supervisorRoleName = (sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId == null
-                ? "Supervisor"
-                : supervisorService
-                    .GetSupervisorRoleById(sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId.Value).RoleName);
-            var model = new EnrolDelegateSummaryViewModel
+            if (supervisorRoles.Any() && supervisorRoles.Count() > 1)
             {
-                RoleProfile = roleProfile,
-                SupervisorDelegateDetail = supervisorDelegate,
-                SupervisorRoleName = supervisorRoleName
-            };
-            return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId));
+                var model = new EnrolDelegateSupervisorRoleViewModel()
+                {
+                    SupervisorDelegateDetail = supervisorDelegate,
+                    RoleProfile = roleProfile,
+                    SelfAssessmentSupervisorRoleId = null,
+                    SelfAssessmentSupervisorRoles = supervisorRoles
+                };
+                return View("SelectDelegateSupervisorRole", model);
+            }
+            else
+            {
+                var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile()
+                {
+                    SelfAssessmentID = supervisorRoles.FirstOrDefault().SelfAssessmentID,
+                    SelfAssessmentSupervisorRoleId = supervisorRoles.FirstOrDefault().ID
+                };
+
+                multiPageFormService.SetMultiPageFormData(
+                    sessionEnrolOnRoleProfile,
+                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                    TempData
+                );
+                var supervisorRoleName = supervisorRoles.FirstOrDefault().RoleName;
+                var model = new EnrolDelegateSummaryViewModel
+                {
+                    RoleProfile = roleProfile,
+                    SupervisorDelegateDetail = supervisorDelegate,
+                    SupervisorRoleName = supervisorRoleName
+                };
+                return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId));
+            }
+            
 
 
         }
@@ -1021,6 +1039,7 @@
             }
             else
             {
+
                 var model = new EnrolDelegateSummaryViewModel
                 {
                     RoleProfile = roleProfile,
