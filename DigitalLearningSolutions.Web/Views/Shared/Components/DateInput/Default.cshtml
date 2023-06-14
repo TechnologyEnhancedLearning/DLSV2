@@ -10,9 +10,19 @@
 
 <div class="@Model.CssClass @errorCss" id="@Model.Id">
   <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-hint" role="group">
-    <legend class="nhsuk-fieldset__legend nhsuk-label">
-      @Model.Label
-    </legend>
+        <legend class="nhsuk-fieldset__legend nhsuk-label">
+            @if (Model.IsPageHeading.GetValueOrDefault() == true)
+            {
+                <h1>
+                    @Model.Label
+                </h1>
+            }
+            else
+            {
+                @Model.Label
+            }
+        </legend>
+        
     @if (Model.HintTextLines != null) {
       @foreach (var hintText in Model.HintTextLines) {
         <div class="nhsuk-hint">

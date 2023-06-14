@@ -31,7 +31,17 @@
         <div class="nhsuk-checkboxes">
             @foreach (var checkbox in Model.Checkboxes)
             {
-                <partial name="_CheckboxItem" model="checkbox" />
+                if (!string.IsNullOrWhiteSpace(Model.Class))
+                {
+                    <div class="@Model.Class">
+                        <partial name="_CheckboxItem" model="checkbox" />
+                    </div>
+                }
+                else
+                {
+                    <partial name="_CheckboxItem" model="checkbox" />
+                }
+
             }
         </div>
     </fieldset>
