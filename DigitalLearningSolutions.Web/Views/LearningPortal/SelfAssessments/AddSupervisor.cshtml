@@ -19,19 +19,19 @@
 }
 @if (Model.JavascriptSearchSortFilterPaginateEnabled)
 {
-  <vc:loading-spinner page-has-side-nav-menu="false" />
+    <vc:loading-spinner page-has-side-nav-menu="false" />
 }
 @section mobilebacklink
-{
+    {
     <p class="nhsuk-breadcrumb__back">
-      @if(TempData["CentreID"] == null)
-      {
-        <a class="nhsuk-breadcrumb__backlink" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Manage Supervisors</a>
-      }
-      else
-      {
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SelectSupervisorCentre" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Choose a centre</a>
-      }
+        @if (TempData["CentreID"] == null)
+        {
+            <a class="nhsuk-breadcrumb__backlink" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Manage Supervisors</a>
+        }
+        else
+        {
+            <a class="nhsuk-breadcrumb__backlink" asp-action="SelectSupervisorCentre" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Choose a centre</a>
+        }
     </p>
 }
 <h1>New activity supervisor</h1>
@@ -45,7 +45,7 @@
                 }
                 <div class="nhsuk-grid-row">
                     <div class="nhsuk-grid-column-full">
-                      <partial name="SearchablePage/_Search" model="Model" />
+                        <partial name="SearchablePage/_Search" model="Model" />
                     </div>
                 </div>
                 <nhs-form-group nhs-validation-for="SupervisorAdminID">
@@ -78,39 +78,39 @@
                         <input type="hidden" aria-hidden="true" id="select-sort-by" value="SearchableName" />
                         <input type="hidden" aria-hidden="true" id="select-sort-direction" value="Ascending" />
 
-                        <form id="frmSubmit" method="post" >
-                          <div class="searchable-element nhsuk-u-padding-top-3">
-                            @foreach (var supervisor in Model.Supervisors)
+                        <form id="frmSubmit" method="post">
+                            <div id="searchable-elements" class="searchable-element nhsuk-u-padding-top-3 util-wrap-text">
+                                @foreach (var supervisor in Model.Supervisors)
+                                {
+                                    <div class="nhsuk-radios__item">
+                                        <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
+                                        <label class="nhsuk-label nhsuk-radios__label util-wrap-text" for="supervisor-@supervisor.AdminID">
+                                            @supervisor.Forename @supervisor.Surname (@supervisor.CentreName)
+                                        </label>
+                                        <div class="nhsuk-hint nhsuk-radios__hint util-wrap-text" id="supervisor-@supervisor.AdminID-item-hint">
+                                            @supervisor.Email
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            @if (Model.Supervisors.Count() > 0 || Model.MatchingSearchResults > 0)
                             {
-                              <div class="nhsuk-radios__item">
-                                <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
-                                <label class="nhsuk-label nhsuk-radios__label util-wrap-text" for="supervisor-@supervisor.AdminID">
-                                    @supervisor.Forename @supervisor.Surname (@supervisor.CentreName)
-                                </label>
-                                <div class="nhsuk-hint nhsuk-radios__hint util-wrap-text" id="supervisor-@supervisor.AdminID-item-hint">
-                                  @supervisor.Email
-                                </div>
-                              </div>
+                                <button id="btnAddSupervisor" class="nhsuk-button nhsuk-u-margin-top-3" type="submit">
+                                    Next
+                                </button>
                             }
-                          </div>
-                          @if (Model.Supervisors.Count() > 0 || Model.MatchingSearchResults>0)
-                          {
-                            <button id="btnAddSupervisor" class="nhsuk-button nhsuk-u-margin-top-3" type="submit">
-                              Next
-                            </button>
-                          }
                         </form>
                     </fieldset>
                 </nhs-form-group>
             </form>
             <div class="nhsuk-back-link">
                 <a class="nhsuk-back-link__link"
-                asp-action="ManageSupervisors"
-                asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">
-                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-                </svg>
-                Cancel
+                   asp-action="ManageSupervisors"
+                   asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">
+                    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                    </svg>
+                    Cancel
                 </a>
             </div>
         </div>
@@ -119,7 +119,7 @@
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled)
 {
-  @section scripts {
-  <script src="@Url.Content("~/js/LearningPortal/supervisorList.js")" asp-append-version="true"></script>
+    @section scripts {
+    <script src="@Url.Content("~/js/LearningPortal/supervisorList.js")" asp-append-version="true"></script>
 }
 }

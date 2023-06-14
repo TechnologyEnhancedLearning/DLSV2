@@ -185,7 +185,7 @@
             A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(delegateEntity);
 
             // When
-            passwordResetService.GenerateAndSendDelegateWelcomeEmail(delegateId, "example.com");
+            passwordResetService.GenerateAndSendDelegateWelcomeEmail(delegateId, "example.com","ExampleHash");
 
             // Then
             A.CallTo(

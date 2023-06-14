@@ -1,11 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
+    using System;
+    using System.Collections.Generic;
     using DateHelper = Helpers.DateHelper;
 
     public class DelegateInfoViewModel
