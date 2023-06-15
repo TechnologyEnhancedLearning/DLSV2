@@ -12,7 +12,7 @@
     "build:sass": "yarn sass --quiet",
     "build:webpack": "webpack",
     "lint": "eslint ./*.js ./Scripts/**/*.ts",
-    "lint-fix": "eslint --fix ./*.js ./Scripts/**/*.ts",
+    "lint:fix": "eslint --fix ./*.js ./Scripts/**/*.ts",
     "dev": "run-p dev:*",
     "dev:sass": "yarn sass --watch --quiet",
     "dev:webpack": "webpack --config webpack.config.dev.js",
