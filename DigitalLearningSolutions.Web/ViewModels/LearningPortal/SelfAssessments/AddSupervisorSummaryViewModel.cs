@@ -19,5 +19,6 @@
         public string SelfAssessmentRoleName { get; set; }
         public int RoleCount { get; set; }
         public string SupervisorAtCentre { get; set; }
+        public int CentreCount { get; set; }
     }
 }

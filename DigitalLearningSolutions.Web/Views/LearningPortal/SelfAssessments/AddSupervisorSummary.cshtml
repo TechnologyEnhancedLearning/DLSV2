@@ -60,9 +60,13 @@
       @Model.SupervisorAtCentre
     </dd>
     <dd class="nhsuk-summary-list__actions">
-            <a asp-action="SelectSupervisorCentre" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
-        Change
-      </a>
+       @if (Model.CentreCount > 1)
+       {
+          <a asp-action="SelectSupervisorCentre" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+             Change
+         </a>
+      }
+            
     </dd>
   </div>
 </dl>
