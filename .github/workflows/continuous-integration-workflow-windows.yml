@@ -1,0 +1,46 @@
+name: Continuous Integration Windows
+
+on:
+  push:
+    branches: [ "Develop/Features/TD-1756_Investigate_nuget_packages_upgrades" ]
+jobs:
+  build:
+    name: Build and test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET Core SDK 6.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Add TechnologyEnhancedLearning as nuget package source
+        run: dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text
+
+      - name: Dotnet build
+        run: dotnet build DigitalLearningSolutions.sln
+
+      - name: Dotnet test
+        run: dotnet test DigitalLearningSolutions.Web.Tests
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Typescript install
+        run: yarn install --frozen-lockfile
+        working-directory: ./DigitalLearningSolutions.Web
+
+      - name: Typescript build
+        run: yarn build:webpack
+        working-directory: ./DigitalLearningSolutions.Web
+
+      - name: Typescript test
+        run: yarn test
+        working-directory: ./DigitalLearningSolutions.Web
+
+      - name: Typescript lint
+        run: yarn lint
+        working-directory: ./DigitalLearningSolutions.Web
