@@ -45,7 +45,7 @@
         void UpdateCandidateAssessmentSupervisorVerificationById(int? candidateAssessmentSupervisorVerificationId, string? supervisorComments, bool signedOff);
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateUserId, string delegateEmail, string supervisorEmail, int centreId);
-        int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId);
+        int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId, bool isLoggedInUser);
         int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
@@ -660,9 +660,9 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId)
         {
             return connection.Query<SelfAssessmentSupervisorRole>(
-               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
+               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview,AllowSupervisorRoleSelection
                   FROM   SelfAssessmentSupervisorRoles
-                  WHERE (SelfAssessmentID = @selfAssessmentId)
+                  WHERE (SelfAssessmentID = @selfAssessmentId) 
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
@@ -694,7 +694,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                ).FirstOrDefault();
         }
 
-        public int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId)
+        public int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId,bool isLoggedInUser)
         {
             if (delegateUserId == 0 | supervisorDelegateId == 0 | selfAssessmentId == 0)
             {
@@ -747,9 +747,9 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             else
             {
                 var numberOfAffectedRows = connection.Execute(
-                    @"INSERT INTO CandidateAssessments (DelegateUserID, SelfAssessmentID, CompleteByDate, EnrolmentMethodId, EnrolledByAdminId, CentreID)
-                    VALUES (@delegateUserId, @selfAssessmentId, @completeByDate, 2, @adminId, @centreId)",
-                    new { delegateUserId, selfAssessmentId, completeByDate, adminId, centreId });
+                    @"INSERT INTO CandidateAssessments (DelegateUserID, SelfAssessmentID, CompleteByDate, EnrolmentMethodId, EnrolledByAdminId, CentreID,NonReportable)
+                    VALUES (@delegateUserId, @selfAssessmentId, @completeByDate, 2, @adminId, @centreId,@isLoggedInUser)",
+                    new { delegateUserId, selfAssessmentId, completeByDate, adminId, centreId, isLoggedInUser });
                 if (numberOfAffectedRows < 1)
                 {
                     logger.LogWarning(

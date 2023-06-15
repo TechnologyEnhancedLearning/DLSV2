@@ -127,7 +127,6 @@
                 TaskRating = null,
             };
 
-            TempData.Clear();
             multiPageFormService.SetMultiPageFormData(
                 userFeedbackSessionData,
                 MultiPageFormDataFeature.AddUserFeedback,
@@ -262,8 +261,6 @@
 
             transaction.Complete();
 
-            TempData.Clear();
-
             userFeedbackViewModel.SourceUrl = data.SourceUrl;
 
             return RedirectToAction("UserFeedbackComplete", userFeedbackViewModel);
@@ -301,10 +298,6 @@
         [HttpPost]
         [Route("/GuestFeedbackComplete")]
         [ResponseCache(CacheProfileName = "Never")]
-        [TypeFilter(
-            typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
-        )]
         public IActionResult GuestFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
         {
             if (!(userFeedbackViewModel.TaskAchieved == null && userFeedbackViewModel.TaskAttempted == null && userFeedbackViewModel.FeedbackText == null && userFeedbackViewModel.TaskRating == null))

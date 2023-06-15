@@ -25,7 +25,7 @@
                     sv.Verified,
                     sv.Comments,
                     sv.SignedOff,
-                    NULL AS SupervisorName,
+                    adu.Forename + ' ' + adu.Surname AS SupervisorName,
                     sv.CandidateAssessmentSupervisorID,
                     sv.EmailSent,
                     0 AS UserIsVerifier,
@@ -34,6 +34,12 @@
                 LEFT OUTER JOIN DelegateAccounts AS da ON s.DelegateUserID = da.UserID
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
+                LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas 
+                    ON sv.CandidateAssessmentSupervisorID = cas.ID
+                LEFT OUTER JOIN SupervisorDelegates AS sd
+                    ON cas.SupervisorDelegateId = sd.ID
+                LEFT OUTER JOIN AdminUsers AS adu
+					ON sd.SupervisorAdminID = adu.AdminID
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
                     ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
                         AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
@@ -120,7 +126,8 @@
             LAR.Comments AS SupervisorComments,
             LAR.SignedOff,
             LAR.UserIsVerifier,
-            LAR.ResultRAG";
+            LAR.ResultRAG,
+            LAR.SupervisorName";
 
         private const string CompetencyTables =
             @"Competencies AS C

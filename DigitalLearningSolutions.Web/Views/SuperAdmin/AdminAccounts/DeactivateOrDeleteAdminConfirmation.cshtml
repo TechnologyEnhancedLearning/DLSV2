@@ -1,0 +1,17 @@
+﻿@{
+  ViewData["Title"] = "User deactivated";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-l">
+      @ViewData["Title"]
+    </h1>
+
+    <p class="nhsuk-body-l">
+      The user's account has been deactivated. They will no longer be able to login. If they need to access the system, they will need to re-register.
+    </p>
+
+        <vc:action-link link-text="Go to administrators" asp-controller="SuperAdmin" asp-action="AdminAccounts" />
+  </div>
+</div>

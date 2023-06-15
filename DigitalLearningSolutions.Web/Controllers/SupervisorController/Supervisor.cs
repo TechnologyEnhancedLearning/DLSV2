@@ -1,22 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
 {
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Supervisor;
-    using Microsoft.AspNetCore.Mvc;
-    using System.Linq;
     using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+    using GDS.MultiPageFormData.Enums;
+    using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
-    using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.ServiceFilter;
-    using GDS.MultiPageFormData.Enums;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using System.Linq;
 
     public partial class SupervisorController
     {
@@ -49,6 +49,7 @@
             var adminId = GetAdminId();
             var loggedInUserId = User.GetAdminId();
             var centreId = GetCentreId();
+            var supervisorEmail = GetUserEmail();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
@@ -88,8 +89,19 @@
                 result,
                 centreRegistrationPrompts
             );
+            model.IsActiveSupervisorDelegateExist = IsSupervisorDelegateExistAndActive(adminId, supervisorEmail, centreId) > 0;
             ModelState.ClearErrorsForAllFieldsExcept("DelegateEmailAddress");
             return View("MyStaffList", model);
+        }
+
+        public IActionResult AddSelfToSelfAssessment()
+        {
+            var adminId = GetAdminId();
+            var centreId = GetCentreId();
+            var supervisorEmail = GetUserEmail();
+            
+            AddSupervisorDelegateAndReturnId(adminId, supervisorEmail, supervisorEmail, centreId);
+            return RedirectToAction("MyStaffList");
         }
 
         [HttpPost]
@@ -913,13 +925,17 @@
                 ? 0
                 : supervisorService
                     .GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value).Count());
+            var allowSupervisorRoleSelection = (sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId == null
+                ? false:supervisorService
+                    .GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value).FirstOrDefault().AllowSupervisorRoleSelection);
             var model = new EnrolDelegateSummaryViewModel()
             {
                 SupervisorDelegateDetail = supervisorDelegate,
                 RoleProfile = roleProfile,
                 SupervisorRoleName = supervisorRoleName,
                 CompleteByDate = sessionEnrolOnRoleProfile.CompleteByDate,
-                SupervisorRoleCount = supervisorRoleCount
+                SupervisorRoleCount = supervisorRoleCount,
+                AllowSupervisorRoleSelection= allowSupervisorRoleSelection
             };
             ViewBag.completeByDate = TempData["completeByDate"];
             ViewBag.completeByMonth = TempData["completeByMonth"];
@@ -934,6 +950,7 @@
             var selfAssessmentId = sessionEnrolOnRoleProfile.SelfAssessmentID;
             var completeByDate = sessionEnrolOnRoleProfile.CompleteByDate;
             var selfAssessmentSupervisorRoleId = sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId;
+            var loggedInUserId = User.GetUserId();
             var candidateAssessmentId = supervisorService.EnrolDelegateOnAssessment(
                 delegateUserId,
                 supervisorDelegateId,
@@ -941,7 +958,8 @@
                 completeByDate,
                 selfAssessmentSupervisorRoleId,
                 GetAdminId(),
-                GetCentreId()
+                GetCentreId(),
+                (loggedInUserId == delegateUserId)
             );
             if (candidateAssessmentId > 0)
             {
@@ -963,7 +981,7 @@
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
-            var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
+            var supervisorRoles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(selfAssessmentId);
 
             if (supervisorRoles.Any() && supervisorRoles.Count() > 1)
             {
@@ -978,14 +996,29 @@
             }
             else
             {
-                supervisorService.InsertCandidateAssessmentSupervisor(
-                    delegateUserId,
-                    supervisorDelegateId,
-                    selfAssessmentId,
-                    supervisorRoles.FirstOrDefault()?.ID
+                var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile()
+                {
+                    SelfAssessmentID = supervisorRoles.FirstOrDefault().SelfAssessmentID,
+                    SelfAssessmentSupervisorRoleId = supervisorRoles.FirstOrDefault().ID
+                };
+
+                multiPageFormService.SetMultiPageFormData(
+                    sessionEnrolOnRoleProfile,
+                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                    TempData
                 );
-                return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
+                var supervisorRoleName = supervisorRoles.FirstOrDefault().RoleName;
+                var model = new EnrolDelegateSummaryViewModel
+                {
+                    RoleProfile = roleProfile,
+                    SupervisorDelegateDetail = supervisorDelegate,
+                    SupervisorRoleName = supervisorRoleName
+                };
+                return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId));
             }
+            
+
+
         }
 
         [HttpPost]
@@ -1008,6 +1041,7 @@
             }
             else
             {
+
                 var model = new EnrolDelegateSummaryViewModel
                 {
                     RoleProfile = roleProfile,
