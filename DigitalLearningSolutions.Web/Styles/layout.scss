@@ -372,27 +372,29 @@ nav, .nhsuk-header__navigation, #header-navigation {
   @extend .nhsuk-width-container;
   background-color: $color_nhsuk-grey-5;
   border-bottom: 1px solid $color_nhsuk-grey-4;
-  min-width: 100% !important;
-  max-width: 100% !important;
-  display: flex;
+  min-width: 100%;
+  max-width: 100%;
+  display: flex !important;
   justify-content: center;
   align-items: center;
-  padding: 0 !important;
-  margin: 0 !important;
+  padding: 0;
+  margin: 0;
 }
 
-.feedback-bar {
-  background-color: $color_nhsuk-grey-5;
-}
-
-.feedback-button-inline {
-  padding: 0px 8px 0px 8px;
-  margin: 8px 10px 8px 0;
+.feedback-tag {
+  align-items: center;
   background-color: $color_nhsuk-blue;
-  box-shadow: none;
-  vertical-align: middle;
-  border-radius: 0px;
+  color: $color_nhsuk-white;
   display: inline-flex;
-  align-items: center;
+  font-family: "Frutiger W01", Arial, sans-serif;
+  font-size: 19px;
+  font-weight: 600;
+  height: 31.9844px;
   justify-content: center;
+  line-height: 27.9999px;
+  margin: 8px 10px 8px 0px;
+  padding: 0px 8px 0px 8px;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
 }
