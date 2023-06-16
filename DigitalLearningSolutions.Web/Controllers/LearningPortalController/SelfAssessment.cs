@@ -1003,6 +1003,11 @@
             );
             var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
+            var distinctCentres = selfAssessmentService.GetValidSupervisorsForActivity(
+                User.GetCentreIdKnownNotNull(),
+                selfAssessmentId,
+                User.GetUserIdKnownNotNull()
+            ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
             var summaryModel = new AddSupervisorSummaryViewModel
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
@@ -1014,7 +1019,8 @@
                     : supervisorService.GetSupervisorRoleById((int)sessionAddSupervisor.SelfAssessmentSupervisorRoleId)
                         .RoleName,
                 RoleCount = roles.Count(),
-                SupervisorAtCentre = supervisor.CentreName
+                SupervisorAtCentre = supervisor.CentreName,
+                CentreCount= distinctCentres.Count()
             };
             return View("SelfAssessments/AddSupervisorSummary", summaryModel);
         }
