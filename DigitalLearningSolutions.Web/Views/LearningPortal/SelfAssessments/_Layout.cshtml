@@ -83,8 +83,10 @@
 
         </header>
 
-        <partial name="_UserFeedbackBarPartial"/>
-
+        <feature name="@(FeatureFlags.UserFeedbackBar)">
+          <partial name="_UserFeedbackBarPartial"/>
+        </feature>
+        
         <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
             <div class="nhsuk-width-container">
                 <ol class="nhsuk-breadcrumb__list">

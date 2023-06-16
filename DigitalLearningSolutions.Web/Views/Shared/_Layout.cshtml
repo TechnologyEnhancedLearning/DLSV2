@@ -166,8 +166,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div class="visual-separator @visualSeparatorNoNavBar"></div>
 
         </header>
-        
-        <partial name="_UserFeedbackBarPartial"/>
+
+        <feature name="@(FeatureFlags.UserFeedbackBar)">
+          <partial name="_UserFeedbackBarPartial"/>
+        </feature>
 
         @RenderSection("NavBreadcrumbs", false)
 
