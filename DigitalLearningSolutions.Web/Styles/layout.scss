@@ -398,3 +398,11 @@ nav, .nhsuk-header__navigation, #header-navigation {
   text-align: center;
   vertical-align: middle;
 }
+
+.validation-summary-valid {
+  display: none;
+}
+
+.field-validation-valid {
+  display: none !important;
+}
