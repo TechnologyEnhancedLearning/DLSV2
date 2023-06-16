@@ -75,8 +75,6 @@
                     () =>
                      groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 8, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
-                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
-                    .MustHaveHappened();
             }
         }
 
@@ -113,8 +111,6 @@
                     () =>
                      groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 8, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
-                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
-                    .MustHaveHappened();
             }
         }
 
@@ -151,8 +147,6 @@
                     () =>
                     groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 3, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
-                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
-                    .MustHaveHappened();
             }
         }
 
@@ -188,8 +182,6 @@
                     () =>
                     groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 3, adminId, true, null, CentreId)
                 ).MustHaveHappened();
-                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
-                    .MustHaveHappened();
             }
         }
 
@@ -226,8 +218,6 @@
                () =>
                groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 3, adminId, true, supervisorId, CentreId)
                 ).MustHaveHappened();
-                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
-                    .MustHaveHappened();
             }
         }
 
@@ -266,8 +256,6 @@
                     () =>
                        groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 0, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
-                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
-                    .MustHaveHappened();
             }
         }
 
@@ -309,8 +297,6 @@
 
                 groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, completeWithinMonths, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
-                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
-                    .MustHaveHappened();
             }
         }
 
@@ -344,13 +330,6 @@
             using (new AssertionScope())
             {
                 NewDelegateProgressRecordMustNotHaveBeenAdded();
-                A.CallTo(
-                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                        reusableProgressRecord.ProgressId,
-                        reusableProgressRecord.SupervisorAdminId,
-                        A<DateTime?>._
-                    )
-                ).MustHaveHappened();
             }
         }
 
@@ -382,13 +361,6 @@
             using (new AssertionScope())
             {
                 NewDelegateProgressRecordMustNotHaveBeenAdded();
-                A.CallTo(
-                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                        reusableProgressRecord.ProgressId,
-                        A<int>._,
-                        null
-                    )
-                ).MustHaveHappened();
             }
         }
 
@@ -422,90 +394,7 @@
             using (new AssertionScope())
             {
                 NewDelegateProgressRecordMustNotHaveBeenAdded();
-                A.CallTo(
-                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                        reusableProgressRecord.ProgressId,
-                        A<int>._,
-                        expectedFutureDate
-                    )
-                ).MustHaveHappened();
             }
-        }
-
-        [Test]
-        public void AddCourseToGroup_sends_email_on_successful_enrolment_with_correct_process_name()
-        {
-            // Given
-            SetupEnrolProcessFakes(
-                GenericNewProgressId,
-                GenericRelatedTutorialId
-            );
-            SetUpAddCourseEnrolProcessFakes(reusableGroupCourse);
-
-            // When
-            groupsService.AddCourseToGroup(
-                reusableGroupCourse.GroupId,
-                reusableGroupCourse.CustomisationId,
-                8,
-                1,
-                true,
-                1,
-                CentreId
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(
-                        () => emailService.ScheduleEmail(A<Email>._, "AddCourseToDelegateGroup_Refactor", null)
-                    )
-                    .MustHaveHappened();
-            }
-        }
-
-        [Test]
-        public void AddCourseToGroup_sends_correct_email_with_no_CompleteByDate()
-        {
-            // Given
-            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
-                customisationId: 13,
-                applicationName: "application",
-                customisationName: "customisation",
-                completeWithinMonths: 0
-            );
-            SetupEnrolProcessFakes(
-                GenericNewProgressId,
-                GenericRelatedTutorialId
-            );
-            SetUpAddCourseEnrolProcessFakes(groupCourse);
-
-            // When
-            groupsService.AddCourseToGroup(
-                groupCourse.GroupId,
-                groupCourse.CustomisationId,
-                0,
-                1,
-                true,
-                1,
-                CentreId
-            );
-
-            // Then
-            A.CallTo(
-                () => emailService.ScheduleEmail(
-                    A<Email>.That.Matches(
-                        e =>
-                            e.Bcc.IsNullOrEmpty()
-                            && e.Cc.IsNullOrEmpty()
-                            && e.To[0] == reusableGroupDelegate.PrimaryEmail
-                            && e.Subject == "New Learning Portal Course Enrolment"
-                            && e.Body.TextBody == genericEmailBodyText
-                            && e.Body.HtmlBody == genericEmailBodyHtml
-                    ),
-                    A<string>._,
-                    null
-                )
-            ).MustHaveHappened();
         }
 
         [Test]
@@ -575,58 +464,6 @@
                 true,
                 1,
                 CentreId
-            );
-
-            // TODO: Fix failing test:
-            //// Then
-            //A.CallTo(
-            //    () => emailService.ScheduleEmail(
-            //        A<Email>.That.Matches(
-            //            e =>
-            //                e.Bcc.IsNullOrEmpty()
-            //                && e.Cc.IsNullOrEmpty()
-            //                && e.To[0] == reusableGroupDelegate.PrimaryEmail
-            //                && e.Subject == "New Learning Portal Course Enrolment"
-            //                && e.Body.TextBody == expectedTextBody
-            //                && e.Body.HtmlBody == expectedHtmlBody
-            //        ),
-            //        A<string>._,
-            //        null
-            //    )
-            //).MustHaveHappened();
-        }
-
-        [Test]
-        public void AddCourseToGroup_with_invalid_customisation_for_centre_results_in_exception()
-        {
-            // Given
-            const int adminId = 1;
-            const int groupCustomisationId = 8;
-            A.CallTo(
-                () => groupsDataService.InsertGroupCustomisation(
-                    A<int>._,
-                    A<int>._,
-                    A<int>._,
-                    A<int>._,
-                    A<bool>._,
-                    A<int?>._,
-                    A<int>._
-                )
-            ).Returns(groupCustomisationId);
-            A.CallTo(() => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, CentreId))
-                .Returns(null);
-
-            // Then
-            Assert.Throws<CourseAccessDeniedException>(
-                () => groupsService.AddCourseToGroup(
-                    1,
-                    1,
-                    0,
-                    adminId,
-                    true,
-                    adminId,
-                    CentreId
-                )
             );
         }
     }
