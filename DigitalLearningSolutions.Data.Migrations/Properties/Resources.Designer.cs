@@ -901,6 +901,48 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 16/06/2023 09:17:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the parameter [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1913_AlterGroupCustomisation_Add_V2_DOWN {
+            get {
+                return ResourceManager.GetString("TD_1913_AlterGroupCustomisation_Add_V2_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 16/06/2023 09:17:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the parameter [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1913_AlterGroupCustomisation_Add_V2_UP {
+            get {
+                return ResourceManager.GetString("TD_1913_AlterGroupCustomisation_Add_V2_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 2/6/2023 22:11:41 ******/
         ///SET ANSI_NULLS ON
         ///GO

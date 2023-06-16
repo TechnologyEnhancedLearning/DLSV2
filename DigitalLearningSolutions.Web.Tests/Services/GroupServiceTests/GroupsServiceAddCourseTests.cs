@@ -41,7 +41,8 @@
                     completeWithinMonths,
                     adminId,
                     true,
-                    adminId
+                    adminId,
+                    CentreId
                 )
             ).MustHaveHappenedOnceExactly();
         }
@@ -72,7 +73,7 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () =>
-                     groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 8, adminId, true, adminId)
+                     groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 8, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
@@ -110,7 +111,7 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () =>
-                     groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 8, adminId, true, adminId)
+                     groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 8, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
@@ -148,7 +149,7 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () =>
-                    groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 3, adminId, true, adminId)
+                    groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 3, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
@@ -185,7 +186,7 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () =>
-                    groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 3, adminId, true, null)
+                    groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 3, adminId, true, null, CentreId)
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
@@ -223,7 +224,7 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                () =>
-               groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 3, adminId, true, supervisorId)
+               groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 3, adminId, true, supervisorId, CentreId)
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
@@ -263,7 +264,7 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () =>
-                       groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 0, adminId, true, adminId)
+                       groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, 0, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
@@ -306,7 +307,7 @@
                 A.CallTo(
                     () =>
 
-                groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, completeWithinMonths, adminId, true, adminId)
+                groupsDataService.InsertGroupCustomisation(groupCourse.GroupId, groupCourse.CustomisationId, completeWithinMonths, adminId, true, adminId, CentreId)
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
@@ -608,7 +609,8 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._,
-                    A<int?>._
+                    A<int?>._,
+                    A<int>._
                 )
             ).Returns(groupCustomisationId);
             A.CallTo(() => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, CentreId))
