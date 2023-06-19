@@ -61,13 +61,13 @@
                                               Competencies AS co ON sar.CompetencyID = co.ID INNER JOIN
                                               SelfAssessmentStructure AS sas ON co.ID = sas.CompetencyID INNER JOIN
                                               DelegateAccounts as da ON sar.DelegateUserID = da.UserID AND ca.CandidateID = da.ID
-                                 WHERE (sar.AssessmentQuestionID = 1) AND (sas.CompetencyGroupID = 3)) AS CommunicationCollaborationParticipationConfidence,
+                                 WHERE (sar.AssessmentQuestionID = 1) AND (sas.CompetencyGroupID = 3)) AS CommunicationCollaborationAndParticipationConfidence,
                                  (SELECT AVG(sar.Result) AS AvgConfidence
                                  FROM    SelfAssessmentResults AS sar INNER JOIN
                                               Competencies AS co ON sar.CompetencyID = co.ID INNER JOIN
                                               SelfAssessmentStructure AS sas ON co.ID = sas.CompetencyID INNER JOIN
                                               DelegateAccounts as da ON sar.DelegateUserID = da.UserID AND ca.CandidateID = da.ID
-                                 WHERE (sar.AssessmentQuestionID = 2) AND (sas.CompetencyGroupID = 3)) AS CommunicationCollaborationParticipationRelevance,
+                                 WHERE (sar.AssessmentQuestionID = 2) AND (sas.CompetencyGroupID = 3)) AS CommunicationCollaborationAndParticipationRelevance,
                                  (SELECT AVG(sar.Result) AS AvgConfidence
                                  FROM    SelfAssessmentResults AS sar INNER JOIN
                                               Competencies AS co ON sar.CompetencyID = co.ID INNER JOIN
@@ -85,13 +85,13 @@
                                               Competencies AS co ON sar.CompetencyID = co.ID INNER JOIN
                                               SelfAssessmentStructure AS sas ON co.ID = sas.CompetencyID INNER JOIN
                                               DelegateAccounts as da ON sar.DelegateUserID = da.UserID AND ca.CandidateID = da.ID
-                                 WHERE (sar.AssessmentQuestionID = 1) AND (sas.CompetencyGroupID = 5)) AS CreationInnovationResearchConfidence,
+                                 WHERE (sar.AssessmentQuestionID = 1) AND (sas.CompetencyGroupID = 5)) AS CreationInnovationAndResearchConfidence,
                                  (SELECT AVG(sar.Result) AS AvgConfidence
                                  FROM    SelfAssessmentResults AS sar INNER JOIN
                                               Competencies AS co ON sar.CompetencyID = co.ID INNER JOIN
                                               SelfAssessmentStructure AS sas ON co.ID = sas.CompetencyID INNER JOIN
                                               DelegateAccounts as da ON sar.DelegateUserID = da.UserID AND ca.CandidateID = da.ID
-                                 WHERE (sar.AssessmentQuestionID = 2) AND (sas.CompetencyGroupID = 5)) AS CreationInnovationResearchRelevance,
+                                 WHERE (sar.AssessmentQuestionID = 2) AND (sas.CompetencyGroupID = 5)) AS CreationInnovationAndResearchRelevance,
                                  (SELECT AVG(sar.Result) AS AvgConfidence
                                  FROM    SelfAssessmentResults AS sar INNER JOIN
                                               Competencies AS co ON sar.CompetencyID = co.ID INNER JOIN
