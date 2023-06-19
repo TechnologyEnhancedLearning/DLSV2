@@ -76,6 +76,10 @@ namespace DigitalLearningSolutions.Web.Services
 
         UserEntity? GetUserById(int userId);
 
+        string? GetEmailVerificationHashesFromEmailVerificationHashID(int ID);
+
+        public List<(int centreId, string centreEmail, string EmailVerificationHashID)> GetUnverifiedCentreEmailListForUser(int userId);
+
         UserEntity? GetUserByUsername(string username);
 
         public UserAccount? GetUserAccountById(int userId);
@@ -283,6 +287,11 @@ namespace DigitalLearningSolutions.Web.Services
             return new UserEntity(userAccount, adminAccounts, delegateAccounts);
         }
 
+        public string? GetEmailVerificationHashesFromEmailVerificationHashID(int ID)
+        {
+            return userDataService.GetEmailVerificationHash(ID);
+        }
+
         public UserEntity? GetUserByUsername(string username)
         {
             var userId = userDataService.GetUserIdFromUsername(username);
@@ -364,6 +373,25 @@ namespace DigitalLearningSolutions.Web.Services
             );
 
             return (unverifiedPrimaryEmail, unverifiedCentreEmails.ToList());
+        }
+
+        public List<(int centreId, string centreEmail, string EmailVerificationHashID)>
+        GetUnverifiedCentreEmailListForUser(int userId)
+        {
+            var userEntity = GetUserById(userId);
+
+            if (userEntity == null)
+            {
+                return new List<(int centreId, string centreName, string centreEmail)>();
+            }
+
+            var unverifiedCentreEmails = userDataService.GetUnverifiedCentreEmailsForUserList(userId).Where(
+                tuple =>
+                    userEntity.AdminAccounts.Any(account => account.CentreId == tuple.centreId && account.Active) ||
+                    userEntity.DelegateAccounts.Any(account => account.CentreId == tuple.centreId && account.Active)
+            );
+
+            return unverifiedCentreEmails.ToList();
         }
 
         public AdminEntity? GetAdminById(int adminId)

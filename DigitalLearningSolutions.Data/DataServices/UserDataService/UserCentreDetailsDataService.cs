@@ -203,6 +203,26 @@
             );
         }
 
+        public IEnumerable<(int centreId, string centreEmail, string EmailVerificationHashID)> GetUnverifiedCentreEmailsForUserList(
+                int userId
+        )
+        {
+            return connection.Query<(int, string, string)>(
+                @"SELECT
+                        c.CentreID,
+                        ucd.Email,
+                        evh.EmailVerificationHash
+                    FROM UserCentreDetails AS ucd
+                    INNER JOIN Centres AS c ON c.CentreID = ucd.CentreID
+                    INNER JOIN EmailVerificationHashes AS evh ON ucd.EmailVerificationHashID = evh.ID
+                    WHERE ucd.UserID = @userId
+                        AND ucd.Email IS NOT NULL
+                        AND ucd.EmailVerified IS NULL
+                        AND c.Active = 1",
+                new { userId }
+            );
+        }
+
         public (int? userId, int? centreId, string? centreName)
             GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
                 string centreSpecificEmail,

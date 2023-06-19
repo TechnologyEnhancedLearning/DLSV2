@@ -149,6 +149,10 @@
 
         UserAccount? GetUserAccountById(int userId);
 
+        string GetEmailVerificationHash(int ID);
+
+        IEnumerable<(int centreId, string centreEmail, string EmailVerificationHashID)> GetUnverifiedCentreEmailsForUserList(int userId);
+
         UserAccount? GetUserAccountByPrimaryEmail(string emailAddress);
 
         int? GetUserIdByAdminId(int adminId);
@@ -280,6 +284,7 @@
                 u.HasDismissedLhLoginWarning,
                 u.EmailVerified,
                 u.DetailsLastChecked,
+                u.EmailVerificationHashID,
                 jg.JobGroupID,
                 jg.JobGroupName
             FROM Users AS u
@@ -349,6 +354,15 @@
                 @$"{BaseSelectUserQuery} WHERE u.ID = @userId",
                 new { userId }
             ).SingleOrDefault();
+        }
+
+        public string GetEmailVerificationHash(int ID)
+        {
+            var EmailVerificationHash = connection.QuerySingle<string?>(
+               @"SELECT EmailVerificationHash FROM EmailVerificationHashes WHERE ID = @ID",
+               new { ID }
+           );
+            return EmailVerificationHash;
         }
 
         public UserAccount? GetUserAccountByPrimaryEmail(string emailAddress)

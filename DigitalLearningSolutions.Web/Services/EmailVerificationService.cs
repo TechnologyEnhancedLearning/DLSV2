@@ -19,6 +19,11 @@
             string baseUrl
         );
 
+        void ResendVerificationEmails(
+            UserAccount userAccount,
+            Dictionary<string, string> EmailAndHashes,
+            string baseUrl
+        );
         Email GenerateVerificationEmail(
             UserAccount userAccount,
             string emailVerificationHash,
@@ -62,6 +67,23 @@
                 var emailAddress = email!;
 
                 UpdateEmailVerificationHashId(userAccount.Id, emailAddress, hashId);
+
+                emailService.SendEmail(
+                    GenerateVerificationEmail(userAccount, hash, emailAddress, baseUrl)
+                );
+            }
+        }
+
+        public void ResendVerificationEmails(
+            UserAccount userAccount,
+            Dictionary<string, string> EmailAndHashes,
+            string baseUrl
+        )
+        {
+            foreach (var EmailAndHash in EmailAndHashes.Distinct())
+            {
+                var emailAddress = EmailAndHash.Key!;
+                var hash = EmailAndHash.Value!;
 
                 emailService.SendEmail(
                     GenerateVerificationEmail(userAccount, hash, emailAddress, baseUrl)
