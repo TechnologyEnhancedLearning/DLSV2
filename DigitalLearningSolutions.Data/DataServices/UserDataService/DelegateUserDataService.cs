@@ -277,7 +277,7 @@
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
                             JobGroupId = @jobGroupId,
                             DetailsLastChecked = (CASE WHEN @changeMadeBySameUser = 1 THEN @detailsLastChecked ELSE DetailsLastChecked END),
-                            EmailVerified = @emailVerified
+                        EmailVerified = (CASE WHEN @isPrimaryEmailUpdated = 1 THEN NULL ELSE EmailVerified END)
                         WHERE ID = @userId",
                 new
                 {
