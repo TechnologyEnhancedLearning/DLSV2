@@ -71,6 +71,10 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
         <h2>@Model.DelegateSelfAssessment.RoleName</h2>
+        @if (Model.DelegateSelfAssessment.NonReportable)
+        {
+            <partial name="_NonReportableSelfAssessment" />
+        }
         <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-">
             <partial name="_ReviewSelfAssessmentOverallProgress"
                      model="@competencySummaries"
