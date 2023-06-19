@@ -596,45 +596,15 @@
             int centreId
         )
         {
-            using var transaction = new TransactionScope();
-
-            var groupCustomisationId = groupsDataService.InsertGroupCustomisation(
+            var delegatesEnroledOnCustomisation = groupsDataService.InsertGroupCustomisation(
                 groupId,
                 customisationId,
                 completeWithinMonths,
                 addedByAdminId,
                 cohortLearners,
-                supervisorAdminId
+                supervisorAdminId,
+                centreId
             );
-
-            var groupDelegates = GetGroupDelegates(groupId);
-            var groupCourse = groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, centreId);
-
-            if (groupCourse == null)
-            {
-                transaction.Dispose();
-                logger.LogError("Attempted to add a course that a centre does not have access to to a group.");
-                throw new CourseAccessDeniedException(
-                    $"No course with customisationId {customisationId} available at centre {centreId}"
-                );
-            }
-
-            foreach (var groupDelegate in groupDelegates)
-            {
-                var fullName = groupDelegate.FirstName + " " + groupDelegate.LastName;
-
-                EnrolDelegateOnGroupCourse(
-                    groupDelegate.DelegateId,
-                    groupDelegate.EmailForCentreNotifications,
-                    fullName,
-                    addedByAdminId,
-                    groupCourse,
-                    true,
-                    notificationPreferencesDataService.GetNotificationPreferencesForDelegate(groupDelegate.DelegateId)
-                );
-            }
-
-            transaction.Complete();
         }
 
         public void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails)

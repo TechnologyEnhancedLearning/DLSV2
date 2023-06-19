@@ -835,7 +835,8 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._,
-                    A<int?>._
+                    A<int?>._,
+                    A<int>._
                 )
             ).Returns(groupCourse.GroupCustomisationId);
 

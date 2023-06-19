@@ -5,6 +5,8 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public interface IGroupsDataService
@@ -66,7 +68,8 @@
             int addedByAdminUserId,
             bool cohortLearners,
             int? supervisorAdminId
-        );
+,
+            int centreId);
 
         void AddDelegatesWithMatchingAnswersToGroup(
             int groupId,
@@ -411,25 +414,31 @@
             int completeWithinMonths,
             int addedByAdminUserId,
             bool cohortLearners,
-            int? supervisorAdminId
+            int? supervisorAdminId,
+            int centreId
         )
         {
             return connection.QuerySingle<int>(
-                @"INSERT INTO GroupCustomisations
-                        (GroupID, CustomisationID, CompleteWithinMonths, AddedByAdminUserID, CohortLearners, SupervisorAdminID)
-                    OUTPUT Inserted.GroupCustomisationId
-                    VALUES
-                        (@groupId, @customisationId, @completeWithinMonths, @addedByAdminUserId, @cohortLearners, @supervisorAdminID)",
-                new
-                {
-                    groupId,
-                    customisationId,
-                    completeWithinMonths,
-                    addedByAdminUserId,
-                    cohortLearners,
-                    supervisorAdminId,
-                }
+                @"GroupCustomisation_Add_V2",
+                new { groupId, customisationId, centreId, completeWithinMonths, adminUserID = addedByAdminUserId, cohortLearners, supervisorAdminId=supervisorAdminId ?? 0 },
+                commandType: CommandType.StoredProcedure
             );
+            //return connection.QuerySingle<int>(
+            //    @"INSERT INTO GroupCustomisations
+            //            (GroupID, CustomisationID, CompleteWithinMonths, AddedByAdminUserID, CohortLearners, SupervisorAdminID)
+            //        OUTPUT Inserted.GroupCustomisationId
+            //        VALUES
+            //            (@groupId, @customisationId, @completeWithinMonths, @addedByAdminUserId, @cohortLearners, @supervisorAdminID)",
+            //    new
+            //    {
+            //        groupId,
+            //        customisationId,
+            //        completeWithinMonths,
+            //        addedByAdminUserId,
+            //        cohortLearners,
+            //        supervisorAdminId,
+            //    }
+            //);
         }
 
         public void AddDelegatesWithMatchingAnswersToGroup(
