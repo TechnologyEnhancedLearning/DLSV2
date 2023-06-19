@@ -67,25 +67,21 @@
         {
             var userId = User.GetUserIdKnownNotNull();
             var userEntity = userService.GetUserById(userId);
-            var (primaryEmailIfUnverified, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
+            int hashID = userEntity.UserAccount.EmailVerificationHashID ?? 0;
+            string EmailVerificationHash = userService.GetEmailVerificationHashesFromEmailVerificationHashID(hashID);
 
-            var unverifiedEmails = new List<string>();
-            if (primaryEmailIfUnverified != null)
-            {
-                unverifiedEmails.Add(primaryEmailIfUnverified);
-            }
+            var unverifiedCentreEmailsList = userService.GetUnverifiedCentreEmailListForUser(userId);
 
-            if (unverifiedCentreEmails.Any())
-            {
-                unverifiedEmails.AddRange(unverifiedCentreEmails.Select(uce => uce.centreEmail));
-            }
+            Dictionary<string, string> EmailAndHashes = unverifiedCentreEmailsList
+            .ToDictionary(t => t.centreEmail, t => t.EmailVerificationHashID);
 
-            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+            EmailAndHashes.Add(userEntity.UserAccount.PrimaryEmail, EmailVerificationHash);
+
+            emailVerificationService.ResendVerificationEmails(
                 userEntity!.UserAccount,
-                unverifiedEmails,
+                EmailAndHashes,
                 config.GetAppRootPath()
             );
-
             return RedirectToAction(
                 "Index",
                 new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }

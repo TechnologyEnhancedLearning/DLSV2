@@ -36,25 +36,26 @@
         public void ResendVerificationEmails_sends_emails_to_all_unverified_emails_and_returns_view()
         {
             // Given
-            const string primaryEmail = "primary@email.com";
+            const int hashID = 123;
+            const string emailVerificationHash = "verificationHash";
             const string centreEmail1 = "centre1@email.com";
             const string centreEmail2 = "centre2@email.com";
 
-            var resultListingPrimaryAndCentreEmailsAsUnverified = (primaryEmail,
-                new List<(int centreId, string centreName, string centreEmail)>
-                    { (1, "Centre name 1", "centre1@email.com"), (2, "Centre name 2", "centre2@email.com") });
+            var unverifiedEmailsList = new List<(int centreId, string centreEmail, string EmailVerificationHashID)>
+            {
+                (1, centreEmail1, "hash1"),
+                (2, centreEmail2, "hash2")
+            };
             var defaultUserEntity = UserTestHelper.GetDefaultUserEntity(UserId);
 
             A.CallTo(() => userService.GetUserById(UserId)).Returns(defaultUserEntity);
-            A.CallTo(() => userService.GetUnverifiedEmailsForUser(UserId))
-                .Returns(resultListingPrimaryAndCentreEmailsAsUnverified);
-            A.CallTo(
-                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                    A<UserAccount>._,
-                    A<List<string>>._,
-                    A<string>._
-                )
-            ).DoesNothing();
+            A.CallTo(() => userService.GetEmailVerificationHashesFromEmailVerificationHashID(hashID)).Returns(emailVerificationHash);
+            A.CallTo(() => userService.GetUnverifiedCentreEmailListForUser(UserId)).Returns(unverifiedEmailsList);
+            A.CallTo(() => emailVerificationService.ResendVerificationEmails(
+                A<UserAccount>._,
+                A<Dictionary<string, string>>._,
+                A<string>._
+            )).DoesNothing();
 
             // When
             var result = controller.ResendVerificationEmails();
@@ -65,19 +66,7 @@
                 EmailVerificationReason.EmailNotVerified
             );
             A.CallTo(() => userService.GetUserById(UserId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.GetUnverifiedEmailsForUser(UserId)).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                    defaultUserEntity.UserAccount,
-                    A<List<string>>.That.Matches(
-                        list => ListTestHelper.ListOfStringsMatch(
-                            list,
-                            new List<string> { primaryEmail, centreEmail1, centreEmail2 }
-                        )
-                    ),
-                    A<string>._
-                )
-            ).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUnverifiedCentreEmailListForUser(UserId)).MustHaveHappenedOnceExactly();
         }
     }
 }
