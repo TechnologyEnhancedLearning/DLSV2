@@ -10,6 +10,7 @@
     using GDS.MultiPageFormData;
     using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
     public class UserFeedbackController : Controller
     {
@@ -105,6 +106,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/StartUserFeedbackSession")]
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
@@ -136,6 +138,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackTaskAchieved")]
         public IActionResult UserFeedbackTaskAchieved(UserFeedbackViewModel userFeedbackViewModel)
         {
@@ -145,6 +148,7 @@
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackTaskAchievedSet")]
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
@@ -170,6 +174,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackTaskAttempted")]
         public IActionResult UserFeedbackTaskAttempted(UserFeedbackViewModel userFeedbackViewModel)
         {
@@ -179,6 +184,7 @@
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackTaskAttemptedSet")]
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
@@ -205,6 +211,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackTaskDifficulty")]
         public IActionResult UserFeedbackTaskDifficulty(UserFeedbackViewModel userFeedbackViewModel)
         {
@@ -214,6 +221,7 @@
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackTaskDifficultySet")]
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
@@ -267,6 +275,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackComplete")]
         public IActionResult UserFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
         {
@@ -276,6 +285,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/GuestFeedbackStart")]
         public IActionResult GuestFeedbackStart(UserFeedbackViewModel userFeedbackViewModel)
         {
@@ -285,6 +295,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/GuestFeedbackComplete")]
         public IActionResult GuestFeedbackComplete()
         {
@@ -296,6 +307,7 @@
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/GuestFeedbackComplete")]
         [ResponseCache(CacheProfileName = "Never")]
         public IActionResult GuestFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
@@ -319,6 +331,7 @@
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackReturnToUrl")]
         public IActionResult UserFeedbackReturnToUrl(string sourceUrl)
         {
