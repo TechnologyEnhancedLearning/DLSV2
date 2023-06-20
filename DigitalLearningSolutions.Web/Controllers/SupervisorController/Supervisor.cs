@@ -938,7 +938,6 @@
             var selfAssessmentId = sessionEnrolOnRoleProfile.SelfAssessmentID;
             var completeByDate = sessionEnrolOnRoleProfile.CompleteByDate;
             var selfAssessmentSupervisorRoleId = sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId;
-            var loggedInUserId = User.GetUserId();
             var candidateAssessmentId = supervisorService.EnrolDelegateOnAssessment(
                 delegateUserId,
                 supervisorDelegateId,
@@ -946,8 +945,7 @@
                 completeByDate,
                 selfAssessmentSupervisorRoleId,
                 GetAdminId(),
-                GetCentreId(),
-                (loggedInUserId == delegateUserId)
+                GetCentreId()
             );
             if (candidateAssessmentId > 0)
             {
