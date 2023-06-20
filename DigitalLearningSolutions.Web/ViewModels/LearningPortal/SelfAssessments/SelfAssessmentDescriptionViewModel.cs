@@ -17,7 +17,6 @@
         public readonly string? UserBookmark;
         public readonly string VocabPlural;
         public readonly string? Vocabulary;
-        public readonly bool NonReportable;
 
         public SelfAssessmentDescriptionViewModel(
             CurrentSelfAssessment selfAssessment,
@@ -36,7 +35,6 @@
             Supervisors = supervisors;
             Vocabulary = selfAssessment.Vocabulary;
             VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(selfAssessment.Vocabulary);
-            NonReportable = selfAssessment.NonReportable;
         }
 
         public List<SelfAssessmentSupervisor> Supervisors { get; set; }

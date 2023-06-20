@@ -96,8 +96,7 @@
                                     WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)),
                             'Supervisor') AS SignOffRoleName,
                         SA.SignOffRequestorStatement,
-                        SA.ManageSupervisorsDescription,
-                        CA.NonReportable
+                        SA.ManageSupervisorsDescription
                     FROM CandidateAssessments CA
                     JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
@@ -119,7 +118,7 @@
                         CA.ID, CA.UserBookmark, CA.UnprocessedUpdates,
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
-                        SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable",
+                        SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription",
                 new { delegateUserId, selfAssessmentId }
             );
         }

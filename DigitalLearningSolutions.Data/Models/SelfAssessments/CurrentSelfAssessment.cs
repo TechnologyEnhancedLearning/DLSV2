@@ -19,6 +19,5 @@
         public bool EnforceRoleRequirementsForSignOff { get; set; }
         public string? ManageSupervisorsDescription { get; set; }
         public string? ReviewerCommentsLabel { get; set; }
-        public bool NonReportable { get; set; }
     }
 }
