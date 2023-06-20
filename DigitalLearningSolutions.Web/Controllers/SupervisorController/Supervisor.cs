@@ -1,22 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
 {
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.Supervisor;
-    using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
+    using System.Linq;
+    using DigitalLearningSolutions.Web.Extensions;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.ServiceFilter;
+    using GDS.MultiPageFormData.Enums;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public partial class SupervisorController
     {
@@ -49,7 +49,6 @@
             var adminId = GetAdminId();
             var loggedInUserId = User.GetAdminId();
             var centreId = GetCentreId();
-            var supervisorEmail = GetUserEmail();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
@@ -89,19 +88,8 @@
                 result,
                 centreRegistrationPrompts
             );
-            model.IsActiveSupervisorDelegateExist = IsSupervisorDelegateExistAndActive(adminId, supervisorEmail, centreId) > 0;
             ModelState.ClearErrorsForAllFieldsExcept("DelegateEmailAddress");
             return View("MyStaffList", model);
-        }
-
-        public IActionResult AddSelfToSelfAssessment()
-        {
-            var adminId = GetAdminId();
-            var centreId = GetCentreId();
-            var supervisorEmail = GetUserEmail();
-            
-            AddSupervisorDelegateAndReturnId(adminId, supervisorEmail, supervisorEmail, centreId);
-            return RedirectToAction("MyStaffList");
         }
 
         [HttpPost]
