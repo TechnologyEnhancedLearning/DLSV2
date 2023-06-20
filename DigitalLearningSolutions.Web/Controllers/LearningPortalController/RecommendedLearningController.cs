@@ -117,7 +117,6 @@
             ReturnPageQuery returnPageQuery
         )
         {
-            var delegateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
 
             if (!actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, delegateUserId))
@@ -127,7 +126,7 @@
 
             try
             {
-                await actionPlanService.AddResourceToActionPlan(resourceReferenceId, delegateId, selfAssessmentId);
+                await actionPlanService.AddResourceToActionPlan(resourceReferenceId, delegateUserId, selfAssessmentId);
             }
             catch (ResourceNotFoundException e)
             {
