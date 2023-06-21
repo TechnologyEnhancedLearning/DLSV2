@@ -9,6 +9,18 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+ @section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item">Competency Assessment Questions</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Back to Framework Structure</a></p>
+    </div>
+  </nav>
+}
   <h1 class="truncate-overflow">@Model.CompetencyName</h1>
   <h2>@Model.VocabSingular() assessment questions</h2>
   <p class="nhsuk-body-l">Assessment questions listed here will be presented to users assessing themselves against this @Model.VocabSingular().ToLower().</p>

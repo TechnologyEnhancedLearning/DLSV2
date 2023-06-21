@@ -714,7 +714,40 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             return View("Developer/Framework", model);
         }
-
+        [Route("/Framework/All/{frameworkId}/{tabname}/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
+        [Route("/Framework/All/{frameworkId}/{tabname}/{frameworkCompetencyGroupId}/")]
+        [Route("/Framework/All/{frameworkId}/{tabname}/")]
+        [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        public IActionResult ViewFrameworkAll(string tabname, int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
+        {
+            var adminId = GetAdminId();
+            var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var routeData = new Dictionary<string, string> { { "frameworkId", detailFramework?.ID.ToString() } };
+            var model = new FrameworkViewModel()
+            {
+                DetailFramework = detailFramework,
+            };
+            switch (tabname)
+            {
+                case "Details":
+                    model.Collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
+                    model.Flags = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, null);
+                    model.FrameworkDefaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
+                    model.TabNavLinks = new TabsNavViewModel(FrameworkAllTab.Details, routeData);
+                    break;
+                case "Structure":
+                    model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
+                    model.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, selected: true);
+                    model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+                    model.TabNavLinks = new TabsNavViewModel(FrameworkAllTab.Structure, routeData);
+                    break;
+                case "Comments":
+                    model.CommentReplies = frameworkService.GetCommentsForFrameworkId(frameworkId, adminId);
+                    model.TabNavLinks = new TabsNavViewModel(FrameworkAllTab.Comments, routeData);
+                    break;
+            }
+            return View("Developer/FrameworkAll", model);
+        }
         [ResponseCache(CacheProfileName = "Never")]
         public IActionResult InsertFramework()
         {

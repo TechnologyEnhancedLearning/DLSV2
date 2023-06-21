@@ -15,6 +15,51 @@
 {
   <vc:error-summary order-of-property-names="@(new string[] { "userEmail" })" />
 }
+@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+{
+    @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item">Create framework</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFrameworks" asp-route-tabname="Mine">Back to frameworks</a></p>
+        </div>
+    </nav>
+  }
+}
+else if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
+{
+    @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Send for Review</a></li>
+                <li class="nhsuk-breadcrumb__item">Collaborators</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Back to Send for Review</a></p>
+        </div>
+    </nav>
+  }
+}
+else
+{
+    @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
+                <li class="nhsuk-breadcrumb__item">Collaborators</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Back to framework detail</a></p>
+        </div>
+    </nav>
+  }
+}
 <h1>Choose working group members</h1>
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {

@@ -9,6 +9,36 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                @if (Model.FrameworkCompetencyId == 0)
+                {
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Framework Details</a></li>
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Default Questions</a></li>
+                    <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") Assessment Question</li>
+                }
+                else
+                {
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">@Model.VocabSingular() Assessment Questions</a></li>
+                    <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") Assessment Question</li>
+                }
+
+            </ol>
+            @if (Model.FrameworkCompetencyId == 0)
+            {
+                <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Back to Default Questions</a></p>
+            }
+            else
+            {
+                <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to @Model.VocabSingular() Assessment Questions</a></p>
+            }
+        </div>
+    </nav>
+}
   <h1>
     @Model.AssessmentQuestionDetail.Question
   </h1>

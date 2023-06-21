@@ -18,7 +18,40 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader"
+                   asp-action="ViewFrameworks"
+                   asp-route-tabname="Mine">Frameworks</a>
+                </li>
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader"
+                   asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId"
+                   asp-route-frameworkId="@Model.FrameworkId"
+                   asp-route-tabname="Structure">Framework Structure</a>
+                </li>
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader"
+                   asp-action="EditCompetencyLearningResources"
+                   asp-route-frameworkId="@Model.FrameworkId"
+                   asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+                   asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Signposting</a>
+                </li>
+                <li class="nhsuk-breadcrumb__item">Add Resource</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__backlink"
+               asp-action="EditCompetencyLearningResources"
+               asp-route-frameworkId="@Model.FrameworkId"
+               asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+               asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Back to Signposting</a>
+            </p>
+        </div>
+    </nav>
+}
 
   <h1>Add Competency Learning Resource</h1>
   <div class="nhsuk-inset-text">

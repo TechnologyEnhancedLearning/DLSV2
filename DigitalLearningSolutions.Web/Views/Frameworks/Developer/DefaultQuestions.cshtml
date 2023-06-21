@@ -9,6 +9,18 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
+                <li class="nhsuk-breadcrumb__item">Default Questions</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Back to Framework Details</a></p>
+        </div>
+    </nav>
+}
   <h1 class="truncate-overflow">@Model.BaseFramework.FrameworkName</h1>
   <h2>Framework default assessment questions</h2>
   <p class="nhsuk-body-l">Default assessment questions listed here will be applied to any new competencies added to this framework. You will be able to remove default questions from competencies where appropriate and add bespoke (non-default) questions to a competency, if required.</p>

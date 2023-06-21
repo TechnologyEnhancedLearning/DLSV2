@@ -10,6 +10,18 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+  @section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@frameworkId" asp-route-tabname="Details">Framework Details</a></li>
+        <li class="nhsuk-breadcrumb__item">Custom Flags</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@frameworkId" asp-route-tabname="Details">Back to framework detail</a></p>
+    </div>
+  </nav>
+}
    <h1>Framework custom flags</h1>
   <div class="nhsuk-table__panel-with-heading-tab">
     <h2 class="nhsuk-table__heading-tab">Custom flags</h2>
