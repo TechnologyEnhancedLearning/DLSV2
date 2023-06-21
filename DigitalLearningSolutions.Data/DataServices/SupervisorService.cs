@@ -235,8 +235,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     SELECT COALESCE
                     ((SELECT Top 1 ID
                         FROM    SupervisorDelegates sd
-                        WHERE ((sd.SupervisorAdminID = @supervisorAdminID) OR (sd.SupervisorAdminID > 0 AND SupervisorEmail = @supervisorEmail))
-		                      AND((sd.DelegateUserID = @delegateUserId) OR (sd.DelegateUserID > 0 AND DelegateEmail = @delegateEmail)) ORDER BY sd.DelegateUserID Desc
+                        WHERE ((sd.SupervisorAdminID = @supervisorAdminID) OR (sd.SupervisorAdminID > 0 AND SupervisorEmail = @supervisorEmail AND @supervisorAdminID = NULL))
+		                      AND((sd.DelegateUserID = @delegateUserId) OR (sd.DelegateUserID > 0 AND DelegateEmail = @delegateEmail AND @delegateUserId = NULL)) ORDER BY sd.DelegateUserID Desc
                         ), 0) AS ID",
                 new
                 {
