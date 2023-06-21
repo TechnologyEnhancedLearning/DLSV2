@@ -109,7 +109,7 @@
         </dd>
 
         <dd class="nhsuk-summary-list__actions">
-            @if (Model.SupervisorRoleCount > 1&&Model.AllowSupervisorRoleSelection==true)
+            @if (Model.SupervisorRoleCount > 1)
             {
                 <a asp-action="EnrolDelegateSupervisorRole" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
                     Change<span class="nhsuk-u-visually-hidden"> supervisor role</span>
