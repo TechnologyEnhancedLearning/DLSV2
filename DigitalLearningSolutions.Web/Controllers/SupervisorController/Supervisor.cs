@@ -963,7 +963,7 @@
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
-            var supervisorRoles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(selfAssessmentId);
+            var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
 
             if (supervisorRoles.Any() && supervisorRoles.Count() > 1)
             {
@@ -978,29 +978,14 @@
             }
             else
             {
-                var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile()
-                {
-                    SelfAssessmentID = supervisorRoles.FirstOrDefault().SelfAssessmentID,
-                    SelfAssessmentSupervisorRoleId = supervisorRoles.FirstOrDefault().ID
-                };
-
-                multiPageFormService.SetMultiPageFormData(
-                    sessionEnrolOnRoleProfile,
-                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                    TempData
+                supervisorService.InsertCandidateAssessmentSupervisor(
+                    delegateUserId,
+                    supervisorDelegateId,
+                    selfAssessmentId,
+                    supervisorRoles.FirstOrDefault()?.ID
                 );
-                var supervisorRoleName = supervisorRoles.FirstOrDefault().RoleName;
-                var model = new EnrolDelegateSummaryViewModel
-                {
-                    RoleProfile = roleProfile,
-                    SupervisorDelegateDetail = supervisorDelegate,
-                    SupervisorRoleName = supervisorRoleName
-                };
-                return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId));
+                return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
             }
-            
-
-
         }
 
         [HttpPost]
@@ -1023,7 +1008,6 @@
             }
             else
             {
-
                 var model = new EnrolDelegateSummaryViewModel
                 {
                     RoleProfile = roleProfile,
