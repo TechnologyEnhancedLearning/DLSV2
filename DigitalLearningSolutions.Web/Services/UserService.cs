@@ -74,6 +74,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         void DeactivateOrDeleteAdmin(int adminId);
 
+        void DeactivateOrDeleteAdminForSuperAdmin(int adminId);        
+
         UserEntity? GetUserById(int userId);
 
         string? GetEmailVerificationHashesFromEmailVerificationHashID(int ID);
@@ -252,6 +254,29 @@ namespace DigitalLearningSolutions.Web.Services
         public void DeactivateOrDeleteAdmin(int adminId)
         {
             if (sessionDataService.HasAdminGotSessions(adminId))
+            {
+                userDataService.DeactivateAdmin(adminId);
+            }
+            else
+            {
+                try
+                {
+                    userDataService.DeleteAdminAccount(adminId);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(
+                        ex,
+                        $"Error attempting to delete admin {adminId} with no sessions, deactivating them instead."
+                    );
+                    userDataService.DeactivateAdmin(adminId);
+                }
+            }
+        }
+
+        public void DeactivateOrDeleteAdminForSuperAdmin(int adminId)
+        {
+            if (sessionDataService.HasAdminGotReferences(adminId))
             {
                 userDataService.DeactivateAdmin(adminId);
             }

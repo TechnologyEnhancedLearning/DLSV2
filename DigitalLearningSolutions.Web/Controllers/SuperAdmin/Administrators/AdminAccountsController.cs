@@ -426,7 +426,6 @@
 
         [Route("SuperAdmin/AdminAccounts/{adminId:int}/DeactivateAdmin")]
         [HttpGet]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult DeactivateOrDeleteAdmin(int adminId, ReturnPageQuery returnPageQuery)
         {
             var admin = userDataService.GetAdminById(adminId);
@@ -442,7 +441,6 @@
 
         [Route("SuperAdmin/AdminAccounts/{adminId:int}/DeactivateAdmin")]
         [HttpPost]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult DeactivateOrDeleteAdmin(int adminId, DeactivateAdminViewModel model)
         {
             var admin = userDataService.GetAdminById(adminId);
@@ -457,7 +455,7 @@
                 return View(model);
             }
 
-            userService.DeactivateOrDeleteAdmin(adminId);
+            userService.DeactivateOrDeleteAdminForSuperAdmin(adminId);
 
             return View("DeactivateOrDeleteAdminConfirmation");
         }

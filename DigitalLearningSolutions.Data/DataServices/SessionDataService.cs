@@ -16,6 +16,7 @@
         int StartAdminSession(int adminId);
 
         bool HasAdminGotSessions(int adminId);
+        bool HasAdminGotReferences(int adminId);
 
         bool HasDelegateGotSessions(int delegateId);
 
@@ -78,6 +79,17 @@
         {
             return connection.ExecuteScalar<bool>(
                 "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
+                new { adminId }
+            );
+        }
+        public bool HasAdminGotReferences(int adminId)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT TOP 1 AdminSessions.AdminID FROM AdminSessions WHERE AdminSessions.AdminID = @adminId
+                  UNION ALL
+                  SELECT TOP 1 FrameworkCollaborators.AdminID FROM FrameworkCollaborators WHERE FrameworkCollaborators.AdminID = @adminId
+                  UNION ALL
+                  SELECT TOP 1 SupervisorDelegates.SupervisorAdminID FROM SupervisorDelegates WHERE SupervisorDelegates.SupervisorAdminID = @adminId",
                 new { adminId }
             );
         }
