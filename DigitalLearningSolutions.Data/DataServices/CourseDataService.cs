@@ -97,7 +97,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         IEnumerable<CourseDelegateForExport> GetDelegatesOnCourseForExport(int customisationId, int centreId);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime completeByDate, int delegateUserId, int centreId);
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId);
 
         bool IsCourseCompleted(int candidateId, int customisationId);
     }
@@ -363,13 +363,13 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
         public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime completeByDate, int delegateUserId, int centreId)
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId)
         {
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
             DateTime lastAccessed = startedDate;
             dynamic completeByDateDynamic = "";
-            if (completeByDate.Year > 1753)
+            if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
                 completeByDateDynamic = completeByDate;
             }
