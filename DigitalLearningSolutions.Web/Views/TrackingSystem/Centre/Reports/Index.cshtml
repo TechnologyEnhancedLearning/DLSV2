@@ -1,5 +1,7 @@
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+@using Microsoft.AspNetCore.Html;
+
 @model ReportsViewModel
 
 @{
@@ -66,10 +68,10 @@
     }
     else
     {
-      var place = Model.Category == "All" ? "at this centre" : $"for course category {Model.Category}";
-      <p class="nhsuk-body-l" id="no-activity-message">
-        There has not yet been any activity @place.
-      </p>
+       var place = Model.Category == "All" ? "yet." : $"in the <b>{Model.Category}</b> category, yet.";
+            <p class="nhsuk-body-l" id="no-activity-message">
+                This centre has no courses set up @Html.Raw(place)
+                </p>
     }
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
