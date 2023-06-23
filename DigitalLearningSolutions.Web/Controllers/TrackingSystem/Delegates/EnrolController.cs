@@ -298,7 +298,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     sessionEnrol.SupervisorID.GetValueOrDefault(),
                     adminEmail,
                     sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault(),
-                    sessionEnrol.CompleteByDate.GetValueOrDefault(),
+                    sessionEnrol.CompleteByDate,
                     (int)sessionEnrol.DelegateUserID,
                     centreId
                     );
