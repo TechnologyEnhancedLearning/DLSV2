@@ -101,8 +101,9 @@
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
+        private IActivityService activityService = null;
 
-        [SetUp]
+    [SetUp]
         public void Setup()
         {
             courseService = A.Fake<ICourseService>();
@@ -134,7 +135,8 @@
                     sectionService,
                     searchSortFilterPaginateService,
                     config,
-                    multiPageFormService
+                    multiPageFormService,
+                    activityService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -147,7 +149,8 @@
                     sectionService,
                     searchSortFilterPaginateService,
                     config,
-                    multiPageFormService
+                    multiPageFormService,
+                    activityService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)

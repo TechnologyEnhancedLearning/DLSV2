@@ -47,6 +47,7 @@
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IActivityService activityService = null;
 
         [SetUp]
         public void Setup()
@@ -68,7 +69,8 @@
             controllerWithCookies = new DelegateCoursesController(
                     courseService,
                     courseDelegatesDownloadFileService,
-                    searchSortFilterPaginateService
+                    searchSortFilterPaginateService,
+                    activityService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)

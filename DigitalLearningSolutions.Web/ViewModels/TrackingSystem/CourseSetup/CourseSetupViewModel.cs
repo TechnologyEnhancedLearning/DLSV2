@@ -13,7 +13,8 @@
         public CourseSetupViewModel(
             SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result,
             IEnumerable<FilterModel> availableFilters,
-            IConfiguration config
+            IConfiguration config,
+            string courseCategoryName
         ) : base(
             result,
             true,
@@ -22,9 +23,11 @@
         )
         {
             Courses = result.ItemsToDisplay.Select(c => new SearchableCourseStatisticsViewModel(c, config));
+            CourseCategoryName = courseCategoryName;
         }
 
         public IEnumerable<SearchableCourseStatisticsViewModel> Courses { get; set; }
+        public string CourseCategoryName { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
