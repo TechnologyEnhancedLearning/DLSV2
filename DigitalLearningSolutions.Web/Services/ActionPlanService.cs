@@ -16,7 +16,7 @@
 
     public interface IActionPlanService
     {
-        Task AddResourceToActionPlan(int learningResourceReferenceId, int delegateId, int selfAssessmentId);
+        Task AddResourceToActionPlan(int learningResourceReferenceId, int delegateUserId, int selfAssessmentId);
 
         Task<(IEnumerable<ActionPlanResource> resources, bool apiIsAccessible)> GetIncompleteActionPlanResources(
             int delegateUserId
@@ -75,7 +75,7 @@
             this.userDataService = userDataService;
         }
 
-        public async Task AddResourceToActionPlan(int learningResourceReferenceId, int delegateId, int selfAssessmentId)
+        public async Task AddResourceToActionPlan(int learningResourceReferenceId, int delegateUserId, int selfAssessmentId)
         {
             var learningHubResourceReferenceId =
                 learningResourceReferenceDataService.GetLearningHubResourceReferenceById(learningResourceReferenceId);
@@ -109,7 +109,7 @@
             using var transaction = new TransactionScope();
 
             var learningLogItemId = learningLogItemsDataService.InsertLearningLogItem(
-                delegateId,
+                delegateUserId,
                 addedDate,
                 resource.Title,
                 resource.Link,
@@ -118,7 +118,6 @@
 
             // We can assume a single Candidate Assessment because we'll be adding a uniqueness constraint
             // on CandidateAssessments (candidateId, selfAssessmentId) before releasing (see HEEDLS-932)
-            var delegateUserId = userDataService.GetUserIdFromDelegateId(delegateId);
             var candidateAssessmentIdIfAny = selfAssessmentDataService
                 .GetCandidateAssessments(delegateUserId, selfAssessmentId)
                 .SingleOrDefault()?.Id;

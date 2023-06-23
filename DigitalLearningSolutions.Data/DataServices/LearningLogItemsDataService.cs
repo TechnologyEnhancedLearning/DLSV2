@@ -102,7 +102,7 @@
         }
 
         public int InsertLearningLogItem(
-            int delegateId,
+            int delegateUserId,
             DateTime addedDate,
             string activityName,
             string resourceLink,
@@ -133,7 +133,7 @@
                     OUTPUT Inserted.LearningLogItemID
                     VALUES (
                         @addedDate,
-                        @delegateId,
+                        @delegateUserId,
                         @activityName,
                         @resourceLink,
                         @learningResourceReferenceId,
@@ -150,7 +150,7 @@
                         NULL,
                         NULL,
                         NULL)",
-                new { addedDate, delegateId, activityName, resourceLink, learningResourceReferenceId }
+                new { addedDate, delegateUserId, activityName, resourceLink, learningResourceReferenceId }
             );
 
             return learningLogItemId;
