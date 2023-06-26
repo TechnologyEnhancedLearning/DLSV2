@@ -943,17 +943,16 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to -- Remove versioning from FrameworkCompetencies table
+        ///   Looks up a localized string similar to -- Switch on versioning from FrameworkCompetencies table
         ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetenciesHistory));
         ///GO
         ///
-        ///-- Remove versioning from FrameworkCompetencyGroups table
+        ///-- Switch on versioning from FrameworkCompetencyGroups table
         ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetencyGroupsHistory));
         ///GO
         ///
-        ///-- Remove versioning from Frameworks table
-        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworksHistory));
-        ///GO [rest of string was truncated]&quot;;.
+        ///-- Switch on versioning from Frameworks table
+        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworksHisto [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_2036_SwitchSystemVersioningOffAllTables_DOWN {
             get {
