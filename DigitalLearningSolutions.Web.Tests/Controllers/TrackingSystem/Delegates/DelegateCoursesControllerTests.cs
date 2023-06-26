@@ -54,8 +54,10 @@
         {
             courseService = A.Fake<ICourseService>();
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
+            activityService = A.Fake<IActivityService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
-
+            A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
+              .Returns("All");
             A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._))
                 .Returns(details);
             A.CallTo(() => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._))

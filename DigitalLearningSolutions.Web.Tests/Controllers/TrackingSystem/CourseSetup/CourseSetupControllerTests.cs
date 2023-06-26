@@ -109,10 +109,12 @@
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
+            activityService = A.Fake<IActivityService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             config = A.Fake<IConfiguration>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
-
+            A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
+            .Returns("All");
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                     A<int>._,
