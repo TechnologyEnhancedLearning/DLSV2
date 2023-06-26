@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
     using DocumentFormat.OpenXml.Wordprocessing;
+    using System.Threading.Tasks;
 
     public interface IUserDataService
     {
@@ -232,7 +233,10 @@
         (IEnumerable<AdminEntity>, int) GetAllAdmins(
        string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
        );
-
+        Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
+      string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
+      );
+        
         bool PrimaryEmailIsInUseAtCentre(string email, int centreId);
 
         void UpdateAdminStatus(int adminId, bool active);
@@ -260,6 +264,7 @@
             int newUserIdForAdminAccount,
             int centreId
         );
+        int RessultCount(int adminId, string search, int? centreId, string userStatus, int failedLoginThreshold, string role);
     }
 
     public partial class UserDataService : IUserDataService
