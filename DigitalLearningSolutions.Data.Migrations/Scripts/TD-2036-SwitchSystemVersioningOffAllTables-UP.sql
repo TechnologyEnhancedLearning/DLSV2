@@ -26,6 +26,10 @@ GO
 ALTER TABLE AssessmentQuestionLevels SET (SYSTEM_VERSIONING = OFF);
 GO
 
+--Rename the history table column to match the transaction table column name so that we can switch versioning on in Azure SQL subscriber without issue
+EXEC sp_RENAME 'AssessmentQuestionLevelsHistory.LevelValueID' , 'LevelValue', 'COLUMN'
+GO
+
 -- Remove versioning from SelfAssessmentResults table
 ALTER TABLE SelfAssessmentResults SET (SYSTEM_VERSIONING = OFF);
 GO

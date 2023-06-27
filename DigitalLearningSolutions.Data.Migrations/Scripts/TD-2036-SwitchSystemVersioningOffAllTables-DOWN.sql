@@ -21,8 +21,7 @@ GO
 -- Switch on versioning from AssessmentQuestions table
 ALTER TABLE AssessmentQuestions SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].AssessmentQuestionsHistory));
 GO
-EXEC sp_RENAME 'AssessmentQuestionLevelsHistory.LevelValueID' , 'LevelValue', 'COLUMN'
-GO
+
 -- Switch on versioning from AssessmentQuestionLevels table
 ALTER TABLE AssessmentQuestionLevels SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].AssessmentQuestionLevelsHistory));
 GO
