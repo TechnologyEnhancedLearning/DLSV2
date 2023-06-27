@@ -54,6 +54,14 @@
             ).FirstOrDefault();
         }
 
+        public DateTime GetConfigLastUpdated(string key)
+        {
+            return connection.Query<DateTime>(
+                @"SELECT UpdatedDate FROM Config WHERE ConfigName = @key",
+                new { key }
+            ).FirstOrDefault();
+        }
+
         public string GetConfigValueMissingExceptionMessage(string missingConfigValue)
         {
             return $"Encountered an error while trying to send an email: The value of {missingConfigValue} is null";
