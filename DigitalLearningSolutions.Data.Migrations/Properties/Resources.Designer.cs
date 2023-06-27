@@ -901,6 +901,52 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 26/06/2023 08:04:53 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDU [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCurrentCoursesForCandidateTweak {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCurrentCoursesForCandidateTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 22/06/2023 14:49:50 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDURE [ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCurrentCoursesForCandidateTweak_down {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCurrentCoursesForCandidateTweak_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 16/06/2023 09:17:01 ******/
         ///SET ANSI_NULLS ON
         ///GO
