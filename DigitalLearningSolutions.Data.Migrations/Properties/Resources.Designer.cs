@@ -943,6 +943,49 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -- Switch on versioning from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetenciesHistory));
+        ///GO
+        ///
+        ///-- Switch on versioning from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetencyGroupsHistory));
+        ///GO
+        ///
+        ///-- Switch on versioning from Frameworks table
+        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworksHisto [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchSystemVersioningOffAllTables_DOWN {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Remove versioning from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from Frameworks table
+        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from Competencies table
+        ///ALTER TABLE Competencies SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from Competency [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchSystemVersioningOffAllTables_UP {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 2/6/2023 22:11:41 ******/
         ///SET ANSI_NULLS ON
         ///GO
