@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using System;
 
     public abstract class User : BaseSearchableItem
     {
@@ -30,6 +31,8 @@
         public int? ResetPasswordId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
+
+        public DateTime? EmailVerified { get; set; }
 
         public override string SearchableName
         {
