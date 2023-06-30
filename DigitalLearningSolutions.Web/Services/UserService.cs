@@ -253,7 +253,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public void DeactivateOrDeleteAdmin(int adminId)
         {
-            if (sessionDataService.HasAdminGotSessions(adminId))
+            if (sessionDataService.HasAdminGotSessions(adminId) || sessionDataService.HasAdminGotReferences(adminId))
             {
                 userDataService.DeactivateAdmin(adminId);
             }
