@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
+    using System;
 
     public class ConfigDataServiceTests
     {
@@ -24,6 +25,16 @@
 
             // Then
             result.Should().Be("https://www.dls.nhs.uk/tracking/");
+        }
+
+        [Test]
+        public void Get_config_last_updated_returns_a_valid_date()
+        {
+            // When
+            var result = configDataService.GetConfigLastUpdated(ConfigDataService.TrackingSystemBaseUrl);
+
+            // Then
+            result.Should().BeBefore(DateTime.Now);
         }
     }
 }
