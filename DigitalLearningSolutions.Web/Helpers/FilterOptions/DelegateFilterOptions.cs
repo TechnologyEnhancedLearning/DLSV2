@@ -45,15 +45,32 @@
     {
         private const string Group = "IsYetToBeClaimed";
 
-        public static readonly FilterOptionModel ClaimedVerifiedAccount = new FilterOptionModel(
-            "Claimed/verified",
+        public static readonly FilterOptionModel ClaimedAccount = new FilterOptionModel(
+            "Claimed",
             FilteringHelper.BuildFilterValueString(Group, Group, "false"),
             FilterStatus.Default
         );
 
-        public static readonly FilterOptionModel UnclaimedUnverifiedAccount = new FilterOptionModel(
-            "Unclaimed/unverified",
+        public static readonly FilterOptionModel UnclaimedAccount = new FilterOptionModel(
+            "Unclaimed",
             FilteringHelper.BuildFilterValueString(Group, Group, "true"),
+            FilterStatus.Default
+        );
+    }
+
+    public static class EmailStatusFilterOptions
+    {
+        private const string Group = "IsEmailVerified";
+
+        public static readonly FilterOptionModel VerifiedAccount = new FilterOptionModel(
+            "Verified",
+            FilteringHelper.BuildFilterValueString(Group, Group, "true"),
+            FilterStatus.Default
+        );
+
+        public static readonly FilterOptionModel UnverifiedAccount = new FilterOptionModel(
+            "Unverified",
+            FilteringHelper.BuildFilterValueString(Group, Group, "false"),
             FilterStatus.Default
         );
     }
