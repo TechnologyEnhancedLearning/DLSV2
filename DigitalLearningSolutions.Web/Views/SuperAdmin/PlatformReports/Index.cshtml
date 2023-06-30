@@ -1,0 +1,118 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports
+@model PlatformReportsViewModel
+@{
+    ViewData["Title"] = "Platform usage summary";
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <div id="no-js-styling">
+            <div class="nhsuk-grid-row">
+                <div class="nhsuk-grid-column-one-quarter">
+                    <nav class="side-nav-menu" aria-label="Side navigation bar">
+                        <partial name="~/Views/SuperAdmin/Shared/_PlatformReportsSideNavMenu.cshtml" model="Model.CurrentPage" />
+                    </nav>
+                </div>
+                <div class="nhsuk-grid-column-three-quarters">
+                    <div class="nhsuk-u-margin-bottom-4">
+                        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+                    </div>
+                    <dl class="nhsuk-summary-list">
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Active centres
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.ActiveCentres
+                            </dd>
+
+                        </div>
+
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Learner logins
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.LearnerLogins
+                            </dd>
+
+                        </div>
+
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Learners
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.Learners
+                            </dd>
+
+                        </div>
+
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Course learning time
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.CourseLearningTime
+                            </dd>
+
+                        </div>
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Course enrolments
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.CourseEnrolments
+                            </dd>
+
+                        </div>
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Course completions
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.CourseCompletions
+                            </dd>
+
+                        </div>
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Digital capability self assessment enrolments
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.DCSAEnrolments
+                            </dd>
+
+                        </div>
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Digital capability self assessment completions
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.DCSACompletions
+                            </dd>
+
+                        </div>
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Nursing proficiency self assessment enrolments
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.NursingPassportEnrolments
+                            </dd>
+
+                        </div>
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Nursing proficiency self assessment completions
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @Model.PlatformUsageSummary.NursingPassportCompletions
+                            </dd>
+
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
