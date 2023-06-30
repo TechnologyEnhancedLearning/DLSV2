@@ -141,6 +141,10 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         }
 
         [HttpGet]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateInActivity) }
+        )]
         public IActionResult EnrolCompleteBy(int delegateId)
         {
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
@@ -191,6 +195,10 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         }
 
         [HttpGet]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateInActivity) }
+        )]
         public IActionResult EnrolDelegateSupervisor(int delegateId)
         {
             var centreId = GetCentreId();
@@ -249,6 +257,10 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             return RedirectToAction("EnrolDelegateSummary", new { delegateId });
         }
         [HttpGet]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateInActivity) }
+        )]
         public IActionResult EnrolDelegateSummary(int delegateId)
         {
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(MultiPageFormDataFeature.EnrolDelegateInActivity, TempData).GetAwaiter().GetResult();
@@ -304,6 +316,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     );
 
             }
+
+            TempData.Clear();
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
 
