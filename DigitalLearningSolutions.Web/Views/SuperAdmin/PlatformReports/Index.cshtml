@@ -37,23 +37,21 @@
                                                 </dd>
 
                                             </div>
+                                            <div class="nhsuk-summary-list__row">
+                                                <dt class="nhsuk-summary-list__key reports-summary-row__key">
+                                                    Active learners
+                                                </dt>
+                                                <dd class="nhsuk-summary-list__value reports-summary-row__value">
+                                                    @Model.PlatformUsageSummary.Learners.ToString("#,##0")
+                                                </dd>
 
+                                            </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
                                                     Learner logins
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.LearnerLogins.ToString("#,##0")
-                                                </dd>
-
-                                            </div>
-
-                                            <div class="nhsuk-summary-list__row">
-                                                <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Learners
-                                                </dt>
-                                                <dd class="nhsuk-summary-list__value reports-summary-row__value">
-                                                    @Model.PlatformUsageSummary.Learners.ToString("#,##0")
                                                 </dd>
 
                                             </div>
