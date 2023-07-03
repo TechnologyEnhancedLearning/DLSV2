@@ -1,0 +1,8 @@
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+.reports-summary-row__key{
+    width:60%;
+}
+.reports-summary-row__value{
+    width:20%;
+    text-align:end;
+}
