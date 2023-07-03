@@ -23,7 +23,7 @@
                             <div class="nhsuk-card">
                                 <div class="nhsuk-card__content">
                                     <h2 class="nhsuk-card__heading">
-                                        Centres and learners
+                                        Centre and learner totals
                                     </h2>
 
                                     <div class="nhsuk-card__description">
@@ -39,7 +39,7 @@
                                             </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Active learners
+                                                    Active learner accounts
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.Learners.ToString("#,##0")
@@ -65,14 +65,14 @@
                             <div class="nhsuk-card">
                                 <div class="nhsuk-card__content">
                                     <h2 class="nhsuk-card__heading">
-                                        Course activity
+                                        Course activity totals
                                     </h2>
 
                                     <div class="nhsuk-card__description">
                                         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Course learning time (hours)
+                                                    <span class="nhsuk-u-visually-hidden">Course </span>Learning time (hours)
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.CourseLearningTime.ToString("#,##0")
@@ -81,7 +81,7 @@
                                             </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Course enrolments
+                                                   <span class="nhsuk-u-visually-hidden">Course </span>Enrolments
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.CourseEnrolments.ToString("#,##0")
@@ -90,7 +90,7 @@
                                             </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Course completions
+                                                    <span class="nhsuk-u-visually-hidden">Course </span>Completions
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.CourseCompletions.ToString("#,##0")
@@ -106,14 +106,14 @@
                             <div class="nhsuk-card">
                                 <div class="nhsuk-card__content">
                                     <h2 class="nhsuk-card__heading">
-                                        Self assessment activity
+                                        Self assessment activity totals
                                     </h2>
 
                                     <div class="nhsuk-card__description">
                                         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Digital capability self assessment enrolments
+                                                    Digital capability <span class="nhsuk-u-visually-hidden">self assessment </span> enrolments
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.DCSAEnrolments.ToString("#,##0")
@@ -122,7 +122,7 @@
                                             </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Digital capability self assessment completions
+                                                    Digital capability <span class="nhsuk-u-visually-hidden">self assessment </span> completions
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.DCSACompletions.ToString("#,##0")
@@ -131,7 +131,7 @@
                                             </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Nursing proficiency self assessment enrolments
+                                                    Nursing proficiency <span class="nhsuk-u-visually-hidden">self assessment </span> enrolments
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.NursingPassportEnrolments.ToString("#,##0")
@@ -140,7 +140,7 @@
                                             </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Nursing proficiency self assessment completions
+                                                    Nursing proficiency <span class="nhsuk-u-visually-hidden">self assessment </span> completions
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.NursingPassportCompletions.ToString("#,##0")
