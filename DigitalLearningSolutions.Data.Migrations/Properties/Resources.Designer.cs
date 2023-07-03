@@ -943,6 +943,32 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 03/07/2023
+        ///-- Description:	Populate the ReportSelfAssessmentActivityLog table with recent activity
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE PopulateReportSelfAssessmentActivityLog
+        ///
+        ///AS
+        ///BEGIN
+        ///	-- SET NOCOUNT ON added to prevent extra result sets from
+        ///	-- interfering with SELECT statements.
+        ///	SET NOCOUNT ON;
+        ///
+        ///   DECLARE @ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP {
+            get {
+                return ResourceManager.GetString("TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 2/6/2023 22:11:41 ******/
         ///SET ANSI_NULLS ON
         ///GO
