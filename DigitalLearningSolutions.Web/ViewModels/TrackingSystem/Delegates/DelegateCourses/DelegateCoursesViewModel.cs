@@ -11,7 +11,8 @@
     {
         public DelegateCoursesViewModel(
             SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result,
-            IEnumerable<FilterModel> availableFilters
+            IEnumerable<FilterModel> availableFilters,
+            string courseCategoryName
         ) : base(
             result,
             true,
@@ -20,8 +21,8 @@
         )
         {
             UpdateCourseActiveFlags(result);
-
             Courses = result.ItemsToDisplay.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
+            CourseCategoryName = courseCategoryName;
         }
 
         private static void UpdateCourseActiveFlags(SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result)
@@ -49,6 +50,7 @@
         }
 
         public IEnumerable<SearchableDelegateCourseStatisticsViewModel> Courses { get; set; }
+        public string CourseCategoryName { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
