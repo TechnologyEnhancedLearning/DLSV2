@@ -51,7 +51,7 @@
                     emailVerificationDataService
                 )
                 .WithDefaultContext()
-                .WithMockUser(true);
+                .WithMockUser(true).WithMockTempData();
         }
 
         [Test]

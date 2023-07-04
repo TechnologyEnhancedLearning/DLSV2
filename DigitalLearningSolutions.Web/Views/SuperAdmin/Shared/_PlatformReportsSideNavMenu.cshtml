@@ -1,0 +1,31 @@
+@using DigitalLearningSolutions.Web.Models.Enums
+@model SuperAdminReportsPage
+
+<h2 class="side-nav__heading">Reports</h2>
+<ul class="nhsuk-list side-nav__list">
+    <vc:side-menu-link asp-action="Index"
+                       asp-controller="PlatformReports"
+                       link-text="Platform usage"
+                       is-current-page="@(Model == SuperAdminReportsPage.PlatformUsage)" />
+
+    <vc:side-menu-link asp-action="Index"
+                       asp-controller="CourseUsage"
+                       link-text="Course usage"
+                       is-current-page="@(Model == SuperAdminReportsPage.CourseUsage)" />
+
+    <vc:side-menu-link asp-action="Delegates"
+                       asp-controller="CourseEvaluations"
+                       link-text="Course evaluations"
+                       is-current-page="@(Model == SuperAdminReportsPage.CourseEvaluations)" />
+
+    <vc:side-menu-link asp-action="Delegates"
+                       asp-controller="DigitalCapabilities"
+                       link-text="Digital capabilities"
+                       is-current-page="@(Model == SuperAdminReportsPage.DigitalCapabilities)" />
+
+    <vc:side-menu-link asp-action="Delegates"
+                       asp-controller="NursingProficiencies"
+                       link-text="Nursing proficiencies"
+                       is-current-page="@(Model == SuperAdminReportsPage.NursingProficiencies)" />
+
+</ul>
