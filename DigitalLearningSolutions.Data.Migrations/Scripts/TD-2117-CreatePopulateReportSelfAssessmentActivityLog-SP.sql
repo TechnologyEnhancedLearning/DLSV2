@@ -26,7 +26,7 @@ SELECT @StartDate = MAX(ActivityDate) FROM ReportSelfAssessmentActivityLog;
                                  SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
                                  Centres AS ce ON ca.CentreID = ce.CentreID INNER JOIN
                                  DelegateAccounts AS da ON ca.DelegateUserID = da.UserID AND ca.CentreID = da.CentreID
-								 WHERE (ca.StartedDate > @StartDate);
+								 WHERE (ca.NonReportable = 0) AND (ca.StartedDate > @StartDate);
             --Insert submitted self assessments into the new table:
 INSERT INTO ReportSelfAssessmentActivityLog
                                  (DelegateID, UserID, CentreID, RegionID, JobGroupID, CategoryID, [National], SelfAssessmentID, ActivityDate, Enrolled, Submitted, SignedOff)
@@ -36,7 +36,7 @@ INSERT INTO ReportSelfAssessmentActivityLog
                                  SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
                                  Centres AS ce ON ca.CentreID = ce.CentreID INNER JOIN
                                  DelegateAccounts AS da ON ca.DelegateUserID = da.UserID AND ca.CentreID = da.CentreID
-                    WHERE (NOT (ca.SubmittedDate IS NULL)) AND (ca.SubmittedDate > @StartDate);
+                    WHERE (ca.NonReportable = 0) AND (NOT (ca.SubmittedDate IS NULL)) AND (ca.SubmittedDate > @StartDate);
             --Insert signed off self assessments into the new table:
 INSERT INTO ReportSelfAssessmentActivityLog
                                  (DelegateID, UserID, CentreID, RegionID, JobGroupID, CategoryID, [National], SelfAssessmentID, ActivityDate, Enrolled, Submitted, SignedOff)
@@ -48,6 +48,6 @@ INSERT INTO ReportSelfAssessmentActivityLog
                                  DelegateAccounts AS da ON ca.DelegateUserID = da.UserID AND ca.CentreID = da.CentreID INNER JOIN
                                  CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID INNER JOIN
                                  CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
-                   WHERE (NOT (casv.Verified IS NULL)) AND (casv.SignedOff = 1) AND (casv.Verified > @StartDate);
+                   WHERE (ca.NonReportable = 0) AND (NOT (casv.Verified IS NULL)) AND (casv.SignedOff = 1) AND (casv.Verified > @StartDate);
 END
 GO

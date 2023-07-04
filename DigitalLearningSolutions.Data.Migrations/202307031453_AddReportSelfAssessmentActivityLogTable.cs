@@ -37,7 +37,8 @@
                                  Users AS u ON ca.DelegateUserID = u.ID INNER JOIN
                                  SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
                                  Centres AS ce ON ca.CentreID = ce.CentreID INNER JOIN
-                                 DelegateAccounts AS da ON ca.DelegateUserID = da.UserID AND ca.CentreID = da.CentreID;"
+                                 DelegateAccounts AS da ON ca.DelegateUserID = da.UserID AND ca.CentreID = da.CentreID
+                    WHERE (ca.NonReportable = 0);"
             );
             //Insert submitted self assessments into the new table:
             Execute.Sql(
@@ -49,7 +50,7 @@
                                  SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
                                  Centres AS ce ON ca.CentreID = ce.CentreID INNER JOIN
                                  DelegateAccounts AS da ON ca.DelegateUserID = da.UserID AND ca.CentreID = da.CentreID
-                    WHERE ca.SubmittedDate IS NOT NULL;"
+                    WHERE (ca.NonReportable = 0) AND (ca.SubmittedDate IS NOT NULL);"
             );
             //Insert signed off self assessments into the new table:
             Execute.Sql(
@@ -63,7 +64,7 @@
                                  DelegateAccounts AS da ON ca.DelegateUserID = da.UserID AND ca.CentreID = da.CentreID INNER JOIN
                                  CandidateAssessmentSupervisors AS cas ON ca.ID = cas.CandidateAssessmentID INNER JOIN
                                  CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
-                   WHERE (NOT (casv.Verified IS NULL)) AND (casv.SignedOff = 1);"
+                   WHERE (ca.NonReportable = 0) AND (NOT (casv.Verified IS NULL)) AND (casv.SignedOff = 1);"
            );
             Execute.Sql(Properties.Resources.TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP);
         }
