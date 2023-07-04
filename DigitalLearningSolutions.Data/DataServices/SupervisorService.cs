@@ -295,6 +295,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
                             AND(sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
                             AND (au.CentreId = @centreId)
+                            AND (sd.Removed IS NULL)
                         ), 0) AS ID",
                     new
                     {
@@ -1131,23 +1132,26 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
                 }
             }
 
-            if (delegateUserId != null)
-            {
-                int? existingId = (int?)connection.ExecuteScalar(
+            int? existingId = (int)connection.ExecuteScalar(
                     @"
-                    SELECT ID
+                    SELECT COALESCE
+                    ((SELECT Top 1 ID
                         FROM    SupervisorDelegates sd
-                        WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
-                        ",
+                            LEFT OUTER JOIN AdminUsers as au ON sd.SupervisorAdminID = au.AdminID
+                        WHERE (DelegateEmail = @delegateEmail)
+                            AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
+                            AND (au.CentreId = @centreId)
+                            AND (sd.Removed IS null)
+                        ), 0) AS ID",
                     new
                     {
+                        delegateEmail,
                         supervisorAdminId = supervisorAdminId ?? 0,
-                        delegateUserId = delegateUserId ?? 0,
+                        centreId
                     }
                 );
-                return existingId ?? 0;
-            }
-            return 0;
+
+            return existingId ??  0;
         }
 
         public SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId)
