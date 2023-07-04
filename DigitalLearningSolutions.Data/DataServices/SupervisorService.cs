@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
 
     public interface ISupervisorService
@@ -57,6 +58,8 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
+        private readonly ICommonService commonService;
+
         private const string supervisorDelegateDetailFields = @"
             sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, u.FirstName, u.LastName, jg.JobGroupName, da.ID AS DelegateID, da.Answer1, da.Answer2, da.Answer3, da.Answer4, 
              da.Answer5, da.Answer6, da.CandidateNumber, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, 
@@ -109,10 +112,11 @@ FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
 WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
 ORDER BY casv.Requested DESC) AS SignedOff,";
 
-        public SupervisorService(IDbConnection connection, ILogger<SupervisorService> logger)
+        public SupervisorService(IDbConnection connection, ILogger<SupervisorService> logger, ICommonService commonService)
         {
             this.connection = connection;
             this.logger = logger;
+            this.commonService = commonService;
         }
 
         public DashboardData GetDashboardDataForAdminId(int adminId)
@@ -236,9 +240,11 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 @"
                     SELECT COALESCE
                     ((SELECT Top 1 ID
-                        FROM    SupervisorDelegates sd
-                        WHERE ((sd.SupervisorAdminID = @supervisorAdminID) OR (sd.SupervisorAdminID > 0 AND SupervisorEmail = @supervisorEmail AND @supervisorAdminID = NULL))
-		                      AND((sd.DelegateUserID = @delegateUserId) OR (sd.DelegateUserID > 0 AND DelegateEmail = @delegateEmail AND @delegateUserId = NULL)) ORDER BY sd.DelegateUserID Desc
+                        FROM  SupervisorDelegates sd
+                              LEFT OUTER JOIN AdminUsers as au ON sd.SupervisorAdminID = au.AdminID
+                        WHERE ((sd.SupervisorAdminID = @supervisorAdminID) OR (sd.SupervisorAdminID > 0 AND SupervisorEmail = @supervisorEmail))
+		                      AND((sd.DelegateUserID = @delegateUserId) OR (sd.DelegateUserID > 0 AND DelegateEmail = @delegateEmail))
+                              AND (au.CentreId = @centreId)  ORDER BY sd.DelegateUserID Desc
                         ), 0) AS ID",
                 new
                 {
@@ -246,6 +252,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     delegateEmail,
                     supervisorAdminId = supervisorAdminId ?? 0,
                     delegateUserId = delegateUserId ?? 0,
+                    centreId
                 }
             );
 
@@ -281,11 +288,13 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 existingId = (int)connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
-                    ((SELECT ID
+                    ((SELECT Top 1 ID
                         FROM    SupervisorDelegates sd
+                            LEFT OUTER JOIN AdminUsers as au ON sd.SupervisorAdminID = au.AdminID
                         WHERE(SupervisorEmail = @supervisorEmail) AND(DelegateEmail = @delegateEmail)
                             AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
                             AND(sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
+                            AND (au.CentreId = @centreId)
                         ), 0) AS ID",
                     new
                     {
@@ -293,6 +302,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         delegateEmail,
                         supervisorAdminId = supervisorAdminId ?? 0,
                         delegateUserId = delegateUserId ?? 0,
+                        centreId
                     }
                 ); return existingId;
             }
@@ -1065,17 +1075,61 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
 
         public int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId, string delegateEmail, int centreId)
         {
-            int? delegateUserId = (int?)connection.ExecuteScalar(
-                 @"SELECT da.UserID AS DelegateUserID 
+            int? delegateUserId = null;
+
+            var user = connection.Query<UserAccount>(
+                @$"SELECT u.ID, u.PrimaryEmail, u.FirstName, u.LastName,  u.Active
                             FROM Users u
-                            INNER JOIN DelegateAccounts da
-                            ON da.UserID = u.ID
-	                        LEFT JOIN UserCentreDetails ucd
+                            LEFT JOIN UserCentreDetails ucd
 	                        ON ucd.UserID = u.ID
-                            AND ucd.CentreID = da.CentreID
-                            WHERE (ucd.Email = @delegateEmail OR u.PrimaryEmail = @delegateEmail)
-                            AND u.Active = 1 
-                            AND da.CentreID = @centreId", new { delegateEmail, centreId });
+                            WHERE (u.PrimaryEmail = @delegateEmail OR ucd.Email = @delegateEmail)
+                            AND u.Active = 1", new { delegateEmail }).FirstOrDefault();
+            if (user != null)
+            {
+                delegateUserId = (int?)connection.ExecuteScalar(
+                     @"SELECT Top 1 da.UserID AS DelegateUserID 
+                            FROM DelegateAccounts da
+                            LEFT JOIN UserCentreDetails ucd
+	                        ON ucd.UserID = da.UserID
+                            WHERE (da.UserID = @Id OR ucd.Email = @delegateEmail) AND da.CentreID = @centreId",
+                     new { user?.Id, delegateEmail, centreId });
+
+                if (delegateUserId == null)
+                {
+                    var candidateNumber = commonService.GenerateCandidateNumber(user.FirstName, user.LastName);
+
+                    delegateUserId = connection.QuerySingle<int>(
+                        @"INSERT INTO DelegateAccounts
+                        (
+                            UserID,
+                            CentreID,
+                            DateRegistered,
+                            CandidateNumber,
+                            Approved,
+                            Active,
+                            ExternalReg,
+                            SelfReg,
+                            CentreSpecificDetailsLastChecked
+                        )
+                        OUTPUT Inserted.UserID
+                        VALUES
+                        (
+                            @Id,
+                            @centreId,
+                            GETDATE(),
+                            @candidateNumber,
+                            1,
+                            1,
+                            0,
+                            0,
+                            GETDATE()
+                        )", new { user.Id, centreId, candidateNumber }
+
+                    );
+
+
+                }
+            }
 
             if (delegateUserId != null)
             {
