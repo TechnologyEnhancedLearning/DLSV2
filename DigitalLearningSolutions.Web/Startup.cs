@@ -267,6 +267,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IEmailVerificationService, EmailVerificationService>();
             services.AddScoped<IEmailGenerationService, EmailGenerationService>();
             services.AddScoped<IAdminDownloadFileService, AdminDownloadFileService>();
+            services.AddScoped<IPlatformReportsService, PlatformReportsService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -317,6 +318,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IMultiPageFormService, MultiPageFormService>();
             services.AddScoped<ISelfAssessmentReportDataService, SelfAssessmentReportDataService>();
             services.AddScoped<IUserFeedbackDataService, UserFeedbackDataService>();
+            services.AddScoped<IPlatformReportsDataService, PlatformReportsDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
