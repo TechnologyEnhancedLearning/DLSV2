@@ -15,7 +15,8 @@
     public class UserFeedbackController : Controller
     {
         private readonly IUserFeedbackDataService _userFeedbackDataService;
-        private readonly IMultiPageFormService multiPageFormService;
+        private readonly IMultiPageFormService _multiPageFormService;
+        private UserFeedbackViewModel _userFeedbackViewModel;
 
         public UserFeedbackController(
             IUserFeedbackDataService userFeedbackDataService,
@@ -23,7 +24,8 @@
         )
         {
             this._userFeedbackDataService = userFeedbackDataService;
-            this.multiPageFormService = multiPageFormService;
+            this._multiPageFormService = multiPageFormService;
+            this._userFeedbackViewModel = new UserFeedbackViewModel();
         }
 
         [Route("/Index")]
@@ -31,7 +33,9 @@
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
-            UserFeedbackViewModel userFeedbackViewModel = new()
+            _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
+            
+            _userFeedbackViewModel = new()
             {
                 UserId = User.GetUserId(),
                 UserRoles = DeriveUserRoles(),
@@ -43,14 +47,11 @@
                 TaskRating = null,
             };
 
-            if (userFeedbackViewModel.UserId == null || userFeedbackViewModel.UserId == 0)
+            if (_userFeedbackViewModel.UserId == null || _userFeedbackViewModel.UserId == 0)
             {
-                return GuestFeedbackStart(userFeedbackViewModel);
+                return GuestFeedbackStart(_userFeedbackViewModel);
             }
-            else
-            {
-                return StartUserFeedbackSession(userFeedbackViewModel);
-            }
+            return StartUserFeedbackSession(_userFeedbackViewModel);
         }
 
         private string DeriveUserRoles()
@@ -60,47 +61,47 @@
             if (User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false)
             {
                 roles.Add("LearningPortalAccess");
-            };
+            }
             if (User.HasCentreAdminPermissions())
             {
                 roles.Add("TrackingSystemAccess");
-            };
+            }
             if (User.GetCustomClaimAsBool(CustomClaimTypes.UserAuthenticatedCm) ?? false)
             {
                 roles.Add("ContentManagementSystemAccess");
-            };
+            }
             if (User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false)
             {
                 roles.Add("Supervisor");
-            };
+            }
             if (User.GetCustomClaimAsBool(CustomClaimTypes.IsNominatedSupervisor) ?? false)
             {
                 roles.Add("NominatedSupervisor");
-            };
+            }
             if (User.GetCustomClaimAsBool(CustomClaimTypes.UserContentCreator) ?? false)
             {
                 roles.Add("ContentCreatorAccess");
-            };
+            }
             if (User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) ?? false)
             {
-                roles.Add("FrameworksAccess ");
-            };
+                roles.Add("FrameworksAccess");
+            }
             if (User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) ?? false)
             {
                 roles.Add("FrameworkContributor");
-            };
+            }
             if (User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) ?? false)
             {
                 roles.Add("WorkforceManager");
-            };
+            }
             if (User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) ?? false)
             {
                 roles.Add("WorkforceContributor");
-            };
+            }
             if (User.HasSuperAdminPermissions())
             {
-                roles.Add("SuperAdminAccess ");
-            };
+                roles.Add("SuperAdminAccess");
+            }
 
             return string.Join(", ", roles);
         }
@@ -123,26 +124,36 @@
                 UserRoles = userFeedbackViewModel.UserRoles,
                 SourceUrl = userFeedbackViewModel.SourceUrl,
                 SourcePageTitle = userFeedbackViewModel.SourcePageTitle,
-                TaskAchieved = null,
-                TaskAttempted = string.Empty,
-                FeedbackText = string.Empty,
-                TaskRating = null,
+                TaskAchieved = userFeedbackViewModel.TaskAchieved,
+                TaskAttempted = userFeedbackViewModel.TaskAttempted ?? string.Empty,
+                FeedbackText = userFeedbackViewModel.FeedbackText ?? string.Empty,
+                TaskRating = userFeedbackViewModel.TaskRating,
             };
 
-            multiPageFormService.SetMultiPageFormData(
+            _multiPageFormService.SetMultiPageFormData(
                 userFeedbackSessionData,
                 MultiPageFormDataFeature.AddUserFeedback,
                 TempData
             );
+
+            userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
+
             return RedirectToAction("UserFeedbackTaskAchieved", userFeedbackViewModel);
         }
 
         [HttpGet]
         [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackTaskAchieved")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
+        )]
         public IActionResult UserFeedbackTaskAchieved(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
+
+            userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
             return View("UserFeedbackTaskAchieved", userFeedbackViewModel);
         }
@@ -157,18 +168,9 @@
         )]
         public IActionResult UserFeedbackTaskAchievedSet(UserFeedbackViewModel userFeedbackViewModel)
         {
-            var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
-                MultiPageFormDataFeature.AddUserFeedback,
-                TempData
-            ).GetAwaiter().GetResult();
+            userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
-            data.TaskAchieved = userFeedbackViewModel.TaskAchieved;
-
-            multiPageFormService.SetMultiPageFormData(
-                data,
-                MultiPageFormDataFeature.AddUserFeedback,
-                TempData
-            );
+            SaveMultiPageFormData(userFeedbackViewModel);
 
             return RedirectToAction("UserFeedbackTaskAttempted", userFeedbackViewModel);
         }
@@ -176,9 +178,16 @@
         [HttpGet]
         [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackTaskAttempted")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
+        )]
         public IActionResult UserFeedbackTaskAttempted(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
+
+            userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
             return View("UserFeedbackTaskAttempted", userFeedbackViewModel);
         }
@@ -193,19 +202,9 @@
         )]
         public IActionResult UserFeedbackTaskAttemptedSet(UserFeedbackViewModel userFeedbackViewModel)
         {
-            var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
-                MultiPageFormDataFeature.AddUserFeedback,
-                TempData
-            ).GetAwaiter().GetResult();
+            userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
-            data.TaskAttempted = userFeedbackViewModel.TaskAttempted;
-            data.FeedbackText = userFeedbackViewModel.FeedbackText;
-
-            multiPageFormService.SetMultiPageFormData(
-                data,
-                MultiPageFormDataFeature.AddUserFeedback,
-                TempData
-            );
+            SaveMultiPageFormData(userFeedbackViewModel);
 
             return RedirectToAction("UserFeedbackTaskDifficulty", userFeedbackViewModel);
         }
@@ -213,9 +212,16 @@
         [HttpGet]
         [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/UserFeedbackTaskDifficulty")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
+        )]
         public IActionResult UserFeedbackTaskDifficulty(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
+
+            userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
             return View("UserFeedbackTaskDifficulty", userFeedbackViewModel);
         }
@@ -230,25 +236,16 @@
         )]
         public IActionResult UserFeedbackTaskDifficultySet(UserFeedbackViewModel userFeedbackViewModel)
         {
-            var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
-                MultiPageFormDataFeature.AddUserFeedback,
-                TempData
-            ).GetAwaiter().GetResult();
+            userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
-            data.TaskRating = userFeedbackViewModel.TaskRating;
-
-            multiPageFormService.SetMultiPageFormData(
-                data,
-                MultiPageFormDataFeature.AddUserFeedback,
-                TempData
-            );
+            SaveMultiPageFormData(userFeedbackViewModel);
 
             return RedirectToAction("UserFeedbackSave", userFeedbackViewModel);
         }
 
         public IActionResult UserFeedbackSave(UserFeedbackViewModel userFeedbackViewModel)
         {
-            var data = multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
+            var data = _multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
                 MultiPageFormDataFeature.AddUserFeedback,
                 TempData
             ).GetAwaiter().GetResult();
@@ -265,7 +262,7 @@
                 data.TaskRating
             );
 
-            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
+            _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
 
             transaction.Complete();
 
@@ -287,6 +284,11 @@
         [HttpGet]
         [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/GuestFeedbackStart")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddUserFeedback) }
+        )]
         public IActionResult GuestFeedbackStart(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
@@ -297,11 +299,14 @@
         [HttpGet]
         [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/GuestFeedbackComplete")]
+        [ResponseCache(CacheProfileName = "Never")]
         public IActionResult GuestFeedbackComplete()
         {
             var userFeedbackModel = new UserFeedbackViewModel();
 
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
+
+            _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
 
             return View("GuestFeedbackComplete", userFeedbackModel);
         }
@@ -309,11 +314,12 @@
         [HttpPost]
         [FeatureGate(FeatureFlags.UserFeedbackBar)]
         [Route("/GuestFeedbackComplete")]
-        [ResponseCache(CacheProfileName = "Never")]
         public IActionResult GuestFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
         {
             if (!(userFeedbackViewModel.TaskAchieved == null && userFeedbackViewModel.TaskAttempted == null && userFeedbackViewModel.FeedbackText == null && userFeedbackViewModel.TaskRating == null))
             {
+                using var transaction = new TransactionScope();
+
                 _userFeedbackDataService.SaveUserFeedback(
                     null,
                     null,
@@ -323,11 +329,15 @@
                     userFeedbackViewModel.FeedbackText,
                     null
                 );
+
+                _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
+
+                transaction.Complete();
             }
 
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
-            return View("GuestFeedbackComplete", userFeedbackViewModel);
+            return RedirectToAction("GuestFeedbackComplete", userFeedbackViewModel);
         }
 
         [HttpPost]
@@ -336,6 +346,56 @@
         public IActionResult UserFeedbackReturnToUrl(string sourceUrl)
         {
             return Redirect(sourceUrl);
+        }
+
+        private UserFeedbackViewModel MapMultiformDataToViewModel(UserFeedbackViewModel viewModel)
+        {
+            var data = _multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
+                MultiPageFormDataFeature.AddUserFeedback,
+                TempData
+            ).GetAwaiter().GetResult();
+
+            viewModel.UserId ??= data.UserId;
+            viewModel.UserRoles ??= data.UserRoles;
+            viewModel.SourceUrl ??= data.SourceUrl;
+            viewModel.SourcePageTitle ??= data.SourcePageTitle;
+            viewModel.TaskAchieved ??= data.TaskAchieved;
+            viewModel.TaskAttempted ??= data.TaskAttempted;
+            viewModel.FeedbackText ??= data.FeedbackText;
+            viewModel.TaskRating ??= data.TaskRating;
+
+            return viewModel;
+        }
+
+        private void SaveMultiPageFormData(UserFeedbackViewModel viewModelDelta)
+        {
+            var data = _multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
+                MultiPageFormDataFeature.AddUserFeedback,
+                TempData
+            ).GetAwaiter().GetResult();
+
+            if (viewModelDelta.TaskAchieved != data.TaskAchieved)
+            {
+                data.TaskAchieved = viewModelDelta.TaskAchieved;
+            }
+            if (viewModelDelta.TaskAttempted != data.TaskAttempted)
+            {
+                data.TaskAttempted = viewModelDelta.TaskAttempted;
+            }
+            if (viewModelDelta.FeedbackText != data.FeedbackText)
+            {
+                data.FeedbackText = viewModelDelta.FeedbackText;
+            }
+            if (viewModelDelta.TaskRating != data.TaskRating)
+            {
+                data.TaskRating = viewModelDelta.TaskRating;
+            }
+
+            _multiPageFormService.SetMultiPageFormData(
+                data,
+                MultiPageFormDataFeature.AddUserFeedback,
+                TempData
+            );
         }
     }
 }
