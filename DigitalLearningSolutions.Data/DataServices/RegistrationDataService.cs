@@ -256,10 +256,12 @@
             IDbTransaction transaction
         )
         {
+            string trimmedFirstName = delegateRegistrationModel.FirstName.Trim();
+            string trimmedLastName = delegateRegistrationModel.LastName.Trim();
             var userValues = new
             {
-                delegateRegistrationModel.FirstName,
-                delegateRegistrationModel.LastName,
+                FirstName = trimmedFirstName,
+                LastName = trimmedLastName,
                 delegateRegistrationModel.PrimaryEmail,
                 delegateRegistrationModel.JobGroup,
                 delegateRegistrationModel.UserIsActive,
