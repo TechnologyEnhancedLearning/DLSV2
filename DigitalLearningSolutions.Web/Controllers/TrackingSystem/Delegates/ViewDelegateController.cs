@@ -68,6 +68,11 @@
                 return NotFound();
             }
 
+            if (TempData["IsDelegatePromoted"] != null)
+            {
+                TempData.Remove("IsDelegatePromoted");
+            }
+
             var delegateUserCard = new DelegateUserCard(delegateEntity);
             var categoryIdFilter = User.GetAdminCategoryId();
 
