@@ -1541,5 +1541,12 @@
                 fileName
             );
         }
+
+        public IActionResult RemoveEnrolment(int selfAssessmentId)
+        {
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            selfAssessmentService.RemoveEnrolment(selfAssessmentId, delegateUserId);
+            return RedirectToAction("Current", "LearningPortal");
+        }
     }
 }

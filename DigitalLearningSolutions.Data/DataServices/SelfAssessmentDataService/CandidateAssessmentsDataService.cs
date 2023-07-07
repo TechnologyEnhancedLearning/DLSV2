@@ -30,7 +30,8 @@
                         CA.LaunchCount,
                         1 AS IsSelfAssessment,
                         CA.SubmittedDate,
-                        CR.CentreName AS CentreName
+                        CR.CentreName AS CentreName,
+                        CA.EnrolmentMethodId
                     FROM Centres AS CR INNER JOIN
                         CandidateAssessments AS CA INNER JOIN
                         SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID ON CR.CentreID = CA.CentreID INNER JOIN
@@ -43,7 +44,7 @@
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
-                        CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName",
+                        CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId",
                 new { delegateUserId, centreId }
             );
         }
@@ -231,6 +232,15 @@
                     $"Self assessment id: {selfAssessmentId}, Delegate User id: {delegateUserId}"
                 );
             }
+        }
+
+        public void RemoveEnrolment(int selfAssessmentId, int delegateUserId)
+        {
+            connection.Execute(
+                @"UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE()
+                      WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId",
+                new { selfAssessmentId, delegateUserId }
+            );
         }
 
         public IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId)
