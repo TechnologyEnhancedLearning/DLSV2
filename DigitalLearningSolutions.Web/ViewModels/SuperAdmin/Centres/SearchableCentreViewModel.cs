@@ -1,10 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Administrators
+﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
 {
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class SearchableCentreViewModel : BaseFilterableViewModel

@@ -4,7 +4,6 @@
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Administrators;
     using System.Collections.Generic;
     using System.Linq;
 
