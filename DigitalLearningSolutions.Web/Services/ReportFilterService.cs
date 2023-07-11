@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Data.Utilities;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -26,6 +27,22 @@
         private readonly ICourseDataService courseDataService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        public ReportFilterService(
+           ICourseCategoriesDataService courseCategoriesDataService,
+           IRegionDataService regionDataService,
+           ICentresDataService centresDataService,
+           ICourseDataService courseDataService,
+           ISelfAssessmentDataService selfAssessmentDataService,
+           IJobGroupsDataService jobGroupsDataService
+           )
+        {
+            this.courseCategoriesDataService = courseCategoriesDataService;
+            this.regionDataService = regionDataService;
+            this.centresDataService = centresDataService;
+            this.courseDataService = courseDataService;
+            this.selfAssessmentDataService = selfAssessmentDataService;
+            this.jobGroupsDataService = jobGroupsDataService;
+        }
         public (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
             ActivityFilterData filterData
         )
