@@ -16,6 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Content Remove="Views\SuperAdmin\PlatformReports\NursingProficiencies.cshtml" />
         <Content Remove="wwwroot\README.txt" />
     </ItemGroup>
 
@@ -80,6 +81,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="Views\SuperAdmin\PlatformReports\NursingProficiencies.cshtml" />
         <None Include="wwwroot\favicon.ico" />
         <None Include="wwwroot\images\itSkillsPathwayLogo.png" />
         <None Include="wwwroot\images\nhsDigitalLogo.png" />
@@ -140,6 +142,7 @@
 
     <ItemGroup>
         <_ContentIncludedByDefault Remove="Views\Shared\Components\VerifyEmailWarningIfAppropriate\Default.cshtml" />
+        <_ContentIncludedByDefault Remove="Views\SuperAdmin\PlatformReports\NursingProficiencies.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -166,5 +169,9 @@
             <UserProperties />
         </VisualStudio>
     </ProjectExtensions>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\SuperAdmin\PlatformReports\NursingProficiencies.cshtml" />
+    </ItemGroup>
 
 </Project>

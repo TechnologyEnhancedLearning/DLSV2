@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using Dapper;
+    using System.Drawing;
     using DigitalLearningSolutions.Data.Models.Common.Users;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Models.Frameworks;
@@ -12,6 +14,9 @@
 
     public interface ISelfAssessmentDataService
     {
+        //Self Assessments
+        string? GetSelfAssessmentNameById(int selfAssessmentId);
+
         // CompetencyDataService
         IEnumerable<int> GetCompetencyIdsForSelfAssessment(int selfAssessmentId);
 
@@ -152,6 +157,18 @@
         {
             this.connection = connection;
             this.logger = logger;
+        }
+
+        public string? GetSelfAssessmentNameById(int selfAssessmentId)
+        {
+            var name = connection.QueryFirstOrDefault<string?>(
+                @"SELECT [Name]
+                        FROM SelfAssessments
+                        WHERE ID = @selfAssessmentId"
+            ,
+                new { selfAssessmentId }
+            );
+            return name;
         }
     }
 }

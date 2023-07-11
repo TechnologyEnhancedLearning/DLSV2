@@ -12,6 +12,9 @@
             int? jobGroupId,
             int? courseCategoryId,
             int? customisationId,
+            int? regionId,
+            int? centreId,
+            int? selfAssessmentId,
             CourseFilterType filterType,
             ReportInterval reportInterval
         )
@@ -19,8 +22,11 @@
             StartDate = startDate;
             EndDate = endDate;
             JobGroupId = jobGroupId;
-            CourseCategoryId = filterType == CourseFilterType.CourseCategory ? courseCategoryId : null;
-            CustomisationId = filterType == CourseFilterType.Course ? customisationId : null;
+            RegionId = regionId;
+            CentreId = centreId;
+            SelfAssessmentId = filterType == CourseFilterType.Activity ? selfAssessmentId : null;
+            CourseCategoryId = filterType == CourseFilterType.Category ? courseCategoryId : null;
+            CustomisationId = filterType == CourseFilterType.Activity ? customisationId : null;
             ReportInterval = reportInterval;
             FilterType = filterType;
         }
@@ -28,6 +34,9 @@
         public int? JobGroupId { get; set; }
         public int? CourseCategoryId { get; set; }
         public int? CustomisationId { get; set; }
+        public int? RegionId { get; set; }
+        public int? CentreId { get; set; }
+        public int? SelfAssessmentId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public ReportInterval ReportInterval { get; set; }
@@ -42,7 +51,10 @@
                 null,
                 categoryIdFilter,
                 null,
-                CourseFilterType.CourseCategory,
+                null,
+                null,
+                null,
+                CourseFilterType.Category,
                 ReportInterval.Months
             );
         }

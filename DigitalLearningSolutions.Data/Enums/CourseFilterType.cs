@@ -3,7 +3,7 @@
     public enum CourseFilterType
     {
         None,
-        Course,
-        CourseCategory
+        Activity,
+        Category
     }
 }

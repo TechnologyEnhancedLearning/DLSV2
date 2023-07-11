@@ -1,0 +1,70 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+@model EditFiltersViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit report filters" : "Edit report filters";
+  var reportIntervalValue = (int)Model.ReportInterval;
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/reports.css")">
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroupId),
+                                                   nameof(Model.CourseCategoryId),
+                                                   nameof(Model.CustomisationId),
+                                                   nameof(Model.StartDay),
+                                                   nameof(Model.StartMonth),
+                                                   nameof(Model.StartYear),
+                                                   nameof(Model.EndDay),
+                                                   nameof(Model.EndMonth),
+                                                   nameof(Model.EndYear),
+                                                   nameof(Model.ReportInterval) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Edit report filters</h1>
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditFilters">
+      <input type="hidden" name="dataStart" value="@Model.DataStart" />
+
+      <vc:select-list asp-for="@nameof(Model.JobGroupId)"
+                      label="Choose job group filter"
+                      value="@Model.JobGroupId.ToString()"
+                      hint-text=""
+                      required="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="All"
+                      select-list-options="@Model.JobGroupOptions" />
+
+      <partial name="_EditCourseCategoryFilters" model="Model" />
+
+      <vc:date-range-input id="date-range"
+                           label="Reporting date range"
+                           start-day-id="@nameof(Model.StartDay)"
+                           start-month-id="@nameof(Model.StartMonth)"
+                           start-year-id="@nameof(Model.StartYear)"
+                           end-day-id="@nameof(Model.EndDay)"
+                           end-month-id="@nameof(Model.EndMonth)"
+                           end-year-id="@nameof(Model.EndYear)"
+                           end-date-checkbox-id="@nameof(Model.EndDate)"
+                           end-date-checkbox-label="End date"
+                           hint-text="The reporting in your centre starts on @Model.DataStart?.ToString(DateHelper.StandardDateFormat). Please select any date range between that date and now."
+                           end-date-checkbox-hint-text="Check this box to specify an end date. If left unchecked will display data until today." />
+
+      <vc:select-list asp-for="@nameof(Model.ReportInterval)"
+                      label="Report by"
+                      value="@reportIntervalValue.ToString()"
+                      hint-text=""
+                      required="true"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option=""
+                      select-list-options="@Model.ReportIntervalOptions" />
+
+      <button class="nhsuk-button" type="submit" value="save">Apply filters</button>
+      <vc:cancel-link asp-controller="Reports" asp-action="Index" />
+    </form>
+  </div>
+</div>

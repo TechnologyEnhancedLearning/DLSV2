@@ -24,11 +24,11 @@
 
             if (filterData.CustomisationId.HasValue)
             {
-                FilterType = CourseFilterType.Course;
+                FilterType = CourseFilterType.Activity;
             }
             else if (filterData.CourseCategoryId.HasValue)
             {
-                FilterType = CourseFilterType.CourseCategory;
+                FilterType = CourseFilterType.Category;
             }
             else
             {

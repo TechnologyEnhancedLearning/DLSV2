@@ -1,0 +1,54 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model ReportsFilterModel
+
+<div class="nhsuk-card word-break">
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
+    <div class="nhsuk-card__description">
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Job group
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.JobGroupName" />
+        </div>
+
+        @if (Model.ShowCourseCategoryFilter)
+        {
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+              Course category
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.CourseCategoryName" />
+          </div>
+        }
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Course
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.CourseName" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Date range
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <span>@Model.StartDate</span><span class="nhsuk-u-visually-hidden">to</span><span> - @Model.EndDate</span>
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Reporting frequency
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.ReportIntervalName" />
+        </div>
+      </dl>
+
+      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Reports" asp-action="EditFilters" role="button">
+        Edit filters
+      </a>
+    </div>
+  </div>
+</div>

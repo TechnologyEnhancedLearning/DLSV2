@@ -1,0 +1,26 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports
+@using DigitalLearningSolutions.Web.ViewModels.Common
+@model NursingProficienciesViewModel
+@{
+    ViewData["Title"] = "Nursing proficiencies";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/superAdmin/platformreports.css")" asp-append-version="true">
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <div id="no-js-styling">
+            <div class="nhsuk-grid-row">
+                <div class="nhsuk-grid-column-one-quarter">
+                    <nav class="side-nav-menu" aria-label="Side navigation bar">
+                        <partial name="~/Views/SuperAdmin/Shared/_PlatformReportsSideNavMenu.cshtml" model="Model.CurrentPage" />
+                    </nav>
+                </div>
+                <div class="nhsuk-grid-column-three-quarters">
+                    <div class="nhsuk-u-margin-bottom-4">
+                        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+                    </div>
+                    <partial name="_ActivityTable.cshtml" model="@Model.SelfAssessmentActivityTableViewModel" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

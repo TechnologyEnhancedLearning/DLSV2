@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -25,16 +26,19 @@
         private readonly IActivityService activityService;
         private readonly IEvaluationSummaryService evaluationSummaryService;
         private readonly IClockUtility clockUtility;
+        private readonly IReportFilterService reportFilterService;
 
         public ReportsController(
             IActivityService activityService,
             IEvaluationSummaryService evaluationSummaryService,
-            IClockUtility clockUtility
+            IClockUtility clockUtility,
+            IReportFilterService reportFilterService
         )
         {
             this.activityService = activityService;
             this.evaluationSummaryService = evaluationSummaryService;
             this.clockUtility = clockUtility;
+            this.reportFilterService = reportFilterService;
         }
 
         public IActionResult Index()
@@ -48,7 +52,7 @@
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
-            var (jobGroupName, courseCategoryName, courseName) = activityService.GetFilterNames(filterData);
+            var (jobGroupName, courseCategoryName, courseName) = reportFilterService.GetFilterNames(filterData);
 
             var filterModel = new ReportsFilterModel(
                 filterData,
@@ -67,7 +71,7 @@
                 filterData.StartDate,
                 filterData.EndDate ?? clockUtility.UtcToday,
                 activityService.GetActivityStartDateForCentre(centreId, categoryIdFilter) != null,
-                activityService.GetCourseCategoryNameForActivityFilter(categoryIdFilter)
+                reportFilterService.GetCourseCategoryNameForActivityFilter(categoryIdFilter)
             );
             return View(model);
         }
@@ -128,6 +132,9 @@
                 model.JobGroupId,
                 categoryIdFilter ?? model.CourseCategoryId,
                 model.CustomisationId,
+                null,
+                null,
+                null,
                 model.FilterType,
                 model.ReportInterval
             );
@@ -165,7 +172,10 @@
                 jobGroupId,
                 adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
-                customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
+                null,
+                null,
+                null,
+                customisationId.HasValue ? CourseFilterType.Activity : CourseFilterType.Category,
                 reportInterval
             );
 
@@ -207,7 +217,10 @@
                 jobGroupId,
                 adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
-                customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
+                null,
+                null,
+                null,
+                customisationId.HasValue ? CourseFilterType.Activity : CourseFilterType.Category,
                 reportInterval
             );
 
@@ -225,7 +238,7 @@
             int? categoryIdFilter
         )
         {
-            return activityService.GetFilterOptions(
+            return reportFilterService.GetFilterOptions(
                 centreId,
                 categoryIdFilter
             );
