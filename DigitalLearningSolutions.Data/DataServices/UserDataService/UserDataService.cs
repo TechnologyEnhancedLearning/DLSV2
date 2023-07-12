@@ -234,7 +234,7 @@
        string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
        );
         (IEnumerable<DelegateEntity>, int) GetAllDelegates(
-      string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
+      string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
       );
         Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
