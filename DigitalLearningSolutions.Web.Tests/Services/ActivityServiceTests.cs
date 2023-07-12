@@ -27,6 +27,7 @@
         private ICourseDataService courseDataService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IClockUtility clockUtility = null!;
+        private IReportFilterService reportFilterService = null!;
 
         [SetUp]
         public void SetUp()
@@ -36,6 +37,7 @@
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             courseDataService = A.Fake<ICourseDataService>();
             clockUtility = A.Fake<IClockUtility>();
+            reportFilterService = A.Fake<IReportFilterService>();
             activityService = new ActivityService(
                 activityDataService,
                 jobGroupsDataService,
@@ -80,6 +82,9 @@
                 null,
                 null,
                 null,
+                null,
+                null,
+                null,
                 CourseFilterType.None,
                 interval
             );
@@ -114,6 +119,9 @@
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2115-6-22"),
                 DateTime.Parse("2116-9-22"),
+                null,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -153,7 +161,10 @@
                 1,
                 2,
                 3,
-                CourseFilterType.CourseCategory,
+                null,
+                null,
+                null,
+                CourseFilterType.Category,
                 ReportInterval.Months
             );
 
@@ -185,7 +196,7 @@
             GivenDataServicesReturnData(centreId, categoryId);
 
             // When
-            var result = activityService.GetFilterOptions(centreId, categoryId);
+            var result = reportFilterService.GetFilterOptions(centreId, categoryId);
 
             // Then
             result.JobGroups.Should().BeEquivalentTo(expectedJobGroups);
@@ -202,7 +213,7 @@
             GivenDataServicesReturnData(centreId, categoryId);
 
             // When
-            var result = activityService.GetFilterOptions(centreId, categoryId);
+            var result = reportFilterService.GetFilterOptions(centreId, categoryId);
 
             // Then
             result.Categories.Should().BeEquivalentTo(expectedCategories);
@@ -220,7 +231,7 @@
             GivenDataServicesReturnData(centreId, categoryId);
 
             // When
-            var result = activityService.GetFilterOptions(centreId, categoryId);
+            var result = reportFilterService.GetFilterOptions(centreId, categoryId);
 
             // Then
             result.Courses.Should().BeEquivalentTo(expectedCourses);
@@ -236,13 +247,16 @@
                 null,
                 null,
                 null,
+                null,
+                null,
+                null,
                 CourseFilterType.None,
                 ReportInterval.Days
             );
             const string all = "All";
 
             // When
-            var result = activityService.GetFilterNames(filterData);
+            var result = reportFilterService.GetFilterNames(filterData);
 
             // Then
             result.jobGroupName.Should().Be(all);
@@ -263,6 +277,9 @@
                 1,
                 null,
                 null,
+                null,
+                null,
+                null,
                 CourseFilterType.None,
                 ReportInterval.Days
             );
@@ -270,7 +287,7 @@
             A.CallTo(() => jobGroupsDataService.GetJobGroupName(A<int>._)).Returns(job);
 
             // When
-            var result = activityService.GetFilterNames(filterData);
+            var result = reportFilterService.GetFilterNames(filterData);
 
             // Then
             result.jobGroupName.Should().Be(job);
@@ -286,14 +303,17 @@
                 null,
                 1,
                 null,
-                CourseFilterType.CourseCategory,
+                null,
+                null,
+                null,
+                CourseFilterType.Category,
                 ReportInterval.Days
             );
             const string category = "Category";
             A.CallTo(() => courseCategoriesDataService.GetCourseCategoryName(A<int>._)).Returns(category);
 
             // When
-            var result = activityService.GetFilterNames(filterData);
+            var result = reportFilterService.GetFilterNames(filterData);
 
             // Then
             result.courseCategoryName.Should().Be(category);
@@ -308,8 +328,11 @@
                 null,
                 null,
                 null,
+                null,
+                null,
+                null,
                 1,
-                CourseFilterType.Course,
+                CourseFilterType.Activity,
                 ReportInterval.Days
             );
             const string course = "Course";
@@ -317,7 +340,7 @@
                 .Returns(new CourseNameInfo { ApplicationName = course });
 
             // When
-            var result = activityService.GetFilterNames(filterData);
+            var result = reportFilterService.GetFilterNames(filterData);
 
             // Then
             result.courseName.Should().Be(course);
@@ -363,6 +386,9 @@
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2020-9-1"),
                 DateTime.Parse("2021-9-1"),
+                null,
+                null,
+                null,
                 null,
                 null,
                 null,
