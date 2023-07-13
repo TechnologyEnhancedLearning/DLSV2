@@ -8,6 +8,7 @@
     public interface IConfigDataService
     {
         string? GetConfigValue(string key);
+        DateTime GetConfigLastUpdated(string key);
 
         bool GetCentreBetaTesting(int centreId);
 
@@ -30,6 +31,7 @@
         public const string AppBaseUrl = "V2AppBaseUrl";
         public const string MaxSignpostedResources = "MaxSignpostedResources";
         public const string SupportEmail = "SupportEmail";
+        public const string AcceptableUsePolicyText = "AcceptableUse";
 
         private readonly IDbConnection connection;
 

@@ -148,5 +148,23 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             }
             return bannerText;
         }
+
+        public IActionResult AcceptableUsePolicy()
+        {
+            var termsText = configDataService.GetConfigValue(ConfigDataService.AcceptableUsePolicyText);            
+            
+            if (termsText == null)
+            {
+                logger.LogError("‘Acceptable Use Policy text from Config table is null");
+                return StatusCode(500);
+            }
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
+
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AcceptableUsePolicyText);
+            nextReviewDate = lastUpdatedDate.AddYears(1);
+            var model = new AcceptableUsePolicyViewModel(termsText, lastUpdatedDate, nextReviewDate);
+            return View(model);
+        }
     }
 }
