@@ -233,6 +233,9 @@
         (IEnumerable<AdminEntity>, int) GetAllAdmins(
        string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
        );
+        (IEnumerable<DelegateEntity>, int) GetAllDelegates(
+      string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
+      );
         Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
       );
@@ -572,6 +575,51 @@
                 WHERE ID = @userId",
                 new { firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId }
             );
+        }
+        public (IEnumerable<DelegateEntity>, int) GetAllDelegates(
+      string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
+      )
+        {
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+            }
+            string condition = $@" WHERE ((@delegateId = 0) OR (da.ID = @delegateId)) 	AND (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @search + N'%')
+                                    AND ((ce.CentreID = @centreId) OR (@centreId= 0)) 
+                                    AND ((@accountStatus = 'Any') OR (@accountStatus = 'Active' AND da.Active = 1 AND u.Active =1) OR (@accountStatus = 'Inactive' AND (u.Active = 0 OR da.Active =0)) 
+	                                    OR(@accountStatus = 'Approved' AND  da.Approved =1) OR (@accountStatus = 'Unapproved' AND  da.Approved =0)
+	                                    OR (@accountStatus = 'Claimed' AND  da.RegistrationConfirmationHash is not null) OR (@accountStatus = 'Unclaimed' AND da.RegistrationConfirmationHash is  null))
+                                    AND ((@lhlinkStatus = 'Any') OR (@lhlinkStatus = 'Linked' AND u.LearningHubAuthID IS NULL) OR (@lhlinkStatus = 'Not linked' AND u.LearningHubAuthID IS NOT NULL))";
+
+            string sql = @$"{BaseDelegateEntitySelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
+                            OFFSET @offset ROWS
+                            FETCH NEXT @rows ROWS ONLY";
+            IEnumerable<DelegateEntity> delegateEntity =
+                connection.Query<DelegateAccount, UserAccount, UserCentreDetails, int?, DelegateEntity>(
+                sql,
+                (delegateAccount, userAccount, userCentreDetails,adminId) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails,
+                    adminId
+                ),
+                new { delegateId, search, centreId, accountStatus, lhlinkStatus, offset, rows },
+                splitOn: "ID,ID,AdminID",
+                commandTimeout: 3000
+            );
+
+            int ResultCount = connection.ExecuteScalar<int>(
+                            @$"SELECT  COUNT(*) AS Matches
+                            FROM DelegateAccounts AS da
+                            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
+                            INNER JOIN Users AS u ON u.ID = da.UserID
+                            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+                            AND ucd.CentreId = da.CentreID
+                            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID {condition}",
+                new { delegateId, search, centreId, accountStatus, failedLoginThreshold, lhlinkStatus },
+                commandTimeout: 3000
+            );
+            return (delegateEntity, ResultCount);
         }
     }
 }
