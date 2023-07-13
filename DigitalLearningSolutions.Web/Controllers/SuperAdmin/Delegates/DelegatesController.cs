@@ -97,7 +97,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
                     }
 
                     string LHLinkStatusFilter = selectedFilters[1];
-                    if (LHLinkStatusFilter.Contains("Role|"))
+                    if (LHLinkStatusFilter.Contains("LHLinkStatus|"))
                     {
                         LHLinkStatus = LHLinkStatusFilter.Split("|")[1];
                     }
