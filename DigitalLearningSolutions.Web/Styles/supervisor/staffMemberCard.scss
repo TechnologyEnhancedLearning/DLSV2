@@ -1,6 +1,6 @@
-﻿$card-text-colour: #000000;
+﻿@use "nhsuk-frontend/packages/core/all" as *;
 
 .loggedinuser .card-background {
-  color: $card-text-colour;
+  color: $nhsuk-text-color;
 }
 
