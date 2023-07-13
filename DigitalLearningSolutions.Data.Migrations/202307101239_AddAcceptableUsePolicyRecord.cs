@@ -210,8 +210,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                                     </li>
                                 </ol>";
 
-            Execute.Sql(@"INSERT INTO [dbo].[Config] ([ConfigName], [ConfigText], [IsHtml])
-                            VALUES (N'AcceptableUse',N'" + acceptableUsePolicy + "',1)");
+            Execute.Sql(@"INSERT INTO [dbo].[Config] ([ConfigName], [ConfigText], [IsHtml],[CreatedDate],[UpdatedDate])
+                            VALUES (N'AcceptableUse',N'" + acceptableUsePolicy + "',1, GETDATE(), GETDATE())");
         }
         public override void Down()
         {
