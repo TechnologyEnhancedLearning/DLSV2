@@ -83,6 +83,8 @@
                 null,
                 null,
                 null,
+                null
+                null,
                 null,
                 null,
                 CourseFilterType.None,
@@ -125,6 +127,8 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 CourseFilterType.None,
                 ReportInterval.Months
             );
@@ -161,6 +165,8 @@
                 1,
                 2,
                 3,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -250,6 +256,8 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 CourseFilterType.None,
                 ReportInterval.Days
             );
@@ -275,6 +283,8 @@
                 DateTime.Now,
                 null,
                 1,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -306,6 +316,8 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 CourseFilterType.Category,
                 ReportInterval.Days
             );
@@ -325,6 +337,8 @@
             // Given
             var filterData = new ActivityFilterData(
                 DateTime.Now,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -386,6 +400,8 @@
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2020-9-1"),
                 DateTime.Parse("2021-9-1"),
+                null,
+                null,
                 null,
                 null,
                 null,

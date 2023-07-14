@@ -18,6 +18,9 @@
                     <div class="nhsuk-u-margin-bottom-4">
                         <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
                     </div>
+                    <span class="nhsuk-body-l">View activity for <span class="nhsuk-u-font-weight-bold">@Model.FilterModel.CategoryName</span> supervised self assessments.</span>
+
+                    <partial name="_FilterDisplayCard.cshtml" model="@Model.FilterModel" />
                     <partial name="_ActivityTable.cshtml" model="@Model.SelfAssessmentActivityTableViewModel" />
                 </div>
             </div>

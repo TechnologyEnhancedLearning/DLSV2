@@ -56,6 +56,8 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 CourseFilterType.None,
                 ReportInterval.Years
             );

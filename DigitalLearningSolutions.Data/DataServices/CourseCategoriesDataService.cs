@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Common;
     using Microsoft.Extensions.Logging;
 

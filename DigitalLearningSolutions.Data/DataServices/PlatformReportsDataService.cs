@@ -22,6 +22,7 @@
             int? courseCategoryId,
             int? regionId,
             int? selfAssessmentId);
+        DateTime GetNursingProficienciesActivityStartDate();
     }
     public class PlatformReportsDataService : IPlatformReportsDataService
     {
@@ -97,6 +98,15 @@
                      regionId
                  }
              );
+        }
+
+        public DateTime GetNursingProficienciesActivityStartDate()
+        {
+            return connection.QuerySingleOrDefault<DateTime>(
+                @"SELECT MIN(ActivityDate) AS StartDate
+                    FROM   ReportSelfAssessmentActivityLog
+                    WHERE (SelfAssessmentID > 1)"
+                );
         }
     }
 }

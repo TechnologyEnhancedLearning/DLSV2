@@ -43,6 +43,8 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 CourseFilterType.None,
                 ReportInterval.Months
             );
@@ -76,6 +78,8 @@
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2020-9-1"),
                 DateTime.Parse("2021-9-1"),
+                null,
+                null,
                 null,
                 null,
                 null,

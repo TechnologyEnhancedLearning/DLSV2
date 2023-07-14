@@ -14,6 +14,7 @@
     {
         PlatformUsageSummary GetPlatformUsageSummary();
         IEnumerable<SelfAssessmentActivityInPeriod> GetNursingProficienciesActivity(ActivityFilterData filterData);
+        DateTime GetNursingProficienciesActivityStartDate();
     }
 
     public class PlatformReportsService : IPlatformReportsService
@@ -98,6 +99,11 @@
         private static int GetFirstMonthOfQuarter(int quarter)
         {
             return quarter * 3 - 2;
+        }
+
+        public DateTime GetNursingProficienciesActivityStartDate()
+        {
+            return platformReportsDataService.GetNursingProficienciesActivityStartDate();
         }
     }
 }

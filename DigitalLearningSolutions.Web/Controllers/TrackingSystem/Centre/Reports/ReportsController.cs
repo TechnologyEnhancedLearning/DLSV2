@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
+    using DocumentFormat.OpenXml.Vml.Spreadsheet;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -46,9 +47,9 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
 
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("ReportsFilterCookie", categoryIdFilter);
 
-            Response.Cookies.SetReportsFilterCookie(filterData, clockUtility.UtcNow);
+            Response.Cookies.SetReportsFilterCookie("ReportsFilterCookie", filterData, clockUtility.UtcNow);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
@@ -83,7 +84,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
 
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("ReportsFilterCookie", categoryIdFilter);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData!);
             return activity.Select(
@@ -97,7 +98,7 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("ReportsFilterCookie", categoryIdFilter);
 
             var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
 
@@ -135,11 +136,13 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 model.FilterType,
                 model.ReportInterval
             );
 
-            Response.Cookies.SetReportsFilterCookie(filterData, clockUtility.UtcNow);
+            Response.Cookies.SetReportsFilterCookie("ReportsFilterCookie", filterData, clockUtility.UtcNow);
 
             return RedirectToAction("Index");
         }
@@ -172,6 +175,8 @@
                 jobGroupId,
                 adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -217,6 +222,8 @@
                 jobGroupId,
                 adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
+                null,
+                null,
                 null,
                 null,
                 null,

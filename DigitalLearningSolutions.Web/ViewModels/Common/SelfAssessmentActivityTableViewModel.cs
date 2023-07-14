@@ -7,6 +7,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.DbModels;
 
     public class SelfAssessmentActivityTableViewModel
     {
@@ -20,9 +21,9 @@
 
             if (activity.Count() <= 1)
             {
-               Rows = activity.Select(
-                    p => new SelfAssessmentActivityDataRowModel(p, DateHelper.StandardDateFormat, startDate, endDate)
-                );
+                Rows = activity.Select(
+                     p => new SelfAssessmentActivityDataRowModel(p, DateHelper.StandardDateFormat, startDate, endDate)
+                 );
             }
             else
             {
@@ -95,18 +96,22 @@
     {
         public NursingReportFilterModel(
             ActivityFilterData filterData,
-            string jobGroupName,
-            string categoryName,
             string regionName,
+            string centreTypeName,
             string centreName,
+            string jobGroupName,
+            string brandName,
+            string categoryName,
             string selfAssessmentNameString,
             bool userManagingAllCourses
         )
         {
-            JobGroupName = jobGroupName;
-            CategoryName = categoryName;
             RegionName = regionName;
+            CentreTypeName = centreTypeName;
             CentreName = centreName;
+            JobGroupName = jobGroupName;
+            BrandName = brandName;
+            CategoryName = categoryName;
             SelfAssessmentName = selfAssessmentNameString;
             ReportIntervalName = Enum.GetName(typeof(ReportInterval), filterData.ReportInterval)!;
             StartDate = filterData.StartDate.ToString(DateHelper.StandardDateFormat);
@@ -124,11 +129,12 @@
                 { "reportInterval", filterData.ReportInterval.ToString() },
             };
         }
-
-        public string JobGroupName { get; set; }
-        public string CategoryName { get; set; }
         public string RegionName { get; set; }
+        public string CentreTypeName { get; set; }
         public string CentreName { get; set; }
+        public string JobGroupName { get; set; }
+        public string BrandName { get; set; }
+        public string CategoryName { get; set; }
         public string SelfAssessmentName { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }

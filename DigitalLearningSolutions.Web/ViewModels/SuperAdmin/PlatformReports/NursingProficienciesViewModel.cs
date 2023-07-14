@@ -1,14 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports
 {
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.PlatformReports;
-    using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class NursingProficienciesViewModel
     {
