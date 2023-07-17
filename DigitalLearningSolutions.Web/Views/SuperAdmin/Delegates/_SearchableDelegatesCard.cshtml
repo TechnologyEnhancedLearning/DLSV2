@@ -23,14 +23,15 @@
         <div class="nhsuk-details__text">
             <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
             <dl class="nhsuk-summary-list details-list-with-button">
-                <div class="nhsuk-summary-list__row">
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
                         Delegate ID
                     </dt>
-                    <dd class="nhsuk-summary-list__value">
-                        <span class="nhsuk-u-margin-right-4">
-                            @Model.Id
-                        </span>
+                    <dd class="nhsuk-summary-list__value status-tag">
+                        @Model.Id
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
                 </div>
                 <div class="nhsuk-summary-list__row">
                     <dt class="nhsuk-summary-list__key">
@@ -67,19 +68,9 @@
                         <span class="nhsuk-u-margin-right-4">
                             <partial name="_StatusTag" model="@Model.IsUserActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
                         </span>
-                        @if (Model.IsLocked)
-                        {
-                            <span>
-                                <partial name="_StatusTag" model="(int)UserCard.Locked" />
-                            </span>
-                        }
                     </dd>
                     <dd class="nhsuk-summary-list__actions">
-                        @if (Model.IsLocked)
-                        {
-                            <a asp-controller="Users" asp-action="UnlockAccount" asp-route-UserId="@Model.UserAccountID" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Unlock</a>
-                        }
-                        <a asp-controller="AdminAccounts" asp-action="RedirectToUser" asp-route-UserId="@Model.UserAccountID" class="nhsuk-u-margin-left-2">View</a>
+                        <a asp-controller="AdminAccounts" asp-action="RedirectToUser" asp-route-UserId="@Model.UserAccountID" class="nhsuk-u-margin-left-1">View</a>
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -88,16 +79,22 @@
                     </dt>
                     <partial name="_SummaryFieldValue" model="@Model.Centre" />
                     <dd class="nhsuk-summary-list__actions">
-                        <a asp-controller="AdminAccounts" asp-action="EditCentre" asp-route-adminId="@Model.Id" asp-route-RequestUrl="@Context.Request.GetDisplayUrl()">Remove</a>
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
                         Centre Email
                     </dt>
-                    <partial name="_SummaryFieldValue" model="@Model.CentreEmail" />
-
+                    <dd class="nhsuk-summary-list__value">
+                        <span class="nhsuk-u-margin-right-4">
+                            @Model.CentreEmail
+                        </span>
+                        <span class="nhsuk-u-margin-right-4">
+                            <partial name="_DelegateStatusTag" model="@Model.IsCentreEmailVerified ? (int)DelegateAccountCard.Verified : (int)DelegateAccountCard.Unverified" />
+                        </span>
+                    </dd>
                     <dd class="nhsuk-summary-list__actions">
+                        <a asp-controller="" asp-action="" asp-route-UserId="" class="nhsuk-u-margin-left-2">Remove</a>
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -116,15 +113,15 @@
                     <dd class="nhsuk-summary-list__actions">
                     </dd>
                 </div>
-                 <div class="nhsuk-summary-list__row details-list-with-button__row">
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
                         Account claimed
                     </dt>
-                    <partial name="_SummaryFieldValue" model="@(Model.AccountClaimed != null ? "Yes" : "No")" />
+                    <partial name="_SummaryFieldValue" model="@(Model.AccountClaimed != null ? "No" : "Yes")" />
                     <dd class="nhsuk-summary-list__actions">
                     </dd>
                 </div>
-                 <div class="nhsuk-summary-list__row details-list-with-button__row">
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
                         Date registered
                     </dt>
@@ -141,7 +138,10 @@
                     </dd>
                 </div>
             </dl>
-            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="" asp-action="" role="button">Approve delegate account</a>
+            @if (!Model.IsApproved)
+            {
+                <a class="nhsuk-button nhsuk-button--secondary" asp-controller="" asp-action="" role="button">Approve delegate account</a>
+            }
             @if (Model.CanShowInactivateDelegateButton)
             {
                 <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
@@ -160,5 +160,6 @@
                     Activate delegate account
                 </a>
             }
+           
     </details>
 </div>

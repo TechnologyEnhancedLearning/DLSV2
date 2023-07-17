@@ -588,8 +588,8 @@
                                     AND ((ce.CentreID = @centreId) OR (@centreId= 0)) 
                                     AND ((@accountStatus = 'Any') OR (@accountStatus = 'Active' AND da.Active = 1 AND u.Active =1) OR (@accountStatus = 'Inactive' AND (u.Active = 0 OR da.Active =0)) 
 	                                    OR(@accountStatus = 'Approved' AND  da.Approved =1) OR (@accountStatus = 'Unapproved' AND  da.Approved =0)
-	                                    OR (@accountStatus = 'Claimed' AND  da.RegistrationConfirmationHash is not null) OR (@accountStatus = 'Unclaimed' AND da.RegistrationConfirmationHash is  null))
-                                    AND ((@lhlinkStatus = 'Any') OR (@lhlinkStatus = 'Linked' AND u.LearningHubAuthID IS NULL) OR (@lhlinkStatus = 'Not linked' AND u.LearningHubAuthID IS NOT NULL))";
+	                                    OR (@accountStatus = 'Claimed' AND  da.RegistrationConfirmationHash is  null) OR (@accountStatus = 'Unclaimed' AND da.RegistrationConfirmationHash is not null))
+                                    AND ((@lhlinkStatus = 'Any') OR (@lhlinkStatus = 'Linked' AND u.LearningHubAuthID IS NOT NULL) OR (@lhlinkStatus = 'Not linked' AND u.LearningHubAuthID IS NULL))";
 
             string sql = @$"{BaseDelegateEntitySelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
                             OFFSET @offset ROWS
