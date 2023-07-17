@@ -162,7 +162,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             DateTime nextReviewDate = DateTime.Now;
 
             lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AcceptableUsePolicyText);
-            nextReviewDate = lastUpdatedDate.AddYears(1);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
             var model = new AcceptableUsePolicyViewModel(termsText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
