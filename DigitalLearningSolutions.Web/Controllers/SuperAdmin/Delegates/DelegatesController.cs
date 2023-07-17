@@ -1,23 +1,25 @@
 ﻿
 namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System;
-    using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates;
-    using DigitalLearningSolutions.Web.Extensions;
+    using System.Net;
+
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
 
@@ -41,6 +43,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
             this.userService = userService;
         }
 
+        [NoCaching]
         [Route("SuperAdmin/Delegates/{page=0:int}")]
         public IActionResult Index(
           int page = 1,
@@ -81,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
                     string userIdFilter = searchFilters[1];
                     if (userIdFilter.Contains("DelegateId|"))
                     {
-                        DelegateId = Convert.ToInt16(userIdFilter.Split("|")[1]);
+                        DelegateId = Convert.ToInt32(userIdFilter.Split("|")[1]);
                     }
                 }
             }
@@ -105,7 +108,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
                     string centreFilter = selectedFilters[2];
                     if (centreFilter.Contains("CentreID|"))
                     {
-                        CentreId = Convert.ToInt16(centreFilter.Split("|")[1]);
+                        CentreId = Convert.ToInt32(centreFilter.Split("|")[1]);
                     }
                 }
             }
@@ -179,6 +182,65 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
         public List<string> GetLHLinkStatus()
         {
             return new List<string>(new string[] { "Any", "Linked", "Not linked"});
+        }
+
+        [Route("SuperAdmin/Delegates/{delegateId=0:int}/InactivateDelegateConfirmation")]
+        public IActionResult InactivateDelegateConfirmation(int delegateId = 0)
+        {
+            var delegateEntity = userDataService.GetDelegateById(delegateId);
+            if (!delegateEntity.DelegateAccount.Active)
+            {
+                return StatusCode((int)HttpStatusCode.Gone);
+            }
+            ConfirmationViewModel confirmationViewModel = new ConfirmationViewModel();
+            confirmationViewModel.DelegateId = delegateId;
+            
+            if (delegateEntity != null)
+                confirmationViewModel.DisplayName = delegateEntity.UserAccount.FullName +
+                                                          " (" + delegateEntity.UserAccount.PrimaryEmail + ")";
+
+            if (TempData["SearchString"] != null)
+            {
+                confirmationViewModel.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                confirmationViewModel.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                confirmationViewModel.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            TempData["DelegateId"] = delegateId;
+            TempData.Keep();
+            return View(confirmationViewModel);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Delegates/{delegateId=0:int}/InactivateDelegateConfirmation")]
+        public IActionResult InactivateDelegateConfirmation(ConfirmationViewModel confirmationViewModel, int delegateId = 0)
+        {
+            TempData["DelegateId"] = delegateId;
+            if (confirmationViewModel.IsChecked)
+            {
+                this.userDataService.DeactivateDelegateUser(delegateId);
+                return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
+            }
+            else
+            {
+                confirmationViewModel.Error = true;
+                ModelState.Clear();
+                ModelState.AddModelError("IsChecked", "You must check the checkbox to continue");
+            }
+            return View(confirmationViewModel);
+        }
+
+        [Route("SuperAdmin/Delegates/{delegateId=0:int}/ActivateDelegate")]
+        public IActionResult ActivateDelegate(int delegateId = 0)
+        {
+            userDataService.ActivateDelegateUser(delegateId);
+            TempData["DelegateId"] = delegateId;
+            return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
         }
     }
 }
