@@ -147,7 +147,10 @@
                 <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
                role="button"
                aria-label="Delete unused account"
-               data-return-page-enabled="true">
+               data-return-page-enabled="true"
+               asp-controller="Delegates"
+               asp-action="InactivateDelegateConfirmation"
+               asp-route-delegateId="@Model.Id">
                     Inactivate delegate account
                 </a>
             }
@@ -156,7 +159,10 @@
                 <a class="nhsuk-button nhsuk-u-margin-bottom-1"
                role="button"
                aria-label=""
-               data-return-page-enabled="true">
+               data-return-page-enabled="true"
+               asp-controller="Delegates"
+               asp-action="ActivateDelegate"
+               asp-route-delegateId="@Model.Id">
                     Activate delegate account
                 </a>
             }
