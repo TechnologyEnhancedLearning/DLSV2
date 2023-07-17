@@ -12,6 +12,8 @@
         bool GetCentreBetaTesting(int centreId);
 
         string GetConfigValueMissingExceptionMessage(string missingConfigValue);
+        DateTime GetConfigLastUpdated(string key);
+
     }
 
     public class ConfigDataService : IConfigDataService
@@ -57,6 +59,13 @@
         public string GetConfigValueMissingExceptionMessage(string missingConfigValue)
         {
             return $"Encountered an error while trying to send an email: The value of {missingConfigValue} is null";
+        }
+        public DateTime GetConfigLastUpdated(string key)
+        {
+            return connection.Query<DateTime>(
+                @"SELECT UpdatedDate FROM Config WHERE IsHtml =1 AND ConfigName = @key",
+                new { key }
+            ).FirstOrDefault();
         }
     }
 
