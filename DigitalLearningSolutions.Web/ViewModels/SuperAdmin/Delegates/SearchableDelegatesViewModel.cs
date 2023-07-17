@@ -30,8 +30,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates
             DateRegistered = delegates.DelegateAccount?.DateRegistered.ToString(Data.Helpers.DateHelper.StandardDateFormat);
             SelRegistered = delegates.DelegateAccount.SelfReg;
             IsDelegateActive = delegates.DelegateAccount.Active;
-            IsCentreEmailVerified = delegates.UserAccount.EmailVerified == null ? "Unverified" : "Verified";
+            IsCentreEmailVerified = delegates.UserAccount.EmailVerified == null ? false : true;
             CanShowInactivateDelegateButton = IsDelegateActive ;
+            IsUserActive = delegates.UserAccount.Active;
+            IsApproved = delegates.DelegateAccount.Approved;
+            IsClaimed = delegates.DelegateAccount.RegistrationConfirmationHash == null ? true : false;
             ReturnPageQuery = returnPageQuery;
         }
 
@@ -43,7 +46,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates
         public int UserAccountID { get; set; }
         public string Centre { get; set; }
         public string CentreEmail { get; set; }
-        public string IsCentreEmailVerified { get; set; }
+        public bool IsCentreEmailVerified { get; set; }
         public string DelegateNumber { get; set; }
         public int? LearningHubID { get; set; }
         public bool IsLocked { get; set; }
@@ -52,6 +55,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates
         public bool SelRegistered { get; set; }
         public bool IsDelegateActive { get; set; }
         public bool IsUserActive { get; set; }
+        public bool IsApproved { get; set; }
+        public bool IsClaimed { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }
