@@ -584,14 +584,48 @@
             {
                 search = search.Trim();
             }
-            string condition = $@" WHERE ((@delegateId = 0) OR (da.ID = @delegateId)) 	AND (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @search + N'%')
+            string BaseSelectQuery = @$"SELECT
+                da.ID,
+                da.Active,
+                da.CentreID,
+                ce.CentreName,
+                ce.Active AS CentreActive,
+                da.DateRegistered,
+                da.CandidateNumber,
+                da.SelfReg,
+                da.UserID,
+                u.ID,
+                u.PrimaryEmail,
+                u.FirstName,
+                u.LastName,
+                u.Active,
+                u.LearningHubAuthID,
+                u.EmailVerified,
+                ucd.ID,
+                ucd.UserID,
+                ucd.CentreID,
+                ucd.Email,
+                ucd.EmailVerified,
+                (SELECT ID
+                    FROM AdminAccounts aa
+                        WHERE aa.UserID = da.UserID
+                            AND aa.CentreID = da.CentreID
+                            AND aa.Active = 1
+                ) AS AdminID
+            FROM DelegateAccounts AS da
+            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
+            INNER JOIN Users AS u ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+            AND ucd.CentreId = da.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+           string condition = $@" WHERE ((@delegateId = 0) OR (da.ID = @delegateId)) 	AND (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @search + N'%')
                                     AND ((ce.CentreID = @centreId) OR (@centreId= 0)) 
                                     AND ((@accountStatus = 'Any') OR (@accountStatus = 'Active' AND da.Active = 1 AND u.Active =1) OR (@accountStatus = 'Inactive' AND (u.Active = 0 OR da.Active =0)) 
 	                                    OR(@accountStatus = 'Approved' AND  da.Approved =1) OR (@accountStatus = 'Unapproved' AND  da.Approved =0)
 	                                    OR (@accountStatus = 'Claimed' AND  da.RegistrationConfirmationHash is  null) OR (@accountStatus = 'Unclaimed' AND da.RegistrationConfirmationHash is not null))
                                     AND ((@lhlinkStatus = 'Any') OR (@lhlinkStatus = 'Linked' AND u.LearningHubAuthID IS NOT NULL) OR (@lhlinkStatus = 'Not linked' AND u.LearningHubAuthID IS NULL))";
 
-            string sql = @$"{BaseDelegateEntitySelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
+            string sql = @$"{BaseSelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
                             OFFSET @offset ROWS
                             FETCH NEXT @rows ROWS ONLY";
             IEnumerable<DelegateEntity> delegateEntity =

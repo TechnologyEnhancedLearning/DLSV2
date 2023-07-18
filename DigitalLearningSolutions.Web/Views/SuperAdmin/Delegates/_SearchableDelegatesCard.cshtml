@@ -21,7 +21,42 @@
         </summary>
 
         <div class="nhsuk-details__text">
-            <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
+            @if (Model.IsDelegateActive)
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Active" />
+                </span>
+            }
+            else
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Inactive" />
+                </span>
+            }
+            @if (Model.IsApproved)
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Approved" />
+                </span>
+            }
+            else
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.UnApproved" />
+                </span>
+            }
+            @if (Model.IsClaimed)
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Claimed" />
+                </span>
+            }
+            else
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Unclaimed" />
+                </span>
+            }
             <dl class="nhsuk-summary-list details-list-with-button">
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
