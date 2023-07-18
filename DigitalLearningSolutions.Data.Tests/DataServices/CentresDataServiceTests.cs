@@ -360,5 +360,25 @@
                 noShowOnMapCentre.Should().BeNull();
             }
         }
+
+        [Test]
+        public void GetFullCentreDetailsById_should_return_expected_item()
+        {
+            // When
+            var result = centresDataService.GetFullCentreDetailsById(2);
+
+            // Then
+            result!.CentreName.Should().BeEquivalentTo("North West Boroughs Healthcare NHS Foundation Trust");
+        }
+
+        [Test]
+        public void GetFullCentreDetailsById_should_return_null_if_id_does_not_exist()
+        {
+            // When
+            var result = centresDataService.GetFullCentreDetailsById(1);
+
+            // Then
+            result.Should().BeNull();
+        }
     }
 }
