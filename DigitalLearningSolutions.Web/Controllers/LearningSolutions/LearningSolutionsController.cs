@@ -49,7 +49,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             DateTime lastUpdatedDate = DateTime.Now;
             DateTime nextReviewDate = DateTime.Now;
 
-            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AcceptableUsePolicyText);
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AccessibilityHelpText);
             nextReviewDate = lastUpdatedDate.AddYears(3);
 
             var model = new AccessibilityHelpViewModel(accessibilityText, lastUpdatedDate, nextReviewDate);
