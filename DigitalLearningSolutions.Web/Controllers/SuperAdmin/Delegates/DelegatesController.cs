@@ -242,5 +242,13 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
             TempData["DelegateId"] = delegateId;
             return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
         }
+
+        [Route("SuperAdmin/Delegates/{delegateId=0:int}/ApproveDelegate")]
+        public IActionResult ApproveDelegate(int delegateId = 0)
+        {
+            userDataService.ApproveDelegateUsers(delegateId);
+            TempData["DelegateId"] = delegateId;
+            return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
+        }
     }
 }

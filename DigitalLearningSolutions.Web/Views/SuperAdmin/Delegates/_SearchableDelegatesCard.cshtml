@@ -140,7 +140,7 @@
             </dl>
             @if (!Model.IsApproved)
             {
-                <a class="nhsuk-button nhsuk-button--secondary" asp-controller="" asp-action="" role="button">Approve delegate account</a>
+                <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Delegates" asp-action="ApproveDelegate" asp-route-delegateId="@Model.Id" role="button">Approve delegate account</a>
             }
             @if (Model.CanShowInactivateDelegateButton)
             {
