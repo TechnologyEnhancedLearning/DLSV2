@@ -15,7 +15,6 @@
         string? GetBrandNameById(int brandId);
         string? GetCategoryNameById(int categoryId);
         string? GetTopicNameById(int topicId);
-        string? GenerateCandidateNumber(string firstName, string lastName);
 
         //INSERT DATA
         int InsertBrandAndReturnId(string brandName, int centreId);
@@ -197,27 +196,6 @@
                     WHERE        CourseTopicID = @topicId",
                new { topicId }
            );
-        }
-        public string? GenerateCandidateNumber(string firstName, string lastName)
-        {
-            string initials="";
-            if (firstName != null) initials = (firstName.Substring(0, 1)).ToUpper();
-            if (lastName != null) initials += (lastName.Substring(0, 1)).ToUpper();
-
-
-            var candidateNumber = connection.QueryFirst<string>(
-                @"DECLARE @_MaxCandidateNumber AS integer
-                        SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
-                        FROM DelegateAccounts
-                        WHERE (LEFT(CandidateNumber, 2) = @initials)
-                        ORDER BY nCandidateNumber DESC)
-                        IF @_MaxCandidateNumber IS Null
-                            BEGIN
-                            SET @_MaxCandidateNumber = 0
-                            END
-                        SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
-                new { initials });
-            return candidateNumber;
         }
     }
 }

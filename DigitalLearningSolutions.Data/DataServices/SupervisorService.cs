@@ -57,7 +57,6 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
-        private readonly ICommonService commonService;
 
         private const string supervisorDelegateDetailFields = @"
             sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, u.FirstName, u.LastName, jg.JobGroupName, da.ID AS DelegateID, da.Answer1, da.Answer2, da.Answer3, da.Answer4, 
@@ -111,11 +110,10 @@ FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
 WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
 ORDER BY casv.Requested DESC) AS SignedOff,";
 
-        public SupervisorService(IDbConnection connection, ILogger<SupervisorService> logger, ICommonService commonService)
+        public SupervisorService(IDbConnection connection, ILogger<SupervisorService> logger)
         {
             this.connection = connection;
             this.logger = logger;
-            this.commonService = commonService;
         }
 
         public DashboardData GetDashboardDataForAdminId(int adminId)

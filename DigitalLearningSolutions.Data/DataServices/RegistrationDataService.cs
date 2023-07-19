@@ -43,21 +43,18 @@
         private readonly IDbConnection connection;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
-        private readonly ICommonService commonService;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
             IClockUtility clockUtility,
-            ILogger<IRegistrationDataService> logger,
-            ICommonService commonService
+            ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
             this.clockUtility = clockUtility;
             this.logger = logger;
-            this.commonService = commonService;
         }
 
         public (int delegateId, string candidateNumber, int delegateUserId) RegisterNewUserAndDelegateAccount(
@@ -336,7 +333,24 @@
             IDbTransaction transaction
         )
         {
-            var candidateNumber = commonService.GenerateCandidateNumber(delegateRegistrationModel.FirstName, delegateRegistrationModel.LastName);
+            var initials = (delegateRegistrationModel.FirstName.Substring(0, 1) +
+                            delegateRegistrationModel.LastName.Substring(0, 1)).ToUpper();
+
+            // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
+            var candidateNumber = connection.QueryFirst<string>(
+                @"DECLARE @_MaxCandidateNumber AS integer
+                    SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
+                    FROM DelegateAccounts
+                    WHERE (LEFT(CandidateNumber, 2) = @initials)
+                    ORDER BY nCandidateNumber DESC)
+                    IF @_MaxCandidateNumber IS Null
+                        BEGIN
+                        SET @_MaxCandidateNumber = 0
+                        END
+                    SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
+                new { initials },
+                transaction
+            );
 
             var candidateValues = new
             {
