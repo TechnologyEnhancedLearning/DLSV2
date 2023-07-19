@@ -46,7 +46,13 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 return StatusCode(500);
             }
 
-            var model = new AccessibilityHelpViewModel(accessibilityText);
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
+
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AcceptableUsePolicyText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+
+            var model = new AccessibilityHelpViewModel(accessibilityText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
 
