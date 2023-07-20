@@ -2,12 +2,12 @@
 {
     using FluentMigrator;
 
-    [Migration(202307040730)]
+    [Migration(202307200830)]
     public class UpdateFirstnameLastNameUsersTable : Migration
     {
         public override void Up()
         {
-            Execute.Sql(@"Update Users set FirstName = TRIM(FirstName), LastName = TRIM(LastName)");
+            Execute.Sql(@"Update Users set FirstName = LTRIM(RTRIM(FirstName)), LastName = LTRIM(RTRIM(LastName))");
         }
         public override void Down()
         {
