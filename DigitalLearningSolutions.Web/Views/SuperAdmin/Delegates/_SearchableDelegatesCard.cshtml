@@ -129,7 +129,10 @@
                         </span>
                     </dd>
                     <dd class="nhsuk-summary-list__actions">
-                        <a asp-controller="" asp-action="" asp-route-UserId="" class="nhsuk-u-margin-left-2">Remove</a>
+                      @if(Model.CentreEmail!=null)
+                        {
+                            <a asp-controller="" asp-action="" asp-route-UserId="" class="nhsuk-u-margin-left-2">Remove</a>
+                        }
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
