@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -164,6 +165,13 @@
         public List<string> GetCentreStatus()
         {
             return new List<string>(new string[] { "Any", "Active", "Inactive" });
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Manage")]
+        public IActionResult ManageCentre(int centreId = 0)
+        {
+            Centre centre = centresDataService.GetFullCentreDetailsById(centreId);
+            return View(centre);
         }
     }
 }
