@@ -60,6 +60,7 @@
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
         IEnumerable<(int, string)> GetAllCentres(bool? activeOnly = false);
         IEnumerable<(int, string)> GetCentreTypes();
+        Centre? GetFullCentreDetailsById(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -113,6 +114,51 @@
                         ORDER BY CentreName"
             );
             return centres;
+        }
+
+        public Centre? GetFullCentreDetailsById(int centreId)
+        {
+            var centre = connection.QueryFirstOrDefault<Centre>(
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            r.RegionName,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone,
+                            c.pwEmail AS CentreEmail,
+                            c.ShowOnMap,
+                            c.CMSAdministrators AS CmsAdministratorSpots,
+                            c.CMSManagers AS CmsManagerSpots,
+                            c.CCLicences AS CcLicenceSpots,
+                            c.Trainers AS TrainerSpots,
+                            c.IPPrefix,
+                            ct.ContractType,
+                            c.CustomCourses,
+                            c.ServerSpaceBytes,
+                            cty.CentreType,
+                            c.CandidateByteLimit,
+                            c.ContractReviewDate
+                        FROM Centres AS c
+                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
+                        INNER JOIN CentreTypes AS cty ON cty.CentreTypeId = c.CentreTypeId
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
+
+            if (centre == null)
+            {
+                logger.LogWarning($"No centre found for centre id {centreId}");
+                return null;
+            }
+
+            if (centre.CentreLogo?.Length < 10)
+            {
+                centre.CentreLogo = null;
+            }
+
+            return centre;
         }
 
         public Centre? GetCentreDetailsById(int centreId)

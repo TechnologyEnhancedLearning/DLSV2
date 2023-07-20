@@ -1,15 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
 
     public interface ISupervisorService
     {
@@ -51,14 +50,13 @@
         bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
         bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId);
-        int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId,string delegateEmail,int centreId);
+        int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId, string delegateEmail, int centreId);
         SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId);
     }
     public class SupervisorService : ISupervisorService
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
-        private readonly ICommonService commonService;
 
         private const string supervisorDelegateDetailFields = @"
             sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, u.FirstName, u.LastName, jg.JobGroupName, da.ID AS DelegateID, da.Answer1, da.Answer2, da.Answer3, da.Answer4, 
@@ -112,11 +110,10 @@ FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
 WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
 ORDER BY casv.Requested DESC) AS SignedOff,";
 
-        public SupervisorService(IDbConnection connection, ILogger<SupervisorService> logger, ICommonService commonService)
+        public SupervisorService(IDbConnection connection, ILogger<SupervisorService> logger)
         {
             this.connection = connection;
             this.logger = logger;
-            this.commonService = commonService;
         }
 
         public DashboardData GetDashboardDataForAdminId(int adminId)
@@ -241,18 +238,15 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     SELECT COALESCE
                     ((SELECT Top 1 ID
                         FROM  SupervisorDelegates sd
-                              LEFT OUTER JOIN AdminUsers as au ON sd.SupervisorAdminID = au.AdminID
-                        WHERE ((sd.SupervisorAdminID = @supervisorAdminID) OR (sd.SupervisorAdminID > 0 AND SupervisorEmail = @supervisorEmail))
-		                      AND((sd.DelegateUserID = @delegateUserId) OR (sd.DelegateUserID > 0 AND DelegateEmail = @delegateEmail))
-                              AND (au.CentreId = @centreId)  ORDER BY sd.DelegateUserID Desc
+                        WHERE ((sd.SupervisorAdminID = @supervisorAdminID) OR (sd.SupervisorAdminID > 0 AND SupervisorEmail = @supervisorEmail AND @supervisorAdminID = NULL))
+		                      AND((sd.DelegateUserID = @delegateUserId) OR (sd.DelegateUserID > 0 AND DelegateEmail = @delegateEmail AND @delegateUserId = NULL)) ORDER BY sd.DelegateUserID 
                         ), 0) AS ID",
                 new
                 {
                     supervisorEmail,
                     delegateEmail,
                     supervisorAdminId = supervisorAdminId ?? 0,
-                    delegateUserId = delegateUserId ?? 0,
-                    centreId
+                    delegateUserId = delegateUserId ?? 0
                 }
             );
 
@@ -288,13 +282,11 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 existingId = (int)connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
-                    ((SELECT Top 1 ID
+                    ((SELECT ID
                         FROM    SupervisorDelegates sd
-                            LEFT OUTER JOIN AdminUsers as au ON sd.SupervisorAdminID = au.AdminID
                         WHERE(SupervisorEmail = @supervisorEmail) AND(DelegateEmail = @delegateEmail)
                             AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
                             AND(sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
-                            AND (au.CentreId = @centreId)
                             AND (sd.Removed IS NULL)
                         ), 0) AS ID",
                     new
@@ -302,8 +294,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         supervisorEmail,
                         delegateEmail,
                         supervisorAdminId = supervisorAdminId ?? 0,
-                        delegateUserId = delegateUserId ?? 0,
-                        centreId
+                        delegateUserId = delegateUserId ?? 0
                     }
                 ); return existingId;
             }
@@ -708,7 +699,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                ).FirstOrDefault();
         }
 
-        public int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId,bool isLoggedInUser)
+        public int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId, bool isLoggedInUser)
         {
             if (delegateUserId == 0 | supervisorDelegateId == 0 | selfAssessmentId == 0)
             {
@@ -1076,82 +1067,32 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
 
         public int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId, string delegateEmail, int centreId)
         {
-            int? delegateUserId = null;
-
-            var user = connection.Query<UserAccount>(
-                @$"SELECT u.ID, u.PrimaryEmail, u.FirstName, u.LastName,  u.Active
+            int? delegateUserId = (int?)connection.ExecuteScalar(
+                 @"SELECT da.UserID AS DelegateUserID 
                             FROM Users u
-                            LEFT JOIN UserCentreDetails ucd
+                            INNER JOIN DelegateAccounts da
+                            ON da.UserID = u.ID
+	                        LEFT JOIN UserCentreDetails ucd
 	                        ON ucd.UserID = u.ID
-                            WHERE (u.PrimaryEmail = @delegateEmail OR ucd.Email = @delegateEmail)
-                            AND u.Active = 1", new { delegateEmail }).FirstOrDefault();
-            if (user != null)
-            {
-                delegateUserId = (int?)connection.ExecuteScalar(
-                     @"SELECT Top 1 da.UserID AS DelegateUserID 
-                            FROM DelegateAccounts da
-                            LEFT JOIN UserCentreDetails ucd
-	                        ON ucd.UserID = da.UserID
-                            WHERE (da.UserID = @Id OR ucd.Email = @delegateEmail) AND da.CentreID = @centreId",
-                     new { user?.Id, delegateEmail, centreId });
+                            AND ucd.CentreID = da.CentreID
+                            WHERE (ucd.Email = @delegateEmail OR u.PrimaryEmail = @delegateEmail)
+                            AND u.Active = 1 
+                            AND da.CentreID = @centreId", new { delegateEmail, centreId });
 
-                if (delegateUserId == null)
-                {
-                    var candidateNumber = commonService.GenerateCandidateNumber(user.FirstName, user.LastName);
-
-                    delegateUserId = connection.QuerySingle<int>(
-                        @"INSERT INTO DelegateAccounts
-                        (
-                            UserID,
-                            CentreID,
-                            DateRegistered,
-                            CandidateNumber,
-                            Approved,
-                            Active,
-                            ExternalReg,
-                            SelfReg,
-                            CentreSpecificDetailsLastChecked
-                        )
-                        OUTPUT Inserted.UserID
-                        VALUES
-                        (
-                            @Id,
-                            @centreId,
-                            GETDATE(),
-                            @candidateNumber,
-                            1,
-                            1,
-                            0,
-                            0,
-                            GETDATE()
-                        )", new { user.Id, centreId, candidateNumber }
-
-                    );
-
-
-                }
-            }
-
-            int? existingId = (int)connection.ExecuteScalar(
-                    @"
-                    SELECT COALESCE
-                    ((SELECT Top 1 ID
+            int? existingId = (int?)connection.ExecuteScalar(
+                @"
+                    SELECT ID
                         FROM    SupervisorDelegates sd
-                            LEFT OUTER JOIN AdminUsers as au ON sd.SupervisorAdminID = au.AdminID
-                        WHERE (DelegateEmail = @delegateEmail)
-                            AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
-                            AND (au.CentreId = @centreId)
-                            AND (sd.Removed IS null)
-                        ), 0) AS ID",
-                    new
-                    {
-                        delegateEmail,
-                        supervisorAdminId = supervisorAdminId ?? 0,
-                        centreId
-                    }
-                );
+                        WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
+                        ",
+                new
+                {
+                    supervisorAdminId = supervisorAdminId ?? 0,
+                    delegateUserId = delegateUserId ?? 0,
+                }
+            );
 
-            return existingId ??  0;
+            return existingId ?? 0;
         }
 
         public SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId)
