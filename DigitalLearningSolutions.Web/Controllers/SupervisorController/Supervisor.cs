@@ -1300,5 +1300,39 @@
             }
             return existingId;
         }
+
+        public IActionResult ResendSupervisorSignoffRequest(
+            int selfAssessmentId,
+            int candidateAssessmentSupervisorId,
+            int candidateAssessmentSupervisorVerificationId,
+            string vocabulary
+        )
+        {
+            frameworkNotificationService.SendSignOffRequest(
+                candidateAssessmentSupervisorId,
+                selfAssessmentId,
+                User.GetUserIdKnownNotNull(),
+                User.GetCentreIdKnownNotNull()
+            );
+            selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(
+                candidateAssessmentSupervisorVerificationId
+            );
+            return RedirectToAction(
+                "SignOffHistory",
+                new { selfAssessmentId, vocabulary }
+            );
+        }
+
+        public IActionResult WithdrawSupervisorSignOffRequest(
+            int selfAssessmentId,
+            int candidateAssessmentSupervisorVerificationId,
+            string vocabulary)
+        {
+            supervisorService.RemoveSelfAssessmentResultSupervisorVerificationById(candidateAssessmentSupervisorVerificationId);
+            return RedirectToAction(
+                "SignOffHistory",
+                new { selfAssessmentId, vocabulary }
+            );
+        }
     }
 }
