@@ -46,7 +46,13 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 return StatusCode(500);
             }
 
-            var model = new AccessibilityHelpViewModel(accessibilityText);
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
+
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AccessibilityHelpText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+
+            var model = new AccessibilityHelpViewModel(accessibilityText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
 
@@ -147,6 +153,24 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 bannerText = centresDataService.GetBannerText((int)centreId);
             }
             return bannerText;
+        }
+
+        public IActionResult AcceptableUsePolicy()
+        {
+            var termsText = configDataService.GetConfigValue(ConfigDataService.AcceptableUsePolicyText);            
+            
+            if (termsText == null)
+            {
+                logger.LogError("‘Acceptable Use Policy text from Config table is null");
+                return StatusCode(500);
+            }
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
+
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AcceptableUsePolicyText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+            var model = new AcceptableUsePolicyViewModel(termsText, lastUpdatedDate, nextReviewDate);
+            return View(model);
         }
     }
 }

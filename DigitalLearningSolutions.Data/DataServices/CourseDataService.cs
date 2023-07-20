@@ -1,9 +1,5 @@
 namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -11,6 +7,10 @@ namespace DigitalLearningSolutions.Data.DataServices
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
 
     public interface ICourseDataService
     {
@@ -377,7 +377,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID  = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID  = @delegateUserId) AND (CompletedDate IS NULL)), 0) AS ID",
                 new { selfAssessmentId, delegateUserId }
             );
 
@@ -439,6 +439,20 @@ namespace DigitalLearningSolutions.Data.DataServices
                         VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)",
                     new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
                 );
+            }
+
+            if (candidateAssessmentId > 1)
+            {
+                connection.Execute(@"
+                BEGIN TRANSACTION
+                UPDATE CandidateAssessments SET RemovedDate = NULL
+                  WHERE ID = @candidateAssessmentId
+
+                UPDATE CandidateAssessmentSupervisors SET Removed = NULL
+                  WHERE CandidateAssessmentID = @candidateAssessmentId
+
+                COMMIT TRANSACTION"
+                , new { candidateAssessmentId });
             }
 
             if (candidateAssessmentId < 1)

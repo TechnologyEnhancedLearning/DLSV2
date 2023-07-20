@@ -1,8 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
-    using System;
-    using System.Linq;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
@@ -10,6 +7,9 @@
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
+    using System;
+    using System.Linq;
+    using System.Transactions;
 
     public class CentresDataServiceTests
     {
@@ -306,19 +306,19 @@
         public void GetAllCentreSummariesForSuperAdmin_returns_active_and_inactive_summary_details_and_reference_data()
         {
             // When
-            var summaries = centresDataService.GetAllCentreSummariesForSuperAdmin().ToList();
+            (var summaries,var count) = centresDataService.GetAllCentreSummariesForSuperAdmin("",0,1000,0,0,0,"Any");
 
             // Then
-            var activeCentre = summaries.Single(c => c.CentreId == 2);
-            var inActiveCentre = summaries.Single(c => c.CentreId == 6);
+            var activeCentre = summaries.ToList().Single(c => c.Centre.CentreId == 2);
+            var inActiveCentre = summaries.ToList().Single(c => c.Centre.CentreId == 6);
 
-            activeCentre.Active.Should().BeTrue();
-            activeCentre.CentreType.Should().Be("NHS Organisation");
-            activeCentre.RegionName.Should().Be("North West");
+            activeCentre.Centre.Active.Should().BeTrue();
+            activeCentre.CentreTypes.CentreType.Should().Be("NHS Organisation");
+            activeCentre.Regions.RegionName.Should().Be("North West");
 
-            inActiveCentre.Active.Should().BeFalse();
-            inActiveCentre.CentreType.Should().Be("NHS Organisation");
-            inActiveCentre.RegionName.Should().Be("East Of England");
+            inActiveCentre.Centre.Active.Should().BeFalse();
+            inActiveCentre.CentreTypes.CentreType.Should().Be("NHS Organisation");
+            inActiveCentre.Regions.RegionName.Should().Be("East Of England");
         }
 
         [Test]
@@ -359,6 +359,26 @@
                 noLongitudeCentre.Should().BeNull();
                 noShowOnMapCentre.Should().BeNull();
             }
+        }
+
+        [Test]
+        public void GetFullCentreDetailsById_should_return_expected_item()
+        {
+            // When
+            var result = centresDataService.GetFullCentreDetailsById(2);
+
+            // Then
+            result!.CentreName.Should().BeEquivalentTo("North West Boroughs Healthcare NHS Foundation Trust");
+        }
+
+        [Test]
+        public void GetFullCentreDetailsById_should_return_null_if_id_does_not_exist()
+        {
+            // When
+            var result = centresDataService.GetFullCentreDetailsById(1);
+
+            // Then
+            result.Should().BeNull();
         }
     }
 }

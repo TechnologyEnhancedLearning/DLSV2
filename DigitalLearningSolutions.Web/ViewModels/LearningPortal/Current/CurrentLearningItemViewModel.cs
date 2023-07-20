@@ -14,10 +14,12 @@
         ) : base(course)
         {
             CompleteByDate = course.CompleteByDate;
+            EnrolmentMethodId = course.EnrolmentMethodId;
             ReturnPageQuery = returnPageQuery;
         }
 
         public DateTime? CompleteByDate { get; }
+        public int EnrolmentMethodId { get; }
         public OldDateValidator.ValidationResult? CompleteByValidationResult { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; }
         private readonly IClockUtility clockUtility = new ClockUtility();

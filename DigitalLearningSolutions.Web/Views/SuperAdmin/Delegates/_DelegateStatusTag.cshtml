@@ -1,0 +1,64 @@
+﻿@model int
+@switch (Model)
+{
+    case 0:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--green">
+                Active
+            </strong>
+        </text>
+        break;
+    case 1:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--red">
+                Inactive
+            </strong>
+        </text>
+        break;
+    case 2:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--green">
+                Approved
+            </strong>
+
+        </text>
+        break;
+    case 3:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--red">
+                Unpproved
+            </strong>
+        </text>
+        break;
+    case 4:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--green">
+                Claimed
+            </strong>
+
+        </text>
+        break;
+    case 5:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--red">
+                Unclaimed
+            </strong>
+        </text>
+        break;
+    case 6:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--green">
+                Verified
+            </strong>
+
+        </text>
+        break;
+    case 7:
+        <text>
+            <strong class="nhsuk-tag status-tag nhsuk-tag--red">
+                Unverified
+            </strong>
+        </text>
+        break;
+}
+

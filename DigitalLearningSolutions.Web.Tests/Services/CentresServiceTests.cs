@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
-    using System;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -11,12 +9,15 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using NUnit.Framework;
+    using System;
+    using System.Linq;
 
     public class CentresServiceTests
     {
         private ICentresDataService centresDataService = null!;
         private ICentresService centresService = null!;
         private IClockUtility clockUtility = null!;
+        private ICentresService fakeCentresService = null!;
 
         [SetUp]
         public void Setup()
@@ -24,6 +25,7 @@
             centresDataService = A.Fake<ICentresDataService>();
             clockUtility = A.Fake<IClockUtility>();
             centresService = new CentresService(centresDataService, clockUtility);
+            fakeCentresService = A.Fake<ICentresService>();
 
             A.CallTo(() => clockUtility.UtcNow).Returns(new DateTime(2021, 1, 1));
             A.CallTo(() => centresDataService.GetCentreRanks(A<DateTime>._, A<int?>._, 10, A<int>._)).Returns(
@@ -77,11 +79,17 @@
         public void GetAllCentreSummariesForSuperAdmin_calls_dataService_and_returns_all_summary_details()
         {
             // Given
-            var centres = Builder<CentreSummaryForSuperAdmin>.CreateListOfSize(10).Build();
-            A.CallTo(() => centresDataService.GetAllCentreSummariesForSuperAdmin()).Returns(centres);
+            var centres = Builder<CentreEntity>.CreateListOfSize(10).Build();
+            (var returnedCentres,var centreCount) = fakeCentresService.GetAllCentreSummariesForSuperAdmin("", 0, 10, 0, 0, 0, "Any");
+            returnedCentres.Equals(centres);
 
             // When
-            var result = centresService.GetAllCentreSummariesForSuperAdmin();
+            var expectedCentres = Builder<CentreEntity>.CreateListOfSize(10).Build().AsEnumerable();
+            var expectedCount = 10;
+
+            A.CallTo(() => fakeCentresService.GetAllCentreSummariesForSuperAdmin("", 0, 10, 0, 0, 0, "Any")).Returns((expectedCentres, expectedCount));
+
+            (var result,var count) = fakeCentresService.GetAllCentreSummariesForSuperAdmin("", 0, 10, 0, 0, 0, "Any");
 
             // Then
             result.Should().HaveCount(10);

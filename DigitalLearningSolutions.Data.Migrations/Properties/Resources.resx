@@ -283,4 +283,10 @@
   <data name="TD_1766_GetCurrentCoursesForCandidateTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-1766-GetCurrentCoursesForCandidateTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-2094-GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-2094-GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

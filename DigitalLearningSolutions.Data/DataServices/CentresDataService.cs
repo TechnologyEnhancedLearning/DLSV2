@@ -1,13 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.DbModels;
-    using DocumentFormat.OpenXml.Drawing.Charts;
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
 
     public interface ICentresDataService
     {
@@ -15,7 +14,10 @@
         string? GetCentreName(int centreId);
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
-        IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
+        (IEnumerable<CentreEntity>, int) GetAllCentreSummariesForSuperAdmin(string search, int offset, int rows, int region,
+          int centreType,
+          int contractType,
+          string centreStatus);
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
         CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
@@ -57,6 +59,8 @@
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
         IEnumerable<(int, string)> GetAllCentres(bool? activeOnly = false);
+        IEnumerable<(int, string)> GetCentreTypes();
+        Centre? GetFullCentreDetailsById(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -110,6 +114,51 @@
                         ORDER BY CentreName"
             );
             return centres;
+        }
+
+        public Centre? GetFullCentreDetailsById(int centreId)
+        {
+            var centre = connection.QueryFirstOrDefault<Centre>(
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            r.RegionName,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone,
+                            c.pwEmail AS CentreEmail,
+                            c.ShowOnMap,
+                            c.CMSAdministrators AS CmsAdministratorSpots,
+                            c.CMSManagers AS CmsManagerSpots,
+                            c.CCLicences AS CcLicenceSpots,
+                            c.Trainers AS TrainerSpots,
+                            c.IPPrefix,
+                            ct.ContractType,
+                            c.CustomCourses,
+                            c.ServerSpaceBytes,
+                            cty.CentreType,
+                            c.CandidateByteLimit,
+                            c.ContractReviewDate
+                        FROM Centres AS c
+                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
+                        INNER JOIN CentreTypes AS cty ON cty.CentreTypeId = c.CentreTypeId
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
+
+            if (centre == null)
+            {
+                logger.LogWarning($"No centre found for centre id {centreId}");
+                return null;
+            }
+
+            if (centre.CentreLogo?.Length < 10)
+            {
+                centre.CentreLogo = null;
+            }
+
+            return centre;
         }
 
         public Centre? GetCentreDetailsById(int centreId)
@@ -169,24 +218,54 @@
             return centre;
         }
 
-        public IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin()
+        public (IEnumerable<CentreEntity>, int) GetAllCentreSummariesForSuperAdmin(string search, int offset, int rows, int region,
+          int centreType,
+          int contractType,
+          string centreStatus)
         {
-            return connection.Query<CentreSummaryForSuperAdmin>(
-                @"SELECT c.CentreID,
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+            }
+            string sql = @"SELECT c.CentreID,
                             c.CentreName,
-                            c.RegionID,
-                            r.RegionName,
                             c.ContactForename,
                             c.ContactSurname,
                             c.ContactEmail,
                             c.ContactTelephone,
+                            c.Active,
                             c.CentreTypeId,
                             ct.CentreType,
-                            c.Active
+                            c.RegionID,
+                            r.RegionName
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
-                        INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId"
+                        INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
+                        WHERE c.CentreName LIKE N'%' + @search + N'%'
+                        AND ((c.RegionID = @region) OR (@region = 0)) AND ((c.CentreTypeId = @centreType) OR (@centreType = 0))
+                        AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))
+                        ORDER BY LTRIM(c.CentreName)
+                            OFFSET @offset ROWS
+                            FETCH NEXT @rows ROWS ONLY";
+            IEnumerable<CentreEntity> centreEntity = connection.Query<Centre, CentreTypes, Regions, CentreEntity>(
+                sql,
+                (centre, centreTypes, regions) => new CentreEntity(
+                    centre, centreTypes, regions
+                ),
+                new { search, offset, rows,region,centreType,contractType,centreStatus },
+                splitOn: "CentreTypeId,RegionID",
+                commandTimeout: 3000
             );
+            int ResultCount = connection.ExecuteScalar<int>(
+                                @$"SELECT  COUNT(*) AS Matches
+                                FROM Centres AS c
+                                INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                                INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
+                                WHERE c.CentreName LIKE N'%' + @search + N'%' AND ((c.RegionID = @region) OR (@region = 0))  AND ((c.CentreTypeId = @centreType) OR (@centreType = 0)) AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
+                    new { search,region,centreType,contractType,centreStatus },
+                    commandTimeout: 3000
+            );
+            return (centreEntity, ResultCount);
         }
 
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
@@ -427,6 +506,15 @@
                 new { activeOnly }
             );
             return centres;
+        }
+
+        public IEnumerable<(int, string)> GetCentreTypes()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT CentreTypeID,CentreType
+                   FROM CentreTypes
+                   ORDER BY CentreType"
+            );
         }
     }
 }

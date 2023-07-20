@@ -1,0 +1,206 @@
+﻿@using DigitalLearningSolutions.Data.Helpers;
+@using DigitalLearningSolutions.Data.Models.User;
+@using DigitalLearningSolutions.Web.Helpers;
+@using DigitalLearningSolutions.Web.Models.Enums;
+@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model SearchableDelegatesViewModel;
+@{
+    var expanderOpen = Model.Id == ViewBag.DelegateId
+    ? "open" : "";
+}
+<div class="searchable-element nhsuk-expander-group word-break" id="@Model.Id-card">
+    <details class="nhsuk-details nhsuk-expander" @(expanderOpen)>
+        <summary class="nhsuk-details__summary">
+            <span class="nhsuk-details__summary-text" id="@Model.Id-name">
+                <span class="searchable-element-title" name="name">@Model.Name</span>
+                <span class="searchable-element-centre">
+                    - @Model.Centre
+                </span>
+            </span>
+        </summary>
+
+        <div class="nhsuk-details__text">
+            @if (Model.IsDelegateActive)
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Active" />
+                </span>
+            }
+            else
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Inactive" />
+                </span>
+            }
+            @if (Model.IsApproved)
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Approved" />
+                </span>
+            }
+            else
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.UnApproved" />
+                </span>
+            }
+            @if (Model.IsClaimed)
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Claimed" />
+                </span>
+            }
+            else
+            {
+                <span>
+                    <partial name="_DelegateStatusTag" model="(int)DelegateAccountCard.Unclaimed" />
+                </span>
+            }
+            <dl class="nhsuk-summary-list details-list-with-button">
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Delegate ID
+                    </dt>
+                    <dd class="nhsuk-summary-list__value status-tag">
+                        @Model.Id
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        First name
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.FirstName" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Last name
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.LastName" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Primary Email
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.PrimaryEmail" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        User Account
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        <span class="nhsuk-u-margin-right-4">
+                            ID: @Model.UserAccountID
+                        </span>
+                        <span class="nhsuk-u-margin-right-4">
+                            <partial name="_StatusTag" model="@Model.IsUserActive ? (int)UserCard.Active : (int)UserCard.Inactive" />
+                        </span>
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                        <a asp-controller="AdminAccounts" asp-action="RedirectToUser" asp-route-UserId="@Model.UserAccountID" class="nhsuk-u-margin-left-1">View</a>
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Centre
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.Centre" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Centre Email
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        <span class="nhsuk-u-margin-right-4">
+                            @Model.CentreEmail
+                        </span>
+                        <span class="nhsuk-u-margin-right-4">
+                            <partial name="_DelegateStatusTag" model="@Model.IsCentreEmailVerified ? (int)DelegateAccountCard.Verified : (int)DelegateAccountCard.Unverified" />
+                        </span>
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                        <a asp-controller="Delegates" asp-action="RemoveCentreEmailConfirmation" asp-route-delegateId="@Model.Id" class="nhsuk-u-margin-left-2">Remove</a>
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Delegate number
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.DelegateNumber" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Learning Hub ID
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.LearningHubID.ToString()" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Account claimed
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@(Model.AccountClaimed != null ? "No" : "Yes")" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Date registered
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.DateRegistered" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Self registered
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@(Model.SelRegistered==true?"Yes" : "No")" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+            </dl>
+            @if (!Model.IsApproved)
+            {
+                <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Delegates" asp-action="ApproveDelegate" asp-route-delegateId="@Model.Id" role="button">Approve delegate account</a>
+            }
+            @if (Model.CanShowInactivateDelegateButton)
+            {
+                <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
+               role="button"
+               aria-label="Delete unused account"
+               data-return-page-enabled="true"
+               asp-controller="Delegates"
+               asp-action="InactivateDelegateConfirmation"
+               asp-route-delegateId="@Model.Id">
+                    Inactivate delegate account
+                </a>
+            }
+            else
+            {
+                <a class="nhsuk-button nhsuk-u-margin-bottom-1"
+               role="button"
+               aria-label=""
+               data-return-page-enabled="true"
+               asp-controller="Delegates"
+               asp-action="ActivateDelegate"
+               asp-route-delegateId="@Model.Id">
+                    Activate delegate account
+                </a>
+            }
+           
+    </details>
+</div>

@@ -10,14 +10,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     public class SupervisorServiceTest
     {
         private ISupervisorService supervisorService = null!;
-        private ICommonService commonService = null!;
 
         [SetUp]
         public void SetUp()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<SupervisorService>>();
-            supervisorService = new SupervisorService(connection, logger,commonService);
+            supervisorService = new SupervisorService(connection, logger);
         }
 
 

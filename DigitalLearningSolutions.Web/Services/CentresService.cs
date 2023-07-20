@@ -14,7 +14,10 @@
 
         int? GetCentreRankForCentre(int centreId);
 
-        IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
+        (IEnumerable<CentreEntity>, int) GetAllCentreSummariesForSuperAdmin(string search, int offset, int rows, int region,
+          int centreType,
+          int contractType,
+          string centreStatus);
 
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
@@ -53,9 +56,12 @@
             return centreRanking?.Ranking;
         }
 
-        public IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin()
+        public (IEnumerable<CentreEntity>, int) GetAllCentreSummariesForSuperAdmin(string search, int offset, int rows,int region,
+          int centreType,
+          int contractType,
+          string centreStatus)
         {
-            return centresDataService.GetAllCentreSummariesForSuperAdmin();
+            return centresDataService.GetAllCentreSummariesForSuperAdmin(search,offset,rows,region,centreType,contractType,centreStatus);
         }
 
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()

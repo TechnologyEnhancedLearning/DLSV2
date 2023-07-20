@@ -36,20 +36,18 @@
                  (SELECT COUNT(ProgressID) AS CourseCompletions
                  FROM    Progress AS P WITH (NOLOCK)
                  WHERE (Completed IS NOT NULL)) AS CourseCompletions,
+                 (SELECT COUNT(ID) AS Expr1
+                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK)
+                 WHERE (SelfAssessmentID = 1) AND (Enrolled=1)) AS DCSAEnrolments,
+                 (SELECT COUNT(ID) AS Expr1
+                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK)
+                 WHERE (SelfAssessmentID = 1) AND (Submitted = 1)) AS DCSACompletions,
                  (SELECT COUNT(*) AS Expr1
-                 FROM    CandidateAssessments WITH (NOLOCK)
-                 WHERE (SelfAssessmentID = 1)) AS DCSAEnrolments,
+                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK)
+                 WHERE (SelfAssessmentID > 1) AND (Enrolled=1)) AS NursingPassportEnrolments,
                  (SELECT COUNT(*) AS Expr1
-                 FROM    CandidateAssessments AS CandidateAssessments_2 WITH (NOLOCK)
-                 WHERE (SelfAssessmentID = 1) AND (SubmittedDate IS NOT NULL)) AS DCSACompletions,
-                 (SELECT COUNT(*) AS Expr1
-                 FROM    CandidateAssessments AS CandidateAssessments_1 WITH (NOLOCK)
-                 WHERE (SelfAssessmentID > 1)) AS NursingPassportEnrolments,
-                 (SELECT COUNT(*) AS Expr1
-                 FROM    CandidateAssessments AS ca WITH (NOLOCK) INNER JOIN
-                              CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID INNER JOIN
-                              CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND casv.SignedOff = 1
-                 WHERE (ca.SelfAssessmentID > 1)) AS NursingPassportCompletions"
+                 FROM    ReportSelfAssessmentActivityLog
+                 WHERE (SelfAssessmentID > 1) AND (SignedOff = 1)) AS NursingPassportCompletions"
             );
         }
     }

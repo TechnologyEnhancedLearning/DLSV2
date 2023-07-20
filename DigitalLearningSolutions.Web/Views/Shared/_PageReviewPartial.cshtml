@@ -1,0 +1,16 @@
+﻿@using DigitalLearningSolutions.Web.Models 
+@model PageReviewModel
+@{ 
+    var defaultDate = new DateTime(2019, 6, 28);
+    var nextDate = new DateTime(2022, 5, 15);
+    var model = Model;
+    if (model == null)
+    {
+        model = new PageReviewModel { LastReviewedDate = defaultDate, NextReviewDate = nextDate };
+    }
+}
+<hr />
+<div class="nhsuk-body-s">
+    Page last reviewed : <span>@Model.LastReviewedDate.ToString("dd MMM yyyy")</span><br />
+    Next review due : <span>@Model.NextReviewDate.ToString("dd MMM yyyy")</span>
+</div>

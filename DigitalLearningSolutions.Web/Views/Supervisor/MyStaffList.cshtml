@@ -11,6 +11,7 @@
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/supervisor/staffMemberCard.css")" asp-append-version="true">
 
 @section NavMenuItems {
     <partial name="Shared/_NavMenuItems" />
@@ -52,10 +53,16 @@
                     </div>
                     <div class="nhsuk-grid-row">
                         <div class="nhsuk-grid-column-full">
+                            @if (Model.SelfSuperviseDelegateDetailViewModels != null)
+                            {
+                                <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
+                                    <span aria-hidden="false">My test area</span>
+                                </p>
+                                <partial name="Shared/_StaffMemberCard" model="Model.SelfSuperviseDelegateDetailViewModels" />
+                            }
                             <partial name="SearchablePage/_SearchResultsCount" model="Model" />
                             <partial name="SearchablePage/_TopPagination" model="Model" />
                             <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
-
                             <input type="hidden" aria-hidden="true" id="select-sort-by" value="SearchableName" />
                             <input type="hidden" aria-hidden="true" id="select-sort-direction" value="Ascending" />
                             @if (Model.SuperviseDelegateDetailViewModels.Any())
@@ -66,7 +73,6 @@
                                         <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
                                     }
                                 </div>
-
                                 <partial name="SearchablePage/_BottomPagination" model="Model" />
                             }
                             else

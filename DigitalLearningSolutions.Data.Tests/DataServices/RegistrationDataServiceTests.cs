@@ -29,7 +29,6 @@
         private RegistrationDataService service = null!;
         private RegistrationDataService serviceWithFakeUserDataService = null!;
         private IUserDataService userDataService = null!;
-        private ICommonService commonService = null;
 
         [SetUp]
         public void SetUp()
@@ -43,15 +42,13 @@
                 connection,
                 userDataService,
                 clockUtility,
-                logger,
-                commonService
+                logger
             );
             serviceWithFakeUserDataService = new RegistrationDataService(
                 connection,
                 fakeUserDataService,
                 clockUtility,
-                logger,
-                commonService
+                logger
             );
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
