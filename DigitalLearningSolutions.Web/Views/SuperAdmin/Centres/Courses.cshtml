@@ -1,0 +1,17 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CentreCourses
+@model List<CentreCoursesViewModel>
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Admin</a></li>
+            </ol>
+        </div>
+    </nav>
+}
+<h1 class="nhsuk-heading-xl nhsuk-u-font-weight-normal nhsuk-fieldset__heading nhsuk-label--l">Courses - @ViewBag.CentreName</h1>
+@foreach (var course in Model)
+{
+    <partial name="_CourseCard" model="course" />
+}
+

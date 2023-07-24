@@ -100,6 +100,8 @@ namespace DigitalLearningSolutions.Data.DataServices
             int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId);
 
         bool IsCourseCompleted(int candidateId, int customisationId);
+
+        public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -1081,6 +1083,19 @@ namespace DigitalLearningSolutions.Data.DataServices
                             THEN CAST(1 AS BIT)
                             ELSE CAST(0 AS BIT) END",
                 new { candidateId, customisationId }
+            );
+        }
+
+        public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId)
+        {
+            return connection.Query<Course>(
+                @$"select ap.ApplicationID,ap.ApplicationName,{DelegateCountQuery},cu.CustomisationID,cu.CustomisationName 
+				from Applications as ap
+				inner join CentreApplications as ca on ap.ApplicationID = ca.ApplicationID
+				inner join Customisations as cu on ca.ApplicationID = cu.ApplicationID
+				where ca.Active = 1 and cu.Active= 1 and cu.CentreID = @centreId AND ca.CentreID=@centreId
+				order by ap.ApplicationName",
+                new { centreId }
             );
         }
     }
