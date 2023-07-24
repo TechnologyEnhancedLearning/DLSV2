@@ -1,0 +1,55 @@
+﻿﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
+@model IEnumerable<SupervisorSignOff>
+
+@if (Model.Any())
+{
+    <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-4">
+        <caption class="nhsuk-table__caption"><h1>@Model.FirstOrDefault().SupervisorRoleName Sign-off History</h1></caption>
+        <thead role="rowgroup" class="nhsuk-table__head">
+            <tr role="row">
+                <th role="columnheader" class="" scope="col">
+                    @Model.FirstOrDefault().SupervisorRoleName
+                </th>
+                <th role="columnheader" class="" scope="col">
+                    Status
+                </th>
+                <th role="columnheader" class="" scope="col">
+                    Comments
+                </th>
+            </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+            @foreach (var supervisorSignOff in Model)
+            {
+                <tr role="row" class="nhsuk-table__row">
+                    <td role="cell" class="nhsuk-table__cell">
+                        <span class="nhsuk-table-responsive__heading">@Model.FirstOrDefault().SupervisorRoleName </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)
+                    </td>
+                    <td role="cell" class="nhsuk-table__cell">
+                        <span class="nhsuk-table-responsive__heading">Status </span>
+                        @if (supervisorSignOff.Verified == null)
+                        {
+                            <span class="nhsuk-tag">Requested @supervisorSignOff.Requested.Value.ToShortDateString()</span>
+                        }
+                        else if (supervisorSignOff.SignedOff && supervisorSignOff.Verified != null)
+                        {
+                            <span class="nhsuk-tag nhsuk-tag--green">Signed off @supervisorSignOff.Verified.Value.ToShortDateString()</span>
+                        }
+                        else
+                        {
+                            <span class="nhsuk-tag nhsuk-tag--red">Rejected @supervisorSignOff.Verified.Value.ToShortDateString()</span>
+                        }
+                    </td>
+                    <td role="cell" class="nhsuk-table__cell">
+                        <span class="nhsuk-table-responsive__heading">Comments </span>@supervisorSignOff.Comments
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h1>Sign-off History</h1>
+    <p class="nhsuk-body-l">There are no sign-off requests for this self assessment.</p>
+}

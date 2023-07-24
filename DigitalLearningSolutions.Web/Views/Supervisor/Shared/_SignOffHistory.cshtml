@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 
 @model SignOffHistoryViewModel
 
@@ -46,7 +46,7 @@
         <td role="cell" class="nhsuk-table__cell">
           <div class="nhsuk-grid-column-one-half nhsuk-u-padding-0">
             <a asp-action="ResendSupervisorSignoffRequest"
-               asp-route-selfAssessmentId=@Model.DelegateSelfAssessment.ID
+               asp-route-selfAssessmentId=@Model.SelfAssessment.Id
                asp-route-candidateAssessmentSupervisorId=@supervisorSignOff.CandidateAssessmentSupervisorID
                asp-route-candidateAssessmentSupervisorVerificationId=@supervisorSignOff.ID
                asp-route-vocabulary="Proficiencies">
@@ -56,7 +56,7 @@
 
           <div class="nhsuk-grid-column-one-half nhsuk-u-padding-0">
             <a asp-action="WithdrawSupervisorSignOffRequest"
-              asp-route-selfAssessmentId=@Model.DelegateSelfAssessment.ID
+              asp-route-selfAssessmentId=@Model.SelfAssessment.Id
               asp-route-candidateAssessmentSupervisorVerificationId=@supervisorSignOff.ID
               asp-route-vocabulary="Proficiencies">
               Withdraw
