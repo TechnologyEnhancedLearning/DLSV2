@@ -1579,7 +1579,7 @@
             int candidateAssessmentSupervisorVerificationId,
             string vocabulary)
         {
-            supervisorService.RemoveSelfAssessmentResultSupervisorVerificationById(candidateAssessmentSupervisorVerificationId);
+            supervisorService.RemoveCandidateAssessmentSupervisorVerification(candidateAssessmentSupervisorVerificationId);
             return RedirectToAction(
                 "SignOffHistory",
                 new { selfAssessmentId, vocabulary }
