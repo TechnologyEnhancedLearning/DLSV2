@@ -626,7 +626,7 @@
 	                                    OR (@accountStatus = 'Claimed' AND  da.RegistrationConfirmationHash is  null) OR (@accountStatus = 'Unclaimed' AND da.RegistrationConfirmationHash is not null))
                                     AND ((@lhlinkStatus = 'Any') OR (@lhlinkStatus = 'Linked' AND u.LearningHubAuthID IS NOT NULL) OR (@lhlinkStatus = 'Not linked' AND u.LearningHubAuthID IS NULL))";
 
-            string sql = @$"{BaseDelegateEntitySelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
+            string sql = @$"{BaseSelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
                             OFFSET @offset ROWS
                             FETCH NEXT @rows ROWS ONLY";
             IEnumerable<DelegateEntity> delegateEntity =
