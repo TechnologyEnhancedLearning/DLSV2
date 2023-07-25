@@ -173,5 +173,57 @@
             Centre centre = centresDataService.GetFullCentreDetailsById(centreId);
             return View(centre);
         }
+
+        [HttpGet]
+        [NoCaching]
+        [Route("SuperAdmin/Centres/{centreId=0:int}/EditCentreDetails")]
+        public IActionResult EditCentreDetails(int centreId = 0)
+        {
+            var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
+
+            var regions = regionDataService.GetRegionsAlphabetical().ToList();
+            ViewBag.Regions = SelectListHelper.MapOptionsToSelectListItems(
+                regions, centreDetails.RegionId
+            );
+
+            var centreTypes = this.centresDataService.GetCentreTypes().ToList();
+            ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
+                centreTypes, centreDetails.CentreTypeId
+            );
+
+            var model = new EditCentreDetailsSuperAdminViewModel(centreDetails);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Centres/{centreId=0:int}/EditCentreDetails")]
+        public IActionResult EditCentreDetails(EditCentreDetailsSuperAdminViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var regions = regionDataService.GetRegionsAlphabetical().ToList();
+                ViewBag.Regions = SelectListHelper.MapOptionsToSelectListItems(
+                    regions, model.RegionId
+                );
+
+                var centreTypes = this.centresDataService.GetCentreTypes().ToList();
+                ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
+                    centreTypes, model.CentreTypeId
+                );
+                return View(model);
+            }
+
+            centresDataService.UpdateCentreDetailsForSuperAdmin(
+                model.CentreId,
+                model.CentreName,
+                model.CentreTypeId,
+                model.RegionId,
+                model.CentreEmail,
+                model.IpPrefix,
+                model.ShowOnMap
+            );
+            return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
+        }
     }
 }
