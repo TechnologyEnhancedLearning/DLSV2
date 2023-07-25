@@ -26,6 +26,10 @@
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
 
         bool IsAnEmailValidForCentreManager(string? primaryEmail, string? centreSpecificEmail, int centreId);
+
+        void DeactivateCentre(int centreId);
+
+        void ReactivateCentre(int centreId);
     }
 
     public class CentresService : ICentresService
@@ -91,6 +95,16 @@
                     StringComparison.CurrentCultureIgnoreCase
                 )
             );
+        }
+
+        public void DeactivateCentre(int centreId)
+        {
+            centresDataService.DeactivateCentre(centreId);
+        }
+
+        public void ReactivateCentre(int centreId)
+        {
+            centresDataService.ReactivateCentre(centreId);
         }
     }
 }
