@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -29,14 +30,16 @@
         private readonly IRegionDataService regionDataService;
         private readonly ICentresDataService centresDataService;
         private readonly IContractTypesDataService contractTypesDataService;
+        private readonly ICourseDataService courseDataService;
         public CentresController(ICentresService centresService, ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IRegionDataService regionDataService, ICentresDataService centresDataService, IContractTypesDataService contractTypesDataService)
+            IRegionDataService regionDataService, ICentresDataService centresDataService, IContractTypesDataService contractTypesDataService, ICourseDataService courseDataService)
         {
             this.centresService = centresService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.regionDataService = regionDataService;
             this.centresDataService = centresDataService;
             this.contractTypesDataService = contractTypesDataService;
+            this.courseDataService = courseDataService;
         }
 
         [Route("SuperAdmin/Centres/{page=0:int}")]
@@ -44,10 +47,10 @@
           int page = 1,
           string? Search = "",
           int? itemsPerPage = 10,
-          int Region=0,
-          int CentreType=0,
-          int ContractType=0,
-          string CentreStatus="",
+          int Region = 0,
+          int CentreType = 0,
+          int ContractType = 0,
+          string CentreStatus = "",
           string? SearchString = "",
           string? ExistingFilterString = ""
         )
@@ -102,7 +105,7 @@
                     }
                 }
             }
-            (var Centres, var ResultCount) = this.centresService.GetAllCentreSummariesForSuperAdmin(Search ?? string.Empty, offSet, itemsPerPage ?? 10,Region,CentreType,ContractType,CentreStatus);
+            (var Centres, var ResultCount) = this.centresService.GetAllCentreSummariesForSuperAdmin(Search ?? string.Empty, offSet, itemsPerPage ?? 10, Region, CentreType, ContractType, CentreStatus);
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
@@ -134,8 +137,8 @@
             model.Search = Search;
             model.Region = Region;
             model.ContractType = ContractType;
-            model.CentreStatus= CentreStatus;
-            model.CentreType=CentreType;
+            model.CentreStatus = CentreStatus;
+            model.CentreType = CentreType;
             model.JavascriptSearchSortFilterPaginateEnabled = false;
 
             var regions = regionDataService.GetRegionsAlphabetical().ToList();
@@ -157,7 +160,7 @@
             );
 
             ViewBag.CentreStatus = SelectListHelper.MapOptionsToSelectListItems(
-                GetCentreStatus(),CentreStatus
+                GetCentreStatus(), CentreStatus
             );
             ModelState.ClearAllErrors();
             return View(model);
@@ -224,6 +227,28 @@
                 model.ShowOnMap
             );
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
+        }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses")]
+        public IActionResult Courses(int centreId = 0)
+        {
+            var courses = this.courseDataService.GetApplicationsAvailableToCentre(centreId);
+            List<CentreCoursesViewModel> centreCoursesViewModel = new List<CentreCoursesViewModel>();
+            centreCoursesViewModel = courses.GroupBy(x => x.ApplicationId).Select(
+                application => new CentreCoursesViewModel
+                {
+                    ApplicationID = application.FirstOrDefault().ApplicationId,
+                    ApplicationName = application.FirstOrDefault().ApplicationName,
+                    CentreCourseCustomisations = application.Select(courseCustomisation => new CentreCourseCustomisation
+                    {
+                        CustomisationID = courseCustomisation.CustomisationId,
+                        CustomisationName = courseCustomisation.CustomisationName,
+                        DelegateCount = courseCustomisation.DelegateCount
+                    }).ToList()
+                }).ToList();
+
+            ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+            return View(centreCoursesViewModel);
+
         }
     }
 }
