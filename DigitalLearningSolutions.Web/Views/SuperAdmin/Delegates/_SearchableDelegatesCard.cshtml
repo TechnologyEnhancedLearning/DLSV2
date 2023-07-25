@@ -121,7 +121,7 @@
                         Centre Email
                     </dt>
                     <dd class="nhsuk-summary-list__value">
-                        <span class="nhsuk-u-margin-right-4">
+                        <span class="nhsuk-u-margin-right-1">
                             @Model.CentreEmail
                         </span>
                         <span class="nhsuk-u-margin-right-4">
@@ -129,7 +129,10 @@
                         </span>
                     </dd>
                     <dd class="nhsuk-summary-list__actions">
-                        <a asp-controller="Delegates" asp-action="RemoveCentreEmailConfirmation" asp-route-delegateId="@Model.Id" class="nhsuk-u-margin-left-2">Remove</a>
+                      @if(Model.CentreEmail!=null)
+                        {
+                             <a asp-controller="Delegates" asp-action="RemoveCentreEmailConfirmation" asp-route-delegateId="@Model.Id" class="nhsuk-u-margin-left-2">Remove</a>
+                        }
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">

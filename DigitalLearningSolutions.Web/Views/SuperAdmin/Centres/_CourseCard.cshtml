@@ -1,0 +1,34 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CentreCourses
+@model CentreCoursesViewModel
+<div class="searchable-element nhsuk-expander-group" id="@Model.ApplicationID-card">
+    <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+        <summary class="nhsuk-details__summary">
+            <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.ApplicationID-name" name="centre-name">
+                @Model.ApplicationName
+            </span>
+        </summary>
+
+        <div class="nhsuk-details__text">
+            <dl class="nhsuk-summary-list">
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__value">
+                        <h3>Customisation name (ID)</h3>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        <h3>Total delegates</h3>
+                    </dd>
+                </div>
+                @foreach (var customisation in Model.CentreCourseCustomisations)
+                {
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key nhsuk-u-font-weight-normal">
+                            @customisation.CustomisationName (@customisation.CustomisationID)
+                        </dt>
+                        <dd class="nhsuk-summary-list__value nhsuk-u-font-weight-normal">
+                            @customisation.DelegateCount
+                        </dd>
+                    </div>
+                }
+        </div>
+    </details>
+</div>
