@@ -243,6 +243,67 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
             return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
         }
 
+
+        [Route("SuperAdmin/Delegates/{delegateId=0:int}/RemoveCentreEmailConfirmation")]
+        public IActionResult RemoveCentreEmailConfirmation(int delegateId = 0)
+        {
+            var delegateEntity = userDataService.GetDelegateById(delegateId);
+
+            if (delegateEntity != null)
+            {
+                var userCenterEmail = userDataService.GetCentreEmail(delegateEntity.DelegateAccount.UserId, delegateEntity.DelegateAccount.CentreId);
+                if (userCenterEmail == null) 
+                    return StatusCode((int)HttpStatusCode.Gone);
+            }
+            ConfirmationViewModel confirmationViewModel = new ConfirmationViewModel();
+            confirmationViewModel.DelegateId = delegateId;
+            
+            if (delegateEntity != null)
+                confirmationViewModel.DisplayName = delegateEntity.UserAccount.FullName +
+                                                          " (" + delegateEntity.UserAccount.PrimaryEmail + ")";
+
+            if (TempData["SearchString"] != null)
+            {
+                confirmationViewModel.SearchString = Convert.ToString(TempData["SearchString"]);
+            }
+            if (TempData["FilterString"] != null)
+            {
+                confirmationViewModel.ExistingFilterString = Convert.ToString(TempData["FilterString"]);
+            }
+            if (TempData["Page"] != null)
+            {
+                confirmationViewModel.Page = Convert.ToInt16(TempData["Page"]);
+            }
+            TempData["DelegateId"] = delegateId;
+            TempData.Keep();
+            return View(confirmationViewModel);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Delegates/{delegateId=0:int}/RemoveCentreEmailConfirmation")]
+        public IActionResult RemoveCentreEmailConfirmation(ConfirmationViewModel confirmationViewModel, int delegateId = 0)
+        {
+            TempData["DelegateId"] = delegateId;
+            if (confirmationViewModel.IsChecked)
+            {
+                var delegateEntity = userDataService.GetDelegateById(delegateId);
+                if (delegateEntity != null)
+                {
+                    userDataService.DeleteUserCentreDetail(delegateEntity.DelegateAccount.UserId, delegateEntity.DelegateAccount.CentreId);
+                }
+                return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
+            }
+            else
+            {
+                confirmationViewModel.Error = true;
+                ModelState.Clear();
+                ModelState.AddModelError("IsChecked", "You must check the checkbox to continue");
+            }
+            return View(confirmationViewModel);
+        }
+
+
+
         [Route("SuperAdmin/Delegates/{delegateId=0:int}/ApproveDelegate")]
         public IActionResult ApproveDelegate(int delegateId = 0)
         {

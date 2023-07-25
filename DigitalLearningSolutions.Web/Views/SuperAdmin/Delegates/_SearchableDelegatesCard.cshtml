@@ -131,7 +131,7 @@
                     <dd class="nhsuk-summary-list__actions">
                       @if(Model.CentreEmail!=null)
                         {
-                            <a asp-controller="" asp-action="" asp-route-UserId="" class="nhsuk-u-margin-left-2">Remove</a>
+                             <a asp-controller="Delegates" asp-action="RemoveCentreEmailConfirmation" asp-route-delegateId="@Model.Id" class="nhsuk-u-margin-left-2">Remove</a>
                         }
                     </dd>
                 </div>
