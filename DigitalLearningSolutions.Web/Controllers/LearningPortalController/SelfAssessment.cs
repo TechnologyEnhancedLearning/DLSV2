@@ -23,6 +23,9 @@
     using Microsoft.Extensions.Logging;
     using GDS.MultiPageFormData.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
+    using DocumentFormat.OpenXml.EMMA;
 
     public partial class LearningPortalController
     {
@@ -1548,14 +1551,13 @@
             selfAssessmentService.RemoveEnrolment(selfAssessmentId, delegateUserId);
             return RedirectToAction("Current", "LearningPortal");
         }
-
-
-
         
-        public IActionResult ResendSupervisorSignoffRequest(
+        public IActionResult ResendSupervisorSignOffRequest(
             int selfAssessmentId,
             int candidateAssessmentSupervisorId,
             int candidateAssessmentSupervisorVerificationId,
+            string supervisorName,
+            string supervisorEmail,
             string vocabulary
         )
         {
@@ -1568,10 +1570,14 @@
             selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(
                 candidateAssessmentSupervisorVerificationId
             );
-            return RedirectToAction(
-                "SignOffHistory",
-                new { selfAssessmentId, vocabulary }
-            );
+
+            var model = new ResendSupervisorSignOffEmailViewModel
+            {
+                SupervisorName = supervisorName,
+                SupervisorEmail = supervisorEmail
+            };
+
+            return View("SelfAssessments/ResendSupervisorSignoffEmailConfirmation", model);
         }
 
         public IActionResult WithdrawSupervisorSignOffRequest(
