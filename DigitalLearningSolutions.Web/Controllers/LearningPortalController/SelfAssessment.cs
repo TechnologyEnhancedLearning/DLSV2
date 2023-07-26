@@ -1573,8 +1573,10 @@
 
             var model = new ResendSupervisorSignOffEmailViewModel
             {
+                Id = selfAssessmentId,
+                Vocabulary = vocabulary,
                 SupervisorName = supervisorName,
-                SupervisorEmail = supervisorEmail
+                SupervisorEmail = supervisorEmail,
             };
 
             return View("SelfAssessments/ResendSupervisorSignoffEmailConfirmation", model);

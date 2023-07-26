@@ -608,5 +608,26 @@
                 .WithActionName("StatusCode")
                 .WithRouteValue("code", 403);
         }
+
+        [Test]
+        public void ResendSupervisorSignOffRequest_given_an_existing_self_assessment_previous_sign_off_and_email_result_is_a_redirect_to_popup_ok()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var competencies = new List<Competency>();
+            var supervisorSignOffs = new List<SupervisorSignOff> { new SupervisorSignOff() };
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
+                .Returns(selfAssessment);
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, DelegateUserId))
+                .Returns(competencies);
+
+            // When
+            var result = controller.ResendSupervisorSignOffRequest(1, 2, 3, "TestName", "test@example.com", "testvocab");
+
+            // Then
+            result.Should()
+                .BeOfType<RedirectToActionResult>()
+                .Which.ActionName.Should().Be("PopupOK");
+        }
     }
 }
