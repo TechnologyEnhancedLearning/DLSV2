@@ -5,6 +5,8 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
@@ -610,24 +612,59 @@
         }
 
         [Test]
-        public void ResendSupervisorSignOffRequest_given_an_existing_self_assessment_previous_sign_off_and_email_result_is_a_redirect_to_popup_ok()
+        public void ResendSupervisorSignOffRequest_sends_email_and_navigates_to_confirmation_view()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            var competencies = new List<Competency>();
-            var supervisorSignOffs = new List<SupervisorSignOff> { new SupervisorSignOff() };
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
-                .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, DelegateUserId))
-                .Returns(competencies);
+            var expectedModel = new ResendSupervisorSignOffEmailViewModel
+            {
+                Id = 1,
+                Vocabulary = "TestVocabulary",
+                SupervisorName = "TestSupervisorName",
+                SupervisorEmail = "testsupervisor@example.com",
+            };
 
             // When
-            var result = controller.ResendSupervisorSignOffRequest(1, 2, 3, "TestName", "test@example.com", "testvocab");
+            var result = controller.ResendSupervisorSignOffRequest(1, 2, 3, "TestSupervisorName", "testsupervisor@example.com", "TestVocabulary");
 
             // Then
+            A.CallTo(
+                () => frameworkNotificationService.SendSignOffRequest(
+                2,
+                1,
+                11,
+                2
+                )).MustHaveHappened();
+
+            A.CallTo(
+                () => selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(3)).MustHaveHappened();
+
+            result.Should().BeViewResult()
+                .WithViewName("SelfAssessments/ResendSupervisorSignoffEmailConfirmation")
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void WithdrawSupervisorSignOffRequest_calls_remove_signoff_and_reloads_page()
+        {
+            // Given
+            var expectedModel = new ResendSupervisorSignOffEmailViewModel
+            {
+                Id = 1,
+                Vocabulary = "TestVocabulary",
+                SupervisorName = "TestSupervisorName",
+                SupervisorEmail = "testsupervisor@example.com",
+            };
+
+            // When
+            var result = controller.WithdrawSupervisorSignOffRequest(1, 2, "TestVocabulary");
+
+            // Then
+            A.CallTo(
+                () => supervisorService.RemoveCandidateAssessmentSupervisorVerification(2)).MustHaveHappened();
+
             result.Should()
-                .BeOfType<RedirectToActionResult>()
-                .Which.ActionName.Should().Be("PopupOK");
+                .BeRedirectToActionResult()
+                .WithActionName("SignOffHistory");
         }
     }
 }
