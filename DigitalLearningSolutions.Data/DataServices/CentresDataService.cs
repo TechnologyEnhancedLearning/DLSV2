@@ -61,6 +61,8 @@
         IEnumerable<(int, string)> GetAllCentres(bool? activeOnly = false);
         IEnumerable<(int, string)> GetCentreTypes();
         Centre? GetFullCentreDetailsById(int centreId);
+        void DeactivateCentre(int centreId);
+        void ReactivateCentre(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -514,6 +516,26 @@
                 @"SELECT CentreTypeID,CentreType
                    FROM CentreTypes
                    ORDER BY CentreType"
+            );
+        }
+
+        public void DeactivateCentre(int centreId)
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                  Active = 0
+                  WHERE CentreId = @centreId",
+                new { centreId }
+            );
+        }
+
+        public void ReactivateCentre(int centreId)
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                  Active = 1
+                  WHERE CentreId = @centreId",
+                new { centreId }
             );
         }
     }

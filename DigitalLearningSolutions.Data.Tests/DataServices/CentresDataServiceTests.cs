@@ -380,5 +380,28 @@
             // Then
             result.Should().BeNull();
         }
+
+
+        [Test]
+        public void DeactivateCentre_should_return_expected_item()
+        {
+            // When
+            centresDataService.DeactivateCentre(2);
+
+            // Then
+            var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
+            updatedCentre.Active.Should().BeFalse();
+        }
+
+        [Test]
+        public void ReactivateCentre_should_return_expected_item()
+        {
+            // When
+            centresDataService.ReactivateCentre(2);
+
+            // Then
+            var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
+            updatedCentre.Active.Should().BeTrue();
+        }
     }
 }
