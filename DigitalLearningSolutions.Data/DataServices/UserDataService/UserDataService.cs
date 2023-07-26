@@ -592,6 +592,7 @@
                 ce.Active AS CentreActive,
                 da.DateRegistered,
                 da.CandidateNumber,
+                da.Approved,
                 da.SelfReg,
                 da.UserID,
                 u.ID,
