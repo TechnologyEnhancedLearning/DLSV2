@@ -122,10 +122,13 @@
                     </dt>
                     <dd class="nhsuk-summary-list__value">
                         <span class="nhsuk-u-margin-right-1">
-                            @Model.CentreEmail
+                            @(Model.CentreEmail != null ? Model.CentreEmail : "-")
                         </span>
                         <span class="nhsuk-u-margin-right-4">
+                        @if(Model.CentreEmail!=null)
+                        {
                             <partial name="_DelegateStatusTag" model="@Model.IsCentreEmailVerified ? (int)DelegateAccountCard.Verified : (int)DelegateAccountCard.Unverified" />
+                        }
                         </span>
                     </dd>
                     <dd class="nhsuk-summary-list__actions">
