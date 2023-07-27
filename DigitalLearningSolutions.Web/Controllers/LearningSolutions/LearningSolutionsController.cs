@@ -172,5 +172,23 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             var model = new AcceptableUsePolicyViewModel(termsText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
+        public IActionResult PrivacyNotice()
+        {
+            var PrivacyPolicyText = configDataService.GetConfigValue(ConfigDataService.PrivacyPolicyText);
+            if (PrivacyPolicyText == null)
+            {
+                logger.LogError("PrivacyPolicy text from Config table is null");
+                return StatusCode(500);
+            }
+
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
+
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.PrivacyPolicyText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+
+            var model = new PrivacyNoticeViewModel(PrivacyPolicyText, lastUpdatedDate, nextReviewDate);
+            return View(model);
+        }
     }
 }
