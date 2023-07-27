@@ -250,7 +250,7 @@
             );
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
         }
-
+        
         [Route("SuperAdmin/Centres/{centreId=0:int}/DeactivateCentre")]
         public IActionResult DeactivateCentre(int centreId = 0)
         {
