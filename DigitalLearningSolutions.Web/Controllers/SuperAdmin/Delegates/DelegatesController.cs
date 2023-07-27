@@ -56,11 +56,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
           string? SearchString = "",
           string? ExistingFilterString = "")
         {
-            var loggedInSuperAdmin = userDataService.GetDelegateById(User.GetAdminId()!.Value);
-            if (loggedInSuperAdmin.DelegateAccount.Active == false)
-            {
-                return NotFound();
-            }
 
             if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
@@ -145,8 +140,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
             }
             TempData["Page"] = result.Page;
             var model = new DelegatesViewModel(
-                result,
-                loggedInSuperAdmin!.DelegateAccount
+                result
             );
 
             ViewBag.LHLinkStatus = SelectListHelper.MapOptionsToSelectListItems(

@@ -10,8 +10,7 @@
     public class DelegatesViewModel : BaseSearchablePageViewModel<DelegateEntity>
     {
         public DelegatesViewModel(
-            SearchSortFilterPaginationResult<DelegateEntity> result,
-            DelegateAccount loggedInSuperAdminAccount
+            SearchSortFilterPaginationResult<DelegateEntity> result
         ) : base(
             result,
             true,
@@ -22,7 +21,6 @@
             Delegates = result.ItemsToDisplay.Select(
                 delegates => new SearchableDelegatesViewModel(
                     delegates,
-                    loggedInSuperAdminAccount,
                     result.GetReturnPageQuery($"{delegates.DelegateAccount.Id}-card")
                 )
             );
