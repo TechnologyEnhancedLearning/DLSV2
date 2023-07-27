@@ -52,6 +52,7 @@
         bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId);
         int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId, string delegateEmail, int centreId);
         SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId);
+        void RemoveCandidateAssessmentSupervisorVerification(int id);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -831,7 +832,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             }
             return true;
         }
-
         public bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId)
         {
             var deletedCandidateAssessmentSupervisors = connection.Execute(
@@ -1106,6 +1106,14 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
             ).FirstOrDefault();
 
             return supervisorDelegate!;
+        }
+
+        public void RemoveCandidateAssessmentSupervisorVerification(int id)
+        {
+            connection.Execute(
+                @"DELETE 
+	                FROM CandidateAssessmentSupervisorVerifications WHERE
+                    ID = @id ", new { id });
         }
     }
 }
