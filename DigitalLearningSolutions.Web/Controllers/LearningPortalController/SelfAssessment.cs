@@ -23,6 +23,9 @@
     using Microsoft.Extensions.Logging;
     using GDS.MultiPageFormData.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
+    using DocumentFormat.OpenXml.EMMA;
 
     public partial class LearningPortalController
     {
@@ -1547,6 +1550,48 @@
             var delegateUserId = User.GetUserIdKnownNotNull();
             selfAssessmentService.RemoveEnrolment(selfAssessmentId, delegateUserId);
             return RedirectToAction("Current", "LearningPortal");
+        }
+        
+        public IActionResult ResendSupervisorSignOffRequest(
+            int selfAssessmentId,
+            int candidateAssessmentSupervisorId,
+            int candidateAssessmentSupervisorVerificationId,
+            string supervisorName,
+            string supervisorEmail,
+            string vocabulary
+        )
+        {
+            frameworkNotificationService.SendSignOffRequest(
+                candidateAssessmentSupervisorId,
+                selfAssessmentId,
+                User.GetUserIdKnownNotNull(),
+                User.GetCentreIdKnownNotNull()
+            );
+            selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(
+                candidateAssessmentSupervisorVerificationId
+            );
+
+            var model = new ResendSupervisorSignOffEmailViewModel
+            {
+                Id = selfAssessmentId,
+                Vocabulary = vocabulary,
+                SupervisorName = supervisorName,
+                SupervisorEmail = supervisorEmail,
+            };
+
+            return View("SelfAssessments/ResendSupervisorSignoffEmailConfirmation", model);
+        }
+
+        public IActionResult WithdrawSupervisorSignOffRequest(
+            int selfAssessmentId,
+            int candidateAssessmentSupervisorVerificationId,
+            string vocabulary)
+        {
+            supervisorService.RemoveCandidateAssessmentSupervisorVerification(candidateAssessmentSupervisorVerificationId);
+            return RedirectToAction(
+                "SignOffHistory",
+                new { selfAssessmentId, vocabulary }
+            );
         }
     }
 }

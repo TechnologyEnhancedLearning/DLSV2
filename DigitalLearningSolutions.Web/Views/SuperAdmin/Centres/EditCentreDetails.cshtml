@@ -21,8 +21,7 @@
         <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditCentreDetails">
             @Html.HiddenFor(x=>x.CentreType)
             @Html.HiddenFor(x=>x.RegionName)
-            <div class="nhsuk-grid-row divider">
-                <div class="nhsuk-grid-column-full">
+            <div class="nhsuk-grid-column-full">
                     <vc:text-input asp-for="CentreName"
                                    label="Centre name"
                                    populate-with-current-value="true"
@@ -74,12 +73,11 @@
                     <div class="nhsuk-checkboxes__item">
                         <input class="nhsuk-checkboxes__input" id="ShowOnMap" name="ShowOnMap" asp-for="@Model.ShowOnMap" type="checkbox">
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="ShowOnMap">
-                            Show on map
+                            Show on Find your centre
                         </label>
                     </div>
                 </div>
-            </div>
-
+            
             <button class="nhsuk-button nhsuk-u-margin-top-6" type="submit" value="save">Save</button>
         </form>
 

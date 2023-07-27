@@ -250,5 +250,19 @@
             );
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
         }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/DeactivateCentre")]
+        public IActionResult DeactivateCentre(int centreId = 0)
+        {
+            this.centresService.DeactivateCentre(centreId);
+            return RedirectToAction("Index", "Centres");
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/ReactivateCentre")]
+        public IActionResult ReactivateCentre(int centreId = 0)
+        {
+            this.centresService.ReactivateCentre(centreId);
+            return RedirectToAction("Index", "Centres");
+        }
     }
 }
