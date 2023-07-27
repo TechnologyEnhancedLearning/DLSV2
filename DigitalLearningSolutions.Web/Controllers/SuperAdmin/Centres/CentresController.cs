@@ -212,5 +212,44 @@
             this.centresService.ReactivateCentre(centreId);
             return RedirectToAction("Index", "Centres");
         }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
+        public IActionResult CentreRoleLimits(int centreId = 0)
+        {
+            //var courses = this.courseDataService.GetApplicationsAvailableToCentre(centreId);
+            //List<CentreCoursesViewModel> centreCoursesViewModel = new List<CentreCoursesViewModel>();
+            //centreCoursesViewModel = courses.GroupBy(x => x.ApplicationId).Select(
+            //    application => new CentreCoursesViewModel
+            //    {
+            //        ApplicationID = application.FirstOrDefault().ApplicationId,
+            //        ApplicationName = application.FirstOrDefault().ApplicationName,
+            //        CentreCourseCustomisations = application.Select(courseCustomisation => new CentreCourseCustomisation
+            //        {
+            //            CustomisationID = courseCustomisation.CustomisationId,
+            //            CustomisationName = courseCustomisation.CustomisationName,
+            //            DelegateCount = courseCustomisation.DelegateCount
+            //        }).ToList()
+            //    }).ToList();
+
+            ViewBag.CentreName = centresDataService.GetCentreName(centreId);
+
+            CentreRoleLimitsViewModel centreRoleLimitsViewModel = new CentreRoleLimitsViewModel();
+
+            centreRoleLimitsViewModel.CentreId = centreId;
+            centreRoleLimitsViewModel.IsLimitSetCMSAdministrators = false;
+            centreRoleLimitsViewModel.LimitSetCMSAdministrators = 0;
+            centreRoleLimitsViewModel.IsLimitSetCMSManagers = false;
+            centreRoleLimitsViewModel.LimitSetCMSManagers = 0;
+            centreRoleLimitsViewModel.IsLimitSetContentCreatorLicenses = false;
+            centreRoleLimitsViewModel.LimitSetContentCreatorLicenses = 0;
+            centreRoleLimitsViewModel.IsLimitSetCustomCourses = false;
+            centreRoleLimitsViewModel.LimitSetCustomCourses = 0;
+            centreRoleLimitsViewModel.IsLimitSetTrainers = false;
+            centreRoleLimitsViewModel.LimitSetTrainers = 0;
+
+            return View("CentreRoleLimits", centreRoleLimitsViewModel);
+        }
+
+
     }
 }

@@ -1,0 +1,59 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using NHSUKViewComponents.Web.ViewComponents
+@model CentreRoleLimitsViewModel;
+@{
+    ViewData["Title"] = "Centre Role Limits";
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Admin</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader">Manage centre</a></li>
+            </ol>
+        </div>
+    </nav>
+}
+<div class="nhsuk-grid-row">
+    <h1 class="nhsuk-heading-xl nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-2">Customise role limits for @ViewBag.CentreName</h1>
+</div>
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <div class="nhsuk-grid-row">
+
+            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCMSAdministrators)"
+                                label="CMS administrators"
+                                hint-text="" />
+
+            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCMSManagers)"
+                                label="CMS managers"
+                                hint-text="" />
+
+            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetContentCreatorLicenses)"
+                                label="Content creator licenses"
+                                hint-text="" />
+
+            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCustomCourses)"
+                                label="Custom courses"
+                                hint-text="" />
+
+            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetTrainers)"
+                                label="Trainers"
+                                hint-text="" />
+
+@*        <h2 class="nhsuk-u-margin-bottom-2  nhsuk-u-font-weight-normal">Contract info</h2>
+        <dl class="nhsuk-summary-list details-list-with-button word-break">
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+              <b>Contract type</b>
+            </dt>
+          </div>
+        </dl>
+        <button class="nhsuk-button view-delegate-button" type="submit">
+          Edit Contract info
+        </button>
+*@      </div>
+    </div>
+</div>
