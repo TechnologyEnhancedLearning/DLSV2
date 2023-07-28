@@ -595,6 +595,7 @@
                 da.Approved,
                 da.SelfReg,
                 da.UserID,
+                da.RegistrationConfirmationHash,
                 u.ID,
                 u.PrimaryEmail,
                 u.FirstName,
