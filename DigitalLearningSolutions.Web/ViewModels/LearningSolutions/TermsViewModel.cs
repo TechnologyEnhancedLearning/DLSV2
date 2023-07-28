@@ -2,16 +2,15 @@
 {
     using Microsoft.AspNetCore.Html;
     using System;
-
-    public class TermsViewModel
+    using DigitalLearningSolutions.Web.Models;
+    public class TermsViewModel:PageReviewModel
     {
         public HtmlString TermsText { get; }
-        public DateTime UpdateLastDate { get; set; }
-
-        public TermsViewModel(string termsText, DateTime UpdateLastDate)
+        public TermsViewModel(string termsText, DateTime lastReviewedDate, DateTime nextReviewDate)
         {
             TermsText = new HtmlString(termsText);
-            this.UpdateLastDate = UpdateLastDate;
+            LastReviewedDate = lastReviewedDate;
+            NextReviewDate = nextReviewDate;
         }
     }
 }
