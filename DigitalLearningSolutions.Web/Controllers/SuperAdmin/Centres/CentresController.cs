@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -263,6 +264,23 @@
         {
             this.centresService.ReactivateCentre(centreId);
             return RedirectToAction("Index", "Centres");
+        }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/ManageCentreManager")]
+        public IActionResult ManageCentreManager(int centreId = 0)
+        {
+            Centre centre = centresDataService.GetCentreManagerDetailsByCentreId (centreId);
+            EditCentreManagerDetailsViewModel editCentreManagerDetailsViewModel = new EditCentreManagerDetailsViewModel(centre);
+            return View(editCentreManagerDetailsViewModel);
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/ManageCentreManager")]
+        [HttpPost]
+        public IActionResult ManageCentreManager(EditCentreManagerDetailsViewModel editCentreManagerDetailsViewModel)
+        {
+            centresService.UpdateCentreManagerDetails(editCentreManagerDetailsViewModel.CentreId, editCentreManagerDetailsViewModel.FirstName, editCentreManagerDetailsViewModel.LastName,
+                editCentreManagerDetailsViewModel.Email,
+                editCentreManagerDetailsViewModel.Telephone);
+            return RedirectToAction("ManageCentre", "Centres", new { centreId = editCentreManagerDetailsViewModel.CentreId });
         }
     }
 }

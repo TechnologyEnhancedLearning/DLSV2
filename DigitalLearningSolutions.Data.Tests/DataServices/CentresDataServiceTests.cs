@@ -403,5 +403,18 @@
             var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
             updatedCentre.Active.Should().BeTrue();
         }
+
+        [Test]
+        public void GetCentreManagerDetailsByCentreId_should_return_expected_item()
+        {
+            // When
+            var result = centresDataService.GetCentreManagerDetailsByCentreId(2);
+
+            // Then
+            result.ContactForename.Should().Be("xxxxx");
+            result.ContactSurname.Should().Be("xxxx");
+            result.ContactEmail.Should().Be("nybwhudkra@ic.vs");
+            result.ContactTelephone.Should().Be("xxxxxxxxxxxx");
+        }
     }
 }

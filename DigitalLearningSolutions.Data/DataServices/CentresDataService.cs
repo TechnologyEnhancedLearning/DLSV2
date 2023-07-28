@@ -73,6 +73,7 @@
         Centre? GetFullCentreDetailsById(int centreId);
         void DeactivateCentre(int centreId);
         void ReactivateCentre(int centreId);
+        Centre? GetCentreManagerDetailsByCentreId(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -268,7 +269,7 @@
                 (centre, centreTypes, regions) => new CentreEntity(
                     centre, centreTypes, regions
                 ),
-                new { search, offset, rows,region,centreType,contractType,centreStatus },
+                new { search, offset, rows, region, centreType, contractType, centreStatus },
                 splitOn: "CentreTypeId,RegionID",
                 commandTimeout: 3000
             );
@@ -278,7 +279,7 @@
                                 INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                                 INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
                                 WHERE c.CentreName LIKE N'%' + @search + N'%' AND ((c.RegionID = @region) OR (@region = 0))  AND ((c.CentreTypeId = @centreType) OR (@centreType = 0)) AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
-                    new { search,region,centreType,contractType,centreStatus },
+                    new { search, region, centreType, contractType, centreStatus },
                     commandTimeout: 3000
             );
             return (centreEntity, ResultCount);
@@ -563,6 +564,21 @@
                    FROM CentreTypes
                    ORDER BY CentreType"
             );
+        }
+
+        public Centre? GetCentreManagerDetailsByCentreId(int centreId)
+        {
+            var centre = connection.QueryFirstOrDefault<Centre>(
+                           @"SELECT c.CentreID,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone
+                        FROM Centres AS c
+                        WHERE c.CentreID = @centreId",
+                        new { centreId }
+                    );
+            return centre;
         }
 
         public void DeactivateCentre(int centreId)
