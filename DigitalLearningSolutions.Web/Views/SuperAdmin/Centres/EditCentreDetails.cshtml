@@ -1,0 +1,87 @@
+﻿@using DigitalLearningSolutions.Web.Extensions;
+@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@model EditCentreDetailsSuperAdminViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreConfiguration.css")" asp-append-version="true">
+
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Edit centre details" : "Edit centre details";
+    var cancelLinkData = Html.GetRouteValues();
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CentreName), nameof(Model.CentreEmail)})" />
+        }
+
+        <h1 class="nhsuk-heading-xl">Edit centre details</h1>
+        <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditCentreDetails">
+            @Html.HiddenFor(x=>x.CentreType)
+            @Html.HiddenFor(x=>x.RegionName)
+            <div class="nhsuk-grid-column-full">
+                    <vc:text-input asp-for="CentreName"
+                                   label="Centre name"
+                                   populate-with-current-value="true"
+                                   type="text"
+                                   spell-check="false"
+                                   autocomplete="off"
+                                   hint-text=""
+                                   css-class="nhsuk-u-width-one-half"
+                                   required="true" />
+
+                    <vc:select-list asp-for="@nameof(Model.CentreTypeId)"
+                                    label="Centre type"
+                                    value="@Model.CentreType.ToString()"
+                                    hint-text=""
+                                    required="true"
+                                    css-class="nhsuk-u-width-one-half"
+                                    default-option=""
+                                    select-list-options="@ViewBag.CentreTypes" />
+
+                    <vc:select-list asp-for="@nameof(Model.RegionId)"
+                                    label="Region"
+                                    value="@Model.RegionName.ToString()"
+                                    hint-text=""
+                                    required="true"
+                                    css-class="nhsuk-u-width-one-half"
+                                    default-option=""
+                                    select-list-options="@ViewBag.Regions" />
+
+                    <vc:text-input asp-for="CentreEmail"
+                                   label="Registration email"
+                                   populate-with-current-value="true"
+                                   type="text"
+                                   spell-check="false"
+                                   autocomplete="off"
+                                   hint-text=""
+                                   css-class="nhsuk-u-width-one-half"
+                                   required="false" />
+
+                    <vc:text-input asp-for="IpPrefix"
+                                   label="IP prefix"
+                                   populate-with-current-value="true"
+                                   type="text"
+                                   spell-check="false"
+                                   autocomplete="off"
+                                   hint-text=""
+                                   css-class="nhsuk-u-width-one-half"
+                                   required="false" />
+
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input" id="ShowOnMap" name="ShowOnMap" asp-for="@Model.ShowOnMap" type="checkbox">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="ShowOnMap">
+                            Show on Find your centre
+                        </label>
+                    </div>
+                </div>
+            
+            <button class="nhsuk-button nhsuk-u-margin-top-6" type="submit" value="save">Save</button>
+        </form>
+
+        <vc:cancel-link asp-controller="Centres" asp-action="ManageCentre" asp-all-route-data="@cancelLinkData" />
+
+    </div>
+</div>
