@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningSolutions
+@using DigitalLearningSolutions.Web.Models;
 @model TermsViewModel
 @{
   ViewData["Title"] = "Digital Learning Solutions - Terms of Use";
@@ -8,8 +9,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1>Terms of Use</h1>
-    @Model.TermsText
-        <p>Page last reviewed : @Model.UpdateLastDate.ToString("dd MMMM yyyy")     </p>
-        <p>Next review due : @Model.UpdateLastDate.AddYears(3).ToString("dd MMMM yyyy")  </p>
+        @Html.Raw(Model.TermsText)
+        @await Html.PartialAsync("~/Views/Shared/_PageReviewPartial.cshtml", new PageReviewModel { LastReviewedDate = Model.LastReviewedDate, NextReviewDate = Model.NextReviewDate })
     </div>
 </div>

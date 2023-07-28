@@ -53,14 +53,16 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
         public IActionResult Terms()
         {
             var termsText = configDataService.GetConfigValue(ConfigDataService.TermsText);
-            var lastUpdateDate = configDataService.GetConfigLastUpdated(ConfigDataService.TermsText);
-
             if (termsText == null)
             {
                 logger.LogError("Terms text from Config table is null");
                 return StatusCode(500);
             }
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
 
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.TermsText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
             var model = new TermsViewModel(termsText, lastUpdateDate);
             return View(model);
         }
