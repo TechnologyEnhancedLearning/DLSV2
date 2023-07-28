@@ -563,17 +563,19 @@
 
         public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
         {
+            string trimmedFirstName = firstName.Trim();
+            string trimmedLastName = lastName.Trim();
             connection.Execute(
                 @"UPDATE Users
                   SET
-                  FirstName = @firstName,
-                  LastName = @lastName,
+                  FirstName = @trimmedFirstName,
+                  LastName = @trimmedLastName,
                   PrimaryEmail = @primaryEmail,
                   JobGroupId = @jobGroupId,
                   ProfessionalRegistrationNumber = @prnNumber,
                   EmailVerified = @emailVerified
                 WHERE ID = @userId",
-                new { firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId }
+                new { trimmedFirstName, trimmedLastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId }
             );
         }
         public (IEnumerable<DelegateEntity>, int) GetAllDelegates(
