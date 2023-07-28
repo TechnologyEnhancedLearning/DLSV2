@@ -165,6 +165,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
 
 
             model.JavascriptSearchSortFilterPaginateEnabled = false;
+            if (DelegateId > 0)
+                TempData["DelegateId"] = DelegateId;
             ViewBag.DelegateId = TempData["DelegateId"];
             ModelState.ClearAllErrors();
             return View(model);
