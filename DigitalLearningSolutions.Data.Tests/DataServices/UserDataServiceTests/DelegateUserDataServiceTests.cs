@@ -187,8 +187,8 @@
             try
             {
                 // Given
-                const string firstName = "TestFirstName";
-                const string lastName = "TestLastName";
+                const string firstName = "   TestFirstName  ";
+                const string lastName = "   TestLastName   ";
                 const string email = "update.test@email.com";
                 const string professionalRegNumber = "test-1234";
                 const int jobGroupId = 1;
@@ -207,17 +207,17 @@
                     61188,
                     true
                 );
-                var updatedUser = userDataService.GetDelegateUserById(2)!;
+                var updatedUser = userDataService.GetDelegateById(2)!;
 
                 // Then
                 using (new AssertionScope())
                 {
-                    updatedUser.FirstName.Should().BeEquivalentTo(firstName);
-                    updatedUser.LastName.Should().BeEquivalentTo(lastName);
-                    updatedUser.EmailAddress.Should().BeEquivalentTo(email);
-                    updatedUser.ProfessionalRegistrationNumber.Should().BeEquivalentTo(professionalRegNumber);
-                    updatedUser.HasBeenPromptedForPrn.Should().BeTrue();
-                    updatedUser.JobGroupId.Should().Be(jobGroupId);
+                    updatedUser.UserAccount.FirstName.Should().Be("TestFirstName");
+                    updatedUser.UserAccount.LastName.Should().Be("TestLastName");
+                    updatedUser.UserAccount.PrimaryEmail.Should().BeEquivalentTo(email);
+                    updatedUser.UserAccount.ProfessionalRegistrationNumber.Should().BeEquivalentTo(professionalRegNumber);
+                    updatedUser.UserAccount.HasBeenPromptedForPrn.Should().BeTrue();
+                    updatedUser.UserAccount.JobGroupId.Should().Be(jobGroupId);
                 }
             }
             finally
@@ -367,22 +367,22 @@
             try
             {
                 // Given
-                const string firstName = "TestFirstName";
-                const string lastName = "TestLastName";
+                const string firstName = "   TestFirstName  ";
+                const string lastName = "   TestLastName  ";
                 const string email = "update.test@email.com";
                 const int jobGroupId = 1;
 
                 // When
                 userDataService.UpdateUserDetails(firstName, lastName, email, jobGroupId, 61188);
-                var updatedUser = userDataService.GetDelegateUserById(2)!;
+                var updatedUser = userDataService.GetDelegateById(2)!;
 
                 // Then
                 using (new AssertionScope())
                 {
-                    updatedUser.FirstName.Should().BeEquivalentTo(firstName);
-                    updatedUser.LastName.Should().BeEquivalentTo(lastName);
-                    updatedUser.EmailAddress.Should().BeEquivalentTo(email);
-                    updatedUser.JobGroupId.Should().Be(jobGroupId);
+                    updatedUser.UserAccount.FirstName.Should().Be("TestFirstName");
+                    updatedUser.UserAccount.LastName.Should().Be("TestLastName");
+                    updatedUser.UserAccount.PrimaryEmail.Should().BeEquivalentTo(email);
+                    updatedUser.UserAccount.JobGroupId.Should().Be(jobGroupId);
                 }
             }
             finally

@@ -971,5 +971,40 @@
                 user.UserCentreDetails.EmailVerified.Should().BeNull();
             }
         }
+
+        [Test]
+        public void RegisterUserAccount_inserts_user_account_into_database()
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const string firstName = "   TestFirstName  ";
+            const string lastName = "   TestLastName   ";
+            var delegateRegistrationModel =
+                RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                   firstName: firstName,
+                   lastName: lastName,
+                   primaryEmail: "r@g.com"
+                );
+
+            var currentTime = DateTime.Now;
+            bool registerJourneyContainsTermsAndConditions = true;
+
+            // When
+            var insertedUserId = service.RegisterUserAccount(
+                delegateRegistrationModel,
+                currentTime,
+                registerJourneyContainsTermsAndConditions,
+                null
+            );
+
+            // Then
+            var userdetails = userDataService.GetUserAccountById(insertedUserId)!;
+            using (new AssertionScope())
+            {
+                userdetails.FirstName.Should().Be("TestFirstName");
+                userdetails.LastName.Should().Be("TestLastName");
+            }
+        }
     }
 }

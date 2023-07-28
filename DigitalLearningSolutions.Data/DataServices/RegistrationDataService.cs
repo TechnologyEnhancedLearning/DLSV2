@@ -249,7 +249,7 @@
             return adminUserId;
         }
 
-        private int RegisterUserAccount(
+        public int RegisterUserAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             DateTime currentTime,
             bool registerJourneyContainsTermsAndConditions,

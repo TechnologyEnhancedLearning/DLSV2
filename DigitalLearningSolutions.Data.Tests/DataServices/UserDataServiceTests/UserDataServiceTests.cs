@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
@@ -314,6 +315,38 @@
             active.Should().BeTrue();
 
             userDataService.DeleteUser(userId);
+        }
+
+        [Test]
+        public void UpdateUserDetailsAccount_update_username_trimmed()
+        {
+            using var transaction = new TransactionScope();
+            //Given
+            const string firstName = "   TestFirstName  ";
+            const string lastName = "   TestLastName   ";
+            const string email = "update.test@email.com";
+            const int jobGroupId = 1;
+            const string prnNumber = "PRN123";
+            var emailVerified = DateTime.Now;
+            const int userId = 61188;
+
+            // When
+            this.userDataService.UpdateUserDetailsAccount(
+            firstName,
+            lastName,
+            email,
+            jobGroupId,
+            prnNumber,
+            emailVerified,
+            userId
+        );
+            var updatedUser = userDataService.GetUserAccountById(userId)!;
+            // Then
+            using (new AssertionScope())
+            {
+                updatedUser.FirstName.Should().Be("TestFirstName");
+                updatedUser.LastName.Should().Be("TestLastName");
+            }
         }
     }
 }
