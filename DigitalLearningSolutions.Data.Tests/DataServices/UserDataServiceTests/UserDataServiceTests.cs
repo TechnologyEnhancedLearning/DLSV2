@@ -318,17 +318,12 @@
         }
 
         [Test]
-        public void UpdateUserDetailsAccount_update_username_trimmed()
+        [TestCase("   TestFirstName  ", "   TestLastName   ", "update.test@email.com",1, "PRN123",61188)]
+        public void UpdateUserDetailsAccount_update_username_trimmed(string firstName, string lastName, string email, int jobGroupId, string prnNumber, int userId)
         {
             using var transaction = new TransactionScope();
             //Given
-            const string firstName = "   TestFirstName  ";
-            const string lastName = "   TestLastName   ";
-            const string email = "update.test@email.com";
-            const int jobGroupId = 1;
-            const string prnNumber = "PRN123";
             var emailVerified = DateTime.Now;
-            const int userId = 61188;
 
             // When
             this.userDataService.UpdateUserDetailsAccount(
@@ -339,7 +334,7 @@
             prnNumber,
             emailVerified,
             userId
-        );
+            );
             var updatedUser = userDataService.GetUserAccountById(userId)!;
             // Then
             using (new AssertionScope())

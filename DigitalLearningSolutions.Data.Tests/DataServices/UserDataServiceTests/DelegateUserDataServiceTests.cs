@@ -181,18 +181,12 @@
         }
 
         [Test]
-        public void UpdateUser_updates_user()
+        [TestCase("   TestFirstName  ", "   TestLastName   ", "update.test@email.com", "test-1234",1)]
+        public void UpdateUser_updates_user(string firstName, string lastName, string email, string professionalRegNumber, int jobGroupId)
         {
             using var transaction = new TransactionScope();
             try
             {
-                // Given
-                const string firstName = "   TestFirstName  ";
-                const string lastName = "   TestLastName   ";
-                const string email = "update.test@email.com";
-                const string professionalRegNumber = "test-1234";
-                const int jobGroupId = 1;
-
                 // When
                 userDataService.UpdateUser(
                     firstName,
@@ -361,17 +355,12 @@
         }
 
         [Test]
-        public void UpdateUserDetails_updates_user()
+        [TestCase("   TestFirstName  ", "   TestLastName  ", "update.test@email.com",1)]
+        public void UpdateUserDetails_updates_user(string firstName, string lastName, string email, int jobGroupId)
         {
             using var transaction = new TransactionScope();
             try
             {
-                // Given
-                const string firstName = "   TestFirstName  ";
-                const string lastName = "   TestLastName  ";
-                const string email = "update.test@email.com";
-                const int jobGroupId = 1;
-
                 // When
                 userDataService.UpdateUserDetails(firstName, lastName, email, jobGroupId, 61188);
                 var updatedUser = userDataService.GetDelegateById(2)!;

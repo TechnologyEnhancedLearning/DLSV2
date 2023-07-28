@@ -8,7 +8,9 @@
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
@@ -973,18 +975,18 @@
         }
 
         [Test]
-        public void RegisterUserAccount_inserts_user_account_into_database()
+        [TestCase("   TestFirstName  ", "   TestLastName   ", "r@g.com")]
+        public void RegisterUserAccount_inserts_user_account_into_database(string firstName, string lastName, string primaryEmail)
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
+            connection.EnsureOpen();
+            using var transaction = connection.BeginTransaction();
             // Given
-            const string firstName = "   TestFirstName  ";
-            const string lastName = "   TestLastName   ";
             var delegateRegistrationModel =
                 RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                    firstName: firstName,
                    lastName: lastName,
-                   primaryEmail: "r@g.com"
+                   primaryEmail: primaryEmail
                 );
 
             var currentTime = DateTime.Now;
@@ -995,7 +997,7 @@
                 delegateRegistrationModel,
                 currentTime,
                 registerJourneyContainsTermsAndConditions,
-                null
+                transaction
             );
 
             // Then
