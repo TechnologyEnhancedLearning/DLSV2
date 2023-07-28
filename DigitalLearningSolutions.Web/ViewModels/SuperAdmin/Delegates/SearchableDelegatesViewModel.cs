@@ -12,7 +12,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates
         public readonly bool CanShowInactivateDelegateButton;
         public SearchableDelegatesViewModel(
            DelegateEntity delegates,
-           DelegateAccount delegateAccount,
            ReturnPageQuery returnPageQuery
        )
         {
