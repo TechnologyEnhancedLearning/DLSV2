@@ -7,7 +7,7 @@
     {
         public SupervisorDelegateDetailViewModel() { }
 
-        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, ReturnPageQuery returnPageQuery, bool isUserSupervisor = false, int? loggedInUserId = 0)
+        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail? supervisorDelegateDetail, ReturnPageQuery? returnPageQuery, bool isUserSupervisor = false, int? loggedInUserId = 0)
         {
             SupervisorDelegateDetail = supervisorDelegateDetail;
             ReturnPageQuery = returnPageQuery;
@@ -15,8 +15,8 @@
             LoggedInUserId = loggedInUserId;
         }
 
-        public SupervisorDelegateDetail SupervisorDelegateDetail { get; set; }
-        public ReturnPageQuery ReturnPageQuery { get; set; }
+        public SupervisorDelegateDetail? SupervisorDelegateDetail { get; set; }
+        public ReturnPageQuery? ReturnPageQuery { get; set; }
         public bool IsUserSupervisor { get; set; }
         public int? LoggedInUserId { get; set; }
 
@@ -31,7 +31,7 @@
 
         public override string SearchableName
         {
-            get => SearchableNameOverrideForFuzzySharp ?? $"{SupervisorDelegateDetail.FirstName} {SupervisorDelegateDetail.LastName} {SupervisorDelegateDetail.DelegateEmail}";
+            get => SearchableNameOverrideForFuzzySharp ?? $"{SupervisorDelegateDetail?.FirstName} {SupervisorDelegateDetail?.LastName} {SupervisorDelegateDetail?.DelegateEmail}";
             set => SearchableNameOverrideForFuzzySharp = value;
         }
     }
