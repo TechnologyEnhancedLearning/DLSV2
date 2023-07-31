@@ -64,6 +64,15 @@
             bool showOnMap
         );
 
+        void UpdateCentreRoleLimits(
+            int centreId,
+            int roleLimitCMSAdministrators,
+            int roleLimitCMSManagers,
+            int roleLimitCCLicenses,
+            int roleLimitCustomCourses,
+            int roleLimitTrainers
+        );
+
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
