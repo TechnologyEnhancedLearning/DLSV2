@@ -5,6 +5,20 @@
 @{
     ViewData["Title"] = "Centre Role Limits";
 }
+@{
+    var isLimitSetCmsAdministrators = Model.IsLimitSetCMSAdministrators.HasValue;
+    var limitSetCmsAdministrators = Model.LimitSetCMSAdministrators.HasValue;
+    var isLimitSetCmsManagers = Model.IsLimitSetCMSManagers.HasValue;
+    var limitSetCmsManagers = Model.LimitSetCMSManagers.HasValue;
+    var isLimitSetContentCreatorLicenses = Model.IsLimitSetContentCreatorLicenses.HasValue;
+    var limitSetContentCreatorLicenses = Model.LimitSetContentCreatorLicenses.HasValue;
+    var isLimitSetCustomCourses = Model.IsLimitSetCustomCourses.HasValue;
+    var limitSetCustomCourses = Model.LimitSetCustomCourses.HasValue;
+    var isLimitSetTrainers = Model.IsLimitSetTrainers.HasValue;
+    var limitSetTrainers = Model.LimitSetTrainers.HasValue;
+    var courseConditionalId = "conditional-course-filter";
+    var categoryConditionalId = "conditional-category-filter";
+}
 @section NavBreadcrumbs {
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
@@ -19,41 +33,107 @@
     <h1 class="nhsuk-heading-xl nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-2">Customise role limits for @ViewBag.CentreName</h1>
 </div>
 
+<p class="nhsuk-body-l">
+    Please select all the roles that should have limits in this centre.
+</p>
+
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-row">
 
-            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCMSAdministrators)"
-                                label="CMS administrators"
-                                hint-text="" />
 
-            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCMSManagers)"
-                                label="CMS managers"
-                                hint-text="" />
+            <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
+                @*            <input type="hidden" asp-for="ResourceName" />
+                <input type="hidden" asp-for="AbsentInLearningHub" />
+                <input type="hidden" asp-for="ApiIsAccessible" />
+                <input type="hidden" asp-for="ReturnPageQuery" />
+                *@
 
-            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetContentCreatorLicenses)"
-                                label="Content creator licenses"
-                                hint-text="" />
+                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCMSAdministrators)"
+                                    label="CMS administrators"
+                                    populate-with-current-value="true"
+                                    hint-text="" />
+                <div class="nhsuk-radios__conditional @(isLimitSetCmsAdministrators ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
+                    <vc:text-input asp-for="@nameof(Model.LimitSetCMSAdministrators)"
+                                   label="Set limit"
+                                   populate-with-current-value="true"
+                                   type="text"
+                                   spell-check="false"
+                                   hint-text=""
+                                   autocomplete="given-name"
+                                   css-class="nhsuk-u-width-one-half"
+                                   required="true" />
+                </div>
 
-            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCustomCourses)"
-                                label="Custom courses"
-                                hint-text="" />
+                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCMSManagers)"
+                                    label="CMS managers"
+                                    populate-with-current-value="true"
+                                    hint-text="" />
+                <div class="nhsuk-radios__conditional @(isLimitSetCmsManagers ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
+                    <vc:text-input asp-for="@nameof(Model.LimitSetCMSManagers)"
+                                   label="Set limit"
+                                   populate-with-current-value="true"
+                                   type="text"
+                                   spell-check="false"
+                                   hint-text=""
+                                   autocomplete="given-name"
+                                   css-class="nhsuk-u-width-one-half"
+                                   required="true" />
+                </div>
 
-            <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetTrainers)"
-                                label="Trainers"
-                                hint-text="" />
+                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetContentCreatorLicenses)"
+                                    label="Content creator licenses"
+                                    populate-with-current-value="true"
+                                    hint-text="" />
+                <div class="nhsuk-radios__conditional @(isLimitSetContentCreatorLicenses ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
+                    <vc:text-input asp-for="@nameof(Model.LimitSetContentCreatorLicenses)"
+                                   label="Set limit"
+                                   populate-with-current-value="true"
+                                   type="text"
+                                   spell-check="false"
+                                   hint-text=""
+                                   autocomplete="given-name"
+                                   css-class="nhsuk-u-width-one-half"
+                                   required="true" />
+                </div>
 
-@*        <h2 class="nhsuk-u-margin-bottom-2  nhsuk-u-font-weight-normal">Contract info</h2>
-        <dl class="nhsuk-summary-list details-list-with-button word-break">
-          <div class="nhsuk-summary-list__row details-list-with-button__row">
-            <dt class="nhsuk-summary-list__key">
-              <b>Contract type</b>
-            </dt>
-          </div>
-        </dl>
-        <button class="nhsuk-button view-delegate-button" type="submit">
-          Edit Contract info
-        </button>
-*@      </div>
+                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCustomCourses)"
+                                    label="Custom courses"
+                                    populate-with-current-value="true"
+                                    hint-text="" />
+                <div class="nhsuk-radios__conditional @(isLimitSetCustomCourses ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
+                    <vc:text-input asp-for="@nameof(Model.LimitSetCustomCourses)"
+                                   label="Set limit"
+                                   populate-with-current-value="true"
+                                   type="text"
+                                   spell-check="false"
+                                   hint-text=""
+                                   autocomplete="given-name"
+                                   css-class="nhsuk-u-width-one-half"
+                                   required="true" />
+                </div>
+
+                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetTrainers)"
+                                    label="Trainers"
+                                    value=""
+                                    populate-with-current-value="true"
+                                    hint-text="" />
+                <div class="nhsuk-radios__conditional @(isLimitSetTrainers ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
+                    <vc:text-input asp-for="@nameof(Model.LimitSetTrainers)"
+                                   label="Set limit"
+                                   populate-with-current-value="true"
+                                   type="text"
+                                   spell-check="false"
+                                   hint-text=""
+                                   autocomplete="given-name"
+                                   css-class="nhsuk-u-width-one-half"
+                                   required="true" />
+                </div>
+
+                <button class="nhsuk-button" type="submit">Save</button>
+                @*<vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@routeParamsForIndexLink" />*@
+                <vc:cancel-link asp-controller="Centres" asp-action="Index" />
+            </form>
+        </div>
     </div>
 </div>

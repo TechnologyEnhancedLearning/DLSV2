@@ -233,6 +233,10 @@
 
             ViewBag.CentreName = centresDataService.GetCentreName(centreId);
 
+            // var setLimits = this.courseDataService.GetSetLimitsForCentre(centreId);
+
+
+
             CentreRoleLimitsViewModel centreRoleLimitsViewModel = new CentreRoleLimitsViewModel();
 
             centreRoleLimitsViewModel.CentreId = centreId;
@@ -249,6 +253,8 @@
 
             return View("CentreRoleLimits", centreRoleLimitsViewModel);
         }
+
+        //TODO: Post save method here
 
 
     }

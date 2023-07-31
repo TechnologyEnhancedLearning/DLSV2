@@ -22,6 +22,8 @@
 
         CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
 
+        CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId);
+
         void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
@@ -50,6 +52,15 @@
             string bannerText,
             byte[]? centreSignature,
             byte[]? centreLogo
+        );
+
+        void UpdateCentreRoleLimits(
+            int centreId,
+            int roleLimitCMSAdministrators,
+            int roleLimitCMSManagers,
+            int roleLimitCCLicenses,
+            int roleLimitCustomCourses,
+            int roleLimitTrainers
         );
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
@@ -254,7 +265,7 @@
                 (centre, centreTypes, regions) => new CentreEntity(
                     centre, centreTypes, regions
                 ),
-                new { search, offset, rows,region,centreType,contractType,centreStatus },
+                new { search, offset, rows, region, centreType, contractType, centreStatus },
                 splitOn: "CentreTypeId,RegionID",
                 commandTimeout: 3000
             );
@@ -264,7 +275,7 @@
                                 INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                                 INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
                                 WHERE c.CentreName LIKE N'%' + @search + N'%' AND ((c.RegionID = @region) OR (@region = 0))  AND ((c.CentreTypeId = @centreType) OR (@centreType = 0)) AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
-                    new { search,region,centreType,contractType,centreStatus },
+                    new { search, region, centreType, contractType, centreStatus },
                     commandTimeout: 3000
             );
             return (centreEntity, ResultCount);
@@ -536,6 +547,51 @@
                   Active = 1
                   WHERE CentreId = @centreId",
                 new { centreId }
+            );
+        }
+
+        public CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId)
+        {
+            return connection.QueryFirstOrDefault<CentreSummaryForRoleLimits>(
+                @"SELECT CentreId,
+                        RoleLimitCMSAdministrators,
+                        RoleLimitCMSManagers,
+                        RoleLimitCCLicenses,
+                        RoleLimitCustomCourses,
+                        RoleLimitTrainers
+                        FROM Centres
+                        WHERE (CentreId = @centreId) AND (Active = 1)
+                        ORDER BY CentreName",
+                new { centreId }
+            );
+        }
+
+        public void UpdateCentreRoleLimits(
+            int centreId,
+            int roleLimitCmsAdministrators,
+            int roleLimitCmsManagers,
+            int roleLimitCcLicenses,
+            int roleLimitCustomCourses,
+            int roleLimitTrainers
+        )
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                        RoleLimitCMSAdministrators = @roleLimitCMSAdministrators,
+                        RoleLimitCMSManagers = @roleLimitCMSManagers,
+                        RoleLimitCCLicenses = @roleLimitCCLicenses,
+                        RoleLimitCustomCourses = @roleLimitCustomCourses,
+                        RoleLimitTrainers = @roleLimitTrainers
+                WHERE CentreId = @centreId",
+                new
+                {
+                    centreId,
+                    roleLimitCMSAdministrators = roleLimitCmsAdministrators,
+                    roleLimitCMSManagers = roleLimitCmsManagers,
+                    roleLimitCCLicenses = roleLimitCcLicenses,
+                    roleLimitCustomCourses,
+                    roleLimitTrainers
+                }
             );
         }
     }
