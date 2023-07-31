@@ -47,7 +47,7 @@
 
         public IEnumerable<SupervisorDelegateDetailViewModel> SuperviseDelegateDetailViewModels { get; set; }
 
-        public SupervisorDelegateDetailViewModel SelfSuperviseDelegateDetailViewModels { get; set; }
+        public SupervisorDelegateDetailViewModel? SelfSuperviseDelegateDetailViewModels { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {

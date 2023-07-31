@@ -8,7 +8,9 @@
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
@@ -969,6 +971,41 @@
             {
                 user.UserCentreDetails!.Email.Should().Be(centreSpecificEmail);
                 user.UserCentreDetails.EmailVerified.Should().BeNull();
+            }
+        }
+
+        [Test]
+        [TestCase("   TestFirstName  ", "   TestLastName   ", "r@g.com")]
+        public void RegisterUserAccount_inserts_user_account_into_database(string firstName, string lastName, string primaryEmail)
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            connection.EnsureOpen();
+            using var transaction = connection.BeginTransaction();
+            // Given
+            var delegateRegistrationModel =
+                RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                   firstName: firstName,
+                   lastName: lastName,
+                   primaryEmail: primaryEmail
+                );
+
+            var currentTime = DateTime.Now;
+            bool registerJourneyContainsTermsAndConditions = true;
+
+            // When
+            var insertedUserId = service.RegisterUserAccount(
+                delegateRegistrationModel,
+                currentTime,
+                registerJourneyContainsTermsAndConditions,
+                transaction
+            );
+
+            // Then
+            var userdetails = userDataService.GetUserAccountById(insertedUserId)!;
+            using (new AssertionScope())
+            {
+                userdetails.FirstName.Should().Be("TestFirstName");
+                userdetails.LastName.Should().Be("TestLastName");
             }
         }
     }

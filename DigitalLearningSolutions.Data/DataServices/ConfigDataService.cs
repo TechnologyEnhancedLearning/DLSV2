@@ -32,6 +32,7 @@
         public const string MaxSignpostedResources = "MaxSignpostedResources";
         public const string SupportEmail = "SupportEmail";
         public const string AcceptableUsePolicyText = "AcceptableUse";
+        public const string PrivacyPolicyText = "PrivacyPolicy";
 
         private readonly IDbConnection connection;
 

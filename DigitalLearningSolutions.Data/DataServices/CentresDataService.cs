@@ -54,13 +54,14 @@
             byte[]? centreLogo
         );
 
-        void UpdateCentreRoleLimits(
+        public void UpdateCentreDetailsForSuperAdmin(
             int centreId,
-            int roleLimitCMSAdministrators,
-            int roleLimitCMSManagers,
-            int roleLimitCCLicenses,
-            int roleLimitCustomCourses,
-            int roleLimitTrainers
+            string centreName,
+            int centreTypeId,
+            int regionId,
+            string? centreEmail,
+            string? ipPrefix,
+            bool showOnMap
         );
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
@@ -209,10 +210,14 @@
                             ct.ContractType,
                             c.CustomCourses,
                             c.ServerSpaceUsed,
-                            c.ServerSpaceBytes
+                            c.ServerSpaceBytes,
+                            c.CentreTypeID,
+                            ctp.CentreType,
+                            c.ShowOnMap
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
+                        INNER JOIN CentreTypes AS ctp ON ctp.CentreTypeID = c.CentreTypeID
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
@@ -398,6 +403,38 @@
                     bannerText,
                     centreSignature,
                     centreLogo,
+                    centreId
+                }
+            );
+        }
+
+        public void UpdateCentreDetailsForSuperAdmin(
+            int centreId,
+            string centreName,
+            int centreTypeId,
+            int regionId,
+            string? centreEmail,
+            string? ipPrefix,
+            bool showOnMap
+        )
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                    CentreName = @centreName,
+                    CentreTypeId = @centreTypeId,
+                    RegionId = @regionId,
+                    pwEmail = @centreEmail,
+                    IPPrefix = @ipPrefix,
+                    ShowOnMap = @showOnMap
+                WHERE CentreId = @centreId",
+                new
+                {
+                    centreName,
+                    centreTypeId,
+                    regionId,
+                    centreEmail,
+                    ipPrefix,
+                    showOnMap,
                     centreId
                 }
             );
