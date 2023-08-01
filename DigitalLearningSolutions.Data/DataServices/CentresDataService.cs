@@ -24,6 +24,15 @@
 
         CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId);
 
+        void UpdateCentreRoleLimits(
+            int centreId,
+            int roleLimitCmsAdministrators,
+            int roleLimitCmsManagers,
+            int roleLimitCcLicenses,
+            int roleLimitCustomCourses,
+            int roleLimitTrainers
+        );
+
         void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
@@ -62,15 +71,6 @@
             string? centreEmail,
             string? ipPrefix,
             bool showOnMap
-        );
-
-        void UpdateCentreRoleLimits(
-            int centreId,
-            int roleLimitCMSAdministrators,
-            int roleLimitCMSManagers,
-            int roleLimitCCLicenses,
-            int roleLimitCustomCourses,
-            int roleLimitTrainers
         );
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
@@ -325,8 +325,6 @@
                 new { centreId }
             );
         }
-
-
 
         public void UpdateCentreManagerDetails(
             int centreId,
@@ -595,7 +593,7 @@
                 new { centreId }
             );
         }
-
+        
         public CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId)
         {
             return connection.QueryFirstOrDefault<CentreSummaryForRoleLimits>(
@@ -632,11 +630,11 @@
                 new
                 {
                     centreId,
-                    roleLimitCMSAdministrators = roleLimitCmsAdministrators,
-                    roleLimitCMSManagers = roleLimitCmsManagers,
-                    roleLimitCCLicenses = roleLimitCcLicenses,
+                    roleLimitCmsAdministrators,
+                    roleLimitCmsManagers,
+                    roleLimitCcLicenses,
                     roleLimitCustomCourses,
-                    roleLimitTrainers
+                    roleLimitTrainers,
                 }
             );
         }

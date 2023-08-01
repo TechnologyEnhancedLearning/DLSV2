@@ -4,14 +4,14 @@
     {
         public int CentreId { get; set; }
 
-        public int RoleLimitCMSAdministrators { get; set; }
+        public int? RoleLimitCmsAdministrators { get; set; }
 
-        public int RoleLimitCMSManagers { get; set; }
+        public int? RoleLimitCmsManagers { get; set; }
 
-        public int RoleLimitCCLicenses { get; set; }
+        public int? RoleLimitCcLicenses { get; set; }
 
-        public int RoleLimitCustomCourses { get; set; }
+        public int? RoleLimitCustomCourses { get; set; }
 
-        public int RoleLimitTrainers { get; set; }
+        public int? RoleLimitTrainers { get; set; }
     }
 }

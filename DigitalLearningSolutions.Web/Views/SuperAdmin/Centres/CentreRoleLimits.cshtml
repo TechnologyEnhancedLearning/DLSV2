@@ -6,16 +6,16 @@
     ViewData["Title"] = "Centre Role Limits";
 }
 @{
-    var isLimitSetCmsAdministrators = Model.IsLimitSetCMSAdministrators.HasValue;
-    var limitSetCmsAdministrators = Model.LimitSetCMSAdministrators.HasValue;
-    var isLimitSetCmsManagers = Model.IsLimitSetCMSManagers.HasValue;
-    var limitSetCmsManagers = Model.LimitSetCMSManagers.HasValue;
-    var isLimitSetContentCreatorLicenses = Model.IsLimitSetContentCreatorLicenses.HasValue;
-    var limitSetContentCreatorLicenses = Model.LimitSetContentCreatorLicenses.HasValue;
-    var isLimitSetCustomCourses = Model.IsLimitSetCustomCourses.HasValue;
-    var limitSetCustomCourses = Model.LimitSetCustomCourses.HasValue;
-    var isLimitSetTrainers = Model.IsLimitSetTrainers.HasValue;
-    var limitSetTrainers = Model.LimitSetTrainers.HasValue;
+    var isLimitSetCmsAdministrators = Model.IsRoleLimitSetCmsAdministrators.HasValue;
+    var limitSetCmsAdministrators = Model.RoleLimitCmsAdministrators;
+    var isLimitSetCmsManagers = Model.IsRoleLimitSetCmsManagers.HasValue;
+    var limitSetCmsManagers = Model.RoleLimitCmsManagers;
+    var isLimitSetContentCreatorLicenses = Model.IsRoleLimitSetContentCreatorLicenses.HasValue;
+    var limitSetContentCreatorLicenses = Model.RoleLimitContentCreatorLicenses;
+    var isLimitSetCustomCourses = Model.IsRoleLimitSetCustomCourses.HasValue;
+    var limitSetCustomCourses = Model.RoleLimitCustomCourses;
+    var isLimitSetTrainers = Model.IsRoleLimitSetTrainers.HasValue;
+    var limitSetTrainers = Model.RoleLimitTrainers;
     var courseConditionalId = "conditional-course-filter";
     var categoryConditionalId = "conditional-category-filter";
 }
@@ -40,21 +40,13 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         <div class="nhsuk-grid-row">
-
-
             <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
-                @*            <input type="hidden" asp-for="ResourceName" />
-                <input type="hidden" asp-for="AbsentInLearningHub" />
-                <input type="hidden" asp-for="ApiIsAccessible" />
-                <input type="hidden" asp-for="ReturnPageQuery" />
-                *@
-
-                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCMSAdministrators)"
+              <vc:single-checkbox asp-for="@nameof(Model.IsRoleLimitSetCmsAdministrators)"
                                     label="CMS administrators"
                                     populate-with-current-value="true"
                                     hint-text="" />
                 <div class="nhsuk-radios__conditional @(isLimitSetCmsAdministrators ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
-                    <vc:text-input asp-for="@nameof(Model.LimitSetCMSAdministrators)"
+                    <vc:text-input asp-for="@nameof(Model.RoleLimitCmsAdministrators)"
                                    label="Set limit"
                                    populate-with-current-value="true"
                                    type="text"
@@ -65,12 +57,12 @@
                                    required="true" />
                 </div>
 
-                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCMSManagers)"
+                <vc:single-checkbox asp-for="@nameof(Model.IsRoleLimitSetCmsManagers)"
                                     label="CMS managers"
                                     populate-with-current-value="true"
                                     hint-text="" />
                 <div class="nhsuk-radios__conditional @(isLimitSetCmsManagers ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
-                    <vc:text-input asp-for="@nameof(Model.LimitSetCMSManagers)"
+                    <vc:text-input asp-for="@nameof(Model.RoleLimitCmsManagers)"
                                    label="Set limit"
                                    populate-with-current-value="true"
                                    type="text"
@@ -81,12 +73,12 @@
                                    required="true" />
                 </div>
 
-                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetContentCreatorLicenses)"
+                <vc:single-checkbox asp-for="@nameof(Model.IsRoleLimitSetContentCreatorLicenses)"
                                     label="Content creator licenses"
                                     populate-with-current-value="true"
                                     hint-text="" />
                 <div class="nhsuk-radios__conditional @(isLimitSetContentCreatorLicenses ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
-                    <vc:text-input asp-for="@nameof(Model.LimitSetContentCreatorLicenses)"
+                    <vc:text-input asp-for="@nameof(Model.RoleLimitContentCreatorLicenses)"
                                    label="Set limit"
                                    populate-with-current-value="true"
                                    type="text"
@@ -97,12 +89,12 @@
                                    required="true" />
                 </div>
 
-                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetCustomCourses)"
+                <vc:single-checkbox asp-for="@nameof(Model.IsRoleLimitSetCustomCourses)"
                                     label="Custom courses"
                                     populate-with-current-value="true"
                                     hint-text="" />
                 <div class="nhsuk-radios__conditional @(isLimitSetCustomCourses ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
-                    <vc:text-input asp-for="@nameof(Model.LimitSetCustomCourses)"
+                    <vc:text-input asp-for="@nameof(Model.RoleLimitCustomCourses)"
                                    label="Set limit"
                                    populate-with-current-value="true"
                                    type="text"
@@ -113,13 +105,13 @@
                                    required="true" />
                 </div>
 
-                <vc:single-checkbox asp-for="@nameof(Model.IsLimitSetTrainers)"
+                <vc:single-checkbox asp-for="@nameof(Model.IsRoleLimitSetTrainers)"
                                     label="Trainers"
                                     value=""
                                     populate-with-current-value="true"
                                     hint-text="" />
                 <div class="nhsuk-radios__conditional @(isLimitSetTrainers ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
-                    <vc:text-input asp-for="@nameof(Model.LimitSetTrainers)"
+                    <vc:text-input asp-for="@nameof(Model.RoleLimitTrainers)"
                                    label="Set limit"
                                    populate-with-current-value="true"
                                    type="text"
@@ -131,7 +123,6 @@
                 </div>
 
                 <button class="nhsuk-button" type="submit">Save</button>
-                @*<vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@routeParamsForIndexLink" />*@
                 <vc:cancel-link asp-controller="Centres" asp-action="Index" />
             </form>
         </div>

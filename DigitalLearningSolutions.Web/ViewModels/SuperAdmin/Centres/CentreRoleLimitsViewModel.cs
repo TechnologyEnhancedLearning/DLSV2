@@ -4,16 +4,16 @@
 
     public class CentreRoleLimitsViewModel
     {
-        public int? CentreId { get; set; }
-        public bool? IsLimitSetCMSAdministrators { get; set; }
-        public int? LimitSetCMSAdministrators { get; set; }
-        public bool? IsLimitSetCMSManagers { get; set; }
-        public int? LimitSetCMSManagers { get; set; }
-        public bool? IsLimitSetContentCreatorLicenses { get; set; }
-        public int? LimitSetContentCreatorLicenses { get; set; }
-        public bool? IsLimitSetCustomCourses { get; set; }
-        public int? LimitSetCustomCourses { get; set; }
-        public bool? IsLimitSetTrainers { get; set; }
-        public int? LimitSetTrainers { get; set; }
+        public int CentreId { get; set; }
+        public bool? IsRoleLimitSetCmsAdministrators { get; set; }
+        public int RoleLimitCmsAdministrators { get; set; }
+        public bool? IsRoleLimitSetCmsManagers { get; set; }
+        public int RoleLimitCmsManagers { get; set; }
+        public bool? IsRoleLimitSetContentCreatorLicenses { get; set; }
+        public int RoleLimitContentCreatorLicenses { get; set; }
+        public bool? IsRoleLimitSetCustomCourses { get; set; }
+        public int RoleLimitCustomCourses { get; set; }
+        public bool? IsRoleLimitSetTrainers { get; set; }
+        public int RoleLimitTrainers { get; set; }
     }
 }

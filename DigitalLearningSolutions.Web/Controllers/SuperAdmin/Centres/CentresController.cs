@@ -268,46 +268,91 @@
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult CentreRoleLimits(int centreId = 0)
         {
-            //var courses = this.courseDataService.GetApplicationsAvailableToCentre(centreId);
-            //List<CentreCoursesViewModel> centreCoursesViewModel = new List<CentreCoursesViewModel>();
-            //centreCoursesViewModel = courses.GroupBy(x => x.ApplicationId).Select(
-            //    application => new CentreCoursesViewModel
-            //    {
-            //        ApplicationID = application.FirstOrDefault().ApplicationId,
-            //        ApplicationName = application.FirstOrDefault().ApplicationName,
-            //        CentreCourseCustomisations = application.Select(courseCustomisation => new CentreCourseCustomisation
-            //        {
-            //            CustomisationID = courseCustomisation.CustomisationId,
-            //            CustomisationName = courseCustomisation.CustomisationName,
-            //            DelegateCount = courseCustomisation.DelegateCount
-            //        }).ToList()
-            //    }).ToList();
-
             ViewBag.CentreName = centresDataService.GetCentreName(centreId);
 
-            // var setLimits = this.courseDataService.GetSetLimitsForCentre(centreId);
+            var roleLimits = this.centresDataService.GetRoleLimitsForCentre(centreId);
 
+            var centreRoleLimitsViewModel = new CentreRoleLimitsViewModel
+            {
+                CentreId = centreId,
+            };
 
+            if (!(roleLimits.RoleLimitCmsAdministrators != null && roleLimits.RoleLimitCmsAdministrators != -1))
+            {
+                centreRoleLimitsViewModel.RoleLimitCmsAdministrators = -1;
+                centreRoleLimitsViewModel.IsRoleLimitSetCmsAdministrators = false;
+            }
+            else
+            {
+                centreRoleLimitsViewModel.RoleLimitCmsAdministrators = roleLimits.RoleLimitCmsAdministrators.Value;
+                centreRoleLimitsViewModel.IsRoleLimitSetCmsAdministrators = true;
+            }
 
-            CentreRoleLimitsViewModel centreRoleLimitsViewModel = new CentreRoleLimitsViewModel();
+            if (!(roleLimits.RoleLimitCmsManagers != null && roleLimits.RoleLimitCmsManagers != -1))
+            {
+                centreRoleLimitsViewModel.RoleLimitCmsManagers = -1;
+                centreRoleLimitsViewModel.IsRoleLimitSetCmsManagers = false;
+            }
+            else
+            {
+                centreRoleLimitsViewModel.RoleLimitCmsManagers = roleLimits.RoleLimitCmsManagers.Value;
+                centreRoleLimitsViewModel.IsRoleLimitSetCmsManagers = true;
+            }
 
-            centreRoleLimitsViewModel.CentreId = centreId;
-            centreRoleLimitsViewModel.IsLimitSetCMSAdministrators = false;
-            centreRoleLimitsViewModel.LimitSetCMSAdministrators = 0;
-            centreRoleLimitsViewModel.IsLimitSetCMSManagers = false;
-            centreRoleLimitsViewModel.LimitSetCMSManagers = 0;
-            centreRoleLimitsViewModel.IsLimitSetContentCreatorLicenses = false;
-            centreRoleLimitsViewModel.LimitSetContentCreatorLicenses = 0;
-            centreRoleLimitsViewModel.IsLimitSetCustomCourses = false;
-            centreRoleLimitsViewModel.LimitSetCustomCourses = 0;
-            centreRoleLimitsViewModel.IsLimitSetTrainers = false;
-            centreRoleLimitsViewModel.LimitSetTrainers = 0;
+            if (!(roleLimits.RoleLimitCcLicenses != null && roleLimits.RoleLimitCcLicenses != -1))
+            {
+                centreRoleLimitsViewModel.RoleLimitContentCreatorLicenses = -1;
+                centreRoleLimitsViewModel.IsRoleLimitSetContentCreatorLicenses = false;
+            }
+            else
+            {
+                centreRoleLimitsViewModel.RoleLimitContentCreatorLicenses = roleLimits.RoleLimitCcLicenses.Value;
+                centreRoleLimitsViewModel.IsRoleLimitSetContentCreatorLicenses = true;
+            }
+
+            if (!(roleLimits.RoleLimitCustomCourses != null && roleLimits.RoleLimitCustomCourses != -1))
+            {
+                centreRoleLimitsViewModel.RoleLimitCustomCourses = -1;
+                centreRoleLimitsViewModel.IsRoleLimitSetCustomCourses = false;
+            }
+            else
+            {
+                centreRoleLimitsViewModel.RoleLimitCustomCourses = roleLimits.RoleLimitCustomCourses.Value;
+                centreRoleLimitsViewModel.IsRoleLimitSetCustomCourses = true;
+            }
+
+            if (!(roleLimits.RoleLimitTrainers != null && roleLimits.RoleLimitTrainers != -1))
+            {
+                centreRoleLimitsViewModel.RoleLimitTrainers = -1;
+                centreRoleLimitsViewModel.IsRoleLimitSetTrainers = false;
+            }
+            else
+            {
+                centreRoleLimitsViewModel.RoleLimitTrainers = roleLimits.RoleLimitTrainers.Value;
+                centreRoleLimitsViewModel.IsRoleLimitSetTrainers = true;
+            }
 
             return View("CentreRoleLimits", centreRoleLimitsViewModel);
         }
 
-        //TODO: Post save method here
-
-
+        [HttpPost]
+        [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
+        public IActionResult EditCentreRoleLimits(CentreRoleLimitsViewModel model)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(model);
+            //}
+            
+            centresDataService.UpdateCentreRoleLimits(
+                model.CentreId,
+                model.RoleLimitCmsAdministrators,
+                model.RoleLimitCmsManagers,
+                model.RoleLimitContentCreatorLicenses,
+                model.RoleLimitCustomCourses,
+                model.RoleLimitTrainers
+            );
+            return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
+        }
     }
 }
