@@ -112,7 +112,7 @@
             var selfAssessments = commonService.GetSupervisedAssessments();
             
 
-            return new NursingReportsFilterOptions(centreTypes, regions, centres, jobGroups, categories, brands, selfAssessments);
+            return new NursingReportsFilterOptions(centreTypes, regions, centres, jobGroups,  brands, categories, selfAssessments);
         }
         public string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
         {

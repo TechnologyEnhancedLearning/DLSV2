@@ -27,10 +27,10 @@
             JobGroupId = jobGroupId;
             RegionId = regionId;
             CentreId = centreId;
-            SelfAssessmentId = filterType == CourseFilterType.Activity ? selfAssessmentId : null;
+            SelfAssessmentId = selfAssessmentId;
             CentreTypeId = centreTypeId;
             BrandId = brandId;
-            CourseCategoryId = filterType == CourseFilterType.Category ? courseCategoryId : null;
+            CourseCategoryId = courseCategoryId;
             CustomisationId = filterType == CourseFilterType.Activity ? customisationId : null;
             ReportInterval = reportInterval;
             FilterType = filterType;
