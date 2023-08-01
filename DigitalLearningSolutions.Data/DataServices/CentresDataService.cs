@@ -73,6 +73,14 @@
         Centre? GetFullCentreDetailsById(int centreId);
         void DeactivateCentre(int centreId);
         void ReactivateCentre(int centreId);
+        ContractInfo? GetContractInfo(int centreId);
+        bool UpdateContractTypeandCenter(
+       int centreId,
+       int contractTypeID,
+       long delegateUploadSpace,
+      long serverSpaceBytesInc,
+      DateTime? contractReviewDate
+   );
     }
 
     public class CentresDataService : ICentresDataService
@@ -583,6 +591,76 @@
                   WHERE CentreId = @centreId",
                 new { centreId }
             );
+        }
+        public ContractInfo? GetContractInfo(int centreId)
+        {
+            var centre = connection.QueryFirstOrDefault<ContractInfo>(
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            ct.ContractTypeID,
+                            ct.ContractType,
+                            ct.ServerSpaceBytesInc,
+                            ct.DelegateUploadSpace,
+                             c.ContractReviewDate
+					    FROM Centres AS c
+                        INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
+
+            if (centre == null)
+            {
+                logger.LogWarning($"No centre found for centre id {centreId}");
+                return null;
+            }
+            return centre;
+        }
+        public bool UpdateContractTypeandCenter(
+           int centreId,
+           int contractTypeID,
+           long delegateUploadSpace,
+          long serverSpaceBytesInc,
+          DateTime? contractReviewDate
+       )
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @" BEGIN TRY
+                    BEGIN TRANSACTION
+                        UPDATE ContractTypes SET
+                DelegateUploadSpace = @delegateUploadSpace ,
+                ServerSpaceBytesInc = @serverSpaceBytesInc
+                WHERE ContractTypeID = @contractTypeID
+
+                        UPDATE Centres SET
+                    ServerSpaceBytes = @serverSpaceBytesInc,
+                    ContractTypeID = @contractTypeID,
+                    ContractReviewDate =@contractReviewDate
+                    WHERE CentreID = @centreId
+
+                        COMMIT TRANSACTION
+                END TRY
+                BEGIN CATCH
+                    ROLLBACK TRANSACTION
+                END CATCH",
+                new
+                {
+                    contractTypeID,
+                    delegateUploadSpace,
+                    serverSpaceBytesInc,
+                    contractReviewDate,
+                    centreId
+                }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Updating ContraType Information failed. centreId: {centreId} contractTypeID: {contractTypeID} delegateUploadSpace:{delegateUploadSpace}" +
+                    $"serverSpaceBytesInc {serverSpaceBytesInc}" +
+                    $"contractReviewDate: {contractReviewDate}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }

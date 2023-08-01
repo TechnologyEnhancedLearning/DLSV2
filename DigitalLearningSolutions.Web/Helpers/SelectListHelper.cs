@@ -15,7 +15,10 @@
         {
             return options.Select(o => new SelectListItem(o.value, o.id.ToString(), o.id == selectedId)).ToList();
         }
-
+        public static IEnumerable<SelectListItem> MapLongOptionsToSelectListItems(IEnumerable<(long id, string value)> options, long? selectedId = null)
+        {
+            return options.Select(o => new SelectListItem(o.value, o.id.ToString(), o.id == selectedId)).ToList();
+        }
         public static IEnumerable<SelectListItem> MapOptionsToSelectListItems(IEnumerable<string> options, string? selected = null)
         {
             return options.Select(o => new SelectListItem(o, o, o == selected)).ToList();
