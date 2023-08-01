@@ -24,7 +24,6 @@
             AdminUser = adminUser;
             CentreRegistrationPrompts = centreRegistrationPrompts;
             SuperviseDelegateDetailViewModels = result.ItemsToDisplay.Where(x=>x.SupervisorDelegateDetail.DelegateUserID != x.LoggedInUserId);
-            SelfSuperviseDelegateDetailViewModels = result.ItemsToDisplay.Where(x => x.SupervisorDelegateDetail.DelegateUserID == x.LoggedInUserId).FirstOrDefault();
         }
 
         public MyStaffListViewModel() : this(
