@@ -157,5 +157,16 @@
 
             return RedirectToAction("Index", new { delegateId });
         }
+
+        [HttpPost]
+        [Route("DeleteAccount")]
+        public IActionResult DeleteAccount(int delegateId)
+        {
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+
+            userDataService.DeleteUserAndAccounts(userId);
+
+            return RedirectToAction("Index", "AllDelegates");
+        }
     }
 }

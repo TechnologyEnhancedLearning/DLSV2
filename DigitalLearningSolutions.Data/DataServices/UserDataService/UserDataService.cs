@@ -268,6 +268,8 @@
             int centreId
         );
         int RessultCount(int adminId, string search, int? centreId, string userStatus, int failedLoginThreshold, string role);
+
+        public void DeleteUserAndAccounts(int userId);
     }
 
     public partial class UserDataService : IUserDataService
@@ -658,6 +660,46 @@
                 commandTimeout: 3000
             );
             return (delegateEntity, ResultCount);
+        }
+
+        public void DeleteUserAndAccounts(int userId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+            @"
+	           BEGIN TRY
+	                BEGIN TRANSACTION
+
+                        DELETE FROM SupervisorDelegates WHERE DelegateUserID = @userId
+
+				        DELETE FROM UserCentreDetails WHERE UserID = @userId
+
+				        DELETE FROM AdminAccounts WHERE UserID = @userId
+
+				        DELETE FROM DelegateAccounts WHERE UserID = @userId
+
+				        DELETE FROM Users WHERE ID = @userId
+
+			        COMMIT TRANSACTION
+		        END TRY
+		        BEGIN CATCH
+                    IF @@TRANCOUNT<>0
+	                BEGIN
+		                ROLLBACK TRANSACTION
+	                END
+		        END CATCH
+		        ",
+                new
+                {
+                    UserID = userId
+                }
+            );
+
+            if (numberOfAffectedRows == 0)
+            {
+                string message =
+                $"db delete user failed for User ID: {userId}";
+                throw new DeleteUserException(message);
+            }
         }
     }
 }
