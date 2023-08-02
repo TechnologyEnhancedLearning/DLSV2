@@ -1,4 +1,6 @@
-﻿namespace DigitalLearningSolutions.Web.Models
+﻿using System;
+
+namespace DigitalLearningSolutions.Web.Models
 {
     public class PageReviewModel
     {

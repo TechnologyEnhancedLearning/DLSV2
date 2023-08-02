@@ -63,7 +63,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
             lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.TermsText);
             nextReviewDate = lastUpdatedDate.AddYears(3);
-            var model = new TermsViewModel(termsText, lastUpdateDate);
+            var model = new TermsViewModel(termsText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
 
