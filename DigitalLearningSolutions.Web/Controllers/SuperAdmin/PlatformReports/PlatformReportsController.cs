@@ -14,6 +14,8 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System.Collections.Generic;
+    using System.Linq;
 
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
@@ -71,6 +73,16 @@
                 );
 
             return View(model);
+        }
+        [NoCaching]
+        [Route("NursingProficiencies/Data")]
+        public IEnumerable<SelfAssessmentActivityDataRowModel> GetGraphData()
+        {
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("ReportsFilterCookie", null);
+            var activity = platformReportsService.GetNursingProficienciesActivity(filterData!);
+            return activity.Select(
+                p => new SelfAssessmentActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
+            );
         }
         [HttpGet]
         [Route("NursingProficiencies/EditFilters")]
