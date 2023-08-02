@@ -128,20 +128,44 @@
                         Promote to admin
                     </a>
                 }
-                <form asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
-                    <button class="nhsuk-button delete-button view-delegate-button"
+                 if (Model.DelegateInfo.RegistrationConfirmationHash != null)
+                {
+                    <form asp-action="DeleteAccount" asp-route-delegateId="@Model.DelegateInfo.Id">
+                        <button class="nhsuk-button delete-button view-delegate-button"
                         type="submit">
-                        Deactivate account
-                    </button>
-                </form>
+                            Delete account
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
+                        <button class="nhsuk-button delete-button view-delegate-button"
+                            type="submit">
+                            Deactivate account
+                        </button>
+                    </form>
+                }
             }
             else
             {
-                <form asp-action="ReactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
-                    <button class="nhsuk-button view-delegate-button" type="submit">
-                        Reactivate account
-                    </button>
-                </form>
+                if (Model.DelegateInfo.RegistrationConfirmationHash != null)
+                {
+                    <form asp-action="DeleteAccount" asp-route-delegateId="@Model.DelegateInfo.Id">
+                        <button class="nhsuk-button delete-button view-delegate-button"
+                        type="submit">
+                            Delete account
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-action="ReactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
+                        <button class="nhsuk-button view-delegate-button" type="submit">
+                            Reactivate account
+                        </button>
+                    </form>
+                }
             }
         </div>
     </div>

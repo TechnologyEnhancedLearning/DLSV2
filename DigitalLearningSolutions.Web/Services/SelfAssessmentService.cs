@@ -127,6 +127,8 @@
             int candidateAssessmentId,
             int delegateUserId
         );
+
+        void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService

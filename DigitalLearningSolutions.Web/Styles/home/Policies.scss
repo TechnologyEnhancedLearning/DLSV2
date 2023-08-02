@@ -1,0 +1,42 @@
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+
+.custom-ordered-list {
+  list-style: none;
+  counter-reset: section;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.custom-ordered-list > li:before {
+    counter-increment: section;
+    content: counters(section, ".") " ";
+}
+
+.custom-ordered-list ol {
+    list-style: none;
+    counter-reset: subsection;
+}
+
+.custom-ordered-list li {
+  font-weight: normal;
+  display: table;
+}
+
+.custom-ordered-list ol li:before {
+  display: table-cell;
+  counter-increment: subsection;
+  content: counters(section, ".") "." counters(subsection, ".") " ";
+  display: table-cell;
+  padding-right: 0.6em;
+}
+
+.policy-word-break {
+  word-break: break-word;
+}
+.policy-text-center {
+  text-align: center;
+}
+.policy-text-justify {
+  text-align: justify;
+  text-justify: inter-word;
+}

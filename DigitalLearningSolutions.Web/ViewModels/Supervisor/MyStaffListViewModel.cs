@@ -23,7 +23,7 @@
         {
             AdminUser = adminUser;
             CentreRegistrationPrompts = centreRegistrationPrompts;
-            SuperviseDelegateDetailViewModels = result.ItemsToDisplay;
+            SuperviseDelegateDetailViewModels = result.ItemsToDisplay.Where(x=>x.SupervisorDelegateDetail.DelegateUserID != x.LoggedInUserId);
         }
 
         public MyStaffListViewModel() : this(
@@ -45,6 +45,8 @@
         { }
 
         public IEnumerable<SupervisorDelegateDetailViewModel> SuperviseDelegateDetailViewModels { get; set; }
+
+        public SupervisorDelegateDetailViewModel? SelfSuperviseDelegateDetailViewModels { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {

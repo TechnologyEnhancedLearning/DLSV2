@@ -47,7 +47,7 @@
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             var adminId = GetAdminId();
-            var loggedInUserId = User.GetAdminId();
+            var loggedInUserId = User.GetUserId();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
@@ -67,7 +67,8 @@
                             sortBy,
                             sortDirection
                         ),
-                        isSupervisor
+                        isSupervisor,
+                        loggedInUserId
                     );
                 }
             );
@@ -90,6 +91,7 @@
                 centreRegistrationPrompts
             );
             model.IsActiveSupervisorDelegateExist = IsSupervisorDelegateExistAndActive(adminId, supervisorEmail, centreId) > 0;
+            model.SelfSuperviseDelegateDetailViewModels= supervisorDelegateDetailViewModels.Where(x => x.SupervisorDelegateDetail.DelegateUserID == loggedInUserId).FirstOrDefault();
             ModelState.ClearErrorsForAllFieldsExcept("DelegateEmailAddress");
             return View("MyStaffList", model);
         }
@@ -307,6 +309,7 @@
         {
             var adminId = GetAdminId();
             var centreId = GetCentreId();
+            var loggedInUserId = User.GetUserId();
             var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId)
                 .Select(supervisor =>
@@ -315,7 +318,7 @@
                 }
             );
             var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
-            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts, isSupervisor);
+            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts, isSupervisor, loggedInUserId);
             return View("AllStaffList", model);
         }
 

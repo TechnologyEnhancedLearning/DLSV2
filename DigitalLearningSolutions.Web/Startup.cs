@@ -156,6 +156,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/SuperAdmin/Delegates/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -320,6 +321,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISelfAssessmentReportDataService, SelfAssessmentReportDataService>();
             services.AddScoped<IUserFeedbackDataService, UserFeedbackDataService>();
             services.AddScoped<IPlatformReportsDataService, PlatformReportsDataService>();
+            services.AddScoped<IContractTypesDataService, ContractTypesDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
