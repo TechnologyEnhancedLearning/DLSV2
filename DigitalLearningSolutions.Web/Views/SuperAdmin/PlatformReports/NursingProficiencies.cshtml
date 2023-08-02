@@ -4,7 +4,8 @@
 @{
     ViewData["Title"] = "Nursing proficiencies";
 }
-<link rel="stylesheet" href="@Url.Content("~/css/superAdmin/platformreports.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/reports.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/superAdmin/platformReports.css")" asp-append-version="true">
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         <div id="no-js-styling">
@@ -18,12 +19,18 @@
                     <div class="nhsuk-u-margin-bottom-4">
                         <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
                     </div>
-                    <span class="nhsuk-body-l">View activity for <span class="nhsuk-u-font-weight-bold">@Model.FilterModel.CategoryName</span> supervised self assessments.</span>
-
                     <partial name="_FilterDisplayCard.cshtml" model="@Model.FilterModel" />
+                    <div id="activity-graph" class="js-only-block">
+                        <partial name="_ActivityGraph.cshtml" />
+                    </div>
+                    <div id="activity-graph-data-error" class="js-only-block" hidden>
+                        <vc:inset-text text="Too many chart data points to display. Please select a smaller date range or a bigger reporting interval to view data on a chart."
+                                       css-class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4" />
+                    </div>
                     <partial name="_ActivityTable.cshtml" model="@Model.SelfAssessmentActivityTableViewModel" />
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script src="@Url.Content("~/js/superAdmin/platformreports.js")" asp-append-version="true"></script>

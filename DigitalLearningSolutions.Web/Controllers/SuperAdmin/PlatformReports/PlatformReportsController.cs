@@ -48,8 +48,8 @@
         [Route("NursingProficiencies")]
         public IActionResult NursingProficiencies()
         {
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("ReportsFilterCookie", null);
-            Response.Cookies.SetReportsFilterCookie("ReportsFilterCookie", filterData, clockUtility.UtcNow);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminReportsFilterCookie", null);
+            Response.Cookies.SetReportsFilterCookie("SuperAdminReportsFilterCookie", filterData, clockUtility.UtcNow);
             var activity = platformReportsService.GetNursingProficienciesActivity(filterData);
             var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetNursingAssessmentCourseFilterNames(filterData);
             var nursingReportFilterModel = new NursingReportFilterModel(
@@ -78,7 +78,7 @@
         [Route("NursingProficiencies/Data")]
         public IEnumerable<SelfAssessmentActivityDataRowModel> GetGraphData()
         {
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("ReportsFilterCookie", null);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminReportsFilterCookie", null);
             var activity = platformReportsService.GetNursingProficienciesActivity(filterData!);
             return activity.Select(
                 p => new SelfAssessmentActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
