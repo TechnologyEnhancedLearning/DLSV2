@@ -157,6 +157,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/Delegates/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/SuperAdmin/PlatformReports/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -269,6 +270,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IEmailGenerationService, EmailGenerationService>();
             services.AddScoped<IAdminDownloadFileService, AdminDownloadFileService>();
             services.AddScoped<IPlatformReportsService, PlatformReportsService>();
+            services.AddScoped<IReportFilterService, ReportFilterService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)

@@ -23,7 +23,7 @@
                class="nhsuk-radios__input"
                id="course-filter-type-1"
                type="radio"
-               value="@CourseFilterType.Course"
+               value="@CourseFilterType.Activity"
                aria-controls="@courseConditionalId"
                aria-expanded="@(courseSelected ? "true" : "false")"
                @(courseSelected ? "checked" : "")>
@@ -52,7 +52,7 @@
                class="nhsuk-radios__input"
                id="course-filter-type-2"
                type="radio"
-               value="@CourseFilterType.CourseCategory"
+               value="@CourseFilterType.Category"
                aria-controls="@categoryConditionalId"
                aria-expanded="@(categorySelected ? "true" : "false")"
                @(categorySelected ? "checked" : "")>
@@ -76,7 +76,7 @@
 }
 else
 {
-  <input type="hidden" asp-for="FilterType" value="@CourseFilterType.Course" />
+  <input type="hidden" asp-for="FilterType" value="@CourseFilterType.Activity" />
   <vc:select-list asp-for="@nameof(Model.CustomisationId)"
                 label="Choose a course filter"
                 value="@Model.CustomisationId.ToString()"

@@ -84,6 +84,7 @@
         Centre? GetFullCentreDetailsById(int centreId);
         void DeactivateCentre(int centreId);
         void ReactivateCentre(int centreId);
+        Centre? GetCentreManagerDetailsByCentreId(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -572,6 +573,21 @@
                    FROM CentreTypes
                    ORDER BY CentreType"
             );
+        }
+
+        public Centre? GetCentreManagerDetailsByCentreId(int centreId)
+        {
+            var centre = connection.QueryFirstOrDefault<Centre>(
+                           @"SELECT c.CentreID,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone
+                        FROM Centres AS c
+                        WHERE c.CentreID = @centreId",
+                        new { centreId }
+                    );
+            return centre;
         }
 
         public void DeactivateCentre(int centreId)

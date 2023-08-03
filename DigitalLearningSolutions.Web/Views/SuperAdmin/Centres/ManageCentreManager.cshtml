@@ -1,0 +1,88 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
+@model EditCentreManagerDetailsViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Edit centre manager";
+}
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new string[] { nameof(Model.FirstName),nameof(Model.LastName),nameof(Model.Email) })" />
+}
+<div id="form-group">
+    <form method="post" asp-action="ManageCentreManager">
+        <div>
+            <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+                Edit centre manager
+            </h1>
+            <div class="nhsuk-grid-row divider">
+                <div class="nhsuk-grid-column-full">
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.FirstName)"
+                                           label="Contact first name"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.LastName)"
+                                           label="Contact last name"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.Email)"
+                                           label="Contact email"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.Telephone)"
+                                           label="Contact phone"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="nhsuk-button" type="submit">
+                Save
+            </button>
+            <div class="nhsuk-back-link nhsuk-u-margin-left-1 nhsuk-u-margin-top-2">
+                <a class="nhsuk-back-link__link" asp-controller="Centres" asp-action="ManageCentre" asp-route-centreId="@Model.CentreId">
+                    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                    </svg>
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </form>
+</div>

@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Remove="Scripts\chartCommon.ts" />
         <None Remove="Scripts\checkboxes.ts" />
         <None Remove="Scripts\common.ts" />
         <None Remove="Scripts\cookiesbanner.ts" />
@@ -45,6 +46,7 @@
         <None Remove="Scripts\searchSortFilterAndPaginate\sort.ts" />
         <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
         <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
+        <None Remove="Scripts\superAdmin\platformReports.ts" />
         <None Remove="Scripts\supervisor\assessmentVerify.ts" />
         <None Remove="Scripts\supervisor\staffList.ts" />
         <None Remove="Scripts\supervisor\verify.ts" />
@@ -110,6 +112,7 @@
         <TypeScriptCompile Include="Scripts\learningPortal\supervisorList.ts" />
         <TypeScriptCompile Include="Scripts\learningPortal\verificationPickResults.ts" />
         <TypeScriptCompile Include="Scripts\nhsuk.ts" />
+        <TypeScriptCompile Include="Scripts\chartCommon.ts" />
         <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\filter.ts" />
         <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\paginate.ts" />
         <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\search.ts" />
@@ -121,6 +124,7 @@
         <TypeScriptCompile Include="Scripts\spec\search.spec.ts" />
         <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
         <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
+        <TypeScriptCompile Include="Scripts\superAdmin\platformReports.ts" />
         <TypeScriptCompile Include="Scripts\supervisor\assessmentVerify.ts" />
         <TypeScriptCompile Include="Scripts\supervisor\verify.ts" />
         <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
@@ -140,6 +144,7 @@
 
     <ItemGroup>
         <_ContentIncludedByDefault Remove="Views\Shared\Components\VerifyEmailWarningIfAppropriate\Default.cshtml" />
+        <_ContentIncludedByDefault Remove="Views\SuperAdmin\PlatformReports\NursingProficiencies.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -166,5 +171,9 @@
             <UserProperties />
         </VisualStudio>
     </ProjectExtensions>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\SuperAdmin\PlatformReports\NursingProficiencies.cshtml" />
+    </ItemGroup>
 
 </Project>

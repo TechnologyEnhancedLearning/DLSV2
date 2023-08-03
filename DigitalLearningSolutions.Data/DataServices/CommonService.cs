@@ -12,10 +12,21 @@
         IEnumerable<Brand> GetBrandListForCentre(int centreId);
         IEnumerable<Category> GetCategoryListForCentre(int centreId);
         IEnumerable<Topic> GetTopicListForCentre(int centreId);
+        IEnumerable<Brand> GetAllBrands();
+        IEnumerable<Category> GetAllCategories();
+        IEnumerable<Topic> GetAllTopics();
+        IEnumerable<(int, string)> GetCentreTypes();
+        IEnumerable<(int, string)> GetSupervisedAssessmentBrands();
+        IEnumerable<(int, string)> GetSupervisedAssessmentCategories();
+        IEnumerable<(int, string)> GetSupervisedAssessmentCentreTypes();
+        IEnumerable<(int, string)> GetSupervisedAssessmentRegions();
+        IEnumerable<(int, string)> GetSupervisedAssessments();
+        IEnumerable<(int, string)> GetSupervisedAssessmentCentres();
         string? GetBrandNameById(int brandId);
         string? GetCategoryNameById(int categoryId);
         string? GetTopicNameById(int topicId);
-
+        string? GenerateCandidateNumber(string firstName, string lastName);
+        string? GetCentreTypeNameById(int centreTypeId);
         //INSERT DATA
         int InsertBrandAndReturnId(string brandName, int centreId);
         int InsertCategoryAndReturnId(string categoryName, int centreId);
@@ -42,6 +53,16 @@
                new { centreId }
            );
         }
+        public IEnumerable<Brand> GetAllBrands()
+        {
+            return connection.Query<Brand>(
+                @"SELECT        BrandID, BrandName
+                    FROM            Brands
+                    WHERE        
+                         (Active = 1)
+                    ORDER BY BrandName"
+           );
+        }
         public IEnumerable<Category> GetCategoryListForCentre(int centreId)
         {
             return connection.Query<Category>(
@@ -50,6 +71,15 @@
                     WHERE        ((CentreID = @CentreID) OR (CourseCategoryID = 1)) AND (Active = 1)
                     ORDER BY CategoryName",
                new { centreId }
+           );
+        }
+        public IEnumerable<Category> GetAllCategories()
+        {
+            return connection.Query<Category>(
+                @"SELECT        CourseCategoryID, CategoryName
+                    FROM            CourseCategories
+                    WHERE        (Active = 1)
+                    ORDER BY CategoryName"
            );
         }
         public IEnumerable<Topic> GetTopicListForCentre(int centreId)
@@ -61,6 +91,99 @@
                     ORDER BY CourseTopic",
                new { centreId }
            );
+        }
+        public IEnumerable<Topic> GetAllTopics()
+        {
+            return connection.Query<Topic>(
+                @"SELECT        CourseTopicID, CourseTopic
+                    FROM            CourseTopics
+                    WHERE        (Active = 1)
+                    ORDER BY CourseTopic"
+                       );
+        }
+
+        public IEnumerable<(int, string)> GetCentreTypes()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT CentreTypeID, CentreType
+                    FROM   CentreTypes
+                    ORDER BY CentreType"
+                      );
+        }
+        public IEnumerable<(int, string)> GetSupervisedAssessmentBrands()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT b.BrandID, b.BrandName
+                    FROM   Brands AS b INNER JOIN
+                                 SelfAssessments AS sa ON b.BrandID = sa.BrandID
+                    WHERE (b.Active = 1) AND
+                                 (sa.ArchivedDate IS NULL) AND (sa.[National] = 1) AND (sa.SupervisorSelfAssessmentReview = 1)
+                    GROUP BY b.BrandID, b.BrandName
+                    ORDER BY b.BrandName"
+           );
+        }
+
+        public IEnumerable<(int, string)> GetSupervisedAssessmentCategories()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT cc.CourseCategoryID, cc.CategoryName
+                    FROM   CourseCategories AS cc INNER JOIN
+                                 SelfAssessments AS sa ON cc.CourseCategoryID = sa.CategoryID
+                    WHERE (cc.Active = 1) AND (sa.ArchivedDate IS NULL) AND (sa.[National] = 1) AND (sa.SupervisorSelfAssessmentReview = 1)
+                    GROUP BY cc.CourseCategoryID, cc.CategoryName
+                    ORDER BY cc.CategoryName"
+           );
+        }
+
+        public IEnumerable<(int, string)> GetSupervisedAssessmentCentreTypes()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT ct.CentreTypeID, ct.CentreType AS CentreTypeName
+                    FROM   Centres AS c INNER JOIN
+                                CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID INNER JOIN
+                                SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID INNER JOIN
+                                CentreTypes AS ct ON c.CentreTypeID = ct.CentreTypeID
+                    WHERE (sa.SupervisorSelfAssessmentReview = 1) AND (sa.[National] = 1) AND (sa.ArchivedDate IS NULL)
+                    GROUP BY ct.CentreTypeID, ct.CentreType
+                    ORDER BY CentreTypeName"
+                      );
+        }
+        public IEnumerable<(int, string)> GetSupervisedAssessmentRegions()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT r.RegionID AS ID, r.RegionName AS Label
+                    FROM   Regions AS r INNER JOIN
+                                 Centres AS c ON r.RegionID = c.RegionID INNER JOIN
+                                 CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID INNER JOIN
+                                 SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
+                    WHERE (sa.SupervisorSelfAssessmentReview = 1) AND (sa.[National] = 1) AND (sa.ArchivedDate IS NULL)
+                    GROUP BY r.RegionID, r.RegionName
+                    ORDER BY Label"
+                      );
+        }
+
+        public IEnumerable<(int, string)> GetSupervisedAssessments()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT ID, Name AS Label
+                    FROM   SelfAssessments AS sa
+                    WHERE (SupervisorSelfAssessmentReview = 1) AND ([National] = 1) AND (ArchivedDate IS NULL)
+                    GROUP BY ID, Name
+                    ORDER BY Label"
+                      );
+        }
+
+        public IEnumerable<(int, string)> GetSupervisedAssessmentCentres()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT c.CentreID AS ID, c.CentreName AS Label
+                    FROM   Centres AS c INNER JOIN
+                                 CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID INNER JOIN
+                                 SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
+                    WHERE (sa.SupervisorSelfAssessmentReview = 1) AND (sa.[National] = 1) AND (sa.ArchivedDate IS NULL)
+                    GROUP BY c.CentreID, c.CentreName
+                    ORDER BY Label"
+                      );
         }
         private const string GetBrandID = @"SELECT COALESCE ((SELECT BrandID FROM Brands WHERE [BrandName] = @brandName), 0) AS BrandID";
         public int InsertBrandAndReturnId(string brandName, int centreId)
@@ -197,5 +320,37 @@
                new { topicId }
            );
         }
+        public string? GetCentreTypeNameById(int centreTypeId)
+        {
+            return (string?)connection.ExecuteScalar(
+                @"SELECT        CentreType
+                    FROM            CentreTypes
+                    WHERE        CentreTypeID = @centreTypeId",
+               new { centreTypeId }
+           );
+        }
+        public string? GenerateCandidateNumber(string firstName, string lastName)
+        {
+            string initials = "";
+            if (firstName != null) initials = (firstName.Substring(0, 1)).ToUpper();
+            if (lastName != null) initials += (lastName.Substring(0, 1)).ToUpper();
+
+
+            var candidateNumber = connection.QueryFirst<string>(
+                @"DECLARE @_MaxCandidateNumber AS integer
+                        SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
+                        FROM DelegateAccounts
+                        WHERE (LEFT(CandidateNumber, 2) = @initials)
+                        ORDER BY nCandidateNumber DESC)
+                        IF @_MaxCandidateNumber IS Null
+                            BEGIN
+                            SET @_MaxCandidateNumber = 0
+                            END
+                        SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
+                new { initials });
+            return candidateNumber;
+        }
+
+        
     }
 }

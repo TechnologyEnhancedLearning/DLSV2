@@ -1,7 +1,7 @@
 ﻿using FluentMigrator;
 namespace DigitalLearningSolutions.Data.Migrations
 {
-    [Migration(202307181724)]
+    [Migration(202308020900)]
     public class UpdateAccessibilityStatementRecord : Migration
     {
         public override void Up()
@@ -34,14 +34,14 @@ namespace DigitalLearningSolutions.Data.Migrations
 	            <p class=""policy-text-justify"">The Accessibility Regulations do not apply to third-party content that is neither funded nor developed by, nor under the control of NHSE.</p>
 	            <p class=""policy-text-justify"">Some of the third-party organisations whose content we host have provided their own accessibility statements covering their e-learning content and their contact details should be available on their help pages.</p>
 	            <h2 class=""nhsuk-heading-l"">4.	FEEDBACK AND CONTACT INFORMATION</h2>
-	            <p class=""policy-text-justify"">If you need information on this website in a different format, then contact us at <a class=""policy-word-break"" href=""support@dls.nhs.uk"">support@dls.nhs.uk</a> and tell us:</p>
+	            <p class=""policy-text-justify"">If you need information on this website in a different format, then contact us at <a class=""policy-word-break"" href=""mailto:support@dls.nhs.uk"">support@dls.nhs.uk</a> and tell us:</p>
 	            <p class=""policy-text-justify"">4.1	your name and email address</p>
 	            <p class=""policy-text-justify"">4.2	which e-learning resource you are enquiring about</p>
 	            <p class=""policy-text-justify"">4.3	the format you need, for example, easy read, audio CD, Braille, BSL or large print, accessible PDF</p>
 	            <p class=""policy-text-justify"">We’ll review your request and aim to respond within 10 days.</p>
 	            <p class=""policy-text-justify"">You can also view the accessible document policy of the organisation that published the document to report any problems or request documents in an alternative format.</p>
 	            <h2 class=""nhsuk-heading-l"">5.	REPORTING ACCESSIBILITY PROBLEMS WITH THIS WEBSITE</h2>
-	            <p class=""policy-text-justify"">We’re always looking to improve the accessibility of this website. If you find any problems not listed on this page or think we’re not meeting accessibility requirements, contact <a class=""policy-word-break"" href=""support@dls.nhs.uk"">support@dls.nhs.uk</a>.</p>
+	            <p class=""policy-text-justify"">We’re always looking to improve the accessibility of this website. If you find any problems not listed on this page or think we’re not meeting accessibility requirements, contact <a class=""policy-word-break"" href=""mailto:support@dls.nhs.uk"">support@dls.nhs.uk</a>.</p>
 	            <h2 class=""nhsuk-heading-l"">6.	ENFORCEMENT PROCEDURE</h2>
 	            <p class=""policy-text-justify"">The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Accessibility Regulations. If you’re not happy with how we respond to your complaint, contact the Equality Advisory and Support Service (EASS) here: <a class=""policy-word-break"" href=""https://www.equalityadvisoryservice.com/"">https://www.equalityadvisoryservice.com/</a>.</p>
 	            <h2 class=""nhsuk-heading-l"">7.	TECHNICAL INFORMATION ABOUT THIS WEBSITE’S ACCESSIBILITY</h2>

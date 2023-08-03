@@ -45,7 +45,7 @@
     <h1>My Staff</h1>
     <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-            @if (Model.SuperviseDelegateDetailViewModels.Any() | (Model.SearchString != null))
+            @if (Model.SuperviseDelegateDetailViewModels.Any() | (Model.SearchString != null)|Model.SelfSuperviseDelegateDetailViewModels!=null )
             {
                 <form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
                     <div class="nhsuk-grid-row">

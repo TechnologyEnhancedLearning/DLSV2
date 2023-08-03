@@ -7,6 +7,7 @@
     public interface IRegionDataService
     {
         public IEnumerable<(int regionId, string regionName)> GetRegionsAlphabetical();
+        string? GetRegionName(int regionId);
     }
 
     public class RegionDataService : IRegionDataService
@@ -16,6 +17,17 @@
         public RegionDataService(IDbConnection connection)
         {
             this.connection = connection;
+        }
+
+        public string? GetRegionName(int regionId)
+        {
+            var name = connection.QueryFirstOrDefault<string?>(
+                 @"SELECT RegionName
+                        FROM Regions
+                        WHERE RegionID = @regionId",
+                 new { regionId }
+             );
+            return name;
         }
 
         public IEnumerable<(int regionId, string regionName)> GetRegionsAlphabetical()

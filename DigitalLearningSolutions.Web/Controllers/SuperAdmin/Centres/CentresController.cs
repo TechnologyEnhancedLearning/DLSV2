@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;

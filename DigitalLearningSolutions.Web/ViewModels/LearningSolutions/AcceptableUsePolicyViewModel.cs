@@ -6,11 +6,11 @@
 
     public class AcceptableUsePolicyViewModel: PageReviewModel
     {
-        public HtmlString TermsText { get; }
+        public HtmlString AcceptableUsePolicyText { get; }
 
-        public AcceptableUsePolicyViewModel(string termsText, DateTime lastReviewedDate, DateTime nextReviewDate)
+        public AcceptableUsePolicyViewModel(string acceptableUsePolicyText, DateTime lastReviewedDate, DateTime nextReviewDate)
         {
-            TermsText = new HtmlString(termsText);
+            AcceptableUsePolicyText = new HtmlString(acceptableUsePolicyText);
             LastReviewedDate = lastReviewedDate;
             NextReviewDate = nextReviewDate;
         }
