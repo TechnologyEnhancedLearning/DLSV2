@@ -30,6 +30,16 @@
         void DeactivateCentre(int centreId);
 
         void ReactivateCentre(int centreId);
+
+        Centre? GetCentreManagerDetailsByCentreId(int centreId);
+
+        void UpdateCentreManagerDetails(
+            int centreId,
+            string firstName,
+            string lastName,
+            string email,
+            string? telephone
+        );
     }
 
     public class CentresService : ICentresService
@@ -105,6 +115,17 @@
         public void ReactivateCentre(int centreId)
         {
             centresDataService.ReactivateCentre(centreId);
+        }
+
+        public Centre? GetCentreManagerDetailsByCentreId(int centreId)
+        {
+            return centresDataService.GetCentreManagerDetailsByCentreId(centreId);
+        }
+
+        public void UpdateCentreManagerDetails(int centreId,string firstName,string lastName,string email,string? telephone
+        )
+        {
+            centresDataService.UpdateCentreManagerDetails(centreId,firstName,lastName,email,telephone);
         }
     }
 }
