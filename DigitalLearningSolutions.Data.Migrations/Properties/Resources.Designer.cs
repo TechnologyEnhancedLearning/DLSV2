@@ -1139,6 +1139,27 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h1 class=&quot;&quot;nhsuk-u-text-align-centre nhsuk-heading-xl&quot;&quot; &gt;PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).&lt;/1&gt;
+        ///&lt;section&gt;
+        ///&lt;h2 class=&quot;&quot;&quot;&quot;nhsuk-heading-l&quot;&quot;&quot;&quot;&gt;1.    THE PLATFORM&lt;/h2&gt;
+        ///&lt;p class=&quot;&quot;&quot;&quot;policy-text-justify&quot;&quot;&quot;&quot;&gt;1.1 These terms of use &lt;strong&gt;(Terms)&lt;/strong&gt; set out the rules for using each of [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TermsAndConditions {
+            get {
+                return ResourceManager.GetString("TermsAndConditions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;ol type=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;&lt;strong&gt;About these terms and conditions&lt;/strong&gt;&lt;ul data-list-level=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;It is your responsibility to ensure that you understand and comply with these terms and conditions. It ensures that:&lt;ul data-list-level=&quot;&quot;2&quot;&quot;&gt;&lt;li&gt;You understand your responsibilities and what constitutes an abuse of the service&lt;/li&gt;&lt;li&gt;Computers and personal data are not put at risk&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;If you have any questions about these terms and conditions, you should contact your Digital Learning Solutions c [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TermsAndConditionsOldrecord {
+            get {
+                return ResourceManager.GetString("TermsAndConditionsOldrecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DROP VIEW AdminUsers
         ///    GO
         ///DROP VIEW Candidates
