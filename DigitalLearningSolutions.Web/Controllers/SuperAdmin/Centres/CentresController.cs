@@ -277,7 +277,11 @@
         [HttpPost]
         public IActionResult ManageCentreManager(EditCentreManagerDetailsViewModel editCentreManagerDetailsViewModel)
         {
-            centresService.UpdateCentreManagerDetails(editCentreManagerDetailsViewModel.CentreId, editCentreManagerDetailsViewModel.FirstName, editCentreManagerDetailsViewModel.LastName,
+            if (!ModelState.IsValid)
+            {
+                return View(editCentreManagerDetailsViewModel);
+            }
+                centresService.UpdateCentreManagerDetails(editCentreManagerDetailsViewModel.CentreId, editCentreManagerDetailsViewModel.FirstName, editCentreManagerDetailsViewModel.LastName,
                 editCentreManagerDetailsViewModel.Email,
                 editCentreManagerDetailsViewModel.Telephone);
             return RedirectToAction("ManageCentre", "Centres", new { centreId = editCentreManagerDetailsViewModel.CentreId });

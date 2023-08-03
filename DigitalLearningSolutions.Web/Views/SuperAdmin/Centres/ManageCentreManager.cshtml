@@ -4,6 +4,10 @@
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Edit centre manager";
 }
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new string[] { nameof(Model.FirstName),nameof(Model.LastName),nameof(Model.Email) })" />
+}
 <div id="form-group">
     <form method="post" asp-action="ManageCentreManager">
         <div>
