@@ -8,7 +8,6 @@
     public static class ReportsFilterCookieHelper
     {
         public static readonly int CookieExpiryDays = 30;
-        public static readonly string CookieName = "ReportsFilterCookie";
 
         public static void SetReportsFilterCookie(
             this IResponseCookies cookies,
@@ -19,7 +18,7 @@
         {
             var expiry = currentDateTime.AddDays(CookieExpiryDays);
             cookies.Append(
-                CookieName,
+                cookieName?? "ReportsFilterCookie",
                 JsonConvert.SerializeObject(filterData),
                 new CookieOptions
                 {
@@ -30,7 +29,7 @@
 
         public static ActivityFilterData RetrieveFilterDataFromCookie(this IRequestCookieCollection cookies, string? cookieName, int? categoryIdFilter)
         {
-            var cookie = cookies[CookieName];
+            var cookie = cookies[cookieName ?? "ReportsFilterCookie"];
 
             if (cookie == null)
             {
