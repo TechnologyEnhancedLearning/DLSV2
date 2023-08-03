@@ -11,10 +11,12 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
+    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using Pipelines.Sockets.Unofficial;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -339,11 +341,32 @@
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult EditCentreRoleLimits(CentreRoleLimitsViewModel model)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(model);
-            //}
-            
+            if (!(model.IsRoleLimitSetCmsAdministrators != null && model.IsRoleLimitSetCmsAdministrators != false))
+            {
+                model.RoleLimitCmsAdministrators = -1;
+            }
+            if (!(model.IsRoleLimitSetCmsManagers != null && model.IsRoleLimitSetCmsManagers != false))
+            {
+                model.RoleLimitCmsManagers = -1;
+            }
+            if (!(model.IsRoleLimitSetContentCreatorLicenses != null && model.IsRoleLimitSetContentCreatorLicenses != false))
+            {
+                model.RoleLimitContentCreatorLicenses = -1;
+            }
+            if (!(model.IsRoleLimitSetCustomCourses != null && model.IsRoleLimitSetCustomCourses != false))
+            {
+                model.RoleLimitCustomCourses = -1;
+            }
+            if (!(model.IsRoleLimitSetTrainers != null && model.IsRoleLimitSetTrainers != false))
+            {
+                model.RoleLimitTrainers = -1;
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("CentreRoleLimits", model);
+            }
+
             centresDataService.UpdateCentreRoleLimits(
                 model.CentreId,
                 model.RoleLimitCmsAdministrators,
@@ -352,6 +375,7 @@
                 model.RoleLimitCustomCourses,
                 model.RoleLimitTrainers
             );
+
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
         }
     }
