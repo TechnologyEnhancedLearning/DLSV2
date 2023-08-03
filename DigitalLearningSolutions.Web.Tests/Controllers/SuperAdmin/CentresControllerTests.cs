@@ -101,6 +101,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             const long serverSpaceBytesInc = 5368709120;
             const long delegateUploadSpace = 52428800;
             DateTime contractReviewDate = DateTime.Parse("2023-08-28 16:28:55.247");
+            const int contractReviewDay = 28;
+            const int contractReviewMonth = 8;
+            const int contractReviewYear = 2023;
             A.CallTo(() => centresDataService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
 
             // When
@@ -116,7 +119,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ServerSpaceBytesInc.Should().Be(serverSpaceBytesInc);
                 result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().DelegateUploadSpace.Should().Be(delegateUploadSpace);
                 result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractReviewDate.Should().Be(contractReviewDate);
-
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractReviewDay.Should().Be(contractReviewDay);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractReviewMonth.Should().Be(contractReviewMonth);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractReviewYear.Should().Be(contractReviewYear);
             }
         }
 
@@ -132,8 +137,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 ContractTypeID = 1,
                 ServerSpaceBytesInc = 5368709120,
                 DelegateUploadSpace = 52428800,
-                ContractReviewDate = DateTime.Parse("2023-08-28 16:28:55.247")
-            };
+                ContractReviewDate = DateTime.Parse("2023-08-28 16:28:55.247"),
+                 ContractReviewDay = 28,
+            ContractReviewMonth = 8,
+            ContractReviewYear = 2023
+        };
 
             // When
             var result = controller.EditContractInfo(model);

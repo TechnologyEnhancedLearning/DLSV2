@@ -31,7 +31,7 @@
         public IEnumerable<(long, string)> GetServerspace()
         {
             var Serverspace = new List<(long, string)> {
-           // Tuple.Create(null,  "None" ),
+            (0,  "None" ),
             (5368709120, "5GB"),
             ( 10737418240, "10GB"),
             ( 16106127360,"15GB"),
@@ -40,7 +40,7 @@
             (32212254720, "30GB"),
             (42949672960, "40GB"),
             (53687091200, "50GB"),
-           (64424509440, "60GB"),
+            (64424509440, "60GB"),
             (75161927680, "70GB"),
            (85899345920, "80GB" ),
            (96636764160, "90GB"),

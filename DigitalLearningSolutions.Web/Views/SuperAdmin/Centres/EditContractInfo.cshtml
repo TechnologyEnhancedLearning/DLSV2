@@ -15,54 +15,82 @@
 <div id="form-group">
     <h1 class="nhsuk-heading-xl">Edit contract info for @Model.CentreName </h1>
     <form method="post">
-     
-                    @Html.HiddenFor(x=>x.CentreId)
-                    @Html.HiddenFor(x=>x.CentreName)
-                    @Html.HiddenFor(x=>x.ContractType)
 
-                    <div class="nhsuk-grid-row divider">
-                        <div class="nhsuk-grid-column-full">
-                            <vc:select-list asp-for="@nameof(Model.ContractTypeID)"
-                                            label="Contract type"
+        @Html.HiddenFor(x=>x.CentreId)
+        @Html.HiddenFor(x=>x.CentreName)
+        @Html.HiddenFor(x=>x.ContractType)
+
+        <div class="nhsuk-grid-row divider">
+            <div class="nhsuk-grid-column-full">
+                <vc:select-list asp-for="@nameof(Model.ContractTypeID)"
+                                label="Contract type"
                                 value="@Model.ContractType.ToString()"
-                                           hint-text=""
-                                            required="true"
-                                            css-class="nhsuk-u-width-one-half"
-                                            default-option=""
-                                            select-list-options="@ViewBag.ContractTypes" />
+                                hint-text=""
+                                required="true"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option=""
+                                select-list-options="@ViewBag.ContractTypes" />
 
-                            <vc:select-list asp-for="@nameof(Model.ServerSpaceBytesInc)"
-                                            label="Server space"
-                                            value="@Model.ServerSpaceBytesInc.ToString()"
-                                            hint-text=""
-                                            required="true"
-                                            css-class="nhsuk-u-width-one-half"
-                                            default-option=""
-                                            select-list-options="@ViewBag.Serverspace" />
+                <vc:select-list asp-for="@nameof(Model.ServerSpaceBytesInc)"
+                                label="Server space"
+                                value="@Model.ServerSpaceBytesInc.ToString()"
+                                hint-text=""
+                                required="true"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option=""
+                                select-list-options="@ViewBag.Serverspace" />
 
 
-                            <vc:select-list asp-for="@nameof(Model.DelegateUploadSpace)"
-                                            label=" Per delegate upload space"
-                                            value="@Model.DelegateUploadSpace"
-                                            hint-text=""
-                                            required="true"
-                                            css-class="nhsuk-u-width-one-half"
-                                            default-option=""
-                                            select-list-options="@ViewBag.Delegatespace" />
-                  <div class="nhsuk-form-group">
-                    <label class="nhsuk-label" for="ContractReviewDate">
-                    Contract Review Date
-                </label>
-                    <input type="date" id="ContractReviewDate" name="ContractReviewDate" class="nhsuk-input nhsuk-u-width-one-half" asp-for="ContractReviewDate" />
+                <vc:select-list asp-for="@nameof(Model.DelegateUploadSpace)"
+                                label=" Per delegate upload space"
+                                value="@Model.DelegateUploadSpace"
+                                hint-text=""
+                                required="true"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option=""
+                                select-list-options="@ViewBag.Delegatespace" />
 
-                  </div>
-
+                <div class="nhsuk-form-group">
+                    <div id="dob-hint" class="nhsuk-hint">
+                        <label class="nhsuk-label">
+                            Contract Review Date
+                        </label>
+                        @Model.ContractReviewDay @Model.ContractReviewMonth @Model.ContractReviewYear
+                    </div>
+                    <div class="nhsuk-date-input" id="ContractReview">
+                        <div class="nhsuk-date-input__item">
+                            <div class="nhsuk-form-group">
+                                <label class="nhsuk-label nhsuk-date-input__label" for="ContractReviewDay">
+                                    Day
+                                </label>
+                                <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2" id="ContractReviewDay" name="ContractReviewDay" type="text" autocomplete="ContractReviewDay" inputmode="numeric">
+                            </div>
+                        </div>
+                        <div class="nhsuk-date-input__item">
+                            <div class="nhsuk-form-group">
+                                <label class="nhsuk-label nhsuk-date-input__label" for="ContractReviewMonth">
+                                    Month
+                                </label>
+                                <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2" id="ContractReviewMonth" name="ContractReviewMonth" type="text" autocomplete="ContractReviewMonth" inputmode="numeric">
+                            </div>
+                        </div>
+                        <div class="nhsuk-date-input__item">
+                            <div class="nhsuk-form-group">
+                                <label class="nhsuk-label nhsuk-date-input__label" for="ContractReviewYear">
+                                    Year
+                                </label>
+                                <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4" id="ContractReviewYear" name="ContractReviewYear" type="text" autocomplete="ContractReviewYear" inputmode="numeric">
+                            </div>
                         </div>
                     </div>
-            <button class="nhsuk-button" type="submit">
-                Save
-            </button>
-     
+                </div>
+
+            </div>
+        </div>
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+
     </form>
     
         <div class="nhsuk-back-link">

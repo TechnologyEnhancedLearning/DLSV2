@@ -272,7 +272,9 @@
             );
             var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
                 centre.ContractTypeID, centre.ContractType,
-                centre.ServerSpaceBytesInc, centre.DelegateUploadSpace, centre.ContractReviewDate);
+                centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
+                centre.ContractReviewDate, centre.ContractReviewDate.Value.Day,
+                centre.ContractReviewDate.Value.Month, centre.ContractReviewDate.Value.Year);
             return View(model);
         }
 
@@ -298,17 +300,19 @@
                     contractTypes, centre.ContractTypeID
                 );
                 var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
-                    centre.ContractTypeID, centre.ContractType,
-                    centre.ServerSpaceBytesInc, centre.DelegateUploadSpace, centre.ContractReviewDate);
+                centre.ContractTypeID, centre.ContractType,
+                centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
+                centre.ContractReviewDate, centre.ContractReviewDate.Value.Day,
+                centre.ContractReviewDate.Value.Month, centre.ContractReviewDate.Value.Year);
                 return View(model);
             }
+            DateTime date = new DateTime(contractTypeViewModel.ContractReviewYear.Value, contractTypeViewModel.ContractReviewMonth.Value, contractTypeViewModel.ContractReviewDay.Value, 0, 0, 0);
             this.centresDataService.UpdateContractTypeandCenter(contractTypeViewModel.CentreId,
-           contractTypeViewModel.ContractTypeID,
-           contractTypeViewModel.DelegateUploadSpace,
-           contractTypeViewModel.ServerSpaceBytesInc,
-           contractTypeViewModel.ContractReviewDate
-           );
-
+               contractTypeViewModel.ContractTypeID,
+               contractTypeViewModel.DelegateUploadSpace,
+               contractTypeViewModel.ServerSpaceBytesInc,
+               date
+               );
             return RedirectToAction("ManageCentre", new { centreId = contractTypeViewModel.CentreId });
         }
 

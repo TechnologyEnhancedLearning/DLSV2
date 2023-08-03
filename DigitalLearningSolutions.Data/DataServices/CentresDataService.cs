@@ -607,11 +607,15 @@
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
-
             if (centre == null)
             {
                 logger.LogWarning($"No centre found for centre id {centreId}");
                 return null;
+            }
+            if (centre.ContractReviewDate == null)
+            {
+                centre.ContractReviewDate = DateTime.Now;
+                return centre;
             }
             return centre;
         }
@@ -626,11 +630,6 @@
             var numberOfAffectedRows = connection.Execute(
                 @" BEGIN TRY
                     BEGIN TRANSACTION
-                        UPDATE ContractTypes SET
-                DelegateUploadSpace = @delegateUploadSpace ,
-                ServerSpaceBytesInc = @serverSpaceBytesInc
-                WHERE ContractTypeID = @contractTypeID
-
                         UPDATE Centres SET
                     ServerSpaceBytes = @serverSpaceBytesInc,
                     ContractTypeID = @contractTypeID,
