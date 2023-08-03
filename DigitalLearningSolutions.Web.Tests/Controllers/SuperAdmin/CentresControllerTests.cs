@@ -138,10 +138,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 ServerSpaceBytesInc = 5368709120,
                 DelegateUploadSpace = 52428800,
                 ContractReviewDate = DateTime.Parse("2023-08-28 16:28:55.247"),
-                 ContractReviewDay = 28,
-            ContractReviewMonth = 8,
-            ContractReviewYear = 2023
-        };
+                ContractReviewDay = 28,
+                ContractReviewMonth = 8,
+                ContractReviewYear = 2023
+            };
+            DateTime date = new DateTime(model.ContractReviewYear.Value, model.ContractReviewMonth.Value, model.ContractReviewDay.Value, 0, 0, 0);
 
             // When
             var result = controller.EditContractInfo(model);
@@ -152,7 +153,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                model.ContractTypeID,
                model.DelegateUploadSpace,
                model.ServerSpaceBytesInc,
-               model.ContractReviewDate
+               date
                )).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
         }
