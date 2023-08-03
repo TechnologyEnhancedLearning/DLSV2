@@ -6,6 +6,7 @@
     using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -22,10 +23,14 @@
     {
         public const string ActivityDataDownloadRelativeFilePath = "/TestData/ActivityDataDownloadTest.xlsx";
         private IActivityDataService activityDataService = null!;
+        private IRegionDataService regionDataService = null!;
+        private ICentresDataService centresDataService = null!;
         private IActivityService activityService = null!;
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private ICourseDataService courseDataService = null!;
+        private ISelfAssessmentDataService  selfAssessmentDataService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private ICommonService commonService = null!;
         private IClockUtility clockUtility = null!;
         private IReportFilterService reportFilterService = null!;
 
@@ -33,11 +38,14 @@
         public void SetUp()
         {
             activityDataService = A.Fake<IActivityDataService>();
+            regionDataService = A.Fake<IRegionDataService>();
+            centresDataService = A.Fake<ICentresDataService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             courseDataService = A.Fake<ICourseDataService>();
+            selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+            commonService = A.Fake<ICommonService>();
             clockUtility = A.Fake<IClockUtility>();
-            reportFilterService = A.Fake<IReportFilterService>();
             activityService = new ActivityService(
                 activityDataService,
                 jobGroupsDataService,
@@ -45,6 +53,15 @@
                 courseDataService,
                 clockUtility
             );
+            reportFilterService = new ReportFilterService(
+                courseCategoriesDataService,
+                regionDataService,
+                centresDataService,
+                courseDataService,
+                selfAssessmentDataService,
+                jobGroupsDataService,
+                commonService
+                );
         }
 
         [Test]
@@ -340,12 +357,12 @@
                 null,
                 null,
                 null,
-                null,
-                null,
-                null,
-                null,
-                null,
                 1,
+                null,
+                null,
+                null,
+                null,
+                null,
                 CourseFilterType.Activity,
                 ReportInterval.Days
             );

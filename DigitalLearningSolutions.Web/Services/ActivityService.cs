@@ -49,7 +49,6 @@
             this.courseDataService = courseDataService;
             this.clockUtility = clockUtility;
         }
-
         public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData)
         {
             var activityData = activityDataService
@@ -82,15 +81,11 @@
                 }
             );
         }
-
-        
-
         public DateTime? GetActivityStartDateForCentre(int centreId, int? courseCategoryId = null)
         {
             var activityStart = activityDataService.GetStartOfActivityForCentre(centreId, courseCategoryId);
             return activityStart?.Date ?? activityStart;
         }
-
         public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)
         {
             using var workbook = new XLWorkbook();
@@ -156,7 +151,6 @@
             workbook.SaveAs(stream);
             return stream.ToArray();
         }
-
         public (DateTime startDate, DateTime? endDate)? GetValidatedUsageStatsDateRange(
             string startDateString,
             string endDateString,
@@ -179,9 +173,6 @@
 
             return (startDate, endDateIsSet ? endDate : (DateTime?)null);
         }
-
-        
-
         private IEnumerable<PeriodOfActivity> GroupActivityData(
             IEnumerable<ActivityLog> activityData,
             ReportInterval interval
@@ -244,6 +235,5 @@
             public int Completions { get; }
             public int Evaluations { get; }
         }
-
     }
 }
