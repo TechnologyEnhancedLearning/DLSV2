@@ -1,12 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.PlatformReports;
-    using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;

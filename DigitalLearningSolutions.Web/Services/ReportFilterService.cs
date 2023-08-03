@@ -5,8 +5,6 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.PlatformReports;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Data.Utilities;
-    using Org.BouncyCastle.Cms;
     using System.Collections.Generic;
     using System.Linq;
 

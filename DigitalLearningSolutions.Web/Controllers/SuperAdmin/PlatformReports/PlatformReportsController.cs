@@ -10,7 +10,6 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;

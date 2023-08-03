@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.DbModels;
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
     using System.Data;
