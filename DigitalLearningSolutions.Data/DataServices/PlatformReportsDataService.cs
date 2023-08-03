@@ -1,18 +1,35 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.PlatformReports;
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Collections.Generic;
     using System.Data;
     public interface IPlatformReportsDataService
     {
         PlatformUsageSummary GetPlatformUsageSummary();
+        IEnumerable<SelfAssessmentActivity> GetNursingProficienciesActivity(
+            int? centreId,
+            DateTime startDate,
+            DateTime? endDate,
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? regionId,
+            int? selfAssessmentId);
+        DateTime GetNursingProficienciesActivityStartDate();
     }
     public class PlatformReportsDataService : IPlatformReportsDataService
     {
         private readonly IDbConnection connection;
         private readonly ILogger<PlatformReportsDataService> logger;
+        private readonly string selectSelfAssessmentActivity = @"SELECT al.ActivityDate, al.Enrolled, al.Submitted | al.SignedOff AS Completed
+                                                                    FROM   ReportSelfAssessmentActivityLog AS al INNER JOIN
+                                                                                     Centres AS ce ON al.CentreID = ce.CentreID
+                                                                        WHERE (@endDate IS NULL OR
+                                                                                     al.ActivityDate <= @endDate) AND (@jobGroupId IS NULL OR
+                                                                                     al.JobGroupID = @jobGroupId) AND (al.ActivityDate >= @startDate) AND (@centreId IS NULL OR
+                                                                                     al.CentreID = @centreId) AND (@regionId IS NULL OR ce.RegionID = @regionId)";
         public PlatformReportsDataService(IDbConnection connection)
         {
             this.connection = connection;
@@ -49,6 +66,40 @@
                  FROM    ReportSelfAssessmentActivityLog
                  WHERE (SelfAssessmentID > 1) AND (SignedOff = 1)) AS NursingPassportCompletions"
             );
+        }
+        public IEnumerable<SelfAssessmentActivity> GetNursingProficienciesActivity(
+            int? centreId,
+            DateTime startDate,
+            DateTime? endDate,
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? regionId,
+            int? selfAssessmentId)
+        {
+           return connection.Query<SelfAssessmentActivity>(
+                 $@"{selectSelfAssessmentActivity} AND (@selfAssessmentId IS NULL OR
+                                 al.SelfAssessmentID = @selfAssessmentId) AND (@courseCategoryId IS NULL OR
+                                 al.CategoryID = @courseCategoryId) ",
+                 new
+                 {
+                     centreId,
+                     startDate,
+                     endDate,
+                     jobGroupId,
+                     selfAssessmentId,
+                     courseCategoryId,
+                     regionId
+                 }
+             );
+        }
+
+        public DateTime GetNursingProficienciesActivityStartDate()
+        {
+            return connection.QuerySingleOrDefault<DateTime>(
+                @"SELECT MIN(ActivityDate) AS StartDate
+                    FROM   ReportSelfAssessmentActivityLog
+                    WHERE (SelfAssessmentID > 1)"
+                );
         }
     }
 }

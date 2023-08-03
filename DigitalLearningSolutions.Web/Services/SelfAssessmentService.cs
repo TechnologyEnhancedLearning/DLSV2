@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Drawing;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.Common.Users;
@@ -12,6 +13,8 @@
 
     public interface ISelfAssessmentService
     {
+        //Self Assessments
+        string? GetSelfAssessmentNameById(int selfAssessmentId);
         // Candidate Assessments
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId);
 
@@ -408,10 +411,15 @@
                 delegateUserId
             );
         }
-
+        
         public void RemoveEnrolment(int selfAssessmentId, int delegateUserId)
         {
             selfAssessmentDataService.RemoveEnrolment(selfAssessmentId, delegateUserId);
+        }
+        
+        public string? GetSelfAssessmentNameById(int selfAssessmentId)
+        {
+            return selfAssessmentDataService.GetSelfAssessmentNameById(selfAssessmentId);
         }
     }
 }

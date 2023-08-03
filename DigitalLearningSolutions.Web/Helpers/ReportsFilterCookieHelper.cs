@@ -12,6 +12,7 @@
 
         public static void SetReportsFilterCookie(
             this IResponseCookies cookies,
+            string? cookieName,
             ActivityFilterData filterData,
             DateTime currentDateTime
         )
@@ -27,7 +28,7 @@
             );
         }
 
-        public static ActivityFilterData RetrieveFilterDataFromCookie(this IRequestCookieCollection cookies, int? categoryIdFilter)
+        public static ActivityFilterData RetrieveFilterDataFromCookie(this IRequestCookieCollection cookies, string? cookieName, int? categoryIdFilter)
         {
             var cookie = cookies[CookieName];
 
