@@ -1,21 +1,21 @@
 ﻿using FluentMigrator;
 namespace DigitalLearningSolutions.Data.Migrations
 {
-    [Migration(202307101239)]
+    [Migration(202308021239)]
     public class AddAcceptableUsePolicyRecord : Migration
     {
         public override void Up()
         {
-            var acceptableUsePolicy = @"<h1 class=""policy-text-center"">ACCEPTABLE USE POLICY</h1>
+            var acceptableUsePolicy = @"<h1 class=""nhsuk-u-text-align-centre nhsuk-heading-xl"">ACCEPTABLE USE POLICY</h1>
                                 <ol class=""custom-ordered-list nhsuk-u-padding-left-0"">
-                                    <li class=""h2 nhsuk-heading-l nhsuk-u-margin-0"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-margin-0"">
                                         General
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
                                             <li>This Acceptable Use Policy sets out how we permit you to use any of our Platforms. Your compliance with this Acceptable Use Policy is a condition of your use of the Platform.</li>
                                             <li>Capitalised terms have the meaning given to them in the terms of use for the Platform which are available at <a class=""policy-word-break"" href=""https://www.dls.nhs.uk/v2/LearningSolutions/Terms"">https://www.dls.nhs.uk/v2/LearningSolutions/Terms</a>.</li>
                                         </ol>
                                     </li>
-                                    <li class=""h2 nhsuk-heading-l nhsuk-u-margin-0"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-margin-0"">
                                         Acceptable use
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
                                             <li>You are permitted to use the Platform as set out in the Terms and for the purpose of personal study.</li>
@@ -24,7 +24,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                                             <li>Our status (and that of any identified contributors) as the authors of Content on the Platform must always be acknowledged (except in respect of Third-Party Content).</li>
                                         </ol>
                                     </li>
-                                    <li class=""h2 nhsuk-heading-l nhsuk-u-margin-0 nhsuk-u-padding-bottom-2"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-margin-0 nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2"">
                                         Prohibited uses
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
                                             <li>
@@ -76,7 +76,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                                             </li>
                                         </ol>
                                     </li>
-                                    <li class=""h2 nhsuk-heading-l nhsuk-u-margin-0"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-margin-0"">
                                         Content standards
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
                                             <li>The content standards set out in this paragraph 4 (Content Standards) apply to any and all Contributions. </li>
@@ -155,19 +155,19 @@ namespace DigitalLearningSolutions.Data.Migrations
                                             <li>When producing Content to upload to the Platform, we encourage you to implement NICE guideline recommendations and ensure that sources of evidence are valid (for example, by peer review).</li>
                                         </ol>
                                     </li>
-                                    <li class=""h2 nhsuk-heading-l"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold"">
                                         Metadata
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
                                             When making any Contribution, you must where prompted include a sufficient description of the Content so that other users can understand the description, source, and age of the Content. For example, if Content has been quality assured, then the relevant information should be posted in the appropriate field. All metadata fields on the Platform must be completed appropriately before initiating upload. Including the correct information is important in order to help other users locate the Content (otherwise the Content may not appear in search results for others to select).
                                         </ol>
                                     </li>
-                                    <li class=""h2 nhsuk-heading-l nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
                                         Updates
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
                                             You must update each Contribution at least once every 3 (three) years, or update or remove it should it cease to be relevant or become outdated or revealed or generally perceived to be unsafe or otherwise unsuitable for inclusion on the Platform.
                                         </ol>
                                     </li>
-                                    <li class=""h2 nhsuk-heading-l nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
                                         Accessibility
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
                                             Where practicable, all Contributions should aim to meet the accessibility standards as described in our Accessibility Statement
@@ -175,14 +175,14 @@ namespace DigitalLearningSolutions.Data.Migrations
                                             <a class=""policy-word-break"" href=""https://www.w3.org/TR/WCAG21/"">https://www.w3.org/TR/WCAG21/</a>.
                                         </ol>
                                     </li>
-                                    <li class=""h2 nhsuk-heading-l nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
                                         Rules about linking to the Platform
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
                                             <li>The Platform must not be framed on any other site. </li>
                                             <li>You may directly link to any Content that is hosted on the Platform, however, please be aware that not all links will continue to be available indefinitely. We will use our best efforts to ensure that all links are valid at the time of creating the related Content but cannot be held responsible for any subsequent changes to the link address or related Content.</li>
                                         </ol>
                                     </li>
-                                    <li class=""h2 nhsuk-heading-l nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
                                         No text or data mining, or web scraping
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
                                             <li>
@@ -196,7 +196,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                                             <li>This paragraph shall not apply insofar as (but only to the extent that) we are unable to exclude or limit text or data mining or web scraping activity by contract under the laws which are applicable to us.</li>
                                         </ol>
                                     </li>
-                                    <li class=""h2 nhsuk-heading-l nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
+                                    <li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0"">
                                         Breach of this Acceptable Use Policy
                                         <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-0"">
                                             Failure to comply with this Acceptable Use Policy constitutes a material breach of this Acceptable Use Policy upon which you are permitted to use the Platform and may result in our taking all or any of the following actions:
