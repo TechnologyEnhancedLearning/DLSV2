@@ -39,10 +39,12 @@
         {
             var activityData = platformReportsDataService.GetNursingProficienciesActivity(
                 filterData.CentreId,
+                filterData.CentreTypeId,
                 filterData.StartDate,
                 filterData.EndDate,
                 filterData.JobGroupId,
                 filterData.CourseCategoryId,
+                filterData.BrandId,
                 filterData.RegionId,
                 filterData.SelfAssessmentId
             ).OrderBy(x => x.ActivityDate);

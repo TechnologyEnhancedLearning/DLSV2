@@ -11,10 +11,12 @@
         PlatformUsageSummary GetPlatformUsageSummary();
         IEnumerable<SelfAssessmentActivity> GetNursingProficienciesActivity(
             int? centreId,
+            int? centreTypeId,
             DateTime startDate,
             DateTime? endDate,
             int? jobGroupId,
             int? courseCategoryId,
+            int? brandId,
             int? regionId,
             int? selfAssessmentId);
         DateTime GetNursingProficienciesActivityStartDate();
@@ -29,7 +31,7 @@
                                                                         WHERE (@endDate IS NULL OR
                                                                                      al.ActivityDate <= @endDate) AND (@jobGroupId IS NULL OR
                                                                                      al.JobGroupID = @jobGroupId) AND (al.ActivityDate >= @startDate) AND (@centreId IS NULL OR
-                                                                                     al.CentreID = @centreId) AND (@regionId IS NULL OR ce.RegionID = @regionId)";
+                                                                                     al.CentreID = @centreId) AND (@regionId IS NULL OR ce.RegionID = @regionId) AND (@centreTypeID IS NULL OR ce.CentreTypeID = @centreTypeID)";
         public PlatformReportsDataService(IDbConnection connection)
         {
             this.connection = connection;
@@ -69,10 +71,12 @@
         }
         public IEnumerable<SelfAssessmentActivity> GetNursingProficienciesActivity(
             int? centreId,
+            int? centreTypeId,
             DateTime startDate,
             DateTime? endDate,
             int? jobGroupId,
             int? courseCategoryId,
+            int? brandId,
             int? regionId,
             int? selfAssessmentId)
         {
@@ -83,16 +87,38 @@
                  new
                  {
                      centreId,
+                     centreTypeId,
                      startDate,
                      endDate,
                      jobGroupId,
                      selfAssessmentId,
                      courseCategoryId,
+                     brandId,
                      regionId
                  }
              );
         }
-
+        public IEnumerable<SelfAssessmentActivity> GetDigitalCapabilitiesActivity(
+           int? centreId,
+           int? centreTypeId,
+           DateTime startDate,
+           DateTime? endDate,
+           int? jobGroupId,
+           int? regionId)
+        {
+            return connection.Query<SelfAssessmentActivity>(
+                  $@"{selectSelfAssessmentActivity} AND (@selfAssessmentId = 1) ",
+                  new
+                  {
+                      centreId,
+                      centreTypeId,
+                      startDate,
+                      endDate,
+                      jobGroupId,
+                      regionId
+                  }
+              );
+        }
         public DateTime GetNursingProficienciesActivityStartDate()
         {
             return connection.QuerySingleOrDefault<DateTime>(

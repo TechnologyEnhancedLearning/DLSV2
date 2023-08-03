@@ -133,5 +133,34 @@
         {
             return reportFilterService.GetNursingFilterOptions();
         }
+        [Route("DigitalSkills")]
+        public IActionResult DigitalSkills()
+        {
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminDSATReportsFilterCookie", null);
+            Response.Cookies.SetReportsFilterCookie("SuperAdminDSATReportsFilterCookie", filterData, clockUtility.UtcNow);
+            var activity = platformReportsService.GetNursingProficienciesActivity(filterData);
+            var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetNursingAssessmentCourseFilterNames(filterData);
+            var nursingReportFilterModel = new NursingReportFilterModel(
+                filterData,
+                regionName,
+                centreTypeName,
+                centreName,
+                jobGroupName,
+                brandName,
+                categoryName,
+                selfAssessmentName,
+                true
+                );
+            var model = new NursingProficienciesViewModel(
+                activity,
+                nursingReportFilterModel,
+                filterData.StartDate,
+                filterData.EndDate ?? clockUtility.UtcToday,
+                true,
+                "All"
+                );
+
+            return View(model);
+        }
     }
 }
