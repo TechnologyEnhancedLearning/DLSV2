@@ -27,7 +27,8 @@
         private readonly ILogger<PlatformReportsDataService> logger;
         private readonly string selectSelfAssessmentActivity = @"SELECT al.ActivityDate, al.Enrolled, al.Submitted | al.SignedOff AS Completed
                                                                     FROM   ReportSelfAssessmentActivityLog AS al INNER JOIN
-                                                                                     Centres AS ce ON al.CentreID = ce.CentreID
+                                                                                     Centres AS ce ON al.CentreID = ce.CentreID INNER JOIN
+                                                                                     SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
                                                                         WHERE (@endDate IS NULL OR
                                                                                      al.ActivityDate <= @endDate) AND (@jobGroupId IS NULL OR
                                                                                      al.JobGroupID = @jobGroupId) AND (al.ActivityDate >= @startDate) AND (@centreId IS NULL OR
@@ -81,7 +82,7 @@
             int? selfAssessmentId)
         {
            return connection.Query<SelfAssessmentActivity>(
-                 $@"{selectSelfAssessmentActivity} AND (@selfAssessmentId IS NULL OR
+                 $@"{selectSelfAssessmentActivity} AND (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1) AND (@selfAssessmentId IS NULL OR
                                  al.SelfAssessmentID = @selfAssessmentId) AND (@courseCategoryId IS NULL OR
                                  al.CategoryID = @courseCategoryId) ",
                  new
@@ -122,9 +123,10 @@
         public DateTime GetNursingProficienciesActivityStartDate()
         {
             return connection.QuerySingleOrDefault<DateTime>(
-                @"SELECT MIN(ActivityDate) AS StartDate
-                    FROM   ReportSelfAssessmentActivityLog
-                    WHERE (SelfAssessmentID > 1)"
+                @"SELECT MIN(al.ActivityDate) AS StartDate
+                    FROM   ReportSelfAssessmentActivityLog AS al INNER JOIN
+                           SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                    WHERE (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1)"
                 );
         }
     }
