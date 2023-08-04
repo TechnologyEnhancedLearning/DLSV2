@@ -32,8 +32,10 @@
                                                                                      Centres AS ce ON al.CentreID = ce.CentreID INNER JOIN
                                                                                      SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
                                                                         WHERE (@endDate IS NULL OR al.ActivityDate <= @endDate) AND
-                                                                                     (@jobGroupId IS NULL OR al.JobGroupID = @jobGroupId) AND
                                                                                      (al.ActivityDate >= @startDate) AND
+                                                                                     (sa.[National] = 1) AND
+                                                                                     (sa.ArchivedDate IS NULL) AND
+                                                                                     (@jobGroupId IS NULL OR al.JobGroupID = @jobGroupId) AND
                                                                                      (@centreId IS NULL OR al.CentreID = @centreId) AND
                                                                                      (@regionId IS NULL OR ce.RegionID = @regionId) AND
                                                                                      (@centreTypeID IS NULL OR ce.CentreTypeID = @centreTypeID) AND
