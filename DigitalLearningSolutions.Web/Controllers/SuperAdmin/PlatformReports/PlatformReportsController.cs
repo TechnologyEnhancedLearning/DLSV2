@@ -26,6 +26,10 @@
         private readonly IPlatformReportsService platformReportsService;
         private readonly IClockUtility clockUtility;
         private readonly IReportFilterService reportFilterService;
+        private SelfAssessmentReportsFilterOptions GetDropdownValues(bool supervised)
+        {
+            return reportFilterService.GetSelfAssessmentFilterOptions(supervised);
+        }
         public PlatformReportsController(
             IPlatformReportsService platformReportsService,
             IClockUtility clockUtility,
@@ -44,13 +48,13 @@
             };
             return View(model);
         }
-        [Route("NursingProficiencies")]
-        public IActionResult NursingProficiencies()
+        [Route("SelfAssessments/Supervised")]
+        public IActionResult SupervisedSelfAssessmentsReport()
         {
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminReportsFilterCookie", null);
             Response.Cookies.SetReportsFilterCookie("SuperAdminReportsFilterCookie", filterData, clockUtility.UtcNow);
-            var activity = platformReportsService.GetNursingProficienciesActivity(filterData);
-            var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetNursingAssessmentCourseFilterNames(filterData);
+            var activity = platformReportsService.GetSelfAssessmentActivity(filterData, true);
+            var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetSelfAssessmentFilterNames(filterData);
             var nursingReportFilterModel = new NursingReportFilterModel(
                 filterData,
                 regionName,
@@ -62,7 +66,7 @@
                 selfAssessmentName,
                 true
                 );
-            var model = new NursingProficienciesViewModel(
+            var model = new SupervisedSelfAssessmentsReportViewModel(
                 activity,
                 nursingReportFilterModel,
                 filterData.StartDate,
@@ -74,39 +78,39 @@
             return View(model);
         }
         [NoCaching]
-        [Route("NursingProficiencies/Data")]
-        public IEnumerable<SelfAssessmentActivityDataRowModel> GetGraphData()
+        [Route("SelfAssessments/Data/{supervised}")]
+        public IEnumerable<SelfAssessmentActivityDataRowModel> GetGraphData(bool supervised)
         {
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminReportsFilterCookie", null);
-            var activity = platformReportsService.GetNursingProficienciesActivity(filterData!);
+            var activity = platformReportsService.GetSelfAssessmentActivity(filterData!, supervised);
             return activity.Select(
                 p => new SelfAssessmentActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
             );
         }
         [HttpGet]
-        [Route("NursingProficiencies/EditFilters")]
-        public IActionResult NursingReportEditFilters()
+        [Route("SelfAssessments/Supervised/EditFilters")]
+        public IActionResult SupervisedSelfAssessmentsEditFilters()
         {
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminReportsFilterCookie", null);
-            var filterOptions = GetDropdownValues();
-            var dataStartDate = platformReportsService.GetNursingProficienciesActivityStartDate();
-            var model = new NursingReportEditFiltersViewModel(
+            var filterOptions = GetDropdownValues(true);
+            var dataStartDate = platformReportsService.GetSelfAssessmentActivityStartDate(true);
+            var model = new SupervisedSelfAssessmentsEditFiltersViewModel(
                 filterData,
                 null,
                 filterOptions,
                 dataStartDate
             );
-            return View("NursingReportEditFilters", model);
+            return View("SupervisedSelfAssessmentsEditFilters", model);
         }
 
         [HttpPost]
-        [Route("NursingProficiencies/EditFilters")]
-        public IActionResult NursingReportEditFilters(NursingReportEditFiltersViewModel model)
+        [Route("SelfAssessments/Supervised/EditFilters")]
+        public IActionResult SupervisedSelfAssessmentsEditFilters(SupervisedSelfAssessmentsEditFiltersViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                var filterOptions = GetDropdownValues();
-                model.DataStart = platformReportsService.GetNursingProficienciesActivityStartDate();
+                var filterOptions = GetDropdownValues(true);
+                model.DataStart = platformReportsService.GetSelfAssessmentActivityStartDate(true);
                 return View("NursingReportEditFilters", model);
             }
 
@@ -127,19 +131,16 @@
 
             Response.Cookies.SetReportsFilterCookie("SuperAdminReportsFilterCookie", filterData, clockUtility.UtcNow);
 
-            return RedirectToAction("NursingProficiencies");
+            return RedirectToAction("SupervisedSelfAssessmentsReport");
         }
-        private NursingReportsFilterOptions GetDropdownValues()
-        {
-            return reportFilterService.GetNursingFilterOptions();
-        }
-        [Route("DigitalSkills")]
-        public IActionResult DigitalSkills()
+
+        [Route("SelfAssessments/Independent")]
+        public IActionResult IndependentSelfAssessmentsReport()
         {
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminDSATReportsFilterCookie", null);
             Response.Cookies.SetReportsFilterCookie("SuperAdminDSATReportsFilterCookie", filterData, clockUtility.UtcNow);
-            var activity = platformReportsService.GetNursingProficienciesActivity(filterData);
-            var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetNursingAssessmentCourseFilterNames(filterData);
+            var activity = platformReportsService.GetSelfAssessmentActivity(filterData, false);
+            var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetSelfAssessmentFilterNames(filterData);
             var nursingReportFilterModel = new NursingReportFilterModel(
                 filterData,
                 regionName,
@@ -151,7 +152,7 @@
                 selfAssessmentName,
                 true
                 );
-            var model = new NursingProficienciesViewModel(
+            var model = new SupervisedSelfAssessmentsReportViewModel(
                 activity,
                 nursingReportFilterModel,
                 filterData.StartDate,

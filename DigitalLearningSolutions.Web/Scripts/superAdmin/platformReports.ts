@@ -2,7 +2,7 @@ import Chartist, { IChartistData } from 'chartist';
 import getPathForEndpoint from '../common';
 import * as chartCommon from '../chartCommon';
 
-const path = getPathForEndpoint('SuperAdmin/Reports/NursingProficiencies/Data');
+const path = getPathForEndpoint('SuperAdmin/Reports/SelfAssessments/Data/True');
 interface IActivityDataRowModel {
   period: string;
   completions: number;

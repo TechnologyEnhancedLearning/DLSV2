@@ -6,9 +6,9 @@
     using System;
     using System.Collections.Generic;
 
-    public class NursingProficienciesViewModel
+    public class SupervisedSelfAssessmentsReportViewModel
     {
-        public NursingProficienciesViewModel(
+        public SupervisedSelfAssessmentsReportViewModel(
             IEnumerable<SelfAssessmentActivityInPeriod> activity,
             NursingReportFilterModel filterModel,
              DateTime startDate,
@@ -23,7 +23,7 @@
             Category = category;
 
         }
-        public SuperAdminReportsPage CurrentPage => SuperAdminReportsPage.NursingProficiencies;
+        public SuperAdminReportsPage CurrentPage => SuperAdminReportsPage.SupervisedSelfAssessments;
         public SelfAssessmentActivityTableViewModel SelfAssessmentActivityTableViewModel { get; set; }
         public NursingReportFilterModel FilterModel { get; set; }
         public bool HasActivity { get; set; }

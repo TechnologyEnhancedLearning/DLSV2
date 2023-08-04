@@ -16,12 +16,12 @@
         IEnumerable<Category> GetAllCategories();
         IEnumerable<Topic> GetAllTopics();
         IEnumerable<(int, string)> GetCentreTypes();
-        IEnumerable<(int, string)> GetSupervisedAssessmentBrands();
-        IEnumerable<(int, string)> GetSupervisedAssessmentCategories();
-        IEnumerable<(int, string)> GetSupervisedAssessmentCentreTypes();
-        IEnumerable<(int, string)> GetSupervisedAssessmentRegions();
-        IEnumerable<(int, string)> GetSupervisedAssessments();
-        IEnumerable<(int, string)> GetSupervisedAssessmentCentres();
+        IEnumerable<(int, string)> GetSelfAssessmentBrands(bool supervised);
+        IEnumerable<(int, string)> GetSelfAssessmentCategories(bool supervised);
+        IEnumerable<(int, string)> GetSelfAssessmentCentreTypes(bool supervised);
+        IEnumerable<(int, string)> GetSelfAssessmentRegions(bool supervised);
+        IEnumerable<(int, string)> GetSelfAssessments(bool supervised);
+        IEnumerable<(int, string)> GetSelfAssessmentCentres(bool supervised);
         string? GetBrandNameById(int brandId);
         string? GetCategoryNameById(int categoryId);
         string? GetTopicNameById(int topicId);
@@ -37,6 +37,10 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<CommonService> logger;
+        private string GetSelfAssessmentWhereClause(bool supervised)
+        {
+            return supervised ? " (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1)" : " (sa.SupervisorResultsReview = 0 AND SupervisorSelfAssessmentReview = 0)";
+        }
         public CommonService(IDbConnection connection, ILogger<CommonService> logger)
         {
             this.connection = connection;
@@ -110,77 +114,83 @@
                     ORDER BY CentreType"
                       );
         }
-        public IEnumerable<(int, string)> GetSupervisedAssessmentBrands()
+        public IEnumerable<(int, string)> GetSelfAssessmentBrands(bool supervised)
         {
+            var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
-                @"SELECT b.BrandID, b.BrandName
+                $@"SELECT b.BrandID, b.BrandName
                     FROM   Brands AS b INNER JOIN
                                  SelfAssessments AS sa ON b.BrandID = sa.BrandID
                     WHERE (b.Active = 1) AND
-                                 (sa.ArchivedDate IS NULL) AND (sa.[National] = 1) AND (sa.SupervisorSelfAssessmentReview = 1)
+                                 (sa.ArchivedDate IS NULL) AND (sa.[National] = 1) AND {whereClause}
                     GROUP BY b.BrandID, b.BrandName
                     ORDER BY b.BrandName"
            );
         }
 
-        public IEnumerable<(int, string)> GetSupervisedAssessmentCategories()
+        public IEnumerable<(int, string)> GetSelfAssessmentCategories(bool supervised)
         {
+            var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
-                @"SELECT cc.CourseCategoryID, cc.CategoryName
+                $@"SELECT cc.CourseCategoryID, cc.CategoryName
                     FROM   CourseCategories AS cc INNER JOIN
                                  SelfAssessments AS sa ON cc.CourseCategoryID = sa.CategoryID
-                    WHERE (cc.Active = 1) AND (sa.ArchivedDate IS NULL) AND (sa.[National] = 1) AND (sa.SupervisorSelfAssessmentReview = 1)
+                    WHERE (cc.Active = 1) AND (sa.ArchivedDate IS NULL) AND (sa.[National] = 1) AND {whereClause}
                     GROUP BY cc.CourseCategoryID, cc.CategoryName
                     ORDER BY cc.CategoryName"
            );
         }
 
-        public IEnumerable<(int, string)> GetSupervisedAssessmentCentreTypes()
+        public IEnumerable<(int, string)> GetSelfAssessmentCentreTypes(bool supervised)
         {
+            var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
-                @"SELECT ct.CentreTypeID, ct.CentreType AS CentreTypeName
+                $@"SELECT ct.CentreTypeID, ct.CentreType AS CentreTypeName
                     FROM   Centres AS c INNER JOIN
                                 CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID INNER JOIN
                                 SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID INNER JOIN
                                 CentreTypes AS ct ON c.CentreTypeID = ct.CentreTypeID
-                    WHERE (sa.SupervisorSelfAssessmentReview = 1) AND (sa.[National] = 1) AND (sa.ArchivedDate IS NULL)
+                    WHERE (sa.[National] = 1) AND (sa.ArchivedDate IS NULL) AND {whereClause}
                     GROUP BY ct.CentreTypeID, ct.CentreType
                     ORDER BY CentreTypeName"
                       );
         }
-        public IEnumerable<(int, string)> GetSupervisedAssessmentRegions()
+        public IEnumerable<(int, string)> GetSelfAssessmentRegions(bool supervised)
         {
+            var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
-                @"SELECT r.RegionID AS ID, r.RegionName AS Label
+                $@"SELECT r.RegionID AS ID, r.RegionName AS Label
                     FROM   Regions AS r INNER JOIN
                                  Centres AS c ON r.RegionID = c.RegionID INNER JOIN
                                  CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID INNER JOIN
                                  SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
-                    WHERE (sa.SupervisorSelfAssessmentReview = 1) AND (sa.[National] = 1) AND (sa.ArchivedDate IS NULL)
+                    WHERE (sa.[National] = 1) AND (sa.ArchivedDate IS NULL) AND {whereClause}
                     GROUP BY r.RegionID, r.RegionName
                     ORDER BY Label"
                       );
         }
 
-        public IEnumerable<(int, string)> GetSupervisedAssessments()
+        public IEnumerable<(int, string)> GetSelfAssessments(bool supervised)
         {
+            var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
-                @"SELECT ID, Name AS Label
+                $@"SELECT ID, Name AS Label
                     FROM   SelfAssessments AS sa
-                    WHERE (SupervisorSelfAssessmentReview = 1) AND ([National] = 1) AND (ArchivedDate IS NULL)
+                    WHERE ([National] = 1) AND (ArchivedDate IS NULL) AND {whereClause}
                     GROUP BY ID, Name
                     ORDER BY Label"
                       );
         }
 
-        public IEnumerable<(int, string)> GetSupervisedAssessmentCentres()
+        public IEnumerable<(int, string)> GetSelfAssessmentCentres(bool supervised)
         {
+            var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
-                @"SELECT c.CentreID AS ID, c.CentreName AS Label
+                $@"SELECT c.CentreID AS ID, c.CentreName AS Label
                     FROM   Centres AS c INNER JOIN
                                  CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID INNER JOIN
                                  SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
-                    WHERE (sa.SupervisorSelfAssessmentReview = 1) AND (sa.[National] = 1) AND (sa.ArchivedDate IS NULL)
+                    WHERE (sa.[National] = 1) AND (sa.ArchivedDate IS NULL) AND {whereClause}
                     GROUP BY c.CentreID, c.CentreName
                     ORDER BY Label"
                       );

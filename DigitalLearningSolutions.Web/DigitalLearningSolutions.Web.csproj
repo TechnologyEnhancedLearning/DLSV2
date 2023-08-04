@@ -144,7 +144,6 @@
 
     <ItemGroup>
         <_ContentIncludedByDefault Remove="Views\Shared\Components\VerifyEmailWarningIfAppropriate\Default.cshtml" />
-        <_ContentIncludedByDefault Remove="Views\SuperAdmin\PlatformReports\NursingProficiencies.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -171,9 +170,5 @@
             <UserProperties />
         </VisualStudio>
     </ProjectExtensions>
-
-    <ItemGroup>
-      <UpToDateCheckInput Remove="Views\SuperAdmin\PlatformReports\NursingProficiencies.cshtml" />
-    </ItemGroup>
 
 </Project>

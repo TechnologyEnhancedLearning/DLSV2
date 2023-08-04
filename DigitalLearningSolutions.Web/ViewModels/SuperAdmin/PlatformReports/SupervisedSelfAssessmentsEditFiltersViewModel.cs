@@ -10,14 +10,14 @@
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
-    public class NursingReportEditFiltersViewModel
+    public class SupervisedSelfAssessmentsEditFiltersViewModel
     {
-        public NursingReportEditFiltersViewModel() { }
+        public SupervisedSelfAssessmentsEditFiltersViewModel() { }
 
-        public NursingReportEditFiltersViewModel(
+        public SupervisedSelfAssessmentsEditFiltersViewModel(
             ActivityFilterData filterData,
             int? userCategoryFilter,
-            NursingReportsFilterOptions filterOptions,
+            SelfAssessmentReportsFilterOptions filterOptions,
             DateTime? dataStartDate
         )
         {
@@ -94,7 +94,7 @@
             return validationResults;
         }
 
-        public void SetUpDropdowns(NursingReportsFilterOptions filterOptions, int? userCategoryFilter)
+        public void SetUpDropdowns(SelfAssessmentReportsFilterOptions filterOptions, int? userCategoryFilter)
         {
             CentreOptions = SelectListHelper.MapOptionsToSelectListItems(filterOptions.Centres, CentreId);
             CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(filterOptions.CentreTypes, CentreTypeId);

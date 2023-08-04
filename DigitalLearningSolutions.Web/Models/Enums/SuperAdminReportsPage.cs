@@ -5,7 +5,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
         PlatformUsage,
         CourseUsage,
         CourseEvaluations,
-        DigitalCapabilities,
-        NursingProficiencies
+        IndependentSelfAssessments,
+        SupervisedSelfAssessments
     }
 }

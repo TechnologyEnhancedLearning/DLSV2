@@ -13,8 +13,8 @@
     public interface IPlatformReportsService
     {
         PlatformUsageSummary GetPlatformUsageSummary();
-        IEnumerable<SelfAssessmentActivityInPeriod> GetNursingProficienciesActivity(ActivityFilterData filterData);
-        DateTime GetNursingProficienciesActivityStartDate();
+        IEnumerable<SelfAssessmentActivityInPeriod> GetSelfAssessmentActivity(ActivityFilterData filterData, bool supervised);
+        DateTime GetSelfAssessmentActivityStartDate(bool supervised);
     }
 
     public class PlatformReportsService : IPlatformReportsService
@@ -35,9 +35,9 @@
         {
             return platformReportsDataService.GetPlatformUsageSummary();
         }
-        public IEnumerable<SelfAssessmentActivityInPeriod> GetNursingProficienciesActivity(ActivityFilterData filterData)
+        public IEnumerable<SelfAssessmentActivityInPeriod> GetSelfAssessmentActivity(ActivityFilterData filterData, bool supervised)
         {
-            var activityData = platformReportsDataService.GetNursingProficienciesActivity(
+            var activityData = platformReportsDataService.GetSelfAssessmentActivity(
                 filterData.CentreId,
                 filterData.CentreTypeId,
                 filterData.StartDate,
@@ -46,7 +46,8 @@
                 filterData.CourseCategoryId,
                 filterData.BrandId,
                 filterData.RegionId,
-                filterData.SelfAssessmentId
+                filterData.SelfAssessmentId,
+                supervised
             ).OrderBy(x => x.ActivityDate);
             var dataByPeriod = GroupSelfAssessmentActivityData(activityData, filterData.ReportInterval);
             var dateSlots = DateHelper.GetPeriodsBetweenDates(
@@ -65,6 +66,7 @@
                 }
             );
         }
+       
         private IEnumerable<SelfAssessmentActivityInPeriod> GroupSelfAssessmentActivityData(
            IEnumerable<SelfAssessmentActivity> activityData,
            ReportInterval interval
@@ -103,9 +105,9 @@
             return quarter * 3 - 2;
         }
 
-        public DateTime GetNursingProficienciesActivityStartDate()
+        public DateTime GetSelfAssessmentActivityStartDate(bool supervised)
         {
-            return platformReportsDataService.GetNursingProficienciesActivityStartDate();
+            return platformReportsDataService.GetSelfAssessmentActivityStartDate(supervised);
         }
     }
 }
