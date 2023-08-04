@@ -284,7 +284,7 @@
                 splitOn: "CentreTypeId,RegionID",
                 commandTimeout: 3000
             );
-            int ResultCount = connection.ExecuteScalar<int>(
+            int resultCount = connection.ExecuteScalar<int>(
                                 @$"SELECT  COUNT(*) AS Matches
                                 FROM Centres AS c
                                 INNER JOIN Regions AS r ON r.RegionID = c.RegionID
@@ -293,7 +293,7 @@
                     new { search, region, centreType, contractType, centreStatus },
                     commandTimeout: 3000
             );
-            return (centreEntity, ResultCount);
+            return (centreEntity, resultCount);
         }
 
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()

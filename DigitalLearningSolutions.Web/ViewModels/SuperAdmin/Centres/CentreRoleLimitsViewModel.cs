@@ -4,7 +4,6 @@
 
     public class CentreRoleLimitsViewModel
     {
-
         public int CentreId { get; set; }
         public bool IsRoleLimitSetCmsAdministrators { get; set; }
         public bool IsRoleLimitSetCmsManagers { get; set; }

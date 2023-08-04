@@ -3,13 +3,10 @@ using DigitalLearningSolutions.Data.Models.Centres;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
-using DocumentFormat.OpenXml.EMMA;
 using FakeItEasy;
 using FluentAssertions;
 using FluentAssertions.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
@@ -88,8 +85,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                                                 .MustHaveHappenedOnceExactly();
         }
 
-
-
         [Test]
         public void CentreRoleLimits_route_loads_existing_role_limits_with_derived_flags_set()
         {
@@ -108,13 +103,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 A<int>._
             )).Returns(roleLimits);
 
-            var expectedVM = new CentreRoleLimitsViewModel
+            var expectedVm = new CentreRoleLimitsViewModel
             {
                 CentreId = 374,
                 RoleLimitCmsAdministrators = -1,
                 IsRoleLimitSetCmsAdministrators = false,    // automatically set off
                 RoleLimitCmsManagers = -1,
-                IsRoleLimitSetCmsManagers = false,    // automatically set off
+                IsRoleLimitSetCmsManagers = false,          // automatically set off
                 IsRoleLimitSetContentCreatorLicenses = true,
                 RoleLimitContentCreatorLicenses = 10,
                 IsRoleLimitSetCustomCourses = true,
@@ -129,7 +124,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             // Then
 
             A.CallTo(() => centresDataService.GetRoleLimitsForCentre(374)).MustHaveHappenedOnceExactly();
-            result.Should().BeViewResult("CentreRoleLimits").ModelAs<CentreRoleLimitsViewModel>().Should().BeEquivalentTo(expectedVM);
+            result.Should().BeViewResult("CentreRoleLimits").ModelAs<CentreRoleLimitsViewModel>().Should().BeEquivalentTo(expectedVm);
         }
 
         [Test]

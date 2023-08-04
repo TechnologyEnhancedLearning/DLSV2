@@ -1,27 +1,24 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
-{
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
-    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
-    using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.FeatureManagement.Mvc;
-    using Pipelines.Sockets.Unofficial;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Data.Enums;
+using DigitalLearningSolutions.Data.Helpers;
+using DigitalLearningSolutions.Data.Models.Centres;
+using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+using DigitalLearningSolutions.Web.Attributes;
+using DigitalLearningSolutions.Web.Extensions;
+using DigitalLearningSolutions.Web.Helpers;
+using DigitalLearningSolutions.Web.Models.Enums;
+using DigitalLearningSolutions.Web.Services;
+using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
+using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
+namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
+{
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.SuperAdmin))]
@@ -48,67 +45,67 @@
         [Route("SuperAdmin/Centres/{page=0:int}")]
         public IActionResult Index(
           int page = 1,
-          string? Search = "",
+          string? search = "",
           int? itemsPerPage = 10,
-          int Region = 0,
-          int CentreType = 0,
-          int ContractType = 0,
-          string CentreStatus = "",
-          string? SearchString = "",
-          string? ExistingFilterString = ""
+          int region = 0,
+          int centreType = 0,
+          int contractType = 0,
+          string centreStatus = "",
+          string? searchString = "",
+          string? existingFilterString = ""
         )
         {
-            if (string.IsNullOrEmpty(SearchString) && string.IsNullOrEmpty(ExistingFilterString))
+            if (string.IsNullOrEmpty(searchString) && string.IsNullOrEmpty(existingFilterString))
             {
                 page = 1;
             }
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
-            CentreStatus = (string.IsNullOrEmpty(CentreStatus) ? "Any" : CentreStatus);
+            centreStatus = (string.IsNullOrEmpty(centreStatus) ? "Any" : centreStatus);
 
-            if (!string.IsNullOrEmpty(SearchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
-                List<string> searchFilters = SearchString.Split("-").ToList();
+                List<string> searchFilters = searchString.Split("-").ToList();
                 if (searchFilters.Count == 1)
                 {
                     string searchFilter = searchFilters[0];
                     if (searchFilter.Contains("SearchQuery|"))
                     {
-                        Search = searchFilter.Split("|")[1];
+                        search = searchFilter.Split("|")[1];
                     }
                 }
             }
-            if (!string.IsNullOrEmpty(ExistingFilterString))
+            if (!string.IsNullOrEmpty(existingFilterString))
             {
-                List<string> selectedFilters = ExistingFilterString.Split("-").ToList();
+                List<string> selectedFilters = existingFilterString.Split("-").ToList();
                 if (selectedFilters.Count == 4)
                 {
                     string regionFilter = selectedFilters[0];
                     if (regionFilter.Contains("Region|"))
                     {
-                        Region = Convert.ToInt16(regionFilter.Split("|")[1]);
+                        region = Convert.ToInt16(regionFilter.Split("|")[1]);
                     }
 
                     string centreTypeFilter = selectedFilters[1];
                     if (centreTypeFilter.Contains("CentreType|"))
                     {
-                        CentreType = Convert.ToInt16(centreTypeFilter.Split("|")[1]);
+                        centreType = Convert.ToInt16(centreTypeFilter.Split("|")[1]);
                     }
 
                     string contractTypeFilter = selectedFilters[2];
                     if (contractTypeFilter.Contains("ContractType|"))
                     {
-                        ContractType = Convert.ToInt16(contractTypeFilter.Split("|")[1]);
+                        contractType = Convert.ToInt16(contractTypeFilter.Split("|")[1]);
                     }
 
                     string centreStatusFilter = selectedFilters[3];
                     if (centreStatusFilter.Contains("CentreStatus|"))
                     {
-                        CentreStatus = centreStatusFilter.Split("|")[1];
+                        centreStatus = centreStatusFilter.Split("|")[1];
                     }
                 }
             }
-            (var Centres, var ResultCount) = this.centresService.GetAllCentreSummariesForSuperAdmin(Search ?? string.Empty, offSet, itemsPerPage ?? 10, Region, CentreType, ContractType, CentreStatus);
+            (var centres, var resultCount) = this.centresService.GetAllCentreSummariesForSuperAdmin(search ?? string.Empty, offSet, itemsPerPage ?? 10, region, centreType, contractType, centreStatus);
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
@@ -118,59 +115,59 @@
             );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
-                Centres,
+                centres,
                 searchSortPaginationOptions
             );
             result.Page = page;
             if (
-                !string.IsNullOrEmpty(Search) ||
-                Region != 0 ||
-                CentreType != 0 ||
-                ContractType != 0 ||
-                !string.IsNullOrEmpty(CentreStatus)
+                !string.IsNullOrEmpty(search) ||
+                region != 0 ||
+                centreType != 0 ||
+                contractType != 0 ||
+                !string.IsNullOrEmpty(centreStatus)
             )
             {
-                result.SearchString = "SearchQuery|" + Search + "";
-                result.FilterString = "Region|" + Region + "-CentreType|" + CentreType + "-ContractType|" + ContractType + "-CentreStatus|" + CentreStatus;
+                result.SearchString = "SearchQuery|" + search + "";
+                result.FilterString = "Region|" + region + "-CentreType|" + centreType + "-ContractType|" + contractType + "-CentreStatus|" + centreStatus;
             }
 
             var model = new CentresViewModel(result);
-            model.TotalPages = (int)(ResultCount / itemsPerPage) + ((ResultCount % itemsPerPage) > 0 ? 1 : 0);
-            model.MatchingSearchResults = ResultCount;
-            model.Search = Search;
-            model.Region = Region;
-            model.ContractType = ContractType;
-            model.CentreStatus = CentreStatus;
-            model.CentreType = CentreType;
+            model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
+            model.MatchingSearchResults = resultCount;
+            model.Search = search;
+            model.Region = region;
+            model.ContractType = contractType;
+            model.CentreStatus = centreStatus;
+            model.CentreType = centreType;
             model.JavascriptSearchSortFilterPaginateEnabled = false;
 
             var regions = regionDataService.GetRegionsAlphabetical().ToList();
             regions.Insert(0, (0, "Any"));
             ViewBag.Regions = SelectListHelper.MapOptionsToSelectListItems(
-                regions, Region
+                regions, region
             );
 
             var centreTypes = this.centresDataService.GetCentreTypes().ToList();
             centreTypes.Insert(0, (0, "Any"));
             ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
-                centreTypes, CentreType
+                centreTypes, centreType
             );
 
             var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
             contractTypes.Insert(0, (0, "Any"));
             ViewBag.ContractTypes = SelectListHelper.MapOptionsToSelectListItems(
-                contractTypes, ContractType
+                contractTypes, contractType
             );
 
             ViewBag.CentreStatus = SelectListHelper.MapOptionsToSelectListItems(
-                GetCentreStatus(), CentreStatus
+                GetCentreStatus(), centreStatus
             );
             ModelState.ClearAllErrors();
             return View(model);
         }
         public List<string> GetCentreStatus()
         {
-            return new List<string>(new string[] { "Any", "Active", "Inactive" });
+            return new List<string>(new[] { "Any", "Active", "Inactive" });
         }
 
         [Route("SuperAdmin/Centres/{centreId=0:int}/Manage")]
@@ -184,12 +181,12 @@
         public IActionResult Courses(int centreId = 0)
         {
             var courses = this.courseDataService.GetApplicationsAvailableToCentre(centreId);
-            List<CentreCoursesViewModel> centreCoursesViewModel = new List<CentreCoursesViewModel>();
+            List<CentreCoursesViewModel> centreCoursesViewModel;
             centreCoursesViewModel = courses.GroupBy(x => x.ApplicationId).Select(
                 application => new CentreCoursesViewModel
                 {
-                    ApplicationID = application.FirstOrDefault().ApplicationId,
-                    ApplicationName = application.FirstOrDefault().ApplicationName,
+                    ApplicationID = application.FirstOrDefault()!.ApplicationId,
+                    ApplicationName = application.FirstOrDefault()!.ApplicationName,
                     CentreCourseCustomisations = application.Select(courseCustomisation => new CentreCourseCustomisation
                     {
                         CustomisationID = courseCustomisation.CustomisationId,
@@ -342,23 +339,23 @@
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult EditCentreRoleLimits(CentreRoleLimitsViewModel model)
         {
-            if (!(model.IsRoleLimitSetCmsAdministrators != null && model.IsRoleLimitSetCmsAdministrators != false))
+            if (!(model.IsRoleLimitSetCmsAdministrators))
             {
                 model.RoleLimitCmsAdministrators = -1;
             }
-            if (!(model.IsRoleLimitSetCmsManagers != null && model.IsRoleLimitSetCmsManagers != false))
+            if (!(model.IsRoleLimitSetCmsManagers))
             {
                 model.RoleLimitCmsManagers = -1;
             }
-            if (!(model.IsRoleLimitSetContentCreatorLicenses != null && model.IsRoleLimitSetContentCreatorLicenses != false))
+            if (!(model.IsRoleLimitSetContentCreatorLicenses))
             {
                 model.RoleLimitContentCreatorLicenses = -1;
             }
-            if (!(model.IsRoleLimitSetCustomCourses != null && model.IsRoleLimitSetCustomCourses != false))
+            if (!(model.IsRoleLimitSetCustomCourses))
             {
                 model.RoleLimitCustomCourses = -1;
             }
-            if (!(model.IsRoleLimitSetTrainers != null && model.IsRoleLimitSetTrainers != false))
+            if (!(model.IsRoleLimitSetTrainers))
             {
                 model.RoleLimitTrainers = -1;
             }
