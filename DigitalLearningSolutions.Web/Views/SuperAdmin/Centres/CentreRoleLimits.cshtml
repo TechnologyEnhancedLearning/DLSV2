@@ -48,124 +48,125 @@
     <div class="nhsuk-grid-column-full">
         <div class="nhsuk-grid-row">
             <form class="nhsuk-u-margin-bottom-3" method="post">
+                <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional">
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input"
+                               asp-for="IsRoleLimitSetCmsAdministrators"
+                               type="checkbox"
+                               aria-controls="@isCmsAdministratorLimitId"
+                               aria-expanded="@Model.IsRoleLimitSetCmsAdministrators.ToString()">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetCmsAdministrators">
+                            CMS Administrators
+                        </label>
+                    </div>
+                    <div class="@cmsAdministratorsCss"
+                         id="@isCmsAdministratorLimitId">
+                        <vc:text-input asp-for="@nameof(Model.RoleLimitCmsAdministrators)"
+                                       label="Set limit"
+                                       populate-with-current-value="true"
+                                       type="text"
+                                       spell-check="false"
+                                       autocomplete="off"
+                                       hint-text=""
+                                       css-class="nhsuk-u-width-one-half"
+                                       required="true" />
+                    </div>
 
-              <div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input"
-                       asp-for="IsRoleLimitSetCmsAdministrators"
-                       type="checkbox"
-                           aria-controls="@isCmsAdministratorLimitId"
-                       aria-expanded="@Model.IsRoleLimitSetCmsAdministrators.ToString()">
-                <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetCmsAdministrators">
-                        CMS Administrators
-                </label>
-              </div>
-              <div class="@cmsAdministratorsCss"
-                     id="@isCmsAdministratorLimitId">
-                <vc:text-input asp-for="@nameof(Model.RoleLimitCmsAdministrators)"
-                               label="Set limit"
-                               populate-with-current-value="true"
-                               type="text"
-                               spell-check="false"
-                               autocomplete="off"
-                               hint-text=""
-                               css-class="nhsuk-u-width-one-half"
-                               required="true" />
-              </div>
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input"
+                               asp-for="IsRoleLimitSetCmsManagers"
+                               type="checkbox"
+                               aria-controls="@isCmsManagerLimitId"
+                               aria-expanded="@Model.IsRoleLimitSetCmsManagers.ToString()">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetCmsManagers">
+                            CMS Managers
+                        </label>
+                    </div>
+                    <div class="@cmsManagersCss"
+                         id="@isCmsManagerLimitId">
+                        <vc:text-input asp-for="@nameof(Model.RoleLimitCmsManagers)"
+                                       label="Set limit"
+                                       populate-with-current-value="true"
+                                       type="text"
+                                       spell-check="false"
+                                       autocomplete="off"
+                                       hint-text=""
+                                       css-class="nhsuk-u-width-one-half"
+                                       required="true" />
+                    </div>
 
-              <div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input"
-                           asp-for="IsRoleLimitSetCmsManagers"
-                       type="checkbox"
-                           aria-controls="@isCmsManagerLimitId"
-                           aria-expanded="@Model.IsRoleLimitSetCmsManagers.ToString()">
-                    <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetCmsManagers">
-                      CMS Managers
-                </label>
-              </div>
-              <div class="@cmsManagersCss"
-                     id="@isCmsManagerLimitId">
-                    <vc:text-input asp-for="@nameof(Model.RoleLimitCmsManagers)"
-                               label="Set limit"
-                               populate-with-current-value="true"
-                               type="text"
-                               spell-check="false"
-                               autocomplete="off"
-                               hint-text=""
-                               css-class="nhsuk-u-width-one-half"
-                               required="true" />
-              </div>
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input"
+                               asp-for="IsRoleLimitSetContentCreatorLicenses"
+                               type="checkbox"
+                               aria-controls="@isContentCreatorLicenseLimitId"
+                               aria-expanded="@Model.IsRoleLimitSetContentCreatorLicenses.ToString()">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetContentCreatorLicenses">
+                            Content Creator Licenses
+                        </label>
+                    </div>
+                    <div class="@contentCreatorLicensesCss"
+                         id="@isContentCreatorLicenseLimitId">
+                        <vc:text-input asp-for="@nameof(Model.RoleLimitContentCreatorLicenses)"
+                                       label="Set limit"
+                                       populate-with-current-value="true"
+                                       type="text"
+                                       spell-check="false"
+                                       autocomplete="off"
+                                       hint-text=""
+                                       css-class="nhsuk-u-width-one-half"
+                                       required="true" />
+                    </div>
 
-              <div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input"
-                           asp-for="IsRoleLimitSetContentCreatorLicenses"
-                       type="checkbox"
-                           aria-controls="@isContentCreatorLicenseLimitId"
-                           aria-expanded="@Model.IsRoleLimitSetContentCreatorLicenses.ToString()">
-                    <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetContentCreatorLicenses">
-                      Content Creator Licenses
-                </label>
-              </div>
-                <div class="@contentCreatorLicensesCss"
-                     id="@isContentCreatorLicenseLimitId">
-                    <vc:text-input asp-for="@nameof(Model.RoleLimitContentCreatorLicenses)"
-                               label="Set limit"
-                               populate-with-current-value="true"
-                               type="text"
-                               spell-check="false"
-                               autocomplete="off"
-                               hint-text=""
-                               css-class="nhsuk-u-width-one-half"
-                               required="true" />
-              </div>
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input"
+                               asp-for="IsRoleLimitSetCustomCourses"
+                               type="checkbox"
+                               aria-controls="@isCustomCourseLimitId"
+                               aria-expanded="@Model.IsRoleLimitSetCustomCourses.ToString()">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetCustomCourses">
+                            Custom Courses
+                        </label>
+                    </div>
+                    <div class="@customCoursesCss"
+                         id="@isCustomCourseLimitId">
+                        <vc:text-input asp-for="@nameof(Model.RoleLimitCustomCourses)"
+                                       label="Set limit"
+                                       populate-with-current-value="true"
+                                       type="text"
+                                       spell-check="false"
+                                       autocomplete="off"
+                                       hint-text=""
+                                       css-class="nhsuk-u-width-one-half"
+                                       required="true" />
+                    </div>
 
-              <div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input"
-                           asp-for="IsRoleLimitSetCustomCourses"
-                       type="checkbox"
-                           aria-controls="@isCustomCourseLimitId"
-                           aria-expanded="@Model.IsRoleLimitSetCustomCourses.ToString()">
-                    <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetCustomCourses">
-                        Custom Courses
-                </label>
-              </div>
-              <div class="@customCoursesCss"
-                     id="@isCustomCourseLimitId">
-                    <vc:text-input asp-for="@nameof(Model.RoleLimitCustomCourses)"
-                               label="Set limit"
-                               populate-with-current-value="true"
-                               type="text"
-                               spell-check="false"
-                               autocomplete="off"
-                               hint-text=""
-                               css-class="nhsuk-u-width-one-half"
-                               required="true" />
-              </div>
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input"
+                               asp-for="IsRoleLimitSetTrainers"
+                               type="checkbox"
+                               aria-controls="@isTrainerLimitId"
+                               aria-expanded="@Model.IsRoleLimitSetTrainers.ToString()">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetTrainers">
+                            Trainers
+                        </label>
+                    </div>
+                    <div class="@trainersCss"
+                         id="@isTrainerLimitId">
+                        <vc:text-input asp-for="@nameof(Model.RoleLimitTrainers)"
+                                       label="Set limit"
+                                       populate-with-current-value="true"
+                                       type="text"
+                                       spell-check="false"
+                                       autocomplete="off"
+                                       hint-text=""
+                                       css-class="nhsuk-u-width-one-half"
+                                       required="true" />
+                    </div>
 
-              <div class="nhsuk-checkboxes__item">
-                    <input class="nhsuk-checkboxes__input"
-                           asp-for="IsRoleLimitSetTrainers"
-                           type="checkbox"
-                           aria-controls="@isTrainerLimitId"
-                           aria-expanded="@Model.IsRoleLimitSetTrainers.ToString()">
-                    <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetTrainers">
-                        Trainers
-                    </label>
-              </div>
-              <div class="@trainersCss"
-                     id="@isTrainerLimitId">
-                    <vc:text-input asp-for="@nameof(Model.RoleLimitTrainers)"
-                                   label="Set limit"
-                                   populate-with-current-value="true"
-                                   type="text"
-                                   spell-check="false"
-                                   autocomplete="off"
-                                   hint-text=""
-                                   css-class="nhsuk-u-width-one-half"
-                                   required="true" />
+                    <button class="nhsuk-button" type="submit">Save</button>
+                    <vc:cancel-link asp-controller="Centres" asp-action="Index" />
                 </div>
-
-                <button class="nhsuk-button" type="submit">Save</button>
-                <vc:cancel-link asp-controller="Centres" asp-action="Index" />
             </form>
         </div>
     </div>
