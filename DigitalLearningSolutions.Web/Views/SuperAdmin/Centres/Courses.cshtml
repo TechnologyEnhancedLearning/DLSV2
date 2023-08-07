@@ -1,5 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CentreCourses
 @model List<CentreCoursesViewModel>
+@{
+    ViewData["Title"] = "Courses";
+}
 @section NavBreadcrumbs {
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
@@ -14,7 +17,7 @@
     </nav>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/superAdmin/centres.css")" asp-append-version="true">
-<h1 class="nhsuk-heading-xl nhsuk-u-font-weight-normal nhsuk-fieldset__heading nhsuk-label--l">Courses - @ViewBag.CentreName</h1>
+<h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Courses - @ViewBag.CentreName</h1>
 @foreach (var course in Model)
 {
     <partial name="_CourseCard" model="course" />
