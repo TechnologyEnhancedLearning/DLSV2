@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 CentreId = 374,
                 RoleLimitCmsAdministrators = -1,    // not set
                 RoleLimitCmsManagers = -1,          // not set
-                RoleLimitCcLicenses = 10,           // set
+                RoleLimitCcLicences = 10,           // set
                 RoleLimitCustomCourses = 20,        // set
                 RoleLimitTrainers = 30,             // set
             };
@@ -106,12 +106,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             var expectedVm = new CentreRoleLimitsViewModel
             {
                 CentreId = 374,
-                RoleLimitCmsAdministrators = -1,
+                RoleLimitCmsAdministrators = null,
                 IsRoleLimitSetCmsAdministrators = false,    // automatically set off
-                RoleLimitCmsManagers = -1,
+                RoleLimitCmsManagers = null,
                 IsRoleLimitSetCmsManagers = false,          // automatically set off
-                IsRoleLimitSetContentCreatorLicenses = true,
-                RoleLimitContentCreatorLicenses = 10,
+                IsRoleLimitSetContentCreatorLicences = true,
+                RoleLimitContentCreatorLicences = 10,
                 IsRoleLimitSetCustomCourses = true,
                 RoleLimitCustomCourses = 20,
                 IsRoleLimitSetTrainers = true,
@@ -136,12 +136,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 CentreId = 374,
                 IsRoleLimitSetCmsAdministrators = true,
                 IsRoleLimitSetCmsManagers = false,
-                IsRoleLimitSetContentCreatorLicenses = true,
+                IsRoleLimitSetContentCreatorLicences = true,
                 IsRoleLimitSetCustomCourses = false,
                 IsRoleLimitSetTrainers = true,
                 RoleLimitCmsAdministrators = 1,
                 RoleLimitCmsManagers = -1,
-                RoleLimitContentCreatorLicenses = 2,
+                RoleLimitContentCreatorLicences = 2,
                 RoleLimitCustomCourses = -1,
                 RoleLimitTrainers = 0
             };
@@ -155,7 +155,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                         model.CentreId,
                         model.RoleLimitCmsAdministrators,
                         model.RoleLimitCmsManagers,
-                        model.RoleLimitContentCreatorLicenses,
+                        model.RoleLimitContentCreatorLicences,
                         model.RoleLimitCustomCourses,
                         model.RoleLimitTrainers
                     )
@@ -173,12 +173,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 CentreId = 374,
                 IsRoleLimitSetCmsAdministrators = true,
                 IsRoleLimitSetCmsManagers = false,
-                IsRoleLimitSetContentCreatorLicenses = false,
+                IsRoleLimitSetContentCreatorLicences = false,
                 IsRoleLimitSetCustomCourses = false,
                 IsRoleLimitSetTrainers = true,
                 RoleLimitCmsAdministrators = 1,
                 RoleLimitCmsManagers = 10,
-                RoleLimitContentCreatorLicenses = 20,
+                RoleLimitContentCreatorLicences = 20,
                 RoleLimitCustomCourses = 30,
                 RoleLimitTrainers = -1,
             };

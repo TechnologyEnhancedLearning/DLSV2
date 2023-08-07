@@ -8,7 +8,7 @@
 
         public int? RoleLimitCmsManagers { get; set; }
 
-        public int? RoleLimitCcLicenses { get; set; }
+        public int? RoleLimitCcLicences { get; set; }
 
         public int? RoleLimitCustomCourses { get; set; }
 

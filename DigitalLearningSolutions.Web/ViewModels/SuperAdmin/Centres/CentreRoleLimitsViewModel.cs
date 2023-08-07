@@ -7,23 +7,28 @@
         public int CentreId { get; set; }
         public bool IsRoleLimitSetCmsAdministrators { get; set; }
         public bool IsRoleLimitSetCmsManagers { get; set; }
-        public bool IsRoleLimitSetContentCreatorLicenses { get; set; }
+        public bool IsRoleLimitSetContentCreatorLicences { get; set; }
         public bool IsRoleLimitSetCustomCourses { get; set; }
         public bool IsRoleLimitSetTrainers { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int RoleLimitCmsAdministrators { get; set; }
+        [Required(ErrorMessage = "Please enter a number for the CMS Administrators role limit.")]
+        [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
+        public int? RoleLimitCmsAdministrators { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int RoleLimitCmsManagers { get; set; }
+        [Required(ErrorMessage = "Please enter a number for the CMS Managers role limit.")]
+        [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
+        public int? RoleLimitCmsManagers { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int RoleLimitContentCreatorLicenses { get; set; }
+        [Required(ErrorMessage = "Please enter a number for the Content Creator Licences role limit.")]
+        [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
+        public int? RoleLimitContentCreatorLicences { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int RoleLimitCustomCourses { get; set; }
+        [Required(ErrorMessage = "Please enter a number for the Custom Courses role limit.")]
+        [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
+        public int? RoleLimitCustomCourses { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int RoleLimitTrainers { get; set; }
+        [Required(ErrorMessage = "Please enter a number for the Trainers role limit.")]
+        [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
+        public int? RoleLimitTrainers { get; set; }
     }
 }

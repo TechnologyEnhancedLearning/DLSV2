@@ -26,11 +26,11 @@
 
         void UpdateCentreRoleLimits(
             int centreId,
-            int roleLimitCmsAdministrators,
-            int roleLimitCmsManagers,
-            int roleLimitCcLicenses,
-            int roleLimitCustomCourses,
-            int roleLimitTrainers
+            int? roleLimitCmsAdministrators,
+            int? roleLimitCmsManagers,
+            int? roleLimitCcLicences,
+            int? roleLimitCustomCourses,
+            int? roleLimitTrainers
         );
 
         void UpdateCentreManagerDetails(
@@ -614,11 +614,11 @@
         {
             return connection.QueryFirstOrDefault<CentreSummaryForRoleLimits>(
                 @"SELECT CentreId,
-                        RoleLimitCMSAdministrators,
-                        RoleLimitCMSManagers,
-                        RoleLimitCCLicenses,
-                        RoleLimitCustomCourses,
-                        RoleLimitTrainers
+                        CMSAdministrators AS RoleLimitCMSAdministrators,
+                        CMSManagers AS RoleLimitCMSManagers,
+                        CCLicences AS RoleLimitCCLicences,
+                        CustomCourses AS RoleLimitCustomCourses,
+                        Trainers AS RoleLimitTrainers
                         FROM Centres
                         WHERE (CentreId = @centreId) AND (Active = 1)
                         ORDER BY CentreName",
@@ -628,27 +628,27 @@
 
         public void UpdateCentreRoleLimits(
             int centreId,
-            int roleLimitCmsAdministrators,
-            int roleLimitCmsManagers,
-            int roleLimitCcLicenses,
-            int roleLimitCustomCourses,
-            int roleLimitTrainers
+            int? roleLimitCmsAdministrators,
+            int? roleLimitCmsManagers,
+            int? roleLimitCcLicences,
+            int? roleLimitCustomCourses,
+            int? roleLimitTrainers
         )
         {
             connection.Execute(
                 @"UPDATE Centres SET
-                        RoleLimitCMSAdministrators = @roleLimitCMSAdministrators,
-                        RoleLimitCMSManagers = @roleLimitCMSManagers,
-                        RoleLimitCCLicenses = @roleLimitCCLicenses,
-                        RoleLimitCustomCourses = @roleLimitCustomCourses,
-                        RoleLimitTrainers = @roleLimitTrainers
+                        CMSAdministrators = @roleLimitCMSAdministrators,
+                        CMSManagers = @roleLimitCMSManagers,
+                        CCLicences = @roleLimitCCLicences,
+                        CustomCourses = @roleLimitCustomCourses,
+                        Trainers = @roleLimitTrainers
                 WHERE CentreId = @centreId",
                 new
                 {
                     centreId,
                     roleLimitCmsAdministrators,
                     roleLimitCmsManagers,
-                    roleLimitCcLicenses,
+                    roleLimitCcLicences,
                     roleLimitCustomCourses,
                     roleLimitTrainers,
                 }

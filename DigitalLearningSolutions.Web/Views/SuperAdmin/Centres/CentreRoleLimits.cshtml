@@ -14,7 +14,7 @@
 
     var cmsAdministratorsCss = "nhsuk-checkboxes__conditional" + (Model.IsRoleLimitSetCmsAdministrators ? "" : " nhsuk-checkboxes__conditional--hidden");
     var cmsManagersCss = "nhsuk-checkboxes__conditional" + (Model.IsRoleLimitSetCmsManagers ? "" : " nhsuk-checkboxes__conditional--hidden");
-    var contentCreatorLicensesCss = "nhsuk-checkboxes__conditional" + (Model.IsRoleLimitSetContentCreatorLicenses ? "" : " nhsuk-checkboxes__conditional--hidden");
+    var contentCreatorLicensesCss = "nhsuk-checkboxes__conditional" + (Model.IsRoleLimitSetContentCreatorLicences ? "" : " nhsuk-checkboxes__conditional--hidden");
     var customCoursesCss = "nhsuk-checkboxes__conditional" + (Model.IsRoleLimitSetCustomCourses ? "" : " nhsuk-checkboxes__conditional--hidden");
     var trainersCss = "nhsuk-checkboxes__conditional" + (Model.IsRoleLimitSetTrainers ? "" : " nhsuk-checkboxes__conditional--hidden");
 }
@@ -90,17 +90,17 @@
 
                     <div class="nhsuk-checkboxes__item">
                         <input class="nhsuk-checkboxes__input"
-                               asp-for="IsRoleLimitSetContentCreatorLicenses"
+                               asp-for="IsRoleLimitSetContentCreatorLicences"
                                type="checkbox"
                                aria-controls="@isContentCreatorLicenseLimitId"
-                               aria-expanded="@Model.IsRoleLimitSetContentCreatorLicenses.ToString()">
-                        <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetContentCreatorLicenses">
+                               aria-expanded="@Model.IsRoleLimitSetContentCreatorLicences.ToString()">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetContentCreatorLicences">
                             Content Creator Licenses
                         </label>
                     </div>
                     <div class="@contentCreatorLicensesCss"
                          id="@isContentCreatorLicenseLimitId">
-                        <vc:text-input asp-for="@nameof(Model.RoleLimitContentCreatorLicenses)"
+                        <vc:text-input asp-for="@nameof(Model.RoleLimitContentCreatorLicences)"
                                        label="Set limit"
                                        populate-with-current-value="true"
                                        type="text"
