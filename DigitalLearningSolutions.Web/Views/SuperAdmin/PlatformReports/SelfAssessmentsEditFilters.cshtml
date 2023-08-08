@@ -115,7 +115,7 @@
                             select-list-options="@Model.ReportIntervalOptions" />
 
             <button class="nhsuk-button" type="submit" value="save">Apply filters</button>
-            <vc:cancel-link asp-controller="PlatformReports" asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsReport" : "IndependentSelfAssessmentReport" ) />
+            <vc:cancel-link asp-controller="PlatformReports" asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsReport" : "IndependentSelfAssessmentsReport" ) />
         </form>
     </div>
 </div>
