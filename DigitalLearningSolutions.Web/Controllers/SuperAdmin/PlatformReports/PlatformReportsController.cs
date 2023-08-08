@@ -55,7 +55,7 @@
             Response.Cookies.SetReportsFilterCookie("SuperAdminReportsFilterCookie", filterData, clockUtility.UtcNow);
             var activity = platformReportsService.GetSelfAssessmentActivity(filterData, true);
             var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetSelfAssessmentFilterNames(filterData);
-            var nursingReportFilterModel = new NursingReportFilterModel(
+            var selfAssessmentReportFilterModel = new SelfAssessmentReportFilterModel(
                 filterData,
                 regionName,
                 centreTypeName,
@@ -64,25 +64,28 @@
                 brandName,
                 categoryName,
                 selfAssessmentName,
+                true,
                 true
                 );
-            var model = new SupervisedSelfAssessmentsReportViewModel(
+            var model = new SelfAssessmentsReportViewModel(
                 activity,
-                nursingReportFilterModel,
+                selfAssessmentReportFilterModel,
                 filterData.StartDate,
                 filterData.EndDate ?? clockUtility.UtcToday,
                 true,
-                "All"
+                "All",
+                true
                 );
 
-            return View(model);
+            return View("SelfAssessmentsReport", model);
         }
         [NoCaching]
-        [Route("SelfAssessments/Data/{supervised}")]
-        public IEnumerable<SelfAssessmentActivityDataRowModel> GetGraphData(bool supervised)
+        [Route("SelfAssessments/{selfAssessmentType}/Data")]
+        public IEnumerable<SelfAssessmentActivityDataRowModel> GetGraphData(string selfAssessmentType)
         {
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminReportsFilterCookie", null);
-            var activity = platformReportsService.GetSelfAssessmentActivity(filterData!, supervised);
+            var cookieName = selfAssessmentType == "Independent" ? "SuperAdminDSATReportsFilterCookie" : "SuperAdminReportsFilterCookie";
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(cookieName, null);
+            var activity = platformReportsService.GetSelfAssessmentActivity(filterData!, selfAssessmentType == "Independent" ? false : true);
             return activity.Select(
                 p => new SelfAssessmentActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
             );
@@ -94,18 +97,19 @@
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminReportsFilterCookie", null);
             var filterOptions = GetDropdownValues(true);
             var dataStartDate = platformReportsService.GetSelfAssessmentActivityStartDate(true);
-            var model = new SupervisedSelfAssessmentsEditFiltersViewModel(
+            var model = new SelfAssessmentsEditFiltersViewModel(
                 filterData,
                 null,
                 filterOptions,
-                dataStartDate
+                dataStartDate,
+                true
             );
-            return View("SupervisedSelfAssessmentsEditFilters", model);
+            return View("SelfAssessmentsEditFilters", model);
         }
 
         [HttpPost]
         [Route("SelfAssessments/Supervised/EditFilters")]
-        public IActionResult SupervisedSelfAssessmentsEditFilters(SupervisedSelfAssessmentsEditFiltersViewModel model)
+        public IActionResult SupervisedSelfAssessmentsEditFilters(SelfAssessmentsEditFiltersViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -128,7 +132,6 @@
                 model.FilterType,
                 model.ReportInterval
             );
-
             Response.Cookies.SetReportsFilterCookie("SuperAdminReportsFilterCookie", filterData, clockUtility.UtcNow);
 
             return RedirectToAction("SupervisedSelfAssessmentsReport");
@@ -141,7 +144,7 @@
             Response.Cookies.SetReportsFilterCookie("SuperAdminDSATReportsFilterCookie", filterData, clockUtility.UtcNow);
             var activity = platformReportsService.GetSelfAssessmentActivity(filterData, false);
             var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetSelfAssessmentFilterNames(filterData);
-            var nursingReportFilterModel = new NursingReportFilterModel(
+            var selfAssessmentReportFilterModel = new SelfAssessmentReportFilterModel(
                 filterData,
                 regionName,
                 centreTypeName,
@@ -150,18 +153,67 @@
                 brandName,
                 categoryName,
                 selfAssessmentName,
-                true
+                true,
+                false
                 );
-            var model = new SupervisedSelfAssessmentsReportViewModel(
+            var model = new SelfAssessmentsReportViewModel(
                 activity,
-                nursingReportFilterModel,
+                selfAssessmentReportFilterModel,
                 filterData.StartDate,
                 filterData.EndDate ?? clockUtility.UtcToday,
                 true,
-                "All"
+                "All",
+                false
                 );
 
-            return View(model);
+            return View("SelfAssessmentsReport", model);
+        }
+
+        [HttpGet]
+        [Route("SelfAssessments/Independent/EditFilters")]
+        public IActionResult IndependentSelfAssessmentsEditFilters()
+        {
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminDSATReportsFilterCookie", null);
+            var filterOptions = GetDropdownValues(false);
+            var dataStartDate = platformReportsService.GetSelfAssessmentActivityStartDate(false);
+            var model = new SelfAssessmentsEditFiltersViewModel(
+                filterData,
+                null,
+                filterOptions,
+                dataStartDate,
+                false
+            );
+            return View("SelfAssessmentsEditFilters", model);
+        }
+
+        [HttpPost]
+        [Route("SelfAssessments/Independent/EditFilters")]
+        public IActionResult IndependentSelfAssessmentsEditFilters(SelfAssessmentsEditFiltersViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var filterOptions = GetDropdownValues(false);
+                model.DataStart = platformReportsService.GetSelfAssessmentActivityStartDate(false);
+                return View("NursingReportEditFilters", model);
+            }
+
+            var filterData = new ActivityFilterData(
+                model.GetValidatedStartDate(),
+                model.GetValidatedEndDate(),
+                model.JobGroupId,
+                model.CategoryId,
+                null,
+                model.RegionId,
+                model.CentreId,
+                model.SelfAssessmentId,
+                model.CentreTypeId,
+                model.BrandId,
+                model.FilterType,
+                model.ReportInterval
+            );
+            Response.Cookies.SetReportsFilterCookie("SuperAdminDSATReportsFilterCookie", filterData, clockUtility.UtcNow);
+
+            return RedirectToAction("IndependentSelfAssessmentsReport");
         }
     }
 }

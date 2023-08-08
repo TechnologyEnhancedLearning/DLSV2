@@ -1,6 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports
-@model SupervisedSelfAssessmentsEditFiltersViewModel
+@model SelfAssessmentsEditFiltersViewModel
 
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -33,7 +33,7 @@
         }
 
         <h1 class="nhsuk-heading-xl">Edit report filters</h1>
-        <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="SupervisedSelfAssessmentsEditFilters">
+        <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsEditFilters" : "IndependentSelfAssessmentsEditFilters" )>
             <input type="hidden" name="dataStart" value="@Model.DataStart" />
 
             <vc:select-list asp-for="@nameof(Model.RegionId)"
@@ -115,7 +115,7 @@
                             select-list-options="@Model.ReportIntervalOptions" />
 
             <button class="nhsuk-button" type="submit" value="save">Apply filters</button>
-            <vc:cancel-link asp-controller="PlatformReports" asp-action="SupervisedSelfAssessmentsReport" />
+            <vc:cancel-link asp-controller="PlatformReports" asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsReport" : "IndependentSelfAssessmentReport" ) />
         </form>
     </div>
 </div>

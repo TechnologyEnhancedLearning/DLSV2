@@ -10,15 +10,16 @@
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
-    public class SupervisedSelfAssessmentsEditFiltersViewModel
+    public class SelfAssessmentsEditFiltersViewModel
     {
-        public SupervisedSelfAssessmentsEditFiltersViewModel() { }
+        public SelfAssessmentsEditFiltersViewModel() { }
 
-        public SupervisedSelfAssessmentsEditFiltersViewModel(
+        public SelfAssessmentsEditFiltersViewModel(
             ActivityFilterData filterData,
             int? userCategoryFilter,
             SelfAssessmentReportsFilterOptions filterOptions,
-            DateTime? dataStartDate
+            DateTime? dataStartDate,
+            bool supervised
         )
         {
             JobGroupId = filterData.JobGroupId;
@@ -50,7 +51,7 @@
             EndDate = filterData.EndDate.HasValue;
             ReportInterval = filterData.ReportInterval;
             DataStart = dataStartDate;
-
+            Supervised = supervised;
             SetUpDropdowns(filterOptions, userCategoryFilter);
         }
         public int? RegionId { get; set; }
@@ -70,7 +71,7 @@
         public bool EndDate { get; set; }
         public ReportInterval ReportInterval { get; set; }
         public DateTime? DataStart { get; set; }
-
+        public bool Supervised { get; set; }
         public IEnumerable<SelectListItem> JobGroupOptions { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> CategoryOptions { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> SelfAssessmentOptions { get; set; } = new List<SelectListItem>();
