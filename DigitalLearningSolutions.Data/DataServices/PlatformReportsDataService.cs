@@ -46,6 +46,7 @@
         {
             return supervised ? " (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1)" : " (sa.SupervisorResultsReview = 0 AND SupervisorSelfAssessmentReview = 0)";
         }
+		
         public PlatformReportsDataService(IDbConnection connection)
         {
             this.connection = connection;
@@ -69,21 +70,21 @@
                  (SELECT COUNT(ProgressID) AS CourseCompletions
                  FROM    Progress AS P WITH (NOLOCK)
                  WHERE (Completed IS NOT NULL)) AS CourseCompletions,
-                 (SELECT COUNT(ID) AS Expr1
+                 (SELECT COUNT(*) AS Expr1
                  FROM    ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
-                 SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                 SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
                  WHERE (sa.SupervisorResultsReview = 0 AND SupervisorSelfAssessmentReview = 0) AND (Enrolled=1)) AS IndependentSelfAssessmentEnrolments,
-                 (SELECT COUNT(ID) AS Expr1
-                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK) INNER JOIN
-                 SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                 (SELECT COUNT(*) AS Expr1
+                 FROM    ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
+                 SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
                  WHERE (sa.SupervisorResultsReview = 0 AND SupervisorSelfAssessmentReview = 0) AND (Submitted = 1)) AS IndependentSelfAssessmentCompletions,
                  (SELECT COUNT(*) AS Expr1
-                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK) INNER JOIN
-                 SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                 FROM    ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
+                 SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
                  WHERE (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1) AND (Enrolled=1)) AS SupervisedSelfAssessmentEnrolments,
                  (SELECT COUNT(*) AS Expr1
-                 FROM    ReportSelfAssessmentActivityLog INNER JOIN
-                 SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                 FROM    ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
+                 SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
                  WHERE (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1) AND (SignedOff = 1)) AS SupervisedSelfAssessmentCompletions"
             );
         }
