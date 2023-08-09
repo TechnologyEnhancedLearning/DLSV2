@@ -68,9 +68,9 @@
     }
     else
     {
-       var place = Model.Category == "All" ? "yet." : $"in the <b>{Model.Category}</b> category, yet.";
+       var place = Model.Category == "All" ? "yet." : $" <b>{Model.Category}</b> category.";
             <p class="nhsuk-body-l" id="no-activity-message">
-                This centre has no courses set up @Html.Raw(place)
+                There has not yet been any activity for courses in the @Html.Raw(place)
                 </p>
     }
 
