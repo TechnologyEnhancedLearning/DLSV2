@@ -459,9 +459,10 @@
         {
             return connection.QueryFirst<int>(
                 @$"SELECT COUNT(*)
-                    FROM Users
-                    WHERE PrimaryEmail = @email
-                    {(userId == null ? "" : "AND Id <> @userId")}",
+                    FROM Users AS u
+                         LEFT OUTER JOIN UserCentreDetails AS ucd ON u.ID = ucd.UserID
+                    WHERE (u.PrimaryEmail = @email OR ucd.Email = @email)  
+                    {(userId == null ? "" : "AND u.Id <> @userId")}",
                 new { email, userId }
             ) > 0;
         }

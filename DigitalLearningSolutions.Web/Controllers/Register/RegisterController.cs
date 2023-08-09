@@ -425,14 +425,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 CommonValidationErrorMessages.EmailInUseDuringDelegateRegistration
             );
 
-            if (!string.IsNullOrEmpty(model.PrimaryEmail) && model.Centre > 0)
-            {
-                if (userDataService.CentreSpecificEmailIsInUseAtCentre(model.PrimaryEmail, (int)model.Centre))
-                {
-                    ModelState.AddModelError("PrimaryEmail", CommonValidationErrorMessages.EmailInUseAtCentre);
-                }
-            }
-
             RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
                 model.CentreSpecificEmail,
                 model.Centre,
