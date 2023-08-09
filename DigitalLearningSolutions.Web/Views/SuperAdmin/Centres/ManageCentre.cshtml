@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Data.Enums
-@using DigitalLearningSolutions.Data.Models.Centres;
+﻿@using DigitalLearningSolutions.Data.Models.Centres;
 @model Centre;
 @{
     ViewData["Title"] = "Manage Centre";
@@ -203,9 +202,13 @@
             <button class="nhsuk-button view-delegate-button" type="submit">
                 Edit contract info
             </button>
-            <button class="@($"{ButtonType.Secondary.CssClass} left-button-mobile-margin-bottom nhsuk-u-margin-right-2")" type="submit">
-                Customise role limits
-            </button>
+
+            <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2" role="button"
+               asp-controller="Centres"
+               asp-action="CentreRoleLimits"
+               asp-route-centreId="@Model.CentreId">
+              Customise role limits
+            </a>
         </div>
     </div>
 </div>

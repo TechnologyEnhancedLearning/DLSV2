@@ -22,6 +22,17 @@
 
         CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
 
+        CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId);
+
+        void UpdateCentreRoleLimits(
+            int centreId,
+            int? roleLimitCmsAdministrators,
+            int? roleLimitCmsManagers,
+            int? roleLimitCcLicences,
+            int? roleLimitCustomCourses,
+            int? roleLimitTrainers
+        );
+
         void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
@@ -273,7 +284,7 @@
                 splitOn: "CentreTypeId,RegionID",
                 commandTimeout: 3000
             );
-            int ResultCount = connection.ExecuteScalar<int>(
+            int resultCount = connection.ExecuteScalar<int>(
                                 @$"SELECT  COUNT(*) AS Matches
                                 FROM Centres AS c
                                 INNER JOIN Regions AS r ON r.RegionID = c.RegionID
@@ -282,7 +293,7 @@
                     new { search, region, centreType, contractType, centreStatus },
                     commandTimeout: 3000
             );
-            return (centreEntity, ResultCount);
+            return (centreEntity, resultCount);
         }
 
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
@@ -315,8 +326,6 @@
                 new { centreId }
             );
         }
-
-
 
         public void UpdateCentreManagerDetails(
             int centreId,
@@ -598,6 +607,51 @@
                   Active = 1
                   WHERE CentreId = @centreId",
                 new { centreId }
+            );
+        }
+        
+        public CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId)
+        {
+            return connection.QueryFirstOrDefault<CentreSummaryForRoleLimits>(
+                @"SELECT CentreId,
+                        CMSAdministrators AS RoleLimitCMSAdministrators,
+                        CMSManagers AS RoleLimitCMSManagers,
+                        CCLicences AS RoleLimitCCLicences,
+                        CustomCourses AS RoleLimitCustomCourses,
+                        Trainers AS RoleLimitTrainers
+                        FROM Centres
+                        WHERE (CentreId = @centreId) AND (Active = 1)
+                        ORDER BY CentreName",
+                new { centreId }
+            );
+        }
+
+        public void UpdateCentreRoleLimits(
+            int centreId,
+            int? roleLimitCmsAdministrators,
+            int? roleLimitCmsManagers,
+            int? roleLimitCcLicences,
+            int? roleLimitCustomCourses,
+            int? roleLimitTrainers
+        )
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                        CMSAdministrators = @roleLimitCMSAdministrators,
+                        CMSManagers = @roleLimitCMSManagers,
+                        CCLicences = @roleLimitCCLicences,
+                        CustomCourses = @roleLimitCustomCourses,
+                        Trainers = @roleLimitTrainers
+                WHERE CentreId = @centreId",
+                new
+                {
+                    centreId,
+                    roleLimitCmsAdministrators,
+                    roleLimitCmsManagers,
+                    roleLimitCcLicences,
+                    roleLimitCustomCourses,
+                    roleLimitTrainers,
+                }
             );
         }
     }
