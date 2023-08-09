@@ -63,7 +63,7 @@
         public DateTime GetConfigLastUpdated(string key)
         {
             return connection.Query<DateTime>(
-                @"SELECT UpdatedDate FROM Config WHERE IsHtml =1 AND ConfigName = @key",
+                @"SELECT UpdatedDate FROM Config WHERE  ConfigName = @key",
                 new { key }
             ).FirstOrDefault();
         }
