@@ -64,8 +64,12 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 logger.LogError("Terms text from Config table is null");
                 return StatusCode(500);
             }
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
 
-            var model = new TermsViewModel(termsText);
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.TermsText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+            var model = new TermsViewModel(termsText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
 

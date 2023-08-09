@@ -289,4 +289,10 @@
   <data name="TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-2094-GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="TermsAndConditions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TermsAndConditions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="TermsAndConditionsOldrecord" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TermsAndConditionsOldrecord.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>
