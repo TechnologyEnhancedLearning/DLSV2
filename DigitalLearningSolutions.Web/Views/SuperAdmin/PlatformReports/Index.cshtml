@@ -127,9 +127,11 @@
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.IndependentSelfAssessmentCompletions.ToString("#,##0")
                                                 </dd>
-
                                             </div>
                                         </dl>
+                                        <div class="nhsuk-u-text-align-right">
+                                            <a asp-controller="PlatformReports" asp-action="IndependentSelfAssessmentsReport">View report</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -162,6 +164,9 @@
 
                                             </div>
                                         </dl>
+                                        <div class="nhsuk-u-text-align-right">
+                                            <a asp-controller="PlatformReports" asp-action="SupervisedSelfAssessmentsReport">View report</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
