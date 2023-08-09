@@ -121,12 +121,12 @@
             var expectedMatchingCompetencies = new[] { 2, 3, 5, 6, 8 };
 
             // When
-            actionPlanService.AddResourceToActionPlan(learningResourceReferenceId, delegateId, selfAssessmentId);
+            actionPlanService.AddResourceToActionPlan(learningResourceReferenceId, delegateUserId, selfAssessmentId);
 
             // Then
             A.CallTo(
                 () => learningLogItemsDataService.InsertLearningLogItem(
-                    delegateId,
+                    delegateUserId,
                     addedDate,
                     resourceName,
                     resourceLink,

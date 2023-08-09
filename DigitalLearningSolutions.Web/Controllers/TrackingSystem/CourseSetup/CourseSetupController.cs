@@ -43,6 +43,7 @@
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
+        private readonly IActivityService activityService;
 
         public CourseSetupController(
             ICourseService courseService,
@@ -50,7 +51,8 @@
             ISectionService sectionService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IConfiguration config,
-            IMultiPageFormService multiPageFormService
+            IMultiPageFormService multiPageFormService,
+            IActivityService activityService
         )
         {
             this.courseService = courseService;
@@ -59,6 +61,7 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.config = config;
             this.multiPageFormService = multiPageFormService;
+            this.activityService = activityService;
         }
 
         [Route("{page=1:int}")]
@@ -85,9 +88,11 @@
 
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
-
+            var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
+            var courses = UpdateCoursesNotActiveStatus(details.Courses);
+            
             var availableFilters = CourseStatisticsViewModelFilterOptions
                 .GetFilterOptions(categoryId.HasValue ? new string[] { } : details.Categories, details.Topics).ToList();
 
@@ -103,14 +108,15 @@
             );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
-                details.Courses,
+                courses,
                 searchSortPaginationOptions
             );
 
             var model = new CourseSetupViewModel(
                 result,
                 availableFilters,
-                config
+                config,
+                courseCategoryName
             );
 
             Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);
@@ -634,5 +640,25 @@
                 tempData.CourseDetailsData.NotificationEmails
             );
         }
-    }
+
+        private static IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> UpdateCoursesNotActiveStatus(IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses)
+        {
+            var updatedCourses = courses.ToList();
+
+            foreach (var course in updatedCourses)
+            {
+                if (course.Archived || course.Active == false)
+                {
+                  course.NotActive = true;
+                }
+                else
+                {
+                  course.NotActive = false;
+                }
+            }
+
+            return updatedCourses;
+        }
+
+  }
 }

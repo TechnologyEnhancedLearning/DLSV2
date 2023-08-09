@@ -23,6 +23,9 @@
     using Microsoft.Extensions.Logging;
     using GDS.MultiPageFormData.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
+    using DocumentFormat.OpenXml.EMMA;
 
     public partial class LearningPortalController
     {
@@ -1003,6 +1006,11 @@
             );
             var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
+            var distinctCentres = selfAssessmentService.GetValidSupervisorsForActivity(
+                User.GetCentreIdKnownNotNull(),
+                selfAssessmentId,
+                User.GetUserIdKnownNotNull()
+            ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
             var summaryModel = new AddSupervisorSummaryViewModel
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
@@ -1014,7 +1022,8 @@
                     : supervisorService.GetSupervisorRoleById((int)sessionAddSupervisor.SelfAssessmentSupervisorRoleId)
                         .RoleName,
                 RoleCount = roles.Count(),
-                SupervisorAtCentre = supervisor.CentreName
+                SupervisorAtCentre = supervisor.CentreName,
+                CentreCount= distinctCentres.Count()
             };
             return View("SelfAssessments/AddSupervisorSummary", summaryModel);
         }
@@ -1533,6 +1542,55 @@
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
                 fileName
+            );
+        }
+
+        public IActionResult RemoveEnrolment(int selfAssessmentId)
+        {
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            selfAssessmentService.RemoveEnrolment(selfAssessmentId, delegateUserId);
+            return RedirectToAction("Current", "LearningPortal");
+        }
+        
+        public IActionResult ResendSupervisorSignOffRequest(
+            int selfAssessmentId,
+            int candidateAssessmentSupervisorId,
+            int candidateAssessmentSupervisorVerificationId,
+            string supervisorName,
+            string supervisorEmail,
+            string vocabulary
+        )
+        {
+            frameworkNotificationService.SendSignOffRequest(
+                candidateAssessmentSupervisorId,
+                selfAssessmentId,
+                User.GetUserIdKnownNotNull(),
+                User.GetCentreIdKnownNotNull()
+            );
+            selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(
+                candidateAssessmentSupervisorVerificationId
+            );
+
+            var model = new ResendSupervisorSignOffEmailViewModel
+            {
+                Id = selfAssessmentId,
+                Vocabulary = vocabulary,
+                SupervisorName = supervisorName,
+                SupervisorEmail = supervisorEmail,
+            };
+
+            return View("SelfAssessments/ResendSupervisorSignoffEmailConfirmation", model);
+        }
+
+        public IActionResult WithdrawSupervisorSignOffRequest(
+            int selfAssessmentId,
+            int candidateAssessmentSupervisorVerificationId,
+            string vocabulary)
+        {
+            supervisorService.RemoveCandidateAssessmentSupervisorVerification(candidateAssessmentSupervisorVerificationId);
+            return RedirectToAction(
+                "SignOffHistory",
+                new { selfAssessmentId, vocabulary }
             );
         }
     }

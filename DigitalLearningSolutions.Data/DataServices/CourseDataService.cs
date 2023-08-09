@@ -1,9 +1,5 @@
 namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -11,6 +7,10 @@ namespace DigitalLearningSolutions.Data.DataServices
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
 
     public interface ICourseDataService
     {
@@ -97,9 +97,11 @@ namespace DigitalLearningSolutions.Data.DataServices
         IEnumerable<CourseDelegateForExport> GetDelegatesOnCourseForExport(int customisationId, int centreId);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime completeByDate, int delegateUserId, int centreId);
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId);
 
         bool IsCourseCompleted(int candidateId, int customisationId);
+
+        public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -363,13 +365,13 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
         public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime completeByDate, int delegateUserId, int centreId)
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId)
         {
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
             DateTime lastAccessed = startedDate;
             dynamic completeByDateDynamic = "";
-            if (completeByDate.Year > 1753)
+            if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
                 completeByDateDynamic = completeByDate;
             }
@@ -377,7 +379,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID  = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID  = @delegateUserId) AND (CompletedDate IS NULL)), 0) AS ID",
                 new { selfAssessmentId, delegateUserId }
             );
 
@@ -439,6 +441,20 @@ namespace DigitalLearningSolutions.Data.DataServices
                         VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)",
                     new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
                 );
+            }
+
+            if (candidateAssessmentId > 1)
+            {
+                connection.Execute(@"
+                BEGIN TRANSACTION
+                UPDATE CandidateAssessments SET RemovedDate = NULL
+                  WHERE ID = @candidateAssessmentId
+
+                UPDATE CandidateAssessmentSupervisors SET Removed = NULL
+                  WHERE CandidateAssessmentID = @candidateAssessmentId
+
+                COMMIT TRANSACTION"
+                , new { candidateAssessmentId });
             }
 
             if (candidateAssessmentId < 1)
@@ -1067,6 +1083,19 @@ namespace DigitalLearningSolutions.Data.DataServices
                             THEN CAST(1 AS BIT)
                             ELSE CAST(0 AS BIT) END",
                 new { candidateId, customisationId }
+            );
+        }
+
+        public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId)
+        {
+            return connection.Query<Course>(
+                @$"select ap.ApplicationID,ap.ApplicationName,{DelegateCountQuery},cu.CustomisationID,cu.CustomisationName 
+				from Applications as ap
+				inner join CentreApplications as ca on ap.ApplicationID = ca.ApplicationID
+				inner join Customisations as cu on ca.ApplicationID = cu.ApplicationID
+				where ca.Active = 1 and cu.Active= 1 and cu.CentreID = @centreId AND ca.CentreID=@centreId
+				order by ap.ApplicationName",
+                new { centreId }
             );
         }
     }

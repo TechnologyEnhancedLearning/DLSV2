@@ -47,14 +47,17 @@
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IActivityService activityService = null;
 
         [SetUp]
         public void Setup()
         {
             courseService = A.Fake<ICourseService>();
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
+            activityService = A.Fake<IActivityService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
-
+            A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
+              .Returns("All");
             A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._))
                 .Returns(details);
             A.CallTo(() => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._))
@@ -68,7 +71,8 @@
             controllerWithCookies = new DelegateCoursesController(
                     courseService,
                     courseDelegatesDownloadFileService,
-                    searchSortFilterPaginateService
+                    searchSortFilterPaginateService,
+                    activityService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)

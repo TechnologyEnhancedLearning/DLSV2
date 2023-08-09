@@ -30,7 +30,7 @@
                                    (SELECT COUNT (DISTINCT da.UserID) AS Learners
                                    FROM   CandidateAssessments AS ca1 INNER JOIN
                                                 DelegateAccounts AS da ON ca1.DelegateUserID = da.UserID
-                                   WHERE (da.CentreID = @centreId) AND (ca1.RemovedDate IS NULL) AND (ca1.SelfAssessmentID = csa.SelfAssessmentID)) AS LearnerCount
+                                   WHERE (da.CentreID = @centreId) AND (ca1.RemovedDate IS NULL) AND (ca1.SelfAssessmentID = csa.SelfAssessmentID) AND ca1.NonReportable=0) AS LearnerCount
                   FROM   CentreSelfAssessments AS csa INNER JOIN
                                SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
                   WHERE (csa.CentreID = @centreId) AND (sa.CategoryID = @categoryId) AND (sa.SupervisorResultsReview = 1) AND (sa.ArchivedDate IS NULL) OR
@@ -96,7 +96,7 @@
 	                    SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID 
 	                    LEFT OUTER JOIN LatestAssessmentResults AS LAR ON LAR.DelegateUserID = ca.DelegateUserID
                     WHERE
-                        (sa.ID = @SelfAssessmentID) AND (sa.ArchivedDate IS NULL) AND (c.Active = 1) AND (ca.RemovedDate IS NULL)
+                        (sa.ID = @SelfAssessmentID) AND (sa.ArchivedDate IS NULL) AND (c.Active = 1) AND (ca.RemovedDate IS NULL AND ca.NonReportable = 0)
                     Group by sa.Name
 	                    , u.LastName + ', ' + u.FirstName
 						, da.Active

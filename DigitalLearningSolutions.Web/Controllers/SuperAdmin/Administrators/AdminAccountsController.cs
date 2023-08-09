@@ -4,23 +4,25 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Administrators;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
 
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
@@ -420,6 +422,49 @@
         public IActionResult RedirectToUser(int UserId) {
             TempData["UserId"] = UserId;
             return RedirectToAction("Index", "Users",new { UserId = UserId });
+        }
+
+        [Route("SuperAdmin/AdminAccounts/{adminId:int}/DeactivateAdmin")]
+        [HttpGet]
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, ReturnPageQuery returnPageQuery)
+        {
+            var admin = userDataService.GetAdminById(adminId);
+
+            if (!CurrentUserCanDeactivateAdmin(admin!.AdminAccount))
+            {
+                return StatusCode((int)HttpStatusCode.Gone);
+            }
+
+            var model = new DeactivateAdminViewModel(admin, returnPageQuery);
+            return View(model);
+        }
+
+        [Route("SuperAdmin/AdminAccounts/{adminId:int}/DeactivateAdmin")]
+        [HttpPost]
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, DeactivateAdminViewModel model)
+        {
+            var admin = userDataService.GetAdminById(adminId);
+
+            if (!CurrentUserCanDeactivateAdmin(admin!.AdminAccount))
+            {
+                return StatusCode((int)HttpStatusCode.Gone);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            userService.DeactivateOrDeleteAdminForSuperAdmin(adminId);
+
+            return View("DeactivateOrDeleteAdminConfirmation");
+        }
+
+        private bool CurrentUserCanDeactivateAdmin(AdminAccount adminToDeactivate)
+        {
+            var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.GetValueOrDefault());
+
+            return UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminToDeactivate, loggedInAdmin!.AdminAccount);
         }
     }
 }

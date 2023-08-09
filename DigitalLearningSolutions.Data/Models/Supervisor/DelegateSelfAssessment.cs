@@ -27,5 +27,6 @@
         public int ResultsVerificationRequests { get; set; }
         public bool IsSupervisorResultsReviewed { get; set; }
         public bool IsAssignedToSupervisor { get; set; }
+        public bool NonReportable { get; set; }
     }
 }

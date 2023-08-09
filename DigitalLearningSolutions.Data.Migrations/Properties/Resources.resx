@@ -262,6 +262,7 @@
   <data name="td_1610_update_getactivitiesfordelegateenrolment_proc_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\td-1610-update_getactivitiesfordelegateenrolment_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+
   <data name="TermsAndConditions" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TermsAndConditions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -269,3 +270,4 @@
     <value>..\Resources\TermsAndConditionsOldrecord.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>
+

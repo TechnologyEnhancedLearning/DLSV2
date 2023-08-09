@@ -1,0 +1,63 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.UserFeedback
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model UserFeedbackViewModel;
+
+@{
+    ViewData["Title"] = "Feedback";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/userFeedback/userFeedback.css")" asp-append-version="true">
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
+                        @if (Model.SourcePageTitle != String.Empty)
+                        {
+                            <div><partial name="_NhsChevronLeft" /> Go back to @Model.SourcePageTitle</div>
+                        }
+                        @if (Model.SourcePageTitle == String.Empty)
+                        {
+                            <div><partial name="_NhsChevronLeft" /> Go back</div>
+                        }
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h2 class="nhsuk-caption-l">Join our user research panel</h2>
+        <h1 id="page-heading" class="nhsuk-heading-xl">Thank you for your feedback</h1>
+    </div>
+    <div class="nhsuk-grid-column-two-thirds">
+        <p class="nhsuk-body-l">Step 4 of 4</p>
+
+        <h3>Help us improve our website</h3>
+
+        <p>Would you like to <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=K5Gn_5ewMUGcD9DoB1Wyqy_N2dia4StEr8rvzDM1MnlUNEhQUDk4UVpHUDc2N0g4OTZGNFRBNktLOC4u" target="_blank">join our research panel</a> and help us improve the experience of our website?</p>
+
+        <p>We will not use your details for any purpose other than to get feedback about our services to help us make improvements in the future. You can opt out at any time.</p>
+
+        <form method="post" asp-action="UserFeedbackReturnToUrl">
+            <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+            <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
+            <div class="nhsuk-u-float-left">
+                <button class="nhsuk-button" type="submit">
+                    @if (Model.SourcePageTitle != String.Empty)
+                    {
+                        <div>Back to @Model.SourcePageTitle</div>
+                    }
+                    @if (Model.SourcePageTitle == String.Empty)
+                    {
+                        <div>Back</div>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

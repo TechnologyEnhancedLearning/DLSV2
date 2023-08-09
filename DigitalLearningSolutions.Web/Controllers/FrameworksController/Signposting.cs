@@ -88,7 +88,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
 
             var session = multiPageFormService.GetMultiPageFormData<CompetencyResourceSummaryViewModel>(feature, TempData);
-            return View("Developer/AddCompetencyLearningResourceSummary", session);
+            return View("Developer/AddCompetencyLearningResourceSummary", session.Result);
         }
 
         [HttpPost]

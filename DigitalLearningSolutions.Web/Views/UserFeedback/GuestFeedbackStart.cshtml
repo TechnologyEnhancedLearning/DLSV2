@@ -1,0 +1,76 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.UserFeedback
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model UserFeedbackViewModel;
+
+@{
+  ViewData["Title"] = "Feedback";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/userFeedback/userFeedback.css")" asp-append-version="true">
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
+            @if (Model.SourcePageTitle != String.Empty)
+            {
+              <div><partial name="_NhsChevronLeft" class="feedback-chevron" />  Go back to Welcome page</div>
+
+            }
+            @if (Model.SourcePageTitle == String.Empty)
+            {
+              <div><partial name="_NhsChevronLeft" class="feedback-chevron" />  Go back</div>
+            }
+          </a>
+        </li>
+      </ol>
+    </div>
+  </nav>
+}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h2 class="nhsuk-caption-l">Give page or website feedback</h2>
+      <h1 id="page-heading" class="nhsuk-heading-xl">Give us feedback about what you were trying to achieve</h1>
+    </div>
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <form method="post" asp-action="GuestFeedbackComplete">
+
+        <vc:text-input asp-for="TaskAttempted"
+                     label="What task did you come to do today?"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="off"
+                     css-class="nhsuk-input"
+                     required = "false" />
+
+        <vc:text-area asp-for="FeedbackText"
+                    label="Please describe in detail your experience and what you came here to achieve."
+                    populate-with-current-value="true"
+                    rows="5"
+                    type="text"
+                    spell-check="false"
+                    hint-text=""
+                    autocomplete="off"
+                    css-class="nhsuk-u-width-full"
+                    character-count="null" />
+
+        <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+
+        <div class="nhsuk-u-float-right">
+          <button class="nhsuk-button" type="submit">
+            Submit Feedback
+            <span class="feedback-chevron">
+              <partial name="_NhsChevronRightOffset" class="feedback-chevron" />
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

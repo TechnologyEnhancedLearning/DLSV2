@@ -861,6 +861,196 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 01/06/2023 15:32:33 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ========= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetActivitiesForDelegateEnrolmentTweak {
+            get {
+                return ResourceManager.GetString("TD_1766_GetActivitiesForDelegateEnrolmentTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 01/06/2023 15:32:33 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ========= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetActivitiesForDelegateEnrolmentTweak_down {
+            get {
+                return ResourceManager.GetString("TD_1766_GetActivitiesForDelegateEnrolmentTweak_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 26/06/2023 08:04:53 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDU [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCurrentCoursesForCandidateTweak {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCurrentCoursesForCandidateTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 22/06/2023 14:49:50 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDURE [ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCurrentCoursesForCandidateTweak_down {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCurrentCoursesForCandidateTweak_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 16/06/2023 09:17:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the parameter [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1913_AlterGroupCustomisation_Add_V2_DOWN {
+            get {
+                return ResourceManager.GetString("TD_1913_AlterGroupCustomisation_Add_V2_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 16/06/2023 09:17:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the parameter [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1913_AlterGroupCustomisation_Add_V2_UP {
+            get {
+                return ResourceManager.GetString("TD_1913_AlterGroupCustomisation_Add_V2_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 05/07/2023 08:52:32 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ============= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak {
+            get {
+                return ResourceManager.GetString("TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 05/07/2023 09:33:56 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ============= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down {
+            get {
+                return ResourceManager.GetString("TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 03/07/2023
+        ///-- Description:	Populate the ReportSelfAssessmentActivityLog table with recent activity
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE PopulateReportSelfAssessmentActivityLog
+        ///
+        ///AS
+        ///BEGIN
+        ///	-- SET NOCOUNT ON added to prevent extra result sets from
+        ///	-- interfering with SELECT statements.
+        ///	SET NOCOUNT ON;
+        ///
+        ///   DECLARE @ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP {
+            get {
+                return ResourceManager.GetString("TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 2/6/2023 22:11:41 ******/
         ///SET ANSI_NULLS ON
         ///GO

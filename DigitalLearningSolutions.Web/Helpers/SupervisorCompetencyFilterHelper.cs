@@ -38,9 +38,9 @@ namespace DigitalLearningSolutions.Web.Helpers
                 var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
                 filters = appliedResponseStatusFilters;
                 filteredCompetencies = from c in competencies
-                                       let searchTextMatchesGroup = wordsInSearchText.Any(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                       let searchTextMatchesCompetencyDescription = wordsInSearchText.Any(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                       let searchTextMatchesCompetencyName = wordsInSearchText.Any(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                                       let searchTextMatchesGroup = wordsInSearchText.All(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                                       let searchTextMatchesCompetencyDescription = wordsInSearchText.All(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                                       let searchTextMatchesCompetencyName = wordsInSearchText.All(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
                                        let responseStatusFilterMatchesAnyQuestion =
                                           (filters.Contains((int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment) && c.AssessmentQuestions.Any(q => q.ResultId == null))
                                        || (filters.Contains((int)SelfAssessmentCompetencyFilter.SelfAssessed) && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Requested == null && q.SignedOff == null))

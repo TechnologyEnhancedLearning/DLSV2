@@ -4,8 +4,10 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -51,8 +53,8 @@
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.config = config;
-            this.emailVerificationService= emailVerificationService;
-            this.emailVerificationDataService= emailVerificationDataService;
+            this.emailVerificationService = emailVerificationService;
+            this.emailVerificationDataService = emailVerificationDataService;
         }
 
         public IActionResult Index(int delegateId)
@@ -64,6 +66,11 @@
             if (delegateEntity == null)
             {
                 return NotFound();
+            }
+
+            if (TempData["IsDelegatePromoted"] != null)
+            {
+                TempData.Remove("IsDelegatePromoted");
             }
 
             var delegateUserCard = new DelegateUserCard(delegateEntity);
@@ -79,18 +86,24 @@
                 model.DelegateInfo.Email = null;
 
             var baseUrl = config.GetAppRootPath();
-            if ((model.DelegateInfo?.IsActive ?? false) && (model.DelegateInfo.RegistrationConfirmationHash != null))
+            IClockUtility clockUtility = new ClockUtility();
+            if ((model.DelegateInfo?.IsActive ?? false) && (model.DelegateInfo.RegistrationConfirmationHash != null)
+                )
             {
-               Email welcomeEmail = passwordResetService.GenerateDelegateWelcomeEmail(delegateId, baseUrl);
-                model.WelcomeEmail = "mailto:" + string.Join(",",welcomeEmail.To) + "?subject=" + welcomeEmail.Subject + "&body=" +welcomeEmail.Body.TextBody.Replace("&", "%26");
+                Email welcomeEmail = passwordResetService.GenerateDelegateWelcomeEmail(delegateId, baseUrl);
+                model.WelcomeEmail = "mailto:" + string.Join(",", welcomeEmail.To) + "?subject=" + welcomeEmail.Subject + "&body=" + welcomeEmail.Body.TextBody.Replace("&", "%26");
             }
+
+
+            EmailVerificationDetails emailVerificationDetails = emailVerificationDataService.GetEmailVerificationDetailsById(delegateEntity.UserAccount.EmailVerificationHashID ?? 0);
+
             if (delegateEntity.UserAccount.EmailVerified == null
-                && delegateEntity.UserAccount.EmailVerificationHashID != null)
+                && delegateEntity.UserAccount.EmailVerificationHashID != null
+                && (emailVerificationDetails.EmailVerificationHashCreatedDate.AddDays(2) > clockUtility.UtcNow))
             {
-               var userEntity = userService.GetUserById(delegateEntity.DelegateAccount.UserId);
-                
-                string emailVerificationHash = emailVerificationDataService.GetEmailVerificationHashById(delegateEntity.UserCentreDetails.EmailVerificationHashID ?? 0);
-               Email verificationEmail = emailVerificationService.GenerateVerificationEmail(userEntity.UserAccount, emailVerificationHash, delegateEntity.UserCentreDetails.Email, baseUrl);
+                var userEntity = userService.GetUserById(delegateEntity.DelegateAccount.UserId);
+                Email verificationEmail = emailVerificationService.GenerateVerificationEmail(userEntity.UserAccount, emailVerificationDetails.EmailVerificationHash,
+                   delegateEntity.UserAccount.PrimaryEmail, baseUrl);
                 model.VerificationEmail = "mailto:" + string.Join(",", verificationEmail.To) + "?subject=" + verificationEmail.Subject + "&body=" + verificationEmail.Body.TextBody.Replace("&", "%26");
             }
             return View(model);
@@ -108,7 +121,8 @@
 
                 passwordResetService.GenerateAndSendDelegateWelcomeEmail(
                     delegateId,
-                    baseUrl
+                    baseUrl,
+                    delegateUser.RegistrationConfirmationHash
                 );
                 return View("WelcomeEmailSent", model);
             }
@@ -142,6 +156,17 @@
             userDataService.ActivateDelegateUser(delegateId);
 
             return RedirectToAction("Index", new { delegateId });
+        }
+
+        [HttpPost]
+        [Route("DeleteAccount")]
+        public IActionResult DeleteAccount(int delegateId)
+        {
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+
+            userDataService.DeleteUserAndAccounts(userId);
+
+            return RedirectToAction("Index", "AllDelegates");
         }
     }
 }

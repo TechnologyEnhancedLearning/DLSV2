@@ -1,0 +1,12 @@
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+
+@media (min-width: 48.0625em) {
+  .reports-summary-row__key {
+    width: 60%;
+  }
+
+  .reports-summary-row__value {
+    width: 20%;
+    text-align: end;
+  }
+}

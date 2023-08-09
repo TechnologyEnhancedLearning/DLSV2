@@ -266,23 +266,25 @@
             bool changeMadeBySameUser = false
         )
         {
+            string trimmedFirstName = firstName.Trim();
+            string trimmedLastName = surname.Trim();
             connection.Execute(
                 @"UPDATE Users
                         SET
-                            FirstName = @firstName,
-                            LastName = @surname,
+                            FirstName = @trimmedFirstName,
+                            LastName = @trimmedLastName,
                             PrimaryEmail = @primaryEmail,
                             ProfileImage = (CASE WHEN @changeMadeBySameUser = 1 THEN @profileImage ELSE ProfileImage END),
                             ProfessionalRegistrationNumber = @professionalRegNumber,
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
                             JobGroupId = @jobGroupId,
                             DetailsLastChecked = (CASE WHEN @changeMadeBySameUser = 1 THEN @detailsLastChecked ELSE DetailsLastChecked END),
-                            EmailVerified = @emailVerified
+                        EmailVerified = (CASE WHEN @isPrimaryEmailUpdated = 1 THEN NULL ELSE EmailVerified END)
                         WHERE ID = @userId",
                 new
                 {
-                    firstName,
-                    surname,
+                    trimmedFirstName,
+                    trimmedLastName,
                     primaryEmail,
                     profileImage,
                     userId,
@@ -299,15 +301,17 @@
 
         public void UpdateUserDetails(string firstName, string surname, string primaryEmail, int jobGroupId, int userId)
         {
+            string trimmedFirstName = firstName.Trim();
+            string trimmedLastName = surname.Trim();
             connection.Execute(
                 @"UPDATE Users
                         SET
-                            FirstName = @firstName,
-                            LastName = @surname,
+                            FirstName = @trimmedFirstName,
+                            LastName = @trimmedLastName,
                             PrimaryEmail = @primaryEmail,
                             JobGroupId = @jobGroupId
                         WHERE ID = @userId",
-                new { firstName, surname, primaryEmail, jobGroupId, userId }
+                new { trimmedFirstName, trimmedLastName, primaryEmail, jobGroupId, userId }
             );
         }
 

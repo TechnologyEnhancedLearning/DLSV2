@@ -156,6 +156,8 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/SuperAdmin/Delegates/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/SuperAdmin/PlatformReports/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -189,7 +191,7 @@ namespace DigitalLearningSolutions.Web
 
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
-            Dapper.SqlMapper.Settings.CommandTimeout = 360;
+            Dapper.SqlMapper.Settings.CommandTimeout = 60;
 
             MultiPageFormService.InitConnection(new SqlConnection(defaultConnectionString));
 
@@ -267,6 +269,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IEmailVerificationService, EmailVerificationService>();
             services.AddScoped<IEmailGenerationService, EmailGenerationService>();
             services.AddScoped<IAdminDownloadFileService, AdminDownloadFileService>();
+            services.AddScoped<IPlatformReportsService, PlatformReportsService>();
+            services.AddScoped<IReportFilterService, ReportFilterService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -316,6 +320,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedisCacheOptions, RedisCacheOptions>();
             services.AddScoped<IMultiPageFormService, MultiPageFormService>();
             services.AddScoped<ISelfAssessmentReportDataService, SelfAssessmentReportDataService>();
+            services.AddScoped<IUserFeedbackDataService, UserFeedbackDataService>();
+            services.AddScoped<IPlatformReportsDataService, PlatformReportsDataService>();
+            services.AddScoped<IContractTypesDataService, ContractTypesDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
@@ -365,8 +372,8 @@ namespace DigitalLearningSolutions.Web
             {
                 context.Response.Headers.Add("content-security-policy",
                     "default-src 'self'; " +
-                    "script-src 'self' 'unsafe-hashes' 'sha256-kbHtQyYDQKz4SWMQ8OHVol3EC0t3tHEJFPCSwNG9NxQ' 'sha256-YoDy5WvNzQHMq2kYTFhDYiGnEgPrvAY5Il6eUu/P4xY=' 'sha256-/n13APBYdqlQW71ZpWflMB/QoXNSUKDxZk1rgZc+Jz8=' https://script.hotjar.com https://www.google-analytics.com https://static.hotjar.com https://www.googletagmanager.com 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=' 'sha256-VQKp2qxuvQmMpqE/U/ASQ0ZQ0pIDvC3dgQPPCqDlvBo=';" +
-                    "style-src 'self' 'unsafe-inline'; " +
+                    "script-src 'self' 'unsafe-hashes' 'sha256-kbHtQyYDQKz4SWMQ8OHVol3EC0t3tHEJFPCSwNG9NxQ' 'sha256-YoDy5WvNzQHMq2kYTFhDYiGnEgPrvAY5Il6eUu/P4xY=' 'sha256-/n13APBYdqlQW71ZpWflMB/QoXNSUKDxZk1rgZc+Jz8=' https://script.hotjar.com https://www.google-analytics.com https://static.hotjar.com https://www.googletagmanager.com https://cdnjs.cloudflare.com 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=' 'sha256-VQKp2qxuvQmMpqE/U/ASQ0ZQ0pIDvC3dgQPPCqDlvBo=';" +
+                    "style-src 'self' 'unsafe-inline' https://use.fontawesome.com; " +
                     "font-src https://script.hotjar.com https://assets.nhs.uk/; " +
                     "connect-src 'self' http: ws:; " +
                     "img-src 'self' data: https:; " +

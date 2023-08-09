@@ -74,7 +74,13 @@ namespace DigitalLearningSolutions.Web.Services
 
         void DeactivateOrDeleteAdmin(int adminId);
 
+        void DeactivateOrDeleteAdminForSuperAdmin(int adminId);        
+
         UserEntity? GetUserById(int userId);
+
+        string? GetEmailVerificationHashesFromEmailVerificationHashID(int ID);
+
+        public List<(int centreId, string centreEmail, string EmailVerificationHashID)> GetUnverifiedCentreEmailListForUser(int userId);
 
         UserEntity? GetUserByUsername(string username);
 
@@ -247,7 +253,30 @@ namespace DigitalLearningSolutions.Web.Services
 
         public void DeactivateOrDeleteAdmin(int adminId)
         {
-            if (sessionDataService.HasAdminGotSessions(adminId))
+            if (sessionDataService.HasAdminGotSessions(adminId) || sessionDataService.HasAdminGotReferences(adminId))
+            {
+                userDataService.DeactivateAdmin(adminId);
+            }
+            else
+            {
+                try
+                {
+                    userDataService.DeleteAdminAccount(adminId);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(
+                        ex,
+                        $"Error attempting to delete admin {adminId} with no sessions, deactivating them instead."
+                    );
+                    userDataService.DeactivateAdmin(adminId);
+                }
+            }
+        }
+
+        public void DeactivateOrDeleteAdminForSuperAdmin(int adminId)
+        {
+            if (sessionDataService.HasAdminGotReferences(adminId))
             {
                 userDataService.DeactivateAdmin(adminId);
             }
@@ -281,6 +310,11 @@ namespace DigitalLearningSolutions.Web.Services
             var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId).ToList();
 
             return new UserEntity(userAccount, adminAccounts, delegateAccounts);
+        }
+
+        public string? GetEmailVerificationHashesFromEmailVerificationHashID(int ID)
+        {
+            return userDataService.GetEmailVerificationHash(ID);
         }
 
         public UserEntity? GetUserByUsername(string username)
@@ -364,6 +398,25 @@ namespace DigitalLearningSolutions.Web.Services
             );
 
             return (unverifiedPrimaryEmail, unverifiedCentreEmails.ToList());
+        }
+
+        public List<(int centreId, string centreEmail, string EmailVerificationHashID)>
+        GetUnverifiedCentreEmailListForUser(int userId)
+        {
+            var userEntity = GetUserById(userId);
+
+            if (userEntity == null)
+            {
+                return new List<(int centreId, string centreName, string centreEmail)>();
+            }
+
+            var unverifiedCentreEmails = userDataService.GetUnverifiedCentreEmailsForUserList(userId).Where(
+                tuple =>
+                    userEntity.AdminAccounts.Any(account => account.CentreId == tuple.centreId && account.Active) ||
+                    userEntity.DelegateAccounts.Any(account => account.CentreId == tuple.centreId && account.Active)
+            );
+
+            return unverifiedCentreEmails.ToList();
         }
 
         public AdminEntity? GetAdminById(int adminId)

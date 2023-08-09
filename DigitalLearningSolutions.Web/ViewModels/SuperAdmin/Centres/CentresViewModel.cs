@@ -1,18 +1,40 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
 {
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.Centres;
 
-    public class CentresViewModel
+    public class CentresViewModel : BaseSearchablePageViewModel<CentreEntity>
     {
-        public CentresViewModel(IEnumerable<CentreSummaryForSuperAdmin> centreSummaries)
+        public CentresViewModel(SearchSortFilterPaginationResult<CentreEntity> result) : base(
+            result,
+            true,
+            null,
+            "Search centre"
+        )
         {
-            // TODO: HEEDLS-641: add filters/sort/pagination
-            // .Take(10) should be removed in HEEDLS-641 in favour of the standard pagination functionality.
-            Centres = centreSummaries.OrderBy(c => c.CentreName).Take(10).Select(c => new CentreSummaryViewModel(c));
+            Centres = result.ItemsToDisplay.Select(
+                centre => new SearchableCentreViewModel(
+                    centre,
+                    result.GetReturnPageQuery($"{centre.Centre.CentreId}-card")
+                )
+            );
         }
 
-        public IEnumerable<CentreSummaryViewModel> Centres { get; set; }
+        public string Search { get; set; }
+        public int Region { get; set; }
+        public int CentreType { get; set; }
+        public int ContractType { get; set; }
+        public string CentreStatus { get; set; }
+        public IEnumerable<SearchableCentreViewModel> Centres { get; set; }
+        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
+        {
+            DefaultSortByOptions.Name,
+        };
+
+        public override bool NoDataFound => !Centres.Any() && NoSearchOrFilter;
     }
 }

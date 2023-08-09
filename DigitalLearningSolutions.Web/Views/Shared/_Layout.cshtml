@@ -3,6 +3,10 @@
 @using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @inject IClockUtility ClockUtility
@@ -17,11 +21,11 @@
     }
     var headerExtension = (string)ViewData[LayoutViewDataKeys.Application];
     var shouldDisplayHelpMenuItem = dlsSubApplication?.DisplayHelpMenuItem ?? headerExtension != DlsSubApplication.TrackingSystem.HeaderExtension;
-    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
- 
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -50,21 +54,25 @@
     <meta name="twitter:title" content="@(ViewData["twitter:title"] ?? ViewData[LayoutViewDataKeys.Title] ?? "Digital Learning Solutions")">
     <meta name="twitter:description" content="@(ViewData["twitter:description"] ?? "")">
     @{
-      var validateCookieBannerCookieViaTempData = (string)TempData["userConsentCookieOption"]; // Need to capture cookie status before page load to avoid inconsistencies.
+        var validateCookieBannerCookieViaTempData = (string)TempData["userConsentCookieOption"]; // Need to capture cookie status before page load to avoid inconsistencies.
     }
-    
+
     @if (validateCookieBannerCookieViaTempData == "true")  // [BY] When the user consent for first time load the follolwing JS. To avoid inconsistencies a temp varaible has been set when the user consent cookie choice
     {
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YVQ5NMPX7P"></script>
-    <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-YVQ5NMPX7P');</script>
-    <!-- End Google Tag -->
-    <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-5SKPRFQ');</script>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-YVQ5NMPX7P"></script>
+        <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-YVQ5NMPX7P');</script>
+        <!-- End Google Tag -->
+        <!-- Google Tag Manager -->
+        <script>
+            (function (w, d, s, l, i) {
+                w[l] = w[l] || []; w[l].push({
+                    'gtm.start':
+                        new Date().getTime(), event: 'gtm.js'
+                }); var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                        'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dataLayer', 'GTM-KJPJHGW');</script>
         <!-- End Google Tag Manager -->
     }
 </head>
@@ -75,7 +83,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
         <partial name="_CookieConsentPartial" />
         <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
-        @if(Configuration["ShowAlertBanner"] == "True")
+        @if (Configuration["ShowAlertBanner"] == "True")
         {
             <div class="dls-alert-banner">
                 <div class="nhsuk-width-container">
@@ -85,7 +93,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
             </div>
         }
-        
+
         <header class="nhsuk-header nhsuk-header--organisation nhsuk-header--white">
             <div class="nhsuk-width-container nhsuk-header__container">
                 <div class="nhsuk-header__logo">
@@ -122,7 +130,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
 
             @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] != true)
-            {              
+            {
                 <nav class="nhsuk-header__navigation" id="header-navigation" aria-label="Primary navigation" aria-labelledby="label-navigation">
                     <div class="nhsuk-width-container">
                         <p class="nhsuk-header__navigation-title">
@@ -141,7 +149,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             {
                                 <partial name="_AutoNavMenuItems.cshtml" model="@dlsSubApplication" />
                             }
-                            
+
                             @if (User.IsAdminAccount())
                             {
                                 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
@@ -160,6 +168,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 var visualSeparatorNoNavBar = (bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] == true ? "visual-separator-no-nav-bar" : string.Empty;
             }
             <div class="visual-separator @visualSeparatorNoNavBar"></div>
+
+            <feature name="@(FeatureFlags.UserFeedbackBar)">
+                <partial name="_UserFeedbackBarPartial" />
+            </feature>
         </header>
 
         @RenderSection("NavBreadcrumbs", false)

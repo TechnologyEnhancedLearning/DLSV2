@@ -1,0 +1,214 @@
+﻿@using DigitalLearningSolutions.Data.Models.Centres;
+@model Centre;
+@{
+    ViewData["Title"] = "Manage Centre";
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader">Manage centre</a></li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__backlink"
+                 asp-controller="Centres" asp-action="Index"
+                >Back to Centres</a>
+            </p>
+        </div>
+    </nav>
+}
+<div class="nhsuk-grid-row">
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">@Model.CentreName (@Model.CentreId)</h1>
+</div>
+<div class="nhsuk-grid-row">
+    <h2 class="nhsuk-u-margin-bottom-2">Details</h2>
+    <dl class="nhsuk-summary-list details-list-with-button word-break">
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                <b>Centre type</b>
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.CentreType
+            </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                <b>Region</b>
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.RegionName
+            </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                <b>Registration email</b>
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.CentreEmail
+            </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                <b>IP prefix</b>
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.IpPrefix
+            </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                <b>Show on find your centre</b>
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.ShowOnMap
+            </dd>
+        </div>
+    </dl>
+    <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-4" role="button" asp-controller="Centres" asp-action="EditCentreDetails" asp-route-centreId="@Model.CentreId">
+        Edit details
+    </a>
+</div>
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <div class="nhsuk-grid-row">
+            <h2 class="nhsuk-u-margin-bottom-2">Centre manager</h2>
+            <dl class="nhsuk-summary-list details-list-with-button word-break">
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Contact first name</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.ContactForename
+                    </dd>
+                </div>
+
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Contact last name</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.ContactSurname
+                    </dd>
+                </div>
+
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Contact email</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.ContactEmail
+                    </dd>
+                </div>
+
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Contact phone</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.ContactTelephone
+                    </dd>
+                </div>
+            </dl>
+            <a class="nhsuk-button view-delegate-button" asp-controller="Centres" asp-action="ManageCentreManager" asp-route-centreId="@Model.CentreId"
+               role="button">
+                Edit centre manager details
+            </a>
+        </div>
+        <div class="nhsuk-grid-row">
+            <h2 class="nhsuk-u-margin-bottom-2">Contract info</h2>
+            <dl class="nhsuk-summary-list details-list-with-button word-break">
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Contract type</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.ContractType
+                    </dd>
+                </div>
+
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>CMS administrators</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.CmsAdministratorSpots
+                    </dd>
+                </div>
+
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>CMS managers</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.CmsManagerSpots
+                    </dd>
+                </div>
+
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Content creator licenses</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.CcLicenceSpots
+                    </dd>
+                </div>
+
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Custom courses</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.CustomCourses
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Trainers</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.TrainerSpots
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Server space</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.ServerSpaceBytes
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Per delegate upload space</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.CandidateByteLimit
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        <b>Contract review date</b>
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.ContractReviewDate
+                    </dd>
+                </div>
+            </dl>
+            <button class="nhsuk-button view-delegate-button" type="submit">
+                Edit contract info
+            </button>
+
+            <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2" role="button"
+               asp-controller="Centres"
+               asp-action="CentreRoleLimits"
+               asp-route-centreId="@Model.CentreId">
+              Customise role limits
+            </a>
+        </div>
+    </div>
+</div>

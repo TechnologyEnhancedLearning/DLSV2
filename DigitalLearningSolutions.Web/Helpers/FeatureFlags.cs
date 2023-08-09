@@ -11,5 +11,6 @@
         public const string UseSignposting = "UseSignposting";
         public const string PricingPageEnabled = "PricingPage";
         public const string RefactoredFindYourCentrePage = "RefactoredFindYourCentrePage";
+        public const string UserFeedbackBar = "UserFeedbackBar";
     }
 }

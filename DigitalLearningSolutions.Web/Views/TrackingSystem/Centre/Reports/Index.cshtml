@@ -1,12 +1,14 @@
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+@using Microsoft.AspNetCore.Html;
+
 @model ReportsViewModel
 
 @{
   ViewData["Title"] = "Course reports";
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/reports.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/reports.css")" asp-append-version="true">
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
@@ -66,10 +68,10 @@
     }
     else
     {
-      var place = Model.Category == "All" ? "at this centre" : $"for course category {Model.Category}";
-      <p class="nhsuk-body-l" id="no-activity-message">
-        There has not yet been any activity @place.
-      </p>
+       var place = Model.Category == "All" ? "yet." : $" <b>{Model.Category}</b> category.";
+            <p class="nhsuk-body-l" id="no-activity-message">
+                There has not yet been any activity for courses in the @Html.Raw(place)
+                </p>
     }
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">

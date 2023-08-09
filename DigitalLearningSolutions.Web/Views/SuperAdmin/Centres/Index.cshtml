@@ -3,29 +3,97 @@
 
 @* TODO: HEEDLS-641: add search/filter/pagination components *@
 @{
-  ViewData["Title"] = "Centres";
+    ViewData["Title"] = "Centres";
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/headingButtons.css")" asp-append-version="true">
-
+<link rel="stylesheet" href="@Url.Content("~/css/superAdmin/centres.css")" asp-append-version="true">
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds">
-        <h1 class="nhsuk-heading-xl">Centres</h1>
-      </div>
-      <div class="nhsuk-grid-column-one-third heading-button-group">
-        <a class="nhsuk-button heading-button"
-           role="button">
-          Add
-        </a>
-      </div>
+    <div class="nhsuk-grid-column-full">
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-two-thirds">
+                <h1 class="nhsuk-heading-xl">Centres</h1>
+            </div>
+            <div class="nhsuk-grid-column-one-third heading-button-group">
+                <a class="nhsuk-button heading-button"
+                   role="button">
+                    Add
+                </a>
+            </div>
+        </div>
+        <form class="nhsuk-u-margin-bottom-3" method="get" role="search" asp-controller="Centres" asp-action="Index" asp-route-page="@Model.Page">
+            <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
+            <div class="nhsuk-grid-row">
+                <div id="search">
+                    <div class="nhsuk-grid-column-three-quarters">
+                        <vc:text-input asp-for="@nameof(Model.Search)"
+                                       label="Search"
+                                       populate-with-current-value="true"
+                                       type="text"
+                                       spell-check="false"
+                                       hint-text=""
+                                       autocomplete=""
+                                       css-class=""
+                                       required="true"
+                                       placeholder-text="Search name" />
+                    </div>
+                    <div class="nhsuk-grid-column-one-quarter">
+                        <button class="nhsuk-button nhsuk-u-width-full nhsuk-u-margin-top-4 nhsuk-u-float-right" type="submit">Search</button>
+                    </div>
+                </div>
+                <div class="filter-container nhsuk-u-margin-top-5">
+                    <div class="nhsuk-grid-column-one-quarter">
+                        <vc:select-list asp-for="@nameof(Model.Region)"
+                                        label="Region"
+                                        value="@Model.Region"
+                                        required="true"
+                                        hint-text=""
+                                        css-class="nhsuk-grid-column-full nhsuk-u-width-full"
+                                        default-option=""
+                                        select-list-options="@ViewBag.Regions" />
+                    </div>
+                    <div class="nhsuk-grid-column-one-quarter">
+                        <vc:select-list asp-for="@nameof(Model.CentreType)"
+                                        label="Centre type"
+                                        value="@Model.CentreType"
+                                        required="true"
+                                        hint-text=""
+                                        css-class="nhsuk-grid-column-full nhsuk-u-width-full"
+                                        default-option=""
+                                        select-list-options="@ViewBag.CentreTypes" />
+                    </div>
+                    <div class="nhsuk-grid-column-one-quarter">
+                        <vc:select-list asp-for="@nameof(Model.ContractType)"
+                                        label="Contract type"
+                                        value="@Model.ContractType"
+                                        hint-text=""
+                                        required="true"
+                                        css-class="nhsuk-grid-column-full  nhsuk-u-width-full"
+                                        default-option=""
+                                        select-list-options="@ViewBag.ContractTypes" />
+                    </div>
+                    <div class="nhsuk-grid-column-one-quarter">
+                        <vc:select-list asp-for="@nameof(Model.CentreStatus)"
+                                        label="Centre status"
+                                        value="@Model.CentreStatus"
+                                        hint-text=""
+                                        required="true"
+                                        css-class="nhsuk-grid-column-full  nhsuk-u-width-full"
+                                        default-option=""
+                                        select-list-options="@ViewBag.CentreStatus" />
+                    </div>
+                </div>
+            </div>
+        </form>
+        <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+        <partial name="SearchablePage/_TopPagination" model="Model" />
+        <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
+        <div id="searchable-elements">
+            @foreach (var centre in Model.Centres)
+            {
+                <partial name="_CentreCard" model="centre" />
+            }
+        </div>
+        <partial name="SearchablePage/_BottomPagination" model="Model" />
     </div>
-    <div id="searchable-elements">
-      @foreach (var centre in Model.Centres)
-      {
-        <partial name="_CentreCard" model="centre" />
-      }
-    </div>
-  </div>
 </div>

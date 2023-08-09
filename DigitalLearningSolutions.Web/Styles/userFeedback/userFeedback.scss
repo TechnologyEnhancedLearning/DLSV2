@@ -1,0 +1,13 @@
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+
+.feedback-chevron {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 24px !important;
+}
+
+.feedback-chevron svg {
+  fill: $color_nhsuk-white !important;
+  height: 24px !important;
+  width: 24px !important;
+}

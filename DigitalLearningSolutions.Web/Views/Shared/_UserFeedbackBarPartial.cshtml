@@ -1,0 +1,39 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] != true)
+{
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="feedback-bar">
+
+            <div class="nhsuk-width-container nhsuk-header_container nhsuk-width-container--feedback nhsuk-body-s">
+                <div class="govuk-phase-banner__content feedback-wrapper">
+                    <div class="govuk-tag govuk-phase-banner__content__tag feedback-tag">
+                        Feedback
+                    </div>
+                    <a asp-controller="UserFeedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()"
+               asp-route-sourcePageTitle="@(ViewData.ContainsKey("Title") ? ViewData["Title"].ToString() : string.Empty)">Give page feedback</a>
+                    or <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=K5Gn_5ewMUGcD9DoB1Wyqy_N2dia4StEr8rvzDM1MnlUNEhQUDk4UVpHUDc2N0g4OTZGNFRBNktLOC4u" target="_blank">join our research panel</a> - this website is in
+                    <a href="https://www.gov.uk/help/beta" target="_blank">Beta</a>, your feedback will help us improve this platform.
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="feedback-bar">
+            <div class="nhsuk-width-container nhsuk-body-s">
+                <div class="govuk-phase-banner__content feedback-wrapper">
+                    <div class="govuk-tag govuk-phase-banner__content__tag feedback-tag">
+                        Feedback
+                    </div>
+                    <a asp-controller="UserFeedback" asp-action="Index" asp-route-sourceurl="@Context.Request.GetDisplayUrl()"
+               asp-route-sourcePageTitle="@(ViewData.ContainsKey("Title") ? ViewData["Title"].ToString() : string.Empty)">Give website feedback</a>
+                    - this website is in <a href="https://www.gov.uk/help/beta" target="_blank">Beta</a>, your feedback will help us improve this platform.
+                </div>
+            </div>
+        </div>
+    }
+}
