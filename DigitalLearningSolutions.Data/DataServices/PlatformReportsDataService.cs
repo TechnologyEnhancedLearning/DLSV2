@@ -70,17 +70,21 @@
                  FROM    Progress AS P WITH (NOLOCK)
                  WHERE (Completed IS NOT NULL)) AS CourseCompletions,
                  (SELECT COUNT(ID) AS Expr1
-                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK)
-                 WHERE (SelfAssessmentID = 1) AND (Enrolled=1)) AS DCSAEnrolments,
+                 FROM    ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
+                 SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                 WHERE (sa.SupervisorResultsReview = 0 AND SupervisorSelfAssessmentReview = 0) AND (Enrolled=1)) AS IndependentSelfAssessmentEnrolments,
                  (SELECT COUNT(ID) AS Expr1
-                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK)
-                 WHERE (SelfAssessmentID = 1) AND (Submitted = 1)) AS DCSACompletions,
+                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK) INNER JOIN
+                 SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                 WHERE (sa.SupervisorResultsReview = 0 AND SupervisorSelfAssessmentReview = 0) AND (Submitted = 1)) AS IndependentSelfAssessmentCompletions,
                  (SELECT COUNT(*) AS Expr1
-                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK)
-                 WHERE (SelfAssessmentID > 1) AND (Enrolled=1)) AS NursingPassportEnrolments,
+                 FROM    ReportSelfAssessmentActivityLog WITH (NOLOCK) INNER JOIN
+                 SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                 WHERE (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1) AND (Enrolled=1)) AS SupervisedSelfAssessmentEnrolments,
                  (SELECT COUNT(*) AS Expr1
-                 FROM    ReportSelfAssessmentActivityLog
-                 WHERE (SelfAssessmentID > 1) AND (SignedOff = 1)) AS NursingPassportCompletions"
+                 FROM    ReportSelfAssessmentActivityLog INNER JOIN
+                 SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                 WHERE (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1) AND (SignedOff = 1)) AS SupervisedSelfAssessmentCompletions"
             );
         }
         public IEnumerable<SelfAssessmentActivity> GetSelfAssessmentActivity(
