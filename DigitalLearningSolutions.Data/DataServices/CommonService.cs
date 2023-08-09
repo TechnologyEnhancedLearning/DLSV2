@@ -361,6 +361,6 @@
             return candidateNumber;
         }
 
-        
+
     }
 }
