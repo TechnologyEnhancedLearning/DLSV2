@@ -4,6 +4,9 @@
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = errorHasOccurred ? "Error: Edit Contract Info" : "Edit Contract Info";
  
+    var hintTextLines = new List<string> {
+    $"For example, {@Model.ContractReviewDay} {@Model.ContractReviewMonth} {@Model.ContractReviewYear}. Leave the boxes blank to clear the contract review date.",
+    " ", };
 }
 
 @if (errorHasOccurred)
@@ -40,7 +43,6 @@
                                 default-option=""
                                 select-list-options="@ViewBag.Serverspace" />
 
-
                 <vc:select-list asp-for="@nameof(Model.DelegateUploadSpace)"
                                 label=" Per delegate upload space"
                                 value="@Model.DelegateUploadSpace"
@@ -50,40 +52,14 @@
                                 default-option=""
                                 select-list-options="@ViewBag.Delegatespace" />
 
-                <div class="nhsuk-form-group">
-                    <div id="dob-hint" class="nhsuk-hint">
-                        <label class="nhsuk-label">
-                            Contract Review Date
-                        </label>
-                        @Model.ContractReviewDay @Model.ContractReviewMonth @Model.ContractReviewYear
-                    </div>
-                    <div class="nhsuk-date-input" id="ContractReview">
-                        <div class="nhsuk-date-input__item">
-                            <div class="nhsuk-form-group">
-                                <label class="nhsuk-label nhsuk-date-input__label" for="ContractReviewDay">
-                                    Day
-                                </label>
-                                <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2" id="ContractReviewDay" name="ContractReviewDay" type="text" autocomplete="ContractReviewDay" inputmode="numeric">
-                            </div>
-                        </div>
-                        <div class="nhsuk-date-input__item">
-                            <div class="nhsuk-form-group">
-                                <label class="nhsuk-label nhsuk-date-input__label" for="ContractReviewMonth">
-                                    Month
-                                </label>
-                                <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2" id="ContractReviewMonth" name="ContractReviewMonth" type="text" autocomplete="ContractReviewMonth" inputmode="numeric">
-                            </div>
-                        </div>
-                        <div class="nhsuk-date-input__item">
-                            <div class="nhsuk-form-group">
-                                <label class="nhsuk-label nhsuk-date-input__label" for="ContractReviewYear">
-                                    Year
-                                </label>
-                                <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4" id="ContractReviewYear" name="ContractReviewYear" type="text" autocomplete="ContractReviewYear" inputmode="numeric">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                  <vc:date-input id="complete-by-date"
+                               label="Contract review date"
+                               day-id="ContractReviewDay"
+                               month-id="ContractReviewMonth"
+                               year-id="ContractReviewYear"
+                               css-class="nhsuk-u-margin-bottom-2"
+                               hint-text-lines="@hintTextLines" />
+               
 
             </div>
         </div>
