@@ -2,29 +2,29 @@
 @model AssessmentQuestion
 <span class="status-tag competency-status-tag">
 
-  @if (Model.SelfAssessmentResultSupervisorVerificationId != null)
-  {
-    if (Model.Verified != null)
+    @if (Model.SelfAssessmentResultSupervisorVerificationId != null)
     {
-      if ((bool)Model.SignedOff)
-      {
-        <span class="nhsuk-tag nhsuk-tag--green status-tag">
-          Confirmed
-        </span>
-      }
-      else
-      {
-        <span class="nhsuk-tag nhsuk-tag--red status-tag">
-          Rejected
-        </span>
-      }
-    }
-    else
-    {
-      <span class="nhsuk-tag nhsuk-tag--yellow status-tag">
-        Awaiting confirmation
-      </span>
-    }
+        if (Model.Verified != null)
+        {
+            if ((bool)Model.SignedOff)
+            {
+                <span class="nhsuk-tag nhsuk-tag--green status-tag">
+                    Confirmed
+                </span>
+            }
+            else
+            {
+                <span class="nhsuk-tag nhsuk-tag--red status-tag">
+                    Rejected
+                </span>
+            }
+        }
+        else
+        {
+            <span class="nhsuk-tag nhsuk-tag--yellow status-tag">
+                Awaiting confirmation
+            </span>
+        }
 
-  }
+    }
 </span>
