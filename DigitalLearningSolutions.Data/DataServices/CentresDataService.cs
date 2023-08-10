@@ -63,6 +63,19 @@
             byte[]? centreLogo
         );
 
+        public int AddCentreForSuperAdmin(
+            string centreName,
+            string? contactFirstName,
+            string? contactLastName,
+            string? contactEmail,
+            string? contactPhone,
+            int? centreTypeId,
+            int? regionId,
+            string? registrationEmail,
+            string? ipPrefix,
+            bool showOnMap
+        );
+
         public void UpdateCentreDetailsForSuperAdmin(
             int centreId,
             string centreName,
@@ -444,6 +457,62 @@
                     ipPrefix,
                     showOnMap,
                     centreId
+                }
+            );
+        }
+
+        public int AddCentreForSuperAdmin(
+            string centreName,
+            string? contactFirstName,
+            string? contactLastName,
+            string? contactEmail,
+            string? contactPhone,
+            int? centreTypeId,
+            int? regionId,
+            string? registrationEmail,
+            string? ipPrefix,
+            bool showOnMap
+        )
+        {
+            return connection.QuerySingle<int>(
+                @"Insert INTO Centres 
+                    (CentreName,
+                    ContactForename,
+                    ContactSurname,
+                    ContactEmail,
+                    ContactTelephone,
+                    CentreTypeID,
+                    RegionID,
+                    pwEmail,
+                    IPPrefix,
+                    ShowOnMap
+                    )
+                    OUTPUT Inserted.CentreID
+                 Values
+                    (
+                    @centreName,
+                    @contactFirstName,
+                    @contactLastName,
+                    @contactEmail,
+                    @contactPhone,
+                    @centreTypeId,
+                    @regionId,
+                    @registrationEmail,
+                    @ipPrefix,
+                    @showOnMap
+                    )",
+                new
+                {
+                    centreName,
+                    contactFirstName,
+                    contactLastName,
+                    contactEmail,
+                    contactPhone,
+                    centreTypeId,
+                    regionId,
+                    registrationEmail,
+                    ipPrefix,
+                    showOnMap
                 }
             );
         }

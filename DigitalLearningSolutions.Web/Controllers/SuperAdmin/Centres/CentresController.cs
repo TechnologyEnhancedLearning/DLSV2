@@ -377,5 +377,63 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
         }
+
+        [Route("SuperAdmin/Centres/AddCentre")]
+        public IActionResult AddCentre()
+        {
+            var regions = regionDataService.GetRegionsAlphabetical().ToList();
+
+            var centreTypes = this.centresDataService.GetCentreTypes().ToList();
+
+
+            ViewBag.Regions = SelectListHelper.MapOptionsToSelectListItems(regions);
+            ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
+
+            var addCentreSuperAdminViewModel = new AddCentreSuperAdminViewModel();
+            addCentreSuperAdminViewModel.IpPrefix = "194.176.105";
+
+            addCentreSuperAdminViewModel.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions);
+            addCentreSuperAdminViewModel.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
+
+
+            return View(addCentreSuperAdminViewModel);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Centres/AddCentre")]
+        public IActionResult AddCentre(AddCentreSuperAdminViewModel model)
+        {
+            var centreTypes = this.centresDataService.GetCentreTypes().ToList();
+            var regions = regionDataService.GetRegionsAlphabetical().ToList();
+
+            if (!ModelState.IsValid)
+            {
+                //ViewBag.Regions = SelectListHelper.MapOptionsToSelectListItems(
+                //    regions);                
+                //ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
+                //    centreTypes);
+                ViewBag.Regions = SelectListHelper.MapOptionsToSelectListItems(
+                    regions);
+                ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
+                    centreTypes);
+                model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions);
+                model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
+                return View(model);
+            }
+
+            int insertedID = centresDataService.AddCentreForSuperAdmin(
+                model.CentreName,
+                model.ContactFirstName,
+                model.ContactLastName,
+                model.ContactEmail,
+                model.ContactPhone,
+                model.CentreTypeId,
+                model.RegionId,
+                model.RegistrationEmail,
+                model.IpPrefix,
+                model.ShowOnMap
+            );
+            return RedirectToAction("ManageCentre", "Centres", new { centreId = insertedID });
+        }
     }
 }
