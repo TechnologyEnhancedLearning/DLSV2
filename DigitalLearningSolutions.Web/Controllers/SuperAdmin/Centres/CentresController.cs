@@ -19,6 +19,8 @@ using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 {
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
+
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.SuperAdmin))]
@@ -263,6 +265,28 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         {
             this.centresService.ReactivateCentre(centreId);
             return RedirectToAction("Index", "Centres");
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/ManageCentreManager")]
+        public IActionResult ManageCentreManager(int centreId = 0)
+        {
+            Centre centre = centresDataService.GetCentreManagerDetailsByCentreId(centreId);
+            EditCentreManagerDetailsViewModel editCentreManagerDetailsViewModel = new EditCentreManagerDetailsViewModel(centre);
+            return View(editCentreManagerDetailsViewModel);
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/ManageCentreManager")]
+        [HttpPost]
+        public IActionResult ManageCentreManager(EditCentreManagerDetailsViewModel editCentreManagerDetailsViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(editCentreManagerDetailsViewModel);
+            }
+            centresService.UpdateCentreManagerDetails(editCentreManagerDetailsViewModel.CentreId, editCentreManagerDetailsViewModel.FirstName, editCentreManagerDetailsViewModel.LastName,
+                editCentreManagerDetailsViewModel.Email,
+                editCentreManagerDetailsViewModel.Telephone);
+            return RedirectToAction("ManageCentre", "Centres", new { centreId = editCentreManagerDetailsViewModel.CentreId });
         }
 
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
