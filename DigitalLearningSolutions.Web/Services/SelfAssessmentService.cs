@@ -382,7 +382,7 @@
         {
             return selfAssessmentDataService.GetSelfAssessmentsForCandidate(delegateUserId, centreId);
         }
-        
+
         public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateId)
         {
             return selfAssessmentDataService.GetMostRecentResults(selfAssessmentId, delegateId);
@@ -411,12 +411,12 @@
                 delegateUserId
             );
         }
-        
+
         public void RemoveEnrolment(int selfAssessmentId, int delegateUserId)
         {
             selfAssessmentDataService.RemoveEnrolment(selfAssessmentId, delegateUserId);
         }
-        
+
         public string? GetSelfAssessmentNameById(int selfAssessmentId)
         {
             return selfAssessmentDataService.GetSelfAssessmentNameById(selfAssessmentId);

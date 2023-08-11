@@ -81,7 +81,7 @@
                                             </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                   <span class="nhsuk-u-visually-hidden">Course </span>Enrolments
+                                                    <span class="nhsuk-u-visually-hidden">Course </span>Enrolments
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
                                                     @Model.PlatformUsageSummary.CourseEnrolments.ToString("#,##0")
@@ -106,48 +106,67 @@
                             <div class="nhsuk-card">
                                 <div class="nhsuk-card__content">
                                     <h2 class="nhsuk-card__heading">
-                                        Self assessment activity totals
+                                        Independent self assessment activity totals
                                     </h2>
 
                                     <div class="nhsuk-card__description">
                                         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Digital capability <span class="nhsuk-u-visually-hidden">self assessment </span> enrolments
+                                                    Independent self assessment enrolments
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
-                                                    @Model.PlatformUsageSummary.DCSAEnrolments.ToString("#,##0")
+                                                    @Model.PlatformUsageSummary.IndependentSelfAssessmentEnrolments.ToString("#,##0")
                                                 </dd>
 
                                             </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Digital capability <span class="nhsuk-u-visually-hidden">self assessment </span> completions
+                                                    Independent self assessment completions
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
-                                                    @Model.PlatformUsageSummary.DCSACompletions.ToString("#,##0")
+                                                    @Model.PlatformUsageSummary.IndependentSelfAssessmentCompletions.ToString("#,##0")
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                        <div class="nhsuk-u-text-align-right">
+                                            <a asp-controller="PlatformReports" asp-action="IndependentSelfAssessmentsReport">View report</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nhsuk-card-group__item">
+                            <div class="nhsuk-card">
+                                <div class="nhsuk-card__content">
+                                    <h2 class="nhsuk-card__heading">
+                                        Supervised self assessment activity totals
+                                    </h2>
+
+                                    <div class="nhsuk-card__description">
+                                        <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
+                                            <div class="nhsuk-summary-list__row">
+                                                <dt class="nhsuk-summary-list__key reports-summary-row__key">
+                                                    Supervised self assessment enrolments
+                                                </dt>
+                                                <dd class="nhsuk-summary-list__value reports-summary-row__value">
+                                                    @Model.PlatformUsageSummary.SupervisedSelfAssessmentEnrolments.ToString("#,##0")
                                                 </dd>
 
                                             </div>
                                             <div class="nhsuk-summary-list__row">
                                                 <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Nursing proficiency <span class="nhsuk-u-visually-hidden">self assessment </span> enrolments
+                                                    Supervised self assessment completions
                                                 </dt>
                                                 <dd class="nhsuk-summary-list__value reports-summary-row__value">
-                                                    @Model.PlatformUsageSummary.NursingPassportEnrolments.ToString("#,##0")
-                                                </dd>
-
-                                            </div>
-                                            <div class="nhsuk-summary-list__row">
-                                                <dt class="nhsuk-summary-list__key reports-summary-row__key">
-                                                    Nursing proficiency <span class="nhsuk-u-visually-hidden">self assessment </span> completions
-                                                </dt>
-                                                <dd class="nhsuk-summary-list__value reports-summary-row__value">
-                                                    @Model.PlatformUsageSummary.NursingPassportCompletions.ToString("#,##0")
+                                                    @Model.PlatformUsageSummary.SupervisedSelfAssessmentCompletions.ToString("#,##0")
                                                 </dd>
 
                                             </div>
                                         </dl>
+                                        <div class="nhsuk-u-text-align-right">
+                                            <a asp-controller="PlatformReports" asp-action="SupervisedSelfAssessmentsReport">View report</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

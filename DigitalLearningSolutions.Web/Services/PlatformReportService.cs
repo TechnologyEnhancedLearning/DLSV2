@@ -19,7 +19,7 @@
 
     public class PlatformReportsService : IPlatformReportsService
     {
-        
+
         private readonly IPlatformReportsDataService platformReportsDataService;
         private readonly IClockUtility clockUtility;
         public PlatformReportsService(

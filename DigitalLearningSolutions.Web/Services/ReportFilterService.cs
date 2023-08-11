@@ -108,8 +108,6 @@
             var categories = commonService.GetSelfAssessmentCategories(supervised);
             var brands = commonService.GetSelfAssessmentBrands(supervised);
             var selfAssessments = commonService.GetSelfAssessments(supervised);
-            
-
             return new SelfAssessmentReportsFilterOptions(centreTypes, regions, centres, jobGroups,  brands, categories, selfAssessments);
         }
         public string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
