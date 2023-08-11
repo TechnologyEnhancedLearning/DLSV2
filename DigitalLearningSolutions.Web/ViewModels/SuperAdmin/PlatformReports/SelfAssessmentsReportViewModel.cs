@@ -6,27 +6,29 @@
     using System;
     using System.Collections.Generic;
 
-    public class NursingProficienciesViewModel
+    public class SelfAssessmentsReportViewModel
     {
-        public NursingProficienciesViewModel(
+        public SelfAssessmentsReportViewModel(
             IEnumerable<SelfAssessmentActivityInPeriod> activity,
-            NursingReportFilterModel filterModel,
+            SelfAssessmentReportFilterModel filterModel,
              DateTime startDate,
             DateTime endDate,
             bool hasActivity,
-            string category
+            string category,
+            bool supervised
             )
         {
             SelfAssessmentActivityTableViewModel = new SelfAssessmentActivityTableViewModel(activity, startDate, endDate);
             FilterModel = filterModel;
             HasActivity = hasActivity;
             Category = category;
-
+            Supervised = supervised;
         }
-        public SuperAdminReportsPage CurrentPage => SuperAdminReportsPage.NursingProficiencies;
+        public SuperAdminReportsPage CurrentPage => Supervised ? SuperAdminReportsPage.SupervisedSelfAssessments : SuperAdminReportsPage.IndependentSelfAssessments;
         public SelfAssessmentActivityTableViewModel SelfAssessmentActivityTableViewModel { get; set; }
-        public NursingReportFilterModel FilterModel { get; set; }
+        public SelfAssessmentReportFilterModel FilterModel { get; set; }
         public bool HasActivity { get; set; }
         public string Category { get; set; }
+        public bool Supervised { get; set; }
     }
 }

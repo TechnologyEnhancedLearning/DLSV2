@@ -1,6 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common
-@model NursingReportFilterModel
-
+@model SelfAssessmentReportFilterModel
 <div class="nhsuk-card word-break">
     <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
         <div class="nhsuk-card__description">
@@ -86,7 +85,7 @@
                 </div>
             </dl>
 
-            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="PlatformReports" asp-action="NursingReportEditFilters" role="button">
+            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="PlatformReports" asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsEditFilters" : "IndependentSelfAssessmentsEditFilters" ) role="button">
                 Edit filters
             </a>
         </div>

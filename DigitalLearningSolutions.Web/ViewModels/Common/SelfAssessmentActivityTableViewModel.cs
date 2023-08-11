@@ -92,9 +92,9 @@
         public int Completions { get; set; }
         public int Enrolments { get; set; }
     }
-    public class NursingReportFilterModel
+    public class SelfAssessmentReportFilterModel
     {
-        public NursingReportFilterModel(
+        public SelfAssessmentReportFilterModel(
             ActivityFilterData filterData,
             string regionName,
             string centreTypeName,
@@ -103,7 +103,8 @@
             string brandName,
             string categoryName,
             string selfAssessmentNameString,
-            bool userManagingAllCourses
+            bool userManagingAllCourses,
+            bool supervised
         )
         {
             RegionName = regionName;
@@ -117,6 +118,7 @@
             StartDate = filterData.StartDate.ToString(DateHelper.StandardDateFormat);
             EndDate = filterData.EndDate?.ToString(DateHelper.StandardDateFormat) ?? "Today";
             ShowCourseCategoryFilter = userManagingAllCourses;
+            Supervised = supervised;
             FilterValues = new Dictionary<string, string>
             {
                 { "jobGroupId", filterData.JobGroupId?.ToString() ?? "" },
@@ -140,7 +142,7 @@
         public string EndDate { get; set; }
         public string ReportIntervalName { get; set; }
         public bool ShowCourseCategoryFilter { get; set; }
-
+        public bool Supervised { get; set; }
         public Dictionary<string, string> FilterValues { get; set; }
     }
 }
