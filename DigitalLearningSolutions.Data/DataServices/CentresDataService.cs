@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.DbModels;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Transactions;
 
     public interface ICentresDataService
     {
@@ -73,7 +75,8 @@
             int? regionId,
             string? registrationEmail,
             string? ipPrefix,
-            bool showOnMap
+            bool showOnMap,
+            bool AddITSPcourses
         );
 
         public void UpdateCentreDetailsForSuperAdmin(
@@ -471,10 +474,15 @@
             int? regionId,
             string? registrationEmail,
             string? ipPrefix,
-            bool showOnMap
+            bool showOnMap,
+            bool AddITSPcourses
         )
         {
-            return connection.QuerySingle<int>(
+            int newCentreId;
+            connection.EnsureOpen();
+            using var transaction = connection.BeginTransaction();
+            {
+                newCentreId = connection.QuerySingle<int>(
                 @"Insert INTO Centres 
                     (CentreName,
                     ContactForename,
@@ -513,8 +521,25 @@
                     registrationEmail,
                     ipPrefix,
                     showOnMap
-                }
+                },
+                transaction
             );
+                if (AddITSPcourses)
+                {
+                    connection.Execute(
+                        @"INSERT INTO [CentreApplications] ([CentreID], [ApplicationID])
+                  SELECT @newCentreId, ApplicationID
+                  FROM  Applications
+                  WHERE (Debug = 0) AND (ArchivedDate IS NULL) AND (ASPMenu = 1) AND (CoreContent = 1) AND (BrandID = 1) AND (LaunchedAssess = 1)",
+                        new { newCentreId },
+                        transaction
+                    );
+                }
+
+                transaction.Commit();
+                return newCentreId;
+            }
+            
         }
 
         public (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId)

@@ -382,19 +382,13 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         public IActionResult AddCentre()
         {
             var regions = regionDataService.GetRegionsAlphabetical().ToList();
-
             var centreTypes = this.centresDataService.GetCentreTypes().ToList();
-
-
-            ViewBag.Regions = SelectListHelper.MapOptionsToSelectListItems(regions);
-            ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
 
             var addCentreSuperAdminViewModel = new AddCentreSuperAdminViewModel();
             addCentreSuperAdminViewModel.IpPrefix = "194.176.105";
 
             addCentreSuperAdminViewModel.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions);
             addCentreSuperAdminViewModel.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
-
 
             return View(addCentreSuperAdminViewModel);
         }
@@ -403,19 +397,10 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/AddCentre")]
         public IActionResult AddCentre(AddCentreSuperAdminViewModel model)
         {
-            var centreTypes = this.centresDataService.GetCentreTypes().ToList();
-            var regions = regionDataService.GetRegionsAlphabetical().ToList();
-
             if (!ModelState.IsValid)
             {
-                //ViewBag.Regions = SelectListHelper.MapOptionsToSelectListItems(
-                //    regions);                
-                //ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
-                //    centreTypes);
-                ViewBag.Regions = SelectListHelper.MapOptionsToSelectListItems(
-                    regions);
-                ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
-                    centreTypes);
+                var centreTypes = this.centresDataService.GetCentreTypes().ToList();
+                var regions = regionDataService.GetRegionsAlphabetical().ToList();
                 model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions);
                 model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
                 return View(model);
@@ -431,8 +416,10 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 model.RegionId,
                 model.RegistrationEmail,
                 model.IpPrefix,
-                model.ShowOnMap
+                model.ShowOnMap,
+                model.AddITSPcourses
             );
+
             return RedirectToAction("ManageCentre", "Centres", new { centreId = insertedID });
         }
     }

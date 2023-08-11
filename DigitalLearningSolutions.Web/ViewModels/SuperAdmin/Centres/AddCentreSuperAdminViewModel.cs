@@ -55,7 +55,12 @@
         public string? ContactLastName { get; set; }
         public string? ContactEmail { get; set; }
         public string? ContactPhone { get; set; }
+
+        [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
+        [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
+        [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? RegistrationEmail { get; set; }
+
         public bool AddITSPcourses { get; set; }
 
         public IEnumerable<SelectListItem> CentreTypeOptions { get; set; } = new List<SelectListItem>();

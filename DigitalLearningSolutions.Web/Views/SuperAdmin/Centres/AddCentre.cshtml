@@ -7,12 +7,10 @@
 }
 @if (errorHasOccurred)
 {
-    <vc:error-summary order-of-property-names="@(new [] { nameof(Model.CentreName), nameof(Model.CentreTypeId), nameof(Model.RegionId) })" />
+    <vc:error-summary order-of-property-names="@(new [] { nameof(Model.CentreName), nameof(Model.ContactEmail), nameof(Model.CentreTypeId), nameof(Model.RegionId), nameof(Model.RegistrationEmail) })" />
 }
 <div id="form-group">
     <form method="post" asp-action="AddCentre">
-        @*        @Html.HiddenFor(x=>x.CentreType)
-        @Html.HiddenFor(x=>x.RegionName)*@
         <div>
             <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
                 Add new centre
@@ -99,7 +97,6 @@
                                             css-class="nhsuk-u-width-full"
                                             default-option="Select a centre type"
                                             select-list-options="Model.CentreTypeOptions" />
-                            @*select-list-options="@ViewBag.CentreTypes" />*@
                         </div>
                     </div>
 
@@ -113,8 +110,6 @@
                                             css-class="nhsuk-u-width-full"
                                             default-option="Select a region"
                                             select-list-options="Model.RegionNameOptions" />
-                            @*select-list-options="@ViewBag.Regions" />*@
-
                         </div>
                     </div>
 
