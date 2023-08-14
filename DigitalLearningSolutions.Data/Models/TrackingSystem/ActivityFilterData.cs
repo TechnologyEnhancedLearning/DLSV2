@@ -12,22 +12,37 @@
             int? jobGroupId,
             int? courseCategoryId,
             int? customisationId,
+            int? regionId,
+            int? centreId,
+            int? selfAssessmentId,
+            int? centreTypeId,
+            int? brandId,
             CourseFilterType filterType,
             ReportInterval reportInterval
         )
         {
+           
             StartDate = startDate;
             EndDate = endDate;
             JobGroupId = jobGroupId;
-            CourseCategoryId = filterType == CourseFilterType.CourseCategory ? courseCategoryId : null;
-            CustomisationId = filterType == CourseFilterType.Course ? customisationId : null;
+            RegionId = regionId;
+            CentreId = centreId;
+            SelfAssessmentId = selfAssessmentId;
+            CentreTypeId = centreTypeId;
+            BrandId = brandId;
+            CourseCategoryId = courseCategoryId;
+            CustomisationId = filterType == CourseFilterType.Activity ? customisationId : null;
             ReportInterval = reportInterval;
             FilterType = filterType;
         }
-
         public int? JobGroupId { get; set; }
         public int? CourseCategoryId { get; set; }
         public int? CustomisationId { get; set; }
+        public int? RegionId { get; set; }
+        public int? CentreId { get; set; }
+        public int? SelfAssessmentId { get; set; }
+        public int? CentreTypeId { get; set; }
+        public int? BrandId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public ReportInterval ReportInterval { get; set; }
@@ -42,7 +57,12 @@
                 null,
                 categoryIdFilter,
                 null,
-                CourseFilterType.CourseCategory,
+                null,
+                null,
+                null,
+                null,
+                null,
+                CourseFilterType.Category,
                 ReportInterval.Months
             );
         }

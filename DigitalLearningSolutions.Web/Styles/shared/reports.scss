@@ -1,0 +1,107 @@
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "chartist/dist/scss/chartist";
+
+$dark-blue: #005EB8;
+$medium-blue: #699AFC;
+$light-blue: #8EBAFF;
+
+.ct-line {
+  stroke-width: 5px;
+
+  @include mq($until: tablet) {
+    stroke-width: 4px;
+  }
+}
+
+.ct-point {
+  @include mq($until: tablet) {
+    stroke-width: 8px;
+  }
+}
+
+.legend {
+  text-align: center;
+
+  li {
+    list-style-type: none;
+    display: inline-block;
+  }
+
+  @include mq($until: tablet) {
+    li {
+      display: flex;
+    }
+
+    .legend-line-wrapper {
+      flex: 0 0 50%;
+    }
+
+    .legend-line-svg {
+      float: right;
+    }
+
+    .legend-label {
+      flex: 0 0 50%;
+      text-align: left;
+    }
+
+    .legend-line {
+      transform: translateY(-6px);
+    }
+  }
+}
+
+.ct-series-a .ct-line {
+  stroke: $light-blue;
+}
+
+.ct-series-a .ct-point {
+  stroke: $light-blue;
+}
+
+.ct-series-b .ct-line {
+  stroke: $medium-blue;
+  stroke-dasharray: 10px 5px;
+}
+
+.ct-series-b .ct-point {
+  stroke: $medium-blue;
+}
+
+.ct-series-c .ct-line {
+  stroke: $dark-blue;
+  stroke-dasharray: 5px 10px;
+}
+
+.ct-series-c .ct-point {
+  stroke: $dark-blue;
+}
+
+.ct-label {
+  color: $nhsuk-secondary-text-color;
+  fill: $nhsuk-secondary-text-color;
+}
+
+.ct-label.ct-label.ct-horizontal {
+  white-space: nowrap;
+  justify-content: flex-end;
+  text-align: right;
+  transform-origin: 100% 0;
+  transform: translate(-100%) rotate(-45deg);
+  position: fixed;
+
+  @include mq($until: tablet) {
+    transform: translate(-100%) rotate(-60deg);
+  }
+}
+
+.eval-summary-row__key {
+  padding-right: 0;
+}
+
+.eval-summary-row__value {
+  @include mq($from: tablet) {
+    text-align: end;
+    padding-right: 0;
+  }
+}

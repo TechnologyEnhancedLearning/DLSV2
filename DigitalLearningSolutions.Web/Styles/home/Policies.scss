@@ -13,8 +13,9 @@
 }
 
 .custom-ordered-list ol {
-    list-style: none;
-    counter-reset: subsection;
+  list-style: none;
+  counter-reset: subsection;
+  font-weight: normal;
 }
 
 .custom-ordered-list li {
