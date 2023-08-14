@@ -1585,13 +1585,20 @@
         public IActionResult WithdrawSupervisorSignOffRequest(
             int selfAssessmentId,
             int candidateAssessmentSupervisorVerificationId,
-            string vocabulary)
+            string vocabulary,
+            string source)
         {
             supervisorService.RemoveCandidateAssessmentSupervisorVerification(candidateAssessmentSupervisorVerificationId);
-            return RedirectToAction(
-                "SignOffHistory",
-                new { selfAssessmentId, vocabulary }
-            );
+
+            return source == "SignOffHistory"
+                ? RedirectToAction(
+                    "SignOffHistory",
+                    new { selfAssessmentId, vocabulary }
+                )
+                : (IActionResult)RedirectToAction(
+                    "SelfAssessmentOverview",
+                    new { selfAssessmentId, vocabulary }
+                );
         }
     }
 }

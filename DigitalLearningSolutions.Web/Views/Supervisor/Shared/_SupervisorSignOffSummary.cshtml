@@ -43,20 +43,19 @@
           <span class="nhsuk-tag nhsuk-tag--red">Rejected @Model.FirstOrDefault().Verified.Value.ToShortDateString()</span>
         }
       </dd>
-      @if ((Model.Count() - 1) > 0)
-      {
-        <dd class="nhsuk-summary-list__actions">
-          @if (((Model.FirstOrDefault().EmailSent == null && Model.FirstOrDefault().Verified == null || (Model.FirstOrDefault().Verified == null) && Model.FirstOrDefault().EmailSent.Value.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString()) && Model.FirstOrDefault().Removed == null))
+      <dd class="nhsuk-summary-list__actions">
+          @if (((
+            Model.FirstOrDefault().EmailSent == null && Model.FirstOrDefault().Verified == null || (Model.FirstOrDefault().Verified == null) && Model.FirstOrDefault().EmailSent.Value.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString()) && Model.FirstOrDefault().Removed == null))
           {
-            if (ViewContext.RouteData.Values.ContainsKey("vocabulary"))
+            @if (ViewContext.RouteData.Values.ContainsKey("vocabulary"))
             {
               <a asp-action="SendRequestSignOffReminder" asp-route-candidateAssessmentSupervisorVerificationId="@Model.FirstOrDefault().ID" asp-route-vocabulary="@ViewContext.RouteData.Values["vocabulary"]" asp-route-candidateAssessmentSupervisorId="@Model.FirstOrDefault().CandidateAssessmentSupervisorID" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">Send reminder</a>
-
             }
           }
-        </dd>
-      }
 
+          <a asp-action="WithdrawSupervisorSignOffRequest" asp-route-selfAssessmentId=@ViewContext.RouteData.Values["selfAssessmentId"]
+                   asp-route-candidateAssessmentSupervisorVerificationId="@Model.FirstOrDefault().ID" asp-route-vocabulary="Proficiencies" asp-route-source="SupervisorSignOffSummary">Withdraw</a>
+      </dd>
     </div>
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">

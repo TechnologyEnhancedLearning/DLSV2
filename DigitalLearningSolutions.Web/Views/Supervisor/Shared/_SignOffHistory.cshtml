@@ -60,7 +60,8 @@
             <a asp-action="WithdrawSupervisorSignOffRequest"
               asp-route-selfAssessmentId=@Model.SelfAssessment.Id
               asp-route-candidateAssessmentSupervisorVerificationId=@supervisorSignOff.ID
-              asp-route-vocabulary="Proficiencies">
+              asp-route-vocabulary="Proficiencies"
+              asp-route-source="SignOffHistory">
               Withdraw
             </a>
           </div>
