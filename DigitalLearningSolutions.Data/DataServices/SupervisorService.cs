@@ -172,7 +172,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         FROM CandidateAssessments AS ca  LEFT JOIN
                         CandidateAssessmentSupervisors AS cas ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL INNER JOIN
                         SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID 
-                        WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = sd.ID OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1 )
+                        WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = sd.ID OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID)
 				        AND ((sa.SupervisorSelfAssessmentReview = 1) OR (sa.SupervisorResultsReview = 1)))) AS CandidateAssessmentCount, 
 		                CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, 
 		                CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) AS DelegateIsSupervisor,             
@@ -450,7 +450,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
                  RIGHT OUTER JOIN SupervisorDelegates AS sd ON sd.ID=@supervisorDelegateId
                  RIGHT OUTER JOIN AdminAccounts AS au ON au.ID = sd.SupervisorAdminID
-                 WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = @supervisorDelegateId OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID AND sa.[National] = 1 )  AND ((sa.SupervisorSelfAssessmentReview = 1) OR
+                 WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = @supervisorDelegateId OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID)  AND ((sa.SupervisorSelfAssessmentReview = 1) OR
                          (sa.SupervisorResultsReview = 1)))", new { supervisorDelegateId }
                 );
         }
@@ -1084,11 +1084,13 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
                     SELECT ID
                         FROM    SupervisorDelegates sd
                         WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
+                                AND DelegateEmail = @delegateEmail ORDER BY ID DESC
                         ",
                 new
                 {
                     supervisorAdminId = supervisorAdminId ?? 0,
                     delegateUserId = delegateUserId ?? 0,
+                    delegateEmail
                 }
             );
 

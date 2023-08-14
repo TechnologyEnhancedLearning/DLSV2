@@ -4,7 +4,6 @@ using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
-using DocumentFormat.OpenXml.EMMA;
 using FakeItEasy;
 using FluentAssertions;
 using FluentAssertions.AspNetCore.Mvc;
@@ -58,7 +57,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         }
 
         [Test]
-        public void EditCentreDetailst_updates_centre_and_redirects_with_successful_save()
+        public void EditCentreDetails_updates_centre_and_redirects_with_successful_save()
         {
             // Given
             var model = new EditCentreDetailsSuperAdminViewModel
@@ -91,6 +90,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         }
 
         [Test]
+
         public void Get_with_centreId_shows_EditContractInfo_page()
         {
             // Given
@@ -156,6 +156,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                date
                )).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
+
         }
     }
 }

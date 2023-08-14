@@ -18,6 +18,7 @@
         private IActivityService activityService = null!;
         private IEvaluationSummaryService evaluationSummaryService = null!;
         private IClockUtility clockUtility = null!;
+        private IReportFilterService reportFilterService = null!;
 
         [SetUp]
         public void Setup()
@@ -25,13 +26,14 @@
             activityService = A.Fake<IActivityService>();
             evaluationSummaryService = A.Fake<IEvaluationSummaryService>();
             clockUtility = A.Fake<IClockUtility>();
+            reportFilterService = A.Fake<IReportFilterService>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieName = "ReportsFilterCookie";
             const string cookieValue = "";
 
-            reportsController = new ReportsController(activityService, evaluationSummaryService, clockUtility)
+            reportsController = new ReportsController(activityService, evaluationSummaryService, clockUtility, reportFilterService)
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()

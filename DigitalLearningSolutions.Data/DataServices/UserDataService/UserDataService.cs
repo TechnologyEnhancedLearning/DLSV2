@@ -270,6 +270,8 @@
         int RessultCount(int adminId, string search, int? centreId, string userStatus, int failedLoginThreshold, string role);
 
         public void DeleteUserAndAccounts(int userId);
+
+        public bool PrimaryEmailInUseAtCentres(string email);
     }
 
     public partial class UserDataService : IUserDataService
@@ -460,7 +462,7 @@
             return connection.QueryFirst<int>(
                 @$"SELECT COUNT(*)
                     FROM Users
-                    WHERE PrimaryEmail = @email
+                    WHERE PrimaryEmail = @email  
                     {(userId == null ? "" : "AND Id <> @userId")}",
                 new { email, userId }
             ) > 0;
@@ -700,6 +702,16 @@
                 $"db delete user failed for User ID: {userId}";
                 throw new DeleteUserException(message);
             }
+        }
+
+        public bool PrimaryEmailInUseAtCentres(string email)
+        {
+            return connection.QueryFirst<int>(
+               @$"SELECT COUNT(*)
+                    FROM UserCentreDetails
+                    WHERE Email = @email ",
+               new { email}
+           ) > 0;
         }
     }
 }

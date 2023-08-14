@@ -22,6 +22,17 @@
 
         CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
 
+        CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId);
+
+        void UpdateCentreRoleLimits(
+            int centreId,
+            int? roleLimitCmsAdministrators,
+            int? roleLimitCmsManagers,
+            int? roleLimitCcLicences,
+            int? roleLimitCustomCourses,
+            int? roleLimitTrainers
+        );
+
         void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
@@ -73,6 +84,7 @@
         Centre? GetFullCentreDetailsById(int centreId);
         void DeactivateCentre(int centreId);
         void ReactivateCentre(int centreId);
+
         ContractInfo? GetContractInfo(int centreId);
         bool UpdateContractTypeandCenter(
        int centreId,
@@ -81,6 +93,7 @@
       long serverSpaceBytesInc,
       DateTime? contractReviewDate
    );
+
     }
 
     public class CentresDataService : ICentresDataService
@@ -276,20 +289,20 @@
                 (centre, centreTypes, regions) => new CentreEntity(
                     centre, centreTypes, regions
                 ),
-                new { search, offset, rows,region,centreType,contractType,centreStatus },
+                new { search, offset, rows, region, centreType, contractType, centreStatus },
                 splitOn: "CentreTypeId,RegionID",
                 commandTimeout: 3000
             );
-            int ResultCount = connection.ExecuteScalar<int>(
+            int resultCount = connection.ExecuteScalar<int>(
                                 @$"SELECT  COUNT(*) AS Matches
                                 FROM Centres AS c
                                 INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                                 INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
                                 WHERE c.CentreName LIKE N'%' + @search + N'%' AND ((c.RegionID = @region) OR (@region = 0))  AND ((c.CentreTypeId = @centreType) OR (@centreType = 0)) AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
-                    new { search,region,centreType,contractType,centreStatus },
+                    new { search, region, centreType, contractType, centreStatus },
                     commandTimeout: 3000
             );
-            return (centreEntity, ResultCount);
+            return (centreEntity, resultCount);
         }
 
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
@@ -322,8 +335,6 @@
                 new { centreId }
             );
         }
-
-
 
         public void UpdateCentreManagerDetails(
             int centreId,
@@ -573,6 +584,21 @@
             );
         }
 
+        public Centre? GetCentreManagerDetailsByCentreId(int centreId)
+        {
+            var centre = connection.QueryFirstOrDefault<Centre>(
+                           @"SELECT c.CentreID,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone
+                        FROM Centres AS c
+                        WHERE c.CentreID = @centreId",
+                        new { centreId }
+                    );
+            return centre;
+        }
+
         public void DeactivateCentre(int centreId)
         {
             connection.Execute(
@@ -660,6 +686,7 @@
                 return false;
             }
             return true;
+
         }
     }
 }

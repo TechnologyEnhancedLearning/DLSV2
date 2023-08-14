@@ -8,7 +8,7 @@
   ViewData["Title"] = "Course reports";
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/reports.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/reports.css")" asp-append-version="true">
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
@@ -68,9 +68,9 @@
     }
     else
     {
-       var place = Model.Category == "All" ? "yet." : $"in the <b>{Model.Category}</b> category, yet.";
+       var place = Model.Category == "All" ? "yet." : $" <b>{Model.Category}</b> category.";
             <p class="nhsuk-body-l" id="no-activity-message">
-                This centre has no courses set up @Html.Raw(place)
+                There has not yet been any activity for courses in the @Html.Raw(place)
                 </p>
     }
 

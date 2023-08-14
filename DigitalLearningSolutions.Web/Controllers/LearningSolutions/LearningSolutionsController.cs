@@ -64,8 +64,12 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 logger.LogError("Terms text from Config table is null");
                 return StatusCode(500);
             }
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
 
-            var model = new TermsViewModel(termsText);
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.TermsText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+            var model = new TermsViewModel(termsText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
 
@@ -157,9 +161,9 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         public IActionResult AcceptableUsePolicy()
         {
-            var termsText = configDataService.GetConfigValue(ConfigDataService.AcceptableUsePolicyText);            
+            var acceptableUsePolicyText = configDataService.GetConfigValue(ConfigDataService.AcceptableUsePolicyText);            
             
-            if (termsText == null)
+            if (acceptableUsePolicyText == null)
             {
                 logger.LogError("‘Acceptable Use Policy text from Config table is null");
                 return StatusCode(500);
@@ -169,7 +173,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
             lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AcceptableUsePolicyText);
             nextReviewDate = lastUpdatedDate.AddYears(3);
-            var model = new AcceptableUsePolicyViewModel(termsText, lastUpdatedDate, nextReviewDate);
+            var model = new AcceptableUsePolicyViewModel(acceptableUsePolicyText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
         public IActionResult PrivacyNotice()
