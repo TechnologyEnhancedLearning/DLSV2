@@ -1,11 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common
-@model NursingReportFilterModel
-
+@model SelfAssessmentReportFilterModel
 <div class="nhsuk-card word-break">
     <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
         <div class="nhsuk-card__description">
             <dl class="nhsuk-summary-list details-list-with-button">
-                
+
                 @if (Model.RegionName != "All")
                 {
                     <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -33,7 +32,7 @@
                         <partial name="_SummaryFieldValue" model="@Model.CentreName" />
                     </div>
                 }
-              @if (Model.JobGroupName != "All")
+                @if (Model.JobGroupName != "All")
                 {
                     <div class="nhsuk-summary-list__row details-list-with-button__row">
                         <dt class="nhsuk-summary-list__key">
@@ -69,15 +68,15 @@
                         <partial name="_SummaryFieldValue" model="@Model.SelfAssessmentName" />
                     </div>
                 }
-                
-                    <div class="nhsuk-summary-list__row details-list-with-button__row">
-                        <dt class="nhsuk-summary-list__key">
-                            Date range
-                        </dt>
-                        <dd class="nhsuk-summary-list__value">
-                            <span>@Model.StartDate</span><span class="nhsuk-u-visually-hidden">to</span><span> - @Model.EndDate</span>
-                        </dd>
-                    </div>
+
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Date range
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        <span>@Model.StartDate</span><span class="nhsuk-u-visually-hidden">to</span><span> - @Model.EndDate</span>
+                    </dd>
+                </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
                         Reporting frequency
@@ -86,7 +85,7 @@
                 </div>
             </dl>
 
-            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="PlatformReports" asp-action="NursingReportEditFilters" role="button">
+            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="PlatformReports" asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsEditFilters" : "IndependentSelfAssessmentsEditFilters" ) role="button">
                 Edit filters
             </a>
         </div>

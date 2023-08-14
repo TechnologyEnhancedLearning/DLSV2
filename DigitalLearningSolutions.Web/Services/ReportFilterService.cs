@@ -13,12 +13,12 @@
         (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
            ActivityFilterData filterData
        );
-        (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string selfAssessmentName) GetNursingAssessmentCourseFilterNames(
+        (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string selfAssessmentName) GetSelfAssessmentFilterNames(
             ActivityFilterData filterData
         );
         ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId);
         string GetCourseCategoryNameForActivityFilter(int? courseCategoryId);
-        NursingReportsFilterOptions GetNursingFilterOptions();
+        SelfAssessmentReportsFilterOptions GetSelfAssessmentFilterOptions(bool supervised);
     }
     public class ReportFilterService : IReportFilterService
     {
@@ -66,7 +66,7 @@
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
         }
-        public (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string selfAssessmentName) GetNursingAssessmentCourseFilterNames(
+        public (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string selfAssessmentName) GetSelfAssessmentFilterNames(
             ActivityFilterData filterData
         )
         {
@@ -99,18 +99,16 @@
 
             return new ReportsFilterOptions(jobGroups, courseCategories, courses);
         }
-        public NursingReportsFilterOptions GetNursingFilterOptions()
+        public SelfAssessmentReportsFilterOptions GetSelfAssessmentFilterOptions(bool supervised)
         {
-            var centreTypes = commonService.GetSupervisedAssessmentCentreTypes();
-            var regions = commonService.GetSupervisedAssessmentRegions();
+            var centreTypes = commonService.GetSelfAssessmentCentreTypes(supervised);
+            var regions = commonService.GetSelfAssessmentRegions(supervised);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var centres = commonService.GetSupervisedAssessmentCentres();
-            var categories = commonService.GetSupervisedAssessmentCategories();
-            var brands = commonService.GetSupervisedAssessmentBrands();
-            var selfAssessments = commonService.GetSupervisedAssessments();
-            
-
-            return new NursingReportsFilterOptions(centreTypes, regions, centres, jobGroups,  brands, categories, selfAssessments);
+            var centres = commonService.GetSelfAssessmentCentres(supervised);
+            var categories = commonService.GetSelfAssessmentCategories(supervised);
+            var brands = commonService.GetSelfAssessmentBrands(supervised);
+            var selfAssessments = commonService.GetSelfAssessments(supervised);
+            return new SelfAssessmentReportsFilterOptions(centreTypes, regions, centres, jobGroups,  brands, categories, selfAssessments);
         }
         public string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
         {

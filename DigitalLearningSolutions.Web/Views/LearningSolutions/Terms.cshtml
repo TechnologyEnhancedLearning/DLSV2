@@ -1,13 +1,15 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningSolutions
+@using DigitalLearningSolutions.Web.Models;
 @model TermsViewModel
 @{
-  ViewData["Title"] = "Digital Learning Solutions - Terms of Use";
-  ViewData["DoNotDisplayNavBar"] = true;
+    ViewData["Title"] = "Digital Learning Solutions - Terms of Use";
+    ViewData["DoNotDisplayNavBar"] = true;
 }
-
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1>Terms of Use</h1>
-    @Model.TermsText
-  </div>
-</div>
+<link rel="stylesheet" type="text/css" href="~/css/home/Policies.css" asp-append-version="true">
+<d iv class="nhsuk-grid-row">
+    <d iv class="nhsuk-grid-column-full">
+        <h1>Terms of Use</h1>
+        @Html.Raw(Model.TermsText)
+        @await Html.PartialAsync("~/Views/Shared/_PageReviewPartial.cshtml", new PageReviewModel { LastReviewedDate = Model.LastReviewedDate, NextReviewDate = Model.NextReviewDate })
+        </div>
+        </div>

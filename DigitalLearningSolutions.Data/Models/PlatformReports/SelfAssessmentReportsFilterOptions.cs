@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
 
-    public class NursingReportsFilterOptions
+    public class SelfAssessmentReportsFilterOptions
     {
-        public NursingReportsFilterOptions(
+        public SelfAssessmentReportsFilterOptions(
             IEnumerable<(int id, string name)> centreTypes,
             IEnumerable<(int id, string name)> regions,
             IEnumerable<(int id, string name)> centres,

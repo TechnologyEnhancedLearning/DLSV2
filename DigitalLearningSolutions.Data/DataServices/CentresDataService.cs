@@ -84,6 +84,7 @@
         Centre? GetFullCentreDetailsById(int centreId);
         void DeactivateCentre(int centreId);
         void ReactivateCentre(int centreId);
+
         Centre? GetCentreManagerDetailsByCentreId(int centreId);
         ContractInfo? GetContractInfo(int centreId);
         bool UpdateContractTypeandCenter(

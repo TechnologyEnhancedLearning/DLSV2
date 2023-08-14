@@ -2,7 +2,8 @@ import Chartist, { IChartistData } from 'chartist';
 import getPathForEndpoint from '../common';
 import * as chartCommon from '../chartCommon';
 
-const path = getPathForEndpoint('SuperAdmin/Reports/NursingProficiencies/Data');
+const pagePath = window.location.pathname;
+const path = getPathForEndpoint(pagePath.concat('/Data'));
 interface IActivityDataRowModel {
   period: string;
   completions: number;
