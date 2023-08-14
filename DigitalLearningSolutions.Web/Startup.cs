@@ -432,7 +432,7 @@ namespace DigitalLearningSolutions.Web
                     endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}")
             );
 
-            //migrationRunner.MigrateUp();
+            migrationRunner.MigrateUp();
         }
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
