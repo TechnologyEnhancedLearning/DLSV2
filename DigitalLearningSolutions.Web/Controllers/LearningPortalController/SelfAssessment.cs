@@ -278,14 +278,14 @@
 
             foreach (var assessmentQuestion in assessmentQuestions)
             {
-                    selfAssessmentService.SetResultForCompetency(
-                        competencyId,
-                        assessment.Id,
-                        delegateUserId,
-                        assessmentQuestion.Id,
-                        assessmentQuestion.Result,
-                        assessmentQuestion.SupportingComments
-                    );
+                selfAssessmentService.SetResultForCompetency(
+                    competencyId,
+                    assessment.Id,
+                    delegateUserId,
+                    assessmentQuestion.Id,
+                    assessmentQuestion.Result,
+                    assessmentQuestion.SupportingComments
+                );
             }
 
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, delegateUserId, true);
@@ -739,10 +739,10 @@
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
             sessionAddSupervisor.SupervisorAdminId = model.SupervisorAdminID;
 
-            string searchString= model.JavascriptSearchSortFilterPaginateEnabled ?
-                                 Request.Query["searchString"].Count>0 ? Request.Query["searchString"][0].ToString(): "":
-                                 Request.Form["SearchString"].Count>0 ? Request.Form["SearchString"][0].ToString():"";
-            
+            string searchString = model.JavascriptSearchSortFilterPaginateEnabled ?
+                                 Request.Query["searchString"].Count > 0 ? Request.Query["searchString"][0].ToString() : "" :
+                                 Request.Form["SearchString"].Count > 0 ? Request.Form["SearchString"][0].ToString() : "";
+
             if (searchString == "")
             {
                 searchString = null;
@@ -1023,7 +1023,7 @@
                         .RoleName,
                 RoleCount = roles.Count(),
                 SupervisorAtCentre = supervisor.CentreName,
-                CentreCount= distinctCentres.Count()
+                CentreCount = distinctCentres.Count()
             };
             return View("SelfAssessments/AddSupervisorSummary", summaryModel);
         }
@@ -1551,7 +1551,7 @@
             selfAssessmentService.RemoveEnrolment(selfAssessmentId, delegateUserId);
             return RedirectToAction("Current", "LearningPortal");
         }
-        
+
         public IActionResult ResendSupervisorSignOffRequest(
             int selfAssessmentId,
             int candidateAssessmentSupervisorId,

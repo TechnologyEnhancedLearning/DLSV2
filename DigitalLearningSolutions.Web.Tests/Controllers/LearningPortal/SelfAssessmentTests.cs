@@ -323,7 +323,7 @@
 
             A.CallTo(() => selfAssessmentService.GetNthCompetency(A<int>._, A<int>._, A<int>._))
                 .Returns(competency);
-            
+
             // When
             var result = controller.SelfAssessmentCompetency(1, userUpdatedAssessmentQuestions, 1, 1, 1);
 
