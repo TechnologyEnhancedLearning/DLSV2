@@ -268,6 +268,10 @@
             int centreId
         );
         int RessultCount(int adminId, string search, int? centreId, string userStatus, int failedLoginThreshold, string role);
+
+        public void DeleteUserAndAccounts(int userId);
+
+        public bool PrimaryEmailInUseAtCentres(string email);
     }
 
     public partial class UserDataService : IUserDataService
@@ -458,7 +462,7 @@
             return connection.QueryFirst<int>(
                 @$"SELECT COUNT(*)
                     FROM Users
-                    WHERE PrimaryEmail = @email
+                    WHERE PrimaryEmail = @email  
                     {(userId == null ? "" : "AND Id <> @userId")}",
                 new { email, userId }
             ) > 0;
@@ -563,17 +567,19 @@
 
         public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
         {
+            string trimmedFirstName = firstName.Trim();
+            string trimmedLastName = lastName.Trim();
             connection.Execute(
                 @"UPDATE Users
                   SET
-                  FirstName = @firstName,
-                  LastName = @lastName,
+                  FirstName = @trimmedFirstName,
+                  LastName = @trimmedLastName,
                   PrimaryEmail = @primaryEmail,
                   JobGroupId = @jobGroupId,
                   ProfessionalRegistrationNumber = @prnNumber,
                   EmailVerified = @emailVerified
                 WHERE ID = @userId",
-                new { firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId }
+                new { trimmedFirstName, trimmedLastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId }
             );
         }
         public (IEnumerable<DelegateEntity>, int) GetAllDelegates(
@@ -595,6 +601,7 @@
                 da.Approved,
                 da.SelfReg,
                 da.UserID,
+                da.RegistrationConfirmationHash,
                 u.ID,
                 u.PrimaryEmail,
                 u.FirstName,
@@ -655,6 +662,56 @@
                 commandTimeout: 3000
             );
             return (delegateEntity, ResultCount);
+        }
+
+        public void DeleteUserAndAccounts(int userId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+            @"
+	           BEGIN TRY
+	                BEGIN TRANSACTION
+
+                        DELETE FROM SupervisorDelegates WHERE DelegateUserID = @userId
+
+				        DELETE FROM UserCentreDetails WHERE UserID = @userId
+
+				        DELETE FROM AdminAccounts WHERE UserID = @userId
+
+				        DELETE FROM DelegateAccounts WHERE UserID = @userId
+
+				        DELETE FROM Users WHERE ID = @userId
+
+			        COMMIT TRANSACTION
+		        END TRY
+		        BEGIN CATCH
+                    IF @@TRANCOUNT<>0
+	                BEGIN
+		                ROLLBACK TRANSACTION
+	                END
+		        END CATCH
+		        ",
+                new
+                {
+                    UserID = userId
+                }
+            );
+
+            if (numberOfAffectedRows == 0)
+            {
+                string message =
+                $"db delete user failed for User ID: {userId}";
+                throw new DeleteUserException(message);
+            }
+        }
+
+        public bool PrimaryEmailInUseAtCentres(string email)
+        {
+            return connection.QueryFirst<int>(
+               @$"SELECT COUNT(*)
+                    FROM UserCentreDetails
+                    WHERE Email = @email ",
+               new { email}
+           ) > 0;
         }
     }
 }

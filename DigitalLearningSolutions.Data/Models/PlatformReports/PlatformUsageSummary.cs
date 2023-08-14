@@ -8,9 +8,9 @@
         public int CourseLearningTime { get; set; }
         public int CourseEnrolments { get; set; }
         public int CourseCompletions { get; set; }
-        public int DCSAEnrolments { get; set; }
-        public int DCSACompletions { get; set; }
-        public int NursingPassportEnrolments { get; set; }
-        public int NursingPassportCompletions { get; set; }
+        public int IndependentSelfAssessmentEnrolments { get; set; }
+        public int IndependentSelfAssessmentCompletions { get; set; }
+        public int SupervisedSelfAssessmentEnrolments { get; set; }
+        public int SupervisedSelfAssessmentCompletions { get; set; }
     }
 }

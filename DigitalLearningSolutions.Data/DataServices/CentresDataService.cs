@@ -22,6 +22,17 @@
 
         CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
 
+        CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId);
+
+        void UpdateCentreRoleLimits(
+            int centreId,
+            int? roleLimitCmsAdministrators,
+            int? roleLimitCmsManagers,
+            int? roleLimitCcLicences,
+            int? roleLimitCustomCourses,
+            int? roleLimitTrainers
+        );
+
         void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
@@ -52,6 +63,16 @@
             byte[]? centreLogo
         );
 
+        public void UpdateCentreDetailsForSuperAdmin(
+            int centreId,
+            string centreName,
+            int centreTypeId,
+            int regionId,
+            string? centreEmail,
+            string? ipPrefix,
+            bool showOnMap
+        );
+
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
@@ -63,6 +84,7 @@
         Centre? GetFullCentreDetailsById(int centreId);
         void DeactivateCentre(int centreId);
         void ReactivateCentre(int centreId);
+        Centre? GetCentreManagerDetailsByCentreId(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -198,10 +220,14 @@
                             ct.ContractType,
                             c.CustomCourses,
                             c.ServerSpaceUsed,
-                            c.ServerSpaceBytes
+                            c.ServerSpaceBytes,
+                            c.CentreTypeID,
+                            ctp.CentreType,
+                            c.ShowOnMap
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
+                        INNER JOIN CentreTypes AS ctp ON ctp.CentreTypeID = c.CentreTypeID
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
@@ -254,20 +280,20 @@
                 (centre, centreTypes, regions) => new CentreEntity(
                     centre, centreTypes, regions
                 ),
-                new { search, offset, rows,region,centreType,contractType,centreStatus },
+                new { search, offset, rows, region, centreType, contractType, centreStatus },
                 splitOn: "CentreTypeId,RegionID",
                 commandTimeout: 3000
             );
-            int ResultCount = connection.ExecuteScalar<int>(
+            int resultCount = connection.ExecuteScalar<int>(
                                 @$"SELECT  COUNT(*) AS Matches
                                 FROM Centres AS c
                                 INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                                 INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
                                 WHERE c.CentreName LIKE N'%' + @search + N'%' AND ((c.RegionID = @region) OR (@region = 0))  AND ((c.CentreTypeId = @centreType) OR (@centreType = 0)) AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
-                    new { search,region,centreType,contractType,centreStatus },
+                    new { search, region, centreType, contractType, centreStatus },
                     commandTimeout: 3000
             );
-            return (centreEntity, ResultCount);
+            return (centreEntity, resultCount);
         }
 
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
@@ -300,8 +326,6 @@
                 new { centreId }
             );
         }
-
-
 
         public void UpdateCentreManagerDetails(
             int centreId,
@@ -387,6 +411,38 @@
                     bannerText,
                     centreSignature,
                     centreLogo,
+                    centreId
+                }
+            );
+        }
+
+        public void UpdateCentreDetailsForSuperAdmin(
+            int centreId,
+            string centreName,
+            int centreTypeId,
+            int regionId,
+            string? centreEmail,
+            string? ipPrefix,
+            bool showOnMap
+        )
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                    CentreName = @centreName,
+                    CentreTypeId = @centreTypeId,
+                    RegionId = @regionId,
+                    pwEmail = @centreEmail,
+                    IPPrefix = @ipPrefix,
+                    ShowOnMap = @showOnMap
+                WHERE CentreId = @centreId",
+                new
+                {
+                    centreName,
+                    centreTypeId,
+                    regionId,
+                    centreEmail,
+                    ipPrefix,
+                    showOnMap,
                     centreId
                 }
             );
@@ -519,6 +575,21 @@
             );
         }
 
+        public Centre? GetCentreManagerDetailsByCentreId(int centreId)
+        {
+            var centre = connection.QueryFirstOrDefault<Centre>(
+                           @"SELECT c.CentreID,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone
+                        FROM Centres AS c
+                        WHERE c.CentreID = @centreId",
+                        new { centreId }
+                    );
+            return centre;
+        }
+
         public void DeactivateCentre(int centreId)
         {
             connection.Execute(
@@ -536,6 +607,51 @@
                   Active = 1
                   WHERE CentreId = @centreId",
                 new { centreId }
+            );
+        }
+        
+        public CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId)
+        {
+            return connection.QueryFirstOrDefault<CentreSummaryForRoleLimits>(
+                @"SELECT CentreId,
+                        CMSAdministrators AS RoleLimitCMSAdministrators,
+                        CMSManagers AS RoleLimitCMSManagers,
+                        CCLicences AS RoleLimitCCLicences,
+                        CustomCourses AS RoleLimitCustomCourses,
+                        Trainers AS RoleLimitTrainers
+                        FROM Centres
+                        WHERE (CentreId = @centreId) AND (Active = 1)
+                        ORDER BY CentreName",
+                new { centreId }
+            );
+        }
+
+        public void UpdateCentreRoleLimits(
+            int centreId,
+            int? roleLimitCmsAdministrators,
+            int? roleLimitCmsManagers,
+            int? roleLimitCcLicences,
+            int? roleLimitCustomCourses,
+            int? roleLimitTrainers
+        )
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                        CMSAdministrators = @roleLimitCMSAdministrators,
+                        CMSManagers = @roleLimitCMSManagers,
+                        CCLicences = @roleLimitCCLicences,
+                        CustomCourses = @roleLimitCustomCourses,
+                        Trainers = @roleLimitTrainers
+                WHERE CentreId = @centreId",
+                new
+                {
+                    centreId,
+                    roleLimitCmsAdministrators,
+                    roleLimitCmsManagers,
+                    roleLimitCcLicences,
+                    roleLimitCustomCourses,
+                    roleLimitTrainers,
+                }
             );
         }
     }

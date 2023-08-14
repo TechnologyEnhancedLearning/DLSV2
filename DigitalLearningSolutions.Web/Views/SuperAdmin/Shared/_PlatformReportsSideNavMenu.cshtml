@@ -8,24 +8,24 @@
                        link-text="Platform usage"
                        is-current-page="@(Model == SuperAdminReportsPage.PlatformUsage)" />
 
-    <vc:side-menu-link asp-action="Index"
-                       asp-controller="CourseUsage"
+    <vc:side-menu-link asp-action="CourseUsage"
+                       asp-controller="PlatformReports"
                        link-text="Course usage"
                        is-current-page="@(Model == SuperAdminReportsPage.CourseUsage)" />
 
-    <vc:side-menu-link asp-action="Delegates"
-                       asp-controller="CourseEvaluations"
+    <vc:side-menu-link asp-action="CourseEvaluations"
+                       asp-controller="PlatformReports"
                        link-text="Course evaluations"
                        is-current-page="@(Model == SuperAdminReportsPage.CourseEvaluations)" />
 
-    <vc:side-menu-link asp-action="Delegates"
-                       asp-controller="DigitalCapabilities"
-                       link-text="Digital capabilities"
-                       is-current-page="@(Model == SuperAdminReportsPage.DigitalCapabilities)" />
+    <vc:side-menu-link asp-action="IndependentSelfAssessmentsReport"
+                       asp-controller="PlatformReports"
+                       link-text="Independent self assessments"
+                       is-current-page="@(Model == SuperAdminReportsPage.IndependentSelfAssessments)" />
 
-    <vc:side-menu-link asp-action="Delegates"
-                       asp-controller="NursingProficiencies"
-                       link-text="Nursing proficiencies"
-                       is-current-page="@(Model == SuperAdminReportsPage.NursingProficiencies)" />
+    <vc:side-menu-link asp-action="SupervisedSelfAssessmentsReport"
+                       asp-controller="PlatformReports"
+                       link-text="Supervised self assessments"
+                       is-current-page="@(Model == SuperAdminReportsPage.SupervisedSelfAssessments)" />
 
 </ul>

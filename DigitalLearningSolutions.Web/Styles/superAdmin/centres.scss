@@ -31,3 +31,18 @@ button.nhsuk-pagination__link {
 #maincontentwrapper {
   display: block;
 }
+.nhsuk-table__row {
+  td.nhsuk-table__cell {
+    &.choose-centre-td {
+      .nhsuk-table-responsive__heading {
+        min-width: 4.25em;
+      }
+
+      @include govuk-media-query($until: desktop) {
+        border-bottom: none;
+        justify-content: left;
+        text-align: left;
+      }
+    }
+  }
+}

@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Data.Enums
-@using DigitalLearningSolutions.Data.Models.Centres;
+﻿@using DigitalLearningSolutions.Data.Models.Centres;
 @model Centre;
 @{
     ViewData["Title"] = "Manage Centre";
@@ -8,17 +7,22 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Admin</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader">Manage centre</a></li>
             </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__backlink"
+                 asp-controller="Centres" asp-action="Index"
+                >Back to Centres</a>
+            </p>
         </div>
     </nav>
 }
 <div class="nhsuk-grid-row">
-    <h1 class="nhsuk-heading-xl nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-2">@Model.CentreName (@Model.CentreId)</h1>
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">@Model.CentreName (@Model.CentreId)</h1>
 </div>
 <div class="nhsuk-grid-row">
-    <h2 class="nhsuk-u-margin-bottom-2 nhsuk-u-font-weight-normal">Details</h2>
+    <h2 class="nhsuk-u-margin-bottom-2">Details</h2>
     <dl class="nhsuk-summary-list details-list-with-button word-break">
         <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
@@ -58,21 +62,21 @@
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
-                <b>Show on map</b>
+                <b>Show on find your centre</b>
             </dt>
             <dd class="nhsuk-summary-list__value">
                 @Model.ShowOnMap
             </dd>
         </div>
     </dl>
-    <button class="nhsuk-button view-delegate-button" type="submit">
+    <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-4" role="button" asp-controller="Centres" asp-action="EditCentreDetails" asp-route-centreId="@Model.CentreId">
         Edit details
-    </button>
+    </a>
 </div>
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         <div class="nhsuk-grid-row">
-            <h2 class="nhsuk-u-margin-bottom-2 nhsuk-u-font-weight-normal">Centre Manager</h2>
+            <h2 class="nhsuk-u-margin-bottom-2">Centre manager</h2>
             <dl class="nhsuk-summary-list details-list-with-button word-break">
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
@@ -110,12 +114,13 @@
                     </dd>
                 </div>
             </dl>
-            <button class="nhsuk-button view-delegate-button" type="submit">
+            <a class="nhsuk-button view-delegate-button" asp-controller="Centres" asp-action="ManageCentreManager" asp-route-centreId="@Model.CentreId"
+               role="button">
                 Edit centre manager details
-            </button>
+            </a>
         </div>
         <div class="nhsuk-grid-row">
-            <h2 class="nhsuk-u-margin-bottom-2  nhsuk-u-font-weight-normal">Contract info</h2>
+            <h2 class="nhsuk-u-margin-bottom-2">Contract info</h2>
             <dl class="nhsuk-summary-list details-list-with-button word-break">
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
@@ -195,11 +200,15 @@
                 </div>
             </dl>
             <button class="nhsuk-button view-delegate-button" type="submit">
-                Edit Contract info
+                Edit contract info
             </button>
-            <button class="@($"{ButtonType.Secondary.CssClass} left-button-mobile-margin-bottom nhsuk-u-margin-right-2")" type="submit">
-                Customise role limits
-            </button>
+
+            <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2" role="button"
+               asp-controller="Centres"
+               asp-action="CentreRoleLimits"
+               asp-route-centreId="@Model.CentreId">
+              Customise role limits
+            </a>
         </div>
     </div>
 </div>

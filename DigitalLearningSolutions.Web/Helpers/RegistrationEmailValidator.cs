@@ -19,7 +19,7 @@
         {
             if (
                 IsValidationNecessary(primaryEmail, nameOfFieldToValidate, modelState) &&
-                userDataService.PrimaryEmailIsInUse(primaryEmail!)
+                (userDataService.PrimaryEmailIsInUse(primaryEmail!) || userDataService.PrimaryEmailInUseAtCentres(primaryEmail!))
             )
             {
                 modelState.AddModelError(nameOfFieldToValidate, errorMessage);
