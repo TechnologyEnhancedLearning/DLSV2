@@ -203,9 +203,12 @@
                 asp-controller="Centres" asp-action="EditContractInfo" asp-route-centreId="@Model.CentreId">
                 Edit contract info
             </a>
-            <button class="@($"{ButtonType.Secondary.CssClass} left-button-mobile-margin-bottom nhsuk-u-margin-right-2")" type="submit">
+            <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2" role="button"
+               asp-controller="Centres"
+               asp-action="CentreRoleLimits"
+               asp-route-centreId="@Model.CentreId">
                 Customise role limits
-            </button>
+            </a>
         </div>
     </div>
 </div>
