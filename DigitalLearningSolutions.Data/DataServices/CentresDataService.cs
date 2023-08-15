@@ -239,7 +239,7 @@
                             c.ServerSpaceBytes,
                             c.CentreTypeID,
                             ctp.CentreType,
-                            c.ShowOnMap
+                            c.pwEmail as RegistrationEmail
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
