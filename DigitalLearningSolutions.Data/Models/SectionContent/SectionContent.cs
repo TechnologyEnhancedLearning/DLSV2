@@ -62,7 +62,7 @@
             bool passwordSubmitted
         )
         {
-            CourseTitle = $"{applicationName} - {customisationName}";
+            CourseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             CourseDescription = applicationInfo;
             SectionName = sectionName;
             HasLearning = hasLearning;
