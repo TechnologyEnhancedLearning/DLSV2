@@ -1,10 +1,9 @@
-
-<h1 class="policy-text-justify nhsuk-heading-xl">PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).</1>
+<h1 class="nhsuk-u-text-align-centre nhsuk-heading-xl">PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).</1>
 <ol class="custom-ordered-list nhsuk-u-padding-left-0">
 
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>THE PLATFORM</strong>
-<ol class="nhsuk-u-padding-top-2">
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-margin-0""><strong>THE PLATFORM</strong>
+<ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0"">
 <li>These terms of use <strong>(Terms)</strong> set out the rules for using each of our following platforms (each being a <strong>Platform</strong>):
 <ol class="nhsuk-u-padding-top-2">
 <li>elearning for healthcare hub (<strong>elfh Hub</strong>);</li>
@@ -28,7 +27,7 @@ By accessing a Platform, you warrant ,represent and undertake that you are 18 ye
 </li>
 
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>WHO WE ARE AND HOW TO CONTACT US</strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-margin-0""><strong>WHO WE ARE AND HOW TO CONTACT US</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>The  Platforms  are  operated  by  NHS  England  (<strong>we,  us,  our,  NHSE</strong>)  via  our  Technology Enhanced  Learning  (<strong>TEL</strong>)  programme.  We  are  a  Non-Departmental  Public  Body  under  the provisions of the Care Act 2014 and are responsible for the education, training and personnel development of the healthcare workforce for England.   Our head offices are situated at NHS England London  , Wellington house , 133-135 Waterloo Rd , London,  SE1 8UG </li>
 <li>To contact us about any matter relating to a Platform, please contact us as follows:
@@ -57,7 +56,7 @@ If you find Content or links that you think should not be on a Platform or have 
 
 
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>THESE TERMS</strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-margin-0""><strong>THESE TERMS</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>By using any Platform, you confirm that you accept these Terms insofar as they apply to that Platform and that you agree to comply with them. If you do not agree to these Terms insofar as they apply to any Platform, you must not use that Platform.</li>
 <li> 
@@ -67,11 +66,11 @@ These Terms incorporate the following which also apply to your use of any Platfo
 <li>our  Acceptable  Use  Policy  &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/v2/LearningSolutions/AcceptableUsePolicy">ACCEPTABLE  USE  POLICY </a>  with which you agree to comply with at all times.</li>
 </ol>
 </li>
-<li>We may amend these Terms from time to time without notice. Any change will be effective in respect of a Platform immediately upon the revised Terms being posted on that Platform. Every time you wish to use a Platform, please check these Terms to ensure you understand the Terms that apply at that time. You must stop using a Platform and deactivate your Account (as defined in clause 4) if you do not agree to such change. Continued use of a Platform after a change has been made is your acceptance of the change.  These Terms were most recently updated on ' + convert(VARCHAR, getdate(), 106) + ' .s </li>
+<li>We may amend these Terms from time to time without notice. Any change will be effective in respect of a Platform immediately upon the revised Terms being posted on that Platform. Every time you wish to use a Platform, please check these Terms to ensure you understand the Terms that apply at that time. You must stop using a Platform and deactivate your Account (as defined in clause 4) if you do not agree to such change. Continued use of a Platform after a change has been made is your acceptance of the change.  These Terms were most recently updated on 16 Aug 2023 .s </li>
 </ol>
 </li>
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>ACCESS TO A PLATFORM</strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-margin-0 nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2""><strong>ACCESS TO A PLATFORM</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>This clause 4 sets out the circumstances in which you may be granted a user account for access to a Platform (<strong>Account</strong>).</li>
 <li>Access to elfh Hub is permitted in accordance with the following provisions:
@@ -97,7 +96,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 </ol>
 </li>
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>YOUR ACCOUNT</strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>YOUR ACCOUNT</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>When you set up your Account you must identify yourself honestly, accurately and completely. It is your responsibility to make sure that your Account details are correct and up to date. You must only access as Platform using your own username and password.</li>
 <li>If  you  choose,  or  you  are  provided  with,  an  Account  code,  password  or  any  other  piece  of information  (<strong>Account  Information</strong>)  as  part  of  our  security  procedures,  you  must  treat  the Account Information as confidential. You must never input any of your Account Information into any other website, and we will never ask for you for your Account Information.  Your Account is non-transferable and you must not disclose your Account Information to any third party or permit  another  person  to  complete  any  elearning  on  your  behalf  or  access  or  upload  any Content on your behalf.</li>
@@ -109,16 +108,16 @@ These Terms incorporate the following which also apply to your use of any Platfo
 </ol>
 </li>
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>YOUR ACCOUNT</strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>YOUR ACCOUNT</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>You may only use a Platform in accordance with our Acceptable Use Policy.</li>
 <li>The Platforms and their Content are only targeted to, and intended for use by, people residing in  the  United  Kingdom  or  British  Overseas  Territories  (Permitted  Territories).  We  do  not represent that Content available on or through any Platform is appropriate for use or available in other locations.  By continuing to access, view or make use of a Platform, you hereby warrant and  represent  to  us  that  you  are  located  in  a  Permitted  Territory.  If  you  are  not  located  in  a Permitted Territory, you must immediately discontinue use of the Platforms.</li>
-<li>Save in respect of elfh Hub and Content on the Learning Hub, the Platforms and Content are provided 'as is'.  We make no representation or endorsement of satisfactory quality, fitness for a particular purpose, non-infringement, compatibility, security and accuracy of the Content.</li>
+<li>Save in respect of elfh Hub and Content on the Learning Hub, the Platforms and Content are provided ''as is''.  We make no representation or endorsement of satisfactory quality, fitness for a particular purpose, non-infringement, compatibility, security and accuracy of the Content.</li>
 <li>While reasonable professional care has been taken in developing the Content (excluding any Third Party Content (as defined in clause 8.1) and any Contributions (as defined in clause 7.1)), we make no warranties concerning the correctness or completeness of the Content. Although we make reasonable efforts to update the Content, we make no representations, warranties or guarantees, whether express or implied, that the Content is up to date.</li>
 </ol>
 </li>
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>UPLOADING CONTENT TO A PLATFORM</strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>UPLOADING CONTENT TO A PLATFORM</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>Whenever  you  make  use  of  a  feature  that  allows  you  to  upload  or  contribute  Content  to  a Platform (<strong>Contribution</strong>), you must comply with the Content Standards (as defined in paragraph 4 of our Acceptable Use Policy). </li>
 <li>By uploading a Contribution to a Platform, you:
@@ -158,7 +157,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 </li>
 
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>THIRD PARTY CONTENT</strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>THIRD PARTY CONTENT</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>The Platforms may contain a variety of Content including but not limited to audio files, videos, text, images, articles, links to other websites, facilities, products, services, resources, elearning and other links of any kind whatsoever and wherever in the world and other materials which may be posted from time to time by other users or any other third party (<strong>Third Party Content</strong>).</li>
 <li>Third Party Content is not owned by us and is not under our influence or control in any respect whatsoever and has not been verified or approved by us.  We assume no responsibility for any Third Party Content and do not endorse any Content or any link to any Content, including but not limited to Content of any type listed in clause 7.6 above. The appearance of Third Party Content on a Platform should not be interpreted as approval by us of those links or information you may obtain from such Third Party Content. We do not give any warranty as to the accuracy of Third Party Content. The views expressed by other users on a Platform do not represent our views or values.</li>
@@ -168,7 +167,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 </li>
 
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>CHANGES TO, AND AVAILABILITY OF, A PLATFORM</strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>CHANGES TO, AND AVAILABILITY OF, A PLATFORM</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>We reserve the right to update, move or change a Platform at any time in order to meet our users’ needs and our business priorities and to continually improve our online service. External web sites link to a Platform at their own risk.</li>
 <li>We reserve the right to modify, suspend or discontinue a Platform at any time without notice. You agree that we will not be liable to you or to any third party for any modification, suspension or discontinuation of a Platform.</li>
@@ -179,7 +178,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 </li>
 
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>ACCESS VIA CENTRE (DLS ONLY)</strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>ACCESS VIA CENTRE (DLS ONLY)</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>Where you are a Centre that provides access for your staff (Delegates) to a Platform, then:
 <ol class="nhsuk-u-padding-top-2">
@@ -210,15 +209,17 @@ These Terms incorporate the following which also apply to your use of any Platfo
 </ol>
 </li>
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>WE ARE NOT RESPONSIBLE FOR VIRUSES </strong>
-<p> We  do  not  guarantee  that  a  Platform  will  be  secure  or  free  from  bugs  or  viruses.   You  are responsible for configuring your information technology and computer programmes to access a Platform. You should use your own virus protection software.</p>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>WE ARE NOT RESPONSIBLE FOR VIRUSES </strong>
+ <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0""> 
+We  do  not  guarantee  that  a  Platform  will  be  secure  or  free  from  bugs  or  viruses.   You  are responsible for configuring your information technology and computer programmes to access a Platform. You should use your own virus protection software.</ol>
 </li>
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>HOW WE MAY USE YOUR PERSONAL INFORMATION </strong>
-<p> We will only use your personal information as set out in our Privacy Policy (please see clause 3.2.1).</p>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>HOW WE MAY USE YOUR PERSONAL INFORMATION </strong>
+ <ol class=""h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0""> 
+ We will only use your personal information as set out in our Privacy Policy (please see clause 3.2.1).</ol>
 </li>
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>INTELLECTUAL PROPERTY </strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>INTELLECTUAL PROPERTY </strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>Without  prejudice to  clauses 7.3  and 7.4,  we are the  owner or  the  licensee of  all  intellectual property rights in a Platform, and in the material published on it. Those works are protected by copyright laws and treaties around the world. All such rights are reserved.</li>
 <li>Save as expressly set out in these Terms, you shall not acquire in any way, any title, rights of ownership, or intellectual property rights of whatever nature in a Platform, its software or any Content or in any copies of it.</li>
@@ -228,7 +229,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 </li>
 
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>OUR RESPONSIBILITY FOR LOSS OR DAMAGE SUFFERED BY YOU </strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>OUR RESPONSIBILITY FOR LOSS OR DAMAGE SUFFERED BY YOU</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>We do not exclude or limit in any way our liability to you where it would be unlawful to do so. This includes liability for death or personal injury caused by our negligence or the negligence of our employees, agents or subcontractors and for fraud or fraudulent misrepresentation.</li>
 <li>We exclude all implied conditions, warranties, representations or other terms that may apply to a  Platform  or  any  Content,  including  but  not  limited  to  the  implied  warranties  of  satisfactory quality, fitness for a particular purpose, non-infringement, compatibility, security and accuracy.</li>
@@ -269,14 +270,14 @@ These Terms incorporate the following which also apply to your use of any Platfo
 
 
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>INDEMNITIES </strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>INDEMNITIES</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>You agree to indemnify and hold harmless and continue to indemnify and hold harmless us, our   employees,   agents,   partners,   sub-contractors,   third   party   software   providers   and collaborators anywhere in the world in all respects and in relation to all matters relating to your use  (and  that  of  any  other  person  acting  on  your  authority)  of  a  Platform,  including  (without limitation) in respect of any breach of these Terms to the fullest extent permitted by law.</li>
 <li>Without prejudice to clause 15.1, you retain responsibility for Contributions in all respects and agree to indemnify and hold harmless and continue to indemnify us and hold us harmless in all respects and in relation to all matters in respect of Contributions, including in respect of breach of the warranties given under clause 7.2, to the fullest extent permitted by law.</li>
 </ol>
 </li>
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>SUSPENSION AND DEACTIVATION OF YOUR ACCOUNT </strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>SUSPENSION AND DEACTIVATION OF YOUR ACCOUNT</strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>We reserve the right to disable or limit the use of your Account at any time without notice and without giving any reason if you have failed to comply with any of the provisions of these Terms or if we suspect any unauthorised use or misuse of your Account, any Content or a Platform generally.   We reserve all rights not expressly granted by these Terms and conferred by law. In  the  event  that  your  Account  is  disabled,  your  right  to  access  a  Platform  shall  (without prejudice to any of our rights and remedies) terminate immediately.</li>
 <li>Should you wish to deactivate your Account at any time, please contact us using the contact details provided in clause 2.2.  In such circumstances, we will aim to deactivate your Account within 5 (five) working days, but please note that this may take longer.</li>
@@ -286,7 +287,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 
 
 
-<li class="h2 nhsuk-heading-l nhsuk-u-margin-0"><strong>GENERAL </strong>
+<li class=""h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0""><strong>GENERAL </strong>
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li><strong>Transfer of these Terms:</strong> We may transfer our rights and obligations under these Terms to another organisation, including but not limited to NHS England.   You may not transfer any of your rights or obligations under these Terms to another person.</li>
 <li><strong>Entire agreement:</strong> These Terms and the documents expressly referred to in them contains the whole agreement between you and us relating to its subject matter and supersedes any prior agreements, representations or understandings between them unless expressly incorporated by reference in these Terms.</li>

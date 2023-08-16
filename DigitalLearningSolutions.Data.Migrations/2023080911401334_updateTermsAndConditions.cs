@@ -3,14 +3,13 @@ using Microsoft.VisualBasic;
 
 namespace DigitalLearningSolutions.Data.Migrations
 {
-    [Migration(202308111140)]
+    [Migration(202308211140)]
     public class UpdateTermsAndConditions : Migration
     {
         public override void Up()
         {
-            var TermsAndConditions = Properties.Resources.TermsAndConditions;
-
-            Execute.Sql(
+            var TermsAndConditions = Properties.Resources.TermsAndCondition;
+             Execute.Sql(
                 @"UPDATE Config SET  UpdatedDate =GETDATE() ,ConfigText =N'" + TermsAndConditions + "' " +
                           "WHERE  ConfigName='TermsAndConditions';"
             );
