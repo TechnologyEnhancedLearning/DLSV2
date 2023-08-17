@@ -1,4 +1,6 @@
-﻿namespace DigitalLearningSolutions.Data.Models.TutorialContent
+﻿using System;
+
+namespace DigitalLearningSolutions.Data.Models.TutorialContent
 {
     public class TutorialContent
     {
@@ -19,7 +21,7 @@
         {
             TutorialName = tutorialName;
             SectionName = sectionName;
-            CourseTitle = $"{applicationName} - {customisationName}";
+            CourseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             TutorialPath = tutorialPath;
             Version = currentVersion;
         }
