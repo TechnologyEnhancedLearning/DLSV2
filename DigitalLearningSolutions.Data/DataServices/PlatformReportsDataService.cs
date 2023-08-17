@@ -3,6 +3,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.PlatformReports;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -22,6 +23,18 @@
             int? selfAssessmentId,
             bool supervised);
         DateTime GetSelfAssessmentActivityStartDate(bool supervised);
+        IEnumerable<ActivityLog> GetFilteredCourseActivity(
+            int? centreId,
+            int? centreTypeId,
+            DateTime startDate,
+            DateTime? endDate,
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? brandId,
+            int? regionId,
+            int? customisationId
+        );
+        DateTime? GetStartOfCourseActivity();
     }
     public class PlatformReportsDataService : IPlatformReportsDataService
     {
@@ -127,6 +140,61 @@
                     WHERE  {whereClause}"
                 );
         }
-        
+
+        public IEnumerable<ActivityLog> GetFilteredCourseActivity(
+            int? centreId,
+            int? centreTypeId,
+            DateTime startDate,
+            DateTime? endDate,
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? brandId,
+            int? regionId,
+            int? customisationId
+        )
+        {
+            return connection.Query<ActivityLog>(
+                @"SELECT
+                        LogDate,
+                        LogYear,
+                        LogQuarter,
+                        LogMonth,
+                        Registered,
+                        Completed,
+                        Evaluated
+                    FROM tActivityLog AS al INNER JOIN Applications AS ap ON ap.ApplicationID = al.ApplicationID
+                    WHERE (ap.DefaultContentTypeID <> 4)
+                        AND(al.LogDate >= @startDate
+                        AND (@endDate IS NULL OR al.LogDate <= @endDate)
+                        AND (@centreId IS NULL OR al.CentreID = @centreId)
+                        AND (@jobGroupId IS NULL OR al.JobGroupID = @jobGroupId)
+                        AND (@regionId IS NULL OR al.RegionID = @regionId)
+                        AND (@customisationId IS NULL OR al.CustomisationID = @customisationId)
+                        AND (@courseCategoryId IS NULL OR al.CourseCategoryId = @courseCategoryId)
+                        AND (@centreTypeID IS NULL OR ce.CentreTypeID = @centreTypeID)
+                        AND (@brandId IS NULL OR al.BrandID = @brandId)
+                        AND (al.Registered = 1 OR al.Completed = 1 OR al.Evaluated = 1)",
+                new
+                {
+                    centreId,
+                    centreTypeId,
+                    startDate,
+                    endDate,
+                    jobGroupId,
+                    brandId,
+                    regionId,
+                    customisationId,
+                    courseCategoryId
+                }
+            );
+        }
+
+        public DateTime? GetStartOfCourseActivity()
+        {
+            return connection.QuerySingleOrDefault<DateTime?>(
+                @"SELECT MIN(LogDate)
+                    FROM tActivityLog"
+            );
+        }
     }
 }

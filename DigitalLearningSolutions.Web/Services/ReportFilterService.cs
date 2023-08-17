@@ -13,6 +13,9 @@
         (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
            ActivityFilterData filterData
        );
+        (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string courseName) GetSuperAdminCourseFilterNames(
+            ActivityFilterData filterData
+        );
         (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string selfAssessmentName) GetSelfAssessmentFilterNames(
             ActivityFilterData filterData
         );
@@ -55,14 +58,16 @@
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
         }
-        public (string regionName, string centreName, string jobGroupName, string categoryName, string courseName) GetSuperAdminCourseFilterNames(
+        public (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string courseName) GetSuperAdminCourseFilterNames(
             ActivityFilterData filterData
         )
         {
             return (
                 GetRegionNameForActivityFilter(filterData.RegionId),
+                GetCentreTypeNameForActivityFilter(filterData.CentreTypeId),
                 GetCentreNameForActivityFilter(filterData.CentreId),
                 GetJobGroupNameForActivityFilter(filterData.JobGroupId),
+                GetBrandNameForActivityFilter(filterData.BrandId),
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
         }
@@ -108,7 +113,7 @@
             var categories = commonService.GetSelfAssessmentCategories(supervised);
             var brands = commonService.GetSelfAssessmentBrands(supervised);
             var selfAssessments = commonService.GetSelfAssessments(supervised);
-            return new SelfAssessmentReportsFilterOptions(centreTypes, regions, centres, jobGroups,  brands, categories, selfAssessments);
+            return new SelfAssessmentReportsFilterOptions(centreTypes, regions, centres, jobGroups, brands, categories, selfAssessments);
         }
         public string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
         {
