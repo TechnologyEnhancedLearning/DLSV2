@@ -1,0 +1,173 @@
+﻿@using DigitalLearningSolutions.Web.Extensions;
+@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@model AddCentreSuperAdminViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Add new centre";
+}
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new [] { nameof(Model.CentreName), nameof(Model.ContactEmail), nameof(Model.CentreTypeId), nameof(Model.RegionId), nameof(Model.RegistrationEmail) })" />
+}
+<div id="form-group">
+    <form method="post" asp-action="AddCentre">
+        <div>
+            <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+                Add new centre
+            </h1>
+            <div class="nhsuk-grid-row divider">
+                <div class="nhsuk-grid-column-full">
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.CentreName)"
+                                           label="Centre name"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="true" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.ContactFirstName)"
+                                           label="Contact first name"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.ContactLastName)"
+                                           label="Contact last name"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.ContactEmail)"
+                                           label="Contact email"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.ContactPhone)"
+                                           label="Contact phone"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:select-list asp-for="@nameof(Model.CentreTypeId)"
+                                            label="Centre type"
+                                            value="@Model.CentreTypeId.ToString()"
+                                            hint-text=""
+                                            required="true"
+                                            css-class="nhsuk-u-width-full"
+                                            default-option="Select a centre type"
+                                            select-list-options="Model.CentreTypeOptions" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:select-list asp-for="@nameof(Model.RegionId)"
+                                            label="Region"
+                                            value="@Model.RegionId.ToString()"
+                                            hint-text=""
+                                            required="true"
+                                            css-class="nhsuk-u-width-full"
+                                            default-option="Select a region"
+                                            select-list-options="Model.RegionNameOptions" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.RegistrationEmail)"
+                                           label="Registration email"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-half">
+                            <vc:text-input asp-for="@nameof(Model.IpPrefix)"
+                                           label="IP Prefix"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="false"
+                                           autocomplete="off"
+                                           hint-text=""
+                                           css-class="nhsuk-u-width-full"
+                                           required="false" />
+                        </div>
+                    </div>
+
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input" id="AddITSPcourses" name="AddITSPcourses" asp-for="@Model.AddITSPcourses" type="checkbox">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="AddITSPcourses">
+                            Add ITSP courses
+                        </label>
+                    </div>
+
+                    <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-4">
+                        <input class="nhsuk-checkboxes__input" id="ShowOnMap" name="ShowOnMap" asp-for="@Model.ShowOnMap" type="checkbox">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="ShowOnMap">
+                            Show on find your centre
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+            <button class="nhsuk-button" type="submit">
+                Save
+            </button>
+            <div class="nhsuk-back-link nhsuk-u-margin-left-1 nhsuk-u-margin-top-2">
+                <a class="nhsuk-back-link__link" asp-controller="Centres" asp-action="Index">
+                    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                    </svg>
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </form>
+</div>

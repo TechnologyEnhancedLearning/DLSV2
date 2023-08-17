@@ -323,7 +323,7 @@
 
             A.CallTo(() => selfAssessmentService.GetNthCompetency(A<int>._, A<int>._, A<int>._))
                 .Returns(competency);
-            
+
             // When
             var result = controller.SelfAssessmentCompetency(1, userUpdatedAssessmentQuestions, 1, 1, 1);
 
@@ -644,7 +644,7 @@
         }
 
         [Test]
-        public void WithdrawSupervisorSignOffRequest_calls_remove_signoff_and_reloads_page()
+        public void WithdrawSupervisorSignOffRequest_calls_remove_sign_off_and_reloads_sign_off_history_page()
         {
             // Given
             var expectedModel = new ResendSupervisorSignOffEmailViewModel
@@ -656,7 +656,7 @@
             };
 
             // When
-            var result = controller.WithdrawSupervisorSignOffRequest(1, 2, "TestVocabulary");
+            var result = controller.WithdrawSupervisorSignOffRequest(1, 2, "TestVocabulary", "SignOffHistory");
 
             // Then
             A.CallTo(
@@ -665,6 +665,30 @@
             result.Should()
                 .BeRedirectToActionResult()
                 .WithActionName("SignOffHistory");
+        }
+
+        [Test]
+        public void WithdrawSupervisorSignOffRequest_calls_remove_sign_off_and_defaults_route_to_self_assessment_overview_page()
+        {
+            // Given
+            var expectedModel = new ResendSupervisorSignOffEmailViewModel
+            {
+                Id = 1,
+                Vocabulary = "TestVocabulary",
+                SupervisorName = "TestSupervisorName",
+                SupervisorEmail = "testsupervisor@example.com",
+            };
+
+            // When
+            var result = controller.WithdrawSupervisorSignOffRequest(1, 2, "TestVocabulary", "");
+
+            // Then
+            A.CallTo(
+                () => supervisorService.RemoveCandidateAssessmentSupervisorVerification(2)).MustHaveHappened();
+
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithActionName("SelfAssessmentOverview");
         }
     }
 }

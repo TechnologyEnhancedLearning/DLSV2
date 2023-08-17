@@ -401,5 +401,50 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
         }
+
+        [Route("SuperAdmin/Centres/AddCentre")]
+        public IActionResult AddCentre()
+        {
+            var regions = regionDataService.GetRegionsAlphabetical().ToList();
+            var centreTypes = this.centresDataService.GetCentreTypes().ToList();
+
+            var addCentreSuperAdminViewModel = new AddCentreSuperAdminViewModel();
+            addCentreSuperAdminViewModel.IpPrefix = "194.176.105";
+
+            addCentreSuperAdminViewModel.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions);
+            addCentreSuperAdminViewModel.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
+
+            return View(addCentreSuperAdminViewModel);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Centres/AddCentre")]
+        public IActionResult AddCentre(AddCentreSuperAdminViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var centreTypes = this.centresDataService.GetCentreTypes().ToList();
+                var regions = regionDataService.GetRegionsAlphabetical().ToList();
+                model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions);
+                model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
+                return View(model);
+            }
+
+            int insertedID = centresDataService.AddCentreForSuperAdmin(
+                model.CentreName,
+                model.ContactFirstName,
+                model.ContactLastName,
+                model.ContactEmail,
+                model.ContactPhone,
+                model.CentreTypeId,
+                model.RegionId,
+                model.RegistrationEmail,
+                model.IpPrefix,
+                model.ShowOnMap,
+                model.AddITSPcourses
+            );
+
+            return RedirectToAction("ManageCentre", "Centres", new { centreId = insertedID });
+        }
     }
 }

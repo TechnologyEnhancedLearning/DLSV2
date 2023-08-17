@@ -41,5 +41,7 @@ namespace DigitalLearningSolutions.Data.Models.Centres
         public string CentreType { get; set; }
         public long CandidateByteLimit { get; set; }
         public DateTime? ContractReviewDate { get; set; }
+        public string? RegistrationEmail { get; set; }
+        public bool AddITSPcourses { get; set; }
     }
 }
