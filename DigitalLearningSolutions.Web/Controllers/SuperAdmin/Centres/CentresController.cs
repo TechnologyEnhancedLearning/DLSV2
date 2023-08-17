@@ -425,8 +425,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             {
                 var centreTypes = this.centresDataService.GetCentreTypes().ToList();
                 var regions = regionDataService.GetRegionsAlphabetical().ToList();
-                model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions);
-                model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
+                model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions, model.RegionId);
+                model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes, model.CentreTypeId);
                 return View(model);
             }
 
