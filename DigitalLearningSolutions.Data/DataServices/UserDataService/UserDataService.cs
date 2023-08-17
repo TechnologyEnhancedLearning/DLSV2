@@ -671,6 +671,24 @@
 	           BEGIN TRY
 	                BEGIN TRANSACTION
 
+                        DELETE FROM aspProgress WHERE ProgressID IN (SELECT ProgressID FROM Progress WHERE CandidateID in (SELECT ID FROM DelegateAccounts where UserID = @userId))
+
+                        DELETE FROM Progress WHERE CandidateID IN (SELECT ID FROM DelegateAccounts where UserID = @userId)
+
+                        DELETE FROM ReportSelfAssessmentActivityLog where UserID = @userId
+
+                        DELETE FROM SelfAssessmentResultSupervisorVerifications WHERE CandidateAssessmentSupervisorID IN ( SELECT ID
+                        FROM CandidateAssessmentSupervisors where CandidateAssessmentID IN (select ID from CandidateAssessments where DelegateUserID = @userId))
+
+                        DELETE FROM CandidateAssessmentSupervisorVerifications WHERE CandidateAssessmentSupervisorID IN ( SELECT ID
+                        FROM CandidateAssessmentSupervisors where CandidateAssessmentID IN (select ID from CandidateAssessments where DelegateUserID = @userId))
+
+                        DELETE FROM CandidateAssessmentSupervisors where CandidateAssessmentID IN (select ID from CandidateAssessments where DelegateUserID = @userId)
+
+                        DELETE FROM CandidateAssessmentOptionalCompetencies WHERE CandidateAssessmentID IN (select ID from CandidateAssessments where DelegateUserID = @userId)
+
+                        DELETE from CandidateAssessments where DelegateUserID = @userId
+
                         DELETE FROM SupervisorDelegates WHERE DelegateUserID = @userId
 
 				        DELETE FROM UserCentreDetails WHERE UserID = @userId
