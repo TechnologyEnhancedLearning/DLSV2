@@ -1183,10 +1183,12 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h1 class=&quot;&quot;nhsuk-u-text-align-centre nhsuk-heading-xl&quot;&quot; &gt;PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).&lt;/1&gt;
-        ///&lt;section&gt;
-        ///&lt;h2 class=&quot;&quot;&quot;&quot;nhsuk-heading-l&quot;&quot;&quot;&quot;&gt;1.    THE PLATFORM&lt;/h2&gt;
-        ///&lt;p class=&quot;&quot;&quot;&quot;policy-text-justify&quot;&quot;&quot;&quot;&gt;1.1 These terms of use &lt;strong&gt;(Terms)&lt;/strong&gt; set out the rules for using each of [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to  &lt;h1 class=&quot;nhsuk-u-text-align-centre nhsuk-heading-xl&quot;&gt;TERMS AND CONDITIONS&lt;/h1&gt;
+        ///&lt;h1 class=&quot;nhsuk-u-text-align-centre nhsuk-heading-xl&quot;&gt;PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).&lt;/h1&gt;
+        ///&lt;ol class=&quot;custom-ordered-list nhsuk-u-padding-left-0&quot;&gt;
+        ///
+        ///
+        ///&lt;li class=&quot;h2 nhsuk-heading-l nhsuk-u-font-weigh [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TermsAndConditions {
             get {
