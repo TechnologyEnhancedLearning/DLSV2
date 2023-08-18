@@ -7,9 +7,7 @@
     ViewData["Title"] = errorHasOccurred ? "Error: Edit report filters" : "Edit report filters";
     var reportIntervalValue = (int)Model.ReportInterval;
 }
-
-<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/reports.css")">
-
+<link rel="stylesheet" href="@Url.Content("~/css/superAdmin/platformreports.css")" asp-append-version="true">
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         @if (errorHasOccurred)
@@ -85,7 +83,7 @@
                             default-option="All"
                             select-list-options="@Model.CategoryOptions" />
             <vc:select-list asp-for="@nameof(Model.SelfAssessmentId)"
-                            label="Choose Self Assessment filter"
+                            label="Choose self assessment filter"
                             value="@Model.SelfAssessmentId.ToString()"
                             hint-text=""
                             required="false"

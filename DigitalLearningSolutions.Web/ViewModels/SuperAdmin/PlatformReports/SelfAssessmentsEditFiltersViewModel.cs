@@ -10,7 +10,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
-    public class SelfAssessmentsEditFiltersViewModel
+    public class SelfAssessmentsEditFiltersViewModel : IValidatableObject
     {
         public SelfAssessmentsEditFiltersViewModel() { }
 
