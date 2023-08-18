@@ -763,8 +763,8 @@
                             c.CentreName,
                             ct.ContractTypeID,
                             ct.ContractType,
-                            ct.ServerSpaceBytesInc,
-                            ct.DelegateUploadSpace,
+                            c.ServerSpaceBytes  ServerSpaceBytesInc,
+                            c.CandidateByteLimit DelegateUploadSpace,
                              c.ContractReviewDate
 					    FROM Centres AS c
                         INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
