@@ -67,7 +67,7 @@
             {
                 var filterOptions = GetDropdownValues(true);
                 model.DataStart = platformReportsService.GetSelfAssessmentActivityStartDate(true);
-                return View("NursingReportEditFilters", model);
+                return View("SelfAssessmentsEditFilters", model);
             }
 
             var filterData = new ActivityFilterData(
