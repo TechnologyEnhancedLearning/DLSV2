@@ -1,9 +1,12 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using NHSUKViewComponents.Web.ViewComponents
 @model CentreRoleLimitsViewModel;
 @{
     ViewData["Title"] = "Centre Role Limits";
+    var cancelLinkData = Html.GetRouteValues();
+
 }
 @{
     const string isCmsAdministratorLimitId = "conditional-cms-administrators";
@@ -23,14 +26,19 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Admin</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader">Manage centre</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="ManageCentre" asp-route-centreId="@Model.CentreId">Manage centre</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader">Centre role limits</a></li>
             </ol>
+          <p class="nhsuk-breadcrumb__back">
+            <a class="nhsuk-breadcrumb__backlink"
+                   asp-controller="Centres" asp-action="ManageCentre" asp-route-centreId="@Model.CentreId">Back to Manage centre</a>
+          </p>
         </div>
     </nav>
 }
+
 <div class="nhsuk-grid-row">
-    <h1 class="nhsuk-heading-xl nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-2">Customise role limits for @ViewBag.CentreName</h1>
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Customise role limits for @ViewBag.CentreName</h1>
 </div>
 
 <p class="nhsuk-body-l">
@@ -49,7 +57,7 @@
                                aria-controls="@isCmsAdministratorLimitId"
                                aria-expanded="@Model.IsRoleLimitSetCmsAdministrators.ToString()">
                         <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetCmsAdministrators">
-                            CMS Administrators
+                            CMS administrators
                         </label>
                     </div>
                     <div class="@cmsAdministratorsCss"
@@ -57,7 +65,7 @@
                         <vc:text-input asp-for="@nameof(Model.RoleLimitCmsAdministrators)"
                                        label="Set limit"
                                        populate-with-current-value="true"
-                                       type="text"
+                                       type="number"
                                        spell-check="false"
                                        autocomplete="off"
                                        hint-text=""
@@ -72,7 +80,7 @@
                                aria-controls="@isCmsManagerLimitId"
                                aria-expanded="@Model.IsRoleLimitSetCmsManagers.ToString()">
                         <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetCmsManagers">
-                            CMS Managers
+                            CMS managers
                         </label>
                     </div>
                     <div class="@cmsManagersCss"
@@ -80,7 +88,7 @@
                         <vc:text-input asp-for="@nameof(Model.RoleLimitCmsManagers)"
                                        label="Set limit"
                                        populate-with-current-value="true"
-                                       type="text"
+                                       type="number"
                                        spell-check="false"
                                        autocomplete="off"
                                        hint-text=""
@@ -95,7 +103,7 @@
                                aria-controls="@isContentCreatorLicenseLimitId"
                                aria-expanded="@Model.IsRoleLimitSetContentCreatorLicences.ToString()">
                         <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetContentCreatorLicences">
-                            Content Creator Licenses
+                            Content creator licenses
                         </label>
                     </div>
                     <div class="@contentCreatorLicensesCss"
@@ -103,7 +111,7 @@
                         <vc:text-input asp-for="@nameof(Model.RoleLimitContentCreatorLicences)"
                                        label="Set limit"
                                        populate-with-current-value="true"
-                                       type="text"
+                                       type="number"
                                        spell-check="false"
                                        autocomplete="off"
                                        hint-text=""
@@ -118,7 +126,7 @@
                                aria-controls="@isCustomCourseLimitId"
                                aria-expanded="@Model.IsRoleLimitSetCustomCourses.ToString()">
                         <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="IsRoleLimitSetCustomCourses">
-                            Custom Courses
+                            Custom courses
                         </label>
                     </div>
                     <div class="@customCoursesCss"
@@ -126,7 +134,7 @@
                         <vc:text-input asp-for="@nameof(Model.RoleLimitCustomCourses)"
                                        label="Set limit"
                                        populate-with-current-value="true"
-                                       type="text"
+                                       type="number"
                                        spell-check="false"
                                        autocomplete="off"
                                        hint-text=""
@@ -149,7 +157,7 @@
                         <vc:text-input asp-for="@nameof(Model.RoleLimitTrainers)"
                                        label="Set limit"
                                        populate-with-current-value="true"
-                                       type="text"
+                                       type="number"
                                        spell-check="false"
                                        autocomplete="off"
                                        hint-text=""
@@ -157,10 +165,10 @@
                                        required="true" />
                     </div>
 
-                    <button class="nhsuk-button" type="submit">Save</button>
-                    <vc:cancel-link asp-controller="Centres" asp-action="Index" />
+                    <button class="nhsuk-button nhsuk-u-margin-top-6" type="submit" value="save">Save</button>
                 </div>
             </form>
+            <vc:cancel-link asp-controller="Centres" asp-action="ManageCentre" asp-all-route-data="@cancelLinkData" />
         </div>
     </div>
 </div>
