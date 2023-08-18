@@ -1,4 +1,5 @@
- <h1 class="nhsuk-u-text-align-centre nhsuk-heading-xl">TERMS AND CONDITIONS</h1>
+
+   <h1 class="nhsuk-u-text-align-centre nhsuk-heading-xl">TERMS AND CONDITIONS</h1>
 <h1 class="nhsuk-u-text-align-centre nhsuk-heading-xl">PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).</h1>
 <ol class="custom-ordered-list nhsuk-u-padding-left-0">
 
@@ -13,10 +14,10 @@
 </ol>
 </li>
 <li>
-These terms of use (<strong>Terms</strong>) set out the rules for using each of our following platforms (each being a <strong>Platform</strong>):
+Each Platform is a collection of online learning (<strong>elearning</strong>)and educational resources (<strong>Content</strong>) which is::
 <ol class="nhsuk-u-padding-top-2">
 <li>in respect of elfh Hub: provided free of charge as part of our elearning for healthcare programme to support patient care by providing elearning to educate and train the health and social care workforce.   The Content is developed by us in partnership with NHS, third sector and professional bodies;</li>
-<li>in respect of DLS: provided to aid registered health and social care organisations (Centres)  with  the  training,  development  and  assessment  of  competence  of  their staff.  The Platform continues to support existing  locally-developed learning;</li>
+<li>in respect of DLS: provided to aid registered health and social care organisations (<strong>Centres</strong>)  with  the  training,  development  and  assessment  of  competence  of  their staff.  The Platform continues to support existing  locally-developed learning;</li>
 <li>in  respect  of  the  Learning  Hub:  provided  free  of  charge  to  educate  and  train  the health and social care workforce.  The Content is uploaded, shared and contributed by  the  Platform’s  user  community.   Users  can  access,  contribute,  share  and  rate digital resources including video, audio, images, web links, documents and articles.</li>
 </ol>
 </li>
@@ -63,11 +64,11 @@ If you find Content or links that you think should not be on a Platform or have 
 <li> 
 These Terms incorporate the following which also apply to your use of any Platform:
 <ol class="nhsuk-u-padding-top-2">
-<li>our Privacy Policy &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/v2/LearningSolutions/Terms">Terms of Use </a> (see further under clause 12); and</li>
-<li>our  Acceptable  Use  Policy  &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/v2/LearningSolutions/AcceptableUsePolicy">ACCEPTABLE  USE  POLICY </a>  with which you agree to comply with at all times.</li>
+<li>our Privacy Policy &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/dls-uar-uat/LearningSolutions/PrivacyNotice">PRIVACY POLICY</a> (see further under clause 12); and</li>
+<li>our  Acceptable  Use  Policy  &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/dls-uar-uat/LearningSolutions/AcceptableUsePolicy">ACCEPTABLE  USE  POLICY </a>  with which you agree to comply with at all times.</li>
 </ol>
 </li>
-<li>We may amend these Terms from time to time without notice. Any change will be effective in respect of a Platform immediately upon the revised Terms being posted on that Platform. Every time you wish to use a Platform, please check these Terms to ensure you understand the Terms that apply at that time. You must stop using a Platform and deactivate your Account (as defined in clause 4) if you do not agree to such change. Continued use of a Platform after a change has been made is your acceptance of the change.  These Terms were most recently updated on 16 Aug 2023 .s </li>
+<li>We may amend these Terms from time to time without notice. Any change will be effective in respect of a Platform immediately upon the revised Terms being posted on that Platform. Every time you wish to use a Platform, please check these Terms to ensure you understand the Terms that apply at that time. You must stop using a Platform and deactivate your Account (as defined in clause 4) if you do not agree to such change. Continued use of a Platform after a change has been made is your acceptance of the change.  These Terms were most recently updated on '+convert(varchar, getdate(), 6)+' .s </li>
 </ol>
 </li>
 
@@ -109,10 +110,10 @@ These Terms incorporate the following which also apply to your use of any Platfo
 </ol>
 </li>
 
-<li class="h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0">YOUR ACCOUNT
+<li class="h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0">USE OF A PLATFORM
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
 <li>You may only use a Platform in accordance with our Acceptable Use Policy.</li>
-<li>The Platforms and their Content are only targeted to, and intended for use by, people residing in  the  United  Kingdom  or  British  Overseas  Territories  (Permitted  Territories).  We  do  not represent that Content available on or through any Platform is appropriate for use or available in other locations.  By continuing to access, view or make use of a Platform, you hereby warrant and  represent  to  us  that  you  are  located  in  a  Permitted  Territory.  If  you  are  not  located  in  a Permitted Territory, you must immediately discontinue use of the Platforms.</li>
+<li>The Platforms and their Content are only targeted to, and intended for use by, people residing in  the  United  Kingdom  or  British  Overseas  Territories  (<strong>Permitted  Territories</strong>).  We  do  not represent that Content available on or through any Platform is appropriate for use or available in other locations.  By continuing to access, view or make use of a Platform, you hereby warrant and  represent  to  us  that  you  are  located  in  a  Permitted  Territory.  If  you  are  not  located  in  a Permitted Territory, you must immediately discontinue use of the Platforms.</li>
 <li>Save in respect of elfh Hub and Content on the Learning Hub, the Platforms and Content are provided ''as is''.  We make no representation or endorsement of satisfactory quality, fitness for a particular purpose, non-infringement, compatibility, security and accuracy of the Content.</li>
 <li>While reasonable professional care has been taken in developing the Content (excluding any Third Party Content (as defined in clause 8.1) and any Contributions (as defined in clause 7.1)), we make no warranties concerning the correctness or completeness of the Content. Although we make reasonable efforts to update the Content, we make no representations, warranties or guarantees, whether express or implied, that the Content is up to date.</li>
 </ol>
@@ -136,7 +137,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 </ol>
 </li>
 
-<li>In respect of the Learning Hub, when you submit a Contribution to the Platform, you must select the appropriate licence in accordance with the guidance provided at&nbsp;<a class="policy-word-break" title="admin" href="https://support.learninghub.nhs.uk/support/solutions/articles/80000986606-which-licence-should-i-select-when-contributing-a-resource-to-the-learning-hub-."> https://support.learninghub.nhs.uk/support/solutions/articles/80000986606-which-licence-should-i-select-when-contributing-a-resource-to-the-learning-hub-</a>&nbsp.     Whichever   licence   you select, you grant the following rights in relation to that Contribution:
+<li>In respect of the Learning Hub, when you submit a Contribution to the Platform, you must select the appropriate licence in accordance with the guidance provided at&nbsp;<a class="policy-word-break" title="admin" href="https://support.learninghub.nhs.uk/support/solutions/articles/80000986606-which-licence-should-i-select-when-contributing-a-resource-to-the-learning-hub-"> https://support.learninghub.nhs.uk/support/solutions/articles/80000986606-which-licence-should-i-select-when-contributing-a-resource-to-the-learning-hub-.</a>     Whichever   licence   you select, you grant the following rights in relation to that Contribution:
 <ol class="nhsuk-u-padding-top-2">
 <li>a  worldwide,  non-exclusive,  royalty-free,  transferable  licence  to  us  to  use  and display that Contribution on the Platform, to expire when you delete the Contribution from the Platform; and</li>
 <li>a worldwide, non-exclusive, royalty-free, perpetual, transferable licence for users of the  Platform  to  use  the  Contribution  in  accordance  with  the  functionality  of  the Platform.</li>
@@ -181,7 +182,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 
 <li class="h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-padding-bottom-2 nhsuk-u-margin-0">ACCESS VIA CENTRE (DLS ONLY)
 <ol class="h4 nhsuk-body-m nhsuk-u-padding-top-4 nhsuk-u-padding-left-0">
-<li>Where you are a Centre that provides access for your staff (Delegates) to a Platform, then:
+<li>Where you are a Centre that provides access for your staff (<strong>Delegates</strong>) to a Platform, then:
 <ol class="nhsuk-u-padding-top-2">
 <li> you must:
 <ol class="nhsuk-u-padding-top-2">
@@ -205,7 +206,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 <li>a request for change needs to be submitted and considered.</li>
 </ol>
 </li>
-<li>If a Platform is decommissioned and we hold any Content which was created by a Centre and/or any data which relates to elearning completed by the Delegates of a specific Centre (Data), we will provide the Data to that Centre. If you require the Data to be provided in a specific format, you  must  discuss  this  with  us  to  determine  (acting  reasonably)  whether  this  is  feasible.  The Data will be transferred securely and with send and receive receipts. </li>
+<li>If a Platform is decommissioned and we hold any Content which was created by a Centre and/or any data which relates to elearning completed by the Delegates of a specific Centre (<strong>Data</strong>), we will provide the Data to that Centre. If you require the Data to be provided in a specific format, you  must  discuss  this  with  us  to  determine  (acting  reasonably)  whether  this  is  feasible.  The Data will be transferred securely and with send and receive receipts. </li>
 <li>Where you are a Delegate, in the event that your Centre ceases to have access to a Platform, your access to a Platform may become limited or cease. </li>
 </ol>
 </li>
