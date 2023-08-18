@@ -797,7 +797,8 @@
                         UPDATE Centres SET
                     ServerSpaceBytes = @serverSpaceBytesInc,
                     ContractTypeID = @contractTypeID,
-                    ContractReviewDate =@contractReviewDate
+                    ContractReviewDate =@contractReviewDate,
+                   CandidateByteLimit=@delegateUploadSpace
                     WHERE CentreID = @centreId
 
                         COMMIT TRANSACTION
