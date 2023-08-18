@@ -901,6 +901,50 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 16/08/2023 12:17:34 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCompletedCoursesForCandidateTweak {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCompletedCoursesForCandidateTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 16/08/2023 12:17:34 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCompletedCoursesForCandidateTweak_down {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCompletedCoursesForCandidateTweak_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 26/06/2023 08:04:53 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -1139,10 +1183,12 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h1 class=&quot;&quot;nhsuk-u-text-align-centre nhsuk-heading-xl&quot;&quot; &gt;PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).&lt;/1&gt;
-        ///&lt;section&gt;
-        ///&lt;h2 class=&quot;&quot;&quot;&quot;nhsuk-heading-l&quot;&quot;&quot;&quot;&gt;1.    THE PLATFORM&lt;/h2&gt;
-        ///&lt;p class=&quot;&quot;&quot;&quot;policy-text-justify&quot;&quot;&quot;&quot;&gt;1.1 These terms of use &lt;strong&gt;(Terms)&lt;/strong&gt; set out the rules for using each of [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to  &lt;h1 class=&quot;nhsuk-u-text-align-centre nhsuk-heading-xl&quot;&gt;TERMS AND CONDITIONS&lt;/h1&gt;
+        ///&lt;h1 class=&quot;nhsuk-u-text-align-centre nhsuk-heading-xl&quot;&gt;PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).&lt;/h1&gt;
+        ///&lt;ol class=&quot;custom-ordered-list nhsuk-u-padding-left-0&quot;&gt;
+        ///
+        ///
+        ///&lt;li class=&quot;h2 nhsuk-heading-l nhsuk-u-font-weigh [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TermsAndConditions {
             get {

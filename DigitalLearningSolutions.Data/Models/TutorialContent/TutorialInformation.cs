@@ -74,7 +74,7 @@
             Id = id;
             Name = name;
             SectionName = sectionName;
-            CourseTitle = $"{applicationName} - {customisationName}";
+            CourseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             CourseDescription = applicationInfo;
             Status = status;
             TimeSpent = timeSpent;

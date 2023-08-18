@@ -199,9 +199,10 @@
                     </dd>
                 </div>
             </dl>
-            <button class="nhsuk-button view-delegate-button" type="submit">
+            <a class="nhsuk-button view-delegate-button" role="button"
+               asp-controller="Centres" asp-action="EditContractInfo" asp-route-centreId="@Model.CentreId">
                 Edit contract info
-            </button>
+            </a>
 
             <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2" role="button"
                asp-controller="Centres"

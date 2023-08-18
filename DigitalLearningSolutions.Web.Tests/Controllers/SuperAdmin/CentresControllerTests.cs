@@ -1,5 +1,6 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.Centres;
+using DigitalLearningSolutions.Data.Tests.TestHelpers;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -7,12 +8,15 @@ using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
 using FakeItEasy;
 using FluentAssertions;
 using FluentAssertions.AspNetCore.Mvc;
+using FluentAssertions.Execution;
 using NUnit.Framework;
+using System;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 {
     public class CentresControllerTests
     {
+        private const int CenterId = 374;
         private readonly ICentresDataService centresDataService = A.Fake<ICentresDataService>();
         private readonly ICentresService centresService = A.Fake<ICentresService>();
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
@@ -199,6 +203,73 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 )
                 .MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre").WithRouteValue("centreId", model.CentreId);
+        }
+        [Test]
+        public void Get_with_centreId_shows_EditContractInfo_page()
+        {
+            // Given
+            const int centreId = 374;
+            const string centreName = "##HEE Demo Centre##";
+            const string contractType = "Premium";
+            const int contractTypeID = 1;
+            const long serverSpaceBytesInc = 5368709120;
+            const long delegateUploadSpace = 52428800;
+            DateTime contractReviewDate = DateTime.Parse("2023-08-28 16:28:55.247");
+            const int contractReviewDay = 28;
+            const int contractReviewMonth = 8;
+            const int contractReviewYear = 2023;
+            A.CallTo(() => centresDataService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
+
+            // When
+            var result = controller.EditContractInfo(centreId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().CentreId.Should().Be(centreId);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().CentreName.Should().Be(centreName);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractType.Should().Be(contractType);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractTypeID.Should().Be(contractTypeID);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ServerSpaceBytesInc.Should().Be(serverSpaceBytesInc);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().DelegateUploadSpace.Should().Be(delegateUploadSpace);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractReviewDate.Should().Be(contractReviewDate);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractReviewDay.Should().Be(contractReviewDay);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractReviewMonth.Should().Be(contractReviewMonth);
+                result.Should().BeViewResult().ModelAs<ContractTypeViewModel>().ContractReviewYear.Should().Be(contractReviewYear);
+            }
+        }
+
+        [Test]
+        public void Edit_ContractInfo_redirects_with_successful_save()
+        {
+            // Given
+            var model = new ContractTypeViewModel
+            {
+                CentreId = 374,
+                CentreName = "##HEE Demo Centre##",
+                ContractType = "Basic",
+                ContractTypeID = 1,
+                ServerSpaceBytesInc = 5368709120,
+                DelegateUploadSpace = 52428800,
+                ContractReviewDate = DateTime.Parse("2023-08-28 16:28:55.247"),
+                ContractReviewDay = 28,
+                ContractReviewMonth = 8,
+                ContractReviewYear = 2023
+            };
+            DateTime date = new DateTime(model.ContractReviewYear.Value, model.ContractReviewMonth.Value, model.ContractReviewDay.Value, 0, 0, 0);
+
+            // When
+            var result = controller.EditContractInfo(model);
+
+            // Then
+
+            A.CallTo(() => centresDataService.UpdateContractTypeandCenter(model.CentreId,
+               model.ContractTypeID,
+               model.DelegateUploadSpace,
+               model.ServerSpaceBytesInc,
+               date
+               )).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
         }
     }
 }

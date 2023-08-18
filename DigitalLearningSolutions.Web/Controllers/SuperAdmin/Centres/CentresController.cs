@@ -401,5 +401,115 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
         }
+
+        [Route("SuperAdmin/Centres/AddCentre")]
+        public IActionResult AddCentre()
+        {
+            var regions = regionDataService.GetRegionsAlphabetical().ToList();
+            var centreTypes = this.centresDataService.GetCentreTypes().ToList();
+
+            var addCentreSuperAdminViewModel = new AddCentreSuperAdminViewModel();
+            addCentreSuperAdminViewModel.IpPrefix = "194.176.105";
+
+            addCentreSuperAdminViewModel.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions);
+            addCentreSuperAdminViewModel.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes);
+
+            return View(addCentreSuperAdminViewModel);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Centres/AddCentre")]
+        public IActionResult AddCentre(AddCentreSuperAdminViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var centreTypes = this.centresDataService.GetCentreTypes().ToList();
+                var regions = regionDataService.GetRegionsAlphabetical().ToList();
+                model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions, model.RegionId);
+                model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes, model.CentreTypeId);
+                return View(model);
+            }
+
+            int insertedID = centresDataService.AddCentreForSuperAdmin(
+                model.CentreName,
+                model.ContactFirstName,
+                model.ContactLastName,
+                model.ContactEmail,
+                model.ContactPhone,
+                model.CentreTypeId,
+                model.RegionId,
+                model.RegistrationEmail,
+                model.IpPrefix,
+                model.ShowOnMap,
+                model.AddITSPcourses
+            );
+
+            return RedirectToAction("ManageCentre", "Centres", new { centreId = insertedID });
+        }
+
+        [HttpGet]
+        [NoCaching]
+        [Route("SuperAdmin/Centres/{centreId=0:int}/EditContractInfo")]
+        public IActionResult EditContractInfo(int centreId = 0)
+        {
+            ContractInfo centre = this.centresDataService.GetContractInfo(centreId);
+            var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
+            var serverspace = this.contractTypesDataService.GetServerspace();
+            var delegatespace = this.contractTypesDataService.Getdelegatespace();
+
+            ViewBag.Serverspace = SelectListHelper.MapLongOptionsToSelectListItems(
+                serverspace, centre.ServerSpaceBytesInc
+            );
+            ViewBag.Delegatespace = SelectListHelper.MapLongOptionsToSelectListItems(
+                delegatespace, centre.DelegateUploadSpace
+            );
+            ViewBag.ContractTypes = SelectListHelper.MapOptionsToSelectListItems(
+                contractTypes, centre.ContractTypeID
+            );
+            var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
+                centre.ContractTypeID, centre.ContractType,
+                centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
+                centre.ContractReviewDate, centre.ContractReviewDate.Value.Day,
+                centre.ContractReviewDate.Value.Month, centre.ContractReviewDate.Value.Year);
+            return View(model);
+        }
+
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/EditContractInfo")]
+        [HttpPost]
+        public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                ContractInfo centre = this.centresDataService.GetContractInfo(contractTypeViewModel.CentreId);
+                var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
+                var serverspace = this.contractTypesDataService.GetServerspace();
+                var delegatespace = this.contractTypesDataService.Getdelegatespace();
+
+                ViewBag.Serverspace = SelectListHelper.MapLongOptionsToSelectListItems(
+                    serverspace, centre.ServerSpaceBytesInc
+                );
+                ViewBag.Delegatespace = SelectListHelper.MapLongOptionsToSelectListItems(
+                    delegatespace, centre.DelegateUploadSpace
+                );
+                ViewBag.ContractTypes = SelectListHelper.MapOptionsToSelectListItems(
+                    contractTypes, centre.ContractTypeID
+                );
+                var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
+                centre.ContractTypeID, centre.ContractType,
+                centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
+                centre.ContractReviewDate, centre.ContractReviewDate.Value.Day,
+                centre.ContractReviewDate.Value.Month, centre.ContractReviewDate.Value.Year);
+                return View(model);
+            }
+            DateTime date = new DateTime(contractTypeViewModel.ContractReviewYear.Value, contractTypeViewModel.ContractReviewMonth.Value, contractTypeViewModel.ContractReviewDay.Value, 0, 0, 0);
+            this.centresDataService.UpdateContractTypeandCenter(contractTypeViewModel.CentreId,
+               contractTypeViewModel.ContractTypeID,
+               contractTypeViewModel.DelegateUploadSpace,
+               contractTypeViewModel.ServerSpaceBytesInc,
+               date
+               );
+            return RedirectToAction("ManageCentre", new { centreId = contractTypeViewModel.CentreId });
+        }
     }
 }

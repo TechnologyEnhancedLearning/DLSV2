@@ -1,0 +1,81 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@model ContractTypeViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Edit Contract Info" : "Edit Contract Info";
+ 
+    var hintTextLines = new List<string> {
+    $"For example, {@Model.ContractReviewDay} {@Model.ContractReviewMonth} {@Model.ContractReviewYear}. Leave the boxes blank to clear the contract review date.",
+    " ", };
+}
+
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new string[] { nameof(Model.CentreName),nameof(Model.ContractType)})" />
+}
+ 
+
+<div id="form-group">
+    <h1 class="nhsuk-heading-xl">Edit contract info for @Model.CentreName </h1>
+    <form method="post">
+
+        @Html.HiddenFor(x=>x.CentreId)
+        @Html.HiddenFor(x=>x.CentreName)
+        @Html.HiddenFor(x=>x.ContractType)
+
+        <div class="nhsuk-grid-row divider">
+            <div class="nhsuk-grid-column-full">
+                <vc:select-list asp-for="@nameof(Model.ContractTypeID)"
+                                label="Contract type"
+                                value="@Model.ContractType.ToString()"
+                                hint-text=""
+                                required="true"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option=""
+                                select-list-options="@ViewBag.ContractTypes" />
+
+                <vc:select-list asp-for="@nameof(Model.ServerSpaceBytesInc)"
+                                label="Server space"
+                                value="@Model.ServerSpaceBytesInc.ToString()"
+                                hint-text=""
+                                required="true"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option=""
+                                select-list-options="@ViewBag.Serverspace" />
+
+                <vc:select-list asp-for="@nameof(Model.DelegateUploadSpace)"
+                                label=" Per delegate upload space"
+                                value="@Model.DelegateUploadSpace"
+                                hint-text=""
+                                required="true"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option=""
+                                select-list-options="@ViewBag.Delegatespace" />
+                                  <vc:date-input id="complete-by-date"
+                               label="Contract review date"
+                               day-id="ContractReviewDay"
+                               month-id="ContractReviewMonth"
+                               year-id="ContractReviewYear"
+                               css-class="nhsuk-u-margin-bottom-2"
+                               hint-text-lines="@hintTextLines" />
+               
+
+            </div>
+        </div>
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+
+    </form>
+    
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link"
+               asp-controller="Centres" asp-action="ManageCentre" asp-route-centreId="@Model.CentreId">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+  
+</div>

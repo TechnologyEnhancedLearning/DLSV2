@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.DbModels;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Transactions;
 
     public interface ICentresDataService
     {
@@ -63,6 +65,20 @@
             byte[]? centreLogo
         );
 
+        public int AddCentreForSuperAdmin(
+            string centreName,
+            string? contactFirstName,
+            string? contactLastName,
+            string? contactEmail,
+            string? contactPhone,
+            int? centreTypeId,
+            int? regionId,
+            string? registrationEmail,
+            string? ipPrefix,
+            bool showOnMap,
+            bool AddITSPcourses
+        );
+
         public void UpdateCentreDetailsForSuperAdmin(
             int centreId,
             string centreName,
@@ -85,6 +101,14 @@
         void DeactivateCentre(int centreId);
         void ReactivateCentre(int centreId);
         Centre? GetCentreManagerDetailsByCentreId(int centreId);
+        ContractInfo? GetContractInfo(int centreId);
+        bool UpdateContractTypeandCenter(
+       int centreId,
+       int contractTypeID,
+       long delegateUploadSpace,
+      long serverSpaceBytesInc,
+      DateTime? contractReviewDate
+   );
     }
 
     public class CentresDataService : ICentresDataService
@@ -223,7 +247,7 @@
                             c.ServerSpaceBytes,
                             c.CentreTypeID,
                             ctp.CentreType,
-                            c.ShowOnMap
+                            c.pwEmail as RegistrationEmail
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
@@ -448,6 +472,84 @@
             );
         }
 
+        public int AddCentreForSuperAdmin(
+            string centreName,
+            string? contactFirstName,
+            string? contactLastName,
+            string? contactEmail,
+            string? contactPhone,
+            int? centreTypeId,
+            int? regionId,
+            string? registrationEmail,
+            string? ipPrefix,
+            bool showOnMap,
+            bool AddITSPcourses
+        )
+        {
+            int newCentreId;
+            connection.EnsureOpen();
+            using var transaction = connection.BeginTransaction();
+            {
+                newCentreId = connection.QuerySingle<int>(
+                @"Insert INTO Centres 
+                    (CentreName,
+                    ContactForename,
+                    ContactSurname,
+                    ContactEmail,
+                    ContactTelephone,
+                    CentreTypeID,
+                    RegionID,
+                    pwEmail,
+                    IPPrefix,
+                    ShowOnMap
+                    )
+                    OUTPUT Inserted.CentreID
+                 Values
+                    (
+                    @centreName,
+                    @contactFirstName,
+                    @contactLastName,
+                    @contactEmail,
+                    @contactPhone,
+                    @centreTypeId,
+                    @regionId,
+                    @registrationEmail,
+                    @ipPrefix,
+                    @showOnMap
+                    )",
+                new
+                {
+                    centreName,
+                    contactFirstName,
+                    contactLastName,
+                    contactEmail,
+                    contactPhone,
+                    centreTypeId,
+                    regionId,
+                    registrationEmail,
+                    ipPrefix,
+                    showOnMap
+                },
+                transaction
+            );
+                if (AddITSPcourses)
+                {
+                    connection.Execute(
+                        @"INSERT INTO [CentreApplications] ([CentreID], [ApplicationID])
+                  SELECT @newCentreId, ApplicationID
+                  FROM  Applications
+                  WHERE (Debug = 0) AND (ArchivedDate IS NULL) AND (ASPMenu = 1) AND (CoreContent = 1) AND (BrandID = 1) AND (LaunchedAssess = 1)",
+                        new { newCentreId },
+                        transaction
+                    );
+                }
+
+                transaction.Commit();
+                return newCentreId;
+            }
+            
+        }
+
         public (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId)
         {
             var info = connection.QueryFirstOrDefault<(string, string, string)>(
@@ -653,6 +755,76 @@
                     roleLimitTrainers,
                 }
             );
+        }
+        public ContractInfo? GetContractInfo(int centreId)
+        {
+            var centre = connection.QueryFirstOrDefault<ContractInfo>(
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            ct.ContractTypeID,
+                            ct.ContractType,
+                            ct.ServerSpaceBytesInc,
+                            ct.DelegateUploadSpace,
+                             c.ContractReviewDate
+					    FROM Centres AS c
+                        INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
+            if (centre == null)
+            {
+                logger.LogWarning($"No centre found for centre id {centreId}");
+                return null;
+            }
+            if (centre.ContractReviewDate == null)
+            {
+                centre.ContractReviewDate = DateTime.Now;
+                return centre;
+            }
+            return centre;
+        }
+        public bool UpdateContractTypeandCenter(
+           int centreId,
+           int contractTypeID,
+           long delegateUploadSpace,
+          long serverSpaceBytesInc,
+          DateTime? contractReviewDate
+       )
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @" BEGIN TRY
+                    BEGIN TRANSACTION
+                        UPDATE Centres SET
+                    ServerSpaceBytes = @serverSpaceBytesInc,
+                    ContractTypeID = @contractTypeID,
+                    ContractReviewDate =@contractReviewDate,
+                   CandidateByteLimit=@delegateUploadSpace
+                    WHERE CentreID = @centreId
+
+                        COMMIT TRANSACTION
+                END TRY
+                BEGIN CATCH
+                    ROLLBACK TRANSACTION
+                END CATCH",
+                new
+                {
+                    contractTypeID,
+                    delegateUploadSpace,
+                    serverSpaceBytesInc,
+                    contractReviewDate,
+                    centreId
+                }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Updating ContraType Information failed. centreId: {centreId} contractTypeID: {contractTypeID} delegateUploadSpace:{delegateUploadSpace}" +
+                    $"serverSpaceBytesInc {serverSpaceBytesInc}" +
+                    $"contractReviewDate: {contractReviewDate}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }

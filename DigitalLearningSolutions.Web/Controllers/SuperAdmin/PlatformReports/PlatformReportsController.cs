@@ -62,6 +62,5 @@
                 p => new SelfAssessmentActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
             );
         }
-
     }
 }
