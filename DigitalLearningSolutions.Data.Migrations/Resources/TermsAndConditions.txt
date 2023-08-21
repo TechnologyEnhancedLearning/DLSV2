@@ -13,7 +13,7 @@
 </ol>
 </li>
 <li>
-Each Platform is a collection of online learning (<strong>elearning</strong>)and educational resources (<strong>Content</strong>) which is::
+Each Platform is a collection of online learning (<strong>elearning</strong>)and educational resources (<strong>Content</strong>) which is:
 <ol class="nhsuk-u-padding-top-2">
 <li>in respect of elfh Hub: provided free of charge as part of our elearning for healthcare programme to support patient care by providing elearning to educate and train the health and social care workforce.   The Content is developed by us in partnership with NHS, third sector and professional bodies;</li>
 <li>in respect of DLS: provided to aid registered health and social care organisations (<strong>Centres</strong>)  with  the  training,  development  and  assessment  of  competence  of  their staff.  The Platform continues to support existing  locally-developed learning;</li>
@@ -67,7 +67,7 @@ These Terms incorporate the following which also apply to your use of any Platfo
 <li>our  Acceptable  Use  Policy  &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/v2/LearningSolutions/AcceptableUsePolicy">ACCEPTABLE  USE  POLICY </a>  with which you agree to comply with at all times.</li>
 </ol>
 </li>
-<li>We may amend these Terms from time to time without notice. Any change will be effective in respect of a Platform immediately upon the revised Terms being posted on that Platform. Every time you wish to use a Platform, please check these Terms to ensure you understand the Terms that apply at that time. You must stop using a Platform and deactivate your Account (as defined in clause 4) if you do not agree to such change. Continued use of a Platform after a change has been made is your acceptance of the change.  These Terms were most recently updated on '+convert(varchar, getdate(), 6)+' .s </li>
+<li>We may amend these Terms from time to time without notice. Any change will be effective in respect of a Platform immediately upon the revised Terms being posted on that Platform. Every time you wish to use a Platform, please check these Terms to ensure you understand the Terms that apply at that time. You must stop using a Platform and deactivate your Account (as defined in clause 4) if you do not agree to such change. Continued use of a Platform after a change has been made is your acceptance of the change.  These Terms were most recently updated on '+convert(varchar, getdate(), 6)+' </li>
 </ol>
 </li>
 
