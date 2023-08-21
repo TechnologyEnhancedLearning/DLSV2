@@ -8,7 +8,7 @@ namespace DigitalLearningSolutions.Data.Migrations
     {
         public override void Up()
         {
-            var TermsAndConditions = Properties.Resources.TermsAndConditions;
+            var TermsAndConditions = Properties.Resources.TermsConditions;
 
             Execute.Sql(
                 @"UPDATE Config SET  UpdatedDate =GETDATE() ,ConfigText =N'" + TermsAndConditions + "' " +
