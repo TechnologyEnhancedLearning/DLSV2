@@ -3,7 +3,7 @@ using Microsoft.VisualBasic;
 
 namespace DigitalLearningSolutions.Data.Migrations
 {
-    [Migration(202308211452)]
+    [Migration(202308221452)]
     public class UpdateTermsAndConditions : Migration
     {
         public override void Up()
