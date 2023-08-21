@@ -1183,13 +1183,13 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///   &lt;h1 class=&quot;nhsuk-u-text-align-centre nhsuk-heading-xl&quot;&gt;TERMS AND CONDITIONS&lt;/h1&gt;
-        ///&lt;h1 class=&quot;nhsuk-u-text-align-centre nhsuk-heading-xl&quot;&gt;PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).&lt;/h1&gt;
+        ///   Looks up a localized string similar to  &lt;h1 class=&quot;policy-text-center&quot;&gt;TERMS AND CONDITIONS&lt;/h1&gt;
+        ///&lt;h1 class=&quot;policy-text-center&quot;&gt;PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).&lt;/h1&gt;
         ///&lt;ol class=&quot;custom-ordered-list nhsuk-u-padding-left-0&quot;&gt;
         ///
         ///
-        ///&lt;li class=&quot;h2 nhsuk-heading-l nhsuk-u-font-w [rest of string was truncated]&quot;;.
+        ///&lt;li class=&quot;h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-margin-0&quot;&gt;THE PLATFORM
+        ///&lt;ol class [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TermsAndConditions {
             get {

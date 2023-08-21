@@ -1,6 +1,5 @@
-
-   <h1 class="nhsuk-u-text-align-centre nhsuk-heading-xl">TERMS AND CONDITIONS</h1>
-<h1 class="nhsuk-u-text-align-centre nhsuk-heading-xl">PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).</h1>
+ <h1 class="policy-text-center">TERMS AND CONDITIONS</h1>
+<h1 class="policy-text-center">PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).</h1>
 <ol class="custom-ordered-list nhsuk-u-padding-left-0">
 
 
@@ -64,8 +63,8 @@ If you find Content or links that you think should not be on a Platform or have 
 <li> 
 These Terms incorporate the following which also apply to your use of any Platform:
 <ol class="nhsuk-u-padding-top-2">
-<li>our Privacy Policy &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/dls-uar-uat/LearningSolutions/PrivacyNotice">PRIVACY POLICY</a> (see further under clause 12); and</li>
-<li>our  Acceptable  Use  Policy  &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/dls-uar-uat/LearningSolutions/AcceptableUsePolicy">ACCEPTABLE  USE  POLICY </a>  with which you agree to comply with at all times.</li>
+<li>our Privacy Policy &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/v2/LearningSolutions/PrivacyNotice">PRIVACY POLICY</a> (see further under clause 12); and</li>
+<li>our  Acceptable  Use  Policy  &nbsp;<a class="policy-word-break" href="https://www.dls.nhs.uk/v2/LearningSolutions/AcceptableUsePolicy">ACCEPTABLE  USE  POLICY </a>  with which you agree to comply with at all times.</li>
 </ol>
 </li>
 <li>We may amend these Terms from time to time without notice. Any change will be effective in respect of a Platform immediately upon the revised Terms being posted on that Platform. Every time you wish to use a Platform, please check these Terms to ensure you understand the Terms that apply at that time. You must stop using a Platform and deactivate your Account (as defined in clause 4) if you do not agree to such change. Continued use of a Platform after a change has been made is your acceptance of the change.  These Terms were most recently updated on '+convert(varchar, getdate(), 6)+' .s </li>
