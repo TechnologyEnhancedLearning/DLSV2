@@ -418,7 +418,7 @@ namespace DigitalLearningSolutions.Web
                 }
             );
 
-            //app.UseExceptionHandler("/LearningSolutions/Error");
+            app.UseExceptionHandler("/LearningSolutions/Error");
             app.UseStatusCodePagesWithReExecute("/LearningSolutions/StatusCode/{0}");
             app.UseStaticFiles();
             app.UseSerilogRequestLogging();
