@@ -1,7 +1,11 @@
 ﻿
 namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
 {
+    using DigitalLearningSolutions.Web.Helpers;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using System;
+    using System.Collections.Generic;
+
     public class ContractTypeViewModel
     {
         public ContractTypeViewModel()
@@ -36,7 +40,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
         public int? ContractReviewDay { get; set; }
         public int? ContractReviewMonth { get; set; }
         public int? ContractReviewYear { get; set; }
-
+        public OldDateValidator.ValidationResult? CompleteByValidationResult { get; set; }
+        public IEnumerable<SelectListItem> ContractTypeOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> ServerSpaceOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> PerDelegateUploadSpaceOptions { get; set; } = new List<SelectListItem>();
 
     }
 }

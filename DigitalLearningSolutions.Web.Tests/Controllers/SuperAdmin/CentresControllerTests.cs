@@ -221,7 +221,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             A.CallTo(() => centresDataService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
 
             // When
-            var result = controller.EditContractInfo(centreId);
+            var result = controller.EditContractInfo(centreId,28,8,2023);
 
             // Then
             using (new AssertionScope())
@@ -259,7 +259,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             DateTime date = new DateTime(model.ContractReviewYear.Value, model.ContractReviewMonth.Value, model.ContractReviewDay.Value, 0, 0, 0);
 
             // When
-            var result = controller.EditContractInfo(model);
+            var result = controller.EditContractInfo(model,28,8,2023);
 
             // Then
 

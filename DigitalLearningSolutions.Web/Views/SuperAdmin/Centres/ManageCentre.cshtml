@@ -195,7 +195,7 @@
                         <b>Contract review date</b>
                     </dt>
                     <dd class="nhsuk-summary-list__value">
-                        @Model.ContractReviewDate
+                        @string.Format("{0:dd/MM/yyyy}",@Model.ContractReviewDate)
                     </dd>
                 </div>
             </dl>

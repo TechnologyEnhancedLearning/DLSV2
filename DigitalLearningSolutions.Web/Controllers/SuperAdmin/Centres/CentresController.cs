@@ -450,59 +450,76 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpGet]
         [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditContractInfo")]
-        public IActionResult EditContractInfo(int centreId = 0)
+        public IActionResult EditContractInfo(int centreId , int? day, int? month, int? year)
         {
             ContractInfo centre = this.centresDataService.GetContractInfo(centreId);
             var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
             var serverspace = this.contractTypesDataService.GetServerspace();
             var delegatespace = this.contractTypesDataService.Getdelegatespace();
 
-            ViewBag.Serverspace = SelectListHelper.MapLongOptionsToSelectListItems(
+            var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
+            centre.ContractTypeID, centre.ContractType,
+                centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
+                centre.ContractReviewDate,day,month,year);
+            model.ServerSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
                 serverspace, centre.ServerSpaceBytesInc
             );
-            ViewBag.Delegatespace = SelectListHelper.MapLongOptionsToSelectListItems(
+            model.PerDelegateUploadSpaceOptions= SelectListHelper.MapLongOptionsToSelectListItems(
                 delegatespace, centre.DelegateUploadSpace
             );
-            ViewBag.ContractTypes = SelectListHelper.MapOptionsToSelectListItems(
+            model.ContractTypeOptions= SelectListHelper.MapOptionsToSelectListItems(
                 contractTypes, centre.ContractTypeID
             );
-            var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
-                centre.ContractTypeID, centre.ContractType,
-                centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
-                centre.ContractReviewDate, centre.ContractReviewDate.Value.Day,
-                centre.ContractReviewDate.Value.Month, centre.ContractReviewDate.Value.Year);
+            if (day != null && month != null && year != null)
+            {
+                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
+            }
             return View(model);
         }
 
 
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditContractInfo")]
         [HttpPost]
-        public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel)
+        public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel,int? day,int? month,int? year)
         {
-            if (!ModelState.IsValid)
+            if (day != 0 | month != 0 | year != 0)
+            {
+                var validationResult = OldDateValidator.ValidateDate(day??0, month??0, year??0);
+                if (!validationResult.DateValid)
+                {
+                    if (day == null) day = 0;
+                    if(month == null) month = 0;
+                    if (year == null) year= 0;
+                    return RedirectToAction("EditContractInfo", new { contractTypeViewModel.CentreId, day, month, year });
+                }
+            }
+                if (!ModelState.IsValid)
             {
                 ContractInfo centre = this.centresDataService.GetContractInfo(contractTypeViewModel.CentreId);
                 var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
                 var serverspace = this.contractTypesDataService.GetServerspace();
                 var delegatespace = this.contractTypesDataService.Getdelegatespace();
 
-                ViewBag.Serverspace = SelectListHelper.MapLongOptionsToSelectListItems(
-                    serverspace, centre.ServerSpaceBytesInc
-                );
-                ViewBag.Delegatespace = SelectListHelper.MapLongOptionsToSelectListItems(
-                    delegatespace, centre.DelegateUploadSpace
-                );
-                ViewBag.ContractTypes = SelectListHelper.MapOptionsToSelectListItems(
-                    contractTypes, centre.ContractTypeID
-                );
                 var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
                 centre.ContractTypeID, centre.ContractType,
                 centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
-                centre.ContractReviewDate, centre.ContractReviewDate.Value.Day,
-                centre.ContractReviewDate.Value.Month, centre.ContractReviewDate.Value.Year);
+                centre.ContractReviewDate, day,month,year);
+                model.ServerSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
+               serverspace, model.ServerSpaceBytesInc
+           );
+                model.PerDelegateUploadSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
+                    delegatespace, model.DelegateUploadSpace
+                );
+                model.ContractTypeOptions = SelectListHelper.MapOptionsToSelectListItems(
+                    contractTypes, model.ContractTypeID
+                );
                 return View(model);
             }
-            DateTime date = new DateTime(contractTypeViewModel.ContractReviewYear.Value, contractTypeViewModel.ContractReviewMonth.Value, contractTypeViewModel.ContractReviewDay.Value, 0, 0, 0);
+            DateTime? date = null;
+            if(day!=null&&month!=null&year!=null)
+            {
+                date = new DateTime(year ?? 0, month ?? 0, day ?? 0);
+            }
             this.centresDataService.UpdateContractTypeandCenter(contractTypeViewModel.CentreId,
                contractTypeViewModel.ContractTypeID,
                contractTypeViewModel.DelegateUploadSpace,
