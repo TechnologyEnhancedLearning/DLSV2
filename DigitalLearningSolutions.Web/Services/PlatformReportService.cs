@@ -123,7 +123,8 @@
                 filterData.CourseCategoryId,
                 filterData.BrandId,
                 filterData.RegionId,
-                filterData.CustomisationId
+                filterData.ApplicationId,
+                filterData.CoreContent
             ).OrderBy(x => x.LogDate);
             var dataByPeriod = GroupCourseActivityData(activityData, filterData.ReportInterval);
             var dateSlots = DateHelper.GetPeriodsBetweenDates(

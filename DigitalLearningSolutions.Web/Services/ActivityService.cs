@@ -103,7 +103,7 @@
                             filterData.StartDate,
                             filterData.EndDate ?? clockUtility.UtcNow
                         ),
-                        p.Registrations,
+                        p.Enrolments,
                         p.Completions,
                         p.Evaluations
                     )
@@ -114,7 +114,7 @@
                 var first = activityData.First();
                 var firstRow = new WorkbookRow(
                     first.DateInformation.GetDateRangeLabel(DateHelper.StandardDateFormat, filterData.StartDate, true),
-                    first.Registrations,
+                    first.Enrolments,
                     first.Completions,
                     first.Evaluations
                 );
@@ -126,7 +126,7 @@
                         filterData.EndDate ?? clockUtility.UtcNow,
                         true
                     ),
-                    last.Registrations,
+                    last.Enrolments,
                     last.Completions,
                     last.Evaluations
                 );
@@ -134,7 +134,7 @@
                 var middleRows = activityData.Skip(1).SkipLast(1).Select(
                     p => new WorkbookRow(
                         p.DateInformation.GetDateLabel(DateHelper.StandardDateFormat),
-                        p.Registrations,
+                        p.Enrolments,
                         p.Completions,
                         p.Evaluations
                     )
@@ -222,16 +222,16 @@
 
         private class WorkbookRow
         {
-            public WorkbookRow(string period, int registrations, int completions, int evaluations)
+            public WorkbookRow(string period, int enrolments, int completions, int evaluations)
             {
                 Period = period;
-                Registrations = registrations;
+                Enrolments = enrolments;
                 Completions = completions;
                 Evaluations = evaluations;
             }
 
             public string Period { get; }
-            public int Registrations { get; }
+            public int Enrolments { get; }
             public int Completions { get; }
             public int Evaluations { get; }
         }

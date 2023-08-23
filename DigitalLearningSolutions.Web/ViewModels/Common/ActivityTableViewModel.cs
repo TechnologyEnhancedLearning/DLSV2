@@ -57,7 +57,7 @@
             Period = periodOfActivity.DateInformation.GetDateLabel(format);
             Completions = periodOfActivity.Completions;
             Evaluations = periodOfActivity.Evaluations;
-            Registrations = periodOfActivity.Registrations;
+            Enrolments = periodOfActivity.Enrolments;
         }
 
         public ActivityDataRowModel(
@@ -70,7 +70,7 @@
             Period = periodOfActivity.DateInformation.GetDateRangeLabel(format, boundaryDate, startRangeFromTerminator);
             Completions = periodOfActivity.Completions;
             Evaluations = periodOfActivity.Evaluations;
-            Registrations = periodOfActivity.Registrations;
+            Enrolments = periodOfActivity.Enrolments;
         }
 
         public ActivityDataRowModel(
@@ -83,13 +83,13 @@
             Period = DateInformation.GetDateRangeLabel(format, startDate, endDate);
             Completions = periodOfActivity.Completions;
             Evaluations = periodOfActivity.Evaluations;
-            Registrations = periodOfActivity.Registrations;
+            Enrolments = periodOfActivity.Enrolments;
         }
 
         public string Period { get; set; }
         public int Completions { get; set; }
         public int Evaluations { get; set; }
-        public int Registrations { get; set; }
+        public int Enrolments { get; set; }
     }
 
     public class ReportsFilterModel

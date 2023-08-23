@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
+﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Helpers;
@@ -7,12 +7,11 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.DbModels;
 
-    public class SelfAssessmentActivityTableViewModel
+    public class CourseActivityTableViewModel
     {
-        public SelfAssessmentActivityTableViewModel(
-            IEnumerable<SelfAssessmentActivityInPeriod> activity,
+        public CourseActivityTableViewModel(
+            IEnumerable<PeriodOfActivity> activity,
             DateTime startDate,
             DateTime endDate
             )
@@ -22,29 +21,29 @@
             if (activity.Count() <= 1)
             {
                 Rows = activity.Select(
-                     p => new SelfAssessmentActivityDataRowModel(p, DateHelper.StandardDateFormat, startDate, endDate)
+                     p => new CourseActivityDataRowModel(p, DateHelper.StandardDateFormat, startDate, endDate)
                  );
             }
             else
             {
                 var first = activity.First();
                 var firstRow = first.DateInformation.Interval == ReportInterval.Days
-                    ? new SelfAssessmentActivityDataRowModel(
+                    ? new CourseActivityDataRowModel(
                         first,
                         DateHelper.GetFormatStringForDateInTable(first.DateInformation.Interval)
                     )
-                    : new SelfAssessmentActivityDataRowModel(first, DateHelper.StandardDateFormat, startDate, true);
+                    : new CourseActivityDataRowModel(first, DateHelper.StandardDateFormat, startDate, true);
 
                 var last = activity.Last();
                 var lastRow = last.DateInformation.Interval == ReportInterval.Days
-                    ? new SelfAssessmentActivityDataRowModel(
+                    ? new CourseActivityDataRowModel(
                         last,
                         DateHelper.GetFormatStringForDateInTable(last.DateInformation.Interval)
                     )
-                    : new SelfAssessmentActivityDataRowModel(last, DateHelper.StandardDateFormat, endDate, false);
+                    : new CourseActivityDataRowModel(last, DateHelper.StandardDateFormat, endDate, false);
 
                 var middleRows = activity.Skip(1).SkipLast(1).Select(
-                    p => new SelfAssessmentActivityDataRowModel(
+                    p => new CourseActivityDataRowModel(
                         p,
                         DateHelper.GetFormatStringForDateInTable(p.DateInformation.Interval)
                     )
@@ -53,48 +52,52 @@
                 Rows = middleRows.Prepend(firstRow).Append(lastRow).Reverse();
             }
         }
-        public IEnumerable<SelfAssessmentActivityDataRowModel> Rows { get; set; }
+        public IEnumerable<CourseActivityDataRowModel> Rows { get; set; }
     }
-    public class SelfAssessmentActivityDataRowModel
+    public class CourseActivityDataRowModel
     {
-        public SelfAssessmentActivityDataRowModel(SelfAssessmentActivityInPeriod selfAssessmentActivityInPeriod, string format)
+        public CourseActivityDataRowModel(PeriodOfActivity courseActivityInPeriod, string format)
         {
-            Period = selfAssessmentActivityInPeriod.DateInformation.GetDateLabel(format);
-            Completions = selfAssessmentActivityInPeriod.Completions;
-            Enrolments = selfAssessmentActivityInPeriod.Enrolments;
+            Period = courseActivityInPeriod.DateInformation.GetDateLabel(format);
+            Completions = courseActivityInPeriod.Completions;
+            Enrolments = courseActivityInPeriod.Enrolments;
+            Evaluations = courseActivityInPeriod.Evaluations;
         }
 
-        public SelfAssessmentActivityDataRowModel(
-            SelfAssessmentActivityInPeriod selfAssessmentActivityInPeriod,
+        public CourseActivityDataRowModel(
+            PeriodOfActivity courseActivityInPeriod,
             string format,
             DateTime boundaryDate,
             bool startRangeFromTerminator
         )
         {
-            Period = selfAssessmentActivityInPeriod.DateInformation.GetDateRangeLabel(format, boundaryDate, startRangeFromTerminator);
-            Completions = selfAssessmentActivityInPeriod.Completions;
-            Enrolments = selfAssessmentActivityInPeriod.Enrolments;
+            Period = courseActivityInPeriod.DateInformation.GetDateRangeLabel(format, boundaryDate, startRangeFromTerminator);
+            Completions = courseActivityInPeriod.Completions;
+            Enrolments = courseActivityInPeriod.Enrolments;
+            Evaluations = courseActivityInPeriod.Evaluations;
         }
 
-        public SelfAssessmentActivityDataRowModel(
-            SelfAssessmentActivityInPeriod selfAssessmentActivityInPeriod,
+        public CourseActivityDataRowModel(
+            PeriodOfActivity courseActivityInPeriod,
             string format,
             DateTime startDate,
             DateTime endDate
         )
         {
             Period = DateInformation.GetDateRangeLabel(format, startDate, endDate);
-            Completions = selfAssessmentActivityInPeriod.Completions;
-            Enrolments = selfAssessmentActivityInPeriod.Enrolments;
+            Completions = courseActivityInPeriod.Completions;
+            Enrolments = courseActivityInPeriod.Enrolments;
+            Evaluations = courseActivityInPeriod.Evaluations;
         }
 
         public string Period { get; set; }
         public int Completions { get; set; }
         public int Enrolments { get; set; }
+        public int Evaluations {  get; set; }
     }
-    public class SelfAssessmentReportFilterModel
+    public class CourseUsageReportFilterModel
     {
-        public SelfAssessmentReportFilterModel(
+        public CourseUsageReportFilterModel(
             ActivityFilterData filterData,
             string regionName,
             string centreTypeName,
@@ -102,9 +105,8 @@
             string jobGroupName,
             string brandName,
             string categoryName,
-            string selfAssessmentNameString,
-            bool userManagingAllCourses,
-            bool supervised
+            string courseName,
+            bool userManagingAllCourses
         )
         {
             RegionName = regionName;
@@ -113,12 +115,11 @@
             JobGroupName = jobGroupName;
             BrandName = brandName;
             CategoryName = categoryName;
-            SelfAssessmentName = selfAssessmentNameString;
+            CourseName = courseName;
             ReportIntervalName = Enum.GetName(typeof(ReportInterval), filterData.ReportInterval)!;
             StartDate = filterData.StartDate.ToString(DateHelper.StandardDateFormat);
             EndDate = filterData.EndDate?.ToString(DateHelper.StandardDateFormat) ?? "Today";
             ShowCourseCategoryFilter = userManagingAllCourses;
-            Supervised = supervised;
             FilterValues = new Dictionary<string, string>
             {
                 { "jobGroupId", filterData.JobGroupId?.ToString() ?? "" },
@@ -137,12 +138,11 @@
         public string JobGroupName { get; set; }
         public string BrandName { get; set; }
         public string CategoryName { get; set; }
-        public string SelfAssessmentName { get; set; }
+        public string CourseName { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string ReportIntervalName { get; set; }
         public bool ShowCourseCategoryFilter { get; set; }
-        public bool Supervised { get; set; }
         public Dictionary<string, string> FilterValues { get; set; }
     }
 }

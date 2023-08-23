@@ -76,11 +76,13 @@
                 model.JobGroupId,
                 model.CategoryId,
                 null,
+                null,
                 model.RegionId,
                 model.CentreId,
                 model.SelfAssessmentId,
                 model.CentreTypeId,
                 model.BrandId,
+                null,
                 model.FilterType,
                 model.ReportInterval
             );

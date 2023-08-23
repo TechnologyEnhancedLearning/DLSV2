@@ -104,6 +104,8 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 CourseFilterType.None,
                 interval
             );
@@ -126,7 +128,7 @@
                 );
 
                 result.Count.Should().Be(expectedSlotCount);
-                result.All(p => p.Evaluations == 0 && p.Registrations == 0).Should().BeTrue();
+                result.All(p => p.Evaluations == 0 && p.Enrolments == 0).Should().BeTrue();
                 result.All(p => p.DateInformation.Interval == interval).Should().BeTrue();
             }
         }
@@ -138,6 +140,8 @@
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2115-6-22"),
                 DateTime.Parse("2116-9-22"),
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -168,7 +172,7 @@
             using (new AssertionScope())
             {
                 result.Count.Should().Be(16);
-                result.All(p => p.Completions == 0 && p.Evaluations == 0 && p.Registrations == 0).Should().BeTrue();
+                result.All(p => p.Completions == 0 && p.Evaluations == 0 && p.Enrolments == 0).Should().BeTrue();
             }
         }
 
@@ -182,6 +186,8 @@
                 1,
                 2,
                 3,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -275,6 +281,8 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 CourseFilterType.None,
                 ReportInterval.Days
             );
@@ -300,6 +308,8 @@
                 DateTime.Now,
                 null,
                 1,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -335,6 +345,8 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 CourseFilterType.Category,
                 ReportInterval.Days
             );
@@ -358,6 +370,8 @@
                 null,
                 null,
                 1,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -417,6 +431,8 @@
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2020-9-1"),
                 DateTime.Parse("2021-9-1"),
+                null,
+                null,
                 null,
                 null,
                 null,

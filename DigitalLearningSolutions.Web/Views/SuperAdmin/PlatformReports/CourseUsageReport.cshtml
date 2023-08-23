@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports
-@model SelfAssessmentsReportViewModel
+@model CourseUsageReportViewModel
 @{
-    ViewData["Title"] = Model.Supervised ? "Supervised self assessments" : "Independent self assessments";
+    ViewData["Title"] = "Course usage";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/shared/reports.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/superAdmin/platformReports.css")" asp-append-version="true">
@@ -18,17 +18,16 @@
                     <div class="nhsuk-u-margin-bottom-4">
                         <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
                     </div>
-                    <partial name="_SelfAssessmentsFilterDisplayCard.cshtml" model="@Model.FilterModel" />
-                    <input  id="is-supervised" type="hidden" value="@Model.Supervised" />
+                    <partial name="_CourseFilterDisplayCard.cshtml" model="@Model.FilterModel" />
                     <div id="activity-graph" class="js-only-block">
                       
-                        <partial name="_SelfAssessmentActivityGraph.cshtml" />
+                        <partial name="_CourseActivityGraph.cshtml" />
                     </div>
                     <div id="activity-graph-data-error" class="js-only-block" hidden>
                         <vc:inset-text text="Too many chart data points to display. Please select a smaller date range or a bigger reporting interval to view data on a chart."
                                        css-class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4" />
                     </div>
-                    <partial name="_SelfAssessmentActivityTable.cshtml" model="@Model.SelfAssessmentActivityTableViewModel" />
+                    <partial name="_CourseActivityTable.cshtml" model="@Model.CourseActivityTableViewModel" />
                 </div>
             </div>
             <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">

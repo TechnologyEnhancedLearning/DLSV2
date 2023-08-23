@@ -32,7 +32,8 @@
             int? courseCategoryId,
             int? brandId,
             int? regionId,
-            int? customisationId
+            int? applicationId,
+            bool? coreContent
         );
         DateTime? GetStartOfCourseActivity();
     }
@@ -150,7 +151,8 @@
             int? courseCategoryId,
             int? brandId,
             int? regionId,
-            int? customisationId
+            int? applicationId,
+            bool? coreContent
         )
         {
             return connection.Query<ActivityLog>(
@@ -162,18 +164,21 @@
                         Registered,
                         Completed,
                         Evaluated
-                    FROM tActivityLog AS al INNER JOIN Applications AS ap ON ap.ApplicationID = al.ApplicationID
+                    FROM tActivityLog AS al WITH(NOLOCK) INNER JOIN
+                         Applications AS ap WITH(NOLOCK) ON ap.ApplicationID = al.ApplicationID INNER JOIN
+                         Centres AS ce  WITH(NOLOCK) ON al.CentreID = ce.CentreID
                     WHERE (ap.DefaultContentTypeID <> 4)
-                        AND(al.LogDate >= @startDate
+                        AND (al.LogDate >= @startDate)
                         AND (@endDate IS NULL OR al.LogDate <= @endDate)
                         AND (@centreId IS NULL OR al.CentreID = @centreId)
                         AND (@jobGroupId IS NULL OR al.JobGroupID = @jobGroupId)
                         AND (@regionId IS NULL OR al.RegionID = @regionId)
-                        AND (@customisationId IS NULL OR al.CustomisationID = @customisationId)
+                        AND (@applicationId IS NULL OR al.ApplicationID = @applicationId)
                         AND (@courseCategoryId IS NULL OR al.CourseCategoryId = @courseCategoryId)
                         AND (@centreTypeID IS NULL OR ce.CentreTypeID = @centreTypeID)
                         AND (@brandId IS NULL OR al.BrandID = @brandId)
-                        AND (al.Registered = 1 OR al.Completed = 1 OR al.Evaluated = 1)",
+                        AND (al.Registered = 1 OR al.Completed = 1 OR al.Evaluated = 1)
+                        AND (@coreContent IS NULL OR ap.CoreContent = @coreContent)",
                 new
                 {
                     centreId,
@@ -183,8 +188,9 @@
                     jobGroupId,
                     brandId,
                     regionId,
-                    customisationId,
-                    courseCategoryId
+                    applicationId,
+                    courseCategoryId,
+                    coreContent
                 }
             );
         }

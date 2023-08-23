@@ -20,9 +20,13 @@
         IEnumerable<(int, string)> GetSelfAssessmentCategories(bool supervised);
         IEnumerable<(int, string)> GetSelfAssessmentCentreTypes(bool supervised);
         IEnumerable<(int, string)> GetSelfAssessmentRegions(bool supervised);
+        IEnumerable<(int, string)> GetAllRegions();
         IEnumerable<(int, string)> GetSelfAssessments(bool supervised);
         IEnumerable<(int, string)> GetSelfAssessmentCentres(bool supervised);
+        IEnumerable<(int, string)> GetCourseCentres();
+        IEnumerable<(int, string)> GetCoreCourses();
         string? GetBrandNameById(int brandId);
+        string? GetApplicationNameById(int applicationId);
         string? GetCategoryNameById(int categoryId);
         string? GetTopicNameById(int topicId);
         string? GenerateCandidateNumber(string firstName, string lastName);
@@ -361,6 +365,44 @@
             return candidateNumber;
         }
 
+        public IEnumerable<(int, string)> GetAllRegions()
+        {
+            return connection.Query<(int, string)>(
+                $@"SELECT r.RegionID AS ID, r.RegionName AS Label
+                    FROM   Regions AS r
+                    ORDER BY Label"
+                      );
+        }
 
+        public IEnumerable<(int, string)> GetCourseCentres()
+        {
+            return connection.Query<(int, string)>(
+               $@"SELECT c.CentreID AS ID, c.CentreName AS Label
+                    FROM   Centres AS c INNER JOIN CentreApplications AS ca ON c.CentreID = ca.CentreID
+                    WHERE c.Active = 1
+                    GROUP BY c.CentreID, c.CentreName
+                    ORDER BY Label"
+                     );
+        }
+
+        public IEnumerable<(int, string)> GetCoreCourses()
+        {
+            return connection.Query<(int, string)>(
+                $@"SELECT a.ApplicationID AS ID, a.ApplicationName AS Label
+                    FROM   Applications AS a
+                    WHERE ASPMenu = 1 AND ArchivedDate IS NULL AND CoreContent = 1
+                    ORDER BY Label"
+                      );
+        }
+
+        public string? GetApplicationNameById(int applicationId)
+        {
+            return(string ?)connection.ExecuteScalar(
+                @"SELECT        ApplicationName
+                    FROM            Applications
+                    WHERE        ApplicationID = @applicationId",
+               new { applicationId }
+           );
+        }
     }
 }
