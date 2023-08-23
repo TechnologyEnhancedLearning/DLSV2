@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
@@ -26,7 +27,7 @@
         private HttpResponse httpResponse = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private PromptsService promptsHelper = null!;
-        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IPaginateService paginateService = null!;
         private IUserDataService userDataService = null!;
 
         [SetUp]
@@ -37,7 +38,7 @@
             promptsHelper = new PromptsService(centreRegistrationPromptsService);
             userDataService = A.Fake<IUserDataService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            paginateService = A.Fake<IPaginateService>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
@@ -49,7 +50,7 @@
                     userDataService,
                     promptsHelper,
                     jobGroupsDataService,
-                    searchSortFilterPaginateService
+                    paginateService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -61,20 +62,28 @@
         public void Index_calls_expected_methods_and_returns_view()
         {
             // When
+
+            var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
+            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
+
             var result = allDelegatesController.Index();
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(A<int>._)).MustHaveHappened();
+                A.CallTo(() => userDataService.GetDelegateUserCards(A<string>._, A<int>._, A<int>._, A<string>._,
+                    A<string>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._,
+                    A<string>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._)
+                ).MustHaveHappened();
                 A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
                     .MustHaveHappened();
                 A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(A<int>._))
                     .MustHaveHappened();
                 A.CallTo(
-                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                    () => paginateService.Paginate(
                         A<IEnumerable<DelegateUserCard>>._,
-                        A<SearchSortFilterAndPaginateOptions>._
+                        A<int>._,
+                        A<PaginationOptions>._, A<FilterOptions>._, A<string>._, A<string>._, A<string>._
                     )
                 ).MustHaveHappened();
                 A.CallTo(
