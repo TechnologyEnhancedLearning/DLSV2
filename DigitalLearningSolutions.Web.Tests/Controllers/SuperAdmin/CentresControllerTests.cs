@@ -221,7 +221,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             A.CallTo(() => centresDataService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
 
             // When
-            var result = controller.EditContractInfo(centreId,28,8,2023);
+            var result = controller.EditContractInfo(centreId,28,8,2023,10024,10024,100024);
 
             // Then
             using (new AssertionScope())

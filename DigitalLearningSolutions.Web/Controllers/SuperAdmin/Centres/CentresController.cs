@@ -447,7 +447,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpGet]
         [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditContractInfo")]
-        public IActionResult EditContractInfo(int centreId , int? day, int? month, int? year)
+        public IActionResult EditContractInfo(int centreId, int? day, int? month, int? year, int? ContractTypeID, long? ServerSpaceBytesInc, long? DelegateUploadSpace)
         {
             ContractInfo centre = this.centresDataService.GetContractInfo(centreId);
             var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
@@ -457,15 +457,15 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
             centre.ContractTypeID, centre.ContractType,
                 centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
-                centre.ContractReviewDate,day,month,year);
+                centre.ContractReviewDate, day, month, year);
             model.ServerSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
-                serverspace, centre.ServerSpaceBytesInc
+                serverspace, ServerSpaceBytesInc ?? centre.ServerSpaceBytesInc
             );
-            model.PerDelegateUploadSpaceOptions= SelectListHelper.MapLongOptionsToSelectListItems(
-                delegatespace, centre.DelegateUploadSpace
+            model.PerDelegateUploadSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
+                delegatespace, DelegateUploadSpace ?? centre.DelegateUploadSpace
             );
-            model.ContractTypeOptions= SelectListHelper.MapOptionsToSelectListItems(
-                contractTypes, centre.ContractTypeID
+            model.ContractTypeOptions = SelectListHelper.MapOptionsToSelectListItems(
+                contractTypes, ContractTypeID ?? centre.ContractTypeID
             );
             if (day != null && month != null && year != null)
             {
@@ -477,20 +477,38 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditContractInfo")]
         [HttpPost]
-        public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel,int? day,int? month,int? year)
+        public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel, int? day, int? month, int? year)
         {
-            if (day != 0 | month != 0 | year != 0)
+            if ((day != 0 && day != null) | (month != 0 && month != null) | (year != 0 && year != null))
             {
-                var validationResult = OldDateValidator.ValidateDate(day??0, month??0, year??0);
+                var validationResult = OldDateValidator.ValidateDate(day ?? 0, month ?? 0, year ?? 0);
+                if(day!=null&&month!=null&&year!=null)
+                {
+                    var today = new DateTime(year ?? 0, month ?? 0, day ?? 0);
+                    if (today == DateTime.Now.Date)
+                    {
+                        validationResult.DateValid = true;
+                        validationResult.ErrorMessage = "";
+                    }
+                }
                 if (!validationResult.DateValid)
                 {
                     if (day == null) day = 0;
-                    if(month == null) month = 0;
-                    if (year == null) year= 0;
-                    return RedirectToAction("EditContractInfo", new { contractTypeViewModel.CentreId, day, month, year });
+                    if (month == null) month = 0;
+                    if (year == null) year = 0;
+                    return RedirectToAction("EditContractInfo", new
+                    {
+                        contractTypeViewModel.CentreId,
+                        day,
+                        month,
+                        year,
+                        contractTypeViewModel.ContractTypeID,
+                        contractTypeViewModel.ServerSpaceBytesInc,
+                        contractTypeViewModel.DelegateUploadSpace
+                    });
                 }
             }
-                if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 ContractInfo centre = this.centresDataService.GetContractInfo(contractTypeViewModel.CentreId);
                 var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
@@ -500,7 +518,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
                 centre.ContractTypeID, centre.ContractType,
                 centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
-                centre.ContractReviewDate, day,month,year);
+                centre.ContractReviewDate, day, month, year);
                 model.ServerSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
                serverspace, model.ServerSpaceBytesInc
            );
@@ -513,7 +531,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 return View(model);
             }
             DateTime? date = null;
-            if(day!=null&&month!=null&year!=null)
+            if ((day != 0 && day != null) && (month != 0 && month != null) && (year != 0 && year != null))
             {
                 date = new DateTime(year ?? 0, month ?? 0, day ?? 0);
             }
