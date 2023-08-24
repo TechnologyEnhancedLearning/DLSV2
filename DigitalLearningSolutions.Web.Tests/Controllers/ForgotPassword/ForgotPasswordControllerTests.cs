@@ -107,7 +107,7 @@
             var result = await controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
-            result.Should().BeStatusCodeResult().WithStatusCode(500);
+            result.Should().BeRedirectToActionResult().WithActionName("Confirm");
         }
 
         [Test]
