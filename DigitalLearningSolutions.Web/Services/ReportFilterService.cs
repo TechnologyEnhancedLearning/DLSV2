@@ -122,10 +122,8 @@
             var regions = commonService.GetAllRegions();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var centres = commonService.GetCourseCentres();
-            var categories = commonService.GetAllCategories()
-                .Select(b => (b.CourseCategoryID, b.CategoryName));
-            var brands = commonService.GetAllBrands()
-                .Select(b => (b.BrandID, b.BrandName));
+            var categories = commonService.GetCoreCourseCategories();
+            var brands = commonService.GetCoreCourseBrands();
             var courses = commonService.GetCoreCourses();
             return new CourseUsageReportFilterOptions(centreTypes, regions, centres, jobGroups, brands, categories, courses);
         }
