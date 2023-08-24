@@ -289,6 +289,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             return RedirectToAction("ManageCentre", "Centres", new { centreId = editCentreManagerDetailsViewModel.CentreId });
         }
 
+        [HttpGet]
+        [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult CentreRoleLimits(int centreId = 0)
         {
@@ -303,7 +305,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCmsAdministrators != null && roleLimits.RoleLimitCmsAdministrators != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitCmsAdministrators = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetCmsAdministrators = false;
             }
             else
@@ -314,7 +315,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCmsManagers != null && roleLimits.RoleLimitCmsManagers != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitCmsManagers = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetCmsManagers = false;
             }
             else
@@ -325,7 +325,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCcLicences != null && roleLimits.RoleLimitCcLicences != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitContentCreatorLicences = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetContentCreatorLicences = false;
             }
             else
@@ -336,7 +335,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCustomCourses != null && roleLimits.RoleLimitCustomCourses != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitCustomCourses = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetCustomCourses = false;
             }
             else
@@ -347,7 +345,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitTrainers != null && roleLimits.RoleLimitTrainers != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitTrainers = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetTrainers = false;
             }
             else
@@ -363,6 +360,11 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult EditCentreRoleLimits(CentreRoleLimitsViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("CentreRoleLimits", model);
+            }
+
             if (!(model.IsRoleLimitSetCmsAdministrators))
             {
                 model.RoleLimitCmsAdministrators = -1;
@@ -383,11 +385,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             if (!(model.IsRoleLimitSetTrainers))
             {
                 model.RoleLimitTrainers = -1;
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View("CentreRoleLimits", model);
             }
 
             centresDataService.UpdateCentreRoleLimits(
