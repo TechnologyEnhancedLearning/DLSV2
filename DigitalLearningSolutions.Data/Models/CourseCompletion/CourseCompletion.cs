@@ -38,7 +38,7 @@
         )
         {
             Id = id;
-            CourseTitle = $"{applicationName} - {customisationName}";
+            CourseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             Completed = completed;
             Evaluated = evaluated;
             MaxPostLearningAssessmentAttempts = maxPostLearningAssessmentAttempts;

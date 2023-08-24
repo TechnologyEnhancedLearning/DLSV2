@@ -27,7 +27,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.CourseTitle.Should().Be($"{applicationName} - {customisationName}");
+            postLearningAssessmentViewModel.CourseTitle.Should().Be(!String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName);
         }
 
         [Test]

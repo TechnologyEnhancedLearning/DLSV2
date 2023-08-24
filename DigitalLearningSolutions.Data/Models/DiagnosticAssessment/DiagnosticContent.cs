@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DiagnosticAssessment
 {
+    using System;
     using System.Collections.Generic;
 
     public class DiagnosticContent
@@ -22,7 +23,7 @@
             int currentVersion
         )
         {
-            CourseTitle = $"{applicationName} - {customisationName}";
+            CourseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             SectionName = sectionName;
             DiagnosticAssessmentPath = diagAssessPath;
             CanSelectTutorials = diagObjSelect;
