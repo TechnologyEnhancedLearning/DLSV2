@@ -21,7 +21,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
+    [ServiceFilter(typeof(VerifyAdminAndDelegateUserCentre))]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     [Route("TrackingSystem/Delegates/{delegateId:int}/View")]
