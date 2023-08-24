@@ -1,8 +1,12 @@
 ﻿using DigitalLearningSolutions.Data.Models.PlatformReports;
 using DigitalLearningSolutions.Data.Models.TrackingSystem;
+using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Helpers;
+using DigitalLearningSolutions.Web.ViewModels.Common;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.PlatformReports
 {
@@ -85,6 +89,17 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.PlatformReports
             Response.Cookies.SetReportsFilterCookie("SuperAdminCourseUsageReportFilterCookie", filterData, clockUtility.UtcNow);
 
             return RedirectToAction("CourseUsageReport");
+        }
+
+        [NoCaching]
+        [Route("CourseUsage/Data")]
+        public IEnumerable<ActivityDataRowModel> GetCourseGraphData(string selfAssessmentType)
+        {
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminCourseUsageReportFilterCookie", null);
+            var activity = platformReportsService.GetFilteredCourseActivity(filterData);
+            return activity.Select(
+                p => new ActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
+            );
         }
     }
 }
