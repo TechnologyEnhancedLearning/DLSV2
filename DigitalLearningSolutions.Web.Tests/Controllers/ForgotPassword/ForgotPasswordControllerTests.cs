@@ -91,9 +91,7 @@
             var result = await controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
-            result.Should().BeViewResult().WithDefaultViewName()
-                .ModelAs<ForgotPasswordViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
+            result.Should().BeRedirectToActionResult().WithActionName("Confirm");
         }
 
         [Test]
