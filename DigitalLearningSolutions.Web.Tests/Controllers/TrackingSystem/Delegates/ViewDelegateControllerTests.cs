@@ -67,7 +67,7 @@
             A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(delegateEntity);
 
             // When
-            var result = viewDelegateController.Index(delegateId);
+            var result = viewDelegateController.Index(delegateId, null);
 
             // Then
             result.As<ViewResult>().Model.As<ViewDelegateViewModel>().DelegateInfo.Email.Should()
@@ -83,7 +83,7 @@
             A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(delegateEntity);
 
             // When
-            var result = viewDelegateController.Index(delegateId);
+            var result = viewDelegateController.Index(delegateId, null);
 
             // Then
             result.As<ViewResult>().Model.As<ViewDelegateViewModel>().DelegateInfo.Email.Should()
@@ -98,7 +98,7 @@
             A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(null);
 
             // When
-            var result = viewDelegateController.Index(delegateId);
+            var result = viewDelegateController.Index(delegateId, null);
 
             // Then
             result.Should().BeNotFoundResult();
