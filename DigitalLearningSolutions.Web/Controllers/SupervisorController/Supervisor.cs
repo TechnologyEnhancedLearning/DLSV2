@@ -347,6 +347,8 @@
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = searchModel,
+                CandidateAssessmentId = candidateAssessmentId,
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle.Contains("Assessor")
             };
 
             var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
@@ -1299,9 +1301,19 @@
                 {
                     return 0;
                 }
-
             }
             return existingId;
+        }
+
+        public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string delegateName, string selfAssessmentName,int delegateUserID)
+        {
+            var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, delegateUserID, true);
+            var fileName = $"{selfAssessmentName.Substring(0,29)}-{delegateName}-{clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
         }
     }
 }

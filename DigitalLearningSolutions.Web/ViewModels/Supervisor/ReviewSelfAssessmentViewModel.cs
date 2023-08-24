@@ -19,5 +19,7 @@
         {
             return FrameworkVocabularyHelper.VocabularyPlural(vocabulary);
         }
+        public int CandidateAssessmentId { get; set; }
+        public bool ExportToExcelHide { get; set; }
     }
 }
