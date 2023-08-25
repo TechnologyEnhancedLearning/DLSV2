@@ -418,6 +418,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/AddCentre")]
         public IActionResult AddCentre(AddCentreSuperAdminViewModel model)
         {
+            var centres = centresDataService.GetAllCentres().ToList();
+            bool isCentreNamePresent = centres.Any(center => center.Item2 == model.CentreName);
+            if (isCentreNamePresent)
+            {
+                ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
+            }
             if (!ModelState.IsValid)
             {
                 var centreTypes = this.centresDataService.GetCentreTypes().ToList();
