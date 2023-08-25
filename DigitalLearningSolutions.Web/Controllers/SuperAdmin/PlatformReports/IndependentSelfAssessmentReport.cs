@@ -63,6 +63,7 @@
             if (!ModelState.IsValid)
             {
                 var filterOptions = GetDropdownValues(false);
+                model.SetUpDropdowns(filterOptions, null);
                 model.DataStart = platformReportsService.GetSelfAssessmentActivityStartDate(false);
                 return View("SelfAssessmentsEditFilters", model);
             }

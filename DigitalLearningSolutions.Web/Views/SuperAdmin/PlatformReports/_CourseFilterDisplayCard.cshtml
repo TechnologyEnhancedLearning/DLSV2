@@ -41,11 +41,20 @@
                         <partial name="_SummaryFieldValue" model="@Model.JobGroupName" />
                     </div>
                 }
+                @if (Model.CourseProviderName != "All")
+                {
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Course provider
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.CourseProviderName" />
+                    </div>
+                }
                 @if (Model.BrandName != "All")
                 {
                     <div class="nhsuk-summary-list__row details-list-with-button__row">
                         <dt class="nhsuk-summary-list__key">
-                            Activity brand
+                            Course brand
                         </dt>
                         <partial name="_SummaryFieldValue" model="@Model.BrandName" />
                     </div>
@@ -54,7 +63,7 @@
                 {
                     <div class="nhsuk-summary-list__row details-list-with-button__row">
                         <dt class="nhsuk-summary-list__key">
-                            Activity category
+                            Course category
                         </dt>
                         <partial name="_SummaryFieldValue" model="@Model.CategoryName" />
                     </div>

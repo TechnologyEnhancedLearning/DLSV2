@@ -42,9 +42,9 @@
         private readonly IDbConnection connection;
         private readonly ILogger<PlatformReportsDataService> logger;
         private readonly string selectSelfAssessmentActivity = @"SELECT al.ActivityDate, al.Enrolled, al.Submitted | al.SignedOff AS Completed
-                                                                    FROM   ReportSelfAssessmentActivityLog AS al INNER JOIN
-                                                                                     Centres AS ce ON al.CentreID = ce.CentreID INNER JOIN
-                                                                                     SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                                                                    FROM   ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
+                                                                                     Centres AS ce WITH (NOLOCK) ON al.CentreID = ce.CentreID INNER JOIN
+                                                                                     SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
                                                                         WHERE (@endDate IS NULL OR al.ActivityDate <= @endDate) AND
                                                                                      (al.ActivityDate >= @startDate) AND
                                                                                      (sa.[National] = 1) AND
@@ -136,8 +136,8 @@
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.QuerySingleOrDefault<DateTime>(
                 $@"SELECT MIN(al.ActivityDate) AS StartDate
-                    FROM   ReportSelfAssessmentActivityLog AS al INNER JOIN
-                           SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                    FROM   ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
+                           SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
                     WHERE  {whereClause}"
                 );
         }
@@ -199,7 +199,7 @@
         {
             return connection.QuerySingleOrDefault<DateTime?>(
                 @"SELECT MIN(LogDate)
-                    FROM tActivityLog"
+                    FROM tActivityLog WITH (NOLOCK)"
             );
         }
     }

@@ -13,7 +13,7 @@
         (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
            ActivityFilterData filterData
        );
-        (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string courseName) GetSuperAdminCourseFilterNames(
+        (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string courseName, string courseProviderName) GetSuperAdminCourseFilterNames(
             ActivityFilterData filterData
         );
         (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string selfAssessmentName) GetSelfAssessmentFilterNames(
@@ -59,10 +59,10 @@
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
         }
-        public (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string courseName) GetSuperAdminCourseFilterNames(
+        public (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string courseName, string courseProviderName) GetSuperAdminCourseFilterNames(
             ActivityFilterData filterData
         )
-        {
+        {            
             return (
                 GetRegionNameForActivityFilter(filterData.RegionId),
                 GetCentreTypeNameForActivityFilter(filterData.CentreTypeId),
@@ -70,7 +70,9 @@
                 GetJobGroupNameForActivityFilter(filterData.JobGroupId),
                 GetBrandNameForActivityFilter(filterData.BrandId),
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
-                GetApplicationNameForActivityFilter(filterData.ApplicationId));
+                GetApplicationNameForActivityFilter(filterData.ApplicationId),
+                filterData.CoreContent.HasValue ? (filterData.CoreContent.Value ? "NHS England TEL" : "External") : "All"
+                );
         }
         public (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string selfAssessmentName) GetSelfAssessmentFilterNames(
             ActivityFilterData filterData

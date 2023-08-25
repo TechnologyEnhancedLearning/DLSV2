@@ -40,7 +40,7 @@
             CentreTypeId = filterData.CentreTypeId;
             CategoryId = filterData.CourseCategoryId;
             BrandId = filterData.BrandId;
-            CoreContent = filterData.CoreContent;
+            CoreContent = filterData.CoreContent.HasValue ? (filterData.CoreContent.Value ? 1 : 0) : (int?)null;
             ApplicationId = filterData.ApplicationId;
             StartDay = filterData.StartDate.Day;
             StartMonth = filterData.StartDate.Month;
@@ -56,7 +56,7 @@
         public int? RegionId { get; set; }
         public int? CentreId { get; set; }
         public int? BrandId { get; set; }
-        public bool? CoreContent { get; set; }
+        public int? CoreContent { get; set; }
         public int? CentreTypeId { get; set; }
         public int? JobGroupId { get; set; }
         public CourseFilterType FilterType { get; set; }
@@ -79,6 +79,7 @@
         public IEnumerable<SelectListItem> BrandOptions { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> CentreOptions { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> RegionOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> CourseProviderOptions { get; set; } = new List<SelectListItem>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -96,6 +97,8 @@
 
         public void SetUpDropdowns(CourseUsageReportFilterOptions filterOptions, int? userCategoryFilter)
         {
+            IEnumerable<(int, string)> courseProviderList = new List<(int, string)> { (0, "External"), (1, "NHS England TEL") };
+            CourseProviderOptions = SelectListHelper.MapOptionsToSelectListItems(courseProviderList, CoreContent);
             CentreOptions = SelectListHelper.MapOptionsToSelectListItems(filterOptions.Centres, CentreId);
             CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(filterOptions.CentreTypes, CentreTypeId);
             RegionOptions = SelectListHelper.MapOptionsToSelectListItems(filterOptions.Regions, RegionId);

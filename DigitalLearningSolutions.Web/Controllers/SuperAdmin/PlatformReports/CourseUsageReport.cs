@@ -18,7 +18,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.PlatformReports
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminCourseUsageReportFilterCookie", null);
             Response.Cookies.SetReportsFilterCookie("SuperAdminCourseUsageReportFilterCookie", filterData, clockUtility.UtcNow);
             var activity = platformReportsService.GetFilteredCourseActivity(filterData);
-            var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, courseName) = reportFilterService.GetSuperAdminCourseFilterNames(filterData);
+            var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, courseName, courseProviderName) = reportFilterService.GetSuperAdminCourseFilterNames(filterData);
             var courseUsageReportFilterModel = new CourseUsageReportFilterModel(
                 filterData,
                 regionName,
@@ -28,6 +28,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.PlatformReports
                 brandName,
                 categoryName,
                 courseName,
+                courseProviderName,
                 true
                 );
             var model = new CourseUsageReportViewModel(
@@ -65,7 +66,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.PlatformReports
         {
             if (!ModelState.IsValid)
             {
-                var filterOptions = GetDropdownValues(false);
+                var filterOptions = GetCourseFilterDropdownValues();
+                model.SetUpDropdowns(filterOptions, null);
                 model.DataStart = platformReportsService.GetStartOfCourseActivity();
                 return View("CourseUsageEditFilters", model);
             }
@@ -82,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.PlatformReports
                 null,
                 model.CentreTypeId,
                 model.BrandId,
-                model.CoreContent,
+                model.CoreContent.HasValue ? (model.CoreContent.Value != 0) : (bool?)null,
                 model.FilterType,
                 model.ReportInterval
             );

@@ -66,8 +66,16 @@
                             css-class="nhsuk-u-width-one-half"
                             default-option="All"
                             select-list-options="@Model.JobGroupOptions" />
+            <vc:select-list asp-for="@nameof(Model.CoreContent)"
+                            label="Choose course provider filter"
+                            value="@Model.CoreContent.ToString()"
+                            hint-text=""
+                            required="false"
+                            css-class="nhsuk-u-width-one-half"
+                            default-option="All"
+                            select-list-options="@Model.CourseProviderOptions" />
             <vc:select-list asp-for="@nameof(Model.BrandId)"
-                            label="Choose activity brand filter"
+                            label="Choose course brand filter"
                             value="@Model.BrandId.ToString()"
                             hint-text=""
                             required="false"
@@ -75,7 +83,7 @@
                             default-option="All"
                             select-list-options="@Model.BrandOptions" />
             <vc:select-list asp-for="@nameof(Model.CategoryId)"
-                            label="Choose activity category filter"
+                            label="Choose course category filter"
                             value="@Model.CategoryId.ToString()"
                             hint-text=""
                             required="false"

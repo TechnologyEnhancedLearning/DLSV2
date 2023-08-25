@@ -106,6 +106,7 @@
             string brandName,
             string categoryName,
             string courseName,
+            string courseProviderName,
             bool userManagingAllCourses
         )
         {
@@ -116,6 +117,7 @@
             BrandName = brandName;
             CategoryName = categoryName;
             CourseName = courseName;
+            CourseProviderName = courseProviderName;
             ReportIntervalName = Enum.GetName(typeof(ReportInterval), filterData.ReportInterval)!;
             StartDate = filterData.StartDate.ToString(DateHelper.StandardDateFormat);
             EndDate = filterData.EndDate?.ToString(DateHelper.StandardDateFormat) ?? "Today";
@@ -139,6 +141,7 @@
         public string BrandName { get; set; }
         public string CategoryName { get; set; }
         public string CourseName { get; set; }
+        public string CourseProviderName { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string ReportIntervalName { get; set; }
