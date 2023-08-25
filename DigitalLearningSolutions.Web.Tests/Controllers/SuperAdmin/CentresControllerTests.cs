@@ -110,9 +110,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             var expectedVm = new CentreRoleLimitsViewModel
             {
                 CentreId = 374,
-                RoleLimitCmsAdministrators = null,
+                RoleLimitCmsAdministrators = 0,
                 IsRoleLimitSetCmsAdministrators = false,    // automatically set off
-                RoleLimitCmsManagers = null,
+                RoleLimitCmsManagers = 0,
                 IsRoleLimitSetCmsManagers = false,          // automatically set off
                 IsRoleLimitSetContentCreatorLicences = true,
                 RoleLimitContentCreatorLicences = 10,
@@ -221,7 +221,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             A.CallTo(() => centresDataService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
 
             // When
-            var result = controller.EditContractInfo(centreId);
+            var result = controller.EditContractInfo(centreId,28,8,2023,10024,10024,100024);
 
             // Then
             using (new AssertionScope())
@@ -259,7 +259,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             DateTime date = new DateTime(model.ContractReviewYear.Value, model.ContractReviewMonth.Value, model.ContractReviewDay.Value, 0, 0, 0);
 
             // When
-            var result = controller.EditContractInfo(model);
+            var result = controller.EditContractInfo(model,28,8,2023);
 
             // Then
 

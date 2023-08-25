@@ -34,6 +34,7 @@
                 </td>
                 <td role="cell" class="nhsuk-table__cell">
                     <span class="nhsuk-table-responsive__heading">Enrolments </span>@activityRow.Enrolments
+
                 </td>
                 <td role="cell" class="nhsuk-table__cell">
                     <span class="nhsuk-table-responsive__heading">Completions </span>@activityRow.Completions
@@ -46,11 +47,14 @@
     </tbody>
 </table>
 
-<div class="nhsuk-u-margin-top-4">
-    <a id="@(toggleableActivityButtonId)"
-       role="button"
-       class="nhsuk-u-margin-top-4 js-only-inline"
-       href="#">
-        View more
-    </a>
-</div>
+@if (Model.Rows.Count() > defaultNumOfRowsVisible)
+{
+    <div class="nhsuk-u-margin-top-4">
+        <a id="@(toggleableActivityButtonId)"
+         role="button"
+         class="nhsuk-u-margin-top-4 js-only-inline"
+         href="#">
+            View more
+        </a>
+    </div>
+}

@@ -1,5 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
-
+﻿@using DigitalLearningSolutions.Data.Utilities;
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@inject IClockUtility ClockUtility
 @model SignOffHistoryViewModel
 
 @if (Model.SupervisorSignOffs.Any())
@@ -50,27 +51,33 @@
                     </td>
 
                     <td role="cell" class="nhsuk-table__cell">
-                        <div class="nhsuk-grid-column-one-half nhsuk-u-padding-0">
-                            <a asp-action="ResendSupervisorSignOffRequest"
-                               asp-route-selfAssessmentId=@Model.SelfAssessment.Id
-                               asp-route-candidateAssessmentSupervisorId=@supervisorSignOff.CandidateAssessmentSupervisorID
-                               asp-route-candidateAssessmentSupervisorVerificationId=@supervisorSignOff.ID
-                               asp-route-supervisorName=@supervisorSignOff.SupervisorName
-                               asp-route-supervisorEmail=@supervisorSignOff.SupervisorEmail
-                               asp-route-vocabulary="Proficiencies">
-                                Resend
-                            </a>
-                        </div>
+                        @if (supervisorSignOff.Verified == null && supervisorSignOff.Removed == null)
+                        {
+                            @if (supervisorSignOff.EmailSent == null || supervisorSignOff.EmailSent.Value.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString())
+                            {
+                                <div class="nhsuk-grid-column-one-half nhsuk-u-padding-0">
+                                    <a asp-action="ResendSupervisorSignOffRequest"
+                                       asp-route-selfAssessmentId=@Model.SelfAssessment.Id
+                                       asp-route-candidateAssessmentSupervisorId=@supervisorSignOff.CandidateAssessmentSupervisorID
+                                       asp-route-candidateAssessmentSupervisorVerificationId=@supervisorSignOff.ID
+                                       asp-route-supervisorName=@supervisorSignOff.SupervisorName
+                                       asp-route-supervisorEmail=@supervisorSignOff.SupervisorEmail
+                                       asp-route-vocabulary="Proficiencies">
+                                        Resend
+                                    </a>
+                                </div>
+                            }
 
-                        <div class="nhsuk-grid-column-one-half nhsuk-u-padding-0">
-                            <a asp-action="WithdrawSupervisorSignOffRequest"
-                               asp-route-selfAssessmentId=@Model.SelfAssessment.Id
-                               asp-route-candidateAssessmentSupervisorVerificationId=@supervisorSignOff.ID
-                               asp-route-vocabulary="Proficiencies"
-                               asp-route-source="SignOffHistory">
-                                Withdraw
-                            </a>
-                        </div>
+                            <div class="nhsuk-grid-column-one-half nhsuk-u-padding-0">
+                                <a asp-action="WithdrawSupervisorSignOffRequest"
+                                   asp-route-selfAssessmentId=@Model.SelfAssessment.Id
+                                   asp-route-candidateAssessmentSupervisorVerificationId=@supervisorSignOff.ID
+                                   asp-route-vocabulary="Proficiencies"
+                                   asp-route-source="SignOffHistory">
+                                    Withdraw
+                                </a>
+                            </div>
+                        }
                     </td>
                 </tr>
             }

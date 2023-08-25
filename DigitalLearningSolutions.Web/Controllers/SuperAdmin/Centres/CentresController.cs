@@ -289,6 +289,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             return RedirectToAction("ManageCentre", "Centres", new { centreId = editCentreManagerDetailsViewModel.CentreId });
         }
 
+        [HttpGet]
+        [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult CentreRoleLimits(int centreId = 0)
         {
@@ -303,7 +305,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCmsAdministrators != null && roleLimits.RoleLimitCmsAdministrators != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitCmsAdministrators = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetCmsAdministrators = false;
             }
             else
@@ -314,7 +315,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCmsManagers != null && roleLimits.RoleLimitCmsManagers != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitCmsManagers = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetCmsManagers = false;
             }
             else
@@ -325,7 +325,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCcLicences != null && roleLimits.RoleLimitCcLicences != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitContentCreatorLicences = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetContentCreatorLicences = false;
             }
             else
@@ -336,7 +335,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCustomCourses != null && roleLimits.RoleLimitCustomCourses != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitCustomCourses = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetCustomCourses = false;
             }
             else
@@ -347,7 +345,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitTrainers != null && roleLimits.RoleLimitTrainers != -1))
             {
-                centreRoleLimitsViewModel.RoleLimitTrainers = null;
                 centreRoleLimitsViewModel.IsRoleLimitSetTrainers = false;
             }
             else
@@ -363,6 +360,11 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult EditCentreRoleLimits(CentreRoleLimitsViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("CentreRoleLimits", model);
+            }
+
             if (!(model.IsRoleLimitSetCmsAdministrators))
             {
                 model.RoleLimitCmsAdministrators = -1;
@@ -383,11 +385,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             if (!(model.IsRoleLimitSetTrainers))
             {
                 model.RoleLimitTrainers = -1;
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View("CentreRoleLimits", model);
             }
 
             centresDataService.UpdateCentreRoleLimits(
@@ -450,35 +447,67 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpGet]
         [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditContractInfo")]
-        public IActionResult EditContractInfo(int centreId = 0)
+        public IActionResult EditContractInfo(int centreId, int? day, int? month, int? year, int? ContractTypeID, long? ServerSpaceBytesInc, long? DelegateUploadSpace)
         {
             ContractInfo centre = this.centresDataService.GetContractInfo(centreId);
             var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
             var serverspace = this.contractTypesDataService.GetServerspace();
             var delegatespace = this.contractTypesDataService.Getdelegatespace();
 
-            ViewBag.Serverspace = SelectListHelper.MapLongOptionsToSelectListItems(
-                serverspace, centre.ServerSpaceBytesInc
-            );
-            ViewBag.Delegatespace = SelectListHelper.MapLongOptionsToSelectListItems(
-                delegatespace, centre.DelegateUploadSpace
-            );
-            ViewBag.ContractTypes = SelectListHelper.MapOptionsToSelectListItems(
-                contractTypes, centre.ContractTypeID
-            );
             var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
-                centre.ContractTypeID, centre.ContractType,
+            centre.ContractTypeID, centre.ContractType,
                 centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
-                centre.ContractReviewDate, centre.ContractReviewDate.Value.Day,
-                centre.ContractReviewDate.Value.Month, centre.ContractReviewDate.Value.Year);
+                centre.ContractReviewDate, day, month, year);
+            model.ServerSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
+                serverspace, ServerSpaceBytesInc ?? centre.ServerSpaceBytesInc
+            );
+            model.PerDelegateUploadSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
+                delegatespace, DelegateUploadSpace ?? centre.DelegateUploadSpace
+            );
+            model.ContractTypeOptions = SelectListHelper.MapOptionsToSelectListItems(
+                contractTypes, ContractTypeID ?? centre.ContractTypeID
+            );
+            if (day != null && month != null && year != null)
+            {
+                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
+            }
             return View(model);
         }
 
 
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditContractInfo")]
         [HttpPost]
-        public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel)
+        public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel, int? day, int? month, int? year)
         {
+            if ((day != 0 && day != null) | (month != 0 && month != null) | (year != 0 && year != null))
+            {
+                var validationResult = OldDateValidator.ValidateDate(day ?? 0, month ?? 0, year ?? 0);
+                if(day!=null&&month!=null&&year!=null)
+                {
+                    var today = new DateTime(year ?? 0, month ?? 0, day ?? 0);
+                    if (today == DateTime.Now.Date)
+                    {
+                        validationResult.DateValid = true;
+                        validationResult.ErrorMessage = "";
+                    }
+                }
+                if (!validationResult.DateValid)
+                {
+                    if (day == null) day = 0;
+                    if (month == null) month = 0;
+                    if (year == null) year = 0;
+                    return RedirectToAction("EditContractInfo", new
+                    {
+                        contractTypeViewModel.CentreId,
+                        day,
+                        month,
+                        year,
+                        contractTypeViewModel.ContractTypeID,
+                        contractTypeViewModel.ServerSpaceBytesInc,
+                        contractTypeViewModel.DelegateUploadSpace
+                    });
+                }
+            }
             if (!ModelState.IsValid)
             {
                 ContractInfo centre = this.centresDataService.GetContractInfo(contractTypeViewModel.CentreId);
@@ -486,23 +515,26 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 var serverspace = this.contractTypesDataService.GetServerspace();
                 var delegatespace = this.contractTypesDataService.Getdelegatespace();
 
-                ViewBag.Serverspace = SelectListHelper.MapLongOptionsToSelectListItems(
-                    serverspace, centre.ServerSpaceBytesInc
-                );
-                ViewBag.Delegatespace = SelectListHelper.MapLongOptionsToSelectListItems(
-                    delegatespace, centre.DelegateUploadSpace
-                );
-                ViewBag.ContractTypes = SelectListHelper.MapOptionsToSelectListItems(
-                    contractTypes, centre.ContractTypeID
-                );
                 var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
                 centre.ContractTypeID, centre.ContractType,
                 centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
-                centre.ContractReviewDate, centre.ContractReviewDate.Value.Day,
-                centre.ContractReviewDate.Value.Month, centre.ContractReviewDate.Value.Year);
+                centre.ContractReviewDate, day, month, year);
+                model.ServerSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
+               serverspace, model.ServerSpaceBytesInc
+           );
+                model.PerDelegateUploadSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
+                    delegatespace, model.DelegateUploadSpace
+                );
+                model.ContractTypeOptions = SelectListHelper.MapOptionsToSelectListItems(
+                    contractTypes, model.ContractTypeID
+                );
                 return View(model);
             }
-            DateTime date = new DateTime(contractTypeViewModel.ContractReviewYear.Value, contractTypeViewModel.ContractReviewMonth.Value, contractTypeViewModel.ContractReviewDay.Value, 0, 0, 0);
+            DateTime? date = null;
+            if ((day != 0 && day != null) && (month != 0 && month != null) && (year != 0 && year != null))
+            {
+                date = new DateTime(year ?? 0, month ?? 0, day ?? 0);
+            }
             this.centresDataService.UpdateContractTypeandCenter(contractTypeViewModel.CentreId,
                contractTypeViewModel.ContractTypeID,
                contractTypeViewModel.DelegateUploadSpace,

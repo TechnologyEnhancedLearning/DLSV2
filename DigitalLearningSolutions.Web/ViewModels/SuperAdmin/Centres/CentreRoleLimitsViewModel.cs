@@ -13,22 +13,22 @@
 
         [Required(ErrorMessage = "Please enter a number for the CMS Administrators role limit.")]
         [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int? RoleLimitCmsAdministrators { get; set; }
+        public int RoleLimitCmsAdministrators { get; set; }
 
         [Required(ErrorMessage = "Please enter a number for the CMS Managers role limit.")]
         [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int? RoleLimitCmsManagers { get; set; }
+        public int RoleLimitCmsManagers { get; set; }
 
         [Required(ErrorMessage = "Please enter a number for the Content Creator Licences role limit.")]
         [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int? RoleLimitContentCreatorLicences { get; set; }
+        public int RoleLimitContentCreatorLicences { get; set; }
 
         [Required(ErrorMessage = "Please enter a number for the Custom Courses role limit.")]
         [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int? RoleLimitCustomCourses { get; set; }
+        public int RoleLimitCustomCourses { get; set; }
 
         [Required(ErrorMessage = "Please enter a number for the Trainers role limit.")]
         [Range(-1, int.MaxValue, ErrorMessage = "The role limit must be a non-negative whole number.")]
-        public int? RoleLimitTrainers { get; set; }
+        public int RoleLimitTrainers { get; set; }
     }
 }

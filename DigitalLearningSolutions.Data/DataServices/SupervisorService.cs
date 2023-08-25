@@ -554,7 +554,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  (SELECT COUNT(*) AS Expr1
                     FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL) AND (Superceded = 0)) AS ResultsVerificationRequests,
-                    ca.NonReportable
+                    ca.NonReportable,ca.DelegateUserID
                     FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
                          CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
                            SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID INNER JOIN
