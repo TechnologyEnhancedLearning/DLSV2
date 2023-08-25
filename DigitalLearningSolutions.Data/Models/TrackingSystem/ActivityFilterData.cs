@@ -23,7 +23,7 @@
             ReportInterval reportInterval
         )
         {
-           
+
             StartDate = startDate;
             EndDate = endDate;
             JobGroupId = jobGroupId;

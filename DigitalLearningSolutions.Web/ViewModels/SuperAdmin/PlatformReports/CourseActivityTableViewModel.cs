@@ -93,7 +93,7 @@
         public string Period { get; set; }
         public int Completions { get; set; }
         public int Enrolments { get; set; }
-        public int Evaluations {  get; set; }
+        public int Evaluations { get; set; }
     }
     public class CourseUsageReportFilterModel
     {

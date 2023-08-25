@@ -40,7 +40,7 @@
             return View("SelfAssessmentsReport", model);
         }
 
-        
+
 
         [HttpGet]
         [Route("SelfAssessments/Supervised/EditFilters")]

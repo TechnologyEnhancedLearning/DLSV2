@@ -68,7 +68,7 @@
                 }
             );
         }
-       
+
         private IEnumerable<SelfAssessmentActivityInPeriod> GroupSelfAssessmentActivityData(
            IEnumerable<SelfAssessmentActivity> activityData,
            ReportInterval interval
@@ -143,7 +143,7 @@
                 }
             );
         }
-        
+
         private IEnumerable<PeriodOfActivity> GroupCourseActivityData(
             IEnumerable<ActivityLog> activityData,
             ReportInterval interval

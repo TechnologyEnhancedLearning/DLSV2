@@ -28,7 +28,7 @@
         private IActivityService activityService = null!;
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private ICourseDataService courseDataService = null!;
-        private ISelfAssessmentDataService  selfAssessmentDataService = null!;
+        private ISelfAssessmentDataService selfAssessmentDataService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private ICommonService commonService = null!;
         private IClockUtility clockUtility = null!;

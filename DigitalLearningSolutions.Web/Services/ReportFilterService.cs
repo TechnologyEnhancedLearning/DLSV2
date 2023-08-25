@@ -62,7 +62,7 @@
         public (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string courseName, string courseProviderName) GetSuperAdminCourseFilterNames(
             ActivityFilterData filterData
         )
-        {            
+        {
             return (
                 GetRegionNameForActivityFilter(filterData.RegionId),
                 GetCentreTypeNameForActivityFilter(filterData.CentreTypeId),

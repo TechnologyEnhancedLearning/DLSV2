@@ -60,7 +60,7 @@
         {
             return supervised ? " (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1)" : " (sa.SupervisorResultsReview = 0 AND SupervisorSelfAssessmentReview = 0)";
         }
-		
+
         public PlatformReportsDataService(IDbConnection connection)
         {
             this.connection = connection;
@@ -115,21 +115,21 @@
             bool supervised)
         {
             var whereClause = GetSelfAssessmentWhereClause(supervised);
-           return connection.Query<SelfAssessmentActivity>(
-                 $@"{selectSelfAssessmentActivity} AND {whereClause}",
-                 new
-                 {
-                     centreId,
-                     centreTypeId,
-                     startDate,
-                     endDate,
-                     jobGroupId,
-                     selfAssessmentId,
-                     courseCategoryId,
-                     brandId,
-                     regionId
-                 }
-             );
+            return connection.Query<SelfAssessmentActivity>(
+                  $@"{selectSelfAssessmentActivity} AND {whereClause}",
+                  new
+                  {
+                      centreId,
+                      centreTypeId,
+                      startDate,
+                      endDate,
+                      jobGroupId,
+                      selfAssessmentId,
+                      courseCategoryId,
+                      brandId,
+                      regionId
+                  }
+              );
         }
         public DateTime GetSelfAssessmentActivityStartDate(bool supervised)
         {
