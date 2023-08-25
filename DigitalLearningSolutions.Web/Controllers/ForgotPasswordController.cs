@@ -58,7 +58,7 @@
             }
             catch (ResetPasswordInsertException)
             {
-                return RedirectToAction("Confirm");
+                return new StatusCodeResult(500);
             }
 
             return RedirectToAction("Confirm");
