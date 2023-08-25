@@ -481,17 +481,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         {
             if ((day != 0 && day != null) | (month != 0 && month != null) | (year != 0 && year != null))
             {
-                var validationResult = OldDateValidator.ValidateDate(day ?? 0, month ?? 0, year ?? 0);
-                if(day!=null&&month!=null&&year!=null)
-                {
-                    var today = new DateTime(year ?? 0, month ?? 0, day ?? 0);
-                    if (today == DateTime.Now.Date)
-                    {
-                        validationResult.DateValid = true;
-                        validationResult.ErrorMessage = "";
-                    }
-                }
-                if (!validationResult.DateValid)
+                var validationResult = DateValidator.ValidateDate(day ?? 0, month ?? 0, year ?? 0);
+                if (validationResult.ErrorMessage != null)
                 {
                     if (day == null) day = 0;
                     if (month == null) month = 0;
