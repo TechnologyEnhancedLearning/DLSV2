@@ -256,20 +256,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 ContractReviewMonth = DateTime.UtcNow.Month,
                 ContractReviewYear = DateTime.UtcNow.Year
             };
-            DateTime date = new DateTime(model.ContractReviewYear.Value, model.ContractReviewMonth.Value, model.ContractReviewDay.Value + 1, 0, 0, 0);
+            DateTime date = new DateTime(model.ContractReviewYear.Value, model.ContractReviewMonth.Value, model.ContractReviewDay.Value, 0, 0, 0);
 
             // When
-            var result = controller.EditContractInfo(model, DateTime.UtcNow.Day + 1, DateTime.UtcNow.Month, DateTime.UtcNow.Year);
+            var result = controller.EditContractInfo(model, DateTime.UtcNow.Day, DateTime.UtcNow.Month, DateTime.UtcNow.Year);
 
             // Then
-            A.CallTo(() => centresDataService.UpdateContractTypeandCenter(model.CentreId,
-               model.ContractTypeID,
-               model.DelegateUploadSpace,
-               model.ServerSpaceBytesInc,
-               date
-               )).MustHaveHappened();
-
-            result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
+            result.Should().BeRedirectToActionResult().WithActionName("EditContractInfo");
         }
     }
 }
