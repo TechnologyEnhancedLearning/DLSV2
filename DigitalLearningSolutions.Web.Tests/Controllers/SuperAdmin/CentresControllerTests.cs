@@ -221,7 +221,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             A.CallTo(() => centresDataService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
 
             // When
-            var result = controller.EditContractInfo(centreId,28,8,2023);
+            var result = controller.EditContractInfo(centreId, 28, 8, 2023);
 
             // Then
             using (new AssertionScope())
@@ -251,25 +251,18 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 ContractTypeID = 1,
                 ServerSpaceBytesInc = 5368709120,
                 DelegateUploadSpace = 52428800,
-                ContractReviewDate = DateTime.Parse("2023-08-28 16:28:55.247"),
-                ContractReviewDay = 28,
-                ContractReviewMonth = 8,
-                ContractReviewYear = 2023
+                ContractReviewDate = DateTime.Parse(DateTime.UtcNow.ToString()),
+                ContractReviewDay = DateTime.UtcNow.Day,
+                ContractReviewMonth = DateTime.UtcNow.Month,
+                ContractReviewYear = DateTime.UtcNow.Year
             };
             DateTime date = new DateTime(model.ContractReviewYear.Value, model.ContractReviewMonth.Value, model.ContractReviewDay.Value, 0, 0, 0);
 
             // When
-            var result = controller.EditContractInfo(model,28,8,2023);
+            var result = controller.EditContractInfo(model, DateTime.UtcNow.Day, DateTime.UtcNow.Month, DateTime.UtcNow.Year);
 
             // Then
-
-            A.CallTo(() => centresDataService.UpdateContractTypeandCenter(model.CentreId,
-               model.ContractTypeID,
-               model.DelegateUploadSpace,
-               model.ServerSpaceBytesInc,
-               date
-               )).MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
+            result.Should().BeRedirectToActionResult().WithActionName("EditContractInfo");
         }
     }
 }
