@@ -1,5 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common
-@model SelfAssessmentActivityTableViewModel
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports
+@model CourseActivityTableViewModel
 @{
     const int defaultNumOfRowsVisible = 5;
 
@@ -20,6 +20,9 @@
             <th role="columnheader" scope="col">
                 Completions
             </th>
+            <th role="columnheader" scope="col">
+                Evaluations
+            </th>
         </tr>
     </thead>
     <tbody class="nhsuk-table__body">
@@ -35,18 +38,19 @@
                 <td role="cell" class="nhsuk-table__cell">
                     <span class="nhsuk-table-responsive__heading">Completions </span>@activityRow.Completions
                 </td>
+                <td role="cell" class="nhsuk-table__cell">
+                    <span class="nhsuk-table-responsive__heading">Evaluations </span>@activityRow.Evaluations
+                </td>
             </tr>
         }
     </tbody>
 </table>
-@if (Model.Rows.Count() > defaultNumOfRowsVisible)
-{
-    <div class="nhsuk-u-margin-top-4">
-        <a id="@(toggleableActivityButtonId)"
+
+<div class="nhsuk-u-margin-top-4">
+    <a id="@(toggleableActivityButtonId)"
        role="button"
        class="nhsuk-u-margin-top-4 js-only-inline"
        href="#">
-            View more
-        </a>
-    </div>
-}
+        View more
+    </a>
+</div>

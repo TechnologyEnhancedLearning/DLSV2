@@ -3,6 +3,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.PlatformReports;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -22,15 +23,28 @@
             int? selfAssessmentId,
             bool supervised);
         DateTime GetSelfAssessmentActivityStartDate(bool supervised);
+        IEnumerable<ActivityLog> GetFilteredCourseActivity(
+            int? centreId,
+            int? centreTypeId,
+            DateTime startDate,
+            DateTime? endDate,
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? brandId,
+            int? regionId,
+            int? applicationId,
+            bool? coreContent
+        );
+        DateTime? GetStartOfCourseActivity();
     }
     public class PlatformReportsDataService : IPlatformReportsDataService
     {
         private readonly IDbConnection connection;
         private readonly ILogger<PlatformReportsDataService> logger;
         private readonly string selectSelfAssessmentActivity = @"SELECT al.ActivityDate, al.Enrolled, al.Submitted | al.SignedOff AS Completed
-                                                                    FROM   ReportSelfAssessmentActivityLog AS al INNER JOIN
-                                                                                     Centres AS ce ON al.CentreID = ce.CentreID INNER JOIN
-                                                                                     SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                                                                    FROM   ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
+                                                                                     Centres AS ce WITH (NOLOCK) ON al.CentreID = ce.CentreID INNER JOIN
+                                                                                     SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
                                                                         WHERE (@endDate IS NULL OR al.ActivityDate <= @endDate) AND
                                                                                      (al.ActivityDate >= @startDate) AND
                                                                                      (sa.[National] = 1) AND
@@ -46,7 +60,7 @@
         {
             return supervised ? " (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1)" : " (sa.SupervisorResultsReview = 0 AND SupervisorSelfAssessmentReview = 0)";
         }
-		
+
         public PlatformReportsDataService(IDbConnection connection)
         {
             this.connection = connection;
@@ -101,32 +115,92 @@
             bool supervised)
         {
             var whereClause = GetSelfAssessmentWhereClause(supervised);
-           return connection.Query<SelfAssessmentActivity>(
-                 $@"{selectSelfAssessmentActivity} AND {whereClause}",
-                 new
-                 {
-                     centreId,
-                     centreTypeId,
-                     startDate,
-                     endDate,
-                     jobGroupId,
-                     selfAssessmentId,
-                     courseCategoryId,
-                     brandId,
-                     regionId
-                 }
-             );
+            return connection.Query<SelfAssessmentActivity>(
+                  $@"{selectSelfAssessmentActivity} AND {whereClause}",
+                  new
+                  {
+                      centreId,
+                      centreTypeId,
+                      startDate,
+                      endDate,
+                      jobGroupId,
+                      selfAssessmentId,
+                      courseCategoryId,
+                      brandId,
+                      regionId
+                  }
+              );
         }
         public DateTime GetSelfAssessmentActivityStartDate(bool supervised)
         {
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.QuerySingleOrDefault<DateTime>(
                 $@"SELECT MIN(al.ActivityDate) AS StartDate
-                    FROM   ReportSelfAssessmentActivityLog AS al INNER JOIN
-                           SelfAssessments AS sa ON sa.ID = al.SelfAssessmentID
+                    FROM   ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
+                           SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
                     WHERE  {whereClause}"
                 );
         }
-        
+
+        public IEnumerable<ActivityLog> GetFilteredCourseActivity(
+            int? centreId,
+            int? centreTypeId,
+            DateTime startDate,
+            DateTime? endDate,
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? brandId,
+            int? regionId,
+            int? applicationId,
+            bool? coreContent
+        )
+        {
+            return connection.Query<ActivityLog>(
+                @"SELECT
+                        LogDate,
+                        LogYear,
+                        LogQuarter,
+                        LogMonth,
+                        Registered,
+                        Completed,
+                        Evaluated
+                    FROM tActivityLog AS al WITH(NOLOCK) INNER JOIN
+                         Applications AS ap WITH(NOLOCK) ON ap.ApplicationID = al.ApplicationID INNER JOIN
+                         Centres AS ce  WITH(NOLOCK) ON al.CentreID = ce.CentreID
+                    WHERE (ap.DefaultContentTypeID <> 4)
+                        AND (al.LogDate >= @startDate)
+                        AND (@endDate IS NULL OR al.LogDate <= @endDate)
+                        AND (@centreId IS NULL OR al.CentreID = @centreId)
+                        AND (@jobGroupId IS NULL OR al.JobGroupID = @jobGroupId)
+                        AND (@regionId IS NULL OR al.RegionID = @regionId)
+                        AND (@applicationId IS NULL OR al.ApplicationID = @applicationId)
+                        AND (@courseCategoryId IS NULL OR al.CourseCategoryId = @courseCategoryId)
+                        AND (@centreTypeID IS NULL OR ce.CentreTypeID = @centreTypeID)
+                        AND (@brandId IS NULL OR al.BrandID = @brandId)
+                        AND (al.Registered = 1 OR al.Completed = 1 OR al.Evaluated = 1)
+                        AND (@coreContent IS NULL OR ap.CoreContent = @coreContent)",
+                new
+                {
+                    centreId,
+                    centreTypeId,
+                    startDate,
+                    endDate,
+                    jobGroupId,
+                    brandId,
+                    regionId,
+                    applicationId,
+                    courseCategoryId,
+                    coreContent
+                }
+            );
+        }
+
+        public DateTime? GetStartOfCourseActivity()
+        {
+            return connection.QuerySingleOrDefault<DateTime?>(
+                @"SELECT MIN(LogDate)
+                    FROM tActivityLog WITH (NOLOCK)"
+            );
+        }
     }
 }
