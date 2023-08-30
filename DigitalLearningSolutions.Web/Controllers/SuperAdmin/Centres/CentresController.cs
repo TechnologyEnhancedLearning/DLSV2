@@ -539,6 +539,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                date
                );
             return RedirectToAction("ManageCentre", new { centreId = contractTypeViewModel.CentreId });
+            //comment
         }
     }
 }
