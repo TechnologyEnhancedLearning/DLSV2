@@ -268,6 +268,19 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                model.ServerSpaceBytesInc,
                date
                )).MustHaveHappened();
+            A.CallTo(() => centresDataService.UpdateContractTypeandCenter(model.CentreId,
+              model.ContractTypeID,
+              model.DelegateUploadSpace,
+              model.ServerSpaceBytesInc,
+              date
+              )).MustHaveHappened();
+            A.CallTo(() => centresDataService.UpdateContractTypeandCenter(model.CentreId,
+              model.ContractTypeID,
+              model.DelegateUploadSpace,
+              model.ServerSpaceBytesInc,
+              date
+              )).MustHaveHappened();
+
 
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
         }
