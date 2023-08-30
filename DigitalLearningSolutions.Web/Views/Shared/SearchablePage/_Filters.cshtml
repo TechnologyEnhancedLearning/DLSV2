@@ -3,50 +3,88 @@
 
 <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filter by</label>
 <div class="filter-container">
-  <input type="hidden" id="existing-filter-string" name="existingFilterString" value="@Model.ExistingFilterString" />
-  <select class="nhsuk-select filter-dropdown-selector"
-          id="filter-selector"
-          name="filterCategorySelector"
-          aria-label="Select filter category">
-    <option value="" disabled selected="selected">Select filter category</option>
-    @foreach (var filter in Model.Filters)
-    {
-      <option value="filter-@filter.FilterProperty">@filter.FilterName</option>
-    }
-  </select>
-  <div class="filters-container" id="filters-container">
-    @foreach (var filter in Model.Filters)
-    {
-      <div class="filter-dropdown-container" id="filter-@filter.FilterProperty">
-        <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
-          <input type="hidden" name="searchString" value="@Model.SearchString" />
-          <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
-          <input type="hidden" name="sortBy" value="@Model.SortBy" />
-          <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
-          <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
-          @foreach (var (key, value) in Model.RouteData)
-          {
-            <input type="hidden" name="@key" value="@value" />
-          }
-          <div class="filter-value-container">
-            <select class="nhsuk-select filter-dropdown"
-                  name="newFilterToAdd"
-                  id="@filter.FilterProperty"
-                  aria-label="@filter.FilterName filter">
-              <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
-              @foreach (var filterOption in filter.FilterOptions)
-              {
-                <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
-              }
-            </select>
-            <button class="nhsuk-button filter-submit filter-submit__dropdown" type="submit" id="@filter.FilterProperty-submit">
-              Add filter
-            </button>
-          </div>
-        </form>
-      </div>
-    }
-  </div>
+    <input type="hidden" id="existing-filter-string" name="existingFilterString" value="@Model.ExistingFilterString" />
+    <select class="nhsuk-select filter-dropdown-selector"
+            id="filter-selector"
+            name="filterCategorySelector"
+            aria-label="Select filter category">
+        <option value="" disabled selected="selected">Select filter category</option>
+        @foreach (var filter in Model.Filters)
+        {
+            <option value="filter-@filter.FilterProperty">Auldrin possa</option>
+        }
+    </select>
+    <div class="filters-container" id="filters-container">
+        @{
+            var groupKeys = Model.Filters.Where(key => key.FilterGroupKey != null).Select(key => key.FilterGroupKey).Distinct();
+            var nonGroupFilters = Model.Filters.Where(key => key.FilterGroupKey == null);
+        }
+        @foreach (var gkey in groupKeys)
+        {
+            var groupFilters = Model.Filters.Where(key => key.FilterGroupKey == gkey);
+
+            <div class="filter-dropdown-container" id="filter-@gkey">
+                <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
+                    <input type="hidden" name="searchString" value="@Model.SearchString" />
+                    <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
+                    <input type="hidden" name="sortBy" value="@Model.SortBy" />
+                    <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+                    <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
+                    @foreach (var (key, value) in Model.RouteData)
+                    {
+                        <input type="hidden" name="@key" value="@value" />
+                    }
+                    <div class="filter-value-container">
+                        <select class="nhsuk-select filter-dropdown" name="newFilterToAdd" id="@gkey" aria-label="@gkey filter">
+                            <option value="">Select @gkey</option>
+                            @foreach (var filter in groupFilters)
+                            {
+                                <optgroup label="@filter.FilterName" value="" selected="selected">
+                                    @foreach (var filterOption in filter.FilterOptions)
+                                    {
+                                        <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                        <button class="nhsuk-button filter-submit filter-submit__dropdown" type="submit" id="@gkey-submit">
+                            Add filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        }
+
+        @foreach (var filter in nonGroupFilters)
+        {
+            <div class="filter-dropdown-container" id="filter-@filter.FilterProperty">
+                <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
+                    <input type="hidden" name="searchString" value="@Model.SearchString" />
+                    <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
+                    <input type="hidden" name="sortBy" value="@Model.SortBy" />
+                    <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+                    <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
+                    @foreach (var (key, value) in Model.RouteData)
+                    {
+                        <input type="hidden" name="@key" value="@value" />
+                    }
+                    <div class="filter-value-container">
+                        <select class="nhsuk-select filter-dropdown" name="newFilterToAdd" id="@filter.FilterProperty" aria-label="@filter.FilterName filter">
+
+                            <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
+                            @foreach (var filterOption in filter.FilterOptions)
+                            {
+                                <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
+                            }
+                        </select>
+                        <button class="nhsuk-button filter-submit filter-submit__dropdown" type="submit" id="@filter.FilterProperty-submit">
+                            Add filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        }
+    </div>
 </div>
 
 <vc:current-filters searchable-page-view-model="Model" />
