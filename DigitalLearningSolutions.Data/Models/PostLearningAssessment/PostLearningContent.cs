@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.PostLearningAssessment
 {
+    using System;
     using System.Collections.Generic;
 
     public class PostLearningContent
@@ -20,7 +21,7 @@
             int currentVersion
         )
         {
-            CourseTitle = $"{applicationName} - {customisationName}";
+            CourseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             SectionName = sectionName;
             PostLearningAssessmentPath = plAssessPath;
             PassThreshold = plaPassThreshold;

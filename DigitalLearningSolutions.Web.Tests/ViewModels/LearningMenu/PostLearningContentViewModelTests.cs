@@ -6,6 +6,7 @@
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using System;
 
     public class PostLearningContentViewModelTests
     {
@@ -50,7 +51,7 @@
             );
 
             // Then
-            postLearningContentViewModel.CourseTitle.Should().Be($"{applicationName} - {customisationName}");
+            postLearningContentViewModel.CourseTitle.Should().Be(!String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName);
         }
 
         [Test]

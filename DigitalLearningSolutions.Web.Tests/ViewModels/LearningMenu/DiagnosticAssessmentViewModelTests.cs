@@ -29,7 +29,7 @@
                 new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
 
             // Then
-            diagnosticAssessmentViewModel.CourseTitle.Should().Be($"{applicationName} - {customisationName}");
+            diagnosticAssessmentViewModel.CourseTitle.Should().Be(!String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName);
         }
 
         [Test]

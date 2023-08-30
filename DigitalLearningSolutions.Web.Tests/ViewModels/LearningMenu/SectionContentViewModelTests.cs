@@ -38,7 +38,7 @@
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
-            sectionContentViewModel.CourseTitle.Should().Be($"{applicationName} - {customisationName}");
+            sectionContentViewModel.CourseTitle.Should().Be(!String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName);
         }
 
         [Test]
