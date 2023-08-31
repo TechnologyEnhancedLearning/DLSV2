@@ -259,8 +259,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             DateTime date = new DateTime(model.ContractReviewYear.Value, model.ContractReviewMonth.Value, model.ContractReviewDay.Value, 0, 0, 0);
 
             // When
-            var result = controller.EditContractInfo(model, DateTime.UtcNow.Day +1, DateTime.UtcNow.Month, DateTime.UtcNow.Year);
-
+            var result = controller.EditContractInfo(model, DateTime.UtcNow.Day, DateTime.UtcNow.Month, DateTime.UtcNow.Year);
+            A.CallTo(() => centresDataService.UpdateContractTypeandCenter(model.CentreId,
+               model.ContractTypeID,
+               model.DelegateUploadSpace,
+               model.ServerSpaceBytesInc,
+               date
+               )).MustHaveHappened();
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
         }
