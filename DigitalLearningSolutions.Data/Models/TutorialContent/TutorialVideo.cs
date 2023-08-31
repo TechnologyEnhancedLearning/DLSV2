@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.TutorialContent
 {
     using DigitalLearningSolutions.Data.Exceptions;
+    using System;
 
     public class TutorialVideo
     {
@@ -19,7 +20,7 @@
         {
             TutorialName = tutorialName;
             SectionName = sectionName;
-            CourseTitle = $"{applicationName} - {customisationName}";
+            CourseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
 
             VideoPath = videoPath ?? throw new VideoNotFoundException();
         }

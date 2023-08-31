@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
@@ -53,7 +54,7 @@
             );
 
             // Then
-            diagnosticContentViewModel.CourseTitle.Should().Be($"{applicationName} - {customisationName}");
+            diagnosticContentViewModel.CourseTitle.Should().Be(!String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName);
         }
 
         [Test]

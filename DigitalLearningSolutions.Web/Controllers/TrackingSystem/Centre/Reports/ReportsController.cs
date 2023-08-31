@@ -138,6 +138,8 @@
                 null,
                 null,
                 null,
+                null,
+                null,
                 model.FilterType,
                 model.ReportInterval
             );
@@ -175,6 +177,8 @@
                 jobGroupId,
                 adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -222,6 +226,8 @@
                 jobGroupId,
                 adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
+                null,
+                null,
                 null,
                 null,
                 null,

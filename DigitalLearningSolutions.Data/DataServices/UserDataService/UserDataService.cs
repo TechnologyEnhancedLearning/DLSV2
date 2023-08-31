@@ -239,7 +239,7 @@
         Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
       );
-        
+
         bool PrimaryEmailIsInUseAtCentre(string email, int centreId);
 
         void UpdateAdminStatus(int adminId, bool active);
@@ -626,7 +626,7 @@
             LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
             AND ucd.CentreId = da.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
-           string condition = $@" WHERE ((@delegateId = 0) OR (da.ID = @delegateId)) 	AND (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @search + N'%')
+            string condition = $@" WHERE ((@delegateId = 0) OR (da.ID = @delegateId)) 	AND (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @search + N'%')
                                     AND ((ce.CentreID = @centreId) OR (@centreId= 0)) 
                                     AND ((@accountStatus = 'Any') OR (@accountStatus = 'Active' AND da.Active = 1 AND u.Active =1) OR (@accountStatus = 'Inactive' AND (u.Active = 0 OR da.Active =0)) 
 	                                    OR(@accountStatus = 'Approved' AND  da.Approved =1) OR (@accountStatus = 'Unapproved' AND  da.Approved =0)
@@ -639,7 +639,7 @@
             IEnumerable<DelegateEntity> delegateEntity =
                 connection.Query<DelegateAccount, UserAccount, UserCentreDetails, int?, DelegateEntity>(
                 sql,
-                (delegateAccount, userAccount, userCentreDetails,adminId) => new DelegateEntity(
+                (delegateAccount, userAccount, userCentreDetails, adminId) => new DelegateEntity(
                     delegateAccount,
                     userAccount,
                     userCentreDetails,
@@ -728,7 +728,7 @@
                @$"SELECT COUNT(*)
                     FROM UserCentreDetails
                     WHERE Email = @email ",
-               new { email}
+               new { email }
            ) > 0;
         }
     }

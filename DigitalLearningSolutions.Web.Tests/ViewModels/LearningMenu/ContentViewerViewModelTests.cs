@@ -6,6 +6,7 @@
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using System;
 
     public class ContentViewerViewModelTests
     {
@@ -213,7 +214,7 @@
             );
 
             // Then
-            var courseTitle = $"{applicationName} - {customisationName}";
+            var courseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             contentViewerViewModel.CourseTitle.Should().BeEquivalentTo(courseTitle);
         }
 
