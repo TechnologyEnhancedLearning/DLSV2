@@ -482,7 +482,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel, int? day, int? month, int? year)
         {
-            if ((day != 0 && day != null) | (month != 0 && month != null) | (year != 0 && year != null))
+            if ((day.GetValueOrDefault() != 0) || (month.GetValueOrDefault() != 0) || (year.GetValueOrDefault() != 0))
             {
                 var validationResult = DateValidator.ValidateDate(day ?? 0, month ?? 0, year ?? 0);
                 if (validationResult.ErrorMessage != null)
@@ -524,8 +524,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 return View(model);
             }
             DateTime? date = null;
-            if ((day != 0 && day != null) && (month != 0 && month != null) && (year != 0 && year != null))
-            {
+            if ((day.GetValueOrDefault() != 0) || (month.GetValueOrDefault() != 0) || (year.GetValueOrDefault() != 0))
+                {
                 date = new DateTime(year ?? 0, month ?? 0, day ?? 0);
             }
             this.centresDataService.UpdateContractTypeandCenter(contractTypeViewModel.CentreId,
