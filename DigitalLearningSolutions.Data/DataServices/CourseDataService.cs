@@ -102,36 +102,39 @@ namespace DigitalLearningSolutions.Data.DataServices
         bool IsCourseCompleted(int candidateId, int customisationId);
 
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
+
+        public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId,
+           string isActive, string categoryName, string courseTopic, string hasAdminFields);
     }
 
     public class CourseDataService : ICourseDataService
     {
         private const string DelegateCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
-                FROM dbo.Progress AS pr
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID
+                FROM dbo.Progress AS pr WITH (NOLOCK)
+                INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
                 WHERE pr.CustomisationID = cu.CustomisationID
                 AND can.CentreID = @centreId
                 AND RemovedDate IS NULL) AS DelegateCount";
 
         private const string CompletedCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
-                FROM dbo.Progress AS pr
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID
+                FROM dbo.Progress AS pr WITH (NOLOCK) 
+                INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
                 WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
                 AND can.CentreID = @centreId) AS CompletedCount";
 
         private const string AllAttemptsQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
-                FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                FROM dbo.AssessAttempts AS aa WITH (NOLOCK) 
+                INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
                 AND can.CentreID = @centreId) AS AllAttempts";
 
         private const string AttemptsPassedQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
-                FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                FROM dbo.AssessAttempts AS aa WITH (NOLOCK) 
+                INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
                 AND can.CentreID = @centreId) AS AttemptsPassed";
 
@@ -584,6 +587,124 @@ namespace DigitalLearningSolutions.Data.DataServices
                 CourseStatisticsQuery,
                 new { centreId, categoryId }
             );
+        }
+
+        public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId,
+            string isActive, string categoryName, string courseTopic, string hasAdminFields
+        )
+        {
+            string courseStatisticsSelect = @$" SELECT
+                        cu.CustomisationID,
+                        cu.CentreID,
+                        cu.Active,
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 0 ELSE cu.Active END AS Active,
+                        cu.AllCentres,
+                        ap.ApplicationId,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        {DelegateCountQuery},
+                        {CompletedCountQuery},
+                        {AllAttemptsQuery},
+                        {AttemptsPassedQuery},
+                        cu.HideInLearnerPortal,
+                        cc.CategoryName,
+                        ct.CourseTopic,
+                        cu.LearningTimeMins AS LearningMinutes,
+                        cu.IsAssessed,
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 1 ELSE 0 END AS Archived,
+                        ((SELECT COUNT(pr.CandidateID)
+		                    FROM dbo.Progress AS pr WITH (NOLOCK) 
+		                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+		                    WHERE pr.CustomisationID = cu.CustomisationID
+		                    AND can.CentreID = @centreId
+		                    AND RemovedDate IS NULL) - 
+		                (SELECT COUNT(pr.CandidateID)
+		                    FROM dbo.Progress AS pr WITH (NOLOCK) 
+		                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+		                    WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
+		                    AND can.CentreID = @centreId)) AS InProgressCount ";
+            string courseStatisticsFromTable = @$" FROM dbo.Customisations AS cu WITH (NOLOCK)
+                    INNER JOIN dbo.CentreApplications AS ca WITH (NOLOCK) ON ca.ApplicationID = cu.ApplicationID
+                    INNER JOIN dbo.Applications AS ap WITH (NOLOCK) ON ap.ApplicationID = ca.ApplicationID
+                    INNER JOIN dbo.CourseCategories AS cc WITH (NOLOCK) ON cc.CourseCategoryID = ap.CourseCategoryID
+                    INNER JOIN dbo.CourseTopics AS ct WITH (NOLOCK) ON ct.CourseTopicID = ap.CourseTopicId
+
+                    LEFT JOIN CoursePrompts AS cp1 WITH (NOLOCK) 
+			            ON cu.CourseField1PromptID = cp1.CoursePromptID
+		            LEFT JOIN CoursePrompts AS cp2 WITH (NOLOCK) 
+			            ON cu.CourseField2PromptID = cp2.CoursePromptID
+		            LEFT JOIN CoursePrompts AS cp3 WITH (NOLOCK) 
+			            ON cu.CourseField3PromptID = cp3.CoursePromptID
+
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
+                        AND ca.CentreID = @centreId
+                        AND ap.DefaultContentTypeID <> 4
+                        AND ( ap.ApplicationName + ' ' + ' ' + cu.CustomisationName LIKE N'%' + @searchString + N'%')
+                        AND ((@isActive = 'Any') OR (@isActive = 'true' AND (cu.Active = 1 AND ap.ArchivedDate IS NULL)) OR (@isActive = 'false' AND ((cu.Active = 0 OR ap.ArchivedDate IS NOT NULL))))
+                        AND ((@categoryName = 'Any') OR (cc.CategoryName = @categoryName))
+                        AND ((@courseTopic = 'Any') OR (ct.CourseTopic = @courseTopic))
+                        AND ((@hasAdminFields = 'Any') OR (@hasAdminFields = 'true' AND (cp1.CoursePrompt IS NOT NULL OR cp2.CoursePrompt IS NOT NULL OR cp3.CoursePrompt IS NOT NULL))
+                                                       OR (@hasAdminFields = 'false' AND (cp1.CoursePrompt IS NULL AND cp2.CoursePrompt IS NULL AND cp3.CoursePrompt IS NULL)))";
+
+
+            string orderBy;
+            string sortOrder;
+
+            if (sortDirection == "Ascending")
+                sortOrder = " ASC ";
+            else
+                sortOrder = " DESC ";
+
+            if (sortBy == "CourseName" || sortBy == "SearchableName")
+                orderBy = " ORDER BY ap.ApplicationName + cu.CustomisationName " + sortOrder;
+            else
+                orderBy = " ORDER BY " + sortBy;
+
+            orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
+
+            var courseStatisticsQuery = courseStatisticsSelect + courseStatisticsFromTable + orderBy;
+
+            IEnumerable<CourseStatistics> courseStatistics = connection.Query<CourseStatistics>(
+                courseStatisticsQuery,
+                new
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    centreId,
+                    categoryId,
+                    isActive,
+                    categoryName,
+                    courseTopic,
+                    hasAdminFields
+                },
+                commandTimeout: 3000
+            );
+
+            var courseStatisticsCountQuery = @$"SELECT  COUNT(*) AS Matches " + courseStatisticsFromTable ;
+
+            int resultCount = connection.ExecuteScalar<int>(
+                courseStatisticsCountQuery,
+                new
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    centreId,
+                    categoryId,
+                    isActive,
+                    categoryName,
+                    courseTopic,
+                    hasAdminFields
+                },
+                commandTimeout: 3000
+            );
+            return (courseStatistics, resultCount);
         }
 
         public IEnumerable<CourseStatistics> GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(
