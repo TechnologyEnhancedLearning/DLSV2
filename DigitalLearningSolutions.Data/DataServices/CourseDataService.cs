@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
 
-        public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId,
+        public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
            string isActive, string categoryName, string courseTopic, string hasAdminFields);
     }
 
@@ -589,7 +589,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId,
+        public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
             string isActive, string categoryName, string courseTopic, string hasAdminFields
         )
         {
@@ -637,7 +637,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 			            ON cu.CourseField3PromptID = cp3.CoursePromptID
 
                     WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
+                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = @allCentreCourses))
                         AND ca.CentreID = @centreId
                         AND ap.DefaultContentTypeID <> 4
                         AND ( ap.ApplicationName + ' ' + ' ' + cu.CustomisationName LIKE N'%' + @searchString + N'%')
@@ -647,6 +647,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND ((@hasAdminFields = 'Any') OR (@hasAdminFields = 'true' AND (cp1.CoursePrompt IS NOT NULL OR cp2.CoursePrompt IS NOT NULL OR cp3.CoursePrompt IS NOT NULL))
                                                        OR (@hasAdminFields = 'false' AND (cp1.CoursePrompt IS NULL AND cp2.CoursePrompt IS NULL AND cp3.CoursePrompt IS NULL)))";
 
+            if (hideInLearnerPortal != null)
+                courseStatisticsFromTable += " AND cu.HideInLearnerPortal = @hideInLearnerPortal";
 
             string orderBy;
             string sortOrder;
@@ -676,6 +678,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     sortDirection,
                     centreId,
                     categoryId,
+                    allCentreCourses,
+                    hideInLearnerPortal,
                     isActive,
                     categoryName,
                     courseTopic,
@@ -697,6 +701,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     sortDirection,
                     centreId,
                     categoryId,
+                    allCentreCourses,
+                    hideInLearnerPortal,
                     isActive,
                     categoryName,
                     courseTopic,
