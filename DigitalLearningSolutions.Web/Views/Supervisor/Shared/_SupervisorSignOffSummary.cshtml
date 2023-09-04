@@ -50,7 +50,7 @@
                     {
                         @if (ViewContext.RouteData.Values.ContainsKey("vocabulary"))
                         {
-                            <a asp-action="SendRequestSignOffReminder" asp-route-candidateAssessmentSupervisorVerificationId="@Model.FirstOrDefault().ID" asp-route-vocabulary="@ViewContext.RouteData.Values["vocabulary"]" asp-route-candidateAssessmentSupervisorId="@Model.FirstOrDefault().CandidateAssessmentSupervisorID" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">Send reminder</a>
+                            <a asp-action="SendRequestSignOffReminder" asp-route-candidateAssessmentSupervisorVerificationId="@Model.FirstOrDefault().ID" asp-route-vocabulary="@ViewContext.RouteData.Values["vocabulary"]" asp-route-candidateAssessmentSupervisorId="@Model.FirstOrDefault().CandidateAssessmentSupervisorID" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">Resend</a>
                         }
                     }
 
