@@ -170,9 +170,9 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 		                au.Forename + ' ' + au.Surname AS SupervisorName,                 
 		                (SELECT COUNT(ca.ID) AS Expr1
                         FROM CandidateAssessments AS ca  LEFT JOIN
-                        CandidateAssessmentSupervisors AS cas ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL INNER JOIN
+                        CandidateAssessmentSupervisors AS cas ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL AND cas.SupervisorDelegateId = sd.ID INNER JOIN
                         SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID 
-                        WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = sd.ID OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID)
+                        WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = sd.ID OR (cas.CandidateAssessmentID IS NULL)
 				        AND ((sa.SupervisorSelfAssessmentReview = 1) OR (sa.SupervisorResultsReview = 1)))) AS CandidateAssessmentCount, 
 		                CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, 
 		                CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) AS DelegateIsSupervisor,             
@@ -442,7 +442,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL) AND (sarsv.Superceded = 0)) AS ResultsVerificationRequests
                  FROM   CandidateAssessments AS ca  LEFT JOIN
-                 CandidateAssessmentSupervisors AS cas ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL INNER JOIN
+                 CandidateAssessmentSupervisors AS cas ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL and cas.SupervisorDelegateId=@supervisorDelegateId INNER JOIN
                  SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID LEFT OUTER JOIN
                  NRPProfessionalGroups AS pg ON sa.NRPProfessionalGroupID = pg.ID LEFT OUTER JOIN
                  NRPSubGroups AS sg ON sa.NRPSubGroupID = sg.ID LEFT OUTER JOIN
@@ -450,7 +450,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
                  RIGHT OUTER JOIN SupervisorDelegates AS sd ON sd.ID=@supervisorDelegateId
                  RIGHT OUTER JOIN AdminAccounts AS au ON au.ID = sd.SupervisorAdminID
-                 WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = @supervisorDelegateId OR (cas.CandidateAssessmentID IS NULL AND ca.CentreID = au.CentreID)  AND ((sa.SupervisorSelfAssessmentReview = 1) OR
+                 WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = @supervisorDelegateId OR (cas.CandidateAssessmentID IS NULL)  AND ((sa.SupervisorSelfAssessmentReview = 1) OR
                          (sa.SupervisorResultsReview = 1)))", new { supervisorDelegateId }
                 );
         }
