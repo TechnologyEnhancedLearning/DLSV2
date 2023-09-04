@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DigitalLearningSolutions.Data.Migrations
 {
-    [Migration(202309011452)]
+    [Migration(202309041452)]
     public  class Update_Columnheadingsmissedon_CookiePolicy : Migration
     {
         public override void Up()
@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Data.Migrations
         }
         public override void Down()
         {
-            var CookiePolicyContentHtmlOldrecord = Properties.Resources.CookiePolicy;
+            var CookiePolicyContentHtmlOldrecord = Properties.Resources.TD_1943_CookiePolicyContentHtmlOldRecord;
 
             Execute.Sql(
                  @$"UPDATE Config SET  ConfigText ='{CookiePolicyContentHtmlOldrecord}'
