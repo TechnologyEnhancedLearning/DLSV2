@@ -68,6 +68,7 @@
                 var filterOptions = GetDropdownValues(true);
                 model.SetUpDropdowns(filterOptions, null);
                 model.DataStart = platformReportsService.GetSelfAssessmentActivityStartDate(true);
+                model.Supervised = true;
                 return View("SelfAssessmentsEditFilters", model);
             }
 
