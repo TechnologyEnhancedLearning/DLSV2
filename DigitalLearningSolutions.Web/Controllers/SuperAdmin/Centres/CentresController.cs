@@ -517,15 +517,22 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel, int? day, int? month, int? year)
         {
-            if (day != 0 | month != 0 | year != 0)
+            if ((day.GetValueOrDefault() != 0) || (month.GetValueOrDefault() != 0) || (year.GetValueOrDefault() != 0))
             {
-                var validationResult = OldDateValidator.ValidateDate(day ?? 0, month ?? 0, year ?? 0);
-                if (!validationResult.DateValid)
+                var validationResult = DateValidator.ValidateDate(day ?? 0, month ?? 0, year ?? 0);
+                if (validationResult.ErrorMessage != null)
                 {
                     if (day == null) day = 0;
                     if (month == null) month = 0;
                     if (year == null) year = 0;
-                    return RedirectToAction("EditContractInfo", new { contractTypeViewModel.CentreId, day, month, year });
+
+                    return RedirectToAction("EditContractInfo", new
+                    {
+                        contractTypeViewModel.CentreId,
+                        day,
+                        month,
+                        year
+                    });
                 }
             }
             if (!ModelState.IsValid)
@@ -534,7 +541,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
                 var serverspace = this.contractTypesDataService.GetServerspace();
                 var delegatespace = this.contractTypesDataService.Getdelegatespace();
-
                 var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
                 centre.ContractTypeID, centre.ContractType,
                 centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
@@ -551,7 +557,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 return View(model);
             }
             DateTime? date = null;
-            if (day != null && month != null & year != null)
+
+            if ((day.GetValueOrDefault() != 0) || (month.GetValueOrDefault() != 0) || (year.GetValueOrDefault() != 0))
             {
                 date = new DateTime(year ?? 0, month ?? 0, day ?? 0);
             }
