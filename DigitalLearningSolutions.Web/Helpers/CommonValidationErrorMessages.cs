@@ -33,5 +33,6 @@
         public const string PasswordSimilarUsername = "Enter a password which is less similar to your user name";
         public const string PrimaryEmailInUseDuringDelegateRegistration =
             "A user with this email address is already registered";
+        public const string CentreNameAlreadyExist = "The centre name you have entered already exists, please enter a different centre name";
     }
 }

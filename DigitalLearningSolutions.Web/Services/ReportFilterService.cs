@@ -13,12 +13,16 @@
         (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
            ActivityFilterData filterData
        );
+        (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string courseName, string courseProviderName) GetSuperAdminCourseFilterNames(
+            ActivityFilterData filterData
+        );
         (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string selfAssessmentName) GetSelfAssessmentFilterNames(
             ActivityFilterData filterData
         );
         ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId);
         string GetCourseCategoryNameForActivityFilter(int? courseCategoryId);
         SelfAssessmentReportsFilterOptions GetSelfAssessmentFilterOptions(bool supervised);
+        CourseUsageReportFilterOptions GetCourseUsageFilterOptions();
     }
     public class ReportFilterService : IReportFilterService
     {
@@ -55,16 +59,20 @@
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
         }
-        public (string regionName, string centreName, string jobGroupName, string categoryName, string courseName) GetSuperAdminCourseFilterNames(
+        public (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string courseName, string courseProviderName) GetSuperAdminCourseFilterNames(
             ActivityFilterData filterData
         )
         {
             return (
                 GetRegionNameForActivityFilter(filterData.RegionId),
+                GetCentreTypeNameForActivityFilter(filterData.CentreTypeId),
                 GetCentreNameForActivityFilter(filterData.CentreId),
                 GetJobGroupNameForActivityFilter(filterData.JobGroupId),
+                GetBrandNameForActivityFilter(filterData.BrandId),
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
-                GetCourseNameForActivityFilter(filterData.CustomisationId));
+                GetApplicationNameForActivityFilter(filterData.ApplicationId),
+                filterData.CoreContent.HasValue ? (filterData.CoreContent.Value ? "NHS England TEL" : "External") : "All"
+                );
         }
         public (string regionName, string centreTypeName, string centreName, string jobGroupName, string brandName, string categoryName, string selfAssessmentName) GetSelfAssessmentFilterNames(
             ActivityFilterData filterData
@@ -108,7 +116,18 @@
             var categories = commonService.GetSelfAssessmentCategories(supervised);
             var brands = commonService.GetSelfAssessmentBrands(supervised);
             var selfAssessments = commonService.GetSelfAssessments(supervised);
-            return new SelfAssessmentReportsFilterOptions(centreTypes, regions, centres, jobGroups,  brands, categories, selfAssessments);
+            return new SelfAssessmentReportsFilterOptions(centreTypes, regions, centres, jobGroups, brands, categories, selfAssessments);
+        }
+        public CourseUsageReportFilterOptions GetCourseUsageFilterOptions()
+        {
+            var centreTypes = commonService.GetCentreTypes();
+            var regions = commonService.GetAllRegions();
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var centres = commonService.GetCourseCentres();
+            var categories = commonService.GetCoreCourseCategories();
+            var brands = commonService.GetCoreCourseBrands();
+            var courses = commonService.GetCoreCourses();
+            return new CourseUsageReportFilterOptions(centreTypes, regions, centres, jobGroups, brands, categories, courses);
         }
         public string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
         {
@@ -161,6 +180,12 @@
         {
             var selfAssessment = selfAssessmentId.HasValue
                 ? selfAssessmentDataService.GetSelfAssessmentNameById(selfAssessmentId.Value) : null;
+            return selfAssessment ?? "All";
+        }
+        private string GetApplicationNameForActivityFilter(int? selfAssessmentId)
+        {
+            var selfAssessment = selfAssessmentId.HasValue
+                ? commonService.GetApplicationNameById(selfAssessmentId.Value) : null;
             return selfAssessment ?? "All";
         }
         private static int GetFirstMonthOfQuarter(int quarter)

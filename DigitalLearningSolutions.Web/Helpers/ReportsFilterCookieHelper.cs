@@ -18,7 +18,7 @@
         {
             var expiry = currentDateTime.AddDays(CookieExpiryDays);
             cookies.Append(
-                cookieName?? "ReportsFilterCookie",
+                cookieName ?? "ReportsFilterCookie",
                 JsonConvert.SerializeObject(filterData),
                 new CookieOptions
                 {

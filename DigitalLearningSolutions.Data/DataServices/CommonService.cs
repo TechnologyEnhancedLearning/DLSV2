@@ -15,14 +15,20 @@
         IEnumerable<Brand> GetAllBrands();
         IEnumerable<Category> GetAllCategories();
         IEnumerable<Topic> GetAllTopics();
+        IEnumerable<(int, string)> GetCoreCourseCategories();
         IEnumerable<(int, string)> GetCentreTypes();
         IEnumerable<(int, string)> GetSelfAssessmentBrands(bool supervised);
         IEnumerable<(int, string)> GetSelfAssessmentCategories(bool supervised);
         IEnumerable<(int, string)> GetSelfAssessmentCentreTypes(bool supervised);
         IEnumerable<(int, string)> GetSelfAssessmentRegions(bool supervised);
+        IEnumerable<(int, string)> GetAllRegions();
         IEnumerable<(int, string)> GetSelfAssessments(bool supervised);
         IEnumerable<(int, string)> GetSelfAssessmentCentres(bool supervised);
+        IEnumerable<(int, string)> GetCourseCentres();
+        IEnumerable<(int, string)> GetCoreCourseBrands();
+        IEnumerable<(int, string)> GetCoreCourses();
         string? GetBrandNameById(int brandId);
+        string? GetApplicationNameById(int applicationId);
         string? GetCategoryNameById(int categoryId);
         string? GetTopicNameById(int topicId);
         string? GenerateCandidateNumber(string firstName, string lastName);
@@ -50,7 +56,7 @@
         {
             return connection.Query<Brand>(
                 @"SELECT        BrandID, BrandName
-                    FROM            Brands
+                    FROM            Brands WITH (NOLOCK)
                     WHERE        (Active = 1) AND (IncludeOnLanding = 1) OR
                          (Active = 1) AND ((OwnerOrganisationID = @centreId) OR (BrandID = 6))
                     ORDER BY BrandName",
@@ -61,7 +67,7 @@
         {
             return connection.Query<Brand>(
                 @"SELECT        BrandID, BrandName
-                    FROM            Brands
+                    FROM            Brands WITH (NOLOCK)
                     WHERE        
                          (Active = 1)
                     ORDER BY BrandName"
@@ -71,7 +77,7 @@
         {
             return connection.Query<Category>(
                 @"SELECT        CourseCategoryID, CategoryName
-                    FROM            CourseCategories
+                    FROM            CourseCategories WITH (NOLOCK)
                     WHERE        ((CentreID = @CentreID) OR (CourseCategoryID = 1)) AND (Active = 1)
                     ORDER BY CategoryName",
                new { centreId }
@@ -81,7 +87,7 @@
         {
             return connection.Query<Category>(
                 @"SELECT        CourseCategoryID, CategoryName
-                    FROM            CourseCategories
+                    FROM            CourseCategories WITH (NOLOCK)
                     WHERE        (Active = 1)
                     ORDER BY CategoryName"
            );
@@ -90,7 +96,7 @@
         {
             return connection.Query<Topic>(
                 @"SELECT        CourseTopicID, CourseTopic
-                    FROM            CourseTopics
+                    FROM            CourseTopics WITH (NOLOCK)
                     WHERE        ((CentreID = @CentreID) OR (CourseTopicID = 1)) AND (Active = 1)
                     ORDER BY CourseTopic",
                new { centreId }
@@ -100,7 +106,7 @@
         {
             return connection.Query<Topic>(
                 @"SELECT        CourseTopicID, CourseTopic
-                    FROM            CourseTopics
+                    FROM            CourseTopics WITH (NOLOCK)
                     WHERE        (Active = 1)
                     ORDER BY CourseTopic"
                        );
@@ -110,7 +116,7 @@
         {
             return connection.Query<(int, string)>(
                 @"SELECT CentreTypeID, CentreType
-                    FROM   CentreTypes
+                    FROM   CentreTypes WITH (NOLOCK)
                     ORDER BY CentreType"
                       );
         }
@@ -119,8 +125,8 @@
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
                 $@"SELECT b.BrandID, b.BrandName
-                    FROM   Brands AS b INNER JOIN
-                                 SelfAssessments AS sa ON b.BrandID = sa.BrandID
+                    FROM   Brands AS b WITH (NOLOCK) INNER JOIN
+                                 SelfAssessments AS sa WITH (NOLOCK) ON b.BrandID = sa.BrandID
                     WHERE (b.Active = 1) AND
                                  (sa.ArchivedDate IS NULL) AND (sa.[National] = 1) AND {whereClause}
                     GROUP BY b.BrandID, b.BrandName
@@ -133,7 +139,7 @@
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
                 $@"SELECT cc.CourseCategoryID, cc.CategoryName
-                    FROM   CourseCategories AS cc INNER JOIN
+                    FROM   CourseCategories AS cc WITH (NOLOCK) INNER JOIN
                                  SelfAssessments AS sa ON cc.CourseCategoryID = sa.CategoryID
                     WHERE (cc.Active = 1) AND (sa.ArchivedDate IS NULL) AND (sa.[National] = 1) AND {whereClause}
                     GROUP BY cc.CourseCategoryID, cc.CategoryName
@@ -146,10 +152,10 @@
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
                 $@"SELECT ct.CentreTypeID, ct.CentreType AS CentreTypeName
-                    FROM   Centres AS c INNER JOIN
-                                CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID INNER JOIN
-                                SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID INNER JOIN
-                                CentreTypes AS ct ON c.CentreTypeID = ct.CentreTypeID
+                    FROM   Centres AS c WITH (NOLOCK) INNER JOIN
+                                CentreSelfAssessments AS csa WITH (NOLOCK) ON c.CentreID = csa.CentreID INNER JOIN
+                                SelfAssessments AS sa WITH (NOLOCK) ON csa.SelfAssessmentID = sa.ID INNER JOIN
+                                CentreTypes AS ct WITH (NOLOCK) ON c.CentreTypeID = ct.CentreTypeID
                     WHERE (sa.[National] = 1) AND (sa.ArchivedDate IS NULL) AND {whereClause}
                     GROUP BY ct.CentreTypeID, ct.CentreType
                     ORDER BY CentreTypeName"
@@ -160,10 +166,10 @@
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
                 $@"SELECT r.RegionID AS ID, r.RegionName AS Label
-                    FROM   Regions AS r INNER JOIN
-                                 Centres AS c ON r.RegionID = c.RegionID INNER JOIN
-                                 CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID INNER JOIN
-                                 SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
+                    FROM   Regions AS r WITH (NOLOCK) INNER JOIN
+                                 Centres AS c WITH (NOLOCK) ON r.RegionID = c.RegionID INNER JOIN
+                                 CentreSelfAssessments AS csa WITH (NOLOCK) ON c.CentreID = csa.CentreID INNER JOIN
+                                 SelfAssessments AS sa WITH (NOLOCK) ON csa.SelfAssessmentID = sa.ID
                     WHERE (sa.[National] = 1) AND (sa.ArchivedDate IS NULL) AND {whereClause}
                     GROUP BY r.RegionID, r.RegionName
                     ORDER BY Label"
@@ -175,7 +181,7 @@
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
                 $@"SELECT ID, Name AS Label
-                    FROM   SelfAssessments AS sa
+                    FROM   SelfAssessments AS sa WITH (NOLOCK)
                     WHERE ([National] = 1) AND (ArchivedDate IS NULL) AND {whereClause}
                     GROUP BY ID, Name
                     ORDER BY Label"
@@ -187,9 +193,9 @@
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<(int, string)>(
                 $@"SELECT c.CentreID AS ID, c.CentreName AS Label
-                    FROM   Centres AS c INNER JOIN
-                                 CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID INNER JOIN
-                                 SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
+                    FROM   Centres AS c WITH (NOLOCK) INNER JOIN
+                                 CentreSelfAssessments AS csa WITH (NOLOCK) ON c.CentreID = csa.CentreID INNER JOIN
+                                 SelfAssessments AS sa WITH (NOLOCK) ON csa.SelfAssessmentID = sa.ID
                     WHERE (sa.[National] = 1) AND (sa.ArchivedDate IS NULL) AND {whereClause}
                     GROUP BY c.CentreID, c.CentreName
                     ORDER BY Label"
@@ -307,7 +313,7 @@
         {
             return (string?)connection.ExecuteScalar(
                @"SELECT       BrandName
-                    FROM            Brands
+                    FROM            Brands WITH (NOLOCK)
                     WHERE        BrandID = @brandId",
               new { brandId }
           );
@@ -316,7 +322,7 @@
         {
             return (string?)connection.ExecuteScalar(
                 @"SELECT         CategoryName
-                    FROM            CourseCategories
+                    FROM            CourseCategories WITH (NOLOCK)
                     WHERE        CourseCategoryID = @categoryId",
                new { categoryId }
            );
@@ -325,7 +331,7 @@
         {
             return (string?)connection.ExecuteScalar(
                 @"SELECT        CourseTopic
-                    FROM            CourseTopics
+                    FROM            CourseTopics WITH (NOLOCK)
                     WHERE        CourseTopicID = @topicId",
                new { topicId }
            );
@@ -334,7 +340,7 @@
         {
             return (string?)connection.ExecuteScalar(
                 @"SELECT        CentreType
-                    FROM            CentreTypes
+                    FROM            CentreTypes WITH (NOLOCK)
                     WHERE        CentreTypeID = @centreTypeId",
                new { centreTypeId }
            );
@@ -361,6 +367,72 @@
             return candidateNumber;
         }
 
+        public IEnumerable<(int, string)> GetAllRegions()
+        {
+            return connection.Query<(int, string)>(
+                $@"SELECT r.RegionID AS ID, r.RegionName AS Label
+                    FROM   Regions AS r WITH (NOLOCK)
+                    ORDER BY Label"
+                      );
+        }
 
+        public IEnumerable<(int, string)> GetCourseCentres()
+        {
+            return connection.Query<(int, string)>(
+               $@"SELECT c.CentreID AS ID, c.CentreName AS Label
+                    FROM   Centres AS c WITH (NOLOCK) INNER JOIN
+                    CentreApplications AS ca WITH (NOLOCK) ON c.CentreID = ca.CentreID
+                    WHERE c.Active = 1
+                    GROUP BY c.CentreID, c.CentreName
+                    ORDER BY Label"
+                     );
+        }
+
+        public IEnumerable<(int, string)> GetCoreCourses()
+        {
+            return connection.Query<(int, string)>(
+                $@"SELECT a.ApplicationID AS ID, a.ApplicationName AS Label
+                    FROM   Applications AS a WITH (NOLOCK) INNER JOIN
+                    Customisations AS cu WITH (NOLOCK) ON a.ApplicationID = cu.ApplicationID
+                    WHERE (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (CoreContent = 1 OR cu.AllCentres = 1) 
+                    GROUP BY a.ApplicationID, a.ApplicationName
+                    ORDER BY Label"
+                      );
+        }
+
+        public string? GetApplicationNameById(int applicationId)
+        {
+            return(string ?)connection.ExecuteScalar(
+                @"SELECT        ApplicationName
+                    FROM            Applications WITH (NOLOCK)
+                    WHERE        ApplicationID = @applicationId",
+               new { applicationId }
+           );
+        }
+
+        public IEnumerable<(int, string)> GetCoreCourseCategories()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT        cc.CourseCategoryID AS ID, cc.CategoryName AS Label
+                    FROM            CourseCategories AS cc WITH (NOLOCK) INNER JOIN
+                    Applications AS a WITH (NOLOCK) ON a.CourseCategoryID = cc.CourseCategoryID INNER JOIN
+                    Customisations AS cu WITH (NOLOCK) ON a.ApplicationID = cu.ApplicationID
+                    WHERE        (cc.Active = 1) AND (a.CoreContent = 1 OR cu.AllCentres = 1)
+                    GROUP BY cc.CourseCategoryID, cc.CategoryName
+                    ORDER BY cc.CategoryName"
+           );
+        }
+        public IEnumerable<(int, string)> GetCoreCourseBrands()
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT        b.BrandID, b.BrandName
+                    FROM            Brands AS b WITH (NOLOCK) INNER JOIN
+                    Applications AS a WITH (NOLOCK) ON b.BrandID = a.BrandID INNER JOIN
+                    Customisations AS cu WITH (NOLOCK) ON a.ApplicationID = cu.ApplicationID
+                    WHERE        (b.Active = 1) AND (a.CoreContent = 1 OR cu.AllCentres = 1)
+                    GROUP BY b.BrandID, b.BrandName
+                    ORDER BY b.BrandName"
+           );
+        }
     }
 }

@@ -19,16 +19,16 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
         }
 
         public int CentreId { get; set; }
-
+		
         [Required(ErrorMessage = "Enter a first name")]
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongFirstName)]
         public string? FirstName { get; set; }
 
         [Required(ErrorMessage = "Enter a last name")]
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
+		
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Enter an email")]
         [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]

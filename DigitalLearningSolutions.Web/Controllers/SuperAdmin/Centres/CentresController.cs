@@ -289,6 +289,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             return RedirectToAction("ManageCentre", "Centres", new { centreId = editCentreManagerDetailsViewModel.CentreId });
         }
 
+        [HttpGet]
+        [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult CentreRoleLimits(int centreId = 0)
         {
@@ -398,27 +400,55 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult EditCentreRoleLimits(CentreRoleLimitsViewModel model)
         {
-            if (!(model.IsRoleLimitSetCmsAdministrators))
+            if (model.IsRoleLimitSetCmsAdministrators && model.RoleLimitCmsAdministrators == null)
+            {
+                ModelState["RoleLimitCmsAdministrators.RoleLimitCmsAdministrators"]?.Errors.Clear();
+            }
+            if (!model.IsRoleLimitSetCmsAdministrators)
             {
                 model.RoleLimitCmsAdministrators = -1;
             }
+            model.RoleLimitCmsAdministrators ??= -1;
 
-            if (!(model.IsRoleLimitSetCmsManagers))
+            if (model.IsRoleLimitSetCmsManagers && model.RoleLimitCmsManagers == null)
+            {
+                ModelState["RoleLimitCmsManagers.RoleLimitCmsManagers"]?.Errors.Clear();
+            }
+            if (!model.IsRoleLimitSetCmsManagers)
             {
                 model.RoleLimitCmsManagers = -1;
             }
-            if (!(model.IsRoleLimitSetContentCreatorLicences))
+            model.RoleLimitCmsManagers ??= -1;
+
+            if (model.IsRoleLimitSetContentCreatorLicences && model.RoleLimitContentCreatorLicences == null)
+            {
+                ModelState["RoleLimitContentCreatorLicences.RoleLimitContentCreatorLicences"]?.Errors.Clear();
+            }
+            if (!model.IsRoleLimitSetContentCreatorLicences)
             {
                 model.RoleLimitContentCreatorLicences = -1;
             }
-            if (!(model.IsRoleLimitSetCustomCourses))
+            model.RoleLimitContentCreatorLicences ??= -1;
+
+            if (model.IsRoleLimitSetCustomCourses && model.RoleLimitCustomCourses == null)
+            {
+                ModelState["RoleLimitCustomCourses.RoleLimitCustomCourses"]?.Errors.Clear();
+            }
+            if (!model.IsRoleLimitSetCustomCourses)
             {
                 model.RoleLimitCustomCourses = -1;
             }
-            if (!(model.IsRoleLimitSetTrainers))
+            model.RoleLimitCustomCourses ??= -1;
+
+            if (model.IsRoleLimitSetTrainers && model.RoleLimitTrainers == null)
+            {
+                ModelState["RoleLimitTrainers.RoleLimitTrainers"]?.Errors.Clear();
+            }
+            if (!model.IsRoleLimitSetTrainers)
             {
                 model.RoleLimitTrainers = -1;
             }
+            model.RoleLimitTrainers ??= -1;
 
             if (!ModelState.IsValid)
             {
@@ -456,6 +486,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/AddCentre")]
         public IActionResult AddCentre(AddCentreSuperAdminViewModel model)
         {
+            var centres = centresDataService.GetAllCentres().ToList();
+            bool isCentreNamePresent = centres.Any(center => center.Item2 == model.CentreName);
+            if (isCentreNamePresent)
+            {
+                ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
+            }
             if (!ModelState.IsValid)
             {
                 var centreTypes = this.centresDataService.GetCentreTypes().ToList();
@@ -485,7 +521,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpGet]
         [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditContractInfo")]
-        public IActionResult EditContractInfo(int centreId, int? day, int? month, int? year)
+        public IActionResult EditContractInfo(int centreId, int? day, int? month, int? year, int? ContractTypeID, long? ServerSpaceBytesInc, long? DelegateUploadSpace)
         {
             ContractInfo centre = this.centresDataService.GetContractInfo(centreId);
             var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
@@ -497,13 +533,13 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
                 centre.ContractReviewDate, day, month, year);
             model.ServerSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
-                serverspace, centre.ServerSpaceBytesInc
+                serverspace, ServerSpaceBytesInc ?? centre.ServerSpaceBytesInc
             );
             model.PerDelegateUploadSpaceOptions = SelectListHelper.MapLongOptionsToSelectListItems(
-                delegatespace, centre.DelegateUploadSpace
+                delegatespace, DelegateUploadSpace ?? centre.DelegateUploadSpace
             );
             model.ContractTypeOptions = SelectListHelper.MapOptionsToSelectListItems(
-                contractTypes, centre.ContractTypeID
+                contractTypes, ContractTypeID ?? centre.ContractTypeID
             );
             if (day != null && month != null && year != null)
             {
