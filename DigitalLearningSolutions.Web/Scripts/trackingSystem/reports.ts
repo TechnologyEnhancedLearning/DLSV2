@@ -8,7 +8,7 @@ interface IActivityDataRowModel {
   period: string;
   completions: number;
   evaluations: number;
-  registrations: number;
+  enrolments: number;
 }
 
 function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.IChartistData {
@@ -16,7 +16,7 @@ function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.ICh
   const series = [
     data.map((d) => d.completions),
     data.map((d) => d.evaluations),
-    data.map((d) => d.registrations),
+    data.map((d) => d.enrolments),
   ];
   return { labels, series };
 }

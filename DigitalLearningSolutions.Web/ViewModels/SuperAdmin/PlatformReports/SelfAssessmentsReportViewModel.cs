@@ -2,7 +2,6 @@
 {
     using DigitalLearningSolutions.Data.Models.PlatformReports;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
     using System;
     using System.Collections.Generic;
 

@@ -7,6 +7,7 @@
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using System;
 
     class TutorialVideoViewModelTests
     {
@@ -145,7 +146,7 @@
             );
 
             // Then
-            var courseTitle = $"{applicationName} - {customisationName}";
+            var courseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             tutorialVideoViewModel.CourseTitle.Should().BeEquivalentTo(courseTitle);
         }
 
