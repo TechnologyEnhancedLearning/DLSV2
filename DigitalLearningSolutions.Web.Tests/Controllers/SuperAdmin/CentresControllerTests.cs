@@ -9,7 +9,6 @@ using FakeItEasy;
 using FluentAssertions;
 using FluentAssertions.AspNetCore.Mvc;
 using FluentAssertions.Execution;
-using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -131,7 +130,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         }
 
         [Test]
-        public void AddCentre_results_DuplicateCentre_error()
+        public void AddCentre_results_DuplicateCentre_error_and_redirects_ToSamePage()
         {
             // Given
             IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##") };
