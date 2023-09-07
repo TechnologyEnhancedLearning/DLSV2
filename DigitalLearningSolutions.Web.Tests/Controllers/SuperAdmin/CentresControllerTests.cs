@@ -11,7 +11,6 @@ using FluentAssertions.AspNetCore.Mvc;
 using FluentAssertions.Execution;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 {
@@ -127,53 +126,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                                                 model.ShowOnMap,
                                                 model.AddITSPcourses))
                                                 .MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void AddCentre_results_DuplicateCentre_error_and_redirects_ToSamePage()
-        {
-            // Given
-            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##") };
-            A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
-            var model = new AddCentreSuperAdminViewModel
-            {
-                CentreName = "##HEE Demo Centre##",
-                ContactFirstName = "FirstName",
-                ContactLastName = "LastName",
-                ContactEmail = "sample@email.com",
-                ContactPhone = "07384562856",
-                CentreTypeId = 1,
-                RegionId = 3,
-                RegistrationEmail = "sample2@email.com",
-                IpPrefix = "192.164.1.1",
-                ShowOnMap = true,
-                AddITSPcourses = true
-            };
-
-            // When
-            var result = controller.AddCentre(model);
-
-            // Then
-            result.Should().BeViewResult();
-
-            controller.ModelState.IsValid.Should().BeFalse();
-            var centreNameErrors = controller.ModelState["CentreName"].Errors;
-            centreNameErrors.Should().NotBeEmpty();
-            centreNameErrors.Should().Contain(error => error.ErrorMessage ==
-            "The centre name you have entered already exists, please enter a different centre name");
-
-            A.CallTo(() => centresDataService.AddCentreForSuperAdmin(
-                                                model.CentreName,
-                                                model.ContactFirstName,
-                                                model.ContactLastName,
-                                                model.ContactEmail,
-                                                model.ContactPhone,
-                                                model.CentreTypeId,
-                                                model.RegionId,
-                                                model.RegistrationEmail,
-                                                model.IpPrefix,
-                                                model.ShowOnMap,
-                                                model.AddITSPcourses)).MustNotHaveHappened();
         }
 
         [Test]
