@@ -90,6 +90,45 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         }
 
         [Test]
+        public void AddCentre_adds_centre_and_redirects_with_successful_save()
+        {
+            // Given
+            var model = new AddCentreSuperAdminViewModel
+            {
+                CentreName = "##HEE Demo Centre##",
+                ContactFirstName = "FirstName",
+                ContactLastName = "LastName",
+                ContactEmail = "sample@email.com",
+                ContactPhone = "07384562856",
+                CentreTypeId = 1,
+                RegionId = 3,
+                RegistrationEmail = "sample2@email.com",
+                IpPrefix = "192.164.1.1",
+                ShowOnMap = true,
+                AddITSPcourses = true
+            };
+
+            // When
+            var result = controller.AddCentre(model);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
+            A.CallTo(() => centresDataService.AddCentreForSuperAdmin(
+                                                model.CentreName,
+                                                model.ContactFirstName,
+                                                model.ContactLastName,
+                                                model.ContactEmail,
+                                                model.ContactPhone,
+                                                model.CentreTypeId,
+                                                model.RegionId,
+                                                model.RegistrationEmail,
+                                                model.IpPrefix,
+                                                model.ShowOnMap,
+                                                model.AddITSPcourses))
+                                                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
         public void CentreRoleLimits_route_loads_existing_role_limits_with_derived_flags_set()
         {
             // Given
