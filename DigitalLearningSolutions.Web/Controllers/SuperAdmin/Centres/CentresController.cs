@@ -360,34 +360,47 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/CentreRoleLimits")]
         public IActionResult EditCentreRoleLimits(CentreRoleLimitsViewModel model)
         {
-            if (!model.IsRoleLimitSetCmsAdministrators)
+            if (model.IsRoleLimitSetCmsAdministrators)
             {
+                ModelState["RoleLimitCmsAdministrators.RoleLimitCmsAdministrators"]?.Errors.Clear();
+            }else{
                 model.RoleLimitCmsAdministrators = -1;
-                ModelState.Remove("RoleLimitCmsAdministrators");
             }
 
-            if (!model.IsRoleLimitSetCmsManagers)
+            if (model.IsRoleLimitSetCmsManagers)
+            {
+                ModelState["RoleLimitCmsManagers.RoleLimitCmsManagers"]?.Errors.Clear();
+            }
+            else
             {
                 model.RoleLimitCmsManagers = -1;
-                ModelState.Remove("RoleLimitCmsManagers");
             }
 
-            if (!model.IsRoleLimitSetContentCreatorLicences)
+            if (model.IsRoleLimitSetContentCreatorLicences)
+            {
+                ModelState["RoleLimitContentCreatorLicences.RoleLimitContentCreatorLicences"]?.Errors.Clear();
+            }
+            else
             {
                 model.RoleLimitContentCreatorLicences = -1;
-                ModelState.Remove("RoleLimitContentCreatorLicences");
             }
 
-            if (!model.IsRoleLimitSetCustomCourses)
+            if (model.IsRoleLimitSetCustomCourses)
+            {
+                ModelState["RoleLimitCustomCourses.RoleLimitCustomCourses"]?.Errors.Clear();
+            }
+            else
             {
                 model.RoleLimitCustomCourses = -1;
-                ModelState.Remove("RoleLimitCustomCourses");
             }
 
-            if (!model.IsRoleLimitSetTrainers)
+            if (model.IsRoleLimitSetTrainers)
+            {
+                ModelState["RoleLimitTrainers.RoleLimitTrainers"]?.Errors.Clear();
+            }
+            else
             {
                 model.RoleLimitTrainers = -1;
-                ModelState.Remove("RoleLimitTrainers");
             }
 
             if (!ModelState.IsValid)
