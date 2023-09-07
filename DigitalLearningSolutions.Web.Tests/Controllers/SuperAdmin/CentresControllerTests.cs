@@ -198,9 +198,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             var expectedVm = new CentreRoleLimitsViewModel
             {
                 CentreId = 374,
-                RoleLimitCmsAdministrators = 0,
+                RoleLimitCmsAdministrators = null,
                 IsRoleLimitSetCmsAdministrators = false,    // automatically set off
-                RoleLimitCmsManagers = 0,
+                RoleLimitCmsManagers = null,
                 IsRoleLimitSetCmsManagers = false,          // automatically set off
                 IsRoleLimitSetContentCreatorLicences = true,
                 RoleLimitContentCreatorLicences = 10,
