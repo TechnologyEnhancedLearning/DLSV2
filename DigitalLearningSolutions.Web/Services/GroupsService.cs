@@ -75,6 +75,14 @@
 
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
+        (IEnumerable<Group>, int) GetGroupsForCentreNEW(
+            string search,
+            int offset,
+            int rows,
+            int centreId,
+            int failedLoginThreshold
+        );
+
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
         string? GetGroupName(int groupId, int centreId);
@@ -487,6 +495,17 @@
         public IEnumerable<Group> GetGroupsForCentre(int centreId)
         {
             return groupsDataService.GetGroupsForCentre(centreId);
+        }
+
+
+        public (IEnumerable<Group>, int) GetGroupsForCentreNEW(string search,
+            int offset,
+            int rows,
+            int centreId,
+            int failedLoginThreshold
+        )
+        {
+            return groupsDataService.GetGroupsForCentreNEW(search, offset, rows, centreId, failedLoginThreshold);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)

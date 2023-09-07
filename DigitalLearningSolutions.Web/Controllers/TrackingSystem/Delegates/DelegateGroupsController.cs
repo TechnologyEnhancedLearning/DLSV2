@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -89,6 +88,92 @@
 
             return View(model);
         }
+
+        //[Route("{page=1:int}")]
+        //public IActionResult Index(
+        //    //string? searchString = null,
+        //    //string? sortBy = null,
+        //    //string sortDirection = GenericSortingHelper.Ascending,
+        //    //string? existingFilterString = null,
+        //    //string? newFilterToAdd = null,
+        //    //bool clearFilters = false,
+        //    //int page = 1
+
+        //    int page = 1,
+        //    string? Search = "",
+        //    int? itemsPerPage = 10,
+        //    string? SearchString = "",
+        //    string? ExistingFilterString = ""
+        //)
+        //{
+        //    //sortBy ??= DefaultSortByOptions.Name.PropertyName;
+        //    //existingFilterString = FilteringHelper.GetFilterString(
+        //    //    existingFilterString,
+        //    //    newFilterToAdd,
+        //    //    clearFilters,
+        //    //    Request,
+        //    //    DelegateGroupsFilterCookieName
+        //    //);
+
+        //    var centreId = User.GetCentreIdKnownNotNull();
+
+        //    if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
+        //    {
+        //        page = 1;
+        //    }
+
+        //    int offSet = ((page - 1) * itemsPerPage) ?? 0;
+
+
+        //    var groups = groupsService.GetGroupsForCentre(centreId).ToList();
+
+
+
+        //    //(var UserAccounts, var ResultCount) = this.userDataService.GetUserAccounts(Search ?? string.Empty, offSet, itemsPerPage ?? 0, JobGroupId, UserStatus, EmailStatus, UserId, AuthHelper.FailedLoginThreshold);
+
+        //    (var groupsNew, var ResultCount) = groupsService.GetGroupsForCentreNEW(
+        //        Search ?? string.Empty, offSet, itemsPerPage ?? 0, CentreId, AuthHelper.FailedLoginThreshold
+        //    );
+
+
+
+        //    var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
+        //    var availableFilters = DelegateGroupsViewModelFilterOptions
+        //        .GetDelegateGroupFilterModels(groups, registrationPrompts).ToList();
+
+
+
+
+
+        //    var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+        //        new SearchOptions(searchString),
+        //        new SortOptions(sortBy, sortDirection),
+        //        new FilterOptions(existingFilterString, availableFilters),
+        //        new PaginationOptions(page)
+        //    );
+
+        //    var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+        //        groups,
+        //        searchSortPaginationOptions
+        //    );
+
+        //    // TODO: Replace the above with something awesome! :D
+
+
+
+
+        //    var model = new DelegateGroupsViewModel(
+        //        result,
+        //        availableFilters
+        //    );
+
+        //    Response.UpdateFilterCookie(DelegateGroupsFilterCookieName, result.FilterString);
+
+        //    return View(model);
+        //}
+
+
+
 
         [Route("AllDelegateGroups")]
         public IActionResult AllDelegateGroups()

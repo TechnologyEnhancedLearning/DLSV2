@@ -8,10 +8,19 @@
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public interface IGroupsDataService
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
+
+        (IEnumerable<Group>, int) GetGroupsForCentreNEW(
+            string search,
+            int offset,
+            int rows,
+            int centreId,
+            int failedLoginThreshold
+        );
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
@@ -189,6 +198,50 @@
                 new { centreId }
             );
         }
+
+
+
+        public (IEnumerable<Group>, int) GetGroupsForCentreNEW(string search, int offset, int rows, int centreId, int failedLoginThreshold)
+        {
+            //if (!string.IsNullOrEmpty(search))
+            //{
+            //    search = search.Trim();
+            //}
+            //string condition = $@" WHERE ((@userId = 0) OR (u.ID = @userId)) AND 
+            //(u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%') AND 
+            //((u.JobGroupID = @jobGroupId) OR (@jobGroupId = 0)) AND 
+            //((@userStatus = 'Any') OR (@userStatus = 'Active' AND u.Active = 1) OR (@userStatus = 'Inactive' AND u.Active = 0) OR (@userStatus = 'Locked' AND u.FailedLoginCount >= @failedLoginThreshold)) AND 
+            //((@emailStatus = 'Any') OR (@emailStatus = 'Verified' AND u.EmailVerified IS NOT NULL) OR (@emailStatus = 'Unverified' AND u.EmailVerified IS NULL))
+            //";
+
+            //string sql = @$"{BaseSelectUserQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
+            //    OFFSET @offset ROWS
+            //    FETCH NEXT @rows ROWS ONLY";
+
+            //IEnumerable<UserAccountEntity> userAccountEntity = connection.Query<UserAccount, JobGroup, UserAccountEntity>(
+            //    sql,
+            //    (userAccount, jobGroup) => new UserAccountEntity(
+            //        userAccount, jobGroup),
+            //    new { userId, search, jobGroupId, userStatus, failedLoginThreshold, emailStatus, offset, rows },
+            //    splitOn: "JobGroupID",
+            //    commandTimeout: 3000
+            //);
+
+            //int ResultCount = connection.ExecuteScalar<int>(
+            //    @$"SELECT COUNT(ID) AS Matches
+            //                FROM   Users AS u INNER JOIN
+            //                JobGroups AS jg ON u.JobGroupID = jg.JobGroupID {condition}",
+            //    new { userId, search, jobGroupId, userStatus, failedLoginThreshold, emailStatus },
+            //    commandTimeout: 3000
+            //);
+            //return (userAccountEntity, ResultCount);
+            return (null, 0);
+        }
+
+
+
+
+
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
         {
@@ -420,7 +473,7 @@
         {
             return connection.QuerySingle<int>(
                 @"GroupCustomisation_Add_V2",
-                new { groupId, customisationId, centreId, completeWithinMonths, adminUserID = addedByAdminUserId, cohortLearners, supervisorAdminId=supervisorAdminId ?? 0 },
+                new { groupId, customisationId, centreId, completeWithinMonths, adminUserID = addedByAdminUserId, cohortLearners, supervisorAdminId = supervisorAdminId ?? 0 },
                 commandType: CommandType.StoredProcedure
             );
             //return connection.QuerySingle<int>(
