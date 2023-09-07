@@ -305,14 +305,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCmsAdministrators != null && roleLimits.RoleLimitCmsAdministrators != -1))
             {
-                if (roleLimits.RoleLimitCmsAdministrators != -1)
-                {
-                    centreRoleLimitsViewModel.RoleLimitCmsAdministrators = null;
-                }
-                else
-                {
-                    centreRoleLimitsViewModel.RoleLimitCmsAdministrators = -1;
-                }
                 centreRoleLimitsViewModel.IsRoleLimitSetCmsAdministrators = false;
             }
             else
@@ -323,14 +315,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCmsManagers != null && roleLimits.RoleLimitCmsManagers != -1))
             {
-                if (roleLimits.RoleLimitCmsManagers != -1)
-                {
-                    centreRoleLimitsViewModel.RoleLimitCmsManagers = null;
-                }
-                else
-                {
-                    centreRoleLimitsViewModel.RoleLimitCmsManagers = -1;
-                }
                 centreRoleLimitsViewModel.IsRoleLimitSetCmsManagers = false;
             }
             else
@@ -341,14 +325,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCcLicences != null && roleLimits.RoleLimitCcLicences != -1))
             {
-                if (roleLimits.RoleLimitCcLicences != -1)
-                {
-                    centreRoleLimitsViewModel.RoleLimitContentCreatorLicences = null;
-                }
-                else
-                {
-                    centreRoleLimitsViewModel.RoleLimitContentCreatorLicences = -1;
-                }
                 centreRoleLimitsViewModel.IsRoleLimitSetContentCreatorLicences = false;
             }
             else
@@ -359,14 +335,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitCustomCourses != null && roleLimits.RoleLimitCustomCourses != -1))
             {
-                if (roleLimits.RoleLimitCustomCourses != -1)
-                {
-                    centreRoleLimitsViewModel.RoleLimitCustomCourses = null;
-                }
-                else
-                {
-                    centreRoleLimitsViewModel.RoleLimitCustomCourses = -1;
-                }
                 centreRoleLimitsViewModel.IsRoleLimitSetCustomCourses = false;
             }
             else
@@ -377,14 +345,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!(roleLimits.RoleLimitTrainers != null && roleLimits.RoleLimitTrainers != -1))
             {
-                if (roleLimits.RoleLimitTrainers != -1)
-                {
-                    centreRoleLimitsViewModel.RoleLimitTrainers = null;
-                }
-                else
-                {
-                    centreRoleLimitsViewModel.RoleLimitTrainers = -1;
-                }
                 centreRoleLimitsViewModel.IsRoleLimitSetTrainers = false;
             }
             else
@@ -546,7 +506,10 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                         contractTypeViewModel.CentreId,
                         day,
                         month,
-                        year
+                        year,
+                        contractTypeViewModel.ContractTypeID,
+                        contractTypeViewModel.ServerSpaceBytesInc,
+                        contractTypeViewModel.DelegateUploadSpace
                     });
                 }
             }
