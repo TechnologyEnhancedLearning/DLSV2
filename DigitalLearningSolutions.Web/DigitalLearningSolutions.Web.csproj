@@ -137,7 +137,6 @@
         <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\centreCourseSetup.ts" />
-        <TypeScriptCompile Include="Scripts\trackingSystem\delegateGroups.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\learningLog.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
     </ItemGroup>
