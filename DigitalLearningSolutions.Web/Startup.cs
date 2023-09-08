@@ -364,7 +364,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyDelegateAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
             services.AddScoped<VerifyUserHasVerifiedPrimaryEmail>();
-            services.AddScoped<VerifyAdminAndDelegateUserCentre>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
