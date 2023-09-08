@@ -556,7 +556,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 var contractTypes = this.contractTypesDataService.GetContractTypes().ToList();
                 var serverspace = this.contractTypesDataService.GetServerspace();
                 var delegatespace = this.contractTypesDataService.Getdelegatespace();
-
                 var model = new ContractTypeViewModel(centre.CentreID, centre.CentreName,
                 centre.ContractTypeID, centre.ContractType,
                 centre.ServerSpaceBytesInc, centre.DelegateUploadSpace,
