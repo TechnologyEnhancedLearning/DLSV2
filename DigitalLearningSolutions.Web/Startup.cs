@@ -93,6 +93,8 @@ namespace DigitalLearningSolutions.Web
                     }
                 );
 
+            this.SetUpAuthentication(services);
+
             services.AddAuthorization(
                 options =>
                 {
