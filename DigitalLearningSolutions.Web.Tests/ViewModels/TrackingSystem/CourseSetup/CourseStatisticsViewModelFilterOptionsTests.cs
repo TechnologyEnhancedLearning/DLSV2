@@ -49,8 +49,7 @@
                     "true",
                     FilterStatus.Success
                 ),
-            },
-            "course status"
+            }
         );
 
         private readonly FilterModel expectedTopicsFilterViewModel = new FilterModel(
@@ -90,8 +89,7 @@
                     "false",
                     FilterStatus.Success
                 ),
-            },
-            "course status"
+            }
         );
 
         private readonly FilterModel expectedHasAdminFieldsFilterViewModel = new FilterModel(
@@ -111,8 +109,7 @@
                     "false",
                     FilterStatus.Default
                 )
-            },
-            "course status"
+            }
         );
 
         private readonly List<string> filterableCategories = new List<string> { "Category 1", "Category 2" };

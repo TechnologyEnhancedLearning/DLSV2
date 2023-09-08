@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
@@ -103,11 +102,8 @@
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
         private IActivityService activityService = null;
-        private IPaginateService paginateService = null;
-        private ICourseCategoriesDataService courseCategoriesDataService = null;
-        private ICourseTopicsDataService courseTopicsDataService = null;
 
-        [SetUp]
+    [SetUp]
         public void Setup()
         {
             courseService = A.Fake<ICourseService>();
@@ -115,9 +111,6 @@
             sectionService = A.Fake<ISectionService>();
             activityService = A.Fake<IActivityService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
-            paginateService = A.Fake<IPaginateService>();
-            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
-            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             config = A.Fake<IConfiguration>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
             A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
@@ -143,12 +136,9 @@
                     tutorialService,
                     sectionService,
                     searchSortFilterPaginateService,
-                    paginateService,
                     config,
                     multiPageFormService,
-                    activityService,
-                    courseCategoriesDataService,
-                    courseTopicsDataService
+                    activityService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -160,12 +150,9 @@
                     tutorialService,
                     sectionService,
                     searchSortFilterPaginateService,
-                    paginateService,
                     config,
                     multiPageFormService,
-                    activityService,
-                    courseCategoriesDataService,
-                    courseTopicsDataService
+                    activityService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
@@ -181,13 +168,11 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseService.GetCentreCourses(A<string>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int?>._, A<bool>._, A<bool?>._,
-                    A<string>._, A<string>._, A<string>._, A<string>._)).MustHaveHappened();
+                A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).MustHaveHappened();
                 A.CallTo(
-                    () => paginateService.Paginate(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                         A<IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>>._,
-                        A<int>._,
-                        A<PaginationOptions>._, A<FilterOptions>._, A<string>._, A<string>._, A<string>._
+                        A<SearchSortFilterAndPaginateOptions>._
                     )
                 ).MustHaveHappened();
                 A.CallTo(
