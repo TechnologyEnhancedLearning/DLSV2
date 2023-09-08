@@ -54,24 +54,24 @@
         {
             var filters = new List<FilterModel>
             {
-                new FilterModel("PasswordStatus", "Password Status", PasswordStatusOptions,"status"),
-                new FilterModel("AdminStatus", "Admin Status", AdminStatusOptions,"status"),
-                new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions,"status"),
+                new FilterModel("PasswordStatus", "Password Status", PasswordStatusOptions),
+                new FilterModel("AdminStatus", "Admin Status", AdminStatusOptions),
+                new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions),
                 new FilterModel(
                     "JobGroupId",
                     "Job Group",
                     DelegatesViewModelFilters.GetJobGroupOptions(jobGroups)
                 ),
-                new FilterModel("RegistrationType", "Registration Type", RegistrationTypeOptions,"status"),
-                new FilterModel("AccountStatus", "Account Status", AccountStatusOptions,"status"),
-                new FilterModel("EmailStatus", "Email Status", EmailStatusOptions,"status"),
+                new FilterModel("RegistrationType", "Registration Type", RegistrationTypeOptions),
+                new FilterModel("AccountStatus", "Account Status", AccountStatusOptions),
+                new FilterModel("EmailStatus", "Email Status", EmailStatusOptions),
             };
             filters.AddRange(
                 promptsWithOptions.Select(
                     customPrompt => new FilterModel(
                         $"CentreRegistrationPrompt{customPrompt.RegistrationField.Id}",
                         customPrompt.PromptText,
-                        FilteringHelper.GetPromptFilterOptions(customPrompt),"prompts"
+                        FilteringHelper.GetPromptFilterOptions(customPrompt)
                     )
                 )
             );
