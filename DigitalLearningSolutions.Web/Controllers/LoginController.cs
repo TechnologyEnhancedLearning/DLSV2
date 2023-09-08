@@ -239,5 +239,19 @@
                 new { returnUrl, dlsSubApplication, isCheckDetailsRedirect }
             );
         }
+
+
+        public IActionResult SharedAuth()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return new ChallengeResult(new AuthenticationProperties() { RedirectUri = "/" });
+
+            //await HttpContext.ChallengeAsync("oidc");
+            //return View();
+        }
     }
 }

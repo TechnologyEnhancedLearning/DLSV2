@@ -69,6 +69,8 @@
         <PackageReference Include="GDS.MultiPageFormData" Version="1.0.6" />
         <PackageReference Include="HtmlAgilityPack" Version="1.11.28" />
 		<PackageReference Include="HtmlSanitizer" Version="7.1.542" />
+		<PackageReference Include="IdentityModel" Version="4.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.4" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
         <PackageReference Include="Microsoft.FeatureManagement" Version="2.5.1" />
