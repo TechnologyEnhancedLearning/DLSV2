@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Utilities;
-    using DocumentFormat.OpenXml.Spreadsheet;
 
     public interface ICourseService
     {
@@ -103,7 +102,7 @@
 
         LearningLog? GetLearningLogDetails(int progressId);
 
-        public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
+        public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId,
            string isActive, string categoryName, string courseTopic, string hasAdminFields);
     }
 
@@ -366,10 +365,10 @@
 
         
 
-        public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
+        public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId,
            string isActive, string categoryName, string courseTopic, string hasAdminFields)
         {
-            var (allCourses, resultCount) = courseDataService.GetCourseStatisticsAtCentre(searchString, offSet, itemsPerPage, sortBy, sortDirection,  centreId, categoryId, allCentreCourses, hideInLearnerPortal,
+            var (allCourses, resultCount) = courseDataService.GetCourseStatisticsAtCentre(searchString, offSet, itemsPerPage, sortBy, sortDirection,  centreId, categoryId,
            isActive, categoryName, courseTopic, hasAdminFields);
 
             return (allCourses.Select(
