@@ -474,7 +474,7 @@
                 : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllActiveCentreEmailsForUser(userId,true).Select(
+                ? userService.GetAllActiveCentreEmailsForUser(userId).Select(
                     row =>
                     {
                         string? email = null;
