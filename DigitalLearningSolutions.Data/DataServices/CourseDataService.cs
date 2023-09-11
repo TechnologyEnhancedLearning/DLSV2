@@ -105,6 +105,9 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
            string isActive, string categoryName, string courseTopic, string hasAdminFields);
+
+        public (IEnumerable<DelegateCourseInfo>, int) GetDelegateCourseInfosPerPageForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
     }
 
     public class CourseDataService : ICourseDataService
@@ -149,17 +152,35 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         private const string DelegateAllAttemptsQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
-                FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.DelegateAccounts AS dacc ON dacc.ID = aa.CandidateID
+                FROM dbo.AssessAttempts AS aa WITH (NOLOCK)
+                INNER JOIN dbo.DelegateAccounts AS dacc WITH (NOLOCK) ON dacc.ID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
                 AND dacc.ID = da.ID) AS AllAttempts";
 
         private const string DelegateAttemptsPassedQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
-                FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.DelegateAccounts AS dacc ON dacc.ID = aa.CandidateID
+                FROM dbo.AssessAttempts AS aa WITH (NOLOCK)
+                INNER JOIN dbo.DelegateAccounts AS dacc WITH (NOLOCK) ON dacc.ID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
                 AND dacc.ID = da.ID) AS AttemptsPassed";
+
+        private const string DelegatePassRateQuery =
+            @"CASE
+					WHEN (SELECT COUNT(aa.AssessAttemptID)
+                        FROM dbo.AssessAttempts AS aa WITH (NOLOCK)
+                        INNER JOIN dbo.DelegateAccounts AS dacc WITH (NOLOCK) ON dacc.ID = aa.CandidateID
+                        WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
+                        AND dacc.ID = da.ID) = 0 THEN 0
+					ELSE ROUND((100 * (CAST((SELECT COUNT(aa.AssessAttemptID)
+                        FROM dbo.AssessAttempts AS aa WITH (NOLOCK)
+                        INNER JOIN dbo.DelegateAccounts AS dacc WITH (NOLOCK) ON dacc.ID = aa.CandidateID
+                        WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
+                        AND dacc.ID = da.ID) AS FLOAT) / (SELECT COUNT(aa.AssessAttemptID)
+                        FROM dbo.AssessAttempts AS aa WITH (NOLOCK)
+                        INNER JOIN dbo.DelegateAccounts AS dacc WITH (NOLOCK) ON dacc.ID = aa.CandidateID
+                        WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
+                        AND dacc.ID = da.ID))),2,0)
+			END AS PassRate";
 
         private const string TutorialWithLearningCountQuery =
             @"SELECT COUNT(ct.TutorialID)
@@ -761,6 +782,133 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
             );
+        }
+
+        public (IEnumerable<DelegateCourseInfo>, int) GetDelegateCourseInfosPerPageForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3)
+        {
+
+            var selectColumnQuery = $@"SELECT
+                cu.CustomisationID AS CustomisationId,
+                cu.CustomisationName,
+                ap.ApplicationName,
+                ap.CourseCategoryID,
+                cu.IsAssessed,
+                cu.CentreID AS CustomisationCentreId,
+                cu.Active AS IsCourseActive,
+                cu.AllCentres AS AllCentresCourse,
+                pr.ProgressId,
+                pr.PLLocked as IsProgressLocked,
+                pr.SubmittedTime AS LastUpdated,
+                pr.CompleteByDate AS CompleteBy,
+                pr.RemovedDate,
+                pr.Completed AS Completed,
+                pr.Evaluated AS Evaluated,
+                pr.LoginCount,
+                pr.Duration AS LearningTime,
+                pr.DiagnosticScore,
+                LTRIM(RTRIM(pr.Answer1)) AS Answer1,
+                LTRIM(RTRIM(pr.Answer2)) AS Answer2,
+                LTRIM(RTRIM(pr.Answer3)) AS Answer3,
+                {DelegateAllAttemptsQuery},
+                {DelegateAttemptsPassedQuery},
+                pr.FirstSubmittedTime AS Enrolled,
+                pr.EnrollmentMethodID AS EnrolmentMethodId,
+                uEnrolledBy.FirstName AS EnrolledByForename,
+                uEnrolledBy.LastName AS EnrolledBySurname,
+                aaEnrolledBy.Active AS EnrolledByAdminActive,
+                aaSupervisor.ID AS SupervisorAdminId,
+                uSupervisor.FirstName AS SupervisorForename,
+                uSupervisor.LastName AS SupervisorSurname,
+                aaSupervisor.Active AS SupervisorAdminActive,
+                da.ID AS DelegateId,
+                da.CandidateNumber AS CandidateNumber,
+                u.FirstName AS DelegateFirstName,
+                u.LastName AS DelegateLastName,
+                COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
+                da.Active AS IsDelegateActive,
+                u.HasBeenPromptedForPrn,
+                u.ProfessionalRegistrationNumber,
+                da.CentreID AS DelegateCentreId,
+                ap.ArchivedDate AS CourseArchivedDate,
+                {DelegatePassRateQuery}";
+
+            var fromTableQuery = $@" FROM Customisations cu WITH (NOLOCK)
+                INNER JOIN Applications AS ap WITH (NOLOCK) ON ap.ApplicationID = cu.ApplicationID
+                INNER JOIN Progress AS pr WITH (NOLOCK) ON pr.CustomisationID = cu.CustomisationID
+                LEFT OUTER JOIN AdminAccounts AS aaSupervisor WITH (NOLOCK) ON aaSupervisor.ID = pr.SupervisorAdminId
+                LEFT OUTER JOIN Users AS uSupervisor WITH (NOLOCK) ON uSupervisor.ID = aaSupervisor.UserID
+                LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = pr.EnrolledByAdminID
+                LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID
+                INNER JOIN DelegateAccounts AS da WITH (NOLOCK) ON da.ID = pr.CandidateID
+                INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+                LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
+
+                WHERE (cu.CentreID = @centreId OR
+                        (cu.AllCentres = 1 AND
+                            EXISTS (SELECT CentreApplicationID
+                                    FROM CentreApplications cap
+                                    WHERE cap.ApplicationID = cu.ApplicationID AND
+                                        cap.CentreID = @centreID AND
+                                        cap.Active = 1)))
+                AND da.CentreID = @centreId
+                AND pr.CustomisationID = @customisationId
+                AND ap.DefaultContentTypeID <> 4
+
+                AND ( u.FirstName + ' ' + u.LastName + ' ' + COALESCE(ucd.Email, u.PrimaryEmail) + ' ' + COALESCE(CandidateNumber, '') LIKE N'%' + @searchString + N'%')
+                AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
+				AND ((@isProgressLocked IS NULL) OR (@isProgressLocked = 1 AND (pr.PLLocked = 1)) OR (@isProgressLocked = 0 AND (pr.PLLocked = 0)))
+				AND ((@removed IS NULL) OR (@removed = 1 AND (pr.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (pr.RemovedDate IS NULL)))
+				AND ((@hasCompleted IS NULL) OR (@hasCompleted = 1 AND pr.Completed IS NOT NULL) OR (@hasCompleted = 0 AND pr.Completed IS NULL))
+
+                AND ((@answer1 IS NULL) OR ((@answer1 = 'No option selected' OR @answer1 = 'FREETEXTBLANKVALUE') AND (pr.Answer1 IS NULL OR TRIM(pr.Answer1) = '')) 
+							OR (@answer1 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer1 IS NOT NULL OR pr.Answer1 = @answer1)))
+
+				AND ((@answer2 IS NULL) OR ((@answer2 = 'No option selected' OR @answer2 = 'FREETEXTBLANKVALUE') AND (pr.Answer2 IS NULL OR TRIM(pr.Answer2) = '')) 
+							OR (@answer2 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer2 IS NOT NULL OR pr.Answer2 = @answer2)))
+
+				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR TRIM(pr.Answer3) = '')) 
+							OR (@answer3 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer3 IS NOT NULL OR pr.Answer3 = @answer3)))
+                
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
+
+            string orderBy;
+            string sortOrder;
+
+            if (sortDirection == "Ascending")
+                sortOrder = " ASC ";
+            else
+                sortOrder = " DESC ";
+
+            if (sortBy == "SearchableName" || sortBy == "FullNameForSearchingSorting")
+                orderBy = " ORDER BY LTRIM(u.LastName) " + sortOrder + ", LTRIM(u.FirstName) ";
+            else
+                orderBy = " ORDER BY  "+ sortBy + sortOrder;
+
+            orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
+
+            var mainSql = selectColumnQuery + fromTableQuery +  orderBy;
+
+            IEnumerable<DelegateCourseInfo> delegateUserCard = connection.Query<DelegateCourseInfo>(
+                mainSql,
+                new
+                {searchString, offSet, itemsPerPage, sortBy, sortDirection, customisationId,
+                    centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
+                },
+                commandTimeout: 3000
+            );
+
+            var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches " + fromTableQuery;
+
+            int ResultCount = connection.ExecuteScalar<int>(
+                delegateCountQuery,
+                new
+                {searchString, offSet, itemsPerPage, sortBy, sortDirection, customisationId, centreId,
+                    isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
+                },
+                commandTimeout: 3000
+            );
+            return (delegateUserCard, ResultCount);
         }
 
         public CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId)
