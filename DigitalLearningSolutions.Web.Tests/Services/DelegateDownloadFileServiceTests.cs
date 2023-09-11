@@ -14,7 +14,7 @@
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using NUnit.Framework;
-
+    using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
     public class DelegateDownloadFileServiceTests
     {
         public const string TestAllDelegatesExportRelativeFilePath = "/TestData/AllDelegatesExportTest.xlsx";
@@ -93,14 +93,16 @@
         private IDelegateDownloadFileService delegateDownloadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IUserDataService userDataService = null!;
-
+        private IConfiguration configuration = null!;
         [SetUp]
         public void SetUp()
         {
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             userDataService = A.Fake<IUserDataService>();
-            delegateDownloadFileService = new DelegateDownloadFileService(centreRegistrationPromptsService, jobGroupsDataService, userDataService);
+            configuration = A.Fake<IConfiguration>();
+            A.CallTo(() => configuration["FeatureManagement:ExportQueryRowLimit"]).Returns("10");
+            delegateDownloadFileService = new DelegateDownloadFileService(centreRegistrationPromptsService, jobGroupsDataService, userDataService, configuration);
         }
 
         [Test]
@@ -144,7 +146,8 @@
                 .Returns(new CentreRegistrationPrompts(centreId, centreRegistrationPrompts));
 
             A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
-
+            A.CallTo(() => userDataService.GetCountDelegateUserCardsForExportByCentreId(2)).Returns(10);
+            A.CallTo(() => userDataService.GetDelegateUserCardsForExportByCentreId(2, 10, 1)).Returns(delegateUserCards);
             // When
             var resultBytes = delegateDownloadFileService.GetAllDelegatesFileForCentre(2, null, null, GenericSortingHelper.Ascending, null);
             using var resultsStream = new MemoryStream(resultBytes);
