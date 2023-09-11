@@ -62,7 +62,14 @@
             );
 
             var centreId = User.GetCentreIdKnownNotNull();
-            var groups = groupsService.GetGroupsForCentre(centreId).ToList();
+
+
+
+            //var groups = groupsService.GetGroupsForCentre(centreId).ToList();
+            (var groups, var count) = groupsService.GetGroupsForCentreNEW(centreId: centreId).ToList();
+
+
+
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
             var availableFilters = DelegateGroupsViewModelFilterOptions
                 .GetDelegateGroupFilterModels(groups, registrationPrompts).ToList();

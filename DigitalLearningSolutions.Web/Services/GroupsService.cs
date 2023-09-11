@@ -73,7 +73,7 @@
 
         void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment);
 
-        IEnumerable<Group> GetGroupsForCentre(int centreId);
+        //IEnumerable<Group> GetGroupsForCentre(int centreId);
 
         (IEnumerable<Group>, int) GetGroupsForCentreNEW(
             string search,
@@ -492,19 +492,23 @@
             transaction.Complete();
         }
 
-        public IEnumerable<Group> GetGroupsForCentre(int centreId)
-        {
-            return groupsDataService.GetGroupsForCentre(centreId);
-        }
+        //public IEnumerable<Group> GetGroupsForCentre(int centreId)
+        //{
+        //    return groupsDataService.GetGroupsForCentre(centreId);
+        //}
 
 
-        public (IEnumerable<Group>, int) GetGroupsForCentreNEW(string search,
-            int offset,
-            int rows,
-            int centreId,
-            int failedLoginThreshold
+        //public (IEnumerable<Group>, int) GetGroupsForCentreNEW(
+        public IEnumerable<Group> GetGroupsForCentreNEW(
+            string? search = "",
+            int? offset = 0,
+            int? rows = 10,
+            int? centreId = 0,
+            int? failedLoginThreshold = 0
         )
         {
+
+            //return groupsDataService.GetGroupsForCentreNEW(search, offset, rows, centreId, failedLoginThreshold);
             return groupsDataService.GetGroupsForCentreNEW(search, offset, rows, centreId, failedLoginThreshold);
         }
 
@@ -635,7 +639,12 @@
                 ? GetJobGroupsAndPrefix()
                 : GetCentreRegistrationPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField.Id);
 
-            var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
+
+            //var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
+            //(var groupsAtCentre, var groupCount) = GetGroupsForCentreNEW(centreId: groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
+            var groupsAtCentre = GetGroupsForCentreNEW(centreId: groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
+
+
 
             using var transaction = new TransactionScope();
             foreach (var (id, newGroupName) in newGroupNames)

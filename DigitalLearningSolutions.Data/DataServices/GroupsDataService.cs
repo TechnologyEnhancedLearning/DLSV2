@@ -12,14 +12,15 @@
 
     public interface IGroupsDataService
     {
-        IEnumerable<Group> GetGroupsForCentre(int centreId);
+        //IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        (IEnumerable<Group>, int) GetGroupsForCentreNEW(
-            string search,
-            int offset,
-            int rows,
-            int centreId,
-            int failedLoginThreshold
+        //(IEnumerable<Group>, int) GetGroupsForCentreNEW(
+        IEnumerable<Group> GetGroupsForCentreNEW(
+            string? search,
+            int? offset,
+            int? rows,
+            int? centreId,
+            int? failedLoginThreshold
         );
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
@@ -191,17 +192,22 @@
             this.connection = connection;
         }
 
-        public IEnumerable<Group> GetGroupsForCentre(int centreId)
-        {
-            return connection.Query<Group>(
-                @$"{groupsSql} AND g.CentreID = @centreId",
-                new { centreId }
-            );
-        }
+        //public IEnumerable<Group> GetGroupsForCentre(int centreId)
+        //{
+        //    return connection.Query<Group>(
+        //        @$"{groupsSql} AND g.CentreID = @centreId",
+        //        new { centreId }
+        //    );
+        //}
 
 
 
-        public (IEnumerable<Group>, int) GetGroupsForCentreNEW(string search, int offset, int rows, int centreId, int failedLoginThreshold)
+        public (IEnumerable<Group>, int) GetGroupsForCentreNEW(
+            string? search = "",
+            int? offset = 0,
+            int? rows = 10,
+            int? centreId = 0,
+            int? failedLoginThreshold = 0)
         {
             //if (!string.IsNullOrEmpty(search))
             //{
