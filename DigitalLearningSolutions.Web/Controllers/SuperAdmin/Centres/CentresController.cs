@@ -432,6 +432,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             if (!ModelState.IsValid)
             {
+                ViewBag.CentreName = centresDataService.GetCentreName(model.CentreId);
                 return View("CentreRoleLimits", model);
             }
 
