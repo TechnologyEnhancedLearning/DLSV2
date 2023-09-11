@@ -117,7 +117,7 @@ namespace DigitalLearningSolutions.Web
             //    {
             //        options.Authority = "https://lh-auth.dev.local";  //config.Authority; Need to get this value from config
             //        options.ClientId = "digitallearningsolutions";   //config.ClientId; Need to get this from config
-            //        options.ClientSecret = "B815B7C5-63EB-4FE5-932A-843BCA81D8A5";  //config.ClientSecret; Need to get this from config
+            //        options.ClientSecret = "";  //config.ClientSecret; Need to get this from config
             //        options.ResponseType = OpenIdConnectResponseType.Code;
             //        options.Scope.Add("openid");
             //        options.Scope.Add("profile");
