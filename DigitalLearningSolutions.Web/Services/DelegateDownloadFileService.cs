@@ -133,7 +133,7 @@
             ClosedXmlHelper.AddSheetToWorkbook(workbook, JobGroupsSheetName, jobGroups, TableTheme);
         }
 
-        private async void PopulateAllDelegatesSheet(
+        private void PopulateAllDelegatesSheet(
             IXLWorkbook workbook,
             int centreId,
             string? searchString,
@@ -143,7 +143,7 @@
         )
         {
             var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var delegatesToExport = await GetDelegatesToExport(centreId);
+            var delegatesToExport =  Task.Run(() => GetDelegatesToExport(centreId)).Result; 
             var searchedUsers = GenericSearchHelper.SearchItems(delegatesToExport, searchString).AsQueryable();
             var filteredItems = FilteringHelper.FilterItems(searchedUsers, filterString).AsQueryable();
             var sortedItems = GenericSortingHelper.SortAllItems(
