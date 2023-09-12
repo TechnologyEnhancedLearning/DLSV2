@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using ClosedXML.Excel;
@@ -208,8 +209,9 @@
                 TestContext.CurrentContext.TestDirectory + CourseDelegateExportCurrentDataDownloadRelativeFilePath
             );
 
-            A.CallTo(() => courseDataService.GetDelegatesOnCourseForExport(customisationId, centreId))
-                .Returns(courseDelegates.Where(c => c.ApplicationName == "Course One"));
+            A.CallTo(() => courseDataService.GetCourseDelegatesForExport(string.Empty, "SearchableName", "Ascending",
+                    customisationId, centreId, null, null, null, null, null, null, null))
+               .Returns(courseDelegates.Where(c => c.ApplicationName == "Course One"));
 
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt>
             {
@@ -230,12 +232,11 @@
                 .Returns(new CourseAdminFields(customisationId, adminFields));
 
             // When
-            var resultBytes = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(
-                customisationId,
-                centreId,
-                null,
-                null
+
+            var resultBytes = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(string.Empty, "SearchableName", "Ascending",
+                    customisationId, centreId, null, null, null, null, null, null, null
             );
+
             using var resultsStream = new MemoryStream(resultBytes);
             using var resultWorkbook = new XLWorkbook(resultsStream);
 

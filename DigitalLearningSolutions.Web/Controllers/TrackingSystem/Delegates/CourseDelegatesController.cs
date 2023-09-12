@@ -197,18 +197,66 @@
         [Route("DownloadCurrent/{customisationId:int}")]
         public IActionResult DownloadCurrent(
             int customisationId,
+             string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null
         )
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(
-                customisationId,
-                centreId,
-                sortBy,
-                existingFilterString,
-                sortDirection
+
+            bool? isDelegateActive, isProgressLocked, removed, hasCompleted;
+            isDelegateActive = isProgressLocked = removed = hasCompleted = null;
+
+            string? answer1, answer2, answer3;
+            answer1 = answer2 = answer3 = null;
+
+            if (!string.IsNullOrEmpty(existingFilterString))
+            {
+                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
+
+                if (selectedFilters.Count > 0)
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        var filterArr = filter.Split(FilteringHelper.Separator);
+                        dynamic filterValue = filterArr[2];
+                        switch (filterValue)
+                        {
+                            case FilteringHelper.EmptyValue:
+                                filterValue = "No option selected"; break;
+                            case "true":
+                                filterValue = true; break;
+                            case "false":
+                                filterValue = false; break;
+                        }
+
+                        if (filter.Contains("AccountStatus"))
+                            isDelegateActive = filterValue;
+
+                        if (filter.Contains("ProgressLocked"))
+                            isProgressLocked = filterValue;
+
+                        if (filter.Contains("ProgressRemoved"))
+                            removed = filterValue;
+
+                        if (filter.Contains("CompletionStatus"))
+                            hasCompleted = filterValue;
+
+                        if (filter.Contains("Answer1"))
+                            answer1 = filterValue;
+
+                        if (filter.Contains("Answer2"))
+                            answer2 = filterValue;
+
+                        if (filter.Contains("Answer3"))
+                            answer3 = filterValue;
+                    }
+                }
+            }
+
+            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(searchString ?? string.Empty, sortBy, sortDirection,
+                    customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
             );
 
             const string fileName = "Digital Learning Solutions Course Delegates.xlsx";

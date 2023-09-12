@@ -10,16 +10,11 @@
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Utilities;
 
     public interface ICourseDelegatesDownloadFileService
     {
-        public byte[] GetCourseDelegateDownloadFileForCourse(
-            int customisationId,
-            int centreId,
-            string? sortBy,
-            string? filterString,
-            string sortDirection = GenericSortingHelper.Ascending
+        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, string sortBy, string sortDirection,
+            int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
         );
 
         public byte[] GetCourseDelegateDownloadFile(
@@ -73,23 +68,26 @@
             this.courseService = courseService;
         }
 
-        public byte[] GetCourseDelegateDownloadFileForCourse(
-            int customisationId,
-            int centreId,
-            string? sortBy,
-            string? filterString,
-            string sortDirection = GenericSortingHelper.Ascending
+        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, string sortBy, string sortDirection,
+            int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
         )
         {
             using var workbook = new XLWorkbook();
 
+            var adminFields = courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId);
+
+            var customRegistrationPrompts = registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+
+            var courseDelegates = courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, sortBy, sortDirection,
+                    customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3)
+                .ToList();
+
             PopulateCourseDelegatesSheetForCourse(
                 workbook,
-                customisationId,
-                centreId,
-                sortBy,
-                filterString,
-                sortDirection
+                adminFields,
+                customRegistrationPrompts,
+                courseDelegates,
+                customisationId
             );
 
             using var stream = new MemoryStream();
@@ -125,34 +123,17 @@
 
         private void PopulateCourseDelegatesSheetForCourse(
             IXLWorkbook workbook,
-            int customisationId,
-            int centreId,
-            string? sortBy,
-            string? filterString,
-            string sortDirection
+           CourseAdminFields adminFields,
+           CentreRegistrationPrompts customRegistrationPrompts,
+           IEnumerable<CourseDelegateForExport> courseDelegates,
+           int customisationId
         )
         {
-            var adminFields = courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId);
-
-            var customRegistrationPrompts = registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-
-            var courseDelegates = courseDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
-                .ToList();
-
-            var filteredCourseDelegates =
-                FilteringHelper.FilterItems(courseDelegates.AsQueryable(), filterString).ToList();
-            var sortedCourseDelegates =
-                GenericSortingHelper.SortAllItems(
-                    filteredCourseDelegates.AsQueryable(),
-                    sortBy ?? nameof(CourseDelegateForExport.FullNameForSearchingSorting),
-                    sortDirection
-                );
-
             var dataTable = new DataTable();
 
             SetUpDataTableColumns(customRegistrationPrompts, adminFields, dataTable);
 
-            foreach (var courseDelegate in sortedCourseDelegates)
+            foreach (var courseDelegate in courseDelegates)
             {
                 AddDelegateToDataTable(dataTable, courseDelegate, customRegistrationPrompts, adminFields);
             }
