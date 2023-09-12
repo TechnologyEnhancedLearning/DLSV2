@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @model CourseSectionViewModel
 
-@if (Model.Tutorials.Any(t => t.DiagnosticEnabled || t.LearningEnabled))
+@if (Model.Tutorials.Any())
 {
   <div class="nhsuk-panel word-break">
     <details class="nhsuk-details nhsuk-expander">
@@ -14,8 +14,6 @@
         <dl class="nhsuk-summary-list">
           @foreach (var tutorial in Model.Tutorials)
           {
-            @if (tutorial.DiagnosticEnabled || tutorial.LearningEnabled)
-            {
               <div class="nhsuk-summary-list__row basic-summary-list__row">
                 <dt class="nhsuk-summary-list__key">
                   @tutorial.TutorialName
@@ -35,7 +33,6 @@
                   }
                 </dd>
               </div>
-            }
           }
         </dl>
         <a class="nhsuk-button"
