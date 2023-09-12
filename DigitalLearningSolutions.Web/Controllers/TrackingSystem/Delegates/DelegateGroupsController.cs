@@ -66,7 +66,13 @@
 
 
             //var groups = groupsService.GetGroupsForCentre(centreId).ToList();
-            (var groups, var count) = groupsService.GetGroupsForCentreNEW(centreId: centreId).ToList();
+            //(var groups, var count) = groupsService.GetGroupsForCentreNEW(centreId: centreId).ToList();
+            var groups = groupsService.GetGroupsForCentreNEW(
+                search: "",
+                offset: 0,
+                rows: 10,
+                centreId: centreId,
+                failedLoginThreshold: 0).ToList();
 
 
 
@@ -186,7 +192,14 @@
         public IActionResult AllDelegateGroups()
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var groups = groupsService.GetGroupsForCentre(centreId).ToList();
+
+            //var groups = groupsService.GetGroupsForCentre(centreId).ToList();
+            var groups = groupsService.GetGroupsForCentrePaginated(
+                search: "",
+                offset: 0,
+                rows: 10,
+                centreId: centreId,
+                failedLoginThreshold: 0).ToList();
 
             var model = new AllDelegateGroupsViewModel(groups, GetRegistrationPromptsWithSetOptions(centreId));
 

@@ -73,14 +73,15 @@
 
         void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment);
 
-        //IEnumerable<Group> GetGroupsForCentre(int centreId);
+        IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        (IEnumerable<Group>, int) GetGroupsForCentreNEW(
-            string search,
-            int offset,
-            int rows,
-            int centreId,
-            int failedLoginThreshold
+        //(IEnumerable<Group>, int) GetGroupsForCentreNEW(
+        IEnumerable<Group> GetGroupsForCentrePaginated(
+            string? search,
+            int? offset,
+            int? rows,
+            int? centreId,
+            int? failedLoginThreshold
         );
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
@@ -492,14 +493,13 @@
             transaction.Complete();
         }
 
-        //public IEnumerable<Group> GetGroupsForCentre(int centreId)
-        //{
-        //    return groupsDataService.GetGroupsForCentre(centreId);
-        //}
-
+        public IEnumerable<Group> GetGroupsForCentre(int centreId)
+        {
+            return groupsDataService.GetGroupsForCentre(centreId);
+        }
 
         //public (IEnumerable<Group>, int) GetGroupsForCentreNEW(
-        public IEnumerable<Group> GetGroupsForCentreNEW(
+        public IEnumerable<Group> GetGroupsForCentrePaginated(
             string? search = "",
             int? offset = 0,
             int? rows = 10,
@@ -509,7 +509,7 @@
         {
 
             //return groupsDataService.GetGroupsForCentreNEW(search, offset, rows, centreId, failedLoginThreshold);
-            return groupsDataService.GetGroupsForCentreNEW(search, offset, rows, centreId, failedLoginThreshold);
+            return groupsDataService.GetGroupsForCentrePaginated(search, offset, rows, centreId, failedLoginThreshold);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
@@ -642,7 +642,7 @@
 
             //var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
             //(var groupsAtCentre, var groupCount) = GetGroupsForCentreNEW(centreId: groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
-            var groupsAtCentre = GetGroupsForCentreNEW(centreId: groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
+            var groupsAtCentre = GetGroupsForCentrePaginated(centreId: groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
 
 
 

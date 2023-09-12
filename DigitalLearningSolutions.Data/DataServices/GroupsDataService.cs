@@ -12,10 +12,10 @@
 
     public interface IGroupsDataService
     {
-        //IEnumerable<Group> GetGroupsForCentre(int centreId);
+        IEnumerable<Group> GetGroupsForCentre(int centreId);
 
         //(IEnumerable<Group>, int) GetGroupsForCentreNEW(
-        IEnumerable<Group> GetGroupsForCentreNEW(
+        IEnumerable<Group> GetGroupsForCentrePaginated(
             string? search,
             int? offset,
             int? rows,
@@ -192,17 +192,16 @@
             this.connection = connection;
         }
 
-        //public IEnumerable<Group> GetGroupsForCentre(int centreId)
-        //{
-        //    return connection.Query<Group>(
-        //        @$"{groupsSql} AND g.CentreID = @centreId",
-        //        new { centreId }
-        //    );
-        //}
+        public IEnumerable<Group> GetGroupsForCentre(int centreId)
+        {
+            return connection.Query<Group>(
+                @$"{groupsSql} AND g.CentreID = @centreId",
+                new { centreId }
+            );
+        }
 
-
-
-        public (IEnumerable<Group>, int) GetGroupsForCentreNEW(
+        //public (IEnumerable<Group>, int) GetGroupsForCentreNEW(
+        public IEnumerable<Group> GetGroupsForCentrePaginated(
             string? search = "",
             int? offset = 0,
             int? rows = 10,
@@ -241,7 +240,9 @@
             //    commandTimeout: 3000
             //);
             //return (userAccountEntity, ResultCount);
-            return (null, 0);
+
+            //return (null, 0);
+            return null;
         }
 
 
