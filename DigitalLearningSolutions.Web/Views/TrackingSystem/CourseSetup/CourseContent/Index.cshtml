@@ -20,7 +20,7 @@
 
       <vc:field-name-value-display display-name="Course" field-value="@Model.CourseName" />
 
-      @if (Model.CourseHasContent)
+      @if (Model != null)
     {
       @foreach (var section in Model.Sections)
       {
