@@ -1033,7 +1033,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;
+        ///   Looks up a localized string similar to 
+        ///  &lt;div class=nhsuk-u-reading-width&gt;
         ///&lt;h2&gt;What are cookies?&lt;/h2&gt;
         ///&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;/p&gt;
         ///&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;/p&gt;
@@ -1041,7 +1042,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;/p&gt;
         ///&lt;ul&gt;
         ///&lt;li&gt;make our website work&lt;/li&gt;
-        ///&lt;li&gt;measure how you use our website, such as which links you clic [rest of string was truncated]&quot;;.
+        ///&lt;li&gt;measure how you use our website, such as which links you  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_1943_CookiePolicyContentHtml {
             get {

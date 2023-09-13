@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DigitalLearningSolutions.Data.Migrations
 {
-    [Migration(202309061452)]
+    [Migration(202309131452)]
 
     public class UpdateCookiePolicyContentHtml : Migration
     {
