@@ -1,4 +1,3 @@
-
   <div class=nhsuk-u-reading-width>
 <h2>What are cookies?</h2>
 <p>Cookies are files saved on your phone, tablet or computer when you visit a website.</p>
@@ -11,7 +10,7 @@
 </li>
 </ul>
 <p>We do not use any other cookies, for example, cookies that remember your settings or cookies that help with health campaigns.</p>
-<p>We sometimes use tools on other organisations' websites to collect data or to ask for feedback. These tools set their own cookies.</p>
+<p>We sometimes use tools on other organisations'' websites to collect data or to ask for feedback. These tools set their own cookies.</p>
 <h2>Cookies that make our website work</h2><p>We use cookies to keep our website secure and fast.</p></div>
 <details class="nhsuk-details">
 <summary class="nhsuk-details__summary">
@@ -38,7 +37,7 @@ ASP.NET_SessionId</td>
 <a href=http://www.dls.nhs.uk/ data-cke-saved-href=http://www.dls.nhs.uk/ title=http://www.dls.nhs.uk>www.dls.nhs.uk</a></td>
 <td class="nhsuk-table__cell" data-label="Purpose" role="cell">
 <span class="nhsuk-table-responsive__heading">Purpose</span>
-Used to remember the users' session on the web server.</td>
+Used to remember the users'' session on the web server.</td>
 <td class="nhsuk-table__cell" data-label="Expiry" role="cell">
  <span class="nhsuk-table-responsive__heading">Expiry</span>
 When you close the browser</td>
@@ -185,11 +184,11 @@ Hotjar cookies</td>
 <a href=http://www.dls.nhs.uk/ data-cke-saved-href=http://www.dls.nhs.uk/ title=http://www.dls.nhs.uk>www.dls.nhs.uk</a></td>
 <td class="nhsuk-table__cell" data-label="Purpose" role="cell">
 <span class="nhsuk-table-responsive__heading">Purpose</span>
-<div><p>Hotjar Tracking Code cookies are set on a visitor's browser when they visit a website that loads the Hotjar Tracking Code. These cookies allow the Hotjar Tracking Code to function correctly. Apart from cookies, the Hotjar Tracking Code uses local and session storage as well.<p>These include cookies with names starting "_hj".<p><a href=https://help.hotjar.com/hc/en-us/articles/6952777582999-Cookies-Set-by-the-Hotjar-Tracking-Code>More information about Hotjar cookies</a>.</div></td>
+<div><p>Hotjar Tracking Code cookies are set on a visitor''s browser when they visit a website that loads the Hotjar Tracking Code. These cookies allow the Hotjar Tracking Code to function correctly. Apart from cookies, the Hotjar Tracking Code uses local and session storage as well.<p>These include cookies with names starting "_hj".<p><a href=https://help.hotjar.com/hc/en-us/articles/6952777582999-Cookies-Set-by-the-Hotjar-Tracking-Code>More information about Hotjar cookies</a>.</div></td>
 <td class="nhsuk-table__cell" data-label="Expiry" role="cell">
 <span class="nhsuk-table-responsive__heading">Expiry</span>1 year</td>
 </tr>
 </table>
 </div>
 </div>
-</details>
+</details> 
