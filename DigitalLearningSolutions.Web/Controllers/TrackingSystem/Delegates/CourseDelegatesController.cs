@@ -12,9 +12,11 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -27,16 +29,19 @@
         private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseDelegatesService courseDelegatesService;
         private readonly IPaginateService paginateService;
+        private readonly IConfiguration configuration;
 
         public CourseDelegatesController(
             ICourseDelegatesService courseDelegatesService,
             ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService,
-            IPaginateService paginateService
+            IPaginateService paginateService,
+            IConfiguration configuration
         )
         {
             this.courseDelegatesService = courseDelegatesService;
             this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
             this.paginateService = paginateService;
+            this.configuration = configuration;
         }
 
         [NoCaching]
@@ -195,7 +200,7 @@
 
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         [Route("DownloadCurrent/{customisationId:int}")]
-        public IActionResult DownloadCurrent(
+        public async Task<IActionResult> DownloadCurrent(
             int customisationId,
              string? searchString = null,
             string? sortBy = null,
@@ -254,16 +259,15 @@
                     }
                 }
             }
-
-            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(searchString ?? string.Empty, sortBy, sortDirection,
+            var itemsPerPage = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
+            var content = await courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(searchString ?? string.Empty, 0, itemsPerPage, sortBy, sortDirection,
                     customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
             );
 
             const string fileName = "Digital Learning Solutions Course Delegates.xlsx";
-            return File(
-                content,
-            FileHelper.GetContentTypeFromFileName(fileName),
-            fileName
+            return File(content,
+                        FileHelper.GetContentTypeFromFileName(fileName),
+                        fileName
             );
         }
     }

@@ -4,6 +4,7 @@
     using System.Data;
     using System.IO;
     using System.Linq;
+    using System.Threading.Tasks;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
@@ -13,7 +14,7 @@
 
     public interface ICourseDelegatesDownloadFileService
     {
-        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, string sortBy, string sortDirection,
+        public Task<byte[]> GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
         );
 
@@ -68,7 +69,7 @@
             this.courseService = courseService;
         }
 
-        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, string sortBy, string sortDirection,
+        public async Task<byte[]> GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
         )
         {
@@ -78,9 +79,23 @@
 
             var customRegistrationPrompts = registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
-            var courseDelegates = courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, sortBy, sortDirection,
-                    customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3)
-                .ToList();
+            int resultCount = courseDataService.GetCourseDelegatesCountForExport(searchString ?? string.Empty, sortBy, sortDirection,
+                    customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3);
+
+
+            int page = 1;
+            int totalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
+
+            List<CourseDelegateForExport> courseDelegates = new List<CourseDelegateForExport>();
+
+            while (totalPages >= page)
+            {
+                offSet = ((page - 1) * itemsPerPage);
+
+                courseDelegates.AddRange(await this.courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, offSet, itemsPerPage, sortBy, sortDirection, 
+                    customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3));
+                page++;
+            }
 
             PopulateCourseDelegatesSheetForCourse(
                 workbook,

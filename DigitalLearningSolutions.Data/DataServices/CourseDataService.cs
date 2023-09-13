@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Data.DataServices
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public interface ICourseDataService
     {
@@ -96,7 +97,10 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<CourseDelegateForExport> GetDelegatesOnCourseForExport(int customisationId, int centreId);
 
-        IEnumerable<CourseDelegateForExport> GetCourseDelegatesForExport(string searchString, string sortBy, string sortDirection,
+        int GetCourseDelegatesCountForExport(string searchString, string sortBy, string sortDirection,
+            int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
+
+        Task<IEnumerable<CourseDelegateForExport>> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
@@ -1348,7 +1352,75 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public IEnumerable<CourseDelegateForExport> GetCourseDelegatesForExport(string searchString, string sortBy, string sortDirection,
+        public int GetCourseDelegatesCountForExport(string searchString, string sortBy, string sortDirection,
+            int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3)
+        {            
+
+            var fromTableQuery = $@" FROM Customisations cu WITH (NOLOCK)
+                INNER JOIN Applications AS ap WITH (NOLOCK) ON ap.ApplicationID = cu.ApplicationID
+                INNER JOIN Progress AS pr WITH (NOLOCK) ON pr.CustomisationID = cu.CustomisationID
+                LEFT OUTER JOIN AdminAccounts AS aaSupervisor WITH (NOLOCK) ON aaSupervisor.ID = pr.SupervisorAdminId
+                LEFT OUTER JOIN Users AS uSupervisor WITH (NOLOCK) ON uSupervisor.ID = aaSupervisor.UserID
+                LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = pr.EnrolledByAdminID
+                LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID
+                INNER JOIN DelegateAccounts AS da WITH (NOLOCK) ON da.ID = pr.CandidateID
+                INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+                LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
+
+                WHERE (cu.CentreID = @centreId OR
+                        (cu.AllCentres = 1 AND
+                            EXISTS (SELECT CentreApplicationID
+                                    FROM CentreApplications cap
+                                    WHERE cap.ApplicationID = cu.ApplicationID AND
+                                        cap.CentreID = @centreID AND
+                                        cap.Active = 1)))
+                AND da.CentreID = @centreId
+                AND pr.CustomisationID = @customisationId
+                AND ap.DefaultContentTypeID <> 4
+
+                AND ( u.FirstName + ' ' + u.LastName + ' ' + COALESCE(ucd.Email, u.PrimaryEmail) + ' ' + COALESCE(CandidateNumber, '') LIKE N'%' + @searchString + N'%')
+                AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
+				AND ((@isProgressLocked IS NULL) OR (@isProgressLocked = 1 AND (pr.PLLocked = 1)) OR (@isProgressLocked = 0 AND (pr.PLLocked = 0)))
+				AND ((@removed IS NULL) OR (@removed = 1 AND (pr.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (pr.RemovedDate IS NULL)))
+				AND ((@hasCompleted IS NULL) OR (@hasCompleted = 1 AND pr.Completed IS NOT NULL) OR (@hasCompleted = 0 AND pr.Completed IS NULL))
+
+                AND ((@answer1 IS NULL) OR ((@answer1 = 'No option selected' OR @answer1 = 'FREETEXTBLANKVALUE') AND (pr.Answer1 IS NULL OR TRIM(pr.Answer1) = '')) 
+							OR (@answer1 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer1 IS NOT NULL OR pr.Answer1 = @answer1)))
+
+				AND ((@answer2 IS NULL) OR ((@answer2 = 'No option selected' OR @answer2 = 'FREETEXTBLANKVALUE') AND (pr.Answer2 IS NULL OR TRIM(pr.Answer2) = '')) 
+							OR (@answer2 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer2 IS NOT NULL OR pr.Answer2 = @answer2)))
+
+				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR TRIM(pr.Answer3) = '')) 
+							OR (@answer3 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer3 IS NOT NULL OR pr.Answer3 = @answer3)))
+                
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
+
+            
+            var mainSql = "SELECT COUNT(*) AS TotalRecords " + fromTableQuery;
+
+            return connection.ExecuteScalar<int>(
+                mainSql,
+                new
+                {
+                    searchString,
+                    sortBy,
+                    sortDirection,
+                    customisationId,
+                    centreId,
+                    isDelegateActive,
+                    isProgressLocked,
+                    removed,
+                    hasCompleted,
+                    answer1,
+                    answer2,
+                    answer3
+                },
+                commandTimeout: 3000
+            );
+        }
+
+
+        public async Task<IEnumerable<CourseDelegateForExport>> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3)
         {
 
@@ -1436,6 +1508,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 orderBy = " ORDER BY LTRIM(u.LastName) " + sortOrder + ", LTRIM(u.FirstName) ";
             else
                 orderBy = " ORDER BY  " + sortBy + sortOrder;
+
+            orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 
 
             var mainSql = selectColumnQuery + fromTableQuery + orderBy;

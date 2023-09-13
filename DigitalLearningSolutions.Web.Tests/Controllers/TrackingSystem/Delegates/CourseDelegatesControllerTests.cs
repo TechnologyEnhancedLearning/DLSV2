@@ -17,6 +17,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class CourseDelegatesControllerTests
@@ -26,6 +27,7 @@
         private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
         private IPaginateService paginateService = null!;
+        private IConfiguration configuration = null!;
 
         [SetUp]
         public void SetUp()
@@ -33,11 +35,13 @@
             courseDelegatesService = A.Fake<ICourseDelegatesService>();
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
             paginateService = A.Fake<IPaginateService>();
+            configuration = A.Fake<IConfiguration>();
 
             controller = new CourseDelegatesController(
                     courseDelegatesService,
                     courseDelegatesDownloadFileService,
-                    paginateService
+                    paginateService,
+                    configuration
                 )
                 .WithDefaultContext()
                  .WithMockHttpContextSession()
@@ -129,7 +133,8 @@
             var courseDelegatesController = new CourseDelegatesController(
                     courseDelegatesService,
                     courseDelegatesDownloadFileService,
-                    paginateService
+                    paginateService,
+                    configuration
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, UserCentreId)
