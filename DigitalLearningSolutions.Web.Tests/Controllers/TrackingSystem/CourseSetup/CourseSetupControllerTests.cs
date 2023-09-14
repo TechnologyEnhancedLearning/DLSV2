@@ -125,8 +125,7 @@
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                     A<int>._,
-                    A<int>._,
-                    false
+                    A<int>._
                 )
             ).Returns(courses);
 

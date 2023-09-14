@@ -34,6 +34,18 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
 
+        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(
+            int centreId,
+            int? categoryId,
+            int exportQueryRowLimit,
+            int currentRun
+        );
+
+        public int GetCourseStatisticsAtCentreFilteredByCategoryResultCount(
+            int centreId,
+            int? categoryId
+        );
+
         IEnumerable<CourseStatistics> GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
 
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
@@ -610,6 +622,40 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
+        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(
+            int centreId,
+            int? categoryId,
+            int exportQueryRowLimit,
+            int currentRun
+        )
+        {
+            string sql = @$"{CourseStatisticsQuery} ORDER BY cu.CustomisationID
+                        OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
+                        FETCH NEXT @exportQueryRowLimit ROWS ONLY";
+            return connection.Query<CourseStatistics>(
+                sql,
+                new { centreId, categoryId,exportQueryRowLimit,currentRun }
+            );
+        }
+
+        public int GetCourseStatisticsAtCentreFilteredByCategoryResultCount(
+            int centreId,
+            int? categoryId
+        )
+        {
+            int ResultCount = connection.ExecuteScalar<int>(@$"SELECT  COUNT(*) AS Matches FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
+                    INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
+                        AND ca.CentreID = @centreId
+                        AND ap.DefaultContentTypeID <> 4", new { centreId, categoryId },
+                    commandTimeout: 3000);
+            return ResultCount;
+        }
+
         public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
             string isActive, string categoryName, string courseTopic, string hasAdminFields
         )
@@ -709,7 +755,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 commandTimeout: 3000
             );
 
-            var courseStatisticsCountQuery = @$"SELECT  COUNT(*) AS Matches " + courseStatisticsFromTable ;
+            var courseStatisticsCountQuery = @$"SELECT  COUNT(*) AS Matches " + courseStatisticsFromTable;
 
             int resultCount = connection.ExecuteScalar<int>(
                 courseStatisticsCountQuery,
