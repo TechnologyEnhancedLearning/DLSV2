@@ -88,13 +88,13 @@
             return stream.ToArray();
         }
 
-        private async void PopulateAllAdminsSheet(
+        private   void PopulateAllAdminsSheet(
             IXLWorkbook workbook,
             string? searchString,
             string? filterString
         )
         {
-            List<AdminEntity> adminsToExport = (List<AdminEntity>)await GetAdminsToExport(searchString, filterString);
+            IEnumerable<AdminEntity> adminsToExport = Task.Run(() => GetAdminsToExport(searchString, filterString)).Result;
             var dataTable = new DataTable();
             SetUpDataTableColumnsForAllAdmins(dataTable);
 

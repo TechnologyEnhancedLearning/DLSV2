@@ -46,11 +46,14 @@
     </tbody>
 </table>
 
-<div class="nhsuk-u-margin-top-4">
-    <a id="@(toggleableActivityButtonId)"
+@if (Model.Rows.Count() > defaultNumOfRowsVisible)
+{
+    <div class="nhsuk-u-margin-top-4">
+        <a id="@(toggleableActivityButtonId)"
        role="button"
        class="nhsuk-u-margin-top-4 js-only-inline"
        href="#">
-        View more
-    </a>
-</div>
+            View more
+        </a>
+    </div>
+}

@@ -93,10 +93,6 @@
 
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
 
-        (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
-                                    string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
-                                    string answer1, string answer2, string answer3, string answer4, string answer5, string answer6);
-
         List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
 
         void UpdateDelegateUserCentrePrompts(

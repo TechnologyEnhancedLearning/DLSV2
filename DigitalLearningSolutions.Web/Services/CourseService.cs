@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Utilities;
-    using DocumentFormat.OpenXml.Spreadsheet;
 
     public interface ICourseService
     {
@@ -102,9 +101,6 @@
         int CreateNewCentreCourse(Customisation customisation);
 
         LearningLog? GetLearningLogDetails(int progressId);
-
-        public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
-           string isActive, string categoryName, string courseTopic, string hasAdminFields);
     }
 
     public class CourseService : ICourseService
@@ -362,22 +358,6 @@
                 courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));
 
             return new CentreCourseDetails(courses, categories, topics);
-        }
-
-        
-
-        public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
-           string isActive, string categoryName, string courseTopic, string hasAdminFields)
-        {
-            var (allCourses, resultCount) = courseDataService.GetCourseStatisticsAtCentre(searchString, offSet, itemsPerPage, sortBy, sortDirection,  centreId, categoryId, allCentreCourses, hideInLearnerPortal,
-           isActive, categoryName, courseTopic, hasAdminFields);
-
-            return (allCourses.Select(
-                c => new CourseStatisticsWithAdminFieldResponseCounts(
-                    c,
-                    courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
-                )
-            ), resultCount);
         }
 
         public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId)
