@@ -138,7 +138,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
             // Then
             result.Should().BeRedirectToActionResult()
-                .WithControllerName("Home").WithActionName("Index");
+                .WithControllerName("SsoLinkage").WithActionName("Index");
         }
 
         [Test]
@@ -196,7 +196,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
             // Then
             result.Should().BeRedirectToActionResult()
-                .WithControllerName("Home").WithActionName("Index");
+                .WithControllerName("SsoLinkage").WithActionName("Index");
         }
 
         [Test]
@@ -354,7 +354,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
             // Then
             result.Should().BeRedirectToActionResult()
-                .WithControllerName("Home").WithActionName("Index");
+                .WithControllerName("SsoLinkage").WithActionName("Index");
         }
 
         [Test]
@@ -473,7 +473,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             }
             else
             {
-                result.Should().BeRedirectToActionResult().WithControllerName("Home")
+                result.Should().BeRedirectToActionResult().WithControllerName("SsoLinkage")
                     .WithActionName("Index");
             }
         }
@@ -624,7 +624,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             }
             else
             {
-                result.Should().BeRedirectToActionResult().WithControllerName("Home")
+                result.Should().BeRedirectToActionResult().WithControllerName("SsoLinkage")
                     .WithActionName("Index");
             }
         }

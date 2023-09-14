@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using DigitalLearningSolutions.Data.Exceptions;
 using DigitalLearningSolutions.Web.ViewModels.Signposting;
 
-namespace DigitalLearningSolutions.Web.Controllers.SsoLinkage
+namespace DigitalLearningSolutions.Web.Controllers
 {
     public class SsoLinkageController : Controller
     {
