@@ -131,8 +131,8 @@
             };
             var customPromptFilters = new List<FilterModel>
             {
-                new FilterModel("CentreRegistrationPrompt1", "First prompt", prompt1Options),
-                new FilterModel("CentreRegistrationPrompt4", "Fourth prompt", prompt4Options),
+                new FilterModel("CentreRegistrationPrompt1", "First prompt", prompt1Options,"prompts"),
+                new FilterModel("CentreRegistrationPrompt4", "Fourth prompt", prompt4Options,"prompts"),
             };
 
             return (prompts, customPromptFilters);

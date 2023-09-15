@@ -132,7 +132,6 @@
         <TypeScriptCompile Include="Scripts\trackingSystem\addNewCentreCourseSelectCourse.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />
-        <TypeScriptCompile Include="Scripts\trackingSystem\allDelegates.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\centreCourseSetup.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\delegateGroups.ts" />

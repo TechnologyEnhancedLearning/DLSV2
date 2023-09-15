@@ -17,11 +17,7 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    @if (Model.JavascriptSearchSortFilterPaginateEnabled)
-    {
-      <vc:loading-spinner page-has-side-nav-menu="true" />
-    }
-    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
+    <div id="no-js-styling">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-one-third">
           <h1 id="page-heading" class="nhsuk-heading-xl">@ViewData["Title"]</h1>
@@ -81,10 +77,3 @@
     </nav>
   </div>
 </div>
-
-@if (Model.JavascriptSearchSortFilterPaginateEnabled)
-{
-  @section scripts {
-  <script src="@Url.Content("~/js/trackingSystem/allDelegates.js")" asp-append-version="true"></script>
-}
-}
