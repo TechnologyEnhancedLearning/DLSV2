@@ -97,7 +97,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseService.GetCentreCourses(A<string>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int?>._,
+                A.CallTo(() => courseService.GetCentreCourses(A<string>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int?>._, A<bool>._, A<bool?>._,
                     A<string>._, A<string>._, A<string>._, A<string>._)).MustHaveHappened();
                 A.CallTo(
                     () => paginateService.Paginate(
