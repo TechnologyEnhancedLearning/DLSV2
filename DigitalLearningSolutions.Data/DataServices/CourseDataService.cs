@@ -454,16 +454,18 @@ namespace DigitalLearningSolutions.Data.DataServices
 
             if (candidateAssessmentId > 1)
             {
-                connection.Execute(@"
+                string sqlQuery=$@"
                 BEGIN TRANSACTION
                 UPDATE CandidateAssessments SET RemovedDate = NULL
                   WHERE ID = @candidateAssessmentId
 
-                UPDATE CandidateAssessmentSupervisors SET Removed = NULL,
-                  SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID
+                UPDATE CandidateAssessmentSupervisors SET Removed = NULL
+                  {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
                   WHERE CandidateAssessmentID = @candidateAssessmentId
 
-                COMMIT TRANSACTION"
+                COMMIT TRANSACTION";
+
+                connection.Execute(sqlQuery
                 , new { candidateAssessmentId, selfAssessmentSupervisorRoleId });
             }
 
