@@ -26,6 +26,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
 
         [Required(ErrorMessage = "Enter a last name")]
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
+		
         public string? LastName { get; set; }
 
         [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
