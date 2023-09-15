@@ -54,7 +54,7 @@ When you close the browser</td>
 Remembers your login user details.</td>
 <td class="nhsuk-table__cell" data-label="Expiry" role="cell">
 <span class="nhsuk-table-responsive__heading">Expiry</span>
-When you close the browser or after 14 days if you tick “Remember me” when logging in</td>
+When you close the browser or after 14 days if you tick "Remember me" when logging in</td>
 </tr>
 <tr class="nhsuk-table__row" role="row">
 <td class="nhsuk-table__cell" data-label="Cookie name"role="cell"><span class="nhsuk-table-responsive__heading">Cookie name</span>.AspNetCore.Antiforgery.KCJdAkfXyjI</td>
@@ -108,7 +108,8 @@ When you close the browser (if you do not use the banner) or 1 year (if you use 
 <span class="nhsuk-table-responsive__heading">Expiry</span>5 months </td>
 </tr>
 <tr class="nhsuk-table__row" role="row">
-<td class="nhsuk-table__cell" data-label="Cookie name"role="cell"><span class="nhsuk-table-responsive__heading">Cookie name</span>FindCentre</td>
+<td class="nhsuk-table__cell" data-label="Cookie name"role="cell">
+<span class="nhsuk-table-responsive__heading">Cookie name</span>FindCentre</td>
 <td class="nhsuk-table__cell" data-label="Domain" role="cell">
 <span class="nhsuk-table-responsive__heading">Domain</span>
 <p><a href=http://www.dls.nhs.uk/ data-cke-saved-href=http://www.dls.nhs.uk/ title=http://www.dls.nhs.uk>www.dls.nhs.uk</a></td>
