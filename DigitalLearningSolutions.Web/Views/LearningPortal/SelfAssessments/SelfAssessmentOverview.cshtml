@@ -177,7 +177,7 @@
                     </p>
                 </div>
             }
-          @if (!Model.SupervisorSignOffs.Any() || latestResult > latestSignoff) {
+          @if (!Model.SupervisorSignOffs.Any()) {
             <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
        asp-action="RequestSignOff"
        asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"

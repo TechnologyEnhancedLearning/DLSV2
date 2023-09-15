@@ -40,18 +40,16 @@
                     "Topic",
                     GetTopicOptions(topics)
                 ),
-                new FilterModel(nameof(CourseStatistics.Active), "Status", CourseStatusOptions,"course status"),
+                new FilterModel(nameof(CourseStatistics.Active), "Status", CourseStatusOptions),
                 new FilterModel(
                     nameof(CourseStatistics.HideInLearnerPortal),
                     "Visibility",
-                    CourseVisibilityOptions,
-                    "course status"
+                    CourseVisibilityOptions
                 ),
                 new FilterModel(
                     nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
                     "Admin fields",
-                    CourseHasAdminFieldOptions,
-                    "course status"
+                    CourseHasAdminFieldOptions
                 ),
             };
 

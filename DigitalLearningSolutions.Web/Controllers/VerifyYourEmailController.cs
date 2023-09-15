@@ -68,17 +68,14 @@
             var userId = User.GetUserIdKnownNotNull();
             var userEntity = userService.GetUserById(userId);
             int hashID = userEntity.UserAccount.EmailVerificationHashID ?? 0;
+            string EmailVerificationHash = userService.GetEmailVerificationHashesFromEmailVerificationHashID(hashID);
 
             var unverifiedCentreEmailsList = userService.GetUnverifiedCentreEmailListForUser(userId);
 
             Dictionary<string, string> EmailAndHashes = unverifiedCentreEmailsList
             .ToDictionary(t => t.centreEmail, t => t.EmailVerificationHashID);
 
-            if (hashID > 0)
-            {
-                string EmailVerificationHash = userService.GetEmailVerificationHashesFromEmailVerificationHashID(hashID);
-                EmailAndHashes.Add(userEntity.UserAccount.PrimaryEmail, EmailVerificationHash);
-            }
+            EmailAndHashes.Add(userEntity.UserAccount.PrimaryEmail, EmailVerificationHash);
 
             emailVerificationService.ResendVerificationEmails(
                 userEntity!.UserAccount,

@@ -23,11 +23,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Enter a first name")]
-        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongFirstName)]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Enter a last name")]
-        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
         public string LastName { get; set; }
 
         public int JobGroupId { get; set; }

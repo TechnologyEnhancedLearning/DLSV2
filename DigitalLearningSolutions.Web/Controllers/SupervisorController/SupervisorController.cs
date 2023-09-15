@@ -2,8 +2,6 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
     using GDS.MultiPageFormData;
@@ -28,8 +26,6 @@
         private readonly IUserService userService;
         private readonly IEmailGenerationService emailGenerationService;
         private readonly IEmailService emailService;
-        private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
-        private readonly IClockUtility clockUtility;
 
         public SupervisorController(
            ISupervisorService supervisorService,
@@ -47,11 +43,9 @@
            IRegistrationService registrationService,
            ICentresDataService centresDataService,
            IUserService userService,
-           IEmailGenerationService emailGenerationService,
-           IEmailService emailService,
-           ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
-           IClockUtility clockUtility
-           )
+            IEmailGenerationService emailGenerationService,
+            IEmailService emailService
+            )
         {
             this.supervisorService = supervisorService;
             this.frameworkNotificationService = frameworkNotificationService;
@@ -66,8 +60,6 @@
             this.userService = userService;
             this.emailGenerationService = emailGenerationService;
             this.emailService = emailService;
-            this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
-            this.clockUtility = clockUtility;
         }
 
         private int GetCentreId()

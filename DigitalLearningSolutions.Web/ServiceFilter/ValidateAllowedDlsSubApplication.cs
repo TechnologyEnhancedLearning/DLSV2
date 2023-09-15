@@ -32,7 +32,7 @@
 
         public void OnActionExecuted(ActionExecutedContext context) { }
 
-        public async void OnActionExecuting(ActionExecutingContext context)
+        public  void OnActionExecuting(ActionExecutingContext context)
         {
             var user = context.HttpContext.User;
             if (!user.Identity.IsAuthenticated)
@@ -48,7 +48,7 @@
                 return;
             }
 
-            if (application == null || await ApplicationIsInaccessibleByPage(application!))
+            if (application == null || Task.Run(() => ApplicationIsInaccessibleByPage(application!)).Result)
             {
                 SetNotFoundResult(context);
                 return;

@@ -10,7 +10,7 @@
   View progress
 </a>
 
-@if (Model.RemovedDate == null)
+@if (string.IsNullOrEmpty(Model.Completed) && Model.RemovedDate == null)
 {
   <a class="nhsuk-button delete-button"
    role="button"

@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -42,17 +41,13 @@
             .And(x => x.Topics = new List<string> { "Topic 1", "Topic 2" })
             .Build();
 
-
-
         private DelegateCoursesController controllerWithCookies = null!;
         private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseService courseService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
-        private IPaginateService paginateService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IActivityService activityService = null;
-        private ICourseCategoriesDataService courseCategoriesDataService = null;
-        private ICourseTopicsDataService courseTopicsDataService = null;
 
         [SetUp]
         public void Setup()
@@ -60,9 +55,7 @@
             courseService = A.Fake<ICourseService>();
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
             activityService = A.Fake<IActivityService>();
-            paginateService = A.Fake<IPaginateService>();
-            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
-            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
               .Returns("All");
             A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._))
@@ -78,10 +71,8 @@
             controllerWithCookies = new DelegateCoursesController(
                     courseService,
                     courseDelegatesDownloadFileService,
-                    paginateService,
-                    activityService,
-                    courseCategoriesDataService,
-                    courseTopicsDataService
+                    searchSortFilterPaginateService,
+                    activityService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
@@ -97,13 +88,11 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseService.GetCentreCourses(A<string>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int?>._, A<bool>._, A<bool?>._,
-                    A<string>._, A<string>._, A<string>._, A<string>._)).MustHaveHappened();
+                A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._)).MustHaveHappened();
                 A.CallTo(
-                    () => paginateService.Paginate(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                         A<IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>>._,
-                         A<int>._,
-                        A<PaginationOptions>._, A<FilterOptions>._, A<string>._, A<string>._, A<string>._
+                        A<SearchSortFilterAndPaginateOptions>._
                     )
                 ).MustHaveHappened();
                 A.CallTo(
