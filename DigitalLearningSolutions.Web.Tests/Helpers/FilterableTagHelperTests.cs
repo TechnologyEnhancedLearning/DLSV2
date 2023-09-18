@@ -28,6 +28,7 @@
                 new SearchableTagViewModel(AdminRoleFilterOptions.CmsAdministrator),
                 new SearchableTagViewModel(AdminRoleFilterOptions.ContentCreatorLicense),
                 new SearchableTagViewModel(AdminRoleFilterOptions.SuperAdmin),
+                new SearchableTagViewModel(UserAccountStatusFilterOptions.Active),
             };
 
             // When
