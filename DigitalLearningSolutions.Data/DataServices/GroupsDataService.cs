@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.User;
+    using DocumentFormat.OpenXml.Wordprocessing;
 
     public interface IGroupsDataService
     {
@@ -19,8 +20,7 @@
             string? search,
             int? offset,
             int? rows,
-            int? centreId,
-            int? failedLoginThreshold
+            int? centreId
         );
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
@@ -200,55 +200,29 @@
             );
         }
 
-        //public (IEnumerable<Group>, int) GetGroupsForCentreNEW(
         public IEnumerable<Group> GetGroupsForCentrePaginated(
             string? search = "",
             int? offset = 0,
             int? rows = 10,
-            int? centreId = 0,
-            int? failedLoginThreshold = 0)
+            int? centreId = 0)
         {
-            //if (!string.IsNullOrEmpty(search))
-            //{
-            //    search = search.Trim();
-            //}
-            //string condition = $@" WHERE ((@userId = 0) OR (u.ID = @userId)) AND 
-            //(u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%') AND 
-            //((u.JobGroupID = @jobGroupId) OR (@jobGroupId = 0)) AND 
-            //((@userStatus = 'Any') OR (@userStatus = 'Active' AND u.Active = 1) OR (@userStatus = 'Inactive' AND u.Active = 0) OR (@userStatus = 'Locked' AND u.FailedLoginCount >= @failedLoginThreshold)) AND 
-            //((@emailStatus = 'Any') OR (@emailStatus = 'Verified' AND u.EmailVerified IS NOT NULL) OR (@emailStatus = 'Unverified' AND u.EmailVerified IS NULL))
-            //";
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+            }
 
-            //string sql = @$"{BaseSelectUserQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
-            //    OFFSET @offset ROWS
-            //    FETCH NEXT @rows ROWS ONLY";
+            string sql = @$"{groupsSql} AND g.CentreId = @centreId
+                OFFSET @offset ROWS
+                FETCH NEXT @rows ROWS ONLY";
 
-            //IEnumerable<UserAccountEntity> userAccountEntity = connection.Query<UserAccount, JobGroup, UserAccountEntity>(
-            //    sql,
-            //    (userAccount, jobGroup) => new UserAccountEntity(
-            //        userAccount, jobGroup),
-            //    new { userId, search, jobGroupId, userStatus, failedLoginThreshold, emailStatus, offset, rows },
-            //    splitOn: "JobGroupID",
-            //    commandTimeout: 3000
-            //);
+            IEnumerable<Group> groups = connection.Query<Group>(
+                @$"{groupsSql} AND g.CentreID = @centreId",
+                new { centreId },
+                commandTimeout: 3000
+            );
 
-            //int ResultCount = connection.ExecuteScalar<int>(
-            //    @$"SELECT COUNT(ID) AS Matches
-            //                FROM   Users AS u INNER JOIN
-            //                JobGroups AS jg ON u.JobGroupID = jg.JobGroupID {condition}",
-            //    new { userId, search, jobGroupId, userStatus, failedLoginThreshold, emailStatus },
-            //    commandTimeout: 3000
-            //);
-            //return (userAccountEntity, ResultCount);
-
-            //return (null, 0);
-            return null;
+            return groups;
         }
-
-
-
-
-
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
         {

@@ -41,7 +41,7 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        [Route("{page=1:int}")]
+        [Route("{page=0:int}")]
         public IActionResult Index(
             string? searchString = null,
             string? sortBy = null,
@@ -49,10 +49,14 @@
             string? existingFilterString = null,
             string? newFilterToAdd = null,
             bool clearFilters = false,
-            int page = 1
+            int page = 1,
+            int? itemsPerPage = 10
+            //string? SearchString = "",
+            //string? ExistingFilterString = ""
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
+
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
@@ -63,18 +67,17 @@
 
             var centreId = User.GetCentreIdKnownNotNull();
 
+            int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
 
-            //var groups = groupsService.GetGroupsForCentre(centreId).ToList();
-            //(var groups, var count) = groupsService.GetGroupsForCentreNEW(centreId: centreId).ToList();
-            var groups = groupsService.GetGroupsForCentreNEW(
-                search: "",
-                offset: 0,
-                rows: 10,
-                centreId: centreId,
-                failedLoginThreshold: 0).ToList();
 
 
+
+            var groups = groupsService.GetGroupsForCentrePaginated(
+                search: searchString,
+                offset: offSet,
+                rows: itemsPerPage,
+                centreId: centreId).ToList();
 
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
             var availableFilters = DelegateGroupsViewModelFilterOptions
@@ -193,13 +196,11 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
 
-            //var groups = groupsService.GetGroupsForCentre(centreId).ToList();
             var groups = groupsService.GetGroupsForCentrePaginated(
                 search: "",
                 offset: 0,
                 rows: 10,
-                centreId: centreId,
-                failedLoginThreshold: 0).ToList();
+                centreId: centreId).ToList();
 
             var model = new AllDelegateGroupsViewModel(groups, GetRegistrationPromptsWithSetOptions(centreId));
 
