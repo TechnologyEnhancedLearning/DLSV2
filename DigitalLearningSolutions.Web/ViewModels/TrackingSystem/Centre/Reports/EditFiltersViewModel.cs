@@ -174,7 +174,7 @@
                 .ToValidationResultList(nameof(EndDay), nameof(EndMonth), nameof(EndYear));
 
             ValidateEndDateIsAfterStartDate(endDateValidationResults);
-
+            ValidatePeriodIsCompatibleWithDateRange(endDateValidationResults);
             validationResults.AddRange(endDateValidationResults);
         }
 
@@ -203,22 +203,26 @@
                     )
                 );
             }
+
         }
         private void ValidatePeriodIsCompatibleWithDateRange(List<ValidationResult> periodValidationResults)
         {
-            var startDate = GetValidatedStartDate();
-            var endDate = GetValidatedEndDate();
-            if (!ReportValidationHelper.IsPeriodCompatibleWithDateRange(ReportInterval, startDate, endDate))
+            if (!periodValidationResults.Any())
             {
-                periodValidationResults.Add(
-                    new ValidationResult(
-                        CommonValidationErrorMessages.ReportFilterReturnsTooManyRows,
-                        new[]
-                        {
+                var startDate = GetValidatedStartDate();
+                var endDate = GetValidatedEndDate();
+                if (!ReportValidationHelper.IsPeriodCompatibleWithDateRange(ReportInterval, startDate, endDate))
+                {
+                    periodValidationResults.Add(
+                        new ValidationResult(
+                            CommonValidationErrorMessages.ReportFilterReturnsTooManyRows,
+                            new[]
+                            {
                             nameof(ReportInterval),
-                        }
-                    )
-                    );
+                            }
+                        )
+                        );
+                }
             }
         }
     }

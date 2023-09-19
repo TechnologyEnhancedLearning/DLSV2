@@ -219,22 +219,24 @@
         }
         private void ValidatePeriodIsCompatibleWithDateRange(List<ValidationResult> periodValidationResults)
         {
-            var startDate = GetValidatedStartDate();
-            var endDate = GetValidatedEndDate();
-
-            if (!ReportValidationHelper.IsPeriodCompatibleWithDateRange(ReportInterval, startDate, endDate))
+            if (!periodValidationResults.Any())
             {
-                periodValidationResults.Add(
-                    new ValidationResult(
-                        CommonValidationErrorMessages.ReportFilterReturnsTooManyRows,
-                        new[]
-                        {
-                            nameof(ReportInterval),
-                        }
-                    )
-                    );
-            }
+                var startDate = GetValidatedStartDate();
+                var endDate = GetValidatedEndDate();
 
+                if (!ReportValidationHelper.IsPeriodCompatibleWithDateRange(ReportInterval, startDate, endDate))
+                {
+                    periodValidationResults.Add(
+                        new ValidationResult(
+                            CommonValidationErrorMessages.ReportFilterReturnsTooManyRows,
+                            new[]
+                            {
+                            nameof(ReportInterval),
+                            }
+                        )
+                        );
+                }
+            }
         }
     }
 }
