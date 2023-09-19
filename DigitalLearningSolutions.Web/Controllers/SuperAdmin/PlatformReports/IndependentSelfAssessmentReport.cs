@@ -10,8 +10,13 @@
         [Route("SelfAssessments/Independent")]
         public IActionResult IndependentSelfAssessmentsReport()
         {
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminDSATReportsFilterCookie", null);
-            Response.Cookies.SetReportsFilterCookie("SuperAdminDSATReportsFilterCookie", filterData, clockUtility.UtcNow);
+            //Removing an old cookie if it exists because it may contain problematic options (filters that return too many rows):
+            if (HttpContext.Request.Cookies.ContainsKey("SuperAdminDSATReportsFilterCookie"))
+            {
+                HttpContext.Response.Cookies.Delete("SuperAdminDSATReportsFilterCookie");
+            }
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminIndependentSAReportsFilterCookie", null);
+            Response.Cookies.SetReportsFilterCookie("SuperAdminIndependentSAReportsFilterCookie", filterData, clockUtility.UtcNow);
             var activity = platformReportsService.GetSelfAssessmentActivity(filterData, false);
             var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetSelfAssessmentFilterNames(filterData);
             var selfAssessmentReportFilterModel = new SelfAssessmentReportFilterModel(
@@ -43,7 +48,7 @@
         [Route("SelfAssessments/Independent/EditFilters")]
         public IActionResult IndependentSelfAssessmentsEditFilters()
         {
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminDSATReportsFilterCookie", null);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminIndependentSAReportsFilterCookie", null);
             var filterOptions = GetDropdownValues(false);
             var dataStartDate = platformReportsService.GetSelfAssessmentActivityStartDate(false);
             var model = new SelfAssessmentsEditFiltersViewModel(
@@ -84,7 +89,7 @@
                 model.FilterType,
                 model.ReportInterval
             );
-            Response.Cookies.SetReportsFilterCookie("SuperAdminDSATReportsFilterCookie", filterData, clockUtility.UtcNow);
+            Response.Cookies.SetReportsFilterCookie("SuperAdminIndependentSAReportsFilterCookie", filterData, clockUtility.UtcNow);
 
             return RedirectToAction("IndependentSelfAssessmentsReport");
         }

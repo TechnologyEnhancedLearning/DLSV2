@@ -54,7 +54,7 @@
         [Route("SelfAssessments/{selfAssessmentType}/Data")]
         public IEnumerable<SelfAssessmentActivityDataRowModel> GetGraphData(string selfAssessmentType)
         {
-            var cookieName = selfAssessmentType == "Independent" ? "SuperAdminDSATReportsFilterCookie" : "SuperAdminReportsFilterCookie";
+            var cookieName = selfAssessmentType == "Independent" ? "SuperAdminIndependentSAReportsFilterCookie" : "SuperAdminSupervisedSAReportsFilterCookie";
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(cookieName, null);
             var activity = platformReportsService.GetSelfAssessmentActivity(filterData!, selfAssessmentType == "Independent" ? false : true);
             return activity.Select(
