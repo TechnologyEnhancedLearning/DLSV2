@@ -97,8 +97,8 @@
                         new DateTime(groupingOfLogs.Key),
                         interval
                     ),
-                    groupingOfLogs.Count(activityLog => activityLog.Enrolled),
-                    groupingOfLogs.Count(activityLog => activityLog.Completed)
+                    groupingOfLogs.Sum(activityLog => activityLog.Enrolled),
+                    groupingOfLogs.Sum(activityLog => activityLog.Completed)
                 )
             );
         }

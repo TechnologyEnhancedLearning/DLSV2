@@ -41,7 +41,7 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<PlatformReportsDataService> logger;
-        private readonly string selectSelfAssessmentActivity = @"SELECT al.ActivityDate, al.Enrolled, al.Submitted | al.SignedOff AS Completed
+        private readonly string selectSelfAssessmentActivity = @"SELECT Cast(al.ActivityDate As Date) As ActivityDate, SUM(CAST(al.Enrolled AS Int)) AS Enrolled, SUM(CAST((al.Submitted | al.SignedOff) AS Int)) AS Completed
                                                                     FROM   ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
                                                                                      Centres AS ce WITH (NOLOCK) ON al.CentreID = ce.CentreID INNER JOIN
                                                                                      SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
@@ -116,7 +116,7 @@
         {
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<SelfAssessmentActivity>(
-                  $@"{selectSelfAssessmentActivity} AND {whereClause}",
+                  $@"{selectSelfAssessmentActivity} AND {whereClause} GROUP BY  Cast(al.ActivityDate As Date)",
                   new
                   {
                       centreId,
