@@ -40,13 +40,13 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.Query<ActivityLog>(
                 @"SELECT
-                        LogDate,
+                        Cast(LogDate As Date) As LogDate,
                         LogYear,
                         LogQuarter,
                         LogMonth,
-                        Registered,
-                        Completed,
-                        Evaluated
+                        SUM(CAST(Registered AS Int)) AS Registered,
+						SUM(CAST(Completed AS Int)) AS Completed,
+						SUM(CAST(Evaluated AS Int)) AS Evaluated
                     FROM tActivityLog AS al
                     WHERE (LogDate >= @startDate
                         AND (@endDate IS NULL OR LogDate <= @endDate)
@@ -59,7 +59,10 @@ namespace DigitalLearningSolutions.Data.DataServices
                             SELECT ap.ApplicationID
                             FROM Applications ap
                             WHERE ap.ApplicationID = al.ApplicationID
-                            AND ap.DefaultContentTypeID <> 4)",
+                            AND ap.DefaultContentTypeID <> 4)
+                    GROUP BY  Cast(LogDate As Date), LogYear,
+                        LogQuarter,
+                        LogMonth",
                 new
                 {
                     centreId,

@@ -70,7 +70,7 @@
             var result = reportsController.EditFilters(model);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append("ReportsFilterCookie", A<string>._, A<CookieOptions>._))
+            A.CallTo(() => httpResponse.Cookies.Append("CourseUsageReportFilterCookie", A<string>._, A<CookieOptions>._))
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
