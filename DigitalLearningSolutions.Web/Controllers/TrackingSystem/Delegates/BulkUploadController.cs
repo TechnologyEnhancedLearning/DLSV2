@@ -85,7 +85,7 @@
                 var workbook = new XLWorkbook(model.DelegatesFile.OpenReadStream());
                 if (!workbook.Worksheets.Contains(DelegateDownloadFileService.DelegatesSheetName))
                 {
-                    ModelState.AddModelError("MaxBulkUploadRows", CommonValidationErrorMessages.InvalidExcelValidationMessage);
+                    ModelState.AddModelError("MaxBulkUploadRows", CommonValidationErrorMessages.InvalidBulkUploadExcelFile);
                     return View("StartUpload", model);
                 }
                 int ExcelRowsCount = delegateUploadFileService.GetBulkUploadExcelRowCount(model.DelegatesFile);
