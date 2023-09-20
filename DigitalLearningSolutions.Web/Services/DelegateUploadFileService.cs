@@ -20,6 +20,7 @@ namespace DigitalLearningSolutions.Web.Services
 {
     public interface IDelegateUploadFileService
     {
+        public int GetBulkUploadExcelRowCount(IFormFile delegatesFile);
         public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime welcomeEmailDate);
     }
 
@@ -309,6 +310,10 @@ namespace DigitalLearningSolutions.Web.Services
             }.OrderBy(x => x);
             var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);
+        }
+        public int GetBulkUploadExcelRowCount(IFormFile delegatesFile)
+        {
+            return OpenDelegatesTable(delegatesFile).AsNativeDataTable().Rows.Count;
         }
     }
 }

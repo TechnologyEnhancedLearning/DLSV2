@@ -11,7 +11,7 @@
         <option value="" disabled selected="selected">Select filter category</option>
         @foreach (var filter in Model.Filters)
         {
-            <option value="filter-@filter.FilterProperty">Auldrin possa</option>
+            <option value="filter-@filter.FilterProperty">@filter.FilterName</option>
         }
     </select>
     <div class="filters-container" id="filters-container">
