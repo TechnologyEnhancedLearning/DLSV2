@@ -14,6 +14,8 @@
     using Microsoft.FeatureManagement.Mvc;
     using Microsoft.Extensions.Configuration;
     using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
+    using ClosedXML.Excel;
+
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
@@ -78,10 +80,19 @@
         public IActionResult StartUpload(UploadDelegatesViewModel model)
         {
             int MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
-            int ExcelRowsCount = delegateUploadFileService.GetBulkUploadExcelRowCount(model.DelegatesFile);
-            if (ExcelRowsCount > MaxBulkUploadRows)
+            if (model.DelegatesFile != null)
             {
-                ModelState.AddModelError("MaxBulkUploadRows", string.Format(CommonValidationErrorMessages.MaxBulkUploadRowsLimit, MaxBulkUploadRows));
+                var workbook = new XLWorkbook(model.DelegatesFile.OpenReadStream());
+                if (!workbook.Worksheets.Contains(DelegateDownloadFileService.DelegatesSheetName))
+                {
+                    ModelState.AddModelError("MaxBulkUploadRows", CommonValidationErrorMessages.InvalidBulkUploadExcelFile);
+                    return View("StartUpload", model);
+                }
+                int ExcelRowsCount = delegateUploadFileService.GetBulkUploadExcelRowCount(model.DelegatesFile);
+                if (ExcelRowsCount > MaxBulkUploadRows)
+                {
+                    ModelState.AddModelError("MaxBulkUploadRows", string.Format(CommonValidationErrorMessages.MaxBulkUploadRowsLimit, MaxBulkUploadRows));
+                }
             }
             if (!ModelState.IsValid)
             {
