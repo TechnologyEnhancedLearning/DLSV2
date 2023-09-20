@@ -12,9 +12,11 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -27,16 +29,19 @@
         private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseDelegatesService courseDelegatesService;
         private readonly IPaginateService paginateService;
+        private readonly IConfiguration configuration;
 
         public CourseDelegatesController(
             ICourseDelegatesService courseDelegatesService,
             ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService,
-            IPaginateService paginateService
+            IPaginateService paginateService,
+            IConfiguration configuration
         )
         {
             this.courseDelegatesService = courseDelegatesService;
             this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
             this.paginateService = paginateService;
+            this.configuration = configuration;
         }
 
         [NoCaching]
@@ -195,27 +200,74 @@
 
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         [Route("DownloadCurrent/{customisationId:int}")]
-        public IActionResult DownloadCurrent(
+        public async Task<IActionResult> DownloadCurrent(
             int customisationId,
+             string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null
         )
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(
-                customisationId,
-                centreId,
-                sortBy,
-                existingFilterString,
-                sortDirection
+
+            bool? isDelegateActive, isProgressLocked, removed, hasCompleted;
+            isDelegateActive = isProgressLocked = removed = hasCompleted = null;
+
+            string? answer1, answer2, answer3;
+            answer1 = answer2 = answer3 = null;
+
+            if (!string.IsNullOrEmpty(existingFilterString))
+            {
+                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
+
+                if (selectedFilters.Count > 0)
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        var filterArr = filter.Split(FilteringHelper.Separator);
+                        dynamic filterValue = filterArr[2];
+                        switch (filterValue)
+                        {
+                            case FilteringHelper.EmptyValue:
+                                filterValue = "No option selected"; break;
+                            case "true":
+                                filterValue = true; break;
+                            case "false":
+                                filterValue = false; break;
+                        }
+
+                        if (filter.Contains("AccountStatus"))
+                            isDelegateActive = filterValue;
+
+                        if (filter.Contains("ProgressLocked"))
+                            isProgressLocked = filterValue;
+
+                        if (filter.Contains("ProgressRemoved"))
+                            removed = filterValue;
+
+                        if (filter.Contains("CompletionStatus"))
+                            hasCompleted = filterValue;
+
+                        if (filter.Contains("Answer1"))
+                            answer1 = filterValue;
+
+                        if (filter.Contains("Answer2"))
+                            answer2 = filterValue;
+
+                        if (filter.Contains("Answer3"))
+                            answer3 = filterValue;
+                    }
+                }
+            }
+            var itemsPerPage = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
+            var content = await courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(searchString ?? string.Empty, 0, itemsPerPage, sortBy, sortDirection,
+                    customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
             );
 
             const string fileName = "Digital Learning Solutions Course Delegates.xlsx";
-            return File(
-                content,
-            FileHelper.GetContentTypeFromFileName(fileName),
-            fileName
+            return File(content,
+                        FileHelper.GetContentTypeFromFileName(fileName),
+                        fileName
             );
         }
     }
