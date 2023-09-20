@@ -1132,9 +1132,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ============= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2508_GetActivitiesForDelegateEnrolmentNotHiddenInLearningPortal {
+        internal static string TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak {
             get {
-                return ResourceManager.GetString("TD_2508_GetActivitiesForDelegateEnrolmentNotHiddenInLearningPortal", resourceCulture);
+                return ResourceManager.GetString("TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak", resourceCulture);
             }
         }
         
@@ -1150,9 +1150,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ============= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2508_GetActivitiesForDelegateEnrolmentNotHiddenInLearningPortal_down {
+        internal static string TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down {
             get {
-                return ResourceManager.GetString("TD_2508_GetActivitiesForDelegateEnrolmentNotHiddenInLearningPortal_down", resourceCulture);
+                return ResourceManager.GetString("TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down", resourceCulture);
             }
         }
         

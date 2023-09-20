@@ -16,6 +16,7 @@
             set => topic = GetValidOrNull(value);
         }
         public int DelegateStatus { get; set; }
+        public int HideInLearnerPortal { get; set; }
 
         private string? category;
         private string? topic;

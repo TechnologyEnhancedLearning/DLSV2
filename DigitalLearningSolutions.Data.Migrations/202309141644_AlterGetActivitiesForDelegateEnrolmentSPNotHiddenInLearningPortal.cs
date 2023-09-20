@@ -2,16 +2,16 @@
 {
     using FluentMigrator;
 
-    [Migration(202309141644)]
+    [Migration(202309141645)]
     public class AlterGetActivitiesForDelegateEnrolmentSPNotHiddenInLearningPortal : Migration
     {
         public override void Up()
         {
-            Execute.Sql(Properties.Resources.TD_2508_GetActivitiesForDelegateEnrolmentNotHiddenInLearningPortal);
+            Execute.Sql(Properties.Resources.TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak);
         }
         public override void Down()
         {
-            Execute.Sql(Properties.Resources.TD_2508_GetActivitiesForDelegateEnrolmentNotHiddenInLearningPortal_down);
+            Execute.Sql(Properties.Resources.TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down);
         }
     }
 }

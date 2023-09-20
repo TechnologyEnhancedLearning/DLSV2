@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
+    using System.Linq;
 
     public partial class LearningPortalController
     {
@@ -23,7 +24,7 @@
             var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
                 User.GetCentreIdKnownNotNull()
-            );
+            ).Where(course => course.HideInLearnerPortal == 0).ToList();
             var bannerText = GetBannerText();
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
@@ -50,7 +51,7 @@
             var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
                 User.GetCentreIdKnownNotNull()
-            );
+            ).Where(course => course.HideInLearnerPortal == 0).ToList();
             var model = new AllAvailableItemsPageViewModel(availableCourses);
             return View("Available/AllAvailableItems", model);
         }
