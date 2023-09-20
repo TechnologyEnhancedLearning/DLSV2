@@ -35,5 +35,6 @@
             "A user with this email address is already registered";
         public const string CentreNameAlreadyExist = "The centre name you have entered already exists, please enter a different centre name";
         public const string MaxBulkUploadRowsLimit = "File must contain no more than {0} rows";
+        public const string InvalidExcelValidationMessage = "The uploaded file must contain a \"DelegatesBulkUpload\" worksheet. Use the \"Download delegates\" button to generate a template.";
     }
 }
