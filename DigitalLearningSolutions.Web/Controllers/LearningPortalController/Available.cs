@@ -24,7 +24,7 @@
             var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
                 User.GetCentreIdKnownNotNull()
-            ).Where(course => course.HideInLearnerPortal == 0).ToList();
+            ).Where(course => !course.HideInLearnerPortal).ToList();
             var bannerText = GetBannerText();
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
@@ -51,7 +51,7 @@
             var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
                 User.GetCentreIdKnownNotNull()
-            ).Where(course => course.HideInLearnerPortal == 0).ToList();
+            ).Where(course => !course.HideInLearnerPortal).ToList();
             var model = new AllAvailableItemsPageViewModel(availableCourses);
             return View("Available/AllAvailableItems", model);
         }

@@ -17,7 +17,7 @@
             string? category = "Category 1",
             string? topic = "Topic 1",
             int delegateStatus = 0,
-            int hideInLearnerPortal =0
+            bool hideInLearnerPortal = false
         )
         {
             return new AvailableCourse
