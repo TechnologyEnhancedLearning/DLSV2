@@ -5,12 +5,14 @@
     using System.Data;
     using System.IO;
     using System.Linq;
+    using System.Threading.Tasks;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
+    using Microsoft.Extensions.Configuration;
 
     public interface IDelegateDownloadFileService
     {
@@ -41,6 +43,7 @@
         private const string Active = "Active";
         private const string Approved = "Approved";
         private const string IsAdmin = "Is admin";
+        private readonly IConfiguration configuration;
         private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IJobGroupsDataService jobGroupsDataService;
@@ -49,12 +52,13 @@
         public DelegateDownloadFileService(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IJobGroupsDataService jobGroupsDataService,
-            IUserDataService userDataService
+            IUserDataService userDataService, IConfiguration configuration
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.userDataService = userDataService;
+            this.configuration = configuration;
         }
 
         public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId)
@@ -139,13 +143,18 @@
         )
         {
             var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var delegatesToExport = GetDelegatesToExport(centreId, searchString, sortBy, sortDirection, filterString)
-                .ToList();
-
+            var delegatesToExport =  Task.Run(() => GetDelegatesToExport(centreId)).Result; 
+            var searchedUsers = GenericSearchHelper.SearchItems(delegatesToExport, searchString).AsQueryable();
+            var filteredItems = FilteringHelper.FilterItems(searchedUsers, filterString).AsQueryable();
+            var sortedItems = GenericSortingHelper.SortAllItems(
+                filteredItems,
+                sortBy ?? nameof(DelegateUserCard.SearchableName),
+                sortDirection
+            ).ToList();
             var dataTable = new DataTable();
             SetUpDataTableColumnsForAllDelegates(registrationPrompts, dataTable);
 
-            foreach (var delegateRecord in delegatesToExport)
+            foreach (var delegateRecord in sortedItems)
             {
                 SetDelegateRowValues(dataTable, delegateRecord, registrationPrompts);
             }
@@ -166,24 +175,24 @@
             FormatAllDelegateWorksheetColumns(workbook, dataTable);
         }
 
-        private IEnumerable<DelegateUserCard> GetDelegatesToExport(
-            int centreId,
-            string? searchString,
-            string? sortBy,
-            string sortDirection,
-            string? filterString
+        private async Task<IEnumerable<DelegateUserCard>> GetDelegatesToExport(
+            int centreId
         )
         {
-            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId).Where(c => !Guid.TryParse(c.EmailAddress, out _));
-            var searchedUsers = GenericSearchHelper.SearchItems(delegateUsers, searchString).AsQueryable();
-            var filteredItems = FilteringHelper.FilterItems(searchedUsers, filterString).AsQueryable();
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                filteredItems,
-                sortBy ?? nameof(DelegateUserCard.SearchableName),
-                sortDirection
-            );
+            var exportQueryRowLimit = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
+            int resultCount = userDataService.GetCountDelegateUserCardsForExportByCentreId(centreId);
 
-            return sortedItems;
+            int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
+            int currentRun = 1;
+            List<DelegateUserCard> delegates = new List<DelegateUserCard>();
+            while (totalRun >= currentRun)
+            {
+                delegates.AddRange(await userDataService.GetDelegateUserCardsForExportByCentreId(centreId, exportQueryRowLimit, currentRun));
+                currentRun++;
+            }
+
+
+            return delegates.Where(c => !Guid.TryParse(c.EmailAddress, out _));
         }
 
         private static void SetUpDataTableColumnsForAllDelegates(

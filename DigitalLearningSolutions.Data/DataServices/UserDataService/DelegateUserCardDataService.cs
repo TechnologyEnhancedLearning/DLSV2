@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -111,7 +112,30 @@
             new { centreId }
             ).ToList();
         }
-
+        public int GetCountDelegateUserCardsForExportByCentreId(int centreId)
+        {
+            return connection.ExecuteScalar<int>(
+                @$"SELECT COUNT(*)
+            FROM DelegateAccounts AS da with(nolock)
+            INNER JOIN Centres AS c with(nolock) ON c.CentreID = da.CentreID
+            INNER JOIN Users AS u with(nolock) ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd with(nolock) ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
+            INNER JOIN JobGroups AS jg with(nolock) ON jg.JobGroupID = u.JobGroupID
+                        WHERE da.CentreId = @centreId AND da.Approved = 1",
+            new { centreId }
+            );
+        }
+        public async Task<List<DelegateUserCard>> GetDelegateUserCardsForExportByCentreId(int centreId, int exportQueryRowLimit, int currentRun)
+        {
+            return connection.Query<DelegateUserCard>(
+                @$"{DelegateUserCardSelectQuery}
+                        WHERE da.CentreId = @centreId AND da.Approved = 1
+                        ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
+                        OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
+                            FETCH NEXT @exportQueryRowLimit ROWS ONLY ",
+            new { centreId, exportQueryRowLimit, currentRun }
+            ).ToList();
+        }
         public (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
                                     string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
