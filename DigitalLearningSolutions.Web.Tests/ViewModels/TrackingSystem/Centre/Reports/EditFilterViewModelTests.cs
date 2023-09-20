@@ -56,6 +56,7 @@
                 StartMonth = 1,
                 StartYear = 2021,
                 EndDate = false,
+                ReportInterval = Data.Enums.ReportInterval.Months,
             };
 
             // When
@@ -75,6 +76,7 @@
                 StartMonth = 1,
                 StartYear = 2021,
                 EndDate = true,
+                ReportInterval = Data.Enums.ReportInterval.Months,
             };
             const string expectedErrorMessage = "Enter an End Date";
 
@@ -146,6 +148,7 @@
                 EndMonth = endMonth,
                 EndYear = endYear,
                 EndDate = false,
+                ReportInterval = Data.Enums.ReportInterval.Months,
             };
 
             // When

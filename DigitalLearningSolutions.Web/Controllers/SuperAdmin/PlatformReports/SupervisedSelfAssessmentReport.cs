@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports;
+    using DocumentFormat.OpenXml.InkML;
     using Microsoft.AspNetCore.Mvc;
 
     public partial class PlatformReportsController
@@ -11,8 +12,13 @@
         [Route("SelfAssessments/Supervised")]
         public IActionResult SupervisedSelfAssessmentsReport()
         {
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminReportsFilterCookie", null);
-            Response.Cookies.SetReportsFilterCookie("SuperAdminReportsFilterCookie", filterData, clockUtility.UtcNow);
+            //Removing an old cookie if it exists because it may contain problematic options (filters that return too many rows):
+            if (HttpContext.Request.Cookies.ContainsKey("SuperAdminReportsFilterCookie"))
+            {
+                HttpContext.Response.Cookies.Delete("SuperAdminReportsFilterCookie");
+            }
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminSupervisedSAReportsFilterCookie", null);
+            Response.Cookies.SetReportsFilterCookie("SuperAdminSupervisedSAReportsFilterCookie", filterData, clockUtility.UtcNow);
             var activity = platformReportsService.GetSelfAssessmentActivity(filterData, true);
             var (regionName, centreTypeName, centreName, jobGroupName, brandName, categoryName, selfAssessmentName) = reportFilterService.GetSelfAssessmentFilterNames(filterData);
             var selfAssessmentReportFilterModel = new SelfAssessmentReportFilterModel(
@@ -46,7 +52,7 @@
         [Route("SelfAssessments/Supervised/EditFilters")]
         public IActionResult SupervisedSelfAssessmentsEditFilters()
         {
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminReportsFilterCookie", null);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("SuperAdminSupervisedSAReportsFilterCookie", null);
             var filterOptions = GetDropdownValues(true);
             var dataStartDate = platformReportsService.GetSelfAssessmentActivityStartDate(true);
             var model = new SelfAssessmentsEditFiltersViewModel(
@@ -88,7 +94,7 @@
                 model.FilterType,
                 model.ReportInterval
             );
-            Response.Cookies.SetReportsFilterCookie("SuperAdminReportsFilterCookie", filterData, clockUtility.UtcNow);
+            Response.Cookies.SetReportsFilterCookie("SuperAdminSupervisedSAReportsFilterCookie", filterData, clockUtility.UtcNow);
             return RedirectToAction("SupervisedSelfAssessmentsReport");
         }
     }

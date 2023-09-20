@@ -92,6 +92,8 @@
         DelegateUserCard? GetDelegateUserCardById(int id);
 
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
+        Task<List<DelegateUserCard>> GetDelegateUserCardsForExportByCentreId(int centreId, int exportQueryRowLimit, int currentRun);
+        int GetCountDelegateUserCardsForExportByCentreId(int centreId);
 
         (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
