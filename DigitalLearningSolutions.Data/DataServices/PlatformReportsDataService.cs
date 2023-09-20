@@ -41,7 +41,7 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<PlatformReportsDataService> logger;
-        private readonly string selectSelfAssessmentActivity = @"SELECT al.ActivityDate, al.Enrolled, al.Submitted | al.SignedOff AS Completed
+        private readonly string selectSelfAssessmentActivity = @"SELECT Cast(al.ActivityDate As Date) As ActivityDate, SUM(CAST(al.Enrolled AS Int)) AS Enrolled, SUM(CAST((al.Submitted | al.SignedOff) AS Int)) AS Completed
                                                                     FROM   ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
                                                                                      Centres AS ce WITH (NOLOCK) ON al.CentreID = ce.CentreID INNER JOIN
                                                                                      SelfAssessments AS sa WITH (NOLOCK) ON sa.ID = al.SelfAssessmentID
@@ -116,7 +116,7 @@
         {
             var whereClause = GetSelfAssessmentWhereClause(supervised);
             return connection.Query<SelfAssessmentActivity>(
-                  $@"{selectSelfAssessmentActivity} AND {whereClause}",
+                  $@"{selectSelfAssessmentActivity} AND {whereClause} GROUP BY  Cast(al.ActivityDate As Date)",
                   new
                   {
                       centreId,
@@ -157,13 +157,13 @@
         {
             return connection.Query<ActivityLog>(
                 @"SELECT
-                        LogDate,
-                        LogYear,
+                        Cast(LogDate As Date) As LogDate,
+						LogYear,
                         LogQuarter,
                         LogMonth,
-                        Registered,
-                        Completed,
-                        Evaluated
+                        SUM(CAST(Registered AS Int)) AS Registered,
+						SUM(CAST(Completed AS Int)) AS Completed,
+						SUM(CAST(Evaluated AS Int)) AS Evaluated
                     FROM tActivityLog AS al WITH(NOLOCK) INNER JOIN
                          Applications AS ap WITH(NOLOCK) ON ap.ApplicationID = al.ApplicationID INNER JOIN
                          Centres AS ce  WITH(NOLOCK) ON al.CentreID = ce.CentreID
@@ -178,7 +178,10 @@
                         AND (@centreTypeID IS NULL OR ce.CentreTypeID = @centreTypeID)
                         AND (@brandId IS NULL OR al.BrandID = @brandId)
                         AND (al.Registered = 1 OR al.Completed = 1 OR al.Evaluated = 1)
-                        AND (@coreContent IS NULL OR ap.CoreContent = @coreContent)",
+                        AND (@coreContent IS NULL OR ap.CoreContent = @coreContent)
+					GROUP BY  Cast(LogDate As Date), LogYear,
+                        LogQuarter,
+                        LogMonth",
                 new
                 {
                     centreId,

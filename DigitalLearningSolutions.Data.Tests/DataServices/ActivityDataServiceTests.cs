@@ -33,8 +33,8 @@
             // when
             var result = service.GetFilteredActivity(
                     101,
-                    DateTime.Parse("2014-01-01 00:00:00.000"),
-                    DateTime.Parse("2014-01-31 23:59:59.999"),
+                    DateTime.Parse("2014-01-01"),
+                    DateTime.Parse("2014-01-31"),
                     null,
                     null,
                     null
@@ -48,22 +48,22 @@
                 result.Count().Should().Be(9);
 
                 var first = result.First();
-                first.LogDate.Should().Be(DateTime.Parse("2014-01-08 11:04:35.753"));
+                first.LogDate.Should().Be(DateTime.Parse("2014-01-08"));
                 first.LogYear.Should().Be(2014);
                 first.LogQuarter.Should().Be(1);
                 first.LogMonth.Should().Be(1);
-                first.Completed.Should().BeFalse();
-                first.Evaluated.Should().BeFalse();
-                first.Registered.Should().BeTrue();
+                first.Completed.Should().Equals(0);
+                first.Evaluated.Should().Equals(0);
+                first.Registered.Should().Equals(1);
 
                 var last = result.Last();
-                last.LogDate.Should().Be(DateTime.Parse("2014-01-31 09:43:28.840"));
+                last.LogDate.Should().Be(DateTime.Parse("2014-01-31"));
                 last.LogYear.Should().Be(2014);
                 last.LogQuarter.Should().Be(1);
                 last.LogMonth.Should().Be(1);
-                last.Completed.Should().BeFalse();
-                last.Evaluated.Should().BeFalse();
-                last.Registered.Should().BeTrue();
+                last.Completed.Should().Equals(0);
+                last.Evaluated.Should().Equals(0);
+                last.Registered.Should().Equals(1);
             }
         }
 
