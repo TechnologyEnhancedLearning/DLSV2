@@ -51,8 +51,6 @@
             bool clearFilters = false,
             int page = 1,
             int? itemsPerPage = 10
-            //string? SearchString = "",
-            //string? ExistingFilterString = ""
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
@@ -68,10 +66,6 @@
             var centreId = User.GetCentreIdKnownNotNull();
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
-
-
-
-
 
             var groups = groupsService.GetGroupsForCentrePaginated(
                 search: searchString,

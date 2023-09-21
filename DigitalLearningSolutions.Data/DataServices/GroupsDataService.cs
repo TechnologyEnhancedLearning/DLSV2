@@ -15,7 +15,6 @@
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        //(IEnumerable<Group>, int) GetGroupsForCentreNEW(
         IEnumerable<Group> GetGroupsForCentrePaginated(
             string? search,
             int? offset,
@@ -208,7 +207,7 @@
         {
             if (!string.IsNullOrEmpty(search))
             {
-                search = search.Trim();
+                search = search.Trim();   
             }
 
             string sql = @$"{groupsSql} AND g.CentreId = @centreId
@@ -216,7 +215,7 @@
                 FETCH NEXT @rows ROWS ONLY";
 
             IEnumerable<Group> groups = connection.Query<Group>(
-                @$"{groupsSql} AND g.CentreID = @centreId",
+                sql,
                 new { centreId },
                 commandTimeout: 3000
             );
