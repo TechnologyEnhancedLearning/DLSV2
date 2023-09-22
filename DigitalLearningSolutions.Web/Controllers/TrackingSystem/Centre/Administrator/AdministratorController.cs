@@ -113,7 +113,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
 
-            var adminsAtCentre = userDataService.GetActiveAdminsByCentreId(centreId);
+            var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var model = new AllAdminsViewModel(
                 adminsAtCentre,
@@ -270,6 +270,17 @@
             userService.DeactivateOrDeleteAdmin(adminId);
 
             return View("DeactivateOrDeleteAdminConfirmation");
+        }
+
+        [Route("{adminId:int}/ReactivateAdmin")]
+        [HttpGet]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
+        public IActionResult ReactivateAdmin(
+            int adminId
+        )
+        {
+            userService.ReactivateAdmin(adminId);
+            return RedirectToAction("Index");
         }
 
         private bool CurrentUserCanDeactivateAdmin(AdminAccount adminToDeactivate)

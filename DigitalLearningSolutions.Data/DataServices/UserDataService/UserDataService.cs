@@ -20,13 +20,15 @@
 
         IEnumerable<AdminEntity> GetActiveAdminsByCentreId(int centreId);
 
+        IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId);
+
         AdminUser? GetAdminUserById(int id);
 
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
 
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 
-        int GetNumberOfActiveAdminsAtCentre(int centreId);
+        int GetNumberOfAdminsAtCentre(int centreId);
 
         void UpdateAdminUserPermissions(
             int adminId,
