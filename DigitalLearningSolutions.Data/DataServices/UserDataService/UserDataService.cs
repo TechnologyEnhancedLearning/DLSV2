@@ -12,6 +12,7 @@
     using Microsoft.Extensions.Logging;
     using DocumentFormat.OpenXml.Wordprocessing;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Models.SuperAdmin;
 
     public interface IUserDataService
     {
@@ -239,7 +240,7 @@
         (IEnumerable<AdminEntity>, int) GetAllAdmins(
        string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
        );
-        (IEnumerable<DelegateEntity>, int) GetAllDelegates(
+        (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(
       string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
       );
         Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
@@ -588,7 +589,7 @@
                 new { trimmedFirstName, trimmedLastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId }
             );
         }
-        public (IEnumerable<DelegateEntity>, int) GetAllDelegates(
+        public (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(
       string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
       )
         {
@@ -608,17 +609,17 @@
                 da.SelfReg,
                 da.UserID,
                 da.RegistrationConfirmationHash,
-                u.ID,
-                u.PrimaryEmail,
+                u.ID as UserId,
+                COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
                 u.FirstName,
                 u.LastName,
-                u.Active,
+                u.Active as UserActive,
                 u.LearningHubAuthID,
                 u.EmailVerified,
                 ucd.ID,
                 ucd.UserID,
                 ucd.CentreID,
-                ucd.Email,
+                ucd.Email as CentreEmail,
                 ucd.EmailVerified,
                 (SELECT ID
                     FROM AdminAccounts aa
@@ -626,12 +627,12 @@
                             AND aa.CentreID = da.CentreID
                             AND aa.Active = 1
                 ) AS AdminID
-            FROM DelegateAccounts AS da
-            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
-            INNER JOIN Users AS u ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+            FROM DelegateAccounts AS da WITH (NOLOCK)
+            INNER JOIN Centres AS ce WITH (NOLOCK) ON ce.CentreId = da.CentreID
+            INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID
             AND ucd.CentreId = da.CentreID
-            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+            INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID";
             string condition = $@" WHERE ((@delegateId = 0) OR (da.ID = @delegateId)) 	AND (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @search + N'%')
                                     AND ((ce.CentreID = @centreId) OR (@centreId= 0)) 
                                     AND ((@accountStatus = 'Any') OR (@accountStatus = 'Active' AND da.Active = 1 AND u.Active =1) OR (@accountStatus = 'Inactive' AND (u.Active = 0 OR da.Active =0)) 
@@ -642,28 +643,20 @@
             string sql = @$"{BaseSelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
                             OFFSET @offset ROWS
                             FETCH NEXT @rows ROWS ONLY";
-            IEnumerable<DelegateEntity> delegateEntity =
-                connection.Query<DelegateAccount, UserAccount, UserCentreDetails, int?, DelegateEntity>(
+            IEnumerable<SuperAdminDelegateAccount> delegateEntity = connection.Query<SuperAdminDelegateAccount>(
                 sql,
-                (delegateAccount, userAccount, userCentreDetails, adminId) => new DelegateEntity(
-                    delegateAccount,
-                    userAccount,
-                    userCentreDetails,
-                    adminId
-                ),
-                new { delegateId, search, centreId, accountStatus, lhlinkStatus, offset, rows },
-                splitOn: "ID,ID,AdminID",
+            new { delegateId, search, centreId, accountStatus, lhlinkStatus, offset, rows },
                 commandTimeout: 3000
             );
 
             int ResultCount = connection.ExecuteScalar<int>(
                             @$"SELECT  COUNT(*) AS Matches
-                            FROM DelegateAccounts AS da
-                            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
-                            INNER JOIN Users AS u ON u.ID = da.UserID
-                            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+                            FROM DelegateAccounts AS da WITH (NOLOCK)
+                            INNER JOIN Centres AS ce WITH (NOLOCK) ON ce.CentreId = da.CentreID
+                            INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+                            LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID
                             AND ucd.CentreId = da.CentreID
-                            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID {condition}",
+                            INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID {condition}",
                 new { delegateId, search, centreId, accountStatus, failedLoginThreshold, lhlinkStatus },
                 commandTimeout: 3000
             );
