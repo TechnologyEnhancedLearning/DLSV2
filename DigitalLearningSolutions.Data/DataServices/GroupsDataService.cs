@@ -90,9 +90,16 @@
     {
         private const string CourseCountSql = @"SELECT COUNT(*)
                 FROM GroupCustomisations AS gc
-                JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
-                INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
-                INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+with (nolock)
+                JOIN Customisations AS c
+with (nolock)
+                ON c.CustomisationID = gc.CustomisationID
+                INNER JOIN dbo.CentreApplications AS ca
+with (nolock)
+                ON ca.ApplicationID = c.ApplicationID
+                INNER JOIN dbo.Applications AS ap
+with (nolock)
+ON ap.ApplicationID = ca.ApplicationID
                 WHERE gc.GroupID = g.GroupID
                 AND ca.CentreId = @centreId
                 AND gc.InactivatedDate IS NULL
@@ -178,8 +185,13 @@
                         AddNewRegistrants,
                         SyncFieldChanges
                         FROM Groups AS g
-                    JOIN AdminUsers AS au ON au.AdminID = g.CreatedByAdminUserID
-                    JOIN Centres AS c ON c.CentreID = g.CentreID
+with (nolock)
+                    JOIN AdminUsers AS au
+with (nolock)
+                    ON au.AdminID = g.CreatedByAdminUserID
+                    JOIN Centres AS c
+with (nolock)
+                    ON c.CentreID = g.CentreID
                     WHERE RemovedDate IS NULL";
 
         public GroupsDataService(IDbConnection connection)
@@ -202,6 +214,13 @@
             int? rows = 10,
             int? centreId = 0)
         {
+            // TODO:
+            // Add the search param into the sql (check which fields to search against)
+            // Add filter logic to calling controller
+            // Fix lock on nav to page 2
+             
+
+
             if (!string.IsNullOrEmpty(search)) 
             {
                 search = search.Trim();   
@@ -220,9 +239,11 @@
 
             int resultCount = connection.ExecuteScalar<int>(
                 @$"SELECT COUNT(g.GroupID) AS Matches
-                    FROM Groups AS g
-                    JOIN AdminUsers AS au ON au.AdminID = g.CreatedByAdminUserID
-                    JOIN Centres AS c ON c.CentreID = g.CentreID
+                    FROM Groups AS g WITH (NOLOCK)
+                    JOIN AdminUsers AS au WITH (NOLOCK)
+                    ON au.AdminID = g.CreatedByAdminUserID
+                    JOIN Centres AS c WITH (NOLOCK)
+                    ON c.CentreID = g.CentreID
                     WHERE RemovedDate IS NULL
                     AND g.CentreId = @centreId",
                 new { centreId },
