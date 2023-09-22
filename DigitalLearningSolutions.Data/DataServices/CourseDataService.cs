@@ -436,25 +436,37 @@ namespace DigitalLearningSolutions.Data.DataServices
 
             if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)
             {
-                int numberOfAffectedRows = connection.Execute(
-                    @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
-                        VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)",
-                    new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+                int candidateAssessmentSupervisorsId = (int)connection.ExecuteScalar(
+                    @"SELECT COALESCE
+                             ((SELECT TOP 1 ID FROM CandidateAssessmentSupervisors WHERE CandidateAssessmentID = @candidateAssessmentID AND SupervisorDelegateId = @supervisorDelegateId), 0) AS ID",
+                    new { candidateAssessmentId, supervisorDelegateId }
                 );
+
+                if (candidateAssessmentSupervisorsId == 0)
+                {
+                    int numberOfAffectedRows = connection.Execute(
+                        @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
+                        VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)",
+                        new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+                    );
+                }
             }
 
             if (candidateAssessmentId > 1)
             {
-                connection.Execute(@"
+                string sqlQuery=$@"
                 BEGIN TRANSACTION
                 UPDATE CandidateAssessments SET RemovedDate = NULL
                   WHERE ID = @candidateAssessmentId
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
+                  {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
                   WHERE CandidateAssessmentID = @candidateAssessmentId
 
-                COMMIT TRANSACTION"
-                , new { candidateAssessmentId });
+                COMMIT TRANSACTION";
+
+                connection.Execute(sqlQuery
+                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId });
             }
 
             if (candidateAssessmentId < 1)

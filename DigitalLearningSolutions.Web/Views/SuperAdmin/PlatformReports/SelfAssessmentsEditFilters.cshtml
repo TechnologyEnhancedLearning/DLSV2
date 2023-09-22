@@ -31,7 +31,7 @@
         }
 
         <h1 class="nhsuk-heading-xl">Edit report filters</h1>
-        <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsEditFilters" : "IndependentSelfAssessmentsEditFilters" )>
+        <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsEditFilters" : "IndependentSelfAssessmentsEditFilters")>
             <input type="hidden" name="dataStart" value="@Model.DataStart" />
 
             <vc:select-list asp-for="@nameof(Model.RegionId)"
@@ -102,7 +102,6 @@
                                  end-date-checkbox-label="End date"
                                  hint-text="Reporting data starts on @Model.DataStart?.ToString(DateHelper.StandardDateFormat). Please select any date range between that date and now."
                                  end-date-checkbox-hint-text="Check this box to specify an end date. If left unchecked will display data until today." />
-
             <vc:select-list asp-for="@nameof(Model.ReportInterval)"
                             label="Report by frequency"
                             value="@reportIntervalValue.ToString()"
@@ -111,9 +110,8 @@
                             css-class="nhsuk-u-width-one-half"
                             default-option=""
                             select-list-options="@Model.ReportIntervalOptions" />
-
             <button class="nhsuk-button" type="submit" value="save">Apply filters</button>
-            <vc:cancel-link asp-controller="PlatformReports" asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsReport" : "IndependentSelfAssessmentsReport" ) />
+            <vc:cancel-link asp-controller="PlatformReports" asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsReport" : "IndependentSelfAssessmentsReport") />
         </form>
     </div>
 </div>

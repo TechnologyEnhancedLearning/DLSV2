@@ -33,24 +33,27 @@
                     <span class="nhsuk-table-responsive__heading">Period </span>@activityRow.Period
                 </td>
                 <td role="cell" class="nhsuk-table__cell">
-                    <span class="nhsuk-table-responsive__heading">Enrolments </span>@activityRow.Enrolments
+                    <span class="nhsuk-table-responsive__heading">Enrolments </span>@activityRow.Enrolments.ToString("#,##0.##")
                 </td>
                 <td role="cell" class="nhsuk-table__cell">
-                    <span class="nhsuk-table-responsive__heading">Completions </span>@activityRow.Completions
+                    <span class="nhsuk-table-responsive__heading">Completions </span>@activityRow.Completions.ToString("#,##0.##")
                 </td>
                 <td role="cell" class="nhsuk-table__cell">
-                    <span class="nhsuk-table-responsive__heading">Evaluations </span>@activityRow.Evaluations
+                    <span class="nhsuk-table-responsive__heading">Evaluations </span>@activityRow.Evaluations.ToString("#,##0.##")
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<div class="nhsuk-u-margin-top-4">
-    <a id="@(toggleableActivityButtonId)"
+@if (Model.Rows.Count() > defaultNumOfRowsVisible)
+{
+    <div class="nhsuk-u-margin-top-4">
+        <a id="@(toggleableActivityButtonId)"
        role="button"
        class="nhsuk-u-margin-top-4 js-only-inline"
        href="#">
-        View more
-    </a>
-</div>
+            View more
+        </a>
+    </div>
+}

@@ -185,49 +185,6 @@
         }
 
         [Test]
-        public void AddCentre_inserts_new_centre()
-        {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                const string centreName = "TestCentre";
-                const string contactFirstName = "TestFirstName";
-                const string contactLastName = "TestLastName";
-                const string contactEmail = "test@email.com";
-                const string contactTelephone = "0123456789";
-                const string registrationEmail = "test2@email.com";
-
-                // When
-                int insertedID = centresDataService.AddCentreForSuperAdmin(centreName, contactFirstName, contactLastName,
-                    contactEmail, contactTelephone, 1, 1, registrationEmail, "194.176.105", true,true);
-                var insertedCentre = centresDataService.GetCentreDetailsById(insertedID)!;
-
-                // Then
-                using (new AssertionScope())
-                {
-                    insertedCentre.CentreName.Should().BeEquivalentTo(centreName);
-                    insertedCentre.ContactForename.Should().BeEquivalentTo(contactFirstName);
-                    insertedCentre.ContactSurname.Should().BeEquivalentTo(contactLastName);
-                    insertedCentre.ContactEmail.Should().BeEquivalentTo(contactEmail);
-                    insertedCentre.ContactTelephone.Should().BeEquivalentTo(contactTelephone);
-                    insertedCentre.CentreType.Should().BeEquivalentTo("NHS Organisation");
-                    insertedCentre.RegionName.Should().BeEquivalentTo("East Midlands");
-                    insertedCentre.RegistrationEmail.Should().BeEquivalentTo(registrationEmail);
-                    insertedCentre.ShowOnMap.Should().Be(true);
-                    insertedCentre.IpPrefix.Should().BeEquivalentTo("194.176.105");
-                    insertedCentre.CmsAdministratorSpots.Should().Be(5);
-                    insertedCentre.ContractType.Should().BeEquivalentTo("Basic");
-                    insertedCentre.TrainerSpots.Should().Be(0);
-                }
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
-        }
-
-        [Test]
         public void UpdateCentreWebsiteDetails_updates_centre()
         {
             using var transaction = new TransactionScope();

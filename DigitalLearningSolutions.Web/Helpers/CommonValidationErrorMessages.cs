@@ -34,5 +34,6 @@
         public const string PrimaryEmailInUseDuringDelegateRegistration =
             "A user with this email address is already registered";
         public const string CentreNameAlreadyExist = "The centre name you have entered already exists, please enter a different centre name";
+        public const string ReportFilterReturnsTooManyRows = "The report frequency is too high for the date range. Choose a lower report frequency (or shorten the date range)";
     }
 }

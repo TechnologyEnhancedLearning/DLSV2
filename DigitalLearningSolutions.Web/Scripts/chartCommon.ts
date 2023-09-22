@@ -153,8 +153,10 @@ function getViewMoreLink() {
 export function setUpToggleActivityRowsButton() {
   const viewMoreLink = getViewMoreLink();
 
-  viewMoreLink.addEventListener('click', (event) => {
-    event.preventDefault();
-    toggleVisibleActivityRows();
-  });
+  if (viewMoreLink != null) {
+    viewMoreLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      toggleVisibleActivityRows();
+    });
+  }
 }

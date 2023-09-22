@@ -97,8 +97,8 @@
                         new DateTime(groupingOfLogs.Key),
                         interval
                     ),
-                    groupingOfLogs.Count(activityLog => activityLog.Enrolled),
-                    groupingOfLogs.Count(activityLog => activityLog.Completed)
+                    groupingOfLogs.Sum(activityLog => activityLog.Enrolled),
+                    groupingOfLogs.Sum(activityLog => activityLog.Completed)
                 )
             );
         }
@@ -172,9 +172,9 @@
                         new DateTime(groupingOfLogs.Key),
                         interval
                     ),
-                    groupingOfLogs.Count(activityLog => activityLog.Registered),
-                    groupingOfLogs.Count(activityLog => activityLog.Completed),
-                    groupingOfLogs.Count(activityLog => activityLog.Evaluated)
+                    groupingOfLogs.Sum(activityLog => activityLog.Registered),
+                    groupingOfLogs.Sum(activityLog => activityLog.Completed),
+                    groupingOfLogs.Sum(activityLog => activityLog.Evaluated)
                 )
             );
         }

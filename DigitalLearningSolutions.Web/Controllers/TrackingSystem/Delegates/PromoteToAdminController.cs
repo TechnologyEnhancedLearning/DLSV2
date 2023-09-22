@@ -173,7 +173,7 @@
                 return new StatusCodeResult(500);
             }
             TempData["IsDelegatePromoted"] = true;
-            return RedirectToAction("Index", "ViewDelegate", new { delegateId = delegateId, callType = ViewDelegateNavigationType.PromoteToAdmin });
+            return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
     }
 }

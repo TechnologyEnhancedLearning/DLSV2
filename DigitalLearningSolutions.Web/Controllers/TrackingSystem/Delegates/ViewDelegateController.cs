@@ -57,7 +57,7 @@
             this.emailVerificationDataService = emailVerificationDataService;
         }
 
-        public IActionResult Index(int delegateId, string? callType)
+        public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreIdKnownNotNull();
 
@@ -68,7 +68,7 @@
                 return NotFound();
             }
 
-            if (string.IsNullOrEmpty(callType) && TempData["IsDelegatePromoted"] != null)
+            if (TempData["IsDelegatePromoted"] != null)
             {
                 TempData.Remove("IsDelegatePromoted");
             }
