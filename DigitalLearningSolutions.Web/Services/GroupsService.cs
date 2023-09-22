@@ -75,7 +75,7 @@
 
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        IEnumerable<Group> GetGroupsForCentrePaginated(
+        (IEnumerable<Group>, int) GetGroupsForCentrePaginated(
             string? search,
             int? offset,
             int? rows,
@@ -496,7 +496,7 @@
             return groupsDataService.GetGroupsForCentre(centreId);
         }
 
-        public IEnumerable<Group> GetGroupsForCentrePaginated(
+        public (IEnumerable<Group>, int) GetGroupsForCentrePaginated(
             string? search = "",
             int? offset = 0,
             int? rows = 10,
@@ -633,12 +633,7 @@
                 ? GetJobGroupsAndPrefix()
                 : GetCentreRegistrationPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField.Id);
 
-
-            //var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
-            //(var groupsAtCentre, var groupCount) = GetGroupsForCentreNEW(centreId: groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
-            var groupsAtCentre = GetGroupsForCentrePaginated(centreId: groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
-
-
+            var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
 
             using var transaction = new TransactionScope();
             foreach (var (id, newGroupName) in newGroupNames)

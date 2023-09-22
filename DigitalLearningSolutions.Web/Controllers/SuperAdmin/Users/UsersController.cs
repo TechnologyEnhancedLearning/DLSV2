@@ -103,21 +103,16 @@
           string? ExistingFilterString = ""
         )
         {
-            // 1) Default to page one if no page number is provided
             if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
                 page = 1;
             }
 
-            // 2) Default offset
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
-
-            // other stuff
             UserStatus = (string.IsNullOrEmpty(UserStatus) ? "Any" : UserStatus);
             EmailStatus = (string.IsNullOrEmpty(EmailStatus) ? "Any" : EmailStatus);
 
-            // 3) Process the search filter
             if (!string.IsNullOrEmpty(SearchString))
             {
                 List<string> searchFilters = SearchString.Split("-").ToList();
@@ -137,7 +132,6 @@
                 }
             }
 
-            //4) Process the filter string
             if (!string.IsNullOrEmpty(ExistingFilterString))
             {
                 List<string> selectedFilters = ExistingFilterString.Split("-").ToList();
@@ -163,14 +157,11 @@
                 }
             }
 
-            // 5) Get the data
             (var UserAccounts, var ResultCount) = this.userDataService.GetUserAccounts(Search ?? string.Empty, offSet, itemsPerPage ?? 0, JobGroupId, UserStatus, EmailStatus, UserId, AuthHelper.FailedLoginThreshold);
 
-            // other stuff
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             jobGroups.Insert(0, (0, "Any"));
 
-            // 6) Setup the pagination bits
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
                 new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
@@ -178,14 +169,12 @@
                 new PaginationOptions(page, itemsPerPage)
             );
 
-            // 7) Apply pagination to the raw data
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 UserAccounts,
                 searchSortPaginationOptions
             );
 
 
-            // 8) Setup the results for the view to use
             result.Page = page;
             if (
                 !string.IsNullOrEmpty(Search) ||
@@ -226,7 +215,6 @@
             model.EmailStatus = EmailStatus;
             model.JobGroupId = JobGroupId;
             model.Search = Search;
-
 
             model.JavascriptSearchSortFilterPaginateEnabled = false;
             ModelState.ClearAllErrors();

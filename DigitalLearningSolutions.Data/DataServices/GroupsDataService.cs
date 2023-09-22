@@ -1,21 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using Dapper;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using Dapper;
-    using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DocumentFormat.OpenXml.Wordprocessing;
 
     public interface IGroupsDataService
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        IEnumerable<Group> GetGroupsForCentrePaginated(
+        (IEnumerable<Group>, int) GetGroupsForCentrePaginated(
             string? search,
             int? offset,
             int? rows,
@@ -199,28 +195,41 @@
             );
         }
 
-        public IEnumerable<Group> GetGroupsForCentrePaginated(
+
+        public (IEnumerable<Group>, int) GetGroupsForCentrePaginated(
             string? search = "",
             int? offset = 0,
             int? rows = 10,
             int? centreId = 0)
         {
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(search)) 
             {
                 search = search.Trim();   
             }
 
             string sql = @$"{groupsSql} AND g.CentreId = @centreId
+                ORDER BY g.CentreId
                 OFFSET @offset ROWS
                 FETCH NEXT @rows ROWS ONLY";
 
             IEnumerable<Group> groups = connection.Query<Group>(
                 sql,
+                new { centreId, offset, rows },
+                commandTimeout: 3000
+            );
+
+            int resultCount = connection.ExecuteScalar<int>(
+                @$"SELECT COUNT(g.GroupID) AS Matches
+                    FROM Groups AS g
+                    JOIN AdminUsers AS au ON au.AdminID = g.CreatedByAdminUserID
+                    JOIN Centres AS c ON c.CentreID = g.CentreID
+                    WHERE RemovedDate IS NULL
+                    AND g.CentreId = @centreId",
                 new { centreId },
                 commandTimeout: 3000
             );
 
-            return groups;
+            return (groups, resultCount);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
