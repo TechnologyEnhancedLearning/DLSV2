@@ -43,7 +43,7 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var dataFile = selfAssessmentReportService.GetDigitalCapabilityExcelExportForCentre(centreId);
-            var fileName = $"DLS DCSA Report - Centre {centreId} - downloaded {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
+            var fileName = $"DLS DSAT Report - Centre {centreId} - downloaded {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
             return File(
                 dataFile,
                 FileHelper.GetContentTypeFromFileName(fileName),
