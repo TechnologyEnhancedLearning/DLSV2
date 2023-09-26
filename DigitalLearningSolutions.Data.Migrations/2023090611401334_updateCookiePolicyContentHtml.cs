@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace DigitalLearningSolutions.Data.Migrations
 {
-    [Migration(202309221452)]
+    [Migration(202309261452)]
 
     public class UpdateCookiePolicyContentHtml : Migration
     {
         public override void Up()
         {
-            var CookiePolicyContentHtml = Properties.Resources.TD_1943_CookiePolicyContentHtml;
+            var CookiePolicyContentHtml = Properties.Resources.TD_1943_CookiesPolicyContentHtml;
 
             Execute.Sql(
                 @"UPDATE Config SET  ConfigText =N'" + CookiePolicyContentHtml + "' " +
