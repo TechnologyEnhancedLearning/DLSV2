@@ -216,10 +216,8 @@ with (nolock)
         {
             // TODO:
             // Add the search param into the sql (check which fields to search against)
+            // Page 2 data not displaying (think data retrieved ok though)
             // Add filter logic to calling controller
-            // Fix lock on nav to page 2
-             
-
 
             if (!string.IsNullOrEmpty(search)) 
             {
@@ -227,6 +225,10 @@ with (nolock)
             }
 
             string sql = @$"{groupsSql} AND g.CentreId = @centreId
+
+--COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%')
+
+
                 ORDER BY g.CentreId
                 OFFSET @offset ROWS
                 FETCH NEXT @rows ROWS ONLY";

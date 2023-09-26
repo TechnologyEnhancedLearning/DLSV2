@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
@@ -45,51 +47,81 @@
 
         [Route("{page=0:int}")]
         public IActionResult Index(
-            string? searchString = null,
-            string? sortBy = null,
-            string sortDirection = GenericSortingHelper.Ascending,
-            string? existingFilterString = null,
-            string? newFilterToAdd = null,
-            bool clearFilters = false,
-            int page = 1,
-            int? itemsPerPage = 10
+          int page = 1,
+          string? search = "",
+          int? itemsPerPage = 10,
+          string? searchString = "",
+          string? existingFilterString = ""
         )
         {
-            sortBy ??= DefaultSortByOptions.Name.PropertyName;
-
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                DelegateGroupsFilterCookieName
-            );
-
-            var centreId = User.GetCentreIdKnownNotNull();
+            if (string.IsNullOrEmpty(searchString) || string.IsNullOrEmpty(existingFilterString))
+            {
+                page = 1;
+            }
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
-            //var groups = groupsService.GetGroupsForCentrePaginated(
-            //    search: searchString,
-            //    offset: offSet,
-            //    rows: itemsPerPage,
-            //centreId: centreId).ToList();
+            //if (!string.IsNullOrEmpty(SearchString))
+            //{
+            //    List<string> searchFilters = SearchString.Split("-").ToList();
+            //    if (searchFilters.Count == 2)
+            //    {
+            //        string searchFilter = searchFilters[0];
+            //        if (searchFilter.Contains("SearchQuery|"))
+            //        {
+            //            Search = searchFilter.Split("|")[1];
+            //        }
+
+            //        string userIdFilter = searchFilters[1];
+            //        if (userIdFilter.Contains("UserId|"))
+            //        {
+            //            UserId = Convert.ToInt32(userIdFilter.Split("|")[1]);
+            //        }
+            //    }
+            //}
+
+            //if (!string.IsNullOrEmpty(ExistingFilterString))
+            //{
+            //    List<string> selectedFilters = ExistingFilterString.Split("-").ToList();
+            //    if (selectedFilters.Count == 3)
+            //    {
+            //        string userStatusFilter = selectedFilters[0];
+            //        if (userStatusFilter.Contains("UserStatus|"))
+            //        {
+            //            UserStatus = userStatusFilter.Split("|")[1];
+            //        }
+
+            //        string emailStatusFilter = selectedFilters[1];
+            //        if (emailStatusFilter.Contains("EmailStatus|"))
+            //        {
+            //            EmailStatus = emailStatusFilter.Split("|")[1];
+            //        }
+
+            //        string jobGroupFilter = selectedFilters[2];
+            //        if (jobGroupFilter.Contains("JobGroup|"))
+            //        {
+            //            JobGroupId = Convert.ToInt16(jobGroupFilter.Split("|")[1]);
+            //        }
+            //    }
+            //}
+
+            var centreId = User.GetCentreIdKnownNotNull();
 
             (var groups, var resultCount) = groupsService.GetGroupsForCentrePaginated(
-                search: searchString,
-                offset: offSet,
-                rows: itemsPerPage,
-            centreId: centreId);
+                search: searchString ?? string.Empty,
+                offSet,
+                rows: itemsPerPage ?? 0,
+                centreId: centreId);
 
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
             var availableFilters = DelegateGroupsViewModelFilterOptions
                 .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
-                new SearchOptions(searchString),
-                new SortOptions(sortBy, sortDirection),
-                new FilterOptions(existingFilterString, availableFilters),
-                new PaginationOptions(page)
+                null,
+                new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
+                null,
+                new PaginationOptions(page, itemsPerPage)
             );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
@@ -97,13 +129,39 @@
                 searchSortPaginationOptions
             );
 
+            result.Page = page;
+            if (
+                !string.IsNullOrEmpty(searchString) ||
+                centreId != 0
+            )
+            {
+                // result.SearchString = "SearchQuery|" + search + "-UserId|" + UserId;
+                // result.FilterString = "UserStatus|" + UserStatus + "-EmailStatus|" + EmailStatus + "-JobGroup|" + JobGroupId;
+
+                TempData["SearchString"] = result.SearchString;
+                TempData["FilterString"] = result.FilterString;
+            }
+            TempData["Page"] = result.Page;
+
             var model = new DelegateGroupsViewModel(
                 result,
-                availableFilters
+                null
             );
+
+            //var model = new DelegateGroupsViewModel(
+            //    result,
+            //    availableFilters
+            //);
 
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
+            //model.centreId = CentreId == 0 ? null : CentreId;
+            //model.Search = search;
+
+            model.JavascriptSearchSortFilterPaginateEnabled = false;
+            //ModelState.ClearAllErrors();
+
+            ViewBag.CentreId = TempData["CentreId"];
 
             Response.UpdateFilterCookie(DelegateGroupsFilterCookieName, result.FilterString);
 
