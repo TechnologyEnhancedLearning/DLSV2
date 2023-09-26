@@ -60,6 +60,7 @@
             int? itemsPerPage = 10
         )
         {
+            searchString= searchString==null ? string.Empty : searchString.Trim();
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
 
