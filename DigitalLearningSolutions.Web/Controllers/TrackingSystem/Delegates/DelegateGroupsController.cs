@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
@@ -45,130 +46,296 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        [Route("{page=0:int}")]
+        //[Route("{page=0:int}")]
+        //public IActionResult Index(
+        //  int page = 1,
+        //  string? addedBy = "",
+        //  string? linkedField = "",
+        //  int? itemsPerPage = 10,
+        //  string? searchString = "",
+        //  string? existingFilterString = ""
+        //)
+        //{
+        //    // TODO:
+        //    // Page 2+ data not displayed in view (data retrieved correctly though)
+        //    // Search text not working
+        //    // Filters not applied to model and not displaying in view
+
+        //    if (string.IsNullOrEmpty(searchString) || string.IsNullOrEmpty(existingFilterString))
+        //    {
+        //        page = 1;
+        //    }
+
+        //    int offSet = ((page - 1) * itemsPerPage) ?? 0;
+
+        //    addedBy = (string.IsNullOrEmpty(addedBy) ? "Any" : addedBy);
+        //    linkedField = (string.IsNullOrEmpty(linkedField) ? "Any" : linkedField);
+
+        //    // TODO: Implement this:
+        //    //if (!string.IsNullOrEmpty(SearchString))
+        //    //{
+        //    //    List<string> searchFilters = SearchString.Split("-").ToList();
+        //    //    if (searchFilters.Count == 2)
+        //    //    {
+        //    //        string searchFilter = searchFilters[0];
+        //    //        if (searchFilter.Contains("SearchQuery|"))
+        //    //        {
+        //    //            Search = searchFilter.Split("|")[1];
+        //    //        }
+
+        //    //        string userIdFilter = searchFilters[1];
+        //    //        if (userIdFilter.Contains("UserId|"))
+        //    //        {
+        //    //            UserId = Convert.ToInt32(userIdFilter.Split("|")[1]);
+        //    //        }
+        //    //    }
+        //    //}
+
+        //    if (!string.IsNullOrEmpty(existingFilterString))
+        //    {
+        //        List<string> selectedFilters = existingFilterString.Split("-").ToList();
+        //        if (selectedFilters.Count == 2)
+        //        {
+        //            string addedByFilter = selectedFilters[0];
+        //            if (addedByFilter.Contains("AddedByAdminId|"))
+        //            {
+        //                addedBy = addedByFilter.Split("|")[1];
+        //            }
+
+        //            string linkedFieldFilter = selectedFilters[1];
+        //            if (linkedFieldFilter.Contains("LinkedToField|"))
+        //            {
+        //                linkedField = linkedFieldFilter.Split("|")[1];
+        //            }
+        //        }
+        //    }
+
+        //    var centreId = User.GetCentreIdKnownNotNull();
+
+        //    (var groups, var resultCount) = groupsService.GetGroupsForCentrePaginated(
+        //        search: searchString ?? string.Empty,
+        //        offSet,
+        //        rows: itemsPerPage ?? 0,
+        //        centreId: centreId);
+
+        //    var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
+        //    var availableFilters = DelegateGroupsViewModelFilterOptions
+        //        .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
+
+        //    var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+        //        new SearchOptions(searchString),    // null?
+        //        new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
+        //        new FilterOptions(existingFilterString, availableFilters),  // null?
+        //        new PaginationOptions(page, itemsPerPage)
+        //    );
+
+        //    var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+        //        groups,
+        //        searchSortPaginationOptions
+        //    );
+
+        //    result.Page = page;
+        //    if (
+        //        !string.IsNullOrEmpty(searchString) ||
+        //        centreId != 0
+        //    )
+        //    {
+        //        // TODO: Update this to use AddedBy and LinkedField?
+        //        // result.SearchString = "SearchQuery|" + search + "-UserId|" + UserId;
+        //        // result.FilterString = "UserStatus|" + UserStatus + "-EmailStatus|" + EmailStatus + "-JobGroup|" + JobGroupId;
+
+        //        TempData["SearchString"] = result.SearchString;
+        //        TempData["FilterString"] = result.FilterString;
+        //    }
+        //    TempData["Page"] = result.Page;
+
+        //    var model = new DelegateGroupsViewModel(
+        //        result,
+        //        null
+        //    );
+
+        //    // Old version:
+        //    //var model = new DelegateGroupsViewModel(
+        //    //    result,
+        //    //    availableFilters
+        //    //);
+
+        //    model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
+        //    model.MatchingSearchResults = resultCount;
+        //    //model.centreId = CentreId == 0 ? null : CentreId;
+        //    //model.Search = search;
+
+        //    model.JavascriptSearchSortFilterPaginateEnabled = false;
+        //    //ModelState.ClearAllErrors();
+
+        //    ViewBag.CentreId = TempData["CentreId"];
+
+        //    Response.UpdateFilterCookie(DelegateGroupsFilterCookieName, result.FilterString);
+
+        //    return View(model);
+        //}
+
+        [NoCaching]
+        [Route("{page=1:int}")]
         public IActionResult Index(
-          int page = 1,
-          string? addedBy = "",
-          string? linkedField = "",
-          int? itemsPerPage = 10,
-          string? searchString = "",
-          string? existingFilterString = ""
+            string? searchString = null,
+            string? sortBy = null,
+            string sortDirection = GenericSortingHelper.Ascending,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
+            bool clearFilters = false,
+            int page = 1,
+            int? itemsPerPage = 10
         )
         {
-            // TODO:
-            // Page 2+ data not displayed in view (data retrieved correctly though)
-            // Search text not working
-            // Filters not applied to model and not displaying in view
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
+            sortDirection ??= GenericSortingHelper.Ascending;
 
-            if (string.IsNullOrEmpty(searchString) || string.IsNullOrEmpty(existingFilterString))
-            {
-                page = 1;
-            }
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                DelegateGroupsFilterCookieName,
+                null // DelegateGroupsFilterOptions.IsActive.FilterValue
+            );
+
+            var centreId = User.GetCentreIdKnownNotNull();
+            //var categoryId = User.GetAdminCategoryId();
+            //var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
+            //var Categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
+            //var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
+            //string isActive, categoryName, courseTopic, hasAdminFields;
+            string categoryAddedBy, categoryLinkedField;
 
-            addedBy = (string.IsNullOrEmpty(addedBy) ? "Any" : addedBy);
-            linkedField = (string.IsNullOrEmpty(linkedField) ? "Any" : linkedField);
-
-            // TODO: Implement this:
-            //if (!string.IsNullOrEmpty(SearchString))
-            //{
-            //    List<string> searchFilters = SearchString.Split("-").ToList();
-            //    if (searchFilters.Count == 2)
-            //    {
-            //        string searchFilter = searchFilters[0];
-            //        if (searchFilter.Contains("SearchQuery|"))
-            //        {
-            //            Search = searchFilter.Split("|")[1];
-            //        }
-
-            //        string userIdFilter = searchFilters[1];
-            //        if (userIdFilter.Contains("UserId|"))
-            //        {
-            //            UserId = Convert.ToInt32(userIdFilter.Split("|")[1]);
-            //        }
-            //    }
-            //}
+            //isActive = categoryName = courseTopic = hasAdminFields = "Any";
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
-                List<string> selectedFilters = existingFilterString.Split("-").ToList();
-                if (selectedFilters.Count == 2)
-                {
-                    string addedByFilter = selectedFilters[0];
-                    if (addedByFilter.Contains("AddedByAdminId|"))
-                    {
-                        addedBy = addedByFilter.Split("|")[1];
-                    }
+                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
 
-                    string linkedFieldFilter = selectedFilters[1];
-                    if (linkedFieldFilter.Contains("LinkedToField|"))
+                if (!string.IsNullOrEmpty(newFilterToAdd))
+                {
+                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
+                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
+                    if (dupfilters.Count() > 1)
                     {
-                        linkedField = linkedFieldFilter.Split("|")[1];
+                        foreach (var filter in selectedFilters)
+                        {
+                            if (filter.Contains(filterHeader))
+                            {
+                                selectedFilters.Remove(filter);
+                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (selectedFilters.Count > 0)
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        var filterArr = filter.Split(FilteringHelper.Separator);
+                        var filterValue = filterArr[2];
+                        if (filterValue == FilteringHelper.EmptyValue) filterValue = "No option selected";
+
+                        if (filter.Contains("AddedBy"))
+                            categoryAddedBy = filterValue;
+
+                        if (filter.Contains("LinkedField"))
+                            categoryLinkedField = filterValue;
+
+                        //if (filter.Contains("CategoryName"))
+                        //    categoryName = filterValue;
+
+                        //if (filter.Contains("CourseTopic"))
+                        //    courseTopic = filterValue;
+
+                        //if (filter.Contains("Active"))
+                        //    isActive = filterValue;
+
+                        //if (filter.Contains("NotActive"))
+                        //    isActive = "false";
+
+                        //if (filter.Contains("HasAdminFields"))
+                        //    hasAdminFields = filterValue;
                     }
                 }
             }
 
-            var centreId = User.GetCentreIdKnownNotNull();
+            //var (courses, resultCount) = courseService.GetCentreCourses(
+            //    searchString ?? string.Empty,
+            //    offSet,
+            //    (int)itemsPerPage,
+            //    sortBy,
+            //    sortDirection,
+            //    centreId,
+            //    categoryId,
+            //    true,
+            //    null,
+            //    isActive,
+            //    categoryName,
+            //    courseTopic,
+            //    hasAdminFields);
 
             (var groups, var resultCount) = groupsService.GetGroupsForCentrePaginated(
                 search: searchString ?? string.Empty,
                 offSet,
                 rows: itemsPerPage ?? 0,
-                centreId: centreId);
+                sortBy,
+                sortDirection,
+                centreId: centreId,
+                categoryAddedBy,
+                categoryLinkedField);
 
-            var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
-            var availableFilters = DelegateGroupsViewModelFilterOptions
-                .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
+            if (groups.Count() == 0 && resultCount > 0)
+            {
+                page = 1;
+                offSet = 0;
+                //(courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true, null,
+                //                                            isActive, categoryName, courseTopic, hasAdminFields);
 
-            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
-                new SearchOptions(searchString),    // null?
-                new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
-                new FilterOptions(existingFilterString, availableFilters),  // null?
-                new PaginationOptions(page, itemsPerPage)
-            );
+                (var groups, var resultCount) = groupsService.GetGroupsForCentrePaginated(
+                    search: searchString ?? string.Empty,
+                    offSet,
+                    rows: itemsPerPage ?? 0,
+                    sortBy,
+                    sortDirection,
+                    centreId: centreId,
+                    categoryAddedBy,
+                    categoryLinkedField);
 
-            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+            }
+
+            //var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
+            //    .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+            var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
+                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+
+            var result = paginateService.Paginate(
                 groups,
-                searchSortPaginationOptions
+                resultCount,
+                new PaginationOptions(page, itemsPerPage),
+                new FilterOptions(existingFilterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),
+                searchString,
+                sortBy,
+                sortDirection
             );
 
             result.Page = page;
-            if (
-                !string.IsNullOrEmpty(searchString) ||
-                centreId != 0
-            )
-            {
-                // TODO: Update this to use AddedBy and LinkedField?
-                // result.SearchString = "SearchQuery|" + search + "-UserId|" + UserId;
-                // result.FilterString = "UserStatus|" + UserStatus + "-EmailStatus|" + EmailStatus + "-JobGroup|" + JobGroupId;
-
-                TempData["SearchString"] = result.SearchString;
-                TempData["FilterString"] = result.FilterString;
-            }
             TempData["Page"] = result.Page;
 
             var model = new DelegateGroupsViewModel(
                 result,
-                null
+                availableFilters,
+                courseCategoryName
             );
-
-            // Old version:
-            //var model = new DelegateGroupsViewModel(
-            //    result,
-            //    availableFilters
-            //);
 
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
-            //model.centreId = CentreId == 0 ? null : CentreId;
-            //model.Search = search;
-
-            model.JavascriptSearchSortFilterPaginateEnabled = false;
-            //ModelState.ClearAllErrors();
-
-            ViewBag.CentreId = TempData["CentreId"];
-
             Response.UpdateFilterCookie(DelegateGroupsFilterCookieName, result.FilterString);
 
             return View(model);
