@@ -48,12 +48,18 @@
         [Route("{page=0:int}")]
         public IActionResult Index(
           int page = 1,
-          string? search = "",
+          string? addedBy = "",
+          string? linkedField = "",
           int? itemsPerPage = 10,
           string? searchString = "",
           string? existingFilterString = ""
         )
         {
+            // TODO:
+            // Page 2+ data not displayed in view (data retrieved correctly though)
+            // Search text not working
+            // Filters not applied to model and not displaying in view
+
             if (string.IsNullOrEmpty(searchString) || string.IsNullOrEmpty(existingFilterString))
             {
                 page = 1;
@@ -61,6 +67,10 @@
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
+            addedBy = (string.IsNullOrEmpty(addedBy) ? "Any" : addedBy);
+            linkedField = (string.IsNullOrEmpty(linkedField) ? "Any" : linkedField);
+
+            // TODO: Implement this:
             //if (!string.IsNullOrEmpty(SearchString))
             //{
             //    List<string> searchFilters = SearchString.Split("-").ToList();
@@ -80,30 +90,24 @@
             //    }
             //}
 
-            //if (!string.IsNullOrEmpty(ExistingFilterString))
-            //{
-            //    List<string> selectedFilters = ExistingFilterString.Split("-").ToList();
-            //    if (selectedFilters.Count == 3)
-            //    {
-            //        string userStatusFilter = selectedFilters[0];
-            //        if (userStatusFilter.Contains("UserStatus|"))
-            //        {
-            //            UserStatus = userStatusFilter.Split("|")[1];
-            //        }
+            if (!string.IsNullOrEmpty(existingFilterString))
+            {
+                List<string> selectedFilters = existingFilterString.Split("-").ToList();
+                if (selectedFilters.Count == 2)
+                {
+                    string addedByFilter = selectedFilters[0];
+                    if (addedByFilter.Contains("AddedByAdminId|"))
+                    {
+                        addedBy = addedByFilter.Split("|")[1];
+                    }
 
-            //        string emailStatusFilter = selectedFilters[1];
-            //        if (emailStatusFilter.Contains("EmailStatus|"))
-            //        {
-            //            EmailStatus = emailStatusFilter.Split("|")[1];
-            //        }
-
-            //        string jobGroupFilter = selectedFilters[2];
-            //        if (jobGroupFilter.Contains("JobGroup|"))
-            //        {
-            //            JobGroupId = Convert.ToInt16(jobGroupFilter.Split("|")[1]);
-            //        }
-            //    }
-            //}
+                    string linkedFieldFilter = selectedFilters[1];
+                    if (linkedFieldFilter.Contains("LinkedToField|"))
+                    {
+                        linkedField = linkedFieldFilter.Split("|")[1];
+                    }
+                }
+            }
 
             var centreId = User.GetCentreIdKnownNotNull();
 
@@ -118,9 +122,9 @@
                 .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
-                null,
+                new SearchOptions(searchString),    // null?
                 new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
-                null,
+                new FilterOptions(existingFilterString, availableFilters),  // null?
                 new PaginationOptions(page, itemsPerPage)
             );
 
@@ -135,6 +139,7 @@
                 centreId != 0
             )
             {
+                // TODO: Update this to use AddedBy and LinkedField?
                 // result.SearchString = "SearchQuery|" + search + "-UserId|" + UserId;
                 // result.FilterString = "UserStatus|" + UserStatus + "-EmailStatus|" + EmailStatus + "-JobGroup|" + JobGroupId;
 
@@ -148,6 +153,7 @@
                 null
             );
 
+            // Old version:
             //var model = new DelegateGroupsViewModel(
             //    result,
             //    availableFilters

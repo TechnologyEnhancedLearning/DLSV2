@@ -214,20 +214,15 @@ with (nolock)
             int? rows = 10,
             int? centreId = 0)
         {
-            // TODO:
-            // Add the search param into the sql (check which fields to search against)
-            // Page 2 data not displaying (think data retrieved ok though)
-            // Add filter logic to calling controller
-
             if (!string.IsNullOrEmpty(search)) 
             {
                 search = search.Trim();   
             }
 
+            // TODO: What fields should this search on? GroupLabel? GroupDescription? Everything?
             string sql = @$"{groupsSql} AND g.CentreId = @centreId
 
---COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%')
-
+AND COALESCE(GroupLabel, '') LIKE N'%' + @search + N'%')
 
                 ORDER BY g.CentreId
                 OFFSET @offset ROWS
