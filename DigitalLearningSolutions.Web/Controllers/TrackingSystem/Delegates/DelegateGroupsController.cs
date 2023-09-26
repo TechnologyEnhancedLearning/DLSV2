@@ -34,16 +34,19 @@
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IGroupsService groupsService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IPaginateService paginateService;
 
         public DelegateGroupsController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IGroupsService groupsService,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IPaginateService paginateService
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.groupsService = groupsService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.paginateService = paginateService;
         }
 
         //[Route("{page=0:int}")]
@@ -202,7 +205,10 @@
 
             var centreId = User.GetCentreIdKnownNotNull();
             //var categoryId = User.GetAdminCategoryId();
+
+            //TODO:
             //var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
+
             //var Categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
             //var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
@@ -281,6 +287,7 @@
             //    courseTopic,
             //    hasAdminFields);
 
+            // TODO: Update the underlying service method:
             (var groups, var resultCount) = groupsService.GetGroupsForCentrePaginated(
                 search: searchString ?? string.Empty,
                 offSet,
@@ -298,7 +305,7 @@
                 //(courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true, null,
                 //                                            isActive, categoryName, courseTopic, hasAdminFields);
 
-                (var groups, var resultCount) = groupsService.GetGroupsForCentrePaginated(
+                (groups, resultCount) = groupsService.GetGroupsForCentrePaginated(
                     search: searchString ?? string.Empty,
                     offSet,
                     rows: itemsPerPage ?? 0,
@@ -330,8 +337,8 @@
 
             var model = new DelegateGroupsViewModel(
                 result,
-                availableFilters,
-                courseCategoryName
+                availableFilters//,
+                //courseCategoryName
             );
 
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
