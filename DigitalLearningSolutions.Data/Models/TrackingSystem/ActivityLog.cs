@@ -8,8 +8,8 @@
         public int LogYear { get; set; }
         public int LogQuarter { get; set; }
         public int LogMonth { get; set; }
-        public bool Registered { get; set; }
-        public bool Completed { get; set; }
-        public bool Evaluated { get; set; }
+        public int Registered { get; set; }
+        public int Completed { get; set; }
+        public int Evaluated { get; set; }
     }
 }

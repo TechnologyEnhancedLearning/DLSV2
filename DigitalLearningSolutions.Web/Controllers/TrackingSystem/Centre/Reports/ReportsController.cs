@@ -46,10 +46,14 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
+            //Removing an old cookie if it exists because it may contain problematic options (filters that return too many rows):
+            if (HttpContext.Request.Cookies.ContainsKey("ReportsFilterCookie"))
+            {
+                HttpContext.Response.Cookies.Delete("ReportsFilterCookie");
+            }
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("CourseUsageReportFilterCookie", categoryIdFilter);
 
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("ReportsFilterCookie", categoryIdFilter);
-
-            Response.Cookies.SetReportsFilterCookie("ReportsFilterCookie", filterData, clockUtility.UtcNow);
+            Response.Cookies.SetReportsFilterCookie("CourseUsageReportFilterCookie", filterData, clockUtility.UtcNow);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
@@ -84,7 +88,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
 
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("ReportsFilterCookie", categoryIdFilter);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("CourseUsageReportFilterCookie", categoryIdFilter);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData!);
             return activity.Select(
@@ -98,7 +102,7 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("ReportsFilterCookie", categoryIdFilter);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("CourseUsageReportFilterCookie", categoryIdFilter);
 
             var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
 
@@ -144,7 +148,7 @@
                 model.ReportInterval
             );
 
-            Response.Cookies.SetReportsFilterCookie("ReportsFilterCookie", filterData, clockUtility.UtcNow);
+            Response.Cookies.SetReportsFilterCookie("CourseUsageReportFilterCookie", filterData, clockUtility.UtcNow);
 
             return RedirectToAction("Index");
         }

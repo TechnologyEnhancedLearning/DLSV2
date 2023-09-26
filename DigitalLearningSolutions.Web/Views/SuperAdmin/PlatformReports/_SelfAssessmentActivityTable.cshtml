@@ -30,10 +30,10 @@
                     <span class="nhsuk-table-responsive__heading">Period </span>@activityRow.Period
                 </td>
                 <td role="cell" class="nhsuk-table__cell">
-                    <span class="nhsuk-table-responsive__heading">Enrolments </span>@activityRow.Enrolments
+                    <span class="nhsuk-table-responsive__heading">Enrolments </span>@activityRow.Enrolments.ToString("#,##0.##")
                 </td>
                 <td role="cell" class="nhsuk-table__cell">
-                    <span class="nhsuk-table-responsive__heading">Completions </span>@activityRow.Completions
+                    <span class="nhsuk-table-responsive__heading">Completions </span>@activityRow.Completions.ToString("#,##0.##")
                 </td>
             </tr>
         }
