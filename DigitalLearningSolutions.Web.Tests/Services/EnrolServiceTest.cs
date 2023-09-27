@@ -4,7 +4,6 @@ using FakeItEasy;
 using NUnit.Framework;
 using Microsoft.Extensions.Configuration;
 using DigitalLearningSolutions.Data.Models.DelegateGroups;
-using DigitalLearningSolutions.Data.Tests.TestHelpers;
 using System;
 using DigitalLearningSolutions.Data.Models.User;
 using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -12,6 +11,7 @@ using DigitalLearningSolutions.Data.DataServices.UserDataService;
 namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
 
     public partial class EnrolServiceTest
     {

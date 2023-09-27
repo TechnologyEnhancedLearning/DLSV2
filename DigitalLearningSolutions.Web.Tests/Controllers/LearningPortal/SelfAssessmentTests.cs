@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FakeItEasy;

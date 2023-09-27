@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
     using FluentAssertions;
     using FluentAssertions.Execution;

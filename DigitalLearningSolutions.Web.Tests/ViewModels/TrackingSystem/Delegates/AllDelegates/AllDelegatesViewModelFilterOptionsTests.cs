@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using FluentAssertions;
     using NUnit.Framework;

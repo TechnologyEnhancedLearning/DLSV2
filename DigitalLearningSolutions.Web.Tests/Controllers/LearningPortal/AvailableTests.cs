@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using FakeItEasy;
     using FluentAssertions;
