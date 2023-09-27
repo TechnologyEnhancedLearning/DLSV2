@@ -2,6 +2,9 @@
 {
     using Dapper;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DocumentFormat.OpenXml.Drawing;
+    using DocumentFormat.OpenXml.Drawing.Charts;
+    using MailKit.Search;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -15,6 +18,8 @@
             string? search,
             int? offset,
             int? rows,
+            string? sortBy,
+            string? sortDirection,
             int? centreId
         );
 
@@ -212,28 +217,44 @@ with (nolock)
             string? search = "",
             int? offset = 0,
             int? rows = 10,
+            string? sortBy = "",
+            string? sortDirection = "",
             int? centreId = 0)
         {
-            // TODO: This should look like CourseDataService.GetCourseStatisticsAtCentre
-
-
             if (!string.IsNullOrEmpty(search)) 
             {
                 search = search.Trim();   
             }
 
-            // TODO: What fields should this search on? GroupLabel? GroupDescription? Everything?
-            string sql = @$"{groupsSql} AND g.CentreId = @centreId
+            var rootSqlQuery = @$"{groupsSql} AND g.CentreId = @centreId";
+                //AND (COALESCE(GroupLabel, '') LIKE N'%' + @search + N'%'
+                //OR COALESCE(GroupDescription, '') LIKE N'%' + @search + N'%')
+                //ORDER BY g.CentreId
+                //OFFSET @offset ROWS
+                //FETCH NEXT @rows ROWS ONLY";
 
-AND COALESCE(GroupLabel, '') LIKE N'%' + @search + N'%')
+            var searchClause = "AND(COALESCE(GroupLabel, '') LIKE N'%" + search + "%' OR COALESCE(GroupDescription, '') LIKE N'%" + search + "%')";
 
-                ORDER BY g.CentreId
-                OFFSET @offset ROWS
-                FETCH NEXT @rows ROWS ONLY";
+            var sortOrder = sortDirection == "Ascending" ? " ASC " : " DESC ";
+
+            var orderByClause = "";
+            if ( string.IsNullOrEmpty(sortBy))
+            {
+                orderByClause = " ORDER BY g.CentreId ASC";
+            }
+            else
+            {
+                orderByClause = " ORDER BY " + sortBy + " " + sortOrder;
+            }
+
+            var paginationClause = " OFFSET " + offset.ToString() + " ROWS FETCH NEXT " + rows + " ROWS ONLY ";
+
+            var groupsForCentreQuery = rootSqlQuery + " " + searchClause + " " + orderByClause + " " + paginationClause;
 
             IEnumerable<Group> groups = connection.Query<Group>(
-                sql,
-                new { centreId, offset, rows },
+                groupsForCentreQuery,
+                new { centreId },
+                //new { centreId, search, offset, rows },
                 commandTimeout: 3000
             );
 
@@ -245,8 +266,10 @@ AND COALESCE(GroupLabel, '') LIKE N'%' + @search + N'%')
                     JOIN Centres AS c WITH (NOLOCK)
                     ON c.CentreID = g.CentreID
                     WHERE RemovedDate IS NULL
-                    AND g.CentreId = @centreId",
-                new { centreId },
+                    AND g.CentreId = @centreId
+                    AND (COALESCE(GroupLabel, '') LIKE N'%' + @search + N'%'
+                    OR COALESCE(GroupDescription, '') LIKE N'%' + @search + N'%')",
+                new { centreId, search },
                 commandTimeout: 3000
             );
 

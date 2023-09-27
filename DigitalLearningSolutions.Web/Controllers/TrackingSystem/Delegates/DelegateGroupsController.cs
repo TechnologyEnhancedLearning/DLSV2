@@ -16,6 +16,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.AspNetCore.Authorization;
@@ -182,7 +183,7 @@
         [Route("{page=1:int}")]
         public IActionResult Index(
             string? searchString = null,
-            string? sortBy = null,
+            string? sortBy = "",
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null,
             string? newFilterToAdd = null,
@@ -191,8 +192,12 @@
             int? itemsPerPage = 10
         )
         {
-            sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            sortDirection ??= GenericSortingHelper.Ascending;
+            // TODO: sortBy has incorrect default value being set somewhere
+            // TODO: Finish implementing the two filters
+            // TODO: Reinstate unit tests
+
+            //sortBy ??= DefaultSortByOptions.Name.PropertyName;
+            //sortDirection ??= GenericSortingHelper.Ascending;
 
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
@@ -288,15 +293,23 @@
             //    hasAdminFields);
 
             // TODO: Update the underlying service method:
+            //(var groups, var resultCount) = groupsService.GetGroupsForCentrePaginated(
+            //    search: searchString ?? string.Empty,
+            //    offSet,
+            //    rows: itemsPerPage ?? 0,
+            //    sortBy,
+            //    sortDirection,
+            //    centreId: centreId,
+            //    categoryAddedBy,
+            //    categoryLinkedField);
+
             (var groups, var resultCount) = groupsService.GetGroupsForCentrePaginated(
                 search: searchString ?? string.Empty,
                 offSet,
                 rows: itemsPerPage ?? 0,
                 sortBy,
                 sortDirection,
-                centreId: centreId,
-                categoryAddedBy,
-                categoryLinkedField);
+                centreId: centreId);
 
             if (groups.Count() == 0 && resultCount > 0)
             {
@@ -305,22 +318,33 @@
                 //(courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true, null,
                 //                                            isActive, categoryName, courseTopic, hasAdminFields);
 
+                // TODO: Update the underlying service method:
                 (groups, resultCount) = groupsService.GetGroupsForCentrePaginated(
                     search: searchString ?? string.Empty,
                     offSet,
                     rows: itemsPerPage ?? 0,
                     sortBy,
                     sortDirection,
-                    centreId: centreId,
-                    categoryAddedBy,
-                    categoryLinkedField);
+                    centreId: centreId);
 
+                //(groups, resultCount) = groupsService.GetGroupsForCentrePaginated(
+                //    search: searchString ?? string.Empty,
+                //    offSet,
+                //    rows: itemsPerPage ?? 0,
+                //    sortBy,
+                //    sortDirection,
+                //    centreId: centreId,
+                //    categoryAddedBy,
+                //    categoryLinkedField);
             }
 
             //var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
             //    .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
-            var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
-                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+            //var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
+            //    .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+            var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
+            var availableFilters = DelegateGroupsViewModelFilterOptions
+                .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
 
             var result = paginateService.Paginate(
                 groups,

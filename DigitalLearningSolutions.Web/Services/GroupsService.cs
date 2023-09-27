@@ -79,6 +79,8 @@
             string? search,
             int? offset,
             int? rows,
+            string? sortBy,
+            string? sortDirection,
             int? centreId
         );
 
@@ -500,10 +502,12 @@
             string? search = "",
             int? offset = 0,
             int? rows = 10,
+            string? sortBy = "",
+            string? sortDirection = "",
             int? centreId = 0
         )
         {
-            return groupsDataService.GetGroupsForCentrePaginated(search, offset, rows, centreId);
+            return groupsDataService.GetGroupsForCentrePaginated(search, offset, rows, sortBy, sortDirection, centreId);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
