@@ -265,7 +265,7 @@
         )
         {
             var progress = progressService.GetDetailedCourseProgress(progressId);
-            if (!courseService.DelegateHasCurrentProgress(progressId) || progress == null)
+            if (progress == null)
             {
                 return StatusCode((int)HttpStatusCode.Gone);
             }
