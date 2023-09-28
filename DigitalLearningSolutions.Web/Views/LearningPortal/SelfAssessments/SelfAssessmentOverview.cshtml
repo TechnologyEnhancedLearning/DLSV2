@@ -163,7 +163,7 @@
             {
                 <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
             }
-            else if (latestResult > latestSignoff)
+            else if (!Model.SupervisorSignOffs.Where(x => x.Verified == null).Any() && latestResult > latestSignoff)
             {
                 <div class="nhsuk-warning-callout">
                     <h3 class="nhsuk-warning-callout__label">
@@ -178,15 +178,18 @@
                     </p>
                 </div>
             }
-          @if (!Model.SupervisorSignOffs.Any() || latestResult > latestSignoff) {
-            <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-       asp-action="RequestSignOff"
-       asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
-       asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-       role="button">
-                Request @Model.SelfAssessment.SignOffRoleName sign-off
-            </a>
-          }
+            @if (!Model.SupervisorSignOffs.Where(x => x.Verified == null).Any()
+           && latestResult > latestSignoff
+           )
+            {
+                <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+                   asp-action="RequestSignOff"
+                   asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
+                   asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+                   role="button">
+                    Request @Model.SelfAssessment.SignOffRoleName sign-off
+                </a>
+            }
         }
         else
         {
