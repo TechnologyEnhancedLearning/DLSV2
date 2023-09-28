@@ -159,7 +159,7 @@
                             hasAdminFields = filterValue;
 
                         if (filter.Contains("HideInLearnerPortal"))
-                            hideInLearnerPortal = filterValue=="true" ? true:false;
+                            hideInLearnerPortal = filterValue == "true" ? true : false;
                     }
                 }
             }
@@ -718,16 +718,16 @@
             {
                 if (course.Archived || course.Active == false)
                 {
-                  course.NotActive = true;
+                    course.NotActive = true;
                 }
                 else
                 {
-                  course.NotActive = false;
+                    course.NotActive = false;
                 }
             }
 
             return updatedCourses;
         }
 
-  }
+    }
 }
