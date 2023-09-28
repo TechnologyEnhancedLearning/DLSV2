@@ -33,38 +33,38 @@
             groupsDataService = new GroupsDataService(connection);
         }
 
-        //[Test]
-        //public void GetGroupsForCentre_returns_expected_groups()
-        //{
-        //    // Given
-        //    var expectedFirstGroup = new Group
-        //    {
-        //        GroupId = 34,
-        //        GroupLabel = "Social care - unspecified",
-        //        GroupDescription = null,
-        //        DelegateCount = 1,
-        //        CoursesCount = 0,
-        //        AddedByAdminId = 1,
-        //        AddedByFirstName = "Kevin",
-        //        AddedByLastName = "Whittaker (Developer)",
-        //        AddedByAdminActive = true,
-        //        LinkedToField = 4,
-        //        LinkedToFieldName = "Job group",
-        //        ShouldAddNewRegistrantsToGroup = true,
-        //        ChangesToRegistrationDetailsShouldChangeGroupMembership = true,
-        //    };
+        [Test]
+        public void GetGroupsForCentre_returns_expected_groups()
+        {
+            // Given
+            var expectedFirstGroup = new Group
+            {
+                GroupId = 34,
+                GroupLabel = "Social care - unspecified",
+                GroupDescription = null,
+                DelegateCount = 1,
+                CoursesCount = 0,
+                AddedByAdminId = 1,
+                AddedByFirstName = "Kevin",
+                AddedByLastName = "Whittaker (Developer)",
+                AddedByAdminActive = true,
+                LinkedToField = 4,
+                LinkedToFieldName = "Job group",
+                ShouldAddNewRegistrantsToGroup = true,
+                ChangesToRegistrationDetailsShouldChangeGroupMembership = true,
+            };
 
-        //    // When
-        //    //var result = groupsDataService.GetGroupsForCentre(101).ToList();
-        //    var result = groupsDataService.GetGroupsForCentreNEW(centreId: 101).ToList();
+            // When
+            //var result = groupsDataService.GetGroupsForCentre(101).ToList();
+            var result = groupsDataService.GetGroupsForCentreNEW(centreId: 101).ToList();
 
-        //    // Then
-        //    using (new AssertionScope())
-        //    {
-        //        result.Count.Should().Be(41);
-        //        result.First(x => x.GroupId == 34).Should().BeEquivalentTo(expectedFirstGroup);
-        //    }
-        //}
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(41);
+                result.First(x => x.GroupId == 34).Should().BeEquivalentTo(expectedFirstGroup);
+            }
+        }
 
         [Test]
         public void GetGroupDelegates_returns_expected_delegates()
@@ -275,43 +275,43 @@
             result.Should().BeNull();
         }
 
-        //[Test]
-        //public void AddDelegateGroup_sets_all_fields_correctly()
-        //{
-        //    using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        //    try
-        //    {
-        //        // Given
+        [Test]
+        public void AddDelegateGroup_sets_all_fields_correctly()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
 
-        //        var groupDetails = new GroupDetails
-        //        {
-        //            CentreId = 101,
-        //            GroupLabel = "Group name",
-        //            GroupDescription = "Group description",
-        //            AdminUserId = 1,
-        //            CreatedDate = DateTime.UtcNow,
-        //            LinkedToField = 0,
-        //            SyncFieldChanges = false,
-        //            AddNewRegistrants = false,
-        //            PopulateExisting = false,
-        //        };
+                var groupDetails = new GroupDetails
+                {
+                    CentreId = 101,
+                    GroupLabel = "Group name",
+                    GroupDescription = "Group description",
+                    AdminUserId = 1,
+                    CreatedDate = DateTime.UtcNow,
+                    LinkedToField = 0,
+                    SyncFieldChanges = false,
+                    AddNewRegistrants = false,
+                    PopulateExisting = false,
+                };
 
-        //        // When
-        //        var groupId = groupsDataService.AddDelegateGroup(groupDetails);
+                // When
+                var groupId = groupsDataService.AddDelegateGroup(groupDetails);
 
-        //        // Then
-        //        var group = groupsDataService.GetGroupsForCentre(groupDetails.CentreId)
-        //            .First(g => g.GroupId == groupId);
-        //        group.GroupLabel.Should().Be(groupDetails.GroupLabel);
-        //        group.GroupDescription.Should().Be(groupDetails.GroupDescription);
-        //        group.AddedByAdminId.Should().Be(groupDetails.AdminUserId);
-        //        group.LinkedToField.Should().Be(groupDetails.LinkedToField);
-        //    }
-        //    finally
-        //    {
-        //        transaction.Dispose();
-        //    }
-        //}
+                // Then
+                var group = groupsDataService.GetGroupsForCentre(groupDetails.CentreId)
+                    .First(g => g.GroupId == groupId);
+                group.GroupLabel.Should().Be(groupDetails.GroupLabel);
+                group.GroupDescription.Should().Be(groupDetails.GroupDescription);
+                group.AddedByAdminId.Should().Be(groupDetails.AdminUserId);
+                group.LinkedToField.Should().Be(groupDetails.LinkedToField);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
 
         [Test]
         public void AddDelegateToGroup_adds_the_delegate_to_the_expected_group()

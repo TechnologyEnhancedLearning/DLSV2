@@ -109,7 +109,6 @@
             }
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
-
             UserStatus = (string.IsNullOrEmpty(UserStatus) ? "Any" : UserStatus);
             EmailStatus = (string.IsNullOrEmpty(EmailStatus) ? "Any" : EmailStatus);
 
@@ -174,7 +173,6 @@
                 searchSortPaginationOptions
             );
 
-
             result.Page = page;
             if (
                 !string.IsNullOrEmpty(Search) ||
@@ -215,6 +213,7 @@
             model.EmailStatus = EmailStatus;
             model.JobGroupId = JobGroupId;
             model.Search = Search;
+
 
             model.JavascriptSearchSortFilterPaginateEnabled = false;
             ModelState.ClearAllErrors();

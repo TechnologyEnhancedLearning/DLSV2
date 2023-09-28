@@ -11,42 +11,42 @@
 
     public partial class GroupsServiceTests
     {
-        //[Test]
-        //public void SynchroniseUserChangesWithGroups_does_nothing_if_no_groups_need_synchronising()
-        //{
-        //    // Given
-        //    var delegateDetails = UserTestHelper.GetDefaultDelegateUser();
-        //    var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers();
-        //    var nonSynchronisedGroup = GroupTestHelper.GetDefaultGroup(
-        //        5,
-        //        "new answer",
-        //        linkedToField: 1,
-        //        changesToRegistrationDetailsShouldChangeGroupMembership: false
-        //    );
-        //    A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-        //        new List<Group> { nonSynchronisedGroup }
-        //    );
+        [Test]
+        public void SynchroniseUserChangesWithGroups_does_nothing_if_no_groups_need_synchronising()
+        {
+            // Given
+            var delegateDetails = UserTestHelper.GetDefaultDelegateUser();
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers();
+            var nonSynchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                5,
+                "new answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: false
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
+                new List<Group> { nonSynchronisedGroup }
+            );
 
-        //    // When
-        //    groupsService.UpdateDelegateGroupsBasedOnUserChanges(
-        //        delegateDetails.Id,
-        //        reusableEditAccountDetailsData,
-        //        centreAnswersData,
-        //        delegateDetails.GetRegistrationFieldAnswers(),
-        //        null,
-        //        new List<Group>()
-        //    );
+            // When
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
+                delegateDetails.Id,
+                reusableEditAccountDetailsData,
+                centreAnswersData,
+                delegateDetails.GetRegistrationFieldAnswers(),
+                null,
+                new List<Group>()
+            );
 
-        //    // Then
-        //    using (new AssertionScope())
-        //    {
-        //        DelegateMustNotHaveBeenRemovedFromAGroup();
-        //        DelegateMustNotHaveBeenAddedToAGroup();
-        //        DelegateProgressRecordMustNotHaveBeenUpdated();
-        //        NewDelegateProgressRecordMustNotHaveBeenAdded();
-        //        NoEnrolmentEmailsMustHaveBeenSent();
-        //    }
-        //}
+            // Then
+            using (new AssertionScope())
+            {
+                DelegateMustNotHaveBeenRemovedFromAGroup();
+                DelegateMustNotHaveBeenAddedToAGroup();
+                DelegateProgressRecordMustNotHaveBeenUpdated();
+                NewDelegateProgressRecordMustNotHaveBeenAdded();
+                NoEnrolmentEmailsMustHaveBeenSent();
+            }
+        }
 
         [Test]
         public void
@@ -371,160 +371,160 @@
             DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup1.GroupId, synchronisedGroup2.GroupId });
         }
 
-        //[Test]
-        //public void UpdateSynchronisedDelegateGroupsBasedOnUserChanges_adds_delegate_to_appropriate_groups()
-        //{
-        //    // Given
-        //    var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(
-        //        answer1: "new answer",
-        //        answer2: "new answer2"
-        //    );
-        //    A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
-        //    var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
-        //        5,
-        //        "new answer",
-        //        linkedToField: 1,
-        //        changesToRegistrationDetailsShouldChangeGroupMembership: true,
-        //        shouldAddNewRegistrantsToGroup: false
-        //    );
-        //    var unsynchronisedGroup = GroupTestHelper.GetDefaultGroup(
-        //        6,
-        //        "new answer2",
-        //        linkedToField: 2,
-        //        changesToRegistrationDetailsShouldChangeGroupMembership: false,
-        //        shouldAddNewRegistrantsToGroup: true
-        //    );
-        //    A.CallTo(() => groupsDataService.GetGroupsForCentre(centreAnswersData.CentreId))
-        //        .Returns(new List<Group> { synchronisedGroup, unsynchronisedGroup });
+        [Test]
+        public void UpdateSynchronisedDelegateGroupsBasedOnUserChanges_adds_delegate_to_appropriate_groups()
+        {
+            // Given
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(
+                answer1: "new answer",
+                answer2: "new answer2"
+            );
+            A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
+            var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                5,
+                "new answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true,
+                shouldAddNewRegistrantsToGroup: false
+            );
+            var unsynchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                6,
+                "new answer2",
+                linkedToField: 2,
+                changesToRegistrationDetailsShouldChangeGroupMembership: false,
+                shouldAddNewRegistrantsToGroup: true
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(centreAnswersData.CentreId))
+                .Returns(new List<Group> { synchronisedGroup, unsynchronisedGroup });
 
-        //    // When
-        //    groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
-        //        reusableDelegateDetails.Id,
-        //        reusableEditAccountDetailsData,
-        //        centreAnswersData,
-        //        UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
-        //        null
-        //    );
+            // When
+            groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
+                reusableDelegateDetails.Id,
+                reusableEditAccountDetailsData,
+                centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
+                null
+            );
 
-        //    // Then
-        //    DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
-        //    A.CallTo(
-        //        () => groupsDataService.AddDelegateToGroup(
-        //            reusableDelegateDetails.Id,
-        //            unsynchronisedGroup.GroupId,
-        //            A<DateTime>._,
-        //            A<int>._
-        //        )
-        //    ).MustNotHaveHappened();
-        //}
+            // Then
+            DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(
+                    reusableDelegateDetails.Id,
+                    unsynchronisedGroup.GroupId,
+                    A<DateTime>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
 
-        //[Test]
-        //public void AddNewDelegateToAppropriateGroups_adds_delegate_to_appropriate_groups()
-        //{
-        //    // Given
-        //    var registrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-        //        answer1: "new answer",
-        //        answer2: "new answer2",
-        //        centre: 1
-        //    );
-        //    A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
-        //    var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
-        //        5,
-        //        "new answer",
-        //        linkedToField: 1,
-        //        changesToRegistrationDetailsShouldChangeGroupMembership: false,
-        //        shouldAddNewRegistrantsToGroup: true
-        //    );
-        //    var unsynchronisedGroup = GroupTestHelper.GetDefaultGroup(
-        //        6,
-        //        "new answer2",
-        //        linkedToField: 2,
-        //        changesToRegistrationDetailsShouldChangeGroupMembership: true,
-        //        shouldAddNewRegistrantsToGroup: false
-        //    );
-        //    A.CallTo(() => groupsDataService.GetGroupsForCentre(registrationModel.Centre))
-        //        .Returns(new List<Group> { synchronisedGroup, unsynchronisedGroup });
-        //    A.CallTo(() => jobGroupsDataService.GetJobGroupName(0)).Returns(null);
-        //    A.CallTo(() => jobGroupsDataService.GetJobGroupName(1)).Returns(null);
+        [Test]
+        public void AddNewDelegateToAppropriateGroups_adds_delegate_to_appropriate_groups()
+        {
+            // Given
+            var registrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                answer1: "new answer",
+                answer2: "new answer2",
+                centre: 1
+            );
+            A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
+            var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                5,
+                "new answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: false,
+                shouldAddNewRegistrantsToGroup: true
+            );
+            var unsynchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                6,
+                "new answer2",
+                linkedToField: 2,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true,
+                shouldAddNewRegistrantsToGroup: false
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(registrationModel.Centre))
+                .Returns(new List<Group> { synchronisedGroup, unsynchronisedGroup });
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(0)).Returns(null);
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(1)).Returns(null);
 
-        //    // When
-        //    groupsService.AddNewDelegateToAppropriateGroups(
-        //        reusableDelegateDetails.Id,
-        //        registrationModel
-        //    );
+            // When
+            groupsService.AddNewDelegateToAppropriateGroups(
+                reusableDelegateDetails.Id,
+                registrationModel
+            );
 
-        //    // Then
-        //    DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
-        //    A.CallTo(
-        //        () => groupsDataService.AddDelegateToGroup(
-        //            reusableDelegateDetails.Id,
-        //            unsynchronisedGroup.GroupId,
-        //            A<DateTime>._,
-        //            A<int>._
-        //        )
-        //    ).MustNotHaveHappened();
-        //}
+            // Then
+            DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(
+                    reusableDelegateDetails.Id,
+                    unsynchronisedGroup.GroupId,
+                    A<DateTime>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
 
-        //[Test]
-        //public void SynchroniseJobGroupsOnOtherCentres_synchronises_correct_job_groups()
-        //{
-        //    // Given
-        //    A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
-        //    var originalDelegateId = 1;
-        //    var userId = 4;
-        //    var oldJobGroupId = 2;
-        //    var newJobGroupId = 3;
-        //    var accountDetailsData = new AccountDetailsData("test", "tester", "fake@email.com");
-        //    var centreEmail = "centreEmail";
+        [Test]
+        public void SynchroniseJobGroupsOnOtherCentres_synchronises_correct_job_groups()
+        {
+            // Given
+            A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
+            var originalDelegateId = 1;
+            var userId = 4;
+            var oldJobGroupId = 2;
+            var newJobGroupId = 3;
+            var accountDetailsData = new AccountDetailsData("test", "tester", "fake@email.com");
+            var centreEmail = "centreEmail";
 
-        //    var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
-        //    var delegateAccounts = new List<DelegateAccount> { delegateAccount };
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+            var delegateAccounts = new List<DelegateAccount> { delegateAccount };
 
-        //    var oldJobGroupGroup = GroupTestHelper.GetDefaultGroup(1, linkedToField: 4, groupLabel: "old group");
-        //    var newJobGroupGroup = GroupTestHelper.GetDefaultGroup(2, linkedToField: 4, groupLabel: "new group");
-        //    var nonJobGroupGroup = GroupTestHelper.GetDefaultGroup(3, linkedToField: 3, groupLabel: "new group");
-        //    var groups = new List<Group> { oldJobGroupGroup, newJobGroupGroup, nonJobGroupGroup };
+            var oldJobGroupGroup = GroupTestHelper.GetDefaultGroup(1, linkedToField: 4, groupLabel: "old group");
+            var newJobGroupGroup = GroupTestHelper.GetDefaultGroup(2, linkedToField: 4, groupLabel: "new group");
+            var nonJobGroupGroup = GroupTestHelper.GetDefaultGroup(3, linkedToField: 3, groupLabel: "new group");
+            var groups = new List<Group> { oldJobGroupGroup, newJobGroupGroup, nonJobGroupGroup };
 
-        //    A.CallTo(() => userDataService.GetUserIdFromDelegateId(originalDelegateId)).Returns(userId);
-        //    A.CallTo(() => userDataService.GetDelegateAccountsByUserId(userId)).Returns(delegateAccounts);
-        //    A.CallTo(() => groupsDataService.GetGroupsForCentre(delegateAccount.CentreId))
-        //        .Returns(groups);
+            A.CallTo(() => userDataService.GetUserIdFromDelegateId(originalDelegateId)).Returns(userId);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(userId)).Returns(delegateAccounts);
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(delegateAccount.CentreId))
+                .Returns(groups);
 
-        //    A.CallTo(() => jobGroupsDataService.GetJobGroupName(oldJobGroupId))
-        //        .Returns(oldJobGroupGroup.GroupLabel);
-        //    A.CallTo(() => jobGroupsDataService.GetJobGroupName(newJobGroupId))
-        //        .Returns(newJobGroupGroup.GroupLabel);
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(oldJobGroupId))
+                .Returns(oldJobGroupGroup.GroupLabel);
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(newJobGroupId))
+                .Returns(newJobGroupGroup.GroupLabel);
 
-        //    // When
-        //    groupsService.SynchroniseJobGroupsOnOtherCentres(
-        //        originalDelegateId,
-        //        userId,
-        //        oldJobGroupId,
-        //        newJobGroupId,
-        //        accountDetailsData
-        //    );
+            // When
+            groupsService.SynchroniseJobGroupsOnOtherCentres(
+                originalDelegateId,
+                userId,
+                oldJobGroupId,
+                newJobGroupId,
+                accountDetailsData
+            );
 
-        //    // Then
-        //    A.CallTo(
-        //        () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
-        //            oldJobGroupGroup.GroupId,
-        //            delegateAccount.Id
-        //        )
-        //    ).MustHaveHappenedOnceExactly();
-        //    A.CallTo(
-        //        () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
-        //            nonJobGroupGroup.GroupId,
-        //            A<int>._
-        //        )
-        //    ).MustNotHaveHappened();
+            // Then
+            A.CallTo(
+                () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
+                    oldJobGroupGroup.GroupId,
+                    delegateAccount.Id
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
+                    nonJobGroupGroup.GroupId,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
 
-        //    A.CallTo(
-        //        () => groupsDataService.AddDelegateToGroup(delegateAccount.Id, newJobGroupGroup.GroupId, testDate, 1)
-        //    ).MustHaveHappenedOnceExactly();
-        //    A.CallTo(
-        //        () => groupsDataService.AddDelegateToGroup(A<int>._, nonJobGroupGroup.GroupId, A<DateTime>._, A<int>._)
-        //    ).MustNotHaveHappened();
-        //}
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(delegateAccount.Id, newJobGroupGroup.GroupId, testDate, 1)
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(A<int>._, nonJobGroupGroup.GroupId, A<DateTime>._, A<int>._)
+            ).MustNotHaveHappened();
+        }
 
         private void DelegateMustHaveBeenRemovedFromGroups(IEnumerable<int> groupIds)
         {
