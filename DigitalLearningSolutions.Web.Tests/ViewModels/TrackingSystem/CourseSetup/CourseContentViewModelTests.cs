@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using FluentAssertions;
     using NUnit.Framework;

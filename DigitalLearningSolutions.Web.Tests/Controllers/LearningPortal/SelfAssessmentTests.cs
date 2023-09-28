@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FakeItEasy;
@@ -22,7 +22,7 @@
         public void SelfAssessment_action_should_return_view_result()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             var supervisors = new List<SelfAssessmentSupervisor>();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
@@ -41,7 +41,7 @@
         public void SelfAssessment_action_should_update_last_accessed()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
@@ -56,7 +56,7 @@
         public void SelfAssessment_action_should_increment_launch_count()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
@@ -91,7 +91,7 @@
         {
             // Given
             const int competencyNumber = 1;
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             var competency = new Competency();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
@@ -119,7 +119,7 @@
         public void SelfAssessmentCompetency_action_should_update_last_accessed()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
@@ -134,7 +134,7 @@
         public void SelfAssessmentCompetency_action_should_update_user_bookmark()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessment.Id + "/1";
@@ -151,7 +151,7 @@
         {
             // Given
             const int competencyNumber = 3;
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, DelegateUserId))
@@ -186,7 +186,7 @@
         public void SelfAssessmentCompetency_Post_Should_Save_Answers()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             const int competencyNumber = 1;
             const int competencyId = 3;
             const int competencyGroupId = 1;
@@ -239,7 +239,7 @@
         public void SelfAssessmentCompetency_Post_Redirects_To_Next_Question()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             const int competencyNumber = 1;
             const int competencyId = 3;
             const int competencyGroupId = 1;
@@ -293,7 +293,7 @@
         public void SelfAssessmentCompetency_Post_result_overriding_signedoff_question_should_redirect_to_confirmation_route()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
 
             var existingAssessmentQuestions = new List<AssessmentQuestion>
             {
@@ -337,7 +337,7 @@
         public void SelfAssessmentCompetency_Post_result_not_overriding_signedoff_question_should_redirect_to_confirmation_route()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
 
             var existingAssessmentQuestions = new List<AssessmentQuestion>
             {
@@ -391,7 +391,7 @@
         public void SelfAssessmentOverview_Should_Return_View()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             var competencies = new List<Competency>
             {
                 new Competency { CompetencyGroup = "A" },
@@ -425,7 +425,7 @@
         public void SelfAssessmentOverview_action_should_update_last_accessed()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(SelfAssessmentId, DelegateUserId))
@@ -442,7 +442,7 @@
         public void SelfAssessmentOverview_action_should_update_user_bookmark()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
             string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessment.Id}/{selfAssessment.Vocabulary}";
@@ -458,7 +458,7 @@
         public void SelfAssessmentOverview_Should_Have_Previous_Competency_Number_One_When_Empty()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             var competencies = new List<Competency>();
             var supervisorSignOffs = new List<SupervisorSignOff>();
             var expectedModel = new SelfAssessmentOverviewViewModel
@@ -512,7 +512,7 @@
             const int newYear = 3020;
             var newDate = new DateTime(newYear, newMonth, newDay);
             var formData = new EditCompleteByDateFormData { Day = newDay, Month = newMonth, Year = newYear };
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
@@ -531,7 +531,7 @@
             // Given
             const int selfAssessmentId = 1;
             var formData = new EditCompleteByDateFormData { Day = null, Month = null, Year = null };
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
@@ -554,7 +554,7 @@
             const int month = 7;
             const int year = 3020;
             var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 
@@ -576,7 +576,7 @@
             const int year = 2020;
             var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
             controller.ModelState.AddModelError("year", "message");
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
 

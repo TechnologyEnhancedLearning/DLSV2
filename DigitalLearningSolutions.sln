@@ -20,8 +20,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Data.Migrations", "DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj", "{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Data.Tests", "DigitalLearningSolutions.Data.Tests\DigitalLearningSolutions.Data.Tests.csproj", "{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Web.IntegrationTests", "DigitalLearningSolutions.Web.IntegrationTests\DigitalLearningSolutions.Web.IntegrationTests.csproj", "{D581EA71-51EE-4BE3-AFE4-07D175EEB039}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Web.AutomatedUiTests", "DigitalLearningSolutions.Web.AutomatedUiTests\DigitalLearningSolutions.Web.AutomatedUiTests.csproj", "{AB5214EA-D17F-471B-BFD8-F23696392908}"
@@ -48,10 +46,6 @@ Global
 		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3CA47F8-AFEE-4DF4-9D4E-356F02316E17}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D581EA71-51EE-4BE3-AFE4-07D175EEB039}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D581EA71-51EE-4BE3-AFE4-07D175EEB039}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D581EA71-51EE-4BE3-AFE4-07D175EEB039}.Release|Any CPU.ActiveCfg = Release|Any CPU
