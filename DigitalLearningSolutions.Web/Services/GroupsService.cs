@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -81,7 +80,9 @@
             int? rows,
             string? sortBy,
             string? sortDirection,
-            int? centreId
+            int? centreId,
+            string? filterAddedBy,
+            string? filterLinkedField
         );
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
@@ -504,10 +505,12 @@
             int? rows = 10,
             string? sortBy = "",
             string? sortDirection = "",
-            int? centreId = 0
+            int? centreId = 0,
+            string? filterAddedBy = "",
+            string? filterLinkedField = ""
         )
         {
-            return groupsDataService.GetGroupsForCentrePaginated(search, offset, rows, sortBy, sortDirection, centreId);
+            return groupsDataService.GetGroupsForCentrePaginated(search, offset, rows, sortBy, sortDirection, centreId, filterAddedBy, filterLinkedField);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)

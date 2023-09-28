@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DocumentFormat.OpenXml.Drawing;
-    using DocumentFormat.OpenXml.Drawing.Charts;
-    using MailKit.Search;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -20,7 +18,9 @@
             int? rows,
             string? sortBy,
             string? sortDirection,
-            int? centreId
+            int? centreId,
+            string? filterAddedBy,
+            string? filterLinkedField
         );
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
@@ -94,17 +94,13 @@
     public class GroupsDataService : IGroupsDataService
     {
         private const string CourseCountSql = @"SELECT COUNT(*)
-                FROM GroupCustomisations AS gc
-with (nolock)
-                JOIN Customisations AS c
-with (nolock)
+                FROM GroupCustomisations AS gc WITH (NOLOCK)
+                JOIN Customisations AS c WITH (NOLOCK)
                 ON c.CustomisationID = gc.CustomisationID
-                INNER JOIN dbo.CentreApplications AS ca
-with (nolock)
+                INNER JOIN dbo.CentreApplications AS ca WITH (NOLOCK)
                 ON ca.ApplicationID = c.ApplicationID
-                INNER JOIN dbo.Applications AS ap
-with (nolock)
-ON ap.ApplicationID = ca.ApplicationID
+                INNER JOIN dbo.Applications AS ap WITH (NOLOCK)
+                ON ap.ApplicationID = ca.ApplicationID
                 WHERE gc.GroupID = g.GroupID
                 AND ca.CentreId = @centreId
                 AND gc.InactivatedDate IS NULL
@@ -189,13 +185,10 @@ ON ap.ApplicationID = ca.ApplicationID
                         END AS LinkedToFieldName,
                         AddNewRegistrants,
                         SyncFieldChanges
-                        FROM Groups AS g
-with (nolock)
-                    JOIN AdminUsers AS au
-with (nolock)
+                        FROM Groups AS g WITH (NOLOCK)
+                    JOIN AdminUsers AS au WITH (NOLOCK)
                     ON au.AdminID = g.CreatedByAdminUserID
-                    JOIN Centres AS c
-with (nolock)
+                    JOIN Centres AS c WITH (NOLOCK)
                     ON c.CentreID = g.CentreID
                     WHERE RemovedDate IS NULL";
 
@@ -219,42 +212,44 @@ with (nolock)
             int? rows = 10,
             string? sortBy = "",
             string? sortDirection = "",
-            int? centreId = 0)
+            int? centreId = 0,
+            string? filterAddedBy = "",
+            string? filterLinkedField = "")
         {
-            if (!string.IsNullOrEmpty(search)) 
+            if (!string.IsNullOrEmpty(search))
             {
-                search = search.Trim();   
+                search = search.Trim();
             }
 
             var rootSqlQuery = @$"{groupsSql} AND g.CentreId = @centreId";
-                //AND (COALESCE(GroupLabel, '') LIKE N'%' + @search + N'%'
-                //OR COALESCE(GroupDescription, '') LIKE N'%' + @search + N'%')
-                //ORDER BY g.CentreId
-                //OFFSET @offset ROWS
-                //FETCH NEXT @rows ROWS ONLY";
+
+            var filtersClause = "";
+            if (!string.IsNullOrEmpty(filterAddedBy))
+            {
+                filtersClause += @$"AND (g.CreatedByAdminUserID = " + filterAddedBy + ") ";
+            }
+            if (!string.IsNullOrEmpty(filterLinkedField))
+            {
+                filtersClause += @$"AND (LinkedToField = " + filterLinkedField + ") ";
+            }
 
             var searchClause = "AND(COALESCE(GroupLabel, '') LIKE N'%" + search + "%' OR COALESCE(GroupDescription, '') LIKE N'%" + search + "%')";
 
             var sortOrder = sortDirection == "Ascending" ? " ASC " : " DESC ";
 
-            var orderByClause = "";
-            if ( string.IsNullOrEmpty(sortBy))
+            if (string.IsNullOrEmpty(sortBy) || sortBy == DefaultSortByOptions.Name.PropertyName)
             {
-                orderByClause = " ORDER BY g.CentreId ASC";
+                sortBy = "GroupLabel";
             }
-            else
-            {
-                orderByClause = " ORDER BY " + sortBy + " " + sortOrder;
-            }
+            var orderByClause = " ORDER BY " + sortBy + " " + sortOrder;
 
             var paginationClause = " OFFSET " + offset.ToString() + " ROWS FETCH NEXT " + rows + " ROWS ONLY ";
 
-            var groupsForCentreQuery = rootSqlQuery + " " + searchClause + " " + orderByClause + " " + paginationClause;
+            var groupsForCentreQuery = rootSqlQuery + " " + searchClause + " " + filtersClause + " " + orderByClause + " " + paginationClause;
 
             IEnumerable<Group> groups = connection.Query<Group>(
                 groupsForCentreQuery,
                 new { centreId },
-                //new { centreId, search, offset, rows },
                 commandTimeout: 3000
             );
 
@@ -268,7 +263,8 @@ with (nolock)
                     WHERE RemovedDate IS NULL
                     AND g.CentreId = @centreId
                     AND (COALESCE(GroupLabel, '') LIKE N'%' + @search + N'%'
-                    OR COALESCE(GroupDescription, '') LIKE N'%' + @search + N'%')",
+                    OR COALESCE(GroupDescription, '') LIKE N'%' + @search + N'%')"
+                    + filtersClause,
                 new { centreId, search },
                 commandTimeout: 3000
             );
@@ -509,22 +505,6 @@ with (nolock)
                 new { groupId, customisationId, centreId, completeWithinMonths, adminUserID = addedByAdminUserId, cohortLearners, supervisorAdminId = supervisorAdminId ?? 0 },
                 commandType: CommandType.StoredProcedure
             );
-            //return connection.QuerySingle<int>(
-            //    @"INSERT INTO GroupCustomisations
-            //            (GroupID, CustomisationID, CompleteWithinMonths, AddedByAdminUserID, CohortLearners, SupervisorAdminID)
-            //        OUTPUT Inserted.GroupCustomisationId
-            //        VALUES
-            //            (@groupId, @customisationId, @completeWithinMonths, @addedByAdminUserId, @cohortLearners, @supervisorAdminID)",
-            //    new
-            //    {
-            //        groupId,
-            //        customisationId,
-            //        completeWithinMonths,
-            //        addedByAdminUserId,
-            //        cohortLearners,
-            //        supervisorAdminId,
-            //    }
-            //);
         }
 
         public void AddDelegatesWithMatchingAnswersToGroup(
