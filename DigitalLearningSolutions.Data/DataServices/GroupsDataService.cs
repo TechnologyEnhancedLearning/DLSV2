@@ -12,7 +12,7 @@
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        (IEnumerable<Group>, int) GetGroupsForCentrePaginated(
+        (IEnumerable<Group>, int) GetGroupsForCentre(
             string? search,
             int? offset,
             int? rows,
@@ -205,8 +205,7 @@
             );
         }
 
-
-        public (IEnumerable<Group>, int) GetGroupsForCentrePaginated(
+        public (IEnumerable<Group>, int) GetGroupsForCentre(
             string? search = "",
             int? offset = 0,
             int? rows = 10,

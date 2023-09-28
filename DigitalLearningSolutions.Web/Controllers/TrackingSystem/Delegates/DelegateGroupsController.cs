@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 }
             }
 
-            (var groups, var resultCount) = groupsService.GetGroupsForCentrePaginated(
+            (var groups, var resultCount) = groupsService.GetGroupsForCentre(
                 search: searchString ?? string.Empty,
                 offSet,
                 rows: itemsPerPage ?? 0,
@@ -137,7 +137,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 page = 1;
                 offSet = 0;
 
-                (groups, resultCount) = groupsService.GetGroupsForCentrePaginated(
+                (groups, resultCount) = groupsService.GetGroupsForCentre(
                     search: searchString ?? string.Empty,
                     offSet,
                     rows: itemsPerPage ?? 0,
