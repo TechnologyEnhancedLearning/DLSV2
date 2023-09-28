@@ -1052,9 +1052,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///&lt;li&gt;make our website work&lt;/li&gt;
         ///&lt;li&gt;measure how you use our website, such as which links you clic [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1943_CookiesPolicyContentHtml {
+        internal static string TD_1943_CookiesPolicy {
             get {
-                return ResourceManager.GetString("TD_1943_CookiesPolicyContentHtml", resourceCulture);
+                return ResourceManager.GetString("TD_1943_CookiesPolicy", resourceCulture);
             }
         }
         
