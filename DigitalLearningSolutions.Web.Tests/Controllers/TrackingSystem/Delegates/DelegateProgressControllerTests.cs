@@ -355,31 +355,6 @@
         }
 
         [Test]
-        public void Removal_confirmation_page_returns_not_found_result_for_delegate_with_no_active_progress()
-        {
-            // Given
-            var delegateCourseInfo = new DelegateCourseInfo();
-            var delegateCourseDetails = new DetailedCourseProgress(
-                new Progress(),
-                new List<DetailedSectionProgress>(),
-                delegateCourseInfo
-            );
-            A.CallTo(() => progressService.GetDetailedCourseProgress(ProgressId))
-                .Returns(delegateCourseDetails);
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(ProgressId))
-                .Returns(false);
-
-            // When
-            var result = delegateProgressController.ConfirmRemoveFromCourse(
-                ProgressId,
-                DelegateAccessRoute.ViewDelegate
-            );
-
-            // Then
-            result.Should().BeStatusCodeResult().WithStatusCode(410);
-        }
-
-        [Test]
         public void Delegate_removal_for_delegate_with_no_active_progress_returns_not_found_result()
         {
             // Given
