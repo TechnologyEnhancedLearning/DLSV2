@@ -80,6 +80,7 @@
         public IActionResult StartUpload(UploadDelegatesViewModel model)
         {
             int MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
+            model.MaxBulkUploadRows = MaxBulkUploadRows;
             if (model.DelegatesFile != null)
             {
                 var workbook = new XLWorkbook(model.DelegatesFile.OpenReadStream());
