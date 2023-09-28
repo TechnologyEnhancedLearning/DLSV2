@@ -5,7 +5,7 @@
     public class CourseStatistics : Course
     {
         public bool AllCentres { get; set; }
-        public int DelegateCount { get; set; }
+        public new int DelegateCount { get; set; }
         public int CompletedCount { get; set; }
         public int InProgressCount => DelegateCount - CompletedCount;
         public int AllAttempts { get; set; }
