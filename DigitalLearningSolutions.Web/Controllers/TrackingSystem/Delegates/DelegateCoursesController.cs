@@ -60,6 +60,7 @@
             int? itemsPerPage = 10
         )
         {
+            searchString = searchString == null ? string.Empty : searchString.Trim();
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
 
@@ -130,13 +131,13 @@
                 }
             }
 
-            var (courses, resultCount)= courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true,null,
+            var (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true, null,
                                                             isActive, categoryName, courseTopic, hasAdminFields);
             if (courses.Count() == 0 && resultCount > 0)
             {
                 page = 1;
                 offSet = 0;
-                (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true,null,
+                (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true, null,
                                                             isActive, categoryName, courseTopic, hasAdminFields);
             }
 
