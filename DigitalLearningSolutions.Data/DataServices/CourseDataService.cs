@@ -748,7 +748,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             if (sortBy == "CourseName" || sortBy == "SearchableName")
                 orderBy = " ORDER BY ap.ApplicationName + cu.CustomisationName " + sortOrder;
             else
-                orderBy = " ORDER BY " + sortBy;
+                orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
 
             orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 
