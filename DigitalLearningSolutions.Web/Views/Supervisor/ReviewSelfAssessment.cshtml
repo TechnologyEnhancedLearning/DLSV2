@@ -96,8 +96,7 @@
         }
         @if (
           Model.DelegateSelfAssessment.SignOffRequested > 0 &&
-          Model.DelegateSelfAssessment.ResultsVerificationRequests == 0 &&
-          competencySummaries.Sum(c => (int)c["questionsCount"]) == competencySummaries.Sum(c => (int)c["verifiedCount"])
+          Model.DelegateSelfAssessment.ResultsVerificationRequests == 0
         )
         {
             <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>
