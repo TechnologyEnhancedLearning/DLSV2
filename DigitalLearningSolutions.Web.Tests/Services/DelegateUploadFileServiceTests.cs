@@ -88,7 +88,7 @@
             var stream = File.OpenRead(
                 TestContext.CurrentContext.TestDirectory + TestDelegateUploadRelativeFilePath
             );
-            var file = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name));
+            var file = new FormFile(stream, 0, stream.Length, "", Path.GetFileName(stream.Name));
 
             // When
             var table = delegateUploadFileService.OpenDelegatesTable(file);
@@ -309,8 +309,8 @@
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.NoRecordForDelegateId);
+            result.Errors?.First().RowNumber.Should().Be(2);
+            result.Errors?.First().Reason.Should().Be(BulkUploadResult.ErrorReason.NoRecordForDelegateId);
         }
 
         [Test]
@@ -327,8 +327,8 @@
             using (var _ = new AssertionScope())
             {
                 AssertBulkUploadResultHasOnlyOneError(result);
-                result.Errors.First().RowNumber.Should().Be(2);
-                result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.EmailAddressInUse);
+                result.Errors?.First().RowNumber.Should().Be(2);
+                result.Errors?.First().Reason.Should().Be(BulkUploadResult.ErrorReason.EmailAddressInUse);
                 A.CallTo(() => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                     A<DelegateRegistrationModel>._,
                     A<bool>._,
@@ -360,8 +360,8 @@
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.EmailAddressInUse);
+            result.Errors?.First().RowNumber.Should().Be(2);
+            result.Errors?.First().Reason.Should().Be(BulkUploadResult.ErrorReason.EmailAddressInUse);
         }
 
         [Test]
@@ -945,9 +945,9 @@
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                     A<int>._,
-                    A<string>._,
+                    A<string>._!,
                     A<DateTime>._,
-                    A<string>._
+                    A<string>._!
                 )
             ).DoesNothing();
 
@@ -958,9 +958,9 @@
             A.CallTo(
                     () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                         A<int>._,
-                        A<string>._,
+                        A<string>._!,
                         welcomeEmailDate,
-                        A<string>._
+                        A<string>._!
                     )
                 )
                 .MustHaveHappened();
@@ -1279,8 +1279,8 @@
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(errorReason);
+            result.Errors?.First().RowNumber.Should().Be(2);
+            result.Errors?.First().Reason.Should().Be(errorReason);
         }
 
         private IXLTable CreateTableFromData(IEnumerable<DelegateDataRow> data)

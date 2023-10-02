@@ -411,10 +411,10 @@
             var result = centresDataService.GetCentreManagerDetailsByCentreId(2);
 
             // Then
-            result.ContactForename.Should().Be("xxxxx");
-            result.ContactSurname.Should().Be("xxxx");
-            result.ContactEmail.Should().Be("nybwhudkra@ic.vs");
-            result.ContactTelephone.Should().Be("xxxxxxxxxxxx");
+            result?.ContactForename.Should().Be("xxxxx");
+            result?.ContactSurname.Should().Be("xxxx");
+            result?.ContactEmail.Should().Be("nybwhudkra@ic.vs");
+            result?.ContactTelephone.Should().Be("xxxxxxxxxxxx");
         }
     }
 }

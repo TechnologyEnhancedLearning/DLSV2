@@ -373,7 +373,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             dynamic completeByDateDynamic = "";
             if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
-                completeByDateDynamic = completeByDate;
+                completeByDateDynamic = completeByDate! ;
             }
             var candidateAssessmentId = (int)connection.ExecuteScalar(
                 @"SELECT COALESCE
@@ -956,8 +956,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 { brandId, threeMonthsAgo }
             );
             return query.ToDictionary<dynamic?, int, int>(
-                entry => entry.ApplicationID,
-                entry => entry.NumRecentProgressRecords
+                entry => entry?.ApplicationID,
+                entry => entry?.NumRecentProgressRecords
             );
         }
 

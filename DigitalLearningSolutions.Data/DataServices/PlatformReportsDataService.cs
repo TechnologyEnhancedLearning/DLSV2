@@ -64,7 +64,6 @@
         public PlatformReportsDataService(IDbConnection connection)
         {
             this.connection = connection;
-            this.logger = logger;
         }
         public PlatformUsageSummary GetPlatformUsageSummary()
         {

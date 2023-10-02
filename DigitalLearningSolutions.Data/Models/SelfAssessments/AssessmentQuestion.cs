@@ -7,7 +7,7 @@
     public class AssessmentQuestion
     {
         public int Id { get; set; }
-        public string Question { get; set; }
+        public string Question { get; set; }  = string.Empty;
         public string? MaxValueDescription { get; set; }
         public string? MinValueDescription { get; set; }
         public int? ResultId { get; set; }
@@ -18,7 +18,7 @@
         public int MaxValue { get; set; }
         public int AssessmentQuestionInputTypeID { get; set; }
         public bool IncludeComments { get; set; }
-        public IEnumerable<LevelDescriptor> LevelDescriptors { get; set; }
+        public IEnumerable<LevelDescriptor> LevelDescriptors { get; set; } = new List<LevelDescriptor>();
         public string? SupervisorName { get; set; }
         public string? SupportingComments { get; set; }
         public int? SelfAssessmentResultSupervisorVerificationId { get; set; }

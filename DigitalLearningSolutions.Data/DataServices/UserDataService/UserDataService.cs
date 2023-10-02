@@ -236,7 +236,7 @@
         (IEnumerable<DelegateEntity>, int) GetAllDelegates(
       string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
       );
-        Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
+        IEnumerable<AdminEntity> GetAllAdminsExport(
       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
       );
 
@@ -374,7 +374,7 @@
                @"SELECT EmailVerificationHash FROM EmailVerificationHashes WHERE ID = @ID",
                new { ID }
            );
-            return EmailVerificationHash;
+            return EmailVerificationHash!;
         }
 
         public UserAccount? GetUserAccountByPrimaryEmail(string emailAddress)

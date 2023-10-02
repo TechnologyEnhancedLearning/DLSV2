@@ -5,21 +5,21 @@
     public class Map
     {
         [JsonProperty("address_components")]
-        public AddressComponent[] AddressComponents { get; set; }
+        public AddressComponent[]? AddressComponents { get; set; }
 
         [JsonProperty("formatted_address")]
-        public string FormattedAddress { get; set; }
+        public string FormattedAddress { get; set; } = string.Empty;
 
         [JsonProperty("geometry")]
-        public Geometry Geometry { get; set; }
+        public Geometry? Geometry { get; set; }
 
         [JsonProperty("place_id")]
-        public string PlaceId { get; set; }
+        public string PlaceId { get; set; } = string.Empty;
 
         [JsonProperty("plus_code")]
-        public PlusCode PlusCode { get; set; }
+        public PlusCode? PlusCode { get; set; }
 
         [JsonProperty("types")]
-        public string[] Types { get; set; }
+        public string[]? Types { get; set; }
     }
 }

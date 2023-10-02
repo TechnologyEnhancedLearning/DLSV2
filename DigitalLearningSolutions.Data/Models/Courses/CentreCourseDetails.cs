@@ -17,8 +17,8 @@
             Courses = courses;
         }
 
-        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> Courses { get; set; }
-        public IEnumerable<string> Categories { get; set; }
-        public IEnumerable<string> Topics { get; set; }
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>? Courses { get; set; }
+        public IEnumerable<string>? Categories { get; set; } 
+        public IEnumerable<string>? Topics { get; set; } 
     }
 }

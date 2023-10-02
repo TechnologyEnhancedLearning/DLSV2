@@ -10,7 +10,7 @@
 
     public class NotificationPreferencesDataServiceTests
     {
-        private NotificationPreferencesDataService service;
+        private NotificationPreferencesDataService service= null!;
 
         [SetUp]
         public void Setup()

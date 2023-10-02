@@ -111,7 +111,7 @@
             promptsService.ValidateCentreRegistrationPrompts(1, null, Answer2, null, null, null, null, modelState);
 
             // Then
-            modelState["Answer1"].Errors.Count.Should().Be(1);
+            modelState["Answer1"]?.Errors.Count.Should().Be(1);
             modelState["Answer2"].Should().BeNull();
         }
 
@@ -136,7 +136,7 @@
 
             // Then
             modelState[Answer1].Should().BeNull();
-            modelState[Answer2].Errors.Count.Should().Be(1);
+            modelState[Answer2]?.Errors.Count.Should().Be(1);
         }
 
         [Test]

@@ -8,7 +8,7 @@
 
     class ContentUrlHelperTests
     {
-        private IConfiguration config;
+        private IConfiguration config = null!;
         private const string BaseUrl = "https://example.com";
 
         [SetUp]

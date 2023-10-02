@@ -4,6 +4,6 @@
     public class CompleteAssetRequest : FilteredApiRequest
     {
         [JsonProperty("params")]
-        public CompleteAsset CompleteAsset { get; set; }
+        public CompleteAsset? CompleteAsset { get; set; } 
     }
 }

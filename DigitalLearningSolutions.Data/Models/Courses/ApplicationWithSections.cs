@@ -5,7 +5,9 @@
 
     public class ApplicationWithSections : ApplicationDetails
     {
-        public ApplicationWithSections() { }
+        public ApplicationWithSections() {
+            Sections = new List<Section>();
+        }
 
         public ApplicationWithSections(
             ApplicationDetails applicationDetails,

@@ -10,8 +10,8 @@
 
     internal class CourseCompletionServiceTests
     {
-        private CourseCompletionService courseCompletionService;
-        private CourseContentTestHelper courseContentTestHelper;
+        private CourseCompletionService courseCompletionService = null!;
+        private CourseContentTestHelper courseContentTestHelper = null!;
 
         [SetUp]
         public void Setup()
@@ -108,7 +108,7 @@
                 var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
 
                 // Then
-                result.PercentageTutorialsCompleted.Should().Be(100.0 * tutorialsComplete / tutorialsAvailable);
+                result?.PercentageTutorialsCompleted.Should().Be(100.0 * tutorialsComplete / tutorialsAvailable);
             }
         }
 

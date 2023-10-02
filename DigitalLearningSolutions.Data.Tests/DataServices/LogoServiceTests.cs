@@ -7,7 +7,7 @@
 
     internal class LogoServiceTests
     {
-        private LogoService logoService;
+        private LogoService logoService = null!;
 
         [SetUp]
         public void Setup()
@@ -24,8 +24,8 @@
 
             // Then
             result.Should().NotBeNull();
-            result.LogoUrl.Should().NotBeNullOrEmpty();
-            result.Name.Should().Be("Royal Cornwall Hospitals NHS Trust");
+            result?.LogoUrl.Should().NotBeNullOrEmpty();
+            result?.Name.Should().Be("Royal Cornwall Hospitals NHS Trust");
         }
 
         [Test]
@@ -36,8 +36,8 @@
 
             // Then
             result.Should().NotBeNull();
-            result.LogoUrl.Should().NotBeNullOrEmpty();
-            result.Name.Should().Be("Royal Cornwall Hospitals NHS Trust");
+            result?.LogoUrl.Should().NotBeNullOrEmpty();
+            result?.Name.Should().Be("Royal Cornwall Hospitals NHS Trust");
         }
 
         [Test]
@@ -48,8 +48,8 @@
 
             // Then
             result.Should().NotBeNull();
-            result.LogoUrl.Should().NotBeNullOrEmpty();
-            result.Name.Should().Be("IT Skills Pathway");
+            result?.LogoUrl.Should().NotBeNullOrEmpty();
+            result?.Name.Should().Be("IT Skills Pathway");
         }
 
         [Test]
@@ -90,8 +90,8 @@
 
             // Then
             result.Should().NotBeNull();
-            result.LogoUrl.Should().NotBeNullOrEmpty();
-            result.Name.Should().Be("Royal Cornwall Hospitals NHS Trust");
+            result?.LogoUrl.Should().NotBeNullOrEmpty();
+            result?.Name.Should().Be("Royal Cornwall Hospitals NHS Trust");
         }
     }
 }

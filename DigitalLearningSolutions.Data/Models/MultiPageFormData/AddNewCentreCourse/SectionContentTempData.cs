@@ -22,6 +22,6 @@
             Tutorials = tutorials;
         }
 
-        public IEnumerable<CourseTutorialTempData> Tutorials { get; set; }
+        public IEnumerable<CourseTutorialTempData>? Tutorials { get; set; }
     }
 }

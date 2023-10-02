@@ -393,7 +393,7 @@
                 )
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
-            controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
+            controller?.ModelState["CustomisationName"]?.Errors[0].ErrorMessage.Should()
                 .BeEquivalentTo("Course name must be unique, including any additions");
         }
 
@@ -429,7 +429,7 @@
                 )
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
-            controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
+            controller?.ModelState["CustomisationName"]?.Errors[0].ErrorMessage.Should()
                 .BeEquivalentTo("A course with no add-on already exists");
         }
 

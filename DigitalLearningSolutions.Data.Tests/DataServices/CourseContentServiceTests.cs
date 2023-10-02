@@ -14,8 +14,8 @@
 
     internal class CourseContentServiceTests
     {
-        private CourseContentService courseContentService;
-        private CourseContentTestHelper courseContentTestHelper;
+        private CourseContentService courseContentService = null!;
+        private CourseContentTestHelper courseContentTestHelper = null!;
 
         [SetUp]
         public void Setup()

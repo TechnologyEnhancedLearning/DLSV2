@@ -37,7 +37,7 @@
             var tutorials = new List<CourseTutorialTempData>();
             foreach (var section in SectionContentData!)
             {
-                tutorials.AddRange(section.Tutorials);
+                tutorials.AddRange(section.Tutorials!);
             }
 
             return tutorials;

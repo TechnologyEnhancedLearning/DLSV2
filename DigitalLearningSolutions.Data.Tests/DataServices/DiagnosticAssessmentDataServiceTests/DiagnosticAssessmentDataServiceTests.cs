@@ -13,9 +13,9 @@
 
     internal partial class DiagnosticAssessmentDataServiceTests
     {
-        private DiagnosticAssessmentDataService diagnosticAssessmentDataService;
-        private TutorialContentTestHelper tutorialContentTestHelper;
-        private SectionContentTestHelper sectionContentTestHelper;
+        private DiagnosticAssessmentDataService diagnosticAssessmentDataService = null!;
+        private TutorialContentTestHelper tutorialContentTestHelper = null!;
+        private SectionContentTestHelper sectionContentTestHelper = null!;
 
         [SetUp]
         public void Setup()

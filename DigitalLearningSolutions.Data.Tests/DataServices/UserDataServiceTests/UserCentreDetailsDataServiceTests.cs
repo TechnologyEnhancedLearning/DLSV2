@@ -237,8 +237,6 @@
             const string delegateOnlyCentreEmail = "centre2@email.com";
             const string adminOnlyCentreEmail = "centre3@email.com";
             const string adminAndDelegateCentreEmail = "centre101@email.com";
-            const string candidateNumber = "AAAAA";
-
             var delegateOnlyCentreName = connection.QuerySingleOrDefault<string>(
                 @"SELECT CentreName FROM Centres WHERE CentreID = @delegateOnlyCentreId",
                 new { delegateOnlyCentreId }
@@ -310,7 +308,6 @@
             const string delegateOnlyCentreEmail = "centre2@email.com";
             const string adminOnlyCentreEmail = "centre3@email.com";
             const string adminAndDelegateCentreEmail = "centre101@email.com";
-            const string candidateNumber = "AAAAA";
 
             var delegateOnlyCentreName = connection.QuerySingleOrDefault<string>(
                 @"SELECT CentreName FROM Centres WHERE CentreID = @delegateOnlyCentreId",

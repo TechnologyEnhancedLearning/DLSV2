@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FakeItEasy;
@@ -195,7 +196,6 @@
             const int minValue = 0;
             const int maxValue = 10;
             const int assessmentQuestionInputTypeID = 2;
-            const int candidateId = 1;
             var assessmentQuestions = new Collection<AssessmentQuestion>
             {
                 new AssessmentQuestion
@@ -210,7 +210,7 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
             var competency = selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, DelegateUserId);
-            if (!competency.AssessmentQuestions.Any(x => x.SignedOff == true))
+            if (competency != null && !competency.AssessmentQuestions.Any(x => x.SignedOff == true) )
             {
                 // When
                 controller.SelfAssessmentCompetency(
@@ -274,12 +274,13 @@
         [Test]
         public void SelfAssessmentCompetency_Post_without_self_assessment_should_return_403()
         {
+            var assessmentQuestion = new List<AssessmentQuestion>();
             // Given
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(null);
 
             // When
-            var result = controller.SelfAssessmentCompetency(1, null, 1, 1, 1);
+            var result = controller.SelfAssessmentCompetency(1, assessmentQuestion, 1, 1, 1);
 
             // Then
             result.Should()
@@ -397,6 +398,7 @@
                 new Competency { CompetencyGroup = "A" },
                 new Competency { CompetencyGroup = "A" },
             };
+               var appliedFilterViewModel = new List<AppliedFilterViewModel>();
             var supervisorSignOffs = new List<SupervisorSignOff>();
             var expectedModel = new SelfAssessmentOverviewViewModel
             {
@@ -404,7 +406,7 @@
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = 2,
                 SupervisorSignOffs = supervisorSignOffs,
-                SearchViewModel = new SearchSelfAssessmentOverviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, false, false, null),
+                SearchViewModel = new SearchSelfAssessmentOverviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, false, false, appliedFilterViewModel),
                 AllQuestionsVerifiedOrNotRequired = true
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
@@ -461,13 +463,14 @@
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var competencies = new List<Competency>();
             var supervisorSignOffs = new List<SupervisorSignOff>();
+            var appliedFilters = new List<AppliedFilterViewModel>(); 
             var expectedModel = new SelfAssessmentOverviewViewModel
             {
                 SelfAssessment = selfAssessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = 1,
                 SupervisorSignOffs = supervisorSignOffs,
-                SearchViewModel = new SearchSelfAssessmentOverviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, false, false, null),
+                SearchViewModel = new SearchSelfAssessmentOverviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, false, false, appliedFilters),
                 AllQuestionsVerifiedOrNotRequired = true
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))

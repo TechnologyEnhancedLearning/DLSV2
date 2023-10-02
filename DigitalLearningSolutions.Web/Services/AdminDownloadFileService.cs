@@ -94,7 +94,7 @@
             string? filterString
         )
         {
-            IEnumerable<AdminEntity> adminsToExport = Task.Run(() => GetAdminsToExport(searchString, filterString)).Result;
+            IEnumerable<AdminEntity> adminsToExport =  GetAdminsToExport(searchString, filterString);
             var dataTable = new DataTable();
             SetUpDataTableColumnsForAllAdmins(dataTable);
 
@@ -119,7 +119,7 @@
             FormatAllDelegateWorksheetColumns(workbook, dataTable);
         }
 
-        private async Task<IEnumerable<AdminEntity>> GetAdminsToExport(
+        private IEnumerable<AdminEntity> GetAdminsToExport(
             string? searchString,
             string? filterString
         )
@@ -181,7 +181,7 @@
             List<AdminEntity> admins = new List<AdminEntity>();
             while (totalRun >= currentRun)
             {
-                admins.AddRange(await this.userDataService.GetAllAdminsExport(Search ?? string.Empty, 0, 999999, AdminId, UserStatus, Role, CentreId, AuthHelper.FailedLoginThreshold, exportQueryRowLimit, currentRun));
+                admins.AddRange( this.userDataService.GetAllAdminsExport(Search ?? string.Empty, 0, 999999, AdminId, UserStatus, Role, CentreId, AuthHelper.FailedLoginThreshold, exportQueryRowLimit, currentRun));
                 currentRun++;
             }
             return admins;

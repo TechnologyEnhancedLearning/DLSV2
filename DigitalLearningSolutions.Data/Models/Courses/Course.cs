@@ -8,7 +8,7 @@
         public bool Active { get; set; }
         public bool Archived { get; set; }
         public bool NotActive { get; set; }
-        public new int DelegateCount { get; set; }
+        public  int DelegateCount { get; set; }
         public string CourseNameWithInactiveFlag => !Active ? "Inactive - " + CourseName : CourseName;
 
         public override bool Equals(object? obj)

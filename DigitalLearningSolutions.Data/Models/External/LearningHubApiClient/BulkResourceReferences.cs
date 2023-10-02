@@ -4,8 +4,8 @@
 
     public class BulkResourceReferences
     {
-        public List<ResourceReferenceWithResourceDetails> ResourceReferences { get; set; }
+        public List<ResourceReferenceWithResourceDetails> ResourceReferences { get; set; } = new List<ResourceReferenceWithResourceDetails>();
 
-        public List<int> UnmatchedResourceReferenceIds { get; set; }
+        public List<int> UnmatchedResourceReferenceIds { get; set; }= new List<int>();
     }
 }

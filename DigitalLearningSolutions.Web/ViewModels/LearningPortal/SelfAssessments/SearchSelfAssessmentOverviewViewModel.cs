@@ -86,7 +86,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
             return this;
         }
 
-        public SearchSelfAssessmentOverviewViewModel(string searchText, int selfAssessmentId, string vocabulary, bool isSupervisorResultsReviewed, bool includeRequirementsFilters, List<AppliedFilterViewModel> appliedFilters, List<CompetencyFlag> competencyFlags = null)
+        public SearchSelfAssessmentOverviewViewModel(string? searchText, int selfAssessmentId, string? vocabulary, bool isSupervisorResultsReviewed, bool includeRequirementsFilters, List<AppliedFilterViewModel> appliedFilters, List<CompetencyFlag> competencyFlags = null)
         {
             FilterBy = nameof(SelectedFilter);
             SearchText = searchText ?? string.Empty;

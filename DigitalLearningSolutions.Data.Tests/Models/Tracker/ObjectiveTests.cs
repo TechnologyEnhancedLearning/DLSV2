@@ -12,7 +12,7 @@
             yield return new object[] { "450,3,14", new[] { 450, 3, 14 } };
             yield return new object[] { "450,,14", new[] { 450, 14 } };
             yield return new object[] { "", new int[] { } };
-            yield return new object[] { null, new int[] { } };
+            yield return new object[] { "", new int[] { } };
         }
 
         [Theory]

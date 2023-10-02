@@ -18,7 +18,7 @@
         {
             string? FindFieldValue(string name)
             {
-                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString().ToLower() == name).ColumnNumber();
+                var colNumber = table.FindColumn(col => col?.FirstCell()?.Value?.ToString()?.ToLower() == name).ColumnNumber();
                 return row.Cell(colNumber).GetValue<string?>();
             }
 
@@ -40,7 +40,7 @@
             {
                 Error = ImportCompetenciesResult.ErrorReason.MissingCompetencyName;
             }
-            else if (CompetencyGroupName.Length > 255)
+            else if (CompetencyGroupName?.Length > 255)
             {
                 Error = ImportCompetenciesResult.ErrorReason.TooLongCompetencyGroupName;
             }

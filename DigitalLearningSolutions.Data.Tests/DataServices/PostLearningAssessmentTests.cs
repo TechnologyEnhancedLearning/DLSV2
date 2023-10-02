@@ -11,11 +11,11 @@
 
     internal partial class PostLearningAssessmentTests
     {
-        private PostLearningAssessmentService postLearningAssessmentService;
-        private PostLearningAssessmentTestHelper postLearningAssessmentTestHelper;
-        private CourseContentTestHelper courseContentTestHelper;
-        private SectionContentTestHelper sectionContentTestHelper;
-        private TutorialContentTestHelper tutorialContentTestHelper;
+        private PostLearningAssessmentService postLearningAssessmentService =null!;
+        private PostLearningAssessmentTestHelper postLearningAssessmentTestHelper = null!;
+        private CourseContentTestHelper courseContentTestHelper = null!;
+        private SectionContentTestHelper sectionContentTestHelper = null!;
+        private TutorialContentTestHelper tutorialContentTestHelper = null!;
 
         [SetUp]
         public void Setup()
@@ -198,10 +198,10 @@
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
             // Then
-            result.PostLearningScore.Should().Be(scoresReturnedFromOldStoredProcedure.MaxScorePL);
-            result.PostLearningAttempts.Should().Be(scoresReturnedFromOldStoredProcedure.AttemptsPL);
-            result.PostLearningPassed.Should().Be(scoresReturnedFromOldStoredProcedure.PLPassed);
-            result.PostLearningLocked.Should().Be(scoresReturnedFromOldStoredProcedure.PLLocked);
+            result?.PostLearningScore.Should().Be(scoresReturnedFromOldStoredProcedure?.MaxScorePL);
+            result?.PostLearningAttempts.Should().Be(scoresReturnedFromOldStoredProcedure?.AttemptsPL);
+            result?.PostLearningPassed.Should().Be(scoresReturnedFromOldStoredProcedure!.PLPassed);
+            result?.PostLearningLocked.Should().Be(scoresReturnedFromOldStoredProcedure!.PLLocked );
         }
 
         [Test]
@@ -217,7 +217,7 @@
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -233,7 +233,7 @@
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -248,7 +248,7 @@
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().BeNull();
+            result?.NextSectionId.Should().BeNull();
         }
 
         [Test]
@@ -267,7 +267,7 @@
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -286,7 +286,7 @@
                 var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
                 // Then
-                result.NextSectionId.Should().Be(expectedNextSectionId);
+                result?.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
 
@@ -306,7 +306,7 @@
                 var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
                 // Then
-                result.NextSectionId.Should().Be(expectedNextSectionId);
+                result?.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
 
@@ -323,7 +323,7 @@
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -345,7 +345,7 @@
                 var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
                 // Then
-                result.NextSectionId.Should().Be(expectedNextSectionId);
+                result?.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
 
@@ -374,7 +374,7 @@
                 var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
                 // Then
-                result.NextSectionId.Should().Be(expectedNextSectionId);
+                result?.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
 
@@ -399,7 +399,7 @@
                 var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
                 // Then
-                result.NextSectionId.Should().BeNull();
+                result?.NextSectionId.Should().BeNull();
             }
         }
 
@@ -481,7 +481,7 @@
             var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
 
             // Then
-            result.Tutorials.Should().NotContain(3899);
+            result?.Tutorials.Should().NotContain(3899);
         }
 
         [Test]

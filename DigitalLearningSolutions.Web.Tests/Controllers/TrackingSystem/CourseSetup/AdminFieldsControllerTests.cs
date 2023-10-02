@@ -650,7 +650,7 @@
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<RemoveAdminFieldViewModel>();
-            controller.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)].Errors[0].ErrorMessage.Should()
+            controller?.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)]?.Errors[0].ErrorMessage.Should()
                 .BeEquivalentTo(expectedErrorMessage);
         }
 
@@ -793,7 +793,7 @@
 
         private static void AssertModelStateErrorIsExpected(IActionResult result, string expectedErrorMessage)
         {
-            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value!.Errors)
                 .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
             errorMessage.Should().BeEquivalentTo(expectedErrorMessage);
         }

@@ -292,7 +292,6 @@
             const string primaryEmail = "primary@email.com";
             const string? centreSpecificEmail = "centre@email.com";
             const int adminId = 1;
-            const int userId = 1;
 
             var model = new SummaryViewModel
             {

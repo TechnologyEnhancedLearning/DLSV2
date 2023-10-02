@@ -20,7 +20,7 @@
 
         public bool IncludeAllSections { get; set; }
 
-        public IEnumerable<Section> AvailableSections { get; set; }
+        public IEnumerable<Section> AvailableSections { get; set; } = Enumerable.Empty<Section>();
 
         public IEnumerable<int>? SelectedSectionIds { get; set; }
 

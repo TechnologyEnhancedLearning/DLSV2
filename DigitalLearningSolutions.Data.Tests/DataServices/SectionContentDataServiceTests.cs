@@ -15,10 +15,10 @@
 
     internal class SectionContentDataServiceTests
     {
-        private SectionContentDataService sectionContentDataService;
-        private SectionContentTestHelper sectionContentTestHelper;
-        private CourseContentTestHelper courseContentTestHelper;
-        private TutorialContentTestHelper tutorialContentTestHelper;
+        private SectionContentDataService sectionContentDataService = null!;
+        private SectionContentTestHelper sectionContentTestHelper = null!;
+        private CourseContentTestHelper courseContentTestHelper = null!;
+        private TutorialContentTestHelper tutorialContentTestHelper = null!;
 
         [SetUp]
         public void Setup()
@@ -411,7 +411,7 @@
             var expectedTutorialOrder = new[]
                 { 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 940 };
 
-            result.Tutorials.Select(tutorial => tutorial.Id).Should().Equal(expectedTutorialOrder);
+            result?.Tutorials.Select(tutorial => tutorial.Id).Should().Equal(expectedTutorialOrder);
         }
 
         [Test]
@@ -433,7 +433,7 @@
             // Then
             var expectedTutorialOrder = new[] { 3330, 3331, 3332, 3334, 3333 };
 
-            result.Tutorials.Select(tutorial => tutorial.Id).Should().Equal(expectedTutorialOrder);
+            result?.Tutorials.Select(tutorial => tutorial.Id).Should().Equal(expectedTutorialOrder);
         }
 
         [Test]
@@ -559,7 +559,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.ConsolidationPath.Should().Be(expectedConsolidationPath);
+            result?.ConsolidationPath.Should().Be(expectedConsolidationPath);
         }
 
         [Test]
@@ -669,7 +669,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -685,7 +685,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -700,7 +700,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().BeNull();
+            result?.NextSectionId.Should().BeNull();
         }
 
         [Test]
@@ -719,7 +719,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -735,7 +735,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -751,7 +751,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -772,7 +772,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.NextSectionId.Should().Be(expectedNextSectionId);
+                result?.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
 
@@ -789,7 +789,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.NextSectionId.Should().Be(expectedNextSectionId);
+            result?.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -811,7 +811,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.NextSectionId.Should().Be(expectedNextSectionId);
+                result?.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
 
@@ -839,7 +839,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.NextSectionId.Should().Be(expectedNextSectionId);
+                result?.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
 
@@ -863,7 +863,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.NextSectionId.Should().BeNull();
+                result?.NextSectionId.Should().BeNull();
             }
         }
 
@@ -924,7 +924,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.MaxSectionScore.Should().Be(expectedMaxScore);
+            result?.MaxSectionScore.Should().Be(expectedMaxScore);
         }
 
         [Test]
@@ -945,7 +945,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.SectionScore.Should().Be(expectedSectionScore);
+                result?.SectionScore.Should().Be(expectedSectionScore);
             }
         }
 
@@ -967,7 +967,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.DiagnosticAttempts.Should().Be(expectedDiagnosticAttempts);
+                result?.DiagnosticAttempts.Should().Be(expectedDiagnosticAttempts);
             }
         }
 
@@ -985,7 +985,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.MaxSectionScore.Should().Be(expectedMaxScore);
+            result?.MaxSectionScore.Should().Be(expectedMaxScore);
         }
 
         [Test]
@@ -1007,7 +1007,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.SectionScore.Should().Be(expectedSectionScore);
+                result?.SectionScore.Should().Be(expectedSectionScore);
             }
         }
 
@@ -1030,7 +1030,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.DiagnosticAttempts.Should().Be(expectedDiagAttempts);
+                result?.DiagnosticAttempts.Should().Be(expectedDiagAttempts);
             }
         }
 
@@ -1046,7 +1046,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.DiagnosticStatus.Should().BeTrue();
+            result?.DiagnosticStatus.Should().BeTrue();
         }
 
         [Test]
@@ -1061,7 +1061,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.DiagnosticStatus.Should().BeTrue();
+            result?.DiagnosticStatus.Should().BeTrue();
         }
 
         [Test]
@@ -1076,7 +1076,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.DiagnosticStatus.Should().BeFalse();
+            result?.DiagnosticStatus.Should().BeFalse();
         }
 
         [Test]
@@ -1095,7 +1095,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.DiagnosticStatus.Should().BeTrue();
+                result?.DiagnosticStatus.Should().BeTrue();
             }
         }
 
@@ -1111,7 +1111,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.OtherSectionsExist.Should().BeTrue();
+            result?.OtherSectionsExist.Should().BeTrue();
         }
 
         [Test]
@@ -1126,7 +1126,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.OtherSectionsExist.Should().BeTrue();
+            result?.OtherSectionsExist.Should().BeTrue();
         }
 
         [TestCase(2087)]
@@ -1146,7 +1146,7 @@
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
                 // Then
-                result.OtherSectionsExist.Should().BeTrue();
+                result?.OtherSectionsExist.Should().BeTrue();
             }
         }
 
@@ -1325,7 +1325,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.Tutorials.Select(tutorial => tutorial.CurrentScore).Should().Equal(expectedCurrentScores);
+            result?.Tutorials.Select(tutorial => tutorial.CurrentScore).Should().Equal(expectedCurrentScores);
         }
 
         [Test]
@@ -1341,7 +1341,7 @@
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            result.Tutorials.Select(tutorial => tutorial.PossibleScore).Should().Equal(expectedPossibleScores);
+            result?.Tutorials.Select(tutorial => tutorial.PossibleScore).Should().Equal(expectedPossibleScores);
         }
 
         [Test]

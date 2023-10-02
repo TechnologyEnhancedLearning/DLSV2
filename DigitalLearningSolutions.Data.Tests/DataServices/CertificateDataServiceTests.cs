@@ -65,7 +65,7 @@
             var result = certificateDataService.GetCertificateDetailsById(3);
 
             // Then
-            result.CentreName.Should().NotBeNull();
+            result!.CentreName.Should().NotBeNull();
         }
         [Test]
         public void GetCertificates_should_contain_an_course_name()
@@ -74,7 +74,7 @@
             var result = certificateDataService.GetCertificateDetailsById(3);
 
             // Then
-            result.CourseName.Should().NotBeNull();
+            result!.CourseName.Should().NotBeNull();
         }
     }
 }

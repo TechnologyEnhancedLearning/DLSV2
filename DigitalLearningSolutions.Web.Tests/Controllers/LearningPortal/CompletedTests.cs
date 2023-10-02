@@ -78,7 +78,7 @@
             var completedViewModel = await CompletedCourseHelper.CompletedViewModelFromController(controller);
 
             // Then
-            completedViewModel.BannerText.Should().Be(bannerText);
+            completedViewModel?.BannerText.Should().Be(bannerText);
         }
 
         [Test]

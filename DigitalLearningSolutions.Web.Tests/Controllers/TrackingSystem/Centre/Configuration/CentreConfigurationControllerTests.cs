@@ -136,7 +136,7 @@
                 )
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
-            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreSignatureFile)].ValidationState.Should()
+            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreSignatureFile)]?.ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
         }
 
@@ -166,7 +166,7 @@
                 )
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
-            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreLogoFile)].ValidationState.Should()
+            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreLogoFile)]?.ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
         }
 

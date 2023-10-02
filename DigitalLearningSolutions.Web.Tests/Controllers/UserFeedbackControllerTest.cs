@@ -21,10 +21,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private const string SourcePageTitle = "DLS Example Page Title";
         private const string FeedbackText = "Example feedback text";
 
-        private UserFeedbackController _userFeedbackController;
+        private UserFeedbackController? _userFeedbackController;
         private IUserFeedbackDataService _userFeedbackDataService = null!;
         private IMultiPageFormService _multiPageFormService = null!;
-        private ITempDataDictionary _tempData = null;
+        private ITempDataDictionary? _tempData = null;
 
         [SetUp]
         public void SetUp()
@@ -45,7 +45,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackTaskAchieved(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.UserFeedbackTaskAchieved(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -60,7 +60,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackTaskAttempted(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.UserFeedbackTaskAttempted(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -75,7 +75,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackTaskDifficulty(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.UserFeedbackTaskDifficulty(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -90,7 +90,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackComplete(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.UserFeedbackComplete(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -105,7 +105,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.GuestFeedbackStart(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.GuestFeedbackStart(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -117,7 +117,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void GuestFeedbackComplete_Get_ShouldReturnCorrectView()
         {
             // When
-            var result = _userFeedbackController.GuestFeedbackComplete() as ViewResult;
+            var result = _userFeedbackController?.GuestFeedbackComplete() as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -129,10 +129,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void Index_WithNullUserId_ShouldRedirectToGuestFeedbackStart()
         {
             // Given
-            _userFeedbackController.WithDefaultContext().WithMockUser(false, userId: null);
+            _userFeedbackController?.WithDefaultContext().WithMockUser(false, userId: null);
 
             // When
-            var result = _userFeedbackController.Index(sourceUrl: SourceUrl, sourcePageTitle: SourcePageTitle) as ViewResult;
+            var result = _userFeedbackController?.Index(sourceUrl: SourceUrl, sourcePageTitle: SourcePageTitle) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -143,10 +143,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void Index_WithNonNullUserId_ShouldRedirectToStartUserFeedbackSession()
         {
             // Given
-            _userFeedbackController.WithDefaultContext().WithMockUser(false, userId: null);
+            _userFeedbackController?.WithDefaultContext().WithMockUser(false, userId: null);
 
             // When
-            var result = _userFeedbackController.Index(sourceUrl: SourceUrl, sourcePageTitle:SourcePageTitle) as ViewResult;
+            var result = _userFeedbackController?.Index(sourceUrl: SourceUrl, sourcePageTitle:SourcePageTitle) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -160,7 +160,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackTaskAchievedSet(userFeedbackViewModel) as RedirectToActionResult;
+            var result = _userFeedbackController?.UserFeedbackTaskAchievedSet(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
             result.Should().NotBeNull();
@@ -174,7 +174,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackTaskAttemptedSet(userFeedbackViewModel) as RedirectToActionResult;
+            var result = _userFeedbackController?.UserFeedbackTaskAttemptedSet(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
             result.Should().NotBeNull();
@@ -188,7 +188,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackTaskDifficultySet(userFeedbackViewModel) as RedirectToActionResult;
+            var result = _userFeedbackController?.UserFeedbackTaskDifficultySet(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
             result.Should().NotBeNull();
@@ -201,11 +201,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             // Given
             var userFeedbackViewModel = new UserFeedbackViewModel();
             A.CallTo(() => _multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
-                    MultiPageFormDataFeature.AddUserFeedback, _tempData))
+                    MultiPageFormDataFeature.AddUserFeedback, _tempData!))
                 .Returns(new UserFeedbackTempData());
 
             // When
-            var result = _userFeedbackController.UserFeedbackSave(userFeedbackViewModel) as RedirectToActionResult;
+            var result = _userFeedbackController?.UserFeedbackSave(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
             A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(A<int?>._, A<string>._, A<string>._, A<bool?>._, A<string>._, A<string>._, A<int?>._))
@@ -222,7 +222,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             userFeedbackViewModel.FeedbackText = FeedbackText;
 
             // When
-            var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as RedirectToActionResult;
+            var result = _userFeedbackController?.GuestFeedbackComplete(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
             A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
@@ -238,7 +238,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as RedirectToActionResult;
+            var result = _userFeedbackController?.GuestFeedbackComplete(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
             A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
@@ -254,7 +254,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             string sourceUrl = "https://example.com";
 
             // When
-            var result = _userFeedbackController.UserFeedbackReturnToUrl(sourceUrl) as RedirectResult;
+            var result = _userFeedbackController?.UserFeedbackReturnToUrl(sourceUrl) as RedirectResult;
 
             // Then
             result.Should().NotBeNull();
@@ -268,10 +268,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
             
             // When
-            var result = _userFeedbackController.StartUserFeedbackSession(userFeedbackViewModel) as RedirectToActionResult;
+            var result = _userFeedbackController?.StartUserFeedbackSession(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
-            A.CallTo(() => _multiPageFormService.SetMultiPageFormData(A<UserFeedbackTempData>._, MultiPageFormDataFeature.AddUserFeedback, _tempData))
+            A.CallTo(() => _multiPageFormService.SetMultiPageFormData(A<UserFeedbackTempData>._, MultiPageFormDataFeature.AddUserFeedback, _tempData!))
                 .MustHaveHappenedOnceExactly();
             result.Should().NotBeNull();
             result?.ActionName.Should().Be("UserFeedbackTaskAchieved");
@@ -284,7 +284,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackTaskAchieved(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.UserFeedbackTaskAchieved(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -298,7 +298,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackTaskAttempted(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.UserFeedbackTaskAttempted(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -312,7 +312,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackTaskDifficulty(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.UserFeedbackTaskDifficulty(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -326,7 +326,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.GuestFeedbackStart(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.GuestFeedbackStart(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();
@@ -340,7 +340,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.UserFeedbackComplete(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController?.UserFeedbackComplete(userFeedbackViewModel) as ViewResult;
 
             // Then
             result.Should().NotBeNull();

@@ -36,7 +36,7 @@
             Sections = progress.Sections.Select(s => new SectionProgressViewModel(s));
         }
 
-        public bool IsCourseActive { get; set; }
+        public new bool IsCourseActive { get; set; }
 
         public IEnumerable<DelegateCourseAdminField> AdminFields { get; set; }
 

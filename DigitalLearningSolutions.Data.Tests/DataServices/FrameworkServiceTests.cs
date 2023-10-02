@@ -15,10 +15,10 @@
 
     public class FrameworkServiceTests
     {
-        private FrameworkService frameworkService;
+        private FrameworkService frameworkService = null!;
         private const int ValidAdminId = 1;
         private const int InvalidAdminId = 10;
-        private SqlConnection connection;
+        private SqlConnection connection = null!;
         private const int ValidFrameworkId = 2;
         private const int InvalidFrameworkId = 22;
         [SetUp]

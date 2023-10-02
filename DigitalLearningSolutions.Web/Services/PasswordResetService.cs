@@ -135,9 +135,9 @@
 
         public void GenerateAndScheduleDelegateWelcomeEmail(
             int delegateId,
-            string baseUrl,
+            string? baseUrl,
             DateTime deliveryDate,
-            string addedByProcess
+            string? addedByProcess
         )
         {
             var delegateEntity = userService.GetDelegateById(delegateId)!;

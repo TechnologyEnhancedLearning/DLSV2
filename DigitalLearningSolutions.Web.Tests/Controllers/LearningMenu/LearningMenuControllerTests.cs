@@ -20,7 +20,7 @@
         private const int SectionId = 199;
         private const int TutorialId = 842;
         private ISession httpContextSession = null!;
-        private IAuthenticationService authenticationService = null!;
+        private IAuthenticationService? authenticationService = null;
         private IClockUtility clockUtility = null!;
         private IConfiguration config = null!;
         private IConfigDataService configDataService = null!;
@@ -32,7 +32,7 @@
         private ISectionContentDataService sectionContentDataService = null!;
         private ISessionService sessionService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
-        private ICourseDataService courseDataService = null;
+        private ICourseDataService courseDataService = null!;
 
         [SetUp]
         public void SetUp()
@@ -70,7 +70,7 @@
                 .WithMockServices();
 
             authenticationService =
-                (IAuthenticationService)controller.HttpContext.RequestServices.GetService(
+                (IAuthenticationService?)controller.HttpContext.RequestServices.GetService(
                     typeof(IAuthenticationService)
                 );
             httpContextSession = controller.HttpContext.Session;

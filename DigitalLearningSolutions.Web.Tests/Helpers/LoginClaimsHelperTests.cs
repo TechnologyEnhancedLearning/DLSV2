@@ -29,8 +29,8 @@
             claims.Should().Contain(claim => claim.Type == CustomClaimTypes.UserSurname);
             var forenameClaim = claims.Find(claim => claim.Type == CustomClaimTypes.UserForename);
             var surnameClaim = claims.Find(claim => claim.Type == CustomClaimTypes.UserSurname);
-            forenameClaim.Value.Should().Be("fname");
-            surnameClaim.Value.Should().Be("lname");
+            forenameClaim?.Value.Should().Be("fname");
+            surnameClaim?.Value.Should().Be("lname");
         }
 
         [Test]

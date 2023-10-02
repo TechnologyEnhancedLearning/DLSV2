@@ -14,7 +14,7 @@
 
         IEnumerable<RoleProfile> GetRoleProfilesForAdminId(int adminId);
 
-        RoleProfileBase GetRoleProfileBaseById(int roleProfileId, int adminId);
+        RoleProfileBase? GetRoleProfileBaseById(int roleProfileId, int adminId);
 
         RoleProfileBase? GetRoleProfileByName(string roleProfileName, int adminId);
 
@@ -102,7 +102,7 @@
             );
         }
 
-        public RoleProfileBase GetRoleProfileBaseById(int roleProfileId, int adminId)
+        public RoleProfileBase? GetRoleProfileBaseById(int roleProfileId, int adminId)
         {
             return connection.Query<RoleProfileBase>(
                 $@"SELECT {SelfAssessmentBaseFields}

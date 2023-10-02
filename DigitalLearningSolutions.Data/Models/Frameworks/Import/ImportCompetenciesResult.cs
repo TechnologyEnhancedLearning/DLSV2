@@ -1,4 +1,5 @@
-﻿namespace DigitalLearningSolutions.Data.Models.Frameworks.Import
+﻿
+namespace DigitalLearningSolutions.Data.Models.Frameworks.Import
 {
     using System;
     using System.Collections.Generic;
@@ -26,7 +27,7 @@
             Errors = competencyTableRows.Where(dr => dr.Error.HasValue).Select(dr => (dr.RowNumber, dr.Error!.Value));
         }
 
-        public IEnumerable<(int RowNumber, ErrorReason Reason)> Errors { get; set; }
+        public IEnumerable<(int RowNumber, ErrorReason Reason)>? Errors { get; set; }
         public int ProcessedCount { get; set; }
         public int CompetenciesInsertedCount { get; set; }
         public int CompetencyGroupsInsertedCount { get; set; }

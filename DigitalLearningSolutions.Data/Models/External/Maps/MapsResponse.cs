@@ -5,10 +5,10 @@
     public class MapsResponse
     {
         [JsonProperty("results")]
-        public Map[] Results { get; set; }
+        public Map[]? Results { get; set; }
 
         [JsonProperty("status")]
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         [JsonProperty("error_message")]
         public string? ErrorMessage { get; set; }

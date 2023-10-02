@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class PasswordDataServiceTests

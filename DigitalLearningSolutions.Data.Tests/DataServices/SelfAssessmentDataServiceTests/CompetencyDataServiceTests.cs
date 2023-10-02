@@ -160,7 +160,7 @@
 
                 // Then
                 var competency = selfAssessmentDataService.GetNthCompetency(2, SelfAssessmentId, DelegateId);
-                var actualResult = competency.AssessmentQuestions.First(question => question.Id == assessmentQuestionId)
+                var actualResult = competency!.AssessmentQuestions.First(question => question.Id == assessmentQuestionId)
                     .Result;
                 result.Should().Be(actualResult);
             }
@@ -246,7 +246,6 @@
             const int competencyId = 2;
             const int assessmentQuestionId = 2;
             const int result = 5;
-            const int invalidCandidateId = 1;
             const int invalidDelegateUserId = 2;
 
             using (new TransactionScope())

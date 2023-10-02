@@ -59,7 +59,7 @@
 
             // When
             var result = userDataService.GetUserAccountById(2);
-            result.EmailVerified = defaultUser.EmailVerified;
+            result!.EmailVerified = defaultUser.EmailVerified;
             result.DetailsLastChecked = defaultUser.DetailsLastChecked;
 
             // Then
@@ -76,7 +76,7 @@
 
             // When
             var result = userDataService.GetUserAccountByPrimaryEmail("test@gmail.com");
-            result.EmailVerified = defaultUser.EmailVerified;
+            result!.EmailVerified = defaultUser.EmailVerified;
             result.DetailsLastChecked = defaultUser.DetailsLastChecked;
 
             // Then

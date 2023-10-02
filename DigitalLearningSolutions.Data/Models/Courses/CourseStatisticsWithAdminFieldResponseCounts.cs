@@ -33,7 +33,7 @@
             Archived = courseStatistics.Archived;
         }
 
-        public IEnumerable<CourseAdminFieldWithResponseCounts> AdminFieldsWithResponses { get; set; }
+        public IEnumerable<CourseAdminFieldWithResponseCounts> AdminFieldsWithResponses { get; set; } = new List<CourseAdminFieldWithResponseCounts>();
 
         public bool HasAdminFields => AdminFieldsWithResponses.Any();
     }

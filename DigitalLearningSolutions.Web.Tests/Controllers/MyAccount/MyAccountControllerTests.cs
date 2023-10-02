@@ -118,8 +118,8 @@
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
-                    A<List<string>>._,
-                    A<string>._
+                    A<List<string>>._!,
+                    A<string>._!
                 )
             ).MustNotHaveHappened();
 
@@ -178,7 +178,7 @@
 
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
 
-            myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Answer1)].ValidationState.Should().Be
+            myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Answer1)]?.ValidationState.Should().Be
                 (ModelValidationState.Invalid);
         }
 
@@ -250,13 +250,13 @@
             // Then
             if (primaryEmailIsDuplicate)
             {
-                myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Email)].ValidationState.Should().Be
+                myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Email)]?.ValidationState.Should().Be
                     (ModelValidationState.Invalid);
             }
 
             if (centreEmailIsDuplicate)
             {
-                myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.CentreSpecificEmail)]
+                myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.CentreSpecificEmail)]?
                     .ValidationState.Should().Be
                         (ModelValidationState.Invalid);
             }
@@ -350,7 +350,7 @@
                 )
                 .MustHaveHappenedOnceExactly();
 
-            myAccountController.ModelState[$"{nameof(formData.AllCentreSpecificEmailsDictionary)}_4"]
+            myAccountController.ModelState[$"{nameof(formData.AllCentreSpecificEmailsDictionary)}_4"]?
                 .ValidationState.Should().Be
                     (ModelValidationState.Invalid);
 
@@ -359,9 +359,9 @@
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()
                 .BeEquivalentTo(expectedModel);
 
-            var errorMessageSameEmail = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+            var errorMessageSameEmail = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value!.Errors)
                 .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
-            var errorMessageEmailAlreadyInUse = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+            var errorMessageEmailAlreadyInUse = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value!.Errors)
                 .Where(y => y.Count > 0).ToList().Last().Last().ErrorMessage;
             errorMessageSameEmail.Should().BeEquivalentTo("Centre email is the same as primary email");
             errorMessageEmailAlreadyInUse.Should().BeEquivalentTo("This email is already in use by another user at the centre");
@@ -484,7 +484,7 @@
                             new List<string> { newEmail }
                         )
                     ),
-                    A<string>._
+                    A<string>._!
                 )
             ).MustHaveHappenedOnceExactly();
 
@@ -550,7 +550,7 @@
 
             // Then
             A.CallTo(
-                () => authenticationService.SignOutAsync(
+                () => authenticationService!.SignOutAsync(
                     myAccountController.HttpContext,
                     A<string>._,
                     A<AuthenticationProperties>._
@@ -558,7 +558,7 @@
             ).MustHaveHappenedOnceExactly();
 
             A.CallTo(
-                () => authenticationService.SignInAsync(
+                () => authenticationService!.SignInAsync(
                     myAccountController.HttpContext,
                     "Identity.Application",
                     A<ClaimsPrincipal>._,
@@ -737,7 +737,7 @@
             // Then
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
 
-            myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)].ValidationState
+            myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)]?.ValidationState
                 .Should().Be(ModelValidationState.Invalid);
         }
 
@@ -848,7 +848,7 @@
                             new List<string> { Email, centreEmail1, centreEmail2 }
                         )
                     ),
-                    A<string>._
+                    A<string>._!
                 )
             ).MustHaveHappened();
 
@@ -879,13 +879,13 @@
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
 
             myAccountController
-                .ModelState[$"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_1"]
+                .ModelState[$"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_1"]?
                 .ValidationState
                 .Should().Be
                     (ModelValidationState.Invalid);
 
             myAccountController
-                .ModelState[$"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_2"]
+                .ModelState[$"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_2"]?
                 .ValidationState
                 .Should().Be
                     (ModelValidationState.Invalid);
@@ -962,17 +962,17 @@
             );
         }
 
-        private static IAuthenticationService GetAuthenticationServiceAuthenticateAsyncReturnsSuccess(
+        private static IAuthenticationService? GetAuthenticationServiceAuthenticateAsyncReturnsSuccess(
             MyAccountController controller,
             bool isPersistent
         )
         {
             var authenticationService =
-                (IAuthenticationService)controller.HttpContext.RequestServices.GetService(
+                (IAuthenticationService?)controller.HttpContext.RequestServices.GetService(
                     typeof(IAuthenticationService)
                 );
 
-            A.CallTo(() => authenticationService.AuthenticateAsync(A<HttpContext>._, A<string>._)).Returns(
+            A.CallTo(() => authenticationService!.AuthenticateAsync(A<HttpContext>._, A<string>._)).Returns(
                 AuthenticateResult.Success(
                     new AuthenticationTicket(
                         new ClaimsPrincipal(),

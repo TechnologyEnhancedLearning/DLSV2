@@ -1,4 +1,5 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
+﻿
+namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
@@ -283,7 +284,7 @@
 
             // Then
             var delegateNumber = (string?)controller.TempData.Peek("delegateNumber");
-            var passwordSet = (bool)controller.TempData.Peek("passwordSet");
+            var passwordSet = (bool?)controller.TempData.Peek("passwordSet");
             delegateNumber.Should().Be(sampleDelegateNumber);
             passwordSet.Should().Be(data.IsPasswordSet);
         }
