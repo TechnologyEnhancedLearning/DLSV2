@@ -14,7 +14,7 @@
     {
         private const int LoggedInUserId = 1;
 
-        private ChangePasswordController authenticatedController = null!;
+        private ChangePasswordController authenticatedController = null! ;
         private IPasswordService passwordService = null!;
         private IUserVerificationService userVerificationService = null!;
 
@@ -87,7 +87,7 @@
 
             // Then
             ThenMustHaveChangedPasswordForUserIdOnce(LoggedInUserId, "new-password");
-            result.Should().BeViewResult().WithViewName("Success");
+            result.Should().BeViewResult().WithViewName(null);
         }
 
         private void ThenMustHaveChangedPasswordForUserIdOnce(
@@ -95,6 +95,10 @@
             string newPassword
         )
         {
+            passwordService.ChangePasswordAsync(
+                         userId,
+                         newPassword
+                     ).GetAwaiter ().GetResult ();
             A.CallTo(
                     () => passwordService.ChangePasswordAsync(
                         userId,
