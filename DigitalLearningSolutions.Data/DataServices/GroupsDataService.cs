@@ -289,12 +289,15 @@
         public void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink)
         {
             connection.Execute(
-                @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
-                    VALUES (
-                        @groupId,
-                        @delegateId,
-                        @addedDate,
-                        @addedByFieldLink)",
+                @"IF NOT EXISTS(SELECT 1 FROM GroupDelegates WHERE DelegateID=@delegateId AND  GroupID=@groupId)
+                    BEGIN
+                        INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                                            VALUES (
+                                                @groupId,
+                                                @delegateId,
+                                                @addedDate,
+                                                @addedByFieldLink)
+                    END",
                 new { groupId, delegateId, addedDate, addedByFieldLink }
             );
         }
