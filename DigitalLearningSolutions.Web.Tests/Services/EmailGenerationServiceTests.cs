@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.Email;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;

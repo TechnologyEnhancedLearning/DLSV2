@@ -38,17 +38,18 @@
         {
             var filters = new List<FilterModel>
             {
-                new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions),
-                new FilterModel("LockedStatus", "Locked Status", LockedStatusOptions),
-                new FilterModel("RemovedStatus", "Removed Status", RemovedStatusOptions),
-                new FilterModel("CompletionStatus", "Completion Status", CompletionStatusOptions)
+                new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions,"status"),
+                new FilterModel("LockedStatus", "Locked Status", LockedStatusOptions, "status"),
+                new FilterModel("RemovedStatus", "Removed Status", RemovedStatusOptions, "status"),
+                new FilterModel("CompletionStatus", "Completion Status", CompletionStatusOptions, "status")
             };
             filters.AddRange(
                 adminFields.Select(
                     field => new FilterModel(
                         $"CourseAdminField{field.PromptNumber}",
                         field.PromptText,
-                        FilteringHelper.GetPromptFilterOptions(field)
+                        FilteringHelper.GetPromptFilterOptions(field),
+                        "prompts"
                     )
                 )
             );

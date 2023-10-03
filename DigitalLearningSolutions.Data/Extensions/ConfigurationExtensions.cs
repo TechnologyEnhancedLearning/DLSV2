@@ -37,6 +37,7 @@
         private const string LearningHubReportAPIClientId = "LearningHubReportAPIConfig:ClientId";
         private const string LearningHubReportAPIClientIdentityKey = "LearningHubReportAPIConfig:ClientIdentityKey";
         private const string ExportQueryRowLimitKey = "FeatureManagement:ExportQueryRowLimit";
+        private const string MaxBulkUploadRowsLimitKey = "FeatureManagement:MaxBulkUploadRows";
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -152,6 +153,9 @@
         {
             return int.Parse(config[ExportQueryRowLimitKey]);
         }
-
+        public static int GetMaxBulkUploadRowsLimit(this IConfiguration config)
+        {
+            return int.Parse(config[MaxBulkUploadRowsLimitKey]);
+        }
     }
 }

@@ -3,9 +3,9 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.User;    
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
@@ -136,7 +136,7 @@
                         adminUser!.CategoryId
                     )
             ).Returns(courseCount);
-            A.CallTo(() => userDataService.GetNumberOfActiveAdminsAtCentre(CentreId)).Returns(adminCount);
+            A.CallTo(() => userDataService.GetNumberOfAdminsAtCentre(CentreId)).Returns(adminCount);
             A.CallTo(() => centresService.GetCentreRankForCentre(CentreId)).Returns(centreRank);
             A.CallTo(() => supportTicketDataService.GetNumberOfUnarchivedTicketsForAdminId(AdminId))
                 .Returns(ticketCountForAdmin);

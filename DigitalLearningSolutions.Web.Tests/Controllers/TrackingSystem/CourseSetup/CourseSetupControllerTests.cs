@@ -1,6 +1,7 @@
 ﻿
 namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
@@ -102,9 +103,15 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSe
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
+
         private IActivityService? activityService = null;
 
-    [SetUp]
+        private IPaginateService paginateService = null;
+        private ICourseCategoriesDataService courseCategoriesDataService = null;
+        private ICourseTopicsDataService courseTopicsDataService = null;
+
+
+        [SetUp]
         public void Setup()
         {
             courseService = A.Fake<ICourseService>();
@@ -112,6 +119,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSe
             sectionService = A.Fake<ISectionService>();
             activityService = A.Fake<IActivityService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            paginateService = A.Fake<IPaginateService>();
+            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
+            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             config = A.Fake<IConfiguration>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
             A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
@@ -119,8 +129,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSe
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                     A<int>._,
-                    A<int>._,
-                    false
+                    A<int>._
                 )
             ).Returns(courses);
 
@@ -137,9 +146,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSe
                     tutorialService,
                     sectionService,
                     searchSortFilterPaginateService,
+                    paginateService,
                     config,
                     multiPageFormService,
-                    activityService
+                    activityService,
+                    courseCategoriesDataService,
+                    courseTopicsDataService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -151,9 +163,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSe
                     tutorialService,
                     sectionService,
                     searchSortFilterPaginateService,
+                    paginateService,
                     config,
                     multiPageFormService,
-                    activityService
+                    activityService,
+                    courseCategoriesDataService,
+                    courseTopicsDataService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
@@ -169,11 +184,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSe
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).MustHaveHappened();
+                A.CallTo(() => courseService.GetCentreCourses(A<string>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int?>._, A<bool>._, A<bool?>._,
+                    A<string>._, A<string>._, A<string>._, A<string>._)).MustHaveHappened();
                 A.CallTo(
-                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                    () => paginateService.Paginate(
                         A<IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>>._,
-                        A<SearchSortFilterAndPaginateOptions>._
+                        A<int>._,
+                        A<PaginationOptions>._, A<FilterOptions>._, A<string>._, A<string>._, A<string>._
                     )
                 ).MustHaveHappened();
                 A.CallTo(

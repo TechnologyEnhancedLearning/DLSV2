@@ -4,7 +4,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Remove enrolment" : "Remove enrolment";
+    ViewData["Title"] = errorHasOccurred ? "Error: Remove from activity" : "Remove from activity";
 
   var cancelLinkRouteData = new Dictionary<string, string>();
 
@@ -24,7 +24,7 @@
     {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
     }
-    <h1 class="nhsuk-heading-xl">Remove enrolment</h1>
+    <h1 class="nhsuk-heading-xl">Remove from activity</h1>
   </div>
 </div>
 
@@ -45,10 +45,10 @@
       <input type="hidden" asp-for="@Model.ReturnPageQuery" />
 
       <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
-                          label="I am sure that I wish to remove this enrolment"
-                          hint-text="This action will remove the activity from the delegate’s Current Activities list and archive their progress." />
+                                label="I am sure that I wish to remove the progress record for this learner on this activity."
+                                hint-text="This action will remove the activity from the delegate’s Learning Portal Activities list and archive their progress." />
 
-      <button class="nhsuk-button delete-button" role="button" type="submit">Remove enrolment</button>
+      <button class="nhsuk-button delete-button" role="button" type="submit">Remove from activity</button>
     </form>
     @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
     {

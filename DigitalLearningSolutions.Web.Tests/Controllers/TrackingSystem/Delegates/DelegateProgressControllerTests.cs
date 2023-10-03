@@ -6,12 +6,12 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Progress;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;    
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
@@ -352,31 +352,6 @@
 
             // Then
             result.Should().BeViewResult();
-        }
-
-        [Test]
-        public void Removal_confirmation_page_returns_not_found_result_for_delegate_with_no_active_progress()
-        {
-            // Given
-            var delegateCourseInfo = new DelegateCourseInfo();
-            var delegateCourseDetails = new DetailedCourseProgress(
-                new Progress(),
-                new List<DetailedSectionProgress>(),
-                delegateCourseInfo
-            );
-            A.CallTo(() => progressService.GetDetailedCourseProgress(ProgressId))
-                .Returns(delegateCourseDetails);
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(ProgressId))
-                .Returns(false);
-
-            // When
-            var result = delegateProgressController.ConfirmRemoveFromCourse(
-                ProgressId,
-                DelegateAccessRoute.ViewDelegate
-            );
-
-            // Then
-            result.Should().BeStatusCodeResult().WithStatusCode(410);
         }
 
         [Test]

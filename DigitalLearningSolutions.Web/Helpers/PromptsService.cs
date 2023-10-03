@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
@@ -246,6 +247,15 @@
                 {
                     var errorMessage = $"{delegateRegistrationPrompt.Prompt} must be at most 100 characters";
                     modelState.AddModelError("Answer" + delegateRegistrationPrompt.PromptNumber, errorMessage);
+                }
+                if (delegateRegistrationPrompt.Prompt?.ToLower().Contains("telephone") ?? false)
+                {
+                    Regex regex = new Regex(@"^\w{4}\d{6,7}$");
+                    if (!string.IsNullOrEmpty(delegateRegistrationPrompt.Answer) && !regex.IsMatch(delegateRegistrationPrompt.Answer))
+                    {
+                        var errorMessage = $"{delegateRegistrationPrompt.Prompt} must be in correct format";
+                        modelState.AddModelError("Answer" + delegateRegistrationPrompt.PromptNumber, errorMessage);
+                    }
                 }
             }
         }

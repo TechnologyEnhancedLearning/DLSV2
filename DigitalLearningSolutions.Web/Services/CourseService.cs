@@ -1,13 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Utilities;
-
+    using Microsoft.Extensions.Configuration;
+    using System.Collections.Generic;
+    using System.Linq;
+    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
     public interface ICourseService
     {
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId);
@@ -15,9 +16,14 @@
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
             GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                 int centreId,
-                int? categoryId,
-                bool includeAllCentreCourses = false
+                int? categoryId
             );
+
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(
+            int centreId,
+            int? categoryId
+        );
 
         public bool DelegateHasCurrentProgress(int progressId);
 
@@ -101,6 +107,9 @@
         int CreateNewCentreCourse(Customisation customisation);
 
         LearningLog? GetLearningLogDetails(int progressId);
+
+        public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
+           string isActive, string categoryName, string courseTopic, string hasAdminFields);
     }
 
     public class CourseService : ICourseService
@@ -113,6 +122,7 @@
         private readonly IGroupsDataService groupsDataService;
         private readonly IProgressDataService progressDataService;
         private readonly ISectionService sectionService;
+        private readonly IConfiguration configuration;
 
         public CourseService(
             IClockUtility clockUtility,
@@ -122,7 +132,8 @@
             IGroupsDataService groupsDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
             ICourseTopicsDataService courseTopicsDataService,
-            ISectionService sectionService
+            ISectionService sectionService,
+            IConfiguration configuration
         )
         {
             this.clockUtility = clockUtility;
@@ -133,6 +144,7 @@
             this.courseCategoriesDataService = courseCategoriesDataService;
             this.courseTopicsDataService = courseTopicsDataService;
             this.sectionService = sectionService;
+            this.configuration = configuration;
         }
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId)
@@ -144,15 +156,39 @@
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
             GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                 int centreId,
-                int? categoryId,
-                bool includeAllCentreCourses = false
+                int? categoryId
             )
         {
             var allCourses = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
-            return allCourses.Where(c => c.CentreId == centreId || c.AllCentres && includeAllCentreCourses).Select(
+            return allCourses.Where(c => c.CentreId == centreId).Select(
                 c => new CourseStatisticsWithAdminFieldResponseCounts(
-                    c,
-                    courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                    c, courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                )
+            );
+        }
+
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+        GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(
+            int centreId,
+            int? categoryId
+        )
+        {
+            var exportQueryRowLimit = ConfigurationExtensions.GetExportQueryRowLimit(configuration);
+
+            int resultCount = courseDataService.GetCourseStatisticsAtCentreFilteredByCategoryResultCount(centreId, categoryId);
+
+            int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
+            int currentRun = 1;
+
+            List<CourseStatistics> allCourses = new List<CourseStatistics>();
+            while (totalRun >= currentRun)
+            {
+                allCourses.AddRange(courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId, exportQueryRowLimit, currentRun));
+                currentRun++;
+            }
+            return allCourses.Where(c => c.CentreId == centreId || c.AllCentres).Select(
+                c => new CourseStatisticsWithAdminFieldResponseCounts(
+                    c, courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
                 )
             );
         }
@@ -360,11 +396,25 @@
             return new CentreCourseDetails(courses, categories, topics);
         }
 
+
+
+        public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
+           string isActive, string categoryName, string courseTopic, string hasAdminFields)
+        {
+            var (allCourses, resultCount) = courseDataService.GetCourseStatisticsAtCentre(searchString, offSet, itemsPerPage, sortBy, sortDirection, centreId, categoryId, allCentreCourses, hideInLearnerPortal,
+           isActive, categoryName, courseTopic, hasAdminFields);
+
+            return (allCourses.Select(
+                c => new CourseStatisticsWithAdminFieldResponseCounts(
+                    c,
+                    courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                )
+            ), resultCount);
+        }
+
         public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId)
         {
-            var (courses, categories, topics) = (
-                GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId, true),
-                courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+            var (courses, categories, topics) = (GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(centreId, categoryId), courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                     .Select(c => c.CategoryName),
                 courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));
 

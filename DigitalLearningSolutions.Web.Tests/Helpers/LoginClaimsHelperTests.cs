@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.User;    
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
 

@@ -73,6 +73,15 @@
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.ReportsViewer));
             }
 
+            if (admin.UserAccount.Active && admin.AdminAccount.Active)
+            {
+                tags.Add(new SearchableTagViewModel(UserAccountStatusFilterOptions.Active));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(UserAccountStatusFilterOptions.Inactive));
+            }
+
             return tags;
         }
 

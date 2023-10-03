@@ -1,12 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using Dapper;
+    using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models.User;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Dapper;
-    using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Models.User;
 
     public partial class UserDataService
     {
@@ -177,6 +177,21 @@
             );
         }
 
+        public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
+        {
+            var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.centreID = @centreId";
+
+            return connection.Query<AdminAccount, UserAccount, UserCentreDetails, AdminEntity>(
+                sql,
+                (adminAccount, userAccount, userCentreDetails) => new AdminEntity(
+                    adminAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { centreId }
+            );
+        }
+
         [Obsolete("New code should use GetAdminById instead")]
         public AdminUser? GetAdminUserById(int id)
         {
@@ -210,10 +225,10 @@
             return users;
         }
 
-        public int GetNumberOfActiveAdminsAtCentre(int centreId)
+        public int GetNumberOfAdminsAtCentre(int centreId)
         {
             return (int)connection.ExecuteScalar(
-                @"SELECT COUNT(*) FROM AdminUsers WHERE Active = 1 AND CentreID = @centreId",
+                @"SELECT COUNT(*) FROM AdminUsers WHERE CentreID = @centreId",
                 new { centreId }
             );
         }

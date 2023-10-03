@@ -1,14 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;    
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using FakeItEasy;
     using FizzWare.NBuilder;
@@ -17,33 +16,38 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class CourseDelegatesControllerTests
     {
         private const int UserCentreId = 3;
         private CourseDelegatesController controller = null!;
-        private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
-        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IPaginateService paginateService = null!;
+        private IConfiguration configuration = null!;
 
         [SetUp]
         public void SetUp()
         {
-            courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             courseDelegatesService = A.Fake<ICourseDelegatesService>();
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
-            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            paginateService = A.Fake<IPaginateService>();
+            configuration = A.Fake<IConfiguration>();
 
             controller = new CourseDelegatesController(
-                    courseAdminFieldsService,
                     courseDelegatesService,
                     courseDelegatesDownloadFileService,
-                    searchSortFilterPaginateService
+                    paginateService,
+                    configuration
                 )
                 .WithDefaultContext()
-                .WithMockUser(true, UserCentreId);
+                 .WithMockHttpContextSession()
+                .WithMockUser(true, UserCentreId)
+                .WithMockTempData()
+                .WithMockServices(); 
         }
 
         [Test]
@@ -51,18 +55,19 @@
         {
             // Given
             var course = new Course { CustomisationId = 1, Active = true };
-            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(UserCentreId, null, null))
-                .Returns(
-                    new CourseDelegatesData(
+            
+            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesPerPageForCentre("", 0, 10, "SearchableName", "Ascending",
+                1, UserCentreId,null,true,null,null,null,null,null,null))
+                .Returns((new CourseDelegatesData(
                         1,
                         new List<Course> { course },
                         new List<CourseDelegate>(),
                         new List<CourseAdminField>()
-                    )
+                    ), 1)
                 );
 
             // When
-            var result = controller.Index();
+            var result = controller.Index(1);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -72,8 +77,16 @@
         public void Index_returns_Not_Found_when_service_returns_null()
         {
             // Given
-            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(UserCentreId, null, 2))
-                .Throws<CourseAccessDeniedException>();
+            var course = new Course { CustomisationId = 1, Active = true };
+            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesPerPageForCentre("", 0, 10, "SearchableName", "Ascending",
+                2, UserCentreId, null, true, null, null, null, null, null, null))
+                .Returns((new CourseDelegatesData(
+                        2,
+                        new List<Course> { course },
+                        new List<CourseDelegate>(),
+                        new List<CourseAdminField>()
+                    ), 0)
+                );
 
             // When
             var result = controller.Index(2);
@@ -87,6 +100,9 @@
         {
             // Given
             const int customisationId = 2;
+            var searchString = string.Empty;
+            var sortBy = "SearchableName";
+            var sortDirection = "Ascending";
             var course = new Course { CustomisationId = customisationId, Active = true };
             var courseDelegate = Builder<CourseDelegate>
                 .CreateListOfSize(2)
@@ -96,19 +112,17 @@
                 .With(c => c.IsDelegateActive = true)
                 .Build();
             A.CallTo(
-                    () => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
-                        UserCentreId,
-                        null,
-                        customisationId
-                    )
+                    () => courseDelegatesService.GetCoursesAndCourseDelegatesPerPageForCentre("", 0, 10, "SearchableName", "Ascending",
+                customisationId, UserCentreId, null, true, null, null, null, null, null, null)
+
                 )
-                .Returns(
+                .Returns((
                     new CourseDelegatesData(
                         customisationId,
                         new List<Course> { course },
                         courseDelegate,
                         new List<CourseAdminField>()
-                    )
+                    ),1)
                 );
 
             var httpRequest = A.Fake<HttpRequest>();
@@ -117,10 +131,10 @@
             const string cookieValue = "AccountStatus|IsDelegateActive|true";
 
             var courseDelegatesController = new CourseDelegatesController(
-                    courseAdminFieldsService,
                     courseDelegatesService,
                     courseDelegatesDownloadFileService,
-                    searchSortFilterPaginateService
+                    paginateService,
+                    configuration
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, UserCentreId)
@@ -128,8 +142,8 @@
 
             A.CallTo(() => httpRequest.Cookies).Returns(A.Fake<IRequestCookieCollection>());
             SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseDelegate>(
-                    searchSortFilterPaginateService
+                .GivenACallToPaginateServiceReturnsResult<CourseDelegate>(
+                    paginateService, courseDelegate.Count,searchString,sortBy,sortDirection
                 );
 
             // When
@@ -142,29 +156,11 @@
                     .Be("AccountStatus|IsDelegateActive|true");
 
                 A.CallTo(
-                        () => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
-                            UserCentreId,
-                            null,
-                            customisationId
-                        )
+                        () => courseDelegatesService.GetCoursesAndCourseDelegatesPerPageForCentre("", 0, 10, "SearchableName", "Ascending",
+                customisationId, UserCentreId, null, true, null, null, null, null, null, null)
                     )
                     .MustHaveHappened();
             }
-        }
-
-        [Test]
-        public void AllCourseDelegates_gets_courses_for_user_details_only()
-        {
-            // Given
-            A.CallTo(() => courseDelegatesService.GetCourseDelegatesForCentre(2, UserCentreId))
-                .Returns(new List<CourseDelegate>());
-
-            // When
-            controller.AllCourseDelegates(2);
-
-            // Then
-            A.CallTo(() => courseDelegatesService.GetCourseDelegatesForCentre(2, UserCentreId))
-                .MustHaveHappened();
         }
     }
 }

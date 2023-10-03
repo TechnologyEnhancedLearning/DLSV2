@@ -2,10 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.User;    
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -28,6 +28,7 @@
                 new SearchableTagViewModel(AdminRoleFilterOptions.CmsAdministrator),
                 new SearchableTagViewModel(AdminRoleFilterOptions.ContentCreatorLicense),
                 new SearchableTagViewModel(AdminRoleFilterOptions.SuperAdmin),
+                new SearchableTagViewModel(UserAccountStatusFilterOptions.Active),
             };
 
             // When

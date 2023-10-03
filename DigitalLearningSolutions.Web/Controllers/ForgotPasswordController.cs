@@ -54,9 +54,7 @@
             }
             catch (UserAccountNotFoundException)
             {
-                ModelState.AddModelError("EmailAddress", "A user with this email could not be found");
-
-                return View(model);
+                return RedirectToAction("Confirm");
             }
             catch (ResetPasswordInsertException)
             {

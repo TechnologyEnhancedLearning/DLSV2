@@ -1,10 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
 @model CourseDelegatesViewModel
 
-@section scripts {
-  <script src="@Url.Content("~/js/trackingSystem/courseDelegates.js")" asp-append-version="true"></script>
-}
-
   <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/courseDelegates.css")" asp-append-version="true">
 
   @{
@@ -17,11 +13,7 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      @if (Model.CourseDetails.JavascriptSearchSortFilterPaginateEnabled)
-    {
-      <vc:loading-spinner page-has-side-nav-menu="true" />
-    }
-    <div id="@(Model.CourseDetails.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
+    <div id="no-js-styling">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-three-quarters">
           <h1 id="page-heading" class="nhsuk-heading-xl">@ViewData["Title"]</h1>
@@ -32,6 +24,7 @@
              asp-controller="CourseDelegates"
              asp-action="DownloadCurrent"
              asp-route-customisationId="@Model.CustomisationId"
+             asp-route-searchString="@Model.CourseDetails.SearchString"
              asp-route-sortBy="@Model.CourseDetails?.SortBy"
              asp-route-sortDirection="@Model.CourseDetails?.SortDirection"
              asp-route-existingFilterString="@Model.CourseDetails?.ExistingFilterString"
@@ -86,7 +79,7 @@
             }
             else
             {
-              <partial name="SearchablePage/_SearchResultsCount" model="Model.CourseDetails" />
+              <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model.CourseDetails" />
               <partial name="SearchablePage/_TopPagination" model="Model.CourseDetails" />
               <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model.CourseDetails" />
 

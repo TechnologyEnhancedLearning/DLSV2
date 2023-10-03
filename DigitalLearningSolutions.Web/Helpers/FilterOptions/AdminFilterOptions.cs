@@ -88,4 +88,21 @@
             FilterStatus.Default
         );
     }
+
+    public static class UserAccountStatusFilterOptions
+    {
+        private const string Group = "UserStatus";
+
+        public static readonly FilterOptionModel Active = new FilterOptionModel(
+            "Active",
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsUserActive), "true"),
+            FilterStatus.Default
+        );
+
+        public static readonly FilterOptionModel Inactive = new FilterOptionModel(
+            "Inactive",
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsUserActive), "false"),
+            FilterStatus.Default
+        );
+    }
 }
