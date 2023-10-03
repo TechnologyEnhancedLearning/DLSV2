@@ -46,7 +46,7 @@
             );
         }
 
-        public bool IsPasswordValid(string? password, int? userId)
+        public bool IsPasswordValid(string password, int? userId)
         {
             if (string.IsNullOrEmpty(password) || userId == null)
             {
