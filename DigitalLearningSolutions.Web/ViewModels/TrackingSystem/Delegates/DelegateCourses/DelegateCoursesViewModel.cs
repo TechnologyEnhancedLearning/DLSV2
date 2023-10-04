@@ -54,7 +54,7 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            CourseSortByOptions.CourseName,
+            CourseSortByOptions.ActivityName,
             CourseSortByOptions.Completed,
             CourseSortByOptions.InProgress,
         };

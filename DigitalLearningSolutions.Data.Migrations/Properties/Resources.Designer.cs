@@ -1033,6 +1033,15 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1943_CookiePolicyContentHtmlOldRecord {
+            get {
+                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtmlOldRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;
         ///&lt;h2&gt;What are cookies?&lt;/h2&gt;
         ///&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;/p&gt;
@@ -1043,18 +1052,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///&lt;li&gt;make our website work&lt;/li&gt;
         ///&lt;li&gt;measure how you use our website, such as which links you clic [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1943_CookiePolicyContentHtml {
+        internal static string TD_1943_CookiesPolicy {
             get {
-                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_1943_CookiePolicyContentHtmlOldRecord {
-            get {
-                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtmlOldRecord", resourceCulture);
+                return ResourceManager.GetString("TD_1943_CookiesPolicy", resourceCulture);
             }
         }
         

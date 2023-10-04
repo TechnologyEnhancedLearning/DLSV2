@@ -76,6 +76,7 @@
             int? itemsPerPage = null
         )
         {
+            searchString = searchString == null ? string.Empty : searchString.Trim();
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
@@ -107,10 +108,57 @@
                 new PaginationOptions(page, itemsPerPage)
             );
 
-            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
-                courses,
-                searchSortPaginationOptions
-            );
+                if (selectedFilters.Count > 0)
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        var filterArr = filter.Split(FilteringHelper.Separator);
+                        var filterValue = filterArr[2];
+                        if (filterValue == FilteringHelper.EmptyValue) filterValue = "No option selected";
+
+                        if (filter.Contains("CategoryName"))
+                            categoryName = filterValue;
+
+                        if (filter.Contains("CourseTopic"))
+                            courseTopic = filterValue;
+
+                        if (filter.Contains("Active"))
+                            isActive = filterValue;
+
+                        if (filter.Contains("NotActive"))
+                            isActive = "false";
+
+                        if (filter.Contains("HasAdminFields"))
+                            hasAdminFields = filterValue;
+
+                        if (filter.Contains("HideInLearnerPortal"))
+                            hideInLearnerPortal = filterValue == "true" ? true : false;
+                    }
+                }
+            }
+
+            var (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, false, hideInLearnerPortal,
+                                                            isActive, categoryName, courseTopic, hasAdminFields);
+            if (courses.Count() == 0 && resultCount > 0)
+            {
+                page = 1;
+                offSet = 0;
+                (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, false, hideInLearnerPortal,
+                                                            isActive, categoryName, courseTopic, hasAdminFields);
+            }
+
+            var availableFilters = CourseStatisticsViewModelFilterOptions
+                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+
+            var result = paginateService.Paginate(
+                 courses,
+                 resultCount,
+                 new PaginationOptions(page, itemsPerPage),
+                 new FilterOptions(existingFilterString, availableFilters),
+                 searchString,
+                 sortBy,
+                 sortDirection
+             );
 
             var model = new CourseSetupViewModel(
                 result,
@@ -649,16 +697,16 @@
             {
                 if (course.Archived || course.Active == false)
                 {
-                  course.NotActive = true;
+                    course.NotActive = true;
                 }
                 else
                 {
-                  course.NotActive = false;
+                    course.NotActive = false;
                 }
             }
 
             return updatedCourses;
         }
 
-  }
+    }
 }
