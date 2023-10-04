@@ -62,6 +62,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         public void EditCentreDetails_updates_centre_and_redirects_with_successful_save()
         {
             // Given
+            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre1##") };
+            A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
             var model = new EditCentreDetailsSuperAdminViewModel
             {
                 CentreId = 374,
@@ -92,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         }
 
         [Test]
-        public void EditCentreDetails_VerifiesCentresList_Results_DuplicateCentre_error()
+        public void EditCentreDetails_results_DuplicateCentre_error()
         {
             // Given
             IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##") };
@@ -111,8 +113,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             };
 
             // When
-            var result = controller.EditCentreDetails(model);
-
+            var result = controller.EditCentreDetails(model);            
             // Then
             result.Should().BeViewResult();
             controller.ModelState.IsValid.Should().BeFalse();
