@@ -34,7 +34,7 @@
 
         private readonly FilterModel expectedStatusFilterViewModel = new FilterModel(
             "Active",
-            "Status",
+            "Active status",
             new[]
             {
                 new FilterOptionModel(
