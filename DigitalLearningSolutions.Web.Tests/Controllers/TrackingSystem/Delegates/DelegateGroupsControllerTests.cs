@@ -19,7 +19,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using NUnit.Framework;
-
     public class DelegateGroupsControllerTests
     {
         private const string CookieName = "DelegateGroupsFilter";
