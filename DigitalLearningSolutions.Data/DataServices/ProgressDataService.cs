@@ -6,6 +6,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using Microsoft.Extensions.Logging;
@@ -44,6 +45,9 @@
         IEnumerable<LearningLogEntry> GetLearningLogEntries(int progressId);
 
         Progress? GetProgressByProgressId(int progressId);
+
+        DelegateCourseProgressInfo? GetDelegateCourseProgress(int progressId);
+        IEnumerable<SectionProgress> GetSectionProgressInfo(int progressId);
 
         IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId);
 
@@ -346,6 +350,61 @@
                     WHERE ProgressID = @progressId",
                 new { progressId }
             ).SingleOrDefault();
+        }
+
+        public DelegateCourseProgressInfo? GetDelegateCourseProgress(int progressId)
+        {
+            return connection.Query<DelegateCourseProgressInfo>(
+                @"SELECT p.ProgressID, Ce.CentreName, Ca.FirstName + ' ' + Ca.LastName AS CandidateName, A_1.ApplicationName + ' - ' + Cu.CustomisationName AS Course, p.Completed, 
+                  p.Evaluated, COALESCE
+                      ((SELECT MAX(DiagAttempts) AS Expr1
+                        FROM      aspProgress
+                        WHERE   (ProgressID = p.ProgressID)), 0) AS DiagnosticAttempts, p.DiagnosticScore,
+                      (SELECT SUM(TutTime) AS TotalTime
+                       FROM      aspProgress AS ap
+                       WHERE   (ProgressID = p.ProgressID)) AS TotalTime, CASE WHEN
+                      (SELECT COUNT(CusTutID) AS Tuts
+                       FROM      CustomisationTutorials AS ct
+                       WHERE   (Status = 1) AND (CustomisationID = p.CustomisationID)) > 0 THEN
+                      ((SELECT SUM(TutStat) AS Done
+                        FROM      aspProgress ap
+                        WHERE   ProgressID = p.ProgressID)) * 100 /
+                      ((SELECT COUNT(CusTutID) AS Tuts
+                        FROM      CustomisationTutorials AS ct
+                        WHERE   (Status = 1) AND (CustomisationID = p.CustomisationID)) * 2) ELSE - 1 END AS LearningDone, COALESCE
+                      ((SELECT MAX(Attempts) AS Attempts
+                        FROM      (SELECT COUNT(AssessAttemptID) AS Attempts
+                                           FROM      AssessAttempts AS aa
+                                           WHERE   (CandidateID = p.CandidateID) AND (CustomisationID = p.CustomisationID)
+                                           GROUP BY SectionNumber) AS derivedtbl_1), 0) AS PLAttempts, COALESCE
+                      ((SELECT COUNT(Passes) AS Passes
+                        FROM      (SELECT COUNT(AssessAttemptID) AS Passes
+                                           FROM      AssessAttempts AS aa
+                                           WHERE   (CandidateID = p.CandidateID) AND (CustomisationID = p.CustomisationID) AND (Status = 1)
+                                           GROUP BY SectionNumber) AS derivedtbl_2), 0) AS PLPasses,
+                      (SELECT COUNT(s.SectionID) AS Sections
+                       FROM      Sections AS s INNER JOIN
+                                         Applications AS a ON s.ApplicationID = a.ApplicationID INNER JOIN
+                                         Customisations AS c ON a.ApplicationID = c.ApplicationID
+                       WHERE   (c.CustomisationID = p.CustomisationID) AND (s.ArchivedDate IS NULL)) AS Sections, Cu.IsAssessed, Cu.TutCompletionThreshold, Cu.DiagCompletionThreshold, 
+                                A_1.AssessAttempts, A_1.PLAPassThreshold, Ca.CandidateNumber
+                FROM Progress AS p INNER JOIN
+                    Customisations AS Cu ON p.CustomisationID = Cu.CustomisationID INNER JOIN
+                    Candidates AS Ca ON p.CandidateID = Ca.CandidateID INNER JOIN
+                    Centres AS Ce ON Cu.CentreID = Ce.CentreID INNER JOIN
+                    Applications AS A_1 ON Cu.ApplicationID = A_1.ApplicationID
+                WHERE  (p.ProgressID = @progressId)",
+                new { progressId }
+            ).SingleOrDefault();
+        }
+
+        public IEnumerable<SectionProgress> GetSectionProgressInfo(int progressId)
+        {
+            return connection.Query<SectionProgress>(
+                "uspReturnSectionsForCandCust_V2",
+                new { progressId },
+                commandType: CommandType.StoredProcedure
+            ).ToList();
         }
 
         public IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId)

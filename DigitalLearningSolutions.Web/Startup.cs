@@ -272,6 +272,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IAdminDownloadFileService, AdminDownloadFileService>();
             services.AddScoped<IPlatformReportsService, PlatformReportsService>();
             services.AddScoped<IReportFilterService, ReportFilterService>();
+            services.AddScoped<IPdfService, PdfService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)

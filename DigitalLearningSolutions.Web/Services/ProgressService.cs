@@ -24,6 +24,8 @@
 
         DetailedCourseProgress? GetDetailedCourseProgress(int progressId);
 
+        DelegateCourseProgressInfo? GetCourseProgressInfo(int progressId);
+
         void UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
@@ -164,6 +166,15 @@
                 sections,
                 courseInfo
             );
+        }
+
+        public DelegateCourseProgressInfo? GetCourseProgressInfo(int progressId)
+        {
+            var delegateCourseProgess = progressDataService.GetDelegateCourseProgress(progressId);
+            var sectionProgress = progressDataService.GetSectionProgressInfo(progressId);
+            delegateCourseProgess.SectionProgress = sectionProgress;
+
+            return (delegateCourseProgess);
         }
 
         public void UpdateCourseAdminFieldForDelegate(
