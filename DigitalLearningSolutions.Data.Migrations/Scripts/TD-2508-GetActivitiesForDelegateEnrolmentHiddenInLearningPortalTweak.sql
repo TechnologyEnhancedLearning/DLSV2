@@ -43,9 +43,9 @@ AS
 										 FROM    CourseCategories
 										 WHERE (CourseCategoryID = SA.CategoryID)) AS Category,
 										 '' AS Topic, IIF(CA.RemovedDate IS NULL,0,1) AS DelegateStatus,
-                                         null AS HideInLearnerPortal
+                                         0 AS HideInLearnerPortal
 						FROM   SelfAssessments AS SA 
-		INNER JOIN CentreSelfAssessments AS CSA ON SA.Id = CSA.SelfAssessmentID AND CSA.CentreId = @centreId AND CSA.AllowEnrolment = 1
+		INNER JOIN CentreSelfAssessments AS CSA ON SA.Id = CSA.SelfAssessmentID AND CSA.CentreId = @centreId
 		LEFT JOIN CandidateAssessments AS CA ON CSA.SelfAssessmentID=CA.SelfAssessmentID AND CA.DelegateUserID = (SELECT UserID from DelegateAccounts where ID=@DelegateID)
 						WHERE (SA.ID NOT IN
 										 (SELECT SelfAssessmentID

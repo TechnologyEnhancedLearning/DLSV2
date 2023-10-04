@@ -115,7 +115,7 @@ When you close the browser (if you do not use the banner) or 1 year (if you use 
 <p><a href=http://www.dls.nhs.uk/ data-cke-saved-href=http://www.dls.nhs.uk/ title=http://www.dls.nhs.uk>www.dls.nhs.uk</a></td>
 <td class="nhsuk-table__cell" data-label="Purpose" role="cell">
 <span class="nhsuk-table-responsive__heading">Purpose</span>
-<p>A custom cookie which remembers the centre chosen by the user. </p></td>
+<p>A custom cookie which remembers the centre chosen by the user.</p></td>
 <td class="nhsuk-table__cell" data-label="Expiry" role="cell"><span class="nhsuk-table-responsive__heading">Expiry</span>1 month</td>
 </tr>
 <tr class="nhsuk-table__row" role="row">

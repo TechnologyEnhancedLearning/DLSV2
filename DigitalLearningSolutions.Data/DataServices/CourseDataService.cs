@@ -727,7 +727,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = @allCentreCourses))
                         AND ca.CentreID = @centreId
                         AND ap.DefaultContentTypeID <> 4
-                        AND ( ap.ApplicationName + ' ' + ' ' + cu.CustomisationName LIKE N'%' + @searchString + N'%')
+                        AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%')
                         AND ((@isActive = 'Any') OR (@isActive = 'true' AND (cu.Active = 1 AND ap.ArchivedDate IS NULL)) OR (@isActive = 'false' AND ((cu.Active = 0 OR ap.ArchivedDate IS NOT NULL))))
                         AND ((@categoryName = 'Any') OR (cc.CategoryName = @categoryName))
                         AND ((@courseTopic = 'Any') OR (ct.CourseTopic = @courseTopic))
@@ -748,7 +748,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             if (sortBy == "CourseName" || sortBy == "SearchableName")
                 orderBy = " ORDER BY ap.ApplicationName + cu.CustomisationName " + sortOrder;
             else
-                orderBy = " ORDER BY " + sortBy;
+                orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
 
             orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 

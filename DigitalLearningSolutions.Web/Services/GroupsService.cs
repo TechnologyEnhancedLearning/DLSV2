@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -74,6 +73,17 @@
         void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment);
 
         IEnumerable<Group> GetGroupsForCentre(int centreId);
+
+        (IEnumerable<Group>, int) GetGroupsForCentre(
+            string? search,
+            int? offset,
+            int? rows,
+            string? sortBy,
+            string? sortDirection,
+            int? centreId,
+            string? filterAddedBy,
+            string? filterLinkedField
+        );
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
@@ -487,6 +497,20 @@
         public IEnumerable<Group> GetGroupsForCentre(int centreId)
         {
             return groupsDataService.GetGroupsForCentre(centreId);
+        }
+
+        public (IEnumerable<Group>, int) GetGroupsForCentre(
+            string? search = "",
+            int? offset = 0,
+            int? rows = 10,
+            string? sortBy = "",
+            string? sortDirection = "",
+            int? centreId = 0,
+            string? filterAddedBy = "",
+            string? filterLinkedField = ""
+        )
+        {
+            return groupsDataService.GetGroupsForCentre(search, offset, rows, sortBy, sortDirection, centreId, filterAddedBy, filterLinkedField);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)

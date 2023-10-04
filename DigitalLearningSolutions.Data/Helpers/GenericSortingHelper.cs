@@ -116,6 +116,8 @@
         public static readonly (string DisplayText, string PropertyName) CourseName =
             ("Course Name", nameof(CourseStatistics.CourseName));
 
+        public static readonly (string DisplayText, string PropertyName) ActivityName =("Activity Name", nameof(CourseStatistics.CourseName));
+
         public static readonly (string DisplayText, string PropertyName) TotalDelegates =
             ("Total Delegates", nameof(CourseStatistics.DelegateCount));
 

@@ -2,7 +2,7 @@
 {
     using FluentMigrator;
 
-    [Migration(202309141645)]
+    [Migration(202310031044)]
     public class AlterGetActivitiesForDelegateEnrolmentSPNotHiddenInLearningPortal : Migration
     {
         public override void Up()

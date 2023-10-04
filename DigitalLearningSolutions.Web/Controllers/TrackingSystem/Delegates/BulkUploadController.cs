@@ -80,25 +80,23 @@
         public IActionResult StartUpload(UploadDelegatesViewModel model)
         {
             int MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
-            if (model.DelegatesFile != null)
-            {
-                var workbook = new XLWorkbook(model.DelegatesFile.OpenReadStream());
-                if (!workbook.Worksheets.Contains(DelegateDownloadFileService.DelegatesSheetName))
-                {
-                    ModelState.AddModelError("MaxBulkUploadRows", CommonValidationErrorMessages.InvalidBulkUploadExcelFile);
-                    return View("StartUpload", model);
-                }
-                int ExcelRowsCount = delegateUploadFileService.GetBulkUploadExcelRowCount(model.DelegatesFile);
-                if (ExcelRowsCount > MaxBulkUploadRows)
-                {
-                    ModelState.AddModelError("MaxBulkUploadRows", string.Format(CommonValidationErrorMessages.MaxBulkUploadRowsLimit, MaxBulkUploadRows));
-                }
-            }
+            model.MaxBulkUploadRows = MaxBulkUploadRows;
             if (!ModelState.IsValid)
             {
                 return View("StartUpload", model);
             }
-
+            var workbook = new XLWorkbook(model.DelegatesFile.OpenReadStream());
+            if (!workbook.Worksheets.Contains(DelegateDownloadFileService.DelegatesSheetName))
+            {
+                ModelState.AddModelError("MaxBulkUploadRows", CommonValidationErrorMessages.InvalidBulkUploadExcelFile);
+                return View("StartUpload", model);
+            }
+            int ExcelRowsCount = delegateUploadFileService.GetBulkUploadExcelRowCount(model.DelegatesFile);
+            if (ExcelRowsCount > MaxBulkUploadRows)
+            {
+                ModelState.AddModelError("MaxBulkUploadRows", string.Format(CommonValidationErrorMessages.MaxBulkUploadRowsLimit, MaxBulkUploadRows));
+                return View("StartUpload", model);
+            }
             try
             {
                 var results = delegateUploadFileService.ProcessDelegatesFile(
