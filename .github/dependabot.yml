@@ -9,7 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 10
     target-branch: "Develop/Features/TD-2122-Automatic_version_update_dependabot"
     ignore:
       # Ignore updates to packages that start with 'Wildcards'
@@ -34,4 +34,4 @@ updates:
       interval: "daily"
     target-branch: "Develop/Features/TD-2122-Automatic_version_update_dependabot"
     #  - "dependencies"
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 10
