@@ -283,7 +283,7 @@
 
             // Then
             var delegateNumber = (string?)controller.TempData.Peek("delegateNumber");
-            var passwordSet = (bool)controller.TempData.Peek("passwordSet");
+            var passwordSet = (bool?)controller.TempData.Peek("passwordSet");
             delegateNumber.Should().Be(sampleDelegateNumber);
             passwordSet.Should().Be(data.IsPasswordSet);
         }

@@ -1045,7 +1045,7 @@
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            );
+            ).GetAwaiter().GetResult();
             var candidateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
             var delegateEntity = userDataService.GetDelegateById(candidateId);

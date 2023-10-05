@@ -5,6 +5,6 @@
     public class PlayListResponse : FilteredResponse
     {
         [JsonProperty("result")]
-        public PlayList Result { get; set; }
+        public PlayList? Result { get; set; }
     }
 }

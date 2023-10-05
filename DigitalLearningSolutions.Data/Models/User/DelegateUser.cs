@@ -5,9 +5,9 @@
 
     public class DelegateUser : User
     {
-        public int Id { get; set; }
+        public new int Id { get; set; }
         public int UserId { get; set; }
-        public string CandidateNumber { get; set; }
+        public string CandidateNumber { get; set; } = string.Empty;
         public DateTime? DateRegistered { get; set; }
         public int JobGroupId { get; set; }
         public string? JobGroupName { get; set; }
@@ -29,7 +29,7 @@
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool HasDismissedLhLoginWarning { get; set; }
 
-        public string? RegistrationConfirmationHash { get; set; }
+        public new string? RegistrationConfirmationHash { get; set; }
         public override string?[] SearchableContent => new[] { SearchableName, CandidateNumber, EmailAddress };
 
         public override UserReference ToUserReference()

@@ -475,7 +475,6 @@
             var oldJobGroupId = 2;
             var newJobGroupId = 3;
             var accountDetailsData = new AccountDetailsData("test", "tester", "fake@email.com");
-            var centreEmail = "centreEmail";
 
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var delegateAccounts = new List<DelegateAccount> { delegateAccount };

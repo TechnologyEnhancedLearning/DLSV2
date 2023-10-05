@@ -29,7 +29,7 @@
                     new ActionDescriptor()
                 ),
                 new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
+                new Dictionary<string, object?>(),
                 controller
             );
         }
@@ -77,24 +77,47 @@
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;
 
-            context.User = new ClaimsPrincipal
-            (
-                new ClaimsIdentity(
-                    new[]
-                    {
-                        centreId == null ? null : new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()),
-                        adminId == null ? null : new Claim(CustomClaimTypes.UserAdminId, adminId.ToString()),
-                        delegateId == null ? null : new Claim(CustomClaimTypes.LearnCandidateId, delegateId.ToString()),
-                        new Claim(CustomClaimTypes.LearnUserAuthenticated, delegateId != null ? "True" : "False"),
-                        emailAddress == null ? null : new Claim(ClaimTypes.Email, emailAddress),
-                        new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()),
-                        new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()),
-                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId?.ToString()),
-                        userId == null ? null : new Claim(CustomClaimTypes.UserId, userId.ToString()),
-                    },
-                    authenticationType
-                )
-            );
+            var claims = new List<Claim>();
+
+            if (centreId != null)
+            {
+                claims.Add(new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()!));
+            }
+
+            if (adminId != null)
+            {
+                claims.Add(new Claim(CustomClaimTypes.UserAdminId, adminId.ToString()!));
+            }
+
+            if (delegateId != null)
+            {
+                claims.Add(new Claim(CustomClaimTypes.LearnCandidateId, delegateId.ToString()!));
+                claims.Add(new Claim(CustomClaimTypes.LearnUserAuthenticated, "True"));
+            }
+            else
+            {
+                claims.Add(new Claim(CustomClaimTypes.LearnUserAuthenticated, "False"));
+            }
+
+            if (emailAddress != null)
+            {
+                claims.Add(new Claim(ClaimTypes.Email, emailAddress));
+            }
+
+            claims.Add(new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()));
+            claims.Add(new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()));
+
+            if (adminCategoryId != null)
+            {
+                claims.Add(new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString()!));
+            }
+
+            if (userId != null)
+            {
+                claims.Add(new Claim(CustomClaimTypes.UserId, userId.ToString()!));
+            }
+
+            context.User = new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType));
 
             return context;
         }

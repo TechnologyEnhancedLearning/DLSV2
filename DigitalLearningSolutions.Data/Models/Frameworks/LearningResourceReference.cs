@@ -8,7 +8,7 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
     {
         public int Id { get; set; }
         public int ResourceRefID { get; set; }
-        public string OriginalResourceName { get; set; }
+        public string OriginalResourceName { get; set; } = string.Empty;
         public int AdminID { get; set; }
         public DateTime Added { get; set; }
     }

@@ -125,7 +125,7 @@
             new { centreId }
             );
         }
-        public async Task<List<DelegateUserCard>> GetDelegateUserCardsForExportByCentreId(int centreId, int exportQueryRowLimit, int currentRun)
+        public List<DelegateUserCard> GetDelegateUserCardsForExportByCentreId(int centreId, int exportQueryRowLimit, int currentRun)
         {
             return connection.Query<DelegateUserCard>(
                 @$"{DelegateUserCardSelectQuery}

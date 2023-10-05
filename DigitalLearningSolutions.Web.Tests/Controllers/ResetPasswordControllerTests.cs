@@ -89,7 +89,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public async Task Index_should_redirect_to_login_page_if_user_is_unauthenticated_and_email_is_missing()
         {
             // When
-            var result = await unauthenticatedController.Index(null, "code");
+            var result = await unauthenticatedController.Index(null!, "code");
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("Login").WithActionName("Index");
@@ -99,7 +99,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public async Task Index_should_redirect_to_login_page_if_user_is_unauthenticated_and_code_is_missing()
         {
             // When
-            var result = await unauthenticatedController.Index("email", null);
+            var result = await unauthenticatedController.Index("email", null!);
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("Login").WithActionName("Index");

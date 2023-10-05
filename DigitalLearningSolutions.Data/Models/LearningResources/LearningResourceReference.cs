@@ -9,7 +9,7 @@
         public int ResourceRefId { get; set; }
         public int AdminId { get; set; }
         private DateTime Added { get; set; }
-        public string OriginalResourceName { get; set; }
+        public string OriginalResourceName { get; set; } = string.Empty;
         public string? OriginalDescription { get; set; }
         public string? OriginalCatalogueName { get; set; }
         public string? OriginalResourceType { get; set; }

@@ -11,7 +11,7 @@
 
     internal class LogoutControllerTests
     {
-        private IAuthenticationService authenticationService = null!;
+        private IAuthenticationService? authenticationService = null!;
         private LogoutController controller = null!;
 
         [SetUp]
@@ -23,7 +23,7 @@
                 .WithMockServices();
 
             authenticationService =
-                (IAuthenticationService)controller.HttpContext.RequestServices.GetService(
+                (IAuthenticationService?)controller.HttpContext.RequestServices.GetService(
                     typeof(IAuthenticationService)
                 );
         }
@@ -47,7 +47,7 @@
             // Then
             A.CallTo(
                     () =>
-                        authenticationService.SignOutAsync(A<HttpContext>._, A<string>._, A<AuthenticationProperties>._)
+                        authenticationService!.SignOutAsync(A<HttpContext>._, A<string>._, A<AuthenticationProperties>._)
                 )
                 .MustHaveHappened();
         }

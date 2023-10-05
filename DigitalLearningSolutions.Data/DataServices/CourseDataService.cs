@@ -112,7 +112,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         int GetCourseDelegatesCountForExport(string searchString, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
-        Task<IEnumerable<CourseDelegateForExport>> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+        IEnumerable<CourseDelegateForExport> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
@@ -417,7 +417,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             dynamic completeByDateDynamic = "";
             if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
-                completeByDateDynamic = completeByDate;
+                completeByDateDynamic = completeByDate!;
             }
             var candidateAssessmentId = (int)connection.ExecuteScalar(
                 @"SELECT COALESCE
@@ -1285,8 +1285,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 { brandId, threeMonthsAgo }
             );
             return query.ToDictionary<dynamic?, int, int>(
-                entry => entry.ApplicationID,
-                entry => entry.NumRecentProgressRecords
+                entry => entry?.ApplicationID,
+                entry => entry?.NumRecentProgressRecords
             );
         }
 
@@ -1479,7 +1479,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
 
-        public async Task<IEnumerable<CourseDelegateForExport>> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+        public  IEnumerable<CourseDelegateForExport> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3)
         {
 

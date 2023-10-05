@@ -204,7 +204,7 @@
         }
 
         [Test]
-        public async Task GetDelegateDownloadFileForCourse_returns_expected_excel_data()
+        public void  GetDelegateDownloadFileForCourse_returns_expected_excel_data()
         {
             // Given
             const int customisationId = 1;
@@ -241,7 +241,7 @@
 
             // When
 
-            var resultBytes = await courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(string.Empty,0,250, "SearchableName", "Ascending",
+            var resultBytes =  courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(string.Empty,0,250, "SearchableName", "Ascending",
                     customisationId, centreId, null, null, null, null, null, null, null
             );
 

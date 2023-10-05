@@ -4,6 +4,6 @@
     public class ParamAssetIdsRequest : FilteredApiRequest
     {
         [JsonProperty("params")]
-        public LearningAssetIDs LearningAssetIDs { get; set; }
+        public LearningAssetIDs? LearningAssetIDs { get; set; }
     }
 }

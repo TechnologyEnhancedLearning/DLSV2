@@ -95,7 +95,7 @@
         DelegateUserCard? GetDelegateUserCardById(int id);
 
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
-        Task<List<DelegateUserCard>> GetDelegateUserCardsForExportByCentreId(int centreId, int exportQueryRowLimit, int currentRun);
+        List<DelegateUserCard> GetDelegateUserCardsForExportByCentreId(int centreId, int exportQueryRowLimit, int currentRun);
         int GetCountDelegateUserCardsForExportByCentreId(int centreId);
 
         (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
@@ -245,7 +245,7 @@
         (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(
       string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
       );
-        Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
+        IEnumerable<AdminEntity> GetAllAdminsExport(
       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
       );
 
@@ -383,7 +383,7 @@
                @"SELECT EmailVerificationHash FROM EmailVerificationHashes WHERE ID = @ID",
                new { ID }
            );
-            return EmailVerificationHash;
+            return EmailVerificationHash!;
         }
 
         public UserAccount? GetUserAccountByPrimaryEmail(string emailAddress)

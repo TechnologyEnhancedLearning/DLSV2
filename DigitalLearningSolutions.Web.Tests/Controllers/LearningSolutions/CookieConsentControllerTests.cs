@@ -21,8 +21,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningSolutions
         private IConfiguration configuration = null!;
         private IClockUtility clockUtility = null!;
         private CookieConsentController controller = null!;
-        private IConfiguration config = null!;
-
+     
         [SetUp]
         public void Setup()
         {

@@ -18,7 +18,7 @@
     {
         //GET DATA
         //  Frameworks:
-        DashboardData GetDashboardDataForAdminID(int adminId);
+        DashboardData? GetDashboardDataForAdminID(int adminId);
 
         IEnumerable<DashboardToDoItem> GetDashboardToDoItems(int adminId);
 
@@ -102,9 +102,9 @@
         //  Comments:
         IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId);
 
-        CommentReplies GetCommentRepliesById(int commentId, int adminId);
+        CommentReplies? GetCommentRepliesById(int commentId, int adminId);
 
-        Comment GetCommentById(int adminId, int commentId);
+        Comment? GetCommentById(int adminId, int commentId);
 
         List<Recipient> GetCommentRecipients(int frameworkId, int adminId, int? replyToCommentId);
 
@@ -141,7 +141,7 @@
                 int competencyResourceAssessmentQuestionParameterId
             );
 
-        LearningResourceReference GetLearningResourceReferenceByCompetencyLearningResouceId(
+        LearningResourceReference? GetLearningResourceReferenceByCompetencyLearningResouceId(
             int competencyLearningResourceID
         );
 
@@ -1777,7 +1777,7 @@ WHERE (FrameworkID = @frameworkId)",
             }
         }
 
-        public Competency GetFrameworkCompetencyForPreview(int frameworkCompetencyId)
+        public Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId)
         {
             Competency? competencyResult = null;
             return connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
@@ -1853,7 +1853,7 @@ WHERE (FrameworkID = @frameworkId)",
             return result;
         }
 
-        public CommentReplies GetCommentRepliesById(int commentId, int adminId)
+        public CommentReplies? GetCommentRepliesById(int commentId, int adminId)
         {
             var result = connection.Query<CommentReplies>(
                 @$"SELECT
@@ -1865,7 +1865,7 @@ WHERE (FrameworkID = @frameworkId)",
             var replies = GetRepliesForCommentId(commentId, adminId);
             foreach (var reply in replies)
             {
-                result.Replies.Add(reply);
+                result?.Replies.Add(reply);
             }
 
             return result;
@@ -1972,7 +1972,7 @@ WHERE (FrameworkID = @frameworkId)",
             ).ToList();
         }
 
-        public Comment GetCommentById(int adminId, int commentId)
+        public Comment? GetCommentById(int adminId, int commentId)
         {
             return connection.Query<Comment>(
                 @"SELECT ID, ReplyToFrameworkCommentID, AdminID, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, Archived, LastEdit, FrameworkID
@@ -2163,7 +2163,7 @@ WHERE (ID = @commentId)",
             }
         }
 
-        public DashboardData GetDashboardDataForAdminID(int adminId)
+        public DashboardData? GetDashboardDataForAdminID(int adminId)
         {
             return connection.Query<DashboardData>(
                 $@"SELECT (SELECT COUNT(*)
@@ -2305,7 +2305,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             );
         }
 
-        public LearningResourceReference GetLearningResourceReferenceByCompetencyLearningResouceId(
+        public LearningResourceReference? GetLearningResourceReferenceByCompetencyLearningResouceId(
             int competencyLearningResouceId
         )
         {

@@ -10,7 +10,7 @@
         public string? Activity { get; set; }
         public string? ExternalUri { get; set; }
         public int? LearningResourceReferenceId { get; set; }
-        public string ActivityType { get; set; }
+        public string ActivityType { get; set; } = string.Empty;
 
         public DateTime? DueDate { get; set; }
         public DateTime? CompletedDate { get; set; }

@@ -78,7 +78,7 @@
             );
 
             // When
-            var model = viewComponent.Invoke(inputViewModel).As<ViewViewComponentResult>().ViewData.Model
+            var model = viewComponent.Invoke(inputViewModel).As<ViewViewComponentResult>().ViewData?.Model
                 .As<CurrentFiltersViewModel>();
 
             // Then

@@ -18,7 +18,7 @@
         }
 
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> Courses { get; set; }
-        public IEnumerable<string> Categories { get; set; }
-        public IEnumerable<string> Topics { get; set; }
+        public IEnumerable<string> Categories { get; set; } = new List<string>();
+        public IEnumerable<string> Topics { get; set; } = new List<string>();
     }
 }

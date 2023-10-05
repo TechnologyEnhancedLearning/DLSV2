@@ -34,10 +34,10 @@
                 HideInLearnerPortal = hideInLearnerPortal
             };
         }
-        public static AvailablePageViewModel AvailableViewModelFromController(LearningPortalController controller)
+        public static AvailablePageViewModel? AvailableViewModelFromController(LearningPortalController controller)
         {
             var result = controller.Available() as ViewResult;
-            return (AvailablePageViewModel)result!.Model;
+            return (AvailablePageViewModel?)result!.Model;
         }
     }
 }

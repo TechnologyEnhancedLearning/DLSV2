@@ -10,7 +10,7 @@
 
         public int CentreId { get; set; }
 
-        public string CentreName { get; set; }
+        public string CentreName { get; set; } = string.Empty;
 
         public bool Active { get; set; }
 
@@ -22,7 +22,7 @@
 
         public string? FirstName { get; set; }
 
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
         public string? EmailAddress { get; set; }
 

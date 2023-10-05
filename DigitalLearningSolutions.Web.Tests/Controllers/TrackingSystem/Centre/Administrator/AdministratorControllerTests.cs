@@ -154,7 +154,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().WithDefaultViewName().ModelAs<DeactivateAdminViewModel>();
-                administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)].Errors[0].ErrorMessage
+                administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)]?.Errors[0].ErrorMessage
                     .Should()
                     .BeEquivalentTo(expectedErrorMessage);
                 A.CallTo(() => userDataService.DeactivateAdmin(admin.AdminAccount.Id)).MustNotHaveHappened();

@@ -8,7 +8,7 @@
         public int LevelValue { get; set; }
         [Required]
         [StringLength(50)]
-        public string LevelLabel { get; set; }
+        public string LevelLabel { get; set; } = string.Empty;
         [StringLength(500)]
         public string? LevelDescription { get; set; }
         public int UpdatedByAdminID { get; set; }

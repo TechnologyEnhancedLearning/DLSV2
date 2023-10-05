@@ -5,7 +5,7 @@
 
     public class CryptoServiceTests
     {
-        private ICryptoService cryptoService;
+        private ICryptoService cryptoService = null!;
 
         [SetUp]
         public void Setup()
