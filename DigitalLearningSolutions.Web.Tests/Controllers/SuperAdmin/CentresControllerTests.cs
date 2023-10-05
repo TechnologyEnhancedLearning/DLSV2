@@ -63,6 +63,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         public void EditCentreDetails_updates_centre_and_redirects_with_successful_save()
         {
             // Given
+            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre1##") };
+            A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
             var model = new EditCentreDetailsSuperAdminViewModel
             {
                 CentreId = 374,
@@ -90,6 +92,46 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                                                 model.IpPrefix,
                                                 model.ShowOnMap))
                                                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void EditCentreDetails_results_DuplicateCentre_error()
+        {
+            // Given
+            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##") };
+            A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
+            var model = new EditCentreDetailsSuperAdminViewModel
+            {
+                CentreId = 374,
+                CentreName = "##HEE Demo Centre##",
+                CentreTypeId = 1,
+                CentreType = "NHS Organisation",
+                RegionName = "National",
+                CentreEmail = "no.email@hee.nhs.uk",
+                IpPrefix = "12.33.4",
+                ShowOnMap = true,
+                RegionId = 13
+            };
+
+            // When
+            var result = controller.EditCentreDetails(model);            
+            // Then
+            result.Should().BeViewResult();
+            controller.ModelState.IsValid.Should().BeFalse();
+            var centreNameErrors = controller.ModelState["CentreName"].Errors;
+            centreNameErrors.Should().NotBeEmpty();
+            centreNameErrors.Should().Contain(error => error.ErrorMessage ==
+            "The centre name you have entered already exists, please enter a different centre name");
+
+            A.CallTo(() => centresDataService.UpdateCentreDetailsForSuperAdmin(
+                                                model.CentreId,
+                                                model.CentreName,
+                                                model.CentreTypeId,
+                                                model.RegionId,
+                                                model.CentreEmail,
+                                                model.IpPrefix,
+                                                model.ShowOnMap))
+                                                .MustNotHaveHappened();
         }
 
         [Test]

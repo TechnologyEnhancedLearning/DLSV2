@@ -1,23 +1,25 @@
+﻿using System.Collections.Generic;
+using DigitalLearningSolutions.Data.Enums;
+using DigitalLearningSolutions.Data.Models.CustomPrompts;
+using DigitalLearningSolutions.Data.Models.DelegateGroups;
+using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+using DigitalLearningSolutions.Data.Tests.TestHelpers;
+using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
+using DigitalLearningSolutions.Web.Helpers;
+using DigitalLearningSolutions.Web.Services;
+using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
+using FakeItEasy;
+using FluentAssertions;
+using FluentAssertions.AspNetCore.Mvc;
+using FluentAssertions.Execution;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using NUnit.Framework;
+using DigitalLearningSolutions.Data.Models.DelegateGroups;
+
 namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
-    using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
-    using FakeItEasy;
-    using FluentAssertions;
-    using FluentAssertions.AspNetCore.Mvc;
-    using FluentAssertions.Execution;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using NUnit.Framework;
     public class DelegateGroupsControllerTests
     {
         private const string CookieName = "DelegateGroupsFilter";
