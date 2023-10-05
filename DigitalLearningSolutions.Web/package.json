@@ -41,7 +41,7 @@
     "@types/dompurify": "^2.3.3",
     "@types/jest": "^27.5.2",
     "@types/js-cookie": "^3.0.3",
-    "@types/js-search": "^1.4.0",
+    "@types/js-search": "^1.4.1",
     "@types/jsdom": "^16.2.15",
     "@types/lodash": "^4.14.182",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
