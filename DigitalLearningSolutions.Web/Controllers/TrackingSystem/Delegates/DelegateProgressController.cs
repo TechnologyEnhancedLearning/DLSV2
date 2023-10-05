@@ -437,7 +437,6 @@
             var pdfReportResponse = await pdfService.PdfReport(progressId.ToString(), renderedViewHTML, delegateId);
             if (pdfReportResponse != null)
             {
-
                 do
                 {
                     pdfReportStatusResponse = await pdfService.PdfReportStatus(pdfReportResponse);

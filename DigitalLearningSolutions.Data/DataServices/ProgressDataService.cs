@@ -355,7 +355,7 @@
         public DelegateCourseProgressInfo? GetDelegateCourseProgress(int progressId)
         {
             return connection.Query<DelegateCourseProgressInfo>(
-                @"SELECT p.ProgressID, Ce.CentreName, Ca.FirstName + ' ' + Ca.LastName AS CandidateName, A_1.ApplicationName + ' - ' + Cu.CustomisationName AS Course, p.Completed, 
+                @"SELECT p.ProgressID, Ce.CentreName, Ca.FirstName + ' ' + Ca.LastName AS CandidateName, A_1.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) AS Course, p.Completed, 
                   p.Evaluated, COALESCE
                       ((SELECT MAX(DiagAttempts) AS Expr1
                         FROM      aspProgress
