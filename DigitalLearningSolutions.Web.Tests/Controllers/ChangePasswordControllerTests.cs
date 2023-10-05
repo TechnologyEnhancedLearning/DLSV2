@@ -15,7 +15,7 @@
         private const int LoggedInUserId = 1;
 
         private ChangePasswordController authenticatedController = null!;
-        private IPasswordService passwordService = null;
+        private IPasswordService passwordService = null!;
         private IUserVerificationService userVerificationService = null!;
 
         [SetUp]

@@ -2269,11 +2269,11 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             ).FirstOrDefault();
             var questions = connection.Query<AssessmentQuestion>(
                 $@"SELECT * FROM AssessmentQuestions
-                    WHERE ID IN ({resource.AssessmentQuestionId ?? 0}, {resource.RelevanceAssessmentQuestionId ?? 0})"
+                    WHERE ID IN ({resource?.AssessmentQuestionId ?? 0}, {resource?.RelevanceAssessmentQuestionId ?? 0})"
             );
-            resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionId);
+            resource!.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionId)!;
             resource.RelevanceAssessmentQuestion =
-                questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionId);
+                questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionId)!;
             return resource;
         }
 
