@@ -43,7 +43,7 @@
     "@types/js-cookie": "^3.0.4",
     "@types/js-search": "^1.4.1",
     "@types/jsdom": "^16.2.15",
-    "@types/lodash": "^4.14.182",
+    "@types/lodash": "^4.14.199",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
     "babel-jest": "^28.1.3",
