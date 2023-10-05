@@ -1619,10 +1619,12 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/chartist@^0.11.1":
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/@types/chartist/-/chartist-0.11.1.tgz#3825e6cee87f5f548e8631b2c25e3a7b597b2522"
-  integrity sha512-85eNd7rF+e5sLnpprgcDdeqARgNvczEXaBfnrkw0292TBCE4KF/2HmOPA6dIblyHUWV4OZ2kuQBH2R12F+VwYg==
+"@types/chartist@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/chartist/-/chartist-1.0.0.tgz#56b1a5609199a02cc4238952720fb39b0c183df2"
+  integrity sha512-c0hsN67D+e1M0Eh7VSGT0b28o/YqC034jttS1AE2s80EVmlYjDzSn9+l3L0c46T9pPQSlVvqj3hMm+fw2Y+uaw==
+  dependencies:
+    chartist "*"
 
 "@types/dompurify@^2.3.3":
   version "2.3.4"
@@ -2446,10 +2448,10 @@ char-regex@^1.0.2:
   resolved "https://registry.yarnpkg.com/char-regex/-/char-regex-1.0.2.tgz#d744358226217f981ed58f479b1d6bcc29545dcf"
   integrity sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==
 
-chartist@^0.11.4:
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/chartist/-/chartist-0.11.4.tgz#e96e1c573d8b67478920a3a6ae52359d9fc8d8b7"
-  integrity sha512-H4AimxaUD738/u9Mq8t27J4lh6STsLi4BQHt65nOtpLk3xyrBPaLiLMrHw7/WV9CmsjGA02WihjuL5qpSagLYw==
+chartist@*, chartist@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/chartist/-/chartist-1.3.0.tgz#ade0cadeb3d443377438a17b6866ccd125d5f079"
+  integrity sha512-M3ckI3ua7EHt08WLZvdi3QXn5g+in27qU6TxjI5bpriS6QwIZlWtisyUhFbpGclW546SlT3SL9oq0vFFDiAo6g==
 
 chokidar@^3.5.3:
   version "3.5.3"
