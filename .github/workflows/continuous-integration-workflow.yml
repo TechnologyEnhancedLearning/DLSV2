@@ -27,7 +27,7 @@ jobs:
           node-version: 16
 
       - name: Typescript install
-        run: yarn install --frozen-lockfile
+        run: --network-timeout 600000 --frozen-lockfile
         working-directory: ./DigitalLearningSolutions.Web
 
       - name: Typescript build
