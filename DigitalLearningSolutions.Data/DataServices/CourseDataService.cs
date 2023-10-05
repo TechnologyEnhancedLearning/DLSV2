@@ -853,7 +853,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public (IEnumerable<DelegateCourseInfo>, int) GetDelegateCourseInfosPerPageForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3)
         {
-
+            searchString = searchString == null ? string.Empty : searchString.Trim();
             var selectColumnQuery = $@"SELECT
                 cu.CustomisationID AS CustomisationId,
                 cu.CustomisationName,
@@ -1413,8 +1413,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public int GetCourseDelegatesCountForExport(string searchString, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3)
-        {            
-
+        {
+            searchString = searchString == null ? string.Empty : searchString.Trim();
             var fromTableQuery = $@" FROM Customisations cu WITH (NOLOCK)
                 INNER JOIN Applications AS ap WITH (NOLOCK) ON ap.ApplicationID = cu.ApplicationID
                 INNER JOIN Progress AS pr WITH (NOLOCK) ON pr.CustomisationID = cu.CustomisationID
@@ -1482,7 +1482,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public async Task<IEnumerable<CourseDelegateForExport>> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3)
         {
-
+            searchString = searchString == null ? string.Empty : searchString.Trim();
             var selectColumnQuery = $@"SELECT
                         ap.ApplicationName,
                         cu.CustomisationName,
