@@ -74,6 +74,7 @@
                 case LoginAttemptResult.InvalidCredentials:
                 case LoginAttemptResult.UnclaimedDelegateAccount:
                     ModelState.AddModelError("Password", "The credentials you have entered are incorrect");
+                    ModelState.AddModelError("Username", "The credentials you have entered are incorrect");
                     return View("Index", model);
                 case LoginAttemptResult.AccountsHaveMismatchedPasswords:
                     return View("MismatchingPasswords");
