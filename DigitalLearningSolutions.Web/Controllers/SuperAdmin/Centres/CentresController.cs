@@ -227,6 +227,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditCentreDetails")]
         public IActionResult EditCentreDetails(EditCentreDetailsSuperAdminViewModel model)
         {
+            bool isCentreNamePresent = centresDataService.GetAllCentres().Any(center => center.Item2 == model.CentreName);
+            if (isCentreNamePresent)
+            {
+                ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
+            }
+
             if (!ModelState.IsValid)
             {
                 var regions = regionDataService.GetRegionsAlphabetical().ToList();

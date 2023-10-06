@@ -75,7 +75,7 @@
             );
 
             var centreId = User.GetCentreIdKnownNotNull();
-            var adminsAtCentre = userDataService.GetActiveAdminsByCentreId(centreId);
+            var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
 

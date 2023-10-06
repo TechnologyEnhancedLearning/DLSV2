@@ -17,7 +17,12 @@
             IEnumerable<FilterModel> availableFilters,
             CourseDelegatesData courseDelegatesData,
             Dictionary<string, string> routeData
-        ) : base(result, true, availableFilters, routeData: routeData)
+        ) : base(
+            result,
+            true,
+            availableFilters,
+            routeData: routeData,
+            searchLabel: "Search activity")
         {
             var currentCourse =
                 courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId);
