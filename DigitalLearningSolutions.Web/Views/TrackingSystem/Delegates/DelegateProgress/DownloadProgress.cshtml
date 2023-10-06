@@ -151,19 +151,19 @@
                                 <h3 class="heading3">@Model.CourseName</h3>
                                 @if (Model.IsAssessed)
                                 {
-                                    <h4 class="heading4">To complete this course, you must pass all post learning assessments</h4>
+                                        <h4 class="heading4">To complete this course, you must pass all post learning assessments</h4>
                                 }
                                 else if (Model.DiagCompletionThreshold > 0 && Model.TutCompletionThreshold > 0 && (!Model.IsAssessed))
                                 {
-                                    <h4 class="heading4">To complete this course, you must achieve @Model.DiagCompletionThreshold% in the diagnostic assessment and complete @Model.TutCompletionThreshold% of the learning materials")</h4>
+                                        <h4 class="heading4">To complete this course, you must achieve @Model.DiagCompletionThreshold% in the diagnostic assessment and complete @Model.TutCompletionThreshold% of the learning materials")</h4>
                                 }
                                 else if (Model.DiagCompletionThreshold == 0 && (!Model.IsAssessed))
                                 {
-                                    <h4 class="heading4">To complete this course, you must complete @Model.TutCompletionThreshold% of the learning materials</h4>
+                                        <h4 class="heading4">To complete this course, you must complete @Model.TutCompletionThreshold% of the learning materials</h4>
                                 }
                                 else if (Model.TutCompletionThreshold == 0 && (!Model.IsAssessed))
                                 {
-                                    <h4 class="heading4">To complete this course, you must achieve @Model.DiagCompletionThreshold% in the diagnostic assessment</h4>
+                                        <h4 class="heading4">To complete this course, you must achieve @Model.DiagCompletionThreshold% in the diagnostic assessment</h4>
                                 }
                                 <br />
 
@@ -178,26 +178,26 @@
                                     </tr>
                                     @if (Model.DiganosticScorePercent != null && Model.DiganosticScorePercent > 0)
                                     {
-                                        <tr>
-                                            <td height="35px">
-                                                Diagnostic Score:
-                                            </td>
-                                            <td style="padding-left:20px">
+                                            <tr>
+                                                <td height="35px">
+                                                    Diagnostic Score:
+                                                </td>
+                                                <td style="padding-left:20px">
                                                 @Model.DiganosticScorePercent%
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
                                     }
                                     @if (Model.LearningCompletedPercent > 0)
                                     {
 
-                                        <tr>
-                                            <td height="35px">
-                                                Learning Completed:
-                                            </td>
-                                            <td style="padding-left:20px">
-                                                <span>@Model.LearningCompletedPercent%</span>
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td height="35px">
+                                                    Learning Completed:
+                                                </td>
+                                                <td style="padding-left:20px">
+                                                    <span>@Model.LearningCompletedPercent%</span>
+                                                </td>
+                                            </tr>
                                     }
                                     <tr>
                                         <td height="35px">
@@ -228,30 +228,29 @@
                                     <tbody>
                                         @foreach (var entry in Model.SectionDetails)
                                         {
-                                            <tr>
-                                                <td>
+                                                <tr>
+                                                    <td>
                                                     @entry.SectionName
-                                                </td>
-                                                <td>
+                                                    </td>
+                                                    <td>
                                                     @(entry.DiagAttempts > 0 ?
-                                                        @entry.SecScore.ToString() + " / " + @entry.SecOutOf.ToString() + " - " + @entry.DiagAttempts.ToString()
-                                                        : "Not attempted".ToString())
-                                                </td>
-                                                <td>
+                                                            @entry.SecScore.ToString() + " / " + @entry.SecOutOf.ToString() + " - " + @entry.DiagAttempts.ToString()
+                                                            : "Not attempted".ToString())
+                                                    </td>
+                                                    <td>
                                                     @(entry.PCComplete.ToString() + "% complete " + @entry.TimeMins.ToString() + " mins")
-                                                </td>
-                                                <td>
+                                                    </td>
+                                                    <td>
                                                     @{
                                                         var result = "";
-                                                        if (entry.AttemptsPL > 0 && entry.PLPassed && entry.IsAssessed) result = "PASSED";
-                                                        if (entry.AttemptsPL > 0 && !entry.PLPassed && entry.IsAssessed) result = "FAILED";
+                                                        if (entry.AttemptsPL > 0) result = @entry.MaxScorePL.ToString() + "% - " + @entry.AttemptsPL.ToString() + " attempt(s) ";
+                                                        if (entry.AttemptsPL == 0 && entry.IsAssessed) result += "Not attempted";
+                                                        if (entry.AttemptsPL > 0 && entry.PLPassed && entry.IsAssessed) result += "PASSED";
+                                                        if (entry.AttemptsPL > 0 && !entry.PLPassed && entry.IsAssessed) result += "FAILED";
                                                     }
-                                                    @(entry.AttemptsPL > 0 ?
-                                                        @entry.MaxScorePL.ToString() + "% - " + @entry.AttemptsPL.ToString() + " attempt(s) " + result
-                                                        : "Not attempted".ToString()
-                                                        )
-                                                </td>
-                                            </tr>
+                                                    @result
+                                                    </td>
+                                                </tr>
                                         }
                                     </tbody>
                                 </table>
@@ -270,14 +269,14 @@
                                     <tbody>
                                         @foreach (var entry in Model.SectionDetails.Where(pass => pass.PLPassed))
                                         {
-                                            <tr>
-                                                <td>
+                                                <tr>
+                                                    <td>
                                                     @entry.SectionName
-                                                </td>
-                                                <td style="color:#0e6935;font-weight:normal;">
+                                                    </td>
+                                                    <td style="color:#0e6935;font-weight:normal;">
                                                     @("PASSED")
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
                                         }
                                     </tbody>
                                 </table>
