@@ -34,4 +34,7 @@ updates:
       interval: "daily"
     target-branch: "Automatic_version_update_dependabot"
     #  - "dependencies"
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
