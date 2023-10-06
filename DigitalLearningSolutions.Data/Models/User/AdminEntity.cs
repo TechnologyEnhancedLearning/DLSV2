@@ -70,7 +70,7 @@
         public bool IsCentreManager => AdminAccount.IsCentreManager;
         public bool IsSuperAdmin => AdminAccount.IsSuperAdmin;
         public bool IsReportsViewer => AdminAccount.IsReportsViewer;
-
+        public bool IsActive => AdminAccount.Active;
 
     }
 }
