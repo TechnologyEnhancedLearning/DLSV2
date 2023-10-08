@@ -15,7 +15,13 @@
             CourseStatusFilterOptions.IsActive,
             CourseStatusFilterOptions.NotActive,
         };
-    
+
+        private static readonly IEnumerable<FilterModel> ActivityTypeOptions = new[]
+        {
+            ActivityTypeFilterOptions.IsCourse,
+            ActivityTypeFilterOptions.IsSelfAssessment,
+        };
+
         private static readonly IEnumerable<FilterOptionModel> CourseHasAdminFieldOptions = new[]
         {
             CourseHasAdminFieldsFilterOptions.HasAdminFields,
@@ -40,6 +46,12 @@
                     "Admin fields",
                     CourseHasAdminFieldOptions
                 ),
+
+                new FilterModel(
+                    nameof(CourseStatistics.ActivityType),
+                    "Activity type",
+                    null
+                )
             };
 
             categories = categories.ToList();

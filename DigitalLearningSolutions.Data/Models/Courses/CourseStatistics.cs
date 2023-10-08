@@ -15,6 +15,7 @@
         public string CourseTopic { get; set; }
         public string LearningMinutes { get; set; }
         public bool IsAssessed { get; set; }
+        public string ActivityType { get; set; }
 
         public double PassRate => AllAttempts == 0 ? 0 : Math.Round(100 * AttemptsPassed / (double)AllAttempts);
     }

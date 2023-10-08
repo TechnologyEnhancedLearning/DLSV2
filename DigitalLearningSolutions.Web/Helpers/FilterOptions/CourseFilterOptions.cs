@@ -75,4 +75,29 @@
             FilterStatus.Default
         );
     }
+
+    public static class ActivityTypeFilterOptions
+    {
+        private const string Group = "ActivityType";
+
+        public static readonly FilterOptionModel IsCourse = new FilterOptionModel(
+            "Course",
+            FilteringHelper.BuildFilterValueString(
+                Group,
+                nameof(CourseStatistics.ActivityType),
+                "Course"
+            ),
+            FilterStatus.Default
+        );
+
+        public static readonly FilterOptionModel IsSelfAssessment = new FilterOptionModel(
+            "Self assessment",
+            FilteringHelper.BuildFilterValueString(
+                Group,
+                nameof(CourseStatistics.ActivityType),
+                "Self assessment"
+            ),
+            FilterStatus.Default
+        );
+    }
 }
