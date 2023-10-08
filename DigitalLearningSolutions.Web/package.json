@@ -26,7 +26,7 @@
     "core-js": "^3.31.0",
     "date-fns": "^2.30.0",
     "dompurify": "^2.4.7",
-    "input-range-scss": "^1.5.2",
+    "input-range-scss": "^1.5.3",
     "jodit": "^3.24.9",
     "js-cookie": "^3.0.5",
     "js-search": "^2.0.1",
