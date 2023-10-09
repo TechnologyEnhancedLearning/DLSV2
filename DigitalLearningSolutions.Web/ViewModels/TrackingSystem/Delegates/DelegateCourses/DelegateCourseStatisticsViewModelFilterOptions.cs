@@ -16,7 +16,7 @@
             CourseStatusFilterOptions.NotActive,
         };
 
-        private static readonly IEnumerable<FilterModel> ActivityTypeOptions = new[]
+        private static readonly IEnumerable<FilterOptionModel> ActivityTypeOptions = new[]
         {
             ActivityTypeFilterOptions.IsCourse,
             ActivityTypeFilterOptions.IsSelfAssessment,
