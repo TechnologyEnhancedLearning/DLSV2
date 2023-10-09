@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using Ganss.XSS;
+    using Ganss.Xss;
     public static class SanitizerHelper
     {
         public static string SanitizeHtmlData(string htmlData)
