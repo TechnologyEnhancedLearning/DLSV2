@@ -20,6 +20,7 @@ namespace DigitalLearningSolutions.Data.Enums
         protected Enumeration(int id, string name) => (Id, Name) = (id, name);
 
         public override string ToString() => Name;
+        public override int GetHashCode() => Id;
 
         public static IEnumerable<T> GetAll<T>() where T : Enumeration =>
             typeof(T).GetFields(
