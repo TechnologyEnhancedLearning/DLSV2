@@ -26,8 +26,12 @@
           <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
         </div>
         <div class="nhsuk-grid-column-one-half heading-button-group">
-          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button" href="@Model.ProgressDownloadUrl">
-            Download
+          <a class="nhsuk-button nhsuk-button--secondary heading-button"
+            role="button"
+                   asp-action="ViewDelegateProgress"
+                   asp-route-progressId="@Model.ProgressId"
+                   asp-route-accessedVia="@Model.AccessedVia">
+              Download
           </a>
           <a class="nhsuk-button nhsuk-button--secondary heading-button"
            role="button"
