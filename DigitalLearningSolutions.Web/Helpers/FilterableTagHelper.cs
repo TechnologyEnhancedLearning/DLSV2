@@ -246,5 +246,17 @@
                     : new SearchableTagViewModel(AddCourseToGroupDiagnosticFilterOptions.NoDiagnostic, true),
             };
         }
+
+        public static IEnumerable<SearchableTagViewModel> GetCurrentStatusTagsForDelegateAssessment(
+            DelegateAssessmentStatistics delegateAssessmentStatistics
+          )
+        {
+            return new List<SearchableTagViewModel>
+            {
+                delegateAssessmentStatistics.Active
+                    ? new SearchableTagViewModel(CourseStatusFilterOptions.IsActive)
+                    : new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive)
+            };
+        }
     }
 }

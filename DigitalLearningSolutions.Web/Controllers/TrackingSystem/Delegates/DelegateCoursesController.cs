@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -14,6 +14,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System.Linq;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -131,21 +132,19 @@
                 }
             }
 
-            var (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true, null,
-                                                            isActive, categoryName, courseTopic, hasAdminFields);
-            if (courses.Count() == 0 && resultCount > 0)
-            {
-                page = 1;
-                offSet = 0;
-                (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true, null,
-                                                            isActive, categoryName, courseTopic, hasAdminFields);
-            }
+            var delegateActivities = courseService.GetDelegateCourses(searchString ?? string.Empty,centreId, categoryId, true, null, isActive, categoryName, courseTopic,hasAdminFields).ToList();
+            var delegateAssessments = courseService.GetDelegateAssessments(centreId);
+
+            var allItems = delegateActivities.Cast<CourseStatistics>().ToList();
+            allItems.AddRange(delegateAssessments);
 
             var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
                 .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
 
+            var resultCount = allItems.Count();
+
             var result = paginateService.Paginate(
-                courses,
+                allItems,
                 resultCount,
                 new PaginationOptions(page, itemsPerPage),
                 new FilterOptions(existingFilterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),

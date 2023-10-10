@@ -110,6 +110,10 @@
 
         public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
            string isActive, string categoryName, string courseTopic, string hasAdminFields);
+
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetDelegateCourses(string searchString,int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,string isActive, string categoryName, string courseTopic, string hasAdminFields);
+
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(int centreId);
     }
 
     public class CourseService : ICourseService
@@ -396,8 +400,6 @@
             return new CentreCourseDetails(courses, categories, topics);
         }
 
-
-
         public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
            string isActive, string categoryName, string courseTopic, string hasAdminFields)
         {
@@ -519,6 +521,23 @@
             );
             info.CourseAdminFields = coursePrompts;
             return info;
+        }
+
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetDelegateCourses(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields)
+        {
+            var allCourses = courseDataService.GetDelegateCourseStatisticsAtCentre(searchString, centreId, categoryId, allCentreCourses, hideInLearnerPortal,
+           isActive, categoryName, courseTopic, hasAdminFields);
+
+            return allCourses.Select(
+                c => new CourseStatisticsWithAdminFieldResponseCounts(
+                    c, courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                )
+            );
+        }
+
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(int centreId)
+        {
+            return courseDataService.GetDelegateAssessmentStatisticsAtCentre(centreId);
         }
     }
 }

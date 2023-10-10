@@ -1,8 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -18,6 +15,9 @@
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class CourseServiceTests
     {
@@ -172,8 +172,7 @@
         }
 
         [Test]
-        public void
-            VerifyAdminUserCanManageCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
+        public void VerifyAdminUserCanManageCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
         {
             // Given
             var validationDetails = new CourseValidationDetails
@@ -955,6 +954,44 @@
                 A.CallTo(
                     () => progressDataService.GetLearningLogEntries(progressId)
                 ).MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void GetDelegateCourses_GetDelegateCourseStatisticsAtCentre_ShouldBeInvokedAndReturnsCourseStatisticsWithAdminFieldResponseCounts()
+        {
+            // Given
+            var delegateCourses = Builder<CourseStatisticsWithAdminFieldResponseCounts>.CreateListOfSize(5).Build();
+            A.CallTo(() => courseDataService.GetDelegateCourseStatisticsAtCentre(string.Empty, 1, 1, true, true, string.Empty, string.Empty, string.Empty, string.Empty)).Returns(delegateCourses);
+
+            // When
+            var result = courseService.GetDelegateCourses(string.Empty, 1, 1, true, true, string.Empty, string.Empty, string.Empty, string.Empty);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => courseDataService.GetDelegateCourseStatisticsAtCentre(string.Empty, 1, 1, true, true, string.Empty, string.Empty, string.Empty, string.Empty))
+                    .MustHaveHappenedOnceExactly();
+                result.Count().Should().BeGreaterOrEqualTo(0);
+            }
+        }
+
+        [Test]
+        public void GetDelegateAssessments_GetDelegateAssessments_ShouldBeInvokedAndReturnsDelegateAssessmentStatistics()
+        {
+            // Given
+            var delegateAssessments = Builder<DelegateAssessmentStatistics>.CreateListOfSize(5).Build();
+            A.CallTo(() => courseDataService.GetDelegateAssessmentStatisticsAtCentre(1)).Returns(delegateAssessments);
+
+            // When
+            var result = courseService.GetDelegateAssessments(1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => courseDataService.GetDelegateAssessmentStatisticsAtCentre(1))
+                    .MustHaveHappenedOnceExactly();
+                result.Count().Should().BeGreaterOrEqualTo(0);
             }
         }
     }
