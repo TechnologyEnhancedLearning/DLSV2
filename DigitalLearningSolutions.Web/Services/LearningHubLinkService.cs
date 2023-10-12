@@ -21,7 +21,11 @@
 
         bool IsLearningHubAccountLinked(int delegateId);
 
+        bool IsLearningHubUserAccountLinked(int userId);
+
         void LinkLearningHubAccountIfNotLinked(int delegateId, int learningHubUserId);
+
+        void LinkLearningHubUserAccountIfNotLinked(int userId, int learningHubUserId);
 
         string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int authId);
 
@@ -56,12 +60,26 @@
             return userDataService.GetDelegateUserLearningHubAuthId(delegateId).HasValue;
         }
 
+        public bool IsLearningHubUserAccountLinked(int userId)
+        {
+            return userDataService.GetUserLearningHubAuthId(userId).HasValue;
+        }
+
         public void LinkLearningHubAccountIfNotLinked(int delegateId, int learningHubUserId)
         {
             var isAccountAlreadyLinked = IsLearningHubAccountLinked(delegateId);
             if (!isAccountAlreadyLinked)
             {
                 userDataService.SetDelegateUserLearningHubAuthId(delegateId, learningHubUserId);
+            }
+        }
+
+        public void LinkLearningHubUserAccountIfNotLinked(int userId, int learningHubUserId)
+        {
+            var isAccountAlreadyLinked = IsLearningHubUserAccountLinked(userId);
+            if (!isAccountAlreadyLinked)
+            {
+                userDataService.SetUserLearningHubAuthId(userId, learningHubUserId);
             }
         }
 
