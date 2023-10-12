@@ -50,9 +50,9 @@
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IPaginateService paginateService = null!;
-        private IActivityService activityService = null;
-        private ICourseCategoriesDataService courseCategoriesDataService = null;
-        private ICourseTopicsDataService courseTopicsDataService = null;
+        private IActivityService activityService = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private ICourseTopicsDataService courseTopicsDataService = null!;
 
         [SetUp]
         public void Setup()

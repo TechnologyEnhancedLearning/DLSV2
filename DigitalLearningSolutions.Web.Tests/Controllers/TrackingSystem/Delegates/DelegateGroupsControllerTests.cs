@@ -24,7 +24,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsService groupsService = null!;
-        private IPaginateService paginateService = null;
+        private IPaginateService paginateService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;

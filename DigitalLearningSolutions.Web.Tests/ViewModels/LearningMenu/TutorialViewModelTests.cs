@@ -11,7 +11,7 @@
 
     public class TutorialViewModelTests
     {
-        private IConfiguration config;
+        private IConfiguration config = null!;
         private const string BaseUrl = "https://example.com";
         private const int CustomisationId = 1;
         private const int SectionId = 10;

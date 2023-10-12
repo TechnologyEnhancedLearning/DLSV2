@@ -14,7 +14,7 @@
 
     public interface ICourseDelegatesDownloadFileService
     {
-        public Task<byte[]> GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
         );
 
@@ -69,7 +69,7 @@
             this.courseService = courseService;
         }
 
-        public async Task<byte[]> GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
         )
         {
@@ -92,7 +92,7 @@
             {
                 offSet = ((page - 1) * itemsPerPage);
 
-                courseDelegates.AddRange(await this.courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, offSet, itemsPerPage, sortBy, sortDirection, 
+                courseDelegates.AddRange( this.courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, offSet, itemsPerPage, sortBy, sortDirection, 
                     customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3));
                 page++;
             }

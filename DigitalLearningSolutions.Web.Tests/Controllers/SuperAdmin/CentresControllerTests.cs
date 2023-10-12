@@ -201,7 +201,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             result.Should().BeViewResult();
 
             controller.ModelState.IsValid.Should().BeFalse();
-            var centreNameErrors = controller.ModelState["CentreName"].Errors;
+            var centreNameErrors = controller.ModelState["CentreName"]?.Errors;
             centreNameErrors.Should().NotBeEmpty();
             centreNameErrors.Should().Contain(error => error.ErrorMessage ==
             "The centre name you have entered already exists, please enter a different centre name");

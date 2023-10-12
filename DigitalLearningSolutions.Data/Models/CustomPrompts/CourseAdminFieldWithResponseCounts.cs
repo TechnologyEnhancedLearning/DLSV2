@@ -8,6 +8,6 @@
             base(customPromptNumber, text, options)
         { }
 
-        public IEnumerable<ResponseCount> ResponseCounts { get; set; }
+        public IEnumerable<ResponseCount> ResponseCounts { get; set; } = new List<ResponseCount>();
     }
 }

@@ -27,7 +27,7 @@
 
         public JobGroup JobGroup { get; }
 
-        public override string SearchableName {get; set;}
+        public override string SearchableName { get; set; } = string.Empty;
 
     }
 }

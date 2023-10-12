@@ -200,7 +200,7 @@
 
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         [Route("DownloadCurrent/{customisationId:int}")]
-        public async Task<IActionResult> DownloadCurrent(
+        public  IActionResult DownloadCurrent(
             int customisationId,
              string? searchString = null,
             string? sortBy = null,
@@ -260,7 +260,7 @@
                 }
             }
             var itemsPerPage = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
-            var content = await courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(searchString ?? string.Empty, 0, itemsPerPage, sortBy, sortDirection,
+            var content =  courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(searchString ?? string.Empty, 0, itemsPerPage, sortBy, sortDirection,
                     customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
             );
 

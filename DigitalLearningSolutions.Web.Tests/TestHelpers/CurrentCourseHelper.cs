@@ -52,10 +52,10 @@
             };
         }
 
-        public static async Task<CurrentPageViewModel> CurrentPageViewModelFromController(LearningPortalController controller)
+        public static async Task<CurrentPageViewModel?> CurrentPageViewModelFromController(LearningPortalController controller)
         {
             var result = await controller.Current() as ViewResult;
-            return (CurrentPageViewModel)result!.Model;
+            return (CurrentPageViewModel?)result!.Model;
         }
     }
 }

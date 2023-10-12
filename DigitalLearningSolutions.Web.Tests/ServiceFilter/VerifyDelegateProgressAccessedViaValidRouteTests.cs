@@ -32,7 +32,7 @@
                     new ActionDescriptor()
                 ),
                 new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
+                new Dictionary<string, object?>(),
                 homeController
             );
         }

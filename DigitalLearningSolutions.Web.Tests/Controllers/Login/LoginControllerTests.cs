@@ -28,8 +28,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
     internal class LoginControllerTests
     {
-        private IAuthenticationService authenticationService = null!;
-        private IAuthenticationService authenticationServiceWithAuthenticatedUser = null!;
+        private IAuthenticationService? authenticationService = null!;
+        private IAuthenticationService? authenticationServiceWithAuthenticatedUser = null!;
         private IClockUtility clockUtility = null!;
         private LoginController controller = null!;
         private LoginController controllerWithAuthenticatedUser = null!;
@@ -68,7 +68,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                 .WithMockUrlHelper(urlHelper);
 
             authenticationService =
-                (IAuthenticationService)controller.HttpContext.RequestServices.GetService(
+                (IAuthenticationService?)controller.HttpContext.RequestServices.GetService(
                     typeof(IAuthenticationService)
                 );
 
@@ -87,7 +87,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                 .WithMockUrlHelper(urlHelper);
 
             authenticationServiceWithAuthenticatedUser =
-                (IAuthenticationService)controllerWithAuthenticatedUser.HttpContext.RequestServices.GetService(
+                (IAuthenticationService?)controllerWithAuthenticatedUser.HttpContext.RequestServices.GetService(
                     typeof(IAuthenticationService)
                 );
         }
@@ -226,7 +226,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
             // Then
             A.CallTo(
-                    () => authenticationService.SignInAsync(
+                    () => authenticationService!.SignInAsync(
                         A<HttpContext>._,
                         A<string>._,
                         A<ClaimsPrincipal>._,
@@ -485,7 +485,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             const int centreId = 2;
             var userEntity = GetUserEntity(true, true, centreId: centreId);
 
-            A.CallTo(() => authenticationServiceWithAuthenticatedUser.AuthenticateAsync(A<HttpContext>._, A<string>._))
+            A.CallTo(() => authenticationServiceWithAuthenticatedUser!.AuthenticateAsync(A<HttpContext>._, A<string>._))
                 .Returns(GetAuthenticateResult());
 
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(userEntity ?? GetUserEntity(true, true));
@@ -524,7 +524,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => authenticationServiceWithAuthenticatedUser.SignOutAsync(
+                    () => authenticationServiceWithAuthenticatedUser!.SignOutAsync(
                         A<HttpContext>._,
                         A<string>._,
                         A<AuthenticationProperties>._
@@ -532,7 +532,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                 ).MustHaveHappened();
 
                 A.CallTo(
-                    () => authenticationServiceWithAuthenticatedUser.SignInAsync(
+                    () => authenticationServiceWithAuthenticatedUser!.SignInAsync(
                         A<HttpContext>._,
                         A<string>._,
                         A<ClaimsPrincipal>._,
@@ -573,7 +573,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             {
                 await controllerWithAuthenticatedUser.ChooseCentre(centreId, null);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 threwException = true;
             }
@@ -656,13 +656,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
                 if (returnUrl == null)
                 {
-                    routeValues.Keys.Should().NotContain("returnUrl");
-                    routeValues.Keys.Should().NotContain("dlsSubApplication");
+                    routeValues?.Keys.Should().NotContain("returnUrl");
+                    routeValues?.Keys.Should().NotContain("dlsSubApplication");
                 }
                 else
                 {
                     routeValues.Should().Contain("returnUrl", returnUrl);
-                    routeValues.Keys.Should().Contain("dlsSubApplication");
+                    routeValues?.Keys.Should().Contain("dlsSubApplication");
                 }
             }
         }
@@ -682,7 +682,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
             // Then
             A.CallTo(
-                () => authenticationServiceWithAuthenticatedUser.SignInAsync(
+                () => authenticationServiceWithAuthenticatedUser!.SignInAsync(
                     A<HttpContext>._,
                     A<string>._,
                     A<ClaimsPrincipal>._,
@@ -790,7 +790,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             AuthenticateResult? authenticateResult = null
         )
         {
-            A.CallTo(() => authenticationServiceWithAuthenticatedUser.AuthenticateAsync(A<HttpContext>._, A<string>._))
+            A.CallTo(() => authenticationServiceWithAuthenticatedUser!.AuthenticateAsync(A<HttpContext>._, A<string>._))
                 .Returns(authenticateResult ?? GetAuthenticateResult());
 
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(userEntity ?? GetUserEntity(true, true));

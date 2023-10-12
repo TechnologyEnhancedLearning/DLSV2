@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
             var delegateNotifications = new List<NotificationPreference>();
 
             // when
-            var returnedModel = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, null);
+            var returnedModel = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, null!);
 
             // then
             returnedModel.AdminNotifications.ShowAsExpandable.Should().BeFalse();
@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
             var delegateNotifications = new List<NotificationPreference> { new NotificationPreference() };
 
             // when
-            var returnedModel = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, null);
+            var returnedModel = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, null!);
 
             // then
             returnedModel.DelegateNotifications.ShowAsExpandable.Should().BeFalse();
@@ -45,7 +45,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
             var delegateNotifications = new List<NotificationPreference> { new NotificationPreference() };
 
             // when
-            var returnedModel = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, null);
+            var returnedModel = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, null!);
 
             // then
             returnedModel.AdminNotifications.ShowAsExpandable.Should().BeTrue();

@@ -37,7 +37,7 @@
 
         public bool TryGetValue(string key, out byte[] value)
         {
-            return store.TryGetValue(key, out value);
+            return store.TryGetValue(key, out value!);
         }
 
         public string Id => "1";

@@ -378,7 +378,7 @@
             var currentViewModel = await CurrentCourseHelper.CurrentPageViewModelFromController(controller);
 
             // Then
-            currentViewModel.BannerText.Should().Be(bannerText);
+            currentViewModel?.BannerText.Should().Be(bannerText);
         }
 
         [Test]

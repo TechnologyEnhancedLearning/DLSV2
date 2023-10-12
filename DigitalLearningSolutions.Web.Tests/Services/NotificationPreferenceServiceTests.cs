@@ -9,8 +9,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
     public class NotificationPreferenceServiceTests
     {
-        private NotificationPreferencesService notificationPreferencesService;
-        private INotificationPreferencesDataService notificationPreferencesDataService;
+        private NotificationPreferencesService notificationPreferencesService = null!;
+        private INotificationPreferencesDataService notificationPreferencesDataService = null!;
 
         [SetUp]
         public void OneTimeSetUp()

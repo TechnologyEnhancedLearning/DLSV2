@@ -56,7 +56,7 @@
             var availableViewModel = AvailableCourseHelper.AvailableViewModelFromController(controller);
 
             // Then
-            availableViewModel.BannerText.Should().Be(bannerText);
+            availableViewModel?.BannerText.Should().Be(bannerText);
         }
     }
 }

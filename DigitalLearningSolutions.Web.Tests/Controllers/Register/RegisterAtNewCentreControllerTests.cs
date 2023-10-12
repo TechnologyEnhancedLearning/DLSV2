@@ -283,7 +283,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(() => userService.GetUserById(userAccount.Id)).MustHaveHappenedOnceExactly();
-                var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+                var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value!.Errors)
                     .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
                 errorMessage.Should().Be("You are already registered at this centre");
                 controller.ModelState.IsValid.Should().BeFalse();

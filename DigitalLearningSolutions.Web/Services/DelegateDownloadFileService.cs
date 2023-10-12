@@ -143,7 +143,7 @@
         )
         {
             var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var delegatesToExport =  Task.Run(() => GetDelegatesToExport(centreId)).Result; 
+            var delegatesToExport =   GetDelegatesToExport(centreId); 
             var searchedUsers = GenericSearchHelper.SearchItems(delegatesToExport, searchString).AsQueryable();
             var filteredItems = FilteringHelper.FilterItems(searchedUsers, filterString).AsQueryable();
             var sortedItems = GenericSortingHelper.SortAllItems(
@@ -175,7 +175,7 @@
             FormatAllDelegateWorksheetColumns(workbook, dataTable);
         }
 
-        private async Task<IEnumerable<DelegateUserCard>> GetDelegatesToExport(
+        private  IEnumerable<DelegateUserCard> GetDelegatesToExport(
             int centreId
         )
         {
@@ -187,7 +187,7 @@
             List<DelegateUserCard> delegates = new List<DelegateUserCard>();
             while (totalRun >= currentRun)
             {
-                delegates.AddRange(await userDataService.GetDelegateUserCardsForExportByCentreId(centreId, exportQueryRowLimit, currentRun));
+                delegates.AddRange( userDataService.GetDelegateUserCardsForExportByCentreId(centreId, exportQueryRowLimit, currentRun));
                 currentRun++;
             }
 

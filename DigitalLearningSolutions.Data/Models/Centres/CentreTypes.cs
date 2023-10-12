@@ -3,6 +3,6 @@
     public class CentreTypes
     {
         public int CentreTypeID { get; set; }
-        public string CentreType { get; set; }
+        public string CentreType { get; set; } = string.Empty;
     }
 }

@@ -85,8 +85,8 @@ namespace DigitalLearningSolutions.Web.Tests.TestHelpers
                 isCmsManager,
                 null,
                 null,
-                null,
-                null,
+                "",
+                "",
                 null
             );
         }
@@ -135,8 +135,8 @@ namespace DigitalLearningSolutions.Web.Tests.TestHelpers
                 isCmsManager,
                 null,
                 null,
-                null,
-                null,
+                "",
+                "",
                 null
             );
         }

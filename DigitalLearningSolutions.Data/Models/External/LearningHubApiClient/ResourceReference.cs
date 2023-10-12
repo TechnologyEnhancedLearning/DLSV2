@@ -6,6 +6,6 @@
 
         public Catalogue? Catalogue { get; set; }
 
-        public string Link { get; set; }
+        public string Link { get; set; } = string.Empty;
     }
 }

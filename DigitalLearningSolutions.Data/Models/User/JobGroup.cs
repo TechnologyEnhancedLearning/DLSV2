@@ -4,6 +4,6 @@
     {
         public int JobGroupID { get; set; }
 
-        public string JobGroupName { get; set; }
+        public string JobGroupName { get; set; } = string.Empty;
     }
 }
