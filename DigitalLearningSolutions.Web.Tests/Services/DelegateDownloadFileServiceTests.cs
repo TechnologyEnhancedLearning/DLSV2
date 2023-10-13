@@ -86,28 +86,6 @@
                 AdminId = 1,
                 HasBeenPromptedForPrn = true,
                 ProfessionalRegistrationNumber = "MammalHands"
-            },
-            new DelegateUserCard
-            {
-                FirstName = "",
-                LastName = "",
-                EmailAddress = null,
-                CandidateNumber = "",
-                Answer1 = "",
-                Answer2 = "",
-                Answer3 =  "",
-                Answer4 =  "",
-                Answer5 =  "",
-                Answer6 =  "",
-                Active = true,
-                JobGroupId = 0,
-                JobGroupName = "Job group 2",
-                Approved = true,
-                Password = "",
-                DateRegistered = new DateTime(2000, 1, 1),
-                AdminId = 1,
-                HasBeenPromptedForPrn = true,
-                ProfessionalRegistrationNumber = "MammalHands"
             }
         };
 
