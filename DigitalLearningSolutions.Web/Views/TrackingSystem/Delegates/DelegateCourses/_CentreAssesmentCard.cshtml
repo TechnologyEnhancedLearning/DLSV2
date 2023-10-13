@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
+@model SearchableDelegateAssessmentStatisticsViewModel
+
+<div class="searchable-element nhsuk-panel card-with-buttons word-break">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text searchable-element-title" name="course-name">
+          @Model.Name
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+      <partial name="SearchablePage/_StatusTags" model="@Model.Tags" />
+      <partial name="_CentreAssessmentCardDetails" model="@Model" />
+    </div>
+  </details>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full nhsuk-u-margin-left-4">
+      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
+         role="button">
+        View self assesment delegates
+      </a>
+    </div>
+  </div>
+</div>
+
