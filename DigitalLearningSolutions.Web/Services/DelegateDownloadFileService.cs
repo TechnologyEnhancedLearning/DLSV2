@@ -250,7 +250,7 @@
             List<DelegateUserCard> delegates = new List<DelegateUserCard>();
             while (totalRun >= currentRun)
             {
-                delegates.AddRange(await userDataService.GetDelegateUserCardsForExportByCentreId(searchString ?? string.Empty, sortBy, sortDirection, centreId,
+                delegates.AddRange(userDataService.GetDelegateUserCardsForExportByCentreId(searchString ?? string.Empty, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6, exportQueryRowLimit, currentRun));
                 currentRun++;
