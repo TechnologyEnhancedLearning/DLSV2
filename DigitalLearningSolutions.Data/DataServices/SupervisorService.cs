@@ -404,6 +404,20 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 
         public bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId)
         {
+
+            connection.Execute(
+                @"DELETE FROM sarsv FROM SelfAssessmentResultSupervisorVerifications as sarsv
+                    LEFT JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = sarsv.CandidateAssessmentSupervisorID
+                    WHERE cas.SupervisorDelegateId IN (SELECT sd.ID
+					FROM SupervisorDelegates sd
+					JOIN (
+					  SELECT DelegateEmail
+					  FROM SupervisorDelegates
+					  WHERE ID = @supervisorDelegateId
+					) sds
+					ON sd.SupervisorEmail = sds.DelegateEmail) AND cas.Removed IS NULL AND sarsv.Verified IS NULL", new { supervisorDelegateId }
+            );
+
             var numberOfAffectedRows = connection.Execute(
          @"UPDATE SupervisorDelegates SET Removed = getUTCDate()
             WHERE ID = @supervisorDelegateId AND Removed IS NULL AND (DelegateUserID = @delegateUserId OR SupervisorAdminID = @adminId)",
@@ -834,6 +848,12 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         }
         public bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId)
         {
+            connection.Execute(
+                @"DELETE FROM sarsv FROM SelfAssessmentResultSupervisorVerifications as sarsv
+                    LEFT JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = sarsv.CandidateAssessmentSupervisorID
+                    WHERE cas.SupervisorDelegateId = @supervisorDelegateId AND cas.Removed IS NULL AND sarsv.Verified IS NULL", new { supervisorDelegateId }
+                );
+
             var deletedCandidateAssessmentSupervisors = connection.Execute(
                 @"DELETE FROM cas
 	                FROM CandidateAssessmentSupervisors AS cas
