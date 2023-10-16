@@ -27,16 +27,20 @@
         private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseService courseService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IActivityService activityService;
 
         public DelegateCoursesController(
             ICourseService courseService,
             ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+       IActivityService activityService
+
         )
         {
             this.courseService = courseService;
             this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.activityService = activityService;
         }
 
         [Route("{page=1:int}")]
@@ -63,7 +67,7 @@
 
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
-
+            var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
             var courses = UpdateCoursesNotActiveStatus(details.Courses);
 
@@ -88,7 +92,8 @@
 
             var model = new DelegateCoursesViewModel(
                 result,
-                availableFilters
+                availableFilters,
+                courseCategoryName
             );
 
             Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);

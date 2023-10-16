@@ -72,7 +72,7 @@
             // Given
             const string applicationName = "Application";
             const string customisationName = "Customisation";
-            var courseTitle = $"{applicationName} - {customisationName}";
+            var courseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
 
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
                 applicationName: applicationName,

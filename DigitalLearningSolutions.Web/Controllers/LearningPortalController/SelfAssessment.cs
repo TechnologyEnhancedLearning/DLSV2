@@ -23,6 +23,9 @@
     using Microsoft.Extensions.Logging;
     using GDS.MultiPageFormData.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
+    using DocumentFormat.OpenXml.EMMA;
 
     public partial class LearningPortalController
     {
@@ -275,14 +278,14 @@
 
             foreach (var assessmentQuestion in assessmentQuestions)
             {
-                    selfAssessmentService.SetResultForCompetency(
-                        competencyId,
-                        assessment.Id,
-                        delegateUserId,
-                        assessmentQuestion.Id,
-                        assessmentQuestion.Result,
-                        assessmentQuestion.SupportingComments
-                    );
+                selfAssessmentService.SetResultForCompetency(
+                    competencyId,
+                    assessment.Id,
+                    delegateUserId,
+                    assessmentQuestion.Id,
+                    assessmentQuestion.Result,
+                    assessmentQuestion.SupportingComments
+                );
             }
 
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, delegateUserId, true);
@@ -736,10 +739,10 @@
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
             sessionAddSupervisor.SupervisorAdminId = model.SupervisorAdminID;
 
-            string searchString= model.JavascriptSearchSortFilterPaginateEnabled ?
-                                 Request.Query["searchString"].Count>0 ? Request.Query["searchString"][0].ToString(): "":
-                                 Request.Form["SearchString"].Count>0 ? Request.Form["SearchString"][0].ToString():"";
-            
+            string searchString = model.JavascriptSearchSortFilterPaginateEnabled ?
+                                 Request.Query["searchString"].Count > 0 ? Request.Query["searchString"][0].ToString() : "" :
+                                 Request.Form["SearchString"].Count > 0 ? Request.Form["SearchString"][0].ToString() : "";
+
             if (searchString == "")
             {
                 searchString = null;
@@ -1020,7 +1023,7 @@
                         .RoleName,
                 RoleCount = roles.Count(),
                 SupervisorAtCentre = supervisor.CentreName,
-                CentreCount= distinctCentres.Count()
+                CentreCount = distinctCentres.Count()
             };
             return View("SelfAssessments/AddSupervisorSummary", summaryModel);
         }
@@ -1540,6 +1543,62 @@
                 FileHelper.GetContentTypeFromFileName(fileName),
                 fileName
             );
+        }
+
+        public IActionResult RemoveEnrolment(int selfAssessmentId)
+        {
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            selfAssessmentService.RemoveEnrolment(selfAssessmentId, delegateUserId);
+            return RedirectToAction("Current", "LearningPortal");
+        }
+
+        public IActionResult ResendSupervisorSignOffRequest(
+            int selfAssessmentId,
+            int candidateAssessmentSupervisorId,
+            int candidateAssessmentSupervisorVerificationId,
+            string supervisorName,
+            string supervisorEmail,
+            string vocabulary
+        )
+        {
+            frameworkNotificationService.SendSignOffRequest(
+                candidateAssessmentSupervisorId,
+                selfAssessmentId,
+                User.GetUserIdKnownNotNull(),
+                User.GetCentreIdKnownNotNull()
+            );
+            selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(
+                candidateAssessmentSupervisorVerificationId
+            );
+
+            var model = new ResendSupervisorSignOffEmailViewModel
+            {
+                Id = selfAssessmentId,
+                Vocabulary = vocabulary,
+                SupervisorName = supervisorName,
+                SupervisorEmail = supervisorEmail,
+            };
+
+            return View("SelfAssessments/ResendSupervisorSignoffEmailConfirmation", model);
+        }
+
+        public IActionResult WithdrawSupervisorSignOffRequest(
+            int selfAssessmentId,
+            int candidateAssessmentSupervisorVerificationId,
+            string vocabulary,
+            string source)
+        {
+            supervisorService.RemoveCandidateAssessmentSupervisorVerification(candidateAssessmentSupervisorVerificationId);
+
+            return source == "SignOffHistory"
+                ? RedirectToAction(
+                    "SignOffHistory",
+                    new { selfAssessmentId, vocabulary }
+                )
+                : (IActionResult)RedirectToAction(
+                    "SelfAssessmentOverview",
+                    new { selfAssessmentId, vocabulary }
+                );
         }
     }
 }

@@ -10,12 +10,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
 
         public EditCentreManagerDetailsViewModel(Centre centre)
         {
+            CentreId = centre.CentreId;
             FirstName = centre.ContactForename;
             LastName = centre.ContactSurname;
             Email = centre.ContactEmail;
             Telephone = centre.ContactTelephone;
         }
 
+        public int CentreId { get; set; }
+		
         [Required(ErrorMessage = "Enter a first name")]
         [MaxLength(250, ErrorMessage = "First name must be 250 characters or fewer")]
         public string? FirstName { get; set; }
@@ -24,7 +27,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
         [MaxLength(250, ErrorMessage = "Last name must be 250 characters or fewer")]
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Enter an email")]
         [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]

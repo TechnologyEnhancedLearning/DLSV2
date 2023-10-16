@@ -46,7 +46,13 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 return StatusCode(500);
             }
 
-            var model = new AccessibilityHelpViewModel(accessibilityText);
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
+
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AccessibilityHelpText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+
+            var model = new AccessibilityHelpViewModel(accessibilityText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
 
@@ -58,8 +64,12 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 logger.LogError("Terms text from Config table is null");
                 return StatusCode(500);
             }
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
 
-            var model = new TermsViewModel(termsText);
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.TermsText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+            var model = new TermsViewModel(termsText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
 
@@ -147,6 +157,42 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 bannerText = centresDataService.GetBannerText((int)centreId);
             }
             return bannerText;
+        }
+
+        public IActionResult AcceptableUsePolicy()
+        {
+            var acceptableUsePolicyText = configDataService.GetConfigValue(ConfigDataService.AcceptableUsePolicyText);            
+            
+            if (acceptableUsePolicyText == null)
+            {
+                logger.LogError("‘Acceptable Use Policy text from Config table is null");
+                return StatusCode(500);
+            }
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
+
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AcceptableUsePolicyText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+            var model = new AcceptableUsePolicyViewModel(acceptableUsePolicyText, lastUpdatedDate, nextReviewDate);
+            return View(model);
+        }
+        public IActionResult PrivacyNotice()
+        {
+            var PrivacyPolicyText = configDataService.GetConfigValue(ConfigDataService.PrivacyPolicyText);
+            if (PrivacyPolicyText == null)
+            {
+                logger.LogError("PrivacyPolicy text from Config table is null");
+                return StatusCode(500);
+            }
+
+            DateTime lastUpdatedDate = DateTime.Now;
+            DateTime nextReviewDate = DateTime.Now;
+
+            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.PrivacyPolicyText);
+            nextReviewDate = lastUpdatedDate.AddYears(3);
+
+            var model = new PrivacyNoticeViewModel(PrivacyPolicyText, lastUpdatedDate, nextReviewDate);
+            return View(model);
         }
     }
 }

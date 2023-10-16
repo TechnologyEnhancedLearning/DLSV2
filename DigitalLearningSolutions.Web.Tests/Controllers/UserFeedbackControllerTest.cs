@@ -222,13 +222,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             userFeedbackViewModel.FeedbackText = FeedbackText;
 
             // When
-            var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
             A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
                 .MustHaveHappenedOnceExactly();
             result.Should().NotBeNull();
-            result?.ViewName.Should().Be("GuestFeedbackComplete");
+            result?.ActionName.Should().Be("GuestFeedbackComplete");
         }
 
         [Test]
@@ -238,13 +238,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
-            var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as ViewResult;
+            var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
             A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
                 .MustNotHaveHappened();
             result.Should().NotBeNull();
-            result?.ViewName.Should().Be("GuestFeedbackComplete");
+            result?.ActionName.Should().Be("GuestFeedbackComplete");
         }
 
         [Test]

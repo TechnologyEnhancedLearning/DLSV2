@@ -37,8 +37,14 @@
 
         public static readonly IEnumerable<FilterOptionModel> AccountStatusOptions = new[]
         {
-            AccountStatusFilterOptions.ClaimedVerifiedAccount,
-            AccountStatusFilterOptions.UnclaimedUnverifiedAccount
+            AccountStatusFilterOptions.ClaimedAccount,
+            AccountStatusFilterOptions.UnclaimedAccount
+        };
+
+        public static readonly IEnumerable<FilterOptionModel> EmailStatusOptions = new[]
+        {
+            EmailStatusFilterOptions.VerifiedAccount,
+            EmailStatusFilterOptions.UnverifiedAccount
         };
 
         public static List<FilterModel> GetAllDelegatesFilterViewModels(
@@ -58,6 +64,7 @@
                 ),
                 new FilterModel("RegistrationType", "Registration Type", RegistrationTypeOptions),
                 new FilterModel("AccountStatus", "Account Status", AccountStatusOptions),
+                new FilterModel("EmailStatus", "Email Status", EmailStatusOptions),
             };
             filters.AddRange(
                 promptsWithOptions.Select(

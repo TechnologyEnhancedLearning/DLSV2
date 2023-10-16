@@ -307,5 +307,24 @@
                 result.First().Should().BeEquivalentTo(expectedCandidateAssessment);
             }
         }
+
+        [Test]
+        public void RemoveEnrolment_sets_removed_date_for_candidate_assessment()
+        {
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentDataService.RemoveEnrolment(SelfAssessmentId, delegateUserId);
+                var updatedSelfAssessment =
+                    selfAssessmentDataService.GetCandidateAssessments(delegateUserId, SelfAssessmentId)!;
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedSelfAssessment.Should().HaveCount(1);
+                    updatedSelfAssessment.First().RemovedDate.Should().NotBeNull();
+                }
+            }
+        }
     }
 }

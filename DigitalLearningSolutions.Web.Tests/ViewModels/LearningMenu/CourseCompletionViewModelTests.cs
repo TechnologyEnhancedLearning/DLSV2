@@ -51,7 +51,7 @@
             var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
-            var courseTitle = $"{applicationName} - {customisationName}";
+            var courseTitle = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             courseCompletionViewModel.CourseTitle.Should().BeEquivalentTo(courseTitle);
         }
 

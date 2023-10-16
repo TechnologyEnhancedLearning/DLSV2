@@ -20,6 +20,7 @@
                 u.FirstName,
                 u.LastName,
                 u.PasswordHash AS Password,
+                u.EmailVerified,
                 da.Approved,
                 LTRIM(RTRIM(da.Answer1)) AS Answer1,
                 LTRIM(RTRIM(da.Answer2)) AS Answer2,

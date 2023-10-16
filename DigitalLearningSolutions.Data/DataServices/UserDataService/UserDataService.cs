@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
     using DocumentFormat.OpenXml.Wordprocessing;
+    using System.Threading.Tasks;
 
     public interface IUserDataService
     {
@@ -232,6 +233,12 @@
         (IEnumerable<AdminEntity>, int) GetAllAdmins(
        string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
        );
+        (IEnumerable<DelegateEntity>, int) GetAllDelegates(
+      string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
+      );
+        Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
+      string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
+      );
 
         bool PrimaryEmailIsInUseAtCentre(string email, int centreId);
 
@@ -260,6 +267,11 @@
             int newUserIdForAdminAccount,
             int centreId
         );
+        int RessultCount(int adminId, string search, int? centreId, string userStatus, int failedLoginThreshold, string role);
+
+        public void DeleteUserAndAccounts(int userId);
+
+        public bool PrimaryEmailInUseAtCentres(string email);
     }
 
     public partial class UserDataService : IUserDataService
@@ -450,7 +462,7 @@
             return connection.QueryFirst<int>(
                 @$"SELECT COUNT(*)
                     FROM Users
-                    WHERE PrimaryEmail = @email
+                    WHERE PrimaryEmail = @email  
                     {(userId == null ? "" : "AND Id <> @userId")}",
                 new { email, userId }
             ) > 0;
@@ -555,18 +567,169 @@
 
         public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
         {
+            string trimmedFirstName = firstName.Trim();
+            string trimmedLastName = lastName.Trim();
             connection.Execute(
                 @"UPDATE Users
                   SET
-                  FirstName = @firstName,
-                  LastName = @lastName,
+                  FirstName = @trimmedFirstName,
+                  LastName = @trimmedLastName,
                   PrimaryEmail = @primaryEmail,
                   JobGroupId = @jobGroupId,
                   ProfessionalRegistrationNumber = @prnNumber,
                   EmailVerified = @emailVerified
                 WHERE ID = @userId",
-                new { firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId }
+                new { trimmedFirstName, trimmedLastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId }
             );
+        }
+        public (IEnumerable<DelegateEntity>, int) GetAllDelegates(
+      string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
+      )
+        {
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+            }
+            string BaseSelectQuery = @$"SELECT
+                da.ID,
+                da.Active,
+                da.CentreID,
+                ce.CentreName,
+                ce.Active AS CentreActive,
+                da.DateRegistered,
+                da.CandidateNumber,
+                da.Approved,
+                da.SelfReg,
+                da.UserID,
+                da.RegistrationConfirmationHash,
+                u.ID,
+                u.PrimaryEmail,
+                u.FirstName,
+                u.LastName,
+                u.Active,
+                u.LearningHubAuthID,
+                u.EmailVerified,
+                ucd.ID,
+                ucd.UserID,
+                ucd.CentreID,
+                ucd.Email,
+                ucd.EmailVerified,
+                (SELECT ID
+                    FROM AdminAccounts aa
+                        WHERE aa.UserID = da.UserID
+                            AND aa.CentreID = da.CentreID
+                            AND aa.Active = 1
+                ) AS AdminID
+            FROM DelegateAccounts AS da
+            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
+            INNER JOIN Users AS u ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+            AND ucd.CentreId = da.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+            string condition = $@" WHERE ((@delegateId = 0) OR (da.ID = @delegateId)) 	AND (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @search + N'%')
+                                    AND ((ce.CentreID = @centreId) OR (@centreId= 0)) 
+                                    AND ((@accountStatus = 'Any') OR (@accountStatus = 'Active' AND da.Active = 1 AND u.Active =1) OR (@accountStatus = 'Inactive' AND (u.Active = 0 OR da.Active =0)) 
+	                                    OR(@accountStatus = 'Approved' AND  da.Approved =1) OR (@accountStatus = 'Unapproved' AND  da.Approved =0)
+	                                    OR (@accountStatus = 'Claimed' AND  da.RegistrationConfirmationHash is  null) OR (@accountStatus = 'Unclaimed' AND da.RegistrationConfirmationHash is not null))
+                                    AND ((@lhlinkStatus = 'Any') OR (@lhlinkStatus = 'Linked' AND u.LearningHubAuthID IS NOT NULL) OR (@lhlinkStatus = 'Not linked' AND u.LearningHubAuthID IS NULL))";
+
+            string sql = @$"{BaseSelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
+                            OFFSET @offset ROWS
+                            FETCH NEXT @rows ROWS ONLY";
+            IEnumerable<DelegateEntity> delegateEntity =
+                connection.Query<DelegateAccount, UserAccount, UserCentreDetails, int?, DelegateEntity>(
+                sql,
+                (delegateAccount, userAccount, userCentreDetails, adminId) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails,
+                    adminId
+                ),
+                new { delegateId, search, centreId, accountStatus, lhlinkStatus, offset, rows },
+                splitOn: "ID,ID,AdminID",
+                commandTimeout: 3000
+            );
+
+            int ResultCount = connection.ExecuteScalar<int>(
+                            @$"SELECT  COUNT(*) AS Matches
+                            FROM DelegateAccounts AS da
+                            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
+                            INNER JOIN Users AS u ON u.ID = da.UserID
+                            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+                            AND ucd.CentreId = da.CentreID
+                            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID {condition}",
+                new { delegateId, search, centreId, accountStatus, failedLoginThreshold, lhlinkStatus },
+                commandTimeout: 3000
+            );
+            return (delegateEntity, ResultCount);
+        }
+
+        public void DeleteUserAndAccounts(int userId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+            @"
+	           BEGIN TRY
+	                BEGIN TRANSACTION
+
+                        DELETE FROM aspProgress WHERE ProgressID IN (SELECT ProgressID FROM Progress WHERE CandidateID in (SELECT ID FROM DelegateAccounts where UserID = @userId))
+
+                        DELETE FROM Progress WHERE CandidateID IN (SELECT ID FROM DelegateAccounts where UserID = @userId)
+
+                        DELETE FROM ReportSelfAssessmentActivityLog where UserID = @userId
+
+                        DELETE FROM SelfAssessmentResultSupervisorVerifications WHERE CandidateAssessmentSupervisorID IN ( SELECT ID
+                        FROM CandidateAssessmentSupervisors where CandidateAssessmentID IN (select ID from CandidateAssessments where DelegateUserID = @userId))
+
+                        DELETE FROM CandidateAssessmentSupervisorVerifications WHERE CandidateAssessmentSupervisorID IN ( SELECT ID
+                        FROM CandidateAssessmentSupervisors where CandidateAssessmentID IN (select ID from CandidateAssessments where DelegateUserID = @userId))
+
+                        DELETE FROM CandidateAssessmentSupervisors where CandidateAssessmentID IN (select ID from CandidateAssessments where DelegateUserID = @userId)
+
+                        DELETE FROM CandidateAssessmentOptionalCompetencies WHERE CandidateAssessmentID IN (select ID from CandidateAssessments where DelegateUserID = @userId)
+
+                        DELETE from CandidateAssessments where DelegateUserID = @userId
+
+                        DELETE FROM SupervisorDelegates WHERE DelegateUserID = @userId
+
+				        DELETE FROM UserCentreDetails WHERE UserID = @userId
+
+				        DELETE FROM AdminAccounts WHERE UserID = @userId
+
+				        DELETE FROM DelegateAccounts WHERE UserID = @userId
+
+				        DELETE FROM Users WHERE ID = @userId
+
+			        COMMIT TRANSACTION
+		        END TRY
+		        BEGIN CATCH
+                    IF @@TRANCOUNT<>0
+	                BEGIN
+		                ROLLBACK TRANSACTION
+	                END
+		        END CATCH
+		        ",
+                new
+                {
+                    UserID = userId
+                }
+            );
+
+            if (numberOfAffectedRows == 0)
+            {
+                string message =
+                $"db delete user failed for User ID: {userId}";
+                throw new DeleteUserException(message);
+            }
+        }
+
+        public bool PrimaryEmailInUseAtCentres(string email)
+        {
+            return connection.QueryFirst<int>(
+               @$"SELECT COUNT(*)
+                    FROM UserCentreDetails
+                    WHERE Email = @email ",
+               new { email }
+           ) > 0;
         }
     }
 }

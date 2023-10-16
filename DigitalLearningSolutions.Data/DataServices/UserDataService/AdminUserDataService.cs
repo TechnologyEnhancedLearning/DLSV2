@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.User;
@@ -386,7 +387,78 @@
             );
             return (adminEntity, ResultCount);
         }
-
+        public int RessultCount(int adminId, string search, int? centreId, string userStatus, int failedLoginThreshold, string role)
+        {
+            string condition = $@" WHERE ((@adminId = 0) OR (aa.ID = @adminId)) AND 
+                                (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%') AND 
+                                ((aa.CentreID = @centreId) OR (@centreId= 0)) AND 
+                                ((@userStatus = 'Any') OR (@userStatus = 'Active' AND aa.Active = 1 AND u.Active =1) OR (@userStatus = 'Inactive' AND (u.Active = 0 OR aa.Active =0))) AND
+                                ((@role = 'Any') OR 
+                                 (@role = 'Super admin' AND aa.IsSuperAdmin = 1) OR (@role = 'Centre manager' AND aa.IsCentreManager = 1) OR 
+                                 (@role = 'Centre administrator' AND aa.IsCentreAdmin = 1) OR (@role = 'Supervisor' AND aa.IsSupervisor = 1) OR 
+                                 (@role = 'Nominated supervisor' AND aa.IsNominatedSupervisor = 1) OR (@role = 'Trainer' AND aa.IsTrainer = 1) OR 
+                                 (@role = 'Content Creator license' AND aa.IsContentCreator = 1) OR (@role = 'CMS administrator' AND aa.IsContentManager = 1 AND aa.ImportOnly =1) OR 
+                                 (@role = 'CMS manager' AND aa.IsContentManager = 1 AND aa.ImportOnly = 0))
+                                 ";
+            int ResultCount = connection.ExecuteScalar<int>(
+                            @$"SELECT  COUNT(*) AS Matches
+                            FROM   AdminAccounts AS aa INNER JOIN
+                            Users AS u ON aa.UserID = u.ID INNER JOIN
+                            Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
+                            UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID {condition}",
+                new { adminId, search, centreId, userStatus, failedLoginThreshold, role },
+                commandTimeout: 3000
+            );
+            return ResultCount;
+        }
+        public async Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
+       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
+       )
+        {
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+            }
+            string condition = $@" WHERE ((@adminId = 0) OR (aa.ID = @adminId)) AND 
+                                (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%') AND 
+                                ((aa.CentreID = @centreId) OR (@centreId= 0)) AND 
+                                ((@userStatus = 'Any') OR (@userStatus = 'Active' AND aa.Active = 1 AND u.Active =1) OR (@userStatus = 'Inactive' AND (u.Active = 0 OR aa.Active =0))) AND
+                                ((@role = 'Any') OR 
+                                 (@role = 'Super admin' AND aa.IsSuperAdmin = 1) OR (@role = 'Centre manager' AND aa.IsCentreManager = 1) OR 
+                                 (@role = 'Centre administrator' AND aa.IsCentreAdmin = 1) OR (@role = 'Supervisor' AND aa.IsSupervisor = 1) OR 
+                                 (@role = 'Nominated supervisor' AND aa.IsNominatedSupervisor = 1) OR (@role = 'Trainer' AND aa.IsTrainer = 1) OR 
+                                 (@role = 'Content Creator license' AND aa.IsContentCreator = 1) OR (@role = 'CMS administrator' AND aa.IsContentManager = 1 AND aa.ImportOnly =1) OR 
+                                 (@role = 'CMS manager' AND aa.IsContentManager = 1 AND aa.ImportOnly = 0))
+                                 ";
+            string BaseSelectQuery = $@"SELECT aa.ID, aa.UserID, aa.CentreID, aa.Active, aa.IsCentreAdmin, aa.IsReportsViewer, aa.IsSuperAdmin, aa.IsCentreManager, 
+		                                aa.IsContentManager, aa.IsContentCreator, aa.IsSupervisor, aa.IsTrainer, aa.CategoryID, aa.IsFrameworkDeveloper, aa.IsFrameworkContributor,aa.ImportOnly,
+		                                aa.IsWorkforceManager, aa.IsWorkforceContributor, aa.IsLocalWorkforceManager, aa.IsNominatedSupervisor,
+		                                u.ID, u.PrimaryEmail, u.FirstName, u.LastName, u.Active, u.FailedLoginCount,
+		                                c.CentreID, c.CentreName,
+		                                ucd.ID, ucd.Email, ucd.EmailVerified, ucd.CentreID,
+                                        1 as AdminIdReferenceCount
+                                    FROM   AdminAccounts AS aa WITH (NOLOCK)  INNER JOIN
+                                    Users AS u WITH (NOLOCK)  ON aa.UserID = u.ID INNER JOIN
+                                    Centres AS c WITH (NOLOCK)  ON aa.CentreID = c.CentreID LEFT OUTER JOIN
+                                    UserCentreDetails AS ucd WITH (NOLOCK)  ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID";
+            string sql = @$"{BaseSelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
+                            OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
+                            FETCH NEXT @exportQueryRowLimit ROWS ONLY";
+            IEnumerable<AdminEntity> adminEntity = connection.Query<AdminAccount, UserAccount, Centre, UserCentreDetails, int, AdminEntity>(
+                sql,
+                (adminAccount, userAccount, centre, userCentreDetails, adminIdReferenceCount) => new AdminEntity(
+                    adminAccount,
+                    userAccount,
+                    centre,
+                    userCentreDetails,
+                    adminIdReferenceCount
+                ),
+                new { adminId, search, centreId, userStatus, failedLoginThreshold, role, offset, rows, exportQueryRowLimit, currentRun },
+                splitOn: "ID,ID,CentreID,ID,AdminIdReferenceCount",
+                commandTimeout: 3000
+            );
+            return adminEntity;
+        }
         public void UpdateAdminStatus(int adminId, bool active)
         {
             connection.Execute(

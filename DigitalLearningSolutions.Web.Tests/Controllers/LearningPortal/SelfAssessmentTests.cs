@@ -5,6 +5,8 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
@@ -321,7 +323,7 @@
 
             A.CallTo(() => selfAssessmentService.GetNthCompetency(A<int>._, A<int>._, A<int>._))
                 .Returns(competency);
-            
+
             // When
             var result = controller.SelfAssessmentCompetency(1, userUpdatedAssessmentQuestions, 1, 1, 1);
 
@@ -607,6 +609,86 @@
                 .WithControllerName("LearningSolutions")
                 .WithActionName("StatusCode")
                 .WithRouteValue("code", 403);
+        }
+
+        [Test]
+        public void ResendSupervisorSignOffRequest_sends_email_and_navigates_to_confirmation_view()
+        {
+            // Given
+            var expectedModel = new ResendSupervisorSignOffEmailViewModel
+            {
+                Id = 1,
+                Vocabulary = "TestVocabulary",
+                SupervisorName = "TestSupervisorName",
+                SupervisorEmail = "testsupervisor@example.com",
+            };
+
+            // When
+            var result = controller.ResendSupervisorSignOffRequest(1, 2, 3, "TestSupervisorName", "testsupervisor@example.com", "TestVocabulary");
+
+            // Then
+            A.CallTo(
+                () => frameworkNotificationService.SendSignOffRequest(
+                2,
+                1,
+                11,
+                2
+                )).MustHaveHappened();
+
+            A.CallTo(
+                () => selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(3)).MustHaveHappened();
+
+            result.Should().BeViewResult()
+                .WithViewName("SelfAssessments/ResendSupervisorSignoffEmailConfirmation")
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void WithdrawSupervisorSignOffRequest_calls_remove_sign_off_and_reloads_sign_off_history_page()
+        {
+            // Given
+            var expectedModel = new ResendSupervisorSignOffEmailViewModel
+            {
+                Id = 1,
+                Vocabulary = "TestVocabulary",
+                SupervisorName = "TestSupervisorName",
+                SupervisorEmail = "testsupervisor@example.com",
+            };
+
+            // When
+            var result = controller.WithdrawSupervisorSignOffRequest(1, 2, "TestVocabulary", "SignOffHistory");
+
+            // Then
+            A.CallTo(
+                () => supervisorService.RemoveCandidateAssessmentSupervisorVerification(2)).MustHaveHappened();
+
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithActionName("SignOffHistory");
+        }
+
+        [Test]
+        public void WithdrawSupervisorSignOffRequest_calls_remove_sign_off_and_defaults_route_to_self_assessment_overview_page()
+        {
+            // Given
+            var expectedModel = new ResendSupervisorSignOffEmailViewModel
+            {
+                Id = 1,
+                Vocabulary = "TestVocabulary",
+                SupervisorName = "TestSupervisorName",
+                SupervisorEmail = "testsupervisor@example.com",
+            };
+
+            // When
+            var result = controller.WithdrawSupervisorSignOffRequest(1, 2, "TestVocabulary", "");
+
+            // Then
+            A.CallTo(
+                () => supervisorService.RemoveCandidateAssessmentSupervisorVerification(2)).MustHaveHappened();
+
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithActionName("SelfAssessmentOverview");
         }
     }
 }

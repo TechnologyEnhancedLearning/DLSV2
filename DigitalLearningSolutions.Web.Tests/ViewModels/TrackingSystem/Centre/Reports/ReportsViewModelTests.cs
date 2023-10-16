@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using FluentAssertions;
     using NUnit.Framework;
@@ -31,7 +32,7 @@
             };
 
             // When
-            var model = new UsageStatsTableViewModel(
+            var model = new ActivityTableViewModel(
                 monthlyData,
                 DateTime.Parse("2001-01-01"),
                 DateTime.Parse("2002-02-01")
@@ -49,6 +50,13 @@
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2001-01-01"),
                 DateTime.Parse("2002-02-02"),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -85,7 +93,7 @@
             };
 
             // When
-            var model = new UsageStatsTableViewModel(
+            var model = new ActivityTableViewModel(
                 dailyData,
                 DateTime.Parse("2002-02-01"),
                 DateTime.Parse("2002-02-03")
@@ -116,7 +124,7 @@
             };
 
             // When
-            var model = new UsageStatsTableViewModel(
+            var model = new ActivityTableViewModel(
                 dailyData,
                 DateTime.Parse("2002-02-01"),
                 DateTime.Parse("2002-02-15")
@@ -147,7 +155,7 @@
             };
 
             // When
-            var model = new UsageStatsTableViewModel(
+            var model = new ActivityTableViewModel(
                 dailyData,
                 DateTime.Parse("2002-01-01"),
                 DateTime.Parse("2002-03-02")
@@ -178,7 +186,7 @@
             };
 
             // When
-            var model = new UsageStatsTableViewModel(
+            var model = new ActivityTableViewModel(
                 dailyData,
                 DateTime.Parse("2002-02-02"),
                 DateTime.Parse("2002-08-02")
@@ -209,7 +217,7 @@
             };
 
             // When
-            var model = new UsageStatsTableViewModel(
+            var model = new ActivityTableViewModel(
                 dailyData,
                 DateTime.Parse("2002-02-02"),
                 DateTime.Parse("2004-02-02")
@@ -240,7 +248,7 @@
             };
 
             // When
-            var model = new UsageStatsTableViewModel(
+            var model = new ActivityTableViewModel(
                 dailyData,
                 DateTime.Parse("2002-02-02"),
                 DateTime.Parse("2004-02-02")
@@ -264,7 +272,7 @@
             };
 
             // When
-            var model = new UsageStatsTableViewModel(
+            var model = new ActivityTableViewModel(
                 dailyData,
                 DateTime.Parse("2002-02-02"),
                 DateTime.Parse("2002-02-03")

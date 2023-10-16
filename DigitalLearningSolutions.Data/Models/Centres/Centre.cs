@@ -1,4 +1,6 @@
-﻿namespace DigitalLearningSolutions.Data.Models.Centres
+﻿using System;
+
+namespace DigitalLearningSolutions.Data.Models.Centres
 {
     public class Centre
     {
@@ -35,5 +37,11 @@
         public int CustomCourses { get; set; }
         public long ServerSpaceUsed { get; set; }
         public long ServerSpaceBytes { get; set; }
+        public int CentreTypeId { get; set; }
+        public string CentreType { get; set; }
+        public long CandidateByteLimit { get; set; }
+        public DateTime? ContractReviewDate { get; set; }
+        public string? RegistrationEmail { get; set; }
+        public bool AddITSPcourses { get; set; }
     }
 }

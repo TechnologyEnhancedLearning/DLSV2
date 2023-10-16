@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Supervisor sign-off email sent";
+}
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader"
+                   asp-action="SignOffHistory"
+                   asp-route-selfAssessmentId="@Model.Id"
+                   asp-route-vocabulary="@Model.Vocabulary">
+                        Sign-off History
+                    </a>
+                </li>
+                <li class="nhsuk-breadcrumb__item">Sign-off Email</li>
+            </ol>
+        </div>
+        <p class="nhsuk-breadcrumb__back">
+            <a class="nhsuk-breadcrumb__backlink"
+           asp-action="SignOffHistory"
+           asp-route-selfAssessmentId="@Model.Id"
+           asp-route-vocabulary="@Model.Vocabulary">
+                Back to Sign-off History
+            </a>
+        </p>
+    </nav>
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">@ViewData["Title"]</h1>
+        <p>A supervisor sign-off message has been sent to @Model.SupervisorName (@Model.SupervisorEmail).</p>
+    </div>
+</div>

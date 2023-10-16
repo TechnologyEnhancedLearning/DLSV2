@@ -36,7 +36,7 @@
         private const string LearningHubReportAPIBaseUrl = "LearningHubReportAPIConfig:BaseUrl";
         private const string LearningHubReportAPIClientId = "LearningHubReportAPIConfig:ClientId";
         private const string LearningHubReportAPIClientIdentityKey = "LearningHubReportAPIConfig:ClientIdentityKey";
-
+        private const string ExportQueryRowLimitKey = "FeatureManagement:ExportQueryRowLimit";
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -147,6 +147,10 @@
         {
             int.TryParse(config[CookieBannerConsentExpiryDays], out int expiryDays);
             return expiryDays;
+        }
+        public static int GetExportQueryRowLimit(this IConfiguration config)
+        {
+            return int.Parse(config[ExportQueryRowLimitKey]);
         }
 
     }

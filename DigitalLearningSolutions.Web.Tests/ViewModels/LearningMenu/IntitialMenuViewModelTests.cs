@@ -24,7 +24,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.Title.Should().Be($"{applicationName} - {customisationName}");
+            initialMenuViewModel.Title.Should().Be(!String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName);
         }
 
         [Test]

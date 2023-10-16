@@ -3,13 +3,18 @@
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.User;
+    using DocumentFormat.OpenXml.Spreadsheet;
+    using Microsoft.Extensions.Configuration;
+    using StackExchange.Redis;
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
     using System.Linq;
-
+    using System.Threading.Tasks;
+    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
     public interface IAdminDownloadFileService
     {
         public byte[] GetAllAdminsFile(
@@ -56,12 +61,13 @@
         private const string IsCMSAdministrator = "CMS Administrator";
         private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
         private readonly IUserDataService userDataService;
-
+        private readonly IConfiguration configuration;
         public AdminDownloadFileService(
-            IUserDataService userDataService
+            IUserDataService userDataService, IConfiguration configuration
         )
         {
             this.userDataService = userDataService;
+            this.configuration = configuration;
         }
 
         public byte[] GetAllAdminsFile(
@@ -82,15 +88,13 @@
             return stream.ToArray();
         }
 
-        private void PopulateAllAdminsSheet(
+        private   void PopulateAllAdminsSheet(
             IXLWorkbook workbook,
             string? searchString,
             string? filterString
         )
         {
-            var adminsToExport = GetAdminsToExport(searchString, filterString)
-                .ToList();
-
+            IEnumerable<AdminEntity> adminsToExport = Task.Run(() => GetAdminsToExport(searchString, filterString)).Result;
             var dataTable = new DataTable();
             SetUpDataTableColumnsForAllAdmins(dataTable);
 
@@ -115,7 +119,7 @@
             FormatAllDelegateWorksheetColumns(workbook, dataTable);
         }
 
-        private IEnumerable<AdminEntity> GetAdminsToExport(
+        private async Task<IEnumerable<AdminEntity>> GetAdminsToExport(
             string? searchString,
             string? filterString
         )
@@ -169,8 +173,17 @@
                     }
                 }
             }
-            (var admins, var ResultCount) = this.userDataService.GetAllAdmins(Search ?? string.Empty, 0, 999999, AdminId, UserStatus, Role, CentreId, AuthHelper.FailedLoginThreshold);
+            var exportQueryRowLimit =ConfigurationExtensions.GetExportQueryRowLimit(configuration);
+            int resultCount = userDataService.RessultCount(AdminId, Search ?? string.Empty, CentreId, UserStatus, AuthHelper.FailedLoginThreshold, Role);
 
+            int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
+            int currentRun = 1;
+            List<AdminEntity> admins = new List<AdminEntity>();
+            while (totalRun >= currentRun)
+            {
+                admins.AddRange(await this.userDataService.GetAllAdminsExport(Search ?? string.Empty, 0, 999999, AdminId, UserStatus, Role, CentreId, AuthHelper.FailedLoginThreshold, exportQueryRowLimit, currentRun));
+                currentRun++;
+            }
             return admins;
         }
 

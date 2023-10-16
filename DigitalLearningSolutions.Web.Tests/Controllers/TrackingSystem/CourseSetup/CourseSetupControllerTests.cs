@@ -101,17 +101,20 @@
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
+        private IActivityService activityService = null;
 
-        [SetUp]
+    [SetUp]
         public void Setup()
         {
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
+            activityService = A.Fake<IActivityService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             config = A.Fake<IConfiguration>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
-
+            A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
+            .Returns("All");
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                     A<int>._,
@@ -134,7 +137,8 @@
                     sectionService,
                     searchSortFilterPaginateService,
                     config,
-                    multiPageFormService
+                    multiPageFormService,
+                    activityService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -147,7 +151,8 @@
                     sectionService,
                     searchSortFilterPaginateService,
                     config,
-                    multiPageFormService
+                    multiPageFormService,
+                    activityService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)

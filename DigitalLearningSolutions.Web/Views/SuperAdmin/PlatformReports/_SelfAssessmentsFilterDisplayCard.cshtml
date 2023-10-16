@@ -1,0 +1,93 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.PlatformReports
+@model SelfAssessmentReportFilterModel
+<div class="nhsuk-card word-break">
+    <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
+        <div class="nhsuk-card__description">
+            <dl class="nhsuk-summary-list details-list-with-button">
+
+                @if (Model.RegionName != "All")
+                {
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Region
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.RegionName" />
+                    </div>
+                }
+                @if (Model.CentreTypeName != "All")
+                {
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Organisation type
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.CentreTypeName" />
+                    </div>
+                }
+                @if (Model.CentreName != "All")
+                {
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Organisation
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.CentreName" />
+                    </div>
+                }
+                @if (Model.JobGroupName != "All")
+                {
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Job group
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.JobGroupName" />
+                    </div>
+                }
+                @if (Model.BrandName != "All")
+                {
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Activity brand
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.BrandName" />
+                    </div>
+                }
+                @if (Model.CategoryName != "All")
+                {
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Activity category
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.CategoryName" />
+                    </div>
+                }
+                @if (Model.SelfAssessmentName != "All")
+                {
+                    <div class="nhsuk-summary-list__row details-list-with-button__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Self assessment
+                        </dt>
+                        <partial name="_SummaryFieldValue" model="@Model.SelfAssessmentName" />
+                    </div>
+                }
+
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Date range
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        <span>@Model.StartDate</span><span class="nhsuk-u-visually-hidden">to</span><span> - @Model.EndDate</span>
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Reporting frequency
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.ReportIntervalName" />
+                </div>
+            </dl>
+
+            <a class="nhsuk-button nhsuk-button--secondary" asp-controller="PlatformReports" asp-action=@(Model.Supervised ? "SupervisedSelfAssessmentsEditFilters" : "IndependentSelfAssessmentsEditFilters" ) role="button">
+                Edit filters
+            </a>
+        </div>
+    </div>
+</div>

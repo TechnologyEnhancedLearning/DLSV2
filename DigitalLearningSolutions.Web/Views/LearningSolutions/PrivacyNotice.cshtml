@@ -1,0 +1,17 @@
+﻿@using DigitalLearningSolutions.Web.Models;
+@using DigitalLearningSolutions.Web.ViewModels.LearningSolutions
+@model PrivacyNoticeViewModel
+@{
+    ViewData["Title"] = "Digital Learning Solutions - Privacy Notice";
+    ViewData["DoNotDisplayNavBar"] = true;
+}
+<link rel="stylesheet" type="text/css" href="~/css/home/Policies.css" asp-append-version="true">
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+
+        @Html.Raw(Model.TermsText)
+        @await Html.PartialAsync("~/Views/Shared/_PageReviewPartial.cshtml", new PageReviewModel { LastReviewedDate = Model.LastReviewedDate, NextReviewDate = Model.NextReviewDate })
+
+    </div>
+</div>

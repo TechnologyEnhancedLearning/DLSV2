@@ -44,7 +44,7 @@
         )
         {
             Id = id;
-            Title = $"{applicationName} - {customisationName}";
+            Title = !String.IsNullOrEmpty(customisationName) ? $"{applicationName} - {customisationName}" : applicationName;
             Description = applicationInfo;
             AverageDuration = averageDuration;
             CentreName = centreName;

@@ -1,0 +1,44 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CentreCourses
+@model CentreCoursesViewModel
+<div class="searchable-element nhsuk-expander-group" id="@Model.ApplicationID-card">
+    <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+        <summary class="nhsuk-details__summary">
+            <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.ApplicationID-name" name="centre-name">
+                @Model.ApplicationName
+            </span>
+        </summary>
+
+        <div class="nhsuk-details__text">
+            <table role="table" class="nhsuk-table-responsive">
+                <thead role="rowgroup" class="nhsuk-table__head">
+                    <tr role="row">
+                        <th role="columnheader" scope="col">
+                            <b>Customisation name (ID)</b>
+                        </th>
+                        <th role="columnheader" scope="col">
+                            <b>Total delegates</b>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody class="nhsuk-table__body">
+                    @foreach (var customisation in Model.CentreCourseCustomisations)
+                    {
+                        <tr role="row" class="nhsuk-table__row">
+                            <td role="cell" class="nhsuk-table__cell choose-centre-td">
+                                <span class="nhsuk-table-responsive__heading"><b>Customisation name (ID): </b></span>
+                                <span class="word-break">@customisation.CustomisationName (@customisation.CustomisationID)</span>
+                            </td>
+                            <td role="cell" class="nhsuk-table__cell choose-centre-td">
+                                <span class="nhsuk-table-responsive__heading">
+                                    <b>Total delegates: </b>
+                                </span>
+                                <span class="word-break">@customisation.DelegateCount</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </details>
+</div>

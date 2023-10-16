@@ -1,0 +1,139 @@
+﻿@using DigitalLearningSolutions.Data.Utilities;
+@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@inject IClockUtility ClockUtility
+@model ContractTypeViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Edit Contract Info" : "Edit Contract Info";
+    var exampleDate = ClockUtility.UtcToday;
+    var hintTextLines = new List<string> {
+    $"For example, {@exampleDate.Day} {@exampleDate.Month} { @exampleDate.Year}. Leave the boxes blank to clear the contract review date.",
+    " ", };
+}
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new string[] { nameof(Model.CentreName),nameof(Model.ContractType)})" />
+}
+@{
+    string contractReviewDay;
+    string ContractReviewMonth;
+    string ContractReviewYear;
+    if (Model.CompleteByValidationResult?.DateValid == false)
+    {
+        contractReviewDay = Model.CompleteByValidationResult?.Day.ToString() ?? "";
+        ContractReviewMonth = Model.CompleteByValidationResult?.Month.ToString() ?? "";
+        ContractReviewYear = Model.CompleteByValidationResult?.Year.ToString() ?? "";
+        contractReviewDay = contractReviewDay == "0" ? "" : contractReviewDay;
+        ContractReviewMonth = ContractReviewMonth == "0" ? "" : ContractReviewMonth;
+        ContractReviewYear = ContractReviewYear == "0" ? "" : ContractReviewYear;
+    }
+    else
+    {
+        contractReviewDay = Model.ContractReviewDate?.Day.ToString() ?? "";
+        ContractReviewMonth = Model.ContractReviewDate?.Month.ToString() ?? "";
+        ContractReviewYear = Model.ContractReviewDate?.Year.ToString() ?? "";
+    }
+    
+    
+    var dayErrorClass = Model.CompleteByValidationResult?.DayValid == false ? "nhsuk-input--error" : "";
+    var monthErrorClass = Model.CompleteByValidationResult?.MonthValid == false ? "nhsuk-input--error" : "";
+    var yearErrorClass = Model.CompleteByValidationResult?.YearValid == false ? "nhsuk-input--error" : "";
+    var formErrorClass = Model.CompleteByValidationResult?.DateValid == false ? "nhsuk-form-group--error" : "";
+}
+
+<div id="form-group">
+    <h1 class="nhsuk-heading-xl">Edit contract info for @Model.CentreName </h1>
+    <form method="post">
+
+        @Html.HiddenFor(x=>x.CentreId)
+        @Html.HiddenFor(x=>x.CentreName)
+        @Html.HiddenFor(x=>x.ContractType)
+
+        <div class="nhsuk-grid-row divider">
+            <div class="nhsuk-grid-column-full">
+                <vc:select-list asp-for="@nameof(Model.ContractTypeID)"
+                                label="Contract type"
+                                value="@Model.ContractType.ToString()"
+                                hint-text=""
+                                required="true"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option=""
+                                select-list-options="@Model.ContractTypeOptions" />
+
+                <vc:select-list asp-for="@nameof(Model.ServerSpaceBytesInc)"
+                                label="Server space"
+                                value="@Model.ServerSpaceBytesInc.ToString()"
+                                hint-text=""
+                                required="true"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option=""
+                                select-list-options="@Model.ServerSpaceOptions" />
+
+                <vc:select-list asp-for="@nameof(Model.DelegateUploadSpace)"
+                                label=" Per delegate upload space"
+                                value="@Model.DelegateUploadSpace"
+                                hint-text=""
+                                required="true"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option=""
+                                select-list-options="@Model.PerDelegateUploadSpaceOptions" />
+                <fieldset class="nhsuk-fieldset" aria-labelledby="form-heading" aria-describedby="example-hint" role="group">
+                <legend class="nhsuk-fieldset__legend nhsuk-label">
+                    Contract review date
+                </legend>
+                <span class="nhsuk-hint" id="example-hint">
+                    For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the contract review date..
+                </span>
+                    @if (Model.CompleteByValidationResult?.DateValid == false)
+                    {
+                        <span class="nhsuk-error-message" id="validation-message" role="alert">
+                            <span class="nhsuk-u-visually-hidden">Error:</span>@Model.CompleteByValidationResult?.ErrorMessage
+                        </span>
+                    }
+                <div class="nhsuk-date-input" id="date">
+          <div class="nhsuk-date-input__item">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label nhsuk-date-input__label" for="day">
+                Day
+              </label>
+                            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @dayErrorClass" id="day" name="day" type="number" value="@contractReviewDay">
+            </div>
+          </div>
+          <div class="nhsuk-date-input__item">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label nhsuk-date-input__label" for="month">
+                Month
+              </label>
+                            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @monthErrorClass" id="month" name="month" type="number" value="@ContractReviewMonth">
+            </div>
+          </div>
+          <div class="nhsuk-date-input__item">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label nhsuk-date-input__label" for="year">
+                Year
+              </label>
+                            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4 @yearErrorClass" id="year" name="year" type="number" value="@ContractReviewYear">
+            </div>
+          </div>
+        </div>
+
+                </fieldset>
+            </div>
+        </div>
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+
+    </form>
+    
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link"
+               asp-controller="Centres" asp-action="ManageCentre" asp-route-centreId="@Model.CentreId">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+  
+</div>

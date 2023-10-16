@@ -3,27 +3,27 @@
 
 @if (Model.HasDiagnosticScore() || Model.HasPassedSections())
 {
-  @if (Model.HasDiagnosticScore())
-  {
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Diagnostic Score
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.DiagnosticScore
-      </dd>
-    </div>
-  }
-  @if (Model.HasPassedSections())
-  {
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Passed Sections
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.DisplayPassedSections()
-      </dd>
-    </div>
-  }
+    @if (Model.HasDiagnosticScore())
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Diagnostic Score
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="diagnostic-score">
+                @Model.DiagnosticScore
+            </dd>
+        </div>
+    }
+    @if (Model.HasPassedSections())
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Passed Sections
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="passed-sections">
+                @Model.DisplayPassedSections()
+            </dd>
+        </div>
+    }
 }
 

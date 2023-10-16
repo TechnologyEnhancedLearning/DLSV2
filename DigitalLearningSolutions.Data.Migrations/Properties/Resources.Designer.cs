@@ -478,7 +478,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 15/10/2021
         ///-- Description:	Reorders the CompetencyAssessmentQuestions - moving the given competency question up or down.
         ///-- =============================================
-        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]        /// [rest of string was truncated]&quot;;.
+        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_379_ReorderCompetencyAssessmentQuestionsSP {
             get {
@@ -901,6 +902,96 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 16/08/2023 12:17:34 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCompletedCoursesForCandidateTweak {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCompletedCoursesForCandidateTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 16/08/2023 12:17:34 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCompletedCoursesForCandidateTweak_down {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCompletedCoursesForCandidateTweak_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 26/06/2023 08:04:53 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDU [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCurrentCoursesForCandidateTweak {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCurrentCoursesForCandidateTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 22/06/2023 14:49:50 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDURE [ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1766_GetCurrentCoursesForCandidateTweak_down {
+            get {
+                return ResourceManager.GetString("TD_1766_GetCurrentCoursesForCandidateTweak_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 16/06/2023 09:17:01 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -957,6 +1048,19 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_2036_SwitchSystemVersioningOffAllTables_DOWN {
             get {
                 return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_DOWN", resourceCulture);
+        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;
+        ///&lt;h2&gt;What are cookies?&lt;/h2&gt;
+        ///&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;/p&gt;
+        ///&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;/p&gt;
+        ///&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;/p&gt;
+        ///&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;/p&gt;
+        ///&lt;ul&gt;
+        ///&lt;li&gt;make our website work&lt;/li&gt;
+        ///&lt;li&gt;measure how you use our website, such as which links you clic [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1943_CookiePolicyContentHtml {
+            get {
+                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtml", resourceCulture);
             }
         }
         
@@ -982,6 +1086,73 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_2036_SwitchSystemVersioningOffAllTables_UP {
             get {
                 return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_UP", resourceCulture);
+        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1943_CookiePolicyContentHtmlOldRecord {
+            get {
+                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtmlOldRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 05/07/2023 08:52:32 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ============= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak {
+            get {
+                return ResourceManager.GetString("TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 05/07/2023 09:33:56 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ============= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down {
+            get {
+                return ResourceManager.GetString("TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 03/07/2023
+        ///-- Description:	Populate the ReportSelfAssessmentActivityLog table with recent activity
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE PopulateReportSelfAssessmentActivityLog
+        ///
+        ///AS
+        ///BEGIN
+        ///	-- SET NOCOUNT ON added to prevent extra result sets from
+        ///	-- interfering with SELECT statements.
+        ///	SET NOCOUNT ON;
+        ///
+        ///   DECLARE @ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP {
+            get {
+                return ResourceManager.GetString("TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP", resourceCulture);
             }
         }
         
@@ -1070,6 +1241,30 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_786_GetSelfRegisteredFlag_UP {
             get {
                 return ResourceManager.GetString("TD-786-GetSelfRegisteredFlag_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;ol type=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;&lt;strong&gt;About these terms and conditions&lt;/strong&gt;&lt;ul data-list-level=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;It is your responsibility to ensure that you understand and comply with these terms and conditions. It ensures that:&lt;ul data-list-level=&quot;&quot;2&quot;&quot;&gt;&lt;li&gt;You understand your responsibilities and what constitutes an abuse of the service&lt;/li&gt;&lt;li&gt;Computers and personal data are not put at risk&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;If you have any questions about these terms and conditions, you should contact your Digital Learning Solutions c [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TermsAndConditionsOldrecord {
+            get {
+                return ResourceManager.GetString("TermsAndConditionsOldrecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &lt;h1 class=&quot;policy-text-center&quot;&gt;TERMS AND CONDITIONS&lt;/h1&gt;
+        ///&lt;h1 class=&quot;policy-text-center&quot;&gt;PLEASE   READ   THESE   TERMS   AND   CONDITIONS   CAREFULLY   BEFORE   USING   THE PLATFORM.  YOUR ATTENTION IS PARTICULARLY DRAWN TO THE PROVISIONS OF CLAUSE 14  (OUR  RESPONSIBILITY  FOR  LOSS  OR  DAMAGE  SUFFERED  BY  YOU)  AND  CLAUSE 15 (INDEMNITIES).&lt;/h1&gt;
+        ///&lt;ol class=&quot;custom-ordered-list nhsuk-u-padding-left-0&quot;&gt;
+        ///
+        ///
+        ///&lt;li class=&quot;h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-margin-0&quot;&gt;THE PLATFORM
+        ///&lt;ol class [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TermsConditions {
+            get {
+                return ResourceManager.GetString("TermsConditions", resourceCulture);
             }
         }
         

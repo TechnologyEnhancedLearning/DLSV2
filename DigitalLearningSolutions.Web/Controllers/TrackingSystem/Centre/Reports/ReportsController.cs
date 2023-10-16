@@ -10,7 +10,9 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
+    using DocumentFormat.OpenXml.Vml.Spreadsheet;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -25,30 +27,37 @@
         private readonly IActivityService activityService;
         private readonly IEvaluationSummaryService evaluationSummaryService;
         private readonly IClockUtility clockUtility;
+        private readonly IReportFilterService reportFilterService;
 
         public ReportsController(
             IActivityService activityService,
             IEvaluationSummaryService evaluationSummaryService,
-            IClockUtility clockUtility
+            IClockUtility clockUtility,
+            IReportFilterService reportFilterService
         )
         {
             this.activityService = activityService;
             this.evaluationSummaryService = evaluationSummaryService;
             this.clockUtility = clockUtility;
+            this.reportFilterService = reportFilterService;
         }
 
         public IActionResult Index()
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
+            //Removing an old cookie if it exists because it may contain problematic options (filters that return too many rows):
+            if (HttpContext.Request.Cookies.ContainsKey("ReportsFilterCookie"))
+            {
+                HttpContext.Response.Cookies.Delete("ReportsFilterCookie");
+            }
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("CourseUsageReportFilterCookie", categoryIdFilter);
 
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
-
-            Response.Cookies.SetReportsFilterCookie(filterData, clockUtility.UtcNow);
+            Response.Cookies.SetReportsFilterCookie("CourseUsageReportFilterCookie", filterData, clockUtility.UtcNow);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
-            var (jobGroupName, courseCategoryName, courseName) = activityService.GetFilterNames(filterData);
+            var (jobGroupName, courseCategoryName, courseName) = reportFilterService.GetFilterNames(filterData);
 
             var filterModel = new ReportsFilterModel(
                 filterData,
@@ -67,7 +76,7 @@
                 filterData.StartDate,
                 filterData.EndDate ?? clockUtility.UtcToday,
                 activityService.GetActivityStartDateForCentre(centreId, categoryIdFilter) != null,
-                activityService.GetCourseCategoryNameForActivityFilter(categoryIdFilter)
+                reportFilterService.GetCourseCategoryNameForActivityFilter(categoryIdFilter)
             );
             return View(model);
         }
@@ -79,7 +88,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
 
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("CourseUsageReportFilterCookie", categoryIdFilter);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData!);
             return activity.Select(
@@ -93,7 +102,7 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie("CourseUsageReportFilterCookie", categoryIdFilter);
 
             var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
 
@@ -128,11 +137,18 @@
                 model.JobGroupId,
                 categoryIdFilter ?? model.CourseCategoryId,
                 model.CustomisationId,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.FilterType,
                 model.ReportInterval
             );
 
-            Response.Cookies.SetReportsFilterCookie(filterData, clockUtility.UtcNow);
+            Response.Cookies.SetReportsFilterCookie("CourseUsageReportFilterCookie", filterData, clockUtility.UtcNow);
 
             return RedirectToAction("Index");
         }
@@ -165,7 +181,14 @@
                 jobGroupId,
                 adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
-                customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                customisationId.HasValue ? CourseFilterType.Activity : CourseFilterType.Category,
                 reportInterval
             );
 
@@ -207,7 +230,14 @@
                 jobGroupId,
                 adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
-                customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                customisationId.HasValue ? CourseFilterType.Activity : CourseFilterType.Category,
                 reportInterval
             );
 
@@ -225,7 +255,7 @@
             int? categoryIdFilter
         )
         {
-            return activityService.GetFilterOptions(
+            return reportFilterService.GetFilterOptions(
                 centreId,
                 categoryIdFilter
             );

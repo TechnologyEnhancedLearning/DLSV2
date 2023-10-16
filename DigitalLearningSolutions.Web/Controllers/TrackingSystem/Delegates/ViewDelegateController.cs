@@ -68,6 +68,11 @@
                 return NotFound();
             }
 
+            if (TempData["IsDelegatePromoted"] != null)
+            {
+                TempData.Remove("IsDelegatePromoted");
+            }
+
             var delegateUserCard = new DelegateUserCard(delegateEntity);
             var categoryIdFilter = User.GetAdminCategoryId();
 
@@ -151,6 +156,17 @@
             userDataService.ActivateDelegateUser(delegateId);
 
             return RedirectToAction("Index", new { delegateId });
+        }
+
+        [HttpPost]
+        [Route("DeleteAccount")]
+        public IActionResult DeleteAccount(int delegateId)
+        {
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+
+            userDataService.DeleteUserAndAccounts(userId);
+
+            return RedirectToAction("Index", "AllDelegates");
         }
     }
 }

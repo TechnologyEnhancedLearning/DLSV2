@@ -1119,5 +1119,16 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 result.First().Should().BeEquivalentTo(expectedFirstRecord);
             }
         }
+
+        [Test]
+        public void GetApplicationsAvailableToCentre_should_returns_expected_count()
+        {
+            // When
+            var result = courseDataService.GetApplicationsAvailableToCentre(2);
+
+            // Then
+            result.Should().HaveCount(38);
+            result.First().ApplicationId.Should().Be(604);
+        }
     }
 }
