@@ -325,6 +325,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserFeedbackDataService, UserFeedbackDataService>();
             services.AddScoped<IPlatformReportsDataService, PlatformReportsDataService>();
             services.AddScoped<IContractTypesDataService, ContractTypesDataService>();
+            services.AddScoped<ICentresDownloadFileService, CentresDownloadFileService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)

@@ -14,7 +14,16 @@
             <div class="nhsuk-grid-column-two-thirds">
                 <h1 class="nhsuk-heading-xl">Centres</h1>
             </div>
-            <div class="nhsuk-grid-column-one-third heading-button-group">
+            <div class="nhsuk-grid-column-two-third heading-button-group">
+              <a class="nhsuk-button nhsuk-button--secondary heading-button"
+                   id="export"
+                   asp-controller="Centres"
+                   asp-action="Export"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-existingFilterString="@Model.ExistingFilterString"
+                   role="button">
+                    Export to Excel
+                </a>
                 <a class="nhsuk-button heading-button" asp-controller="Centres" asp-action="AddCentre"
                    role="button">
                     Add

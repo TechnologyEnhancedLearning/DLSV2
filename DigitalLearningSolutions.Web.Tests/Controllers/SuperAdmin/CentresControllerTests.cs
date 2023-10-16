@@ -1,6 +1,5 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.Centres;
-
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -10,7 +9,6 @@ using FakeItEasy;
 using FluentAssertions;
 using FluentAssertions.AspNetCore.Mvc;
 using FluentAssertions.Execution;
-using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -26,6 +24,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         private readonly IRegionDataService regionDataService = A.Fake<IRegionDataService>();
         private readonly IContractTypesDataService contractTypesDataService = A.Fake<IContractTypesDataService>();
         private readonly ICourseDataService courseDataService = A.Fake<ICourseDataService>();
+        private readonly ICentresDownloadFileService centresDownloadFileService = A.Fake<ICentresDownloadFileService>();
         private CentresController controller = null!;
 
         [SetUp]
@@ -37,7 +36,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             regionDataService,
             centresDataService,
             contractTypesDataService,
-            courseDataService
+            courseDataService,
+            centresDownloadFileService
             )
             .WithDefaultContext()
             .WithMockUser(true);
@@ -399,6 +399,25 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                )).MustHaveHappened();
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
+        }
+
+        [Test]
+        public void Export_passes_in_used_parameters_to_file()
+        {
+            // Given
+            const string searchString = "Frame by Frame";
+            const string existingFilterString = "";
+
+            // When
+            controller.Export(searchString, existingFilterString);
+
+            // Then
+            A.CallTo(
+                () => centresDownloadFileService.GetAllCentresFile(
+                    searchString,
+                    existingFilterString
+                )
+            ).MustHaveHappenedOnceExactly();
         }
     }
 }
