@@ -143,18 +143,79 @@
         )
         {
             var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var delegatesToExport =  Task.Run(() => GetDelegatesToExport(centreId)).Result; 
-            var searchedUsers = GenericSearchHelper.SearchItems(delegatesToExport, searchString).AsQueryable();
-            var filteredItems = FilteringHelper.FilterItems(searchedUsers, filterString).AsQueryable();
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                filteredItems,
-                sortBy ?? nameof(DelegateUserCard.SearchableName),
-                sortDirection
-            ).ToList();
+            string isActive = "Any";
+            string isPasswordSet = "Any";
+            string isAdmin = "Any";
+            string isUnclaimed = "Any";
+            string isEmailVerified = "Any";
+            string registrationType = "Any";
+            int jobGroupId = 0;
+            string answer1 = "Any";
+            string answer2 = "Any";
+            string answer3 = "Any";
+            string answer4 = "Any";
+            string answer5 = "Any";
+            string answer6 = "Any";
+            if (!string.IsNullOrEmpty(filterString))
+            {
+                var selectedFilters = filterString.Split(FilteringHelper.FilterSeparator).ToList();
+
+                if (selectedFilters.Count > 0)
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        var filterArr = filter.Split(FilteringHelper.Separator);
+                        var filterValue = filterArr[2];
+                        if (filterValue == "╳") filterValue = "No option selected";
+
+                        if (filter.Contains("IsPasswordSet"))
+                            isPasswordSet = filterValue;
+
+                        if (filter.Contains("IsAdmin"))
+                            isAdmin = filterValue;
+
+                        if (filter.Contains("Active"))
+                            isActive = filterValue;
+
+                        if (filter.Contains("RegistrationType"))
+                            registrationType = filterValue;
+
+                        if (filter.Contains("IsYetToBeClaimed"))
+                            isUnclaimed = filterValue;
+
+                        if (filter.Contains("IsEmailVerified"))
+                            isEmailVerified = filterValue;
+
+                        if (filter.Contains("JobGroupId"))
+                            jobGroupId = Convert.ToInt32(filterValue);
+
+                        if (filter.Contains("Answer1"))
+                            answer1 = filterValue;
+
+                        if (filter.Contains("Answer2"))
+                            answer2 = filterValue;
+
+                        if (filter.Contains("Answer3"))
+                            answer3 = filterValue;
+
+                        if (filter.Contains("Answer4"))
+                            answer4 = filterValue;
+
+                        if (filter.Contains("Answer5"))
+                            answer5 = filterValue;
+
+                        if (filter.Contains("Answer6"))
+                            answer6 = filterValue;
+                    }
+                }
+            }
+            var delegatesToExport = Task.Run(() => GetDelegatesToExport(searchString ?? string.Empty, sortBy, sortDirection, centreId,
+                                               isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
+                                               answer1, answer2, answer3, answer4, answer5, answer6)).Result;
             var dataTable = new DataTable();
             SetUpDataTableColumnsForAllDelegates(registrationPrompts, dataTable);
 
-            foreach (var delegateRecord in sortedItems)
+            foreach (var delegateRecord in delegatesToExport)
             {
                 SetDelegateRowValues(dataTable, delegateRecord, registrationPrompts);
             }
@@ -175,24 +236,27 @@
             FormatAllDelegateWorksheetColumns(workbook, dataTable);
         }
 
-        private async Task<IEnumerable<DelegateUserCard>> GetDelegatesToExport(
-            int centreId
-        )
+        private async Task<IEnumerable<DelegateUserCard>> GetDelegatesToExport(String searchString, string sortBy, string sortDirection, int centreId,
+                                    string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
+                                    string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
         {
             var exportQueryRowLimit = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
-            int resultCount = userDataService.GetCountDelegateUserCardsForExportByCentreId(centreId);
+            int resultCount = userDataService.GetCountDelegateUserCardsForExportByCentreId(searchString ?? string.Empty, sortBy, sortDirection, centreId,
+                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
+                                                answer1, answer2, answer3, answer4, answer5, answer6);
 
             int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
             int currentRun = 1;
             List<DelegateUserCard> delegates = new List<DelegateUserCard>();
             while (totalRun >= currentRun)
             {
-                delegates.AddRange(await userDataService.GetDelegateUserCardsForExportByCentreId(centreId, exportQueryRowLimit, currentRun));
+                delegates.AddRange(await userDataService.GetDelegateUserCardsForExportByCentreId(searchString ?? string.Empty, sortBy, sortDirection, centreId,
+                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
+                                                answer1, answer2, answer3, answer4, answer5, answer6, exportQueryRowLimit, currentRun));
                 currentRun++;
             }
 
-
-            return delegates.Where(c => !Guid.TryParse(c.EmailAddress, out _));
+            return delegates;
         }
 
         private static void SetUpDataTableColumnsForAllDelegates(
