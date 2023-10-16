@@ -203,7 +203,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 	                    ON cp6.CustomPromptID = ct.CustomField6PromptID 
 	                    LEFT OUTER JOIN AdminAccounts AS au2 
 		                    ON da.UserID = au2.UserID AND da.CentreID = au2.CentreID
-                    WHERE (sd.SupervisorAdminID = @adminId) AND (sd.Removed IS NULL)
+                    WHERE (sd.SupervisorAdminID = @adminId) AND (sd.Removed IS NULL) AND 
+                     (u.ID = da.UserID OR sd.DelegateUserID IS NULL)
                     ORDER BY u.LastName, COALESCE (u.FirstName, sd.DelegateEmail)
                     ", new { adminId }
                 );
