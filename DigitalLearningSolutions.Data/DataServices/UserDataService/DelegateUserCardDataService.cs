@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -86,13 +87,77 @@
 							AND aa.CentreID = da.CentreID
 							AND aa.Active = 1
 				) AS AdminID ";
-
-		private const string DelegateUserFromTable = @" FROM DelegateAccounts AS da WITH (NOLOCK)
+        private const string DelegateUserExportSelectQuery =
+            @"SELECT
+                da.ID,
+                da.CandidateNumber,
+                c.CentreName,
+                da.CentreID,
+                da.DateRegistered,
+                da.RegistrationConfirmationHash,
+                c.Active AS CentreActive,
+                COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
+                u.FirstName,
+                u.LastName,
+                u.PasswordHash AS Password,
+                u.EmailVerified,
+                da.Approved,
+                LTRIM(RTRIM(da.Answer1)) AS Answer1,
+                LTRIM(RTRIM(da.Answer2)) AS Answer2,
+                LTRIM(RTRIM(da.Answer3)) AS Answer3,
+                LTRIM(RTRIM(da.Answer4)) AS Answer4,
+                LTRIM(RTRIM(da.Answer5)) AS Answer5,
+                LTRIM(RTRIM(da.Answer6)) AS Answer6,
+                u.JobGroupId,
+                jg.JobGroupName,
+                da.SelfReg,
+                da.ExternalReg,
+                da.Active,
+                u.HasBeenPromptedForPrn,
+                u.ProfessionalRegistrationNumber,
+                (SELECT ID
+                    FROM AdminAccounts aa
+                        WHERE aa.UserID = da.UserID
+                            AND aa.CentreID = da.CentreID
+                            AND aa.Active = 1
+                ) AS AdminID
+                ,u.PrimaryEmail
+				,ucd.Email
+				,da.Active as DelegateActive
+            FROM DelegateAccounts AS da
+            INNER JOIN Centres AS c ON c.CentreID = da.CentreID
+            INNER JOIN Users AS u ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+        private const string DelegateUserFromTable = @" FROM DelegateAccounts AS da WITH (NOLOCK)
 			INNER JOIN Centres AS c WITH (NOLOCK) ON c.CentreID = da.CentreID
 			INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
 			LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
 			INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID ";
+        private const string DelegatewhereConditon = $@" Where ((CentreID = @centreId) OR (@centreId= 0))
+                            AND ( FirstName + ' ' + LastName + ' ' + PrimaryEmail + ' ' + COALESCE(Email, '') + ' ' + COALESCE(CandidateNumber, '') LIKE N'%' + @searchString + N'%')
+					        AND ((@isActive = 'Any') OR (@isActive = 'true' AND DelegateActive = 1) OR (@isActive = 'false' AND DelegateActive = 0))
+					        AND ((@isPasswordSet = 'Any') OR (@isPasswordSet = 'true' AND (Password <>'')) OR (@isPasswordSet = 'false' AND (Password ='')))
+					        AND ((@isAdmin = 'Any') OR (@isAdmin = 'true' AND (AdminID is not null)) OR (@isAdmin = 'false' AND (AdminID is null)))
+					        AND ((@isUnclaimed = 'Any') OR (@isUnclaimed = 'true' AND (RegistrationConfirmationHash is not null)) OR (@isUnclaimed = 'false' AND (RegistrationConfirmationHash is null)))
+					        AND ((@isEmailVerified = 'Any') OR (@isEmailVerified = 'true' AND EmailVerified IS NOT NULL) OR (@isEmailVerified = 'false' AND EmailVerified IS NULL))
 
+					        AND ((@registrationType = 'Any') OR (@registrationType = 'SelfRegistered' AND SelfReg = 1 AND ExternalReg = 0) OR 
+					        (@registrationType = 'SelfRegisteredExternal' AND SelfReg = 1 AND ExternalReg = 1) OR 
+					        (@registrationType = 'RegisteredByCentre' AND SelfReg = 0 AND (ExternalReg = 0 OR ExternalReg = 1)))
+
+                            AND ((@jobGroupId = 0) OR (JobGroupID = @jobGroupId ))
+
+                            AND ((@answer1 = 'Any') OR (@answer1 = 'No option selected' AND (Answer1 IS NULL)) OR(Answer1 = @answer1))
+                            AND ((@answer2 = 'Any') OR (@answer2 = 'No option selected' AND (Answer2 IS NULL)) OR (Answer2 = @answer2))
+                            AND ((@answer3 = 'Any') OR (@answer3 = 'No option selected' AND (Answer3 IS NULL)) OR (Answer3 = @answer3))
+                            AND ((@answer4 = 'Any') OR (@answer4 = 'No option selected' AND (Answer4 IS NULL)) OR (Answer4 = @answer4))
+                            AND ((@answer5 = 'Any') OR (@answer5 = 'No option selected' AND (Answer5 IS NULL)) OR (Answer5 = @answer5))
+                            AND ((@answer6 = 'Any') OR (@answer6 = 'No option selected' AND (Answer6 IS NULL)) OR (Answer6 = @answer6))
+
+                            AND Approved = 1
+
+                            AND EmailAddress LIKE '%_@_%.__%'";
         public DelegateUserCard? GetDelegateUserCardById(int id)
         {
             var user = connection.Query<DelegateUserCard>(
@@ -112,29 +177,87 @@
             new { centreId }
             ).ToList();
         }
-        public int GetCountDelegateUserCardsForExportByCentreId(int centreId)
+        public int GetCountDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
+                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
+                                     string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
         {
-            return connection.ExecuteScalar<int>(
-                @$"SELECT COUNT(*)
-            FROM DelegateAccounts AS da with(nolock)
-            INNER JOIN Centres AS c with(nolock) ON c.CentreID = da.CentreID
-            INNER JOIN Users AS u with(nolock) ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd with(nolock) ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
-            INNER JOIN JobGroups AS jg with(nolock) ON jg.JobGroupID = u.JobGroupID
-                        WHERE da.CentreId = @centreId AND da.Approved = 1",
-            new { centreId }
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.Trim();
+            }
+
+            
+            var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches FROM ( " + DelegateUserExportSelectQuery + " ) D " + DelegatewhereConditon;
+
+            int ResultCount = connection.ExecuteScalar<int>(
+                delegateCountQuery,
+                new
+                {
+                    searchString,
+                    sortBy,
+                    sortDirection,
+                    centreId,
+                    isActive,
+                    isPasswordSet,
+                    isAdmin,
+                    isUnclaimed,
+                    isEmailVerified,
+                    registrationType,
+                    jobGroupId,
+                    answer1,
+                    answer2,
+                    answer3,
+                    answer4,
+                    answer5,
+                    answer6
+                },
+                commandTimeout: 3000
             );
+            return ResultCount;
         }
-        public List<DelegateUserCard> GetDelegateUserCardsForExportByCentreId(int centreId, int exportQueryRowLimit, int currentRun)
+
+        public List<DelegateUserCard> GetDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
+                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
+                                     string answer1, string answer2, string answer3, string answer4, string answer5, string answer6, int exportQueryRowLimit, int currentRun)
         {
-            return connection.Query<DelegateUserCard>(
-                @$"{DelegateUserCardSelectQuery}
-                        WHERE da.CentreId = @centreId AND da.Approved = 1
-                        ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
-                        OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
-                            FETCH NEXT @exportQueryRowLimit ROWS ONLY ",
-            new { centreId, exportQueryRowLimit, currentRun }
-            ).ToList();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.Trim();
+            }
+
+            string orderBy;
+            string sortOrder;
+            sortOrder = " ASC ";
+            orderBy = " ORDER BY LTRIM(LastName) " + sortOrder + ", LTRIM(FirstName) OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS  FETCH NEXT @exportQueryRowLimit ROWS ONLY";
+            var mainSql = "SELECT * FROM ( " + DelegateUserExportSelectQuery + " ) D " + DelegatewhereConditon + orderBy;
+
+            IEnumerable<DelegateUserCard> delegateUserCard = connection.Query<DelegateUserCard>(
+                mainSql,
+                new
+                {
+                    searchString,
+                    sortBy,
+                    sortDirection,
+                    centreId,
+                    isActive,
+                    isPasswordSet,
+                    isAdmin,
+                    isUnclaimed,
+                    isEmailVerified,
+                    registrationType,
+                    jobGroupId,
+                    answer1,
+                    answer2,
+                    answer3,
+                    answer4,
+                    answer5,
+                    answer6,
+                    exportQueryRowLimit,
+                    currentRun
+                },
+                commandTimeout: 3000
+            );
+            return (delegateUserCard).ToList();
         }
         public (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
