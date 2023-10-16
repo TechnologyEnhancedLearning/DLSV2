@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
@@ -50,7 +51,12 @@
             );
         }
 
+
+        //TODO: This doesn't work because the groups collection doesn't have all the admins
+        // Has to be done in the calling method. See DelegateCoursesViewModelFilterOptions
+
         public static IEnumerable<FilterModel> GetDelegateGroupFilterModels(List<Group> groups, IEnumerable<CentreRegistrationPrompt> registrationPrompts)
+        //public static IEnumerable<FilterModel> GetDelegateGroupFilterModels(IEnumerable<int, string> addedByAdminIds, IEnumerable<CentreRegistrationPrompt> registrationPrompts)
         {
             var admins = groups.Select(
                 g => (g.AddedByAdminId, DisplayStringHelper.GetPotentiallyInactiveAdminName(
@@ -64,6 +70,7 @@
                 new FilterModel(
                     nameof(Group.AddedByAdminId),
                     "Added by",
+                    //GetAddedByOptions(addedByAdminIds)
                     GetAddedByOptions(admins)
                 ),
                 new FilterModel(

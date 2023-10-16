@@ -12,6 +12,7 @@ using DigitalLearningSolutions.Web.Helpers.FilterOptions;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.ServiceFilter;
 using DigitalLearningSolutions.Web.Services;
+using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -79,6 +80,16 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             var centreId = User.GetCentreIdKnownNotNull();
 
+//var categoryId = User.GetAdminCategoryId();
+//var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
+//var Categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
+//var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+
+
+
+
+
+
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             string filterAddedBy = "";
             string filterLinkedField = "";
@@ -91,6 +102,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 {
                     var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
                     var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
+
                     if (dupfilters.Count() > 1)
                     {
                         foreach (var filter in selectedFilters)
@@ -122,7 +134,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 }
             }
 
-            (var groups, var resultCount) = groupsService.GetGroupsForCentre(
+            (var groups, var resultCount, var addedByAdmins) = groupsService.GetGroupsForCentre(
                 search: searchString ?? string.Empty,
                 offSet,
                 rows: itemsPerPage ?? 0,
@@ -137,7 +149,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 page = 1;
                 offSet = 0;
 
-                (groups, resultCount) = groupsService.GetGroupsForCentre(
+                (groups, resultCount, addedByAdmins) = groupsService.GetGroupsForCentre(
                     search: searchString ?? string.Empty,
                     offSet,
                     rows: itemsPerPage ?? 0,
@@ -149,8 +161,22 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
 
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
+
+            //var addedByAdminIds = 
+
             var availableFilters = DelegateGroupsViewModelFilterOptions
                 .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
+
+            //var availableFilters = DelegateGroupsViewModelFilterOptions
+            //    .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
+
+            //var availableFiltersX = DelegateGroupsViewModelFilterOptions.GetDelegateGroupFilterModels 
+
+
+            //var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
+            //    .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+
+
 
             var result = paginateService.Paginate(
                 groups,
@@ -385,6 +411,19 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             return centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts
                 .Where(cp => cp.Options.Any());
         }
+
+        //private IEnumerable<int> GetAddedByAdminIds(int centreId)
+        //{
+        //    (var groups, var resultCount) = groupsService.GetGroupsForCentre(
+
+
+
+        //    return centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts
+        //        .Where(cp => cp.Options.Any());
+        //}
+
+
+
 
         private IEnumerable<SelectListItem> GetRegistrationFieldOptionsSelectList(int? selectedId = null)
         {

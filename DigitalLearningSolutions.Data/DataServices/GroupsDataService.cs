@@ -12,7 +12,7 @@
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        (IEnumerable<Group>, int) GetGroupsForCentre(
+        (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
             string? search,
             int? offset,
             int? rows,
@@ -205,7 +205,8 @@
             );
         }
 
-        public (IEnumerable<Group>, int) GetGroupsForCentre(
+        //public (IEnumerable<Group>, int) GetGroupsForCentre(
+        public (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
             string? search = "",
             int? offset = 0,
             int? rows = 10,
@@ -268,7 +269,23 @@
                 commandTimeout: 3000
             );
 
-            return (groups, resultCount);
+            IEnumerable<int> addedByAdmins = connection.Query<int>(
+                @$"SELECT DISTINCT g.CreatedByAdminUserID AS AddedByAdminId,
+                        au.Forename AS AddedByFirstName,
+                        au.Surname AS AddedByLastName,
+                        au.Active AS AddedByAdminActive
+                    FROM Groups AS g WITH(NOLOCK)
+                    JOIN AdminUsers AS au WITH(NOLOCK)
+                    ON au.AdminID = g.CreatedByAdminUserID
+                    JOIN Centres AS c WITH(NOLOCK)
+                    ON c.CentreID = g.CentreID
+                    WHERE RemovedDate IS NULL
+                    AND g.CentreId = @centreId",
+                new { centreId },
+                commandTimeout: 3000
+            );
+
+            return (groups, resultCount, addedByAdmins);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)

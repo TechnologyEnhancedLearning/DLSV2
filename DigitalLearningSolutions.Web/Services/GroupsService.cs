@@ -74,7 +74,8 @@
 
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        (IEnumerable<Group>, int) GetGroupsForCentre(
+        //(IEnumerable<Group>, int) GetGroupsForCentre(
+        (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
             string? search,
             int? offset,
             int? rows,
@@ -499,7 +500,8 @@
             return groupsDataService.GetGroupsForCentre(centreId);
         }
 
-        public (IEnumerable<Group>, int) GetGroupsForCentre(
+        //public (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
+        public (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
             string? search = "",
             int? offset = 0,
             int? rows = 10,
