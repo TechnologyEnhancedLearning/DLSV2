@@ -80,13 +80,16 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             var centreId = User.GetCentreIdKnownNotNull();
 
-//var categoryId = User.GetAdminCategoryId();
-//var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
-//var Categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
-//var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
-
-
             var addedByAdmins = groupsService.GetAdminsForCentreGroups(centreId);
+
+            foreach (var admin in addedByAdmins)
+            {
+                admin.FullName = DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    admin.Forename,
+                    admin.Surname,
+                    admin.Active
+                );
+            }
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             string filterAddedBy = "";

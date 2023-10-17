@@ -10,7 +10,7 @@
 
         public string? Surname { get; set; }
 
-        public string FullName => $"{Forename} {Surname}";
+        public string? FullName { get; set; }
 
         public bool Active { get; set; }
     }
