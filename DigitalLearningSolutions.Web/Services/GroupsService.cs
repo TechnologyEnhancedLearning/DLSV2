@@ -19,6 +19,7 @@
     using Microsoft.Extensions.Logging;
     using MimeKit;
     using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public interface IGroupsService
     {
@@ -74,8 +75,7 @@
 
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        //(IEnumerable<Group>, int) GetGroupsForCentre(
-        (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
+        (IEnumerable<Group>, int) GetGroupsForCentre(
             string? search,
             int? offset,
             int? rows,
@@ -85,6 +85,8 @@
             string? filterAddedBy,
             string? filterLinkedField
         );
+
+        IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId);
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
@@ -500,8 +502,7 @@
             return groupsDataService.GetGroupsForCentre(centreId);
         }
 
-        //public (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
-        public (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
+        public (IEnumerable<Group>, int) GetGroupsForCentre(
             string? search = "",
             int? offset = 0,
             int? rows = 10,
@@ -513,6 +514,11 @@
         )
         {
             return groupsDataService.GetGroupsForCentre(search, offset, rows, sortBy, sortDirection, centreId, filterAddedBy, filterLinkedField);
+        }
+
+        public IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId = 0)
+        {
+            return groupsDataService.GetAdminsForCentreGroups(centreId);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)

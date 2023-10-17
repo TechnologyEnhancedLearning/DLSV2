@@ -12,7 +12,7 @@
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
-        (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
+        (IEnumerable<Group>, int) GetGroupsForCentre(
             string? search,
             int? offset,
             int? rows,
@@ -22,6 +22,8 @@
             string? filterAddedBy,
             string? filterLinkedField
         );
+
+        IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId);
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
@@ -205,8 +207,7 @@
             );
         }
 
-        //public (IEnumerable<Group>, int) GetGroupsForCentre(
-        public (IEnumerable<Group>, int, IEnumerable<int>) GetGroupsForCentre(
+        public (IEnumerable<Group>, int) GetGroupsForCentre(
             string? search = "",
             int? offset = 0,
             int? rows = 10,
@@ -269,11 +270,16 @@
                 commandTimeout: 3000
             );
 
-            IEnumerable<int> addedByAdmins = connection.Query<int>(
-                @$"SELECT DISTINCT g.CreatedByAdminUserID AS AddedByAdminId,
-                        au.Forename AS AddedByFirstName,
-                        au.Surname AS AddedByLastName,
-                        au.Active AS AddedByAdminActive
+            return (groups, resultCount);
+        }
+
+        public IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId = 0)
+        {
+            IEnumerable<GroupDelegateAdmin> addedByAdmins = connection.Query<GroupDelegateAdmin>(
+                @$"SELECT DISTINCT g.CreatedByAdminUserID AS AdminId,
+                        au.Forename AS Forename,
+                        au.Surname AS Surname,
+                        au.Active AS Active
                     FROM Groups AS g WITH(NOLOCK)
                     JOIN AdminUsers AS au WITH(NOLOCK)
                     ON au.AdminID = g.CreatedByAdminUserID
@@ -285,7 +291,7 @@
                 commandTimeout: 3000
             );
 
-            return (groups, resultCount, addedByAdmins);
+            return (addedByAdmins);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)

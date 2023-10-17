@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
+
     public class AllDelegateGroupsViewModel : BaseJavaScriptFilterableViewModel
     {
         public readonly IEnumerable<SearchableDelegateGroupViewModel> DelegateGroups;
@@ -21,7 +22,20 @@
                 }
             );
 
-            Filters = DelegateGroupsViewModelFilterOptions.GetDelegateGroupFilterModels(groups, registrationPrompts)
+            var addedByAdmins = groups
+                .Select(g => new GroupDelegateAdmin
+                {
+                    GroupId = g.GroupId,
+                    AdminId = g.AddedByAdminId,
+                    Forename = g.AddedByFirstName,
+                    Surname = g.AddedByLastName,
+                    Active = g.AddedByAdminActive
+                })
+                .GroupBy(g => g.GroupId)
+                .Select(g => g.First())
+                .AsEnumerable();
+
+            Filters = DelegateGroupsViewModelFilterOptions.GetDelegateGroupFilterModels(addedByAdmins, registrationPrompts)
                 .SelectAppliedFilterViewModels();
         }
     }

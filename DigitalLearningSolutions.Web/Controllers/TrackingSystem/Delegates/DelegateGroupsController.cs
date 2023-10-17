@@ -86,9 +86,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 //var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
 
-
-
-
+            var addedByAdmins = groupsService.GetAdminsForCentreGroups(centreId);
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             string filterAddedBy = "";
@@ -134,7 +132,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 }
             }
 
-            (var groups, var resultCount, var addedByAdmins) = groupsService.GetGroupsForCentre(
+            (var groups, var resultCount) = groupsService.GetGroupsForCentre(
                 search: searchString ?? string.Empty,
                 offSet,
                 rows: itemsPerPage ?? 0,
@@ -149,7 +147,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 page = 1;
                 offSet = 0;
 
-                (groups, resultCount, addedByAdmins) = groupsService.GetGroupsForCentre(
+                (groups, resultCount) = groupsService.GetGroupsForCentre(
                     search: searchString ?? string.Empty,
                     offSet,
                     rows: itemsPerPage ?? 0,
@@ -161,22 +159,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
 
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
-
-            //var addedByAdminIds = 
-
             var availableFilters = DelegateGroupsViewModelFilterOptions
-                .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
-
-            //var availableFilters = DelegateGroupsViewModelFilterOptions
-            //    .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
-
-            //var availableFiltersX = DelegateGroupsViewModelFilterOptions.GetDelegateGroupFilterModels 
-
-
-            //var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
-            //    .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
-
-
+                .GetDelegateGroupFilterModels(addedByAdmins, registrationPrompts).ToList();
 
             var result = paginateService.Paginate(
                 groups,
