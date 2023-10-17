@@ -142,6 +142,17 @@
             }
         }
 
+        public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"DELETE A FROM CandidateAssessmentSupervisorVerifications A
+                  INNER JOIN CandidateAssessments B
+                  ON A.CandidateAssessmentSupervisorID = B.ID
+                  WHERE B.SelfAssessmentID = @selfAssessmentId  AND B.DelegateUserID = @delegateUserId",
+                new { selfAssessmentId, delegateUserId }
+            );
+
+        }
 
         public void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate)
         {
