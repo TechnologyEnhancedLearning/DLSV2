@@ -23,6 +23,7 @@
 
         public int CentreId { get; set; }
         [Required(ErrorMessage = "Enter a centre name")]
+        [MaxLength(250, ErrorMessage = "Centre name must be 250 characters or fewer")]
         public string CentreName { get; set; }
         public int CentreTypeId { get; set; }
         public string? CentreType { get; set; }
