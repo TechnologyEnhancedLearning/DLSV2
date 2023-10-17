@@ -1308,7 +1308,7 @@
         public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string delegateName, string selfAssessmentName,int delegateUserID)
         {
             var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, delegateUserID, true);
-            var fileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0,29) : selfAssessmentName)}-{delegateName}-{clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
+            var fileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0,30) : selfAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
