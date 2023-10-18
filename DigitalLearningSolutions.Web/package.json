@@ -40,7 +40,7 @@
     "@babel/preset-typescript": "^7.23.2",
     "@types/dompurify": "^2.3.3",
     "@types/jest": "^27.5.2",
-    "@types/js-cookie": "^3.0.4",
+    "@types/js-cookie": "^3.0.5",
     "@types/js-search": "^1.4.1",
     "@types/jsdom": "^16.2.15",
     "@types/lodash": "^4.14.199",
