@@ -18,11 +18,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
         {
             RequestTypeId = data.RequestTypeId;
             RequestType = data.RequestType;
-            //RequestSubject = data.RequestSubject;
-            //RequestDescription = data.RequestDescription;
+            RequestSubject = data.RequestSubject;
+            RequestDescription = data.RequestDescription;
         }
-        [Required(ErrorMessage = "Please enter request summary")]
         public string? RequestSubject { get; set; }
+        [MaxLength(250, ErrorMessage = "Description must be 250 characters or fewer")]
         public string? RequestDescription { get; set; }
         public int? RequestTypeId { get; set; }
         public string? RequestType { get; set; }

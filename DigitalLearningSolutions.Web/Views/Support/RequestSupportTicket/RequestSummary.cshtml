@@ -4,7 +4,7 @@
 @model RequestSummaryViewModel;
 @{
     bool errorHasOccurred = false;
-    @if (Model.RequestSubject != null && !ViewData.ModelState.IsValid)
+    @if (Model.RequestSubject == null && !ViewData.ModelState.IsValid)
     {
         errorHasOccurred = true;
     }
@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
 @if (errorHasOccurred)
 {
-    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RequestSubject) })" />
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RequestSubject),nameof(Model.RequestDescription) })" />
 }
 <div class=" nhsuk-u-margin-top-1">
     <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupport" asp-action="TypeofRequest">

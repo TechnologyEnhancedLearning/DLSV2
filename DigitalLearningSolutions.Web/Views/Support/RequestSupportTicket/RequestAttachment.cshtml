@@ -22,63 +22,66 @@
 <div id="form-group">
     <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-            <div class="nhsuk-u-margin-bottom-8">
-                <h1 class="nhsuk-heading-xl">Attach screenshots (optional)</h1>
+            <div class="nhsuk-u-reading-width">
+                <div class="nhsuk-u-margin-bottom-8">
+                    <h1 class="nhsuk-heading-xl">Attach screenshots (optional)</h1>
+                </div>
+                <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetAttachment" enctype="multipart/form-data">
+                    <p class="nhsuk-body-s nhsuk-u-margin-bottom-3">
+                        If you have any screenshots that help illustarte your request,attach them here.
+                    </p>
+                    <input type="file" class="form-control nhsuk-input nhsuk-u-width-one-half " multiple asp-for="ImageFiles" />
+                    <button class="nhsuk-button nhsuk-button--secondary" type="submit">Upload</button>
+
+                </form>
+
+                @if (Model.ImageFiles != null)
+                {
+                    <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
+                        Files attached
+                    </p>
+                    @foreach (var a in Model.ImageFiles)
+                    {
+                        <dl class="nhsuk-summary-list">
+                            <div class="nhsuk-summary-list__row">
+
+                                <dd class="nhsuk-summary-list__value">
+                                    @a.FileName.Split('_')[1]
+                                </dd>
+                                <dd class="nhsuk-summary-list__actions">
+                                    <a asp-action="DeleteImage" asp-route-imageName="@a.FileName">
+                                        Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
+                                    </a>
+                                </dd>
+                            </div>
+                        </dl>
+                    }
+                }
+                @if (Model.RequestAttachment != null && Model.RequestAttachment.Count > 0)
+                {
+                    <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
+                        Files attached
+                    </p>
+                    @foreach (var a in Model.RequestAttachment)
+                    {
+                        <dl class="nhsuk-summary-list">
+                            <div class="nhsuk-summary-list__row">
+
+                                <dd class="nhsuk-summary-list__value">
+                                    @a.FileName.Split('_')[1]
+                                </dd>
+                                <dd class="nhsuk-summary-list__actions">
+                                    <a asp-action="DeleteImage" asp-route-imageName="@a.FileName" asp-route-imageId="@a.Id">
+                                        Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
+                                    </a>
+                                </dd>
+                            </div>
+                        </dl>
+                    }
+                }
+                <a class="nhsuk-button" asp-controller="RequestSupport" asp-action="SupportSummary">Next</a>
+                <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" />
             </div>
-            <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetAttachment" enctype="multipart/form-data">
-                <p class="nhsuk-body-s nhsuk-u-margin-bottom-3">
-                    If you have any screenshots that help illustarte your request,attach them here.
-                </p>
-                <input type="file" class="form-control nhsuk-input nhsuk-u-width-one-half " multiple asp-for="ImageFiles" />
-                <button class="nhsuk-button" type="submit">Upload</button>
-
-            </form>
-            @if (Model.ImageFiles != null)
-            {
-                <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
-                    Files attached
-                </p>
-                @foreach (var a in Model.ImageFiles)
-                {
-                    <dl class="nhsuk-summary-list">
-                        <div class="nhsuk-summary-list__row">
-
-                            <dd class="nhsuk-summary-list__value">
-                                @a.FileName.Split('_')[1]
-                            </dd>
-                            <dd class="nhsuk-summary-list__actions">
-                                <a asp-action="DeleteImage" asp-route-imageName="@a.FileName">
-                                    Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
-                                </a>
-                            </dd>
-                        </div>
-                    </dl>
-                }
-            }
-            @if (Model.RequestAttachment != null && Model.RequestAttachment.Count > 0)
-            {
-                <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
-                    Files attached
-                </p>
-                @foreach (var a in Model.RequestAttachment)
-                {
-                    <dl class="nhsuk-summary-list" style="width:50%">
-                        <div class="nhsuk-summary-list__row">
-
-                            <dd class="nhsuk-summary-list__value">
-                                @a.FileName.Split('_')[1]
-                            </dd>
-                            <dd class="nhsuk-summary-list__actions">
-                                <a asp-action="DeleteImage" asp-route-imageName="@a.FileName" asp-route-imageId="@a.Id">
-                                    Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
-                                </a>
-                            </dd>
-                        </div>
-                    </dl>
-                }
-            }
-            <a class="nhsuk-button" asp-controller="RequestSupport" asp-action="SupportSummary">Next</a>
-            <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" />
         </div>
     </div>
 </div>

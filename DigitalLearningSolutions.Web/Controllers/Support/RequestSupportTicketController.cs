@@ -108,9 +108,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         public IActionResult SetRequestSummary(RequestSummaryViewModel requestDetailsmodel)
 
         {
+            if(requestDetailsmodel.RequestSubject==null)
+            {
+                ModelState.AddModelError("RequestSubject", "Please enter request summary");
+                return View("RequestSummary", requestDetailsmodel);
+            }
             if (!ModelState.IsValid)
             {
-                return View("RequestDetails", requestDetailsmodel);
+                return View("RequestSummary", requestDetailsmodel);
             }
             var data = TempData.Peek<RequestSupportTicketData>()!;
             data.setRequestSubjectDetails(requestDetailsmodel);
@@ -216,9 +221,18 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             //data.UserCentreEmail = "test@gmail.com";
 
             var result = freshdeskService.CreateNewTicketAsync(data);
-            
+            //if (result.Status.ToString() == "Ok")
+            //{
+            //    DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
+            //    TempData.Clear();
+            //    return View("SuccessPage");
+            //}
+            //else
+            //{
+            //    return View("RequestError");
+            //}
+
             //If success
-            DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
             return View("SuccessPage");
             //
             //else error page

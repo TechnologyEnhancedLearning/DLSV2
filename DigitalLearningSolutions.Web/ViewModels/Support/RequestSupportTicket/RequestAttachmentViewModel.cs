@@ -19,10 +19,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
         }
         public string? Attachment { get; set; }
         public List<RequestAttachment>? RequestAttachment { get; set; }
-        [Required(ErrorMessage = "Please select atleast one image")]
-        [DataType(DataType.Upload)]
-        [MaxFileSize(5 * 1024 * 1024)]
-        [AllowedExtensions(new string[] { ".png", ".jpg", ".jpeg" })]
+
+        [Required(ErrorMessage = "Please select at least one image")]
+        [AllowedExtensions(new[] { ".png", ".jpg", ".jpeg" }, "Delegates update file must be in image format")]
+        [MaxFileSize(20 * 1024 * 1024, "Maximum allowed file size is 20MB")]
         public List<IFormFile>? ImageFiles { get; set; }
     }
 }
