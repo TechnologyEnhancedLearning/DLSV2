@@ -29,16 +29,20 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         private readonly ICentresDataService centresDataService;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IRequestSupportTicketDataService requestSupportTicketDataService;
+        private readonly IFreshdeskService freshdeskService;
+
         public RequestSupportTicketController(IConfiguration configuration,
                                         IUserDataService userDataService, ICentresDataService centresDataService
                                        , IWebHostEnvironment webHostEnvironment 
-                                       , IRequestSupportTicketDataService requestSupportTicketDataService)
+                                       , IRequestSupportTicketDataService requestSupportTicketDataService
+                                        , IFreshdeskService freshdeskService)
         {
             this.configuration = configuration;
             this.userDataService = userDataService;
             this.centresDataService = centresDataService;
             this.webHostEnvironment = webHostEnvironment;
             this.requestSupportTicketDataService = requestSupportTicketDataService;
+            this.freshdeskService = freshdeskService;
         }
         [Route("Support/RequestSupportTicket")]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
@@ -188,25 +192,34 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
 #elif (RELEASE)
                 uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
 #endif
-            foreach (var file in data.RequestAttachment)
+            if (data.RequestAttachment != null)
             {
-                fileName = uploadDir + file.FileName;
-                byte[] FileBytes = System.IO.File.ReadAllBytes(fileName);
-                var attachment = new RequestAttachment()
+                foreach (var file in data.RequestAttachment)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    FileName = fileName.Split('_')[2],
-                    FullFileName= fileName,
-                    Content = FileBytes
-                };
-                RequestAttachmentList.Add(attachment);
+                    fileName = uploadDir + file.FileName;
+                    byte[] FileBytes = System.IO.File.ReadAllBytes(fileName);
+                    var attachment = new RequestAttachment()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        FileName = fileName.Split('_')[2],
+                        FullFileName = fileName,
+                        Content = FileBytes
+                    };
+                    RequestAttachmentList.Add(attachment);
+                }
+
+                data.RequestAttachment.RemoveAll((x) => x.Content == null);
+                data.setImageFiles(RequestAttachmentList);
             }
-            data.RequestAttachment.RemoveAll((x) => x.Content == null);
-            data.RequestType = "DLS " + data.RequestType;
-            data.setImageFiles(RequestAttachmentList);
+
+            data.RequestType = data.RequestType;
+            //data.UserCentreEmail = "test@gmail.com";
+
+            var result = freshdeskService.CreateNewTicketAsync(data);
+            
             //If success
             DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
-                    return View("SuccessPage");
+            return View("SuccessPage");
             //
             //else error page
             // 

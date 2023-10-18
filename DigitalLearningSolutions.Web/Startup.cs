@@ -273,6 +273,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPlatformReportsService, PlatformReportsService>();
             services.AddScoped<IReportFilterService, ReportFilterService>();
             services.AddScoped<IPdfService, PdfService>();
+            services.AddScoped<IFreshdeskService, FreshdeskService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -342,6 +343,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<ILearningHubApiClient, LearningHubApiClient>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
+            services.AddScoped<IFreshdeskApiClient, FreshdeskApiClient>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
