@@ -12,7 +12,7 @@ namespace DigitalLearningSolutions.Data.Migrations
     {
         public override void Up()
         {
-            string freshdeskAPIKey = "tUwQvJb64EIHcerbhshR";
+            string freshdeskAPIKey = "NOKey";
             Execute.Sql(
                    @$"IF NOT EXISTS (SELECT ConfigID FROM Config WHERE ConfigName = 'FreshdeskAPIKey')
                     BEGIN
