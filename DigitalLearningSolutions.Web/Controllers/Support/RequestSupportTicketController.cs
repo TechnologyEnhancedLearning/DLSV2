@@ -213,7 +213,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             }
 
             data.RequestType = data.RequestType;
-            data.UserCentreEmail = "test@gmail.com";
+            //data.UserCentreEmail = "test@gmail.com";
 
             var result = freshdeskService.CreateNewTicketAsync(data);
             
