@@ -98,7 +98,7 @@
                    candidateAssessmentDownloadFileService,
                    clockUtility
                );
-            string expectedFileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0, 29) : selfAssessmentName)}-{delegateName}-{clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
+            string expectedFileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0, 30) : selfAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
 
             // Act
             var result = controller.ExportCandidateAssessment(candidateAssessmentId, delegateName, selfAssessmentName, delegateUserID) as FileResult;
