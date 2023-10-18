@@ -433,7 +433,10 @@
 
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(assessment.Id, delegateUserId);
-            selfAssessmentService.RemoveSignoffRequests(assessment.Id, delegateUserId);
+            if(selfAssessmentService.CheckSignoffRequestsExist(assessment.Id, delegateUserId) > 0)
+            {
+                selfAssessmentService.RemoveSignoffRequests(assessment.Id, delegateUserId);
+            }
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, delegateUserId);
 
             var recentResults = selfAssessmentService.GetMostRecentResults(assessment.Id, delegateId).ToList();

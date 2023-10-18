@@ -154,6 +154,18 @@
 
         }
 
+        public int CheckSignoffRequestsExist(int selfAssessmentId, int delegateUserId)
+        {
+            return connection.Execute(
+                @"select Count(*) num from CandidateAssessmentSupervisorVerifications A
+                    INNER JOIN CandidateAssessments B
+                    ON A.CandidateAssessmentSupervisorID = B.ID
+                    WHERE B.SelfAssessmentID = @selfAssessmentId  AND B.DelegateUserID = @delegateUserId",
+                new { selfAssessmentId, delegateUserId }
+            );
+
+        }
+
         public void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate)
         {
             var numberOfAffectedRows = connection.Execute(

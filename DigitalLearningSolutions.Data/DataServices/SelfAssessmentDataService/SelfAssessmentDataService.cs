@@ -77,6 +77,7 @@
 
         void UpdateLastAccessed(int selfAssessmentId, int delegateUserId);
         void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId);
+        int CheckSignoffRequestsExist(int selfAssessmentId, int delegateUserId);
         void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
 
         void SetSubmittedDateNow(int selfAssessmentId, int delegateUserId);
