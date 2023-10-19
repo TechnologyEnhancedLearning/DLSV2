@@ -124,6 +124,16 @@
                             );
                     }
 
+                    if (action == TrackerEndpointAction.getsuspenddata)
+                    {
+                        return trackerActionService.GetSuspendData(
+                            query.ProgressId,
+                            query.TutorialId,
+                            query.CandidateId,
+                            query.CustomisationId
+                            );
+                    }
+
                     throw new ArgumentOutOfRangeException();
                 }
 
