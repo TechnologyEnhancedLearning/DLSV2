@@ -110,6 +110,8 @@
             bool status,
             int progressId
         );
+
+        string? GetAspProgressSuspendData(int progressId, int tutorialId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -662,6 +664,17 @@
                     VALUES (@delegateId, @customisationId, @version, @insertionDate, 1, @sectionNumber, @score, @status, @progressId)",
                 new { delegateId, customisationId, version, insertionDate, sectionNumber, score, status, progressId }
             );
+        }
+
+        public string? GetAspProgressSuspendData(int progressId, int tutorialId)
+        {
+            return connection.Query<string?>(
+                @"SELECT TOP(1)
+                        SuspendData
+                    FROM dbo.aspProgress
+                    WHERE ProgressID = @progressId AND TutorialID = @tutorialId",
+                new { progressId, tutorialId }
+            ).FirstOrDefault();
         }
     }
 }

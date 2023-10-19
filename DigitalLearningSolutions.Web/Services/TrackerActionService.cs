@@ -17,6 +17,8 @@
 
         TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning);
 
+        string? GetSuspendData(int? progressId, int? tutorialId, int? customisationId, int? candidateId);
+
         TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
 
         TrackerEndpointResponse StoreAspProgressV2(
@@ -370,7 +372,7 @@
             string? suspendData
             )
         {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
                progressId,
                tutorialId,
                candidateId,
@@ -391,10 +393,37 @@
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.StoreAspProgressException;
+                return TrackerEndpointResponse.SuspendDataException;
             }
 
             return TrackerEndpointResponse.Success;
+        }
+
+        public string? GetSuspendData(int? progressId, int? tutorialId, int? customisationId, int? candidateId)
+        {
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+               progressId,
+               tutorialId,
+               candidateId,
+               customisationId
+           );
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
+            try
+            {
+               var suspendData = storeAspService.GetAspProgressSessionData(
+                    progressId!.Value,
+                    tutorialId!.Value
+                );
+                return suspendData ?? "";
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return TrackerEndpointResponse.StoreAspProgressException;
+            }
         }
     }
 }

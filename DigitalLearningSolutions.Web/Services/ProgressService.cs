@@ -41,6 +41,17 @@
             int tutorialStatus
         );
 
+        void StoreAspProgressSuspendData(
+            int progressId,
+            int tutorialId,
+            string? suspendData
+            );
+
+        string? GetAspProgressSuspendData(
+            int progressId,
+            int tutorialId
+            );
+
         void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress);
 
         public SectionAndApplicationDetailsForAssessAttempts? GetSectionAndApplicationDetailsForAssessAttempts(
@@ -241,6 +252,11 @@
         )
         {
             return progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
+        }
+
+        public string? GetAspProgressSuspendData(int progressId, int tutorialId)
+        {
+            return progressDataService.GetAspProgressSuspendData(progressId, tutorialId);
         }
     }
 }

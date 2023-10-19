@@ -45,6 +45,11 @@
                 string? sessionData
             );
 
+        string? GetAspProgressSessionData(
+            int progressId,
+            int tutorialId
+            );
+
         (TrackerEndpointResponse? validationResponse, DelegateCourseInfo? progress)
             GetProgressAndValidateInputsForStoreAspAssess(
                 int? version,
@@ -59,7 +64,7 @@
                 int customisationId
             );
         (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
+            GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
                 int? progressId,
                 int? tutorialId,
                 int? candidateId,
@@ -235,7 +240,7 @@
         }
 
         public (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
+            GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
                 int? progressId,
                 int? tutorialId,
                 int? candidateId,
@@ -245,14 +250,14 @@
             if (progressId == null || tutorialId == null ||
                 candidateId == null || customisationId == null)
             {
-                return (TrackerEndpointResponse.StoreSuspendDataException, null);
+                return (TrackerEndpointResponse.SuspendDataException, null);
             }
 
             var progress = progressService.GetDetailedCourseProgress(progressId.Value);
             if (progress == null || progress.DelegateId != candidateId ||
                 progress.CustomisationId != customisationId.Value)
             {
-                return (TrackerEndpointResponse.StoreSuspendDataException, null);
+                return (TrackerEndpointResponse.SuspendDataException, null);
             }
 
             return (null, progress);
@@ -260,7 +265,19 @@
 
         public void StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
         {
-            throw new NotImplementedException();
+            progressService.StoreAspProgressSuspendData(
+                progressId,
+                tutorialId,
+                sessionData
+                );
+        }
+
+        public string? GetAspProgressSessionData(int progressId, int tutorialId)
+        {
+            return progressService.GetAspProgressSuspendData(
+                progressId,
+                tutorialId
+                );
         }
     }
 }
