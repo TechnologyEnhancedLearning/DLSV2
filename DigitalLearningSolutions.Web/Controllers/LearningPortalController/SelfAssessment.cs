@@ -433,12 +433,7 @@
 
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(assessment.Id, delegateUserId);
-            if(selfAssessmentService.CheckSignoffRequestsExist(assessment.Id, delegateUserId) > 0)
-            {
-                selfAssessmentService.RemoveSignoffRequests(assessment.Id, delegateUserId);
-            }
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, delegateUserId);
-
             var recentResults = selfAssessmentService.GetMostRecentResults(assessment.Id, delegateId).ToList();
             var competencyIds = recentResults.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
@@ -1359,6 +1354,7 @@
         [HttpPost]
         public IActionResult SubmitVerification()
         {
+            var delegateUserId = User.GetUserIdKnownNotNull();
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification, TempData).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
@@ -1389,6 +1385,9 @@
                     resultId
                 )
             );
+
+            selfAssessmentService.RemoveSignoffRequests(sessionRequestVerification.SelfAssessmentID, delegateUserId, candidateAssessmentSupervisorId);
+            
             if (resultCount > 0)
             {
                 frameworkNotificationService.SendResultVerificationRequest(

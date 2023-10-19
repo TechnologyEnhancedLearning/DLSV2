@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
     using Microsoft.Extensions.Logging;
 
     public partial class SelfAssessmentDataService
@@ -142,29 +143,28 @@
             }
         }
 
-        public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId)
+        public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int candidateAssessmentSupervisorId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"DELETE A FROM CandidateAssessmentSupervisorVerifications A
-                  INNER JOIN CandidateAssessments B
-                  ON A.CandidateAssessmentSupervisorID = B.ID
-                  WHERE B.SelfAssessmentID = @selfAssessmentId  AND B.DelegateUserID = @delegateUserId",
-                new { selfAssessmentId, delegateUserId }
+                @"DELETE casv
+                    FROM CandidateAssessmentSupervisorVerifications AS casv
+                    INNER JOIN CandidateAssessmentSupervisors AS cas
+                        ON casv.CandidateAssessmentSupervisorID = cas.ID
+                    INNER JOIN CandidateAssessments AS ca
+                        ON cas.CandidateAssessmentID = ca.ID
+                    INNER JOIN SupervisorDelegates AS sd
+                        ON cas.SupervisorDelegateId = sd.ID
+                    INNER JOIN AdminUsers AS au
+                        ON sd.SupervisorAdminID = au.AdminID
+                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
+                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+                    WHERE (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1) AND casv.CandidateAssessmentSupervisorID =@candidateAssessmentSupervisorId AND SignedOff =0
+                        OR (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL) AND casv.CandidateAssessmentSupervisorID =@candidateAssessmentSupervisorId AND SignedOff =0",
+                new { selfAssessmentId, delegateUserId, candidateAssessmentSupervisorId }
             );
 
         }
 
-        public int CheckSignoffRequestsExist(int selfAssessmentId, int delegateUserId)
-        {
-            return connection.Execute(
-                @"select Count(*) num from CandidateAssessmentSupervisorVerifications A
-                    INNER JOIN CandidateAssessments B
-                    ON A.CandidateAssessmentSupervisorID = B.ID
-                    WHERE B.SelfAssessmentID = @selfAssessmentId  AND B.DelegateUserID = @delegateUserId",
-                new { selfAssessmentId, delegateUserId }
-            );
-
-        }
 
         public void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate)
         {
