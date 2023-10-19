@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.11" />
+    <PackageReference Include="Dapper" Version="2.1.15" />
     <PackageReference Include="FluentMigrator" Version="3.3.2" />
     <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="3.3.2" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
