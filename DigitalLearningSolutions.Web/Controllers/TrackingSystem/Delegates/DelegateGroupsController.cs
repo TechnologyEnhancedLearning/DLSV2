@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DigitalLearningSolutions.Data.Enums;
+﻿using DigitalLearningSolutions.Data.Enums;
 using DigitalLearningSolutions.Data.Helpers;
 using DigitalLearningSolutions.Data.Models.CustomPrompts;
 using DigitalLearningSolutions.Data.Models.DelegateGroups;
+using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Helpers;
@@ -12,12 +10,14 @@ using DigitalLearningSolutions.Web.Helpers.FilterOptions;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.ServiceFilter;
 using DigitalLearningSolutions.Web.Services;
-using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.FeatureManagement.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
@@ -215,13 +215,21 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return View(model);
             }
 
-            groupsService.AddDelegateGroup(
+            if (!groupsService.IsDelegateGroupExist(model.GroupName))
+            {
+                groupsService.AddDelegateGroup(
                 User.GetCentreIdKnownNotNull(),
                 model.GroupName!,
                 model.GroupDescription,
                 User.GetAdminId()!.Value
             );
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError(nameof(model.GroupName), "Delegate Group with the same name already exists");
+                return View("AddDelegateGroup", model);
+            }
         }
 
         [HttpGet("{groupId:int}/EditDescription")]
