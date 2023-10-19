@@ -376,9 +376,7 @@
                     )
                 )
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus))
+            A.CallTo(() => progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime))
                 .MustHaveHappenedOnceExactly();
         }
 
