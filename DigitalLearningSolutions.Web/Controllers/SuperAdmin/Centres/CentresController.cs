@@ -228,8 +228,14 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditCentreDetails")]
         public IActionResult EditCentreDetails(EditCentreDetailsSuperAdminViewModel model)
         {
-            bool isCentreNamePresent = centresDataService.GetAllCentres().Any(center => center.Item2 == model.CentreName);
-            if (isCentreNamePresent)
+            var centres = centresDataService.GetAllCentres().ToList();
+            bool isExistingCentreName = centres.Where(center => center.Item1 == model.CentreId)
+                .Select(center => center.Item2)
+                .FirstOrDefault()
+                .Equals(model.CentreName);
+            bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (isCentreNamePresent && !isExistingCentreName)
             {
                 ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
             }
@@ -250,7 +256,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 
             centresDataService.UpdateCentreDetailsForSuperAdmin(
                 model.CentreId,
-                model.CentreName,
+                model.CentreName.Trim(),
                 model.CentreTypeId,
                 model.RegionId,
                 model.CentreEmail,
@@ -490,7 +496,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             }
 
             int insertedID = centresDataService.AddCentreForSuperAdmin(
-                model.CentreName,
+                model.CentreName.Trim(),
                 model.ContactFirstName,
                 model.ContactLastName,
                 model.ContactEmail,

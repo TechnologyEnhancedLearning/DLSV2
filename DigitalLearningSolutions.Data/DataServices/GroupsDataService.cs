@@ -25,6 +25,8 @@
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
+        IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId);
+
         IEnumerable<GroupCourse> GetGroupCoursesVisibleToCentre(int centreId);
 
         GroupCourse? GetGroupCourseIfVisibleToCentre(int groupCustomisationId, int centreId);
@@ -269,6 +271,27 @@
             );
 
             return (groups, resultCount);
+        }
+
+        public IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId = 0)
+        {
+            IEnumerable<GroupDelegateAdmin> addedByAdmins = connection.Query<GroupDelegateAdmin>(
+                @$"SELECT DISTINCT g.CreatedByAdminUserID AS AdminId,
+                        au.Forename AS Forename,
+                        au.Surname AS Surname,
+                        au.Active AS Active
+                    FROM Groups AS g WITH(NOLOCK)
+                    JOIN AdminUsers AS au WITH(NOLOCK)
+                    ON au.AdminID = g.CreatedByAdminUserID
+                    JOIN Centres AS c WITH(NOLOCK)
+                    ON c.CentreID = g.CentreID
+                    WHERE RemovedDate IS NULL
+                    AND g.CentreId = @centreId",
+                new { centreId },
+                commandTimeout: 3000
+            );
+
+            return (addedByAdmins);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)

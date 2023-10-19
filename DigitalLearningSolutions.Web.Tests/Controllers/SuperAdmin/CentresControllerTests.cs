@@ -98,12 +98,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         public void EditCentreDetails_results_DuplicateCentre_error()
         {
             // Given
-            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##") };
+            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##"), (610, "Alternative Futures Group") };
             A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
             var model = new EditCentreDetailsSuperAdminViewModel
             {
                 CentreId = 374,
-                CentreName = "##HEE Demo Centre##",
+                CentreName = "Alternative Futures Group",
                 CentreTypeId = 1,
                 CentreType = "NHS Organisation",
                 RegionName = "National",
