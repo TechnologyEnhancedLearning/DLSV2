@@ -37,7 +37,7 @@
           <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
           <partial name="_CompetencyFlags"
                  model="competency.CompetencyFlags"
-                 view-data="@(new ViewDataDictionary(ViewData) {{ "cssClass", $"{(competency.AlwaysShowDescription ? "" : "nhsuk-u-padding-left-4")}" }})" />
+                             view-data="@(new ViewDataDictionary(ViewData) {{ "cssClass", $"{(competency.AlwaysShowDescription ? "" : "nhsuk-u-padding-left-4 competency-status-tag")}" }})" />
           @if (competency.Description != null && !competency.AlwaysShowDescription)
           {
             <details class="nhsuk-details">
