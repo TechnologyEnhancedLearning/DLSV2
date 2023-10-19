@@ -423,10 +423,10 @@
             }
             try
             {
-               var suspendData = storeAspService.GetAspProgressSessionData(
-                    progressId!.Value,
-                    tutorialId!.Value
-                );
+                var suspendData = storeAspService.GetAspProgressSessionData(
+                     progressId!.Value,
+                     tutorialId!.Value
+                 );
                 return suspendData ?? "";
             }
             catch (Exception ex)
