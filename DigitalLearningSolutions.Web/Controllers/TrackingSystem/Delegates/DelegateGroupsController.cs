@@ -12,6 +12,7 @@ using DigitalLearningSolutions.Web.Helpers.FilterOptions;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.ServiceFilter;
 using DigitalLearningSolutions.Web.Services;
+using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -78,6 +79,17 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             );
 
             var centreId = User.GetCentreIdKnownNotNull();
+
+            var addedByAdmins = groupsService.GetAdminsForCentreGroups(centreId);
+
+            foreach (var admin in addedByAdmins)
+            {
+                admin.FullName = DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    admin.Forename,
+                    admin.Surname,
+                    admin.Active
+                );
+            }
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             string filterAddedBy = "";
@@ -150,7 +162,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
             var availableFilters = DelegateGroupsViewModelFilterOptions
-                .GetDelegateGroupFilterModels(groups.ToList(), registrationPrompts).ToList();
+                .GetDelegateGroupFilterModels(addedByAdmins, registrationPrompts).ToList();
 
             var result = paginateService.Paginate(
                 groups,

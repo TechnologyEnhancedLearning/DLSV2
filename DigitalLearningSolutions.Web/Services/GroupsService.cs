@@ -19,6 +19,7 @@
     using Microsoft.Extensions.Logging;
     using MimeKit;
     using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public interface IGroupsService
     {
@@ -85,6 +86,7 @@
             string? filterLinkedField
         );
 
+        IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId);
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
         string? GetGroupName(int groupId, int centreId);
@@ -511,6 +513,11 @@
         )
         {
             return groupsDataService.GetGroupsForCentre(search, offset, rows, sortBy, sortDirection, centreId, filterAddedBy, filterLinkedField);
+        }
+
+        public IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId = 0)
+        {
+            return groupsDataService.GetAdminsForCentreGroups(centreId);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
