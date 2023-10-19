@@ -83,6 +83,19 @@
             int tutStat
         );
 
+        void UpdateAspProgressTutStatAndTime(
+            int tutorialId,
+            int progressId,
+            int tutStat,
+            int tutTime
+            );
+
+        void UpdateAspProgressSuspendData(
+           int tutorialId,
+           int progressId,
+           string? suspendData
+       );
+
         int GetCompletionStatusForProgress(int progressId);
 
         IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int progressId, int sectionNumber);
@@ -568,6 +581,38 @@
                       AND (ProgressID = @progressId)
                       AND (TutStat < @tutStat)",
                 new { tutorialId, progressId, tutStat }
+            );
+        }
+
+        public void UpdateAspProgressTutStatAndTime(
+            int tutorialId,
+            int progressId,
+            int tutStat,
+            int tutTime
+        )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET TutStat = Case WHEN TutStat < @tutStat THEN @tutStat ELSE TutStat END, TutTime = TutTime + @tutTime
+                    WHERE (TutorialID = @tutorialId)
+                      AND (ProgressID = @progressId)
+                      AND (TutStat < @tutStat)",
+                new { tutorialId, progressId, tutStat, tutTime }
+            );
+        }
+
+        public void UpdateAspProgressSuspendData(
+           int tutorialId,
+           int progressId,
+           string? suspendData
+       )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET SuspendData = @suspendData
+                    WHERE (TutorialID = @tutorialId)
+                      AND (ProgressID = @progressId)",
+                new { tutorialId, progressId, suspendData }
             );
         }
 

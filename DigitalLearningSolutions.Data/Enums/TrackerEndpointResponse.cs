@@ -26,6 +26,9 @@
         public static readonly TrackerEndpointResponse StoreDiagnosticScoreException =
             new TrackerEndpointResponse(-25, nameof(StoreDiagnosticScoreException));
 
+        public static readonly TrackerEndpointResponse StoreSuspendDataException =
+            new TrackerEndpointResponse(-26, nameof(StoreSuspendDataException));
+
         public TrackerEndpointResponse(int id, string name) : base(id, name) { }
 
         public static implicit operator string(TrackerEndpointResponse trackerEndpointResponse)

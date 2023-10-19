@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Utilities;
+    using DocumentFormat.OpenXml.Bibliography;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
 
@@ -49,6 +50,13 @@
             int? customisationId,
             string? sessionId
         );
+        TrackerEndpointResponse StoreSuspendData(
+            int? progressId,
+            int? tutorialId,
+            int? candidateId,
+            int? customisationId,
+            string? suspendData
+            );
     }
 
     public class TrackerActionService : ITrackerActionService
@@ -350,6 +358,40 @@
             else
             {
                 progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
+            }
+
+            return TrackerEndpointResponse.Success;
+        }
+        public TrackerEndpointResponse StoreSuspendData(
+            int? progressId,
+            int? tutorialId,
+            int? candidateId,
+            int? customisationId,
+            string? suspendData
+            )
+        {
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
+               progressId,
+               tutorialId,
+               candidateId,
+               customisationId
+           );
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
+            try
+            {
+                storeAspService.StoreAspProgressSessionData(
+                    progressId!.Value,
+                    tutorialId!.Value,
+                    suspendData
+                );
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return TrackerEndpointResponse.StoreAspProgressException;
             }
 
             return TrackerEndpointResponse.Success;
