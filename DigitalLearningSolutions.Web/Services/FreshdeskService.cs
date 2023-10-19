@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.Services
 
     public interface IFreshdeskService
     {
-        Task<FreshDeskApiResponse> CreateNewTicketAsync(RequestSupportTicketData ticketInfo);
+        FreshDeskApiResponse CreateNewTicket(RequestSupportTicketData ticketInfo);
     }
 
     public class FreshdeskService : IFreshdeskService
@@ -33,14 +33,14 @@ namespace DigitalLearningSolutions.Web.Services
             this.logger = logger;
         }
 
-        public async Task<FreshDeskApiResponse> CreateNewTicketAsync(RequestSupportTicketData ticketDetails)
+        public FreshDeskApiResponse CreateNewTicket(RequestSupportTicketData ticketDetails)
         {
             FreshDeskApiResponse freshDeskApiResponse = new FreshDeskApiResponse();
 
             try
             {
                 CreateTicketRequest ticketInfo = MapToCreateTicketRequest(ticketDetails);
-                freshDeskApiResponse = await freshdeskApiClient.CreateNewTicket(ticketInfo);
+                freshDeskApiResponse = Task.Run(() => freshdeskApiClient.CreateNewTicket(ticketInfo)).Result; 
             }
             catch (Exception e)
             {
@@ -51,13 +51,13 @@ namespace DigitalLearningSolutions.Web.Services
             return freshDeskApiResponse;
         }
 
-        private CreateTicketRequest MapToCreateTicketRequest(RequestSupportTicketData ticketInfoModel)
+        private CreateTicketRequest MapToCreateTicketRequest(RequestSupportTicketData ticketDetails)
         {
             List<FileAttachment> filesAttachment = new List<FileAttachment>();
 
-            if (ticketInfoModel.RequestAttachment != null && !ticketInfoModel.RequestAttachment.Any())
+            if (ticketDetails.RequestAttachment != null && !ticketDetails.RequestAttachment.Any())
             {
-                foreach (var requestAttachment in ticketInfoModel.RequestAttachment)
+                foreach (var requestAttachment in ticketDetails.RequestAttachment)
                 {
                     FileAttachment fileAttachment = new FileAttachment
                     {
@@ -70,23 +70,24 @@ namespace DigitalLearningSolutions.Web.Services
             }
 
             Dictionary<string, object> customFieldsDictionary = new Dictionary<string, object>();
-            if (ticketInfoModel.CentreName != null)
+            if (ticketDetails.CentreName != null)
             {
-                customFieldsDictionary.Add("cf_fsm_service_location", ticketInfoModel.CentreName);
+                customFieldsDictionary.Add("cf_fsm_service_location", ticketDetails.CentreName);
             }
 
             CreateTicketRequest ticketRequest = new CreateTicketRequest(
                 TicketStatus.Open,
                 TicketPriority.Medium,
                 TicketSource.Portal,
-                ticketInfoModel.RequestDescription!,
+                ticketDetails.RequestDescription!,
                 "",
                 null,
-                email: ticketInfoModel.UserCentreEmail,
+                email: ticketDetails.UserCentreEmail,
                 files: filesAttachment,
-                subject: ticketInfoModel.RequestSubject,
+                subject: ticketDetails.RequestSubject,
                 groupId: 80000639888,
                 productId: 80000003097,
+                ticketType:ticketDetails.FreshdeskRequestType,
                 customFields: customFieldsDictionary
             );
 

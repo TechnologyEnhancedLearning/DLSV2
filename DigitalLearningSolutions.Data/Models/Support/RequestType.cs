@@ -4,6 +4,6 @@
     {
         public int? ID { get; set; }
         public string? RequestTypes { get; set; }
-
+        public string? FreshdeskRequestTypes { get; set; }
     }
 }

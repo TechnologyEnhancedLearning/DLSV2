@@ -75,10 +75,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         public IActionResult setRequestType(RequestTypeViewModel RequestTypemodel, int requestType)
         {
             var requestTypes = requestSupportTicketDataService.GetRequestTypes();
-            string reqType = requestTypes.ToList().Where(x => x.ID == requestType).Select(x => x.RequestTypes).FirstOrDefault();
+            var reqType = requestTypes.ToList().Where(x => x.ID == requestType)
+                .Select(ticketRequestTypes => new { ticketRequestTypes.RequestTypes, ticketRequestTypes.FreshdeskRequestTypes }).FirstOrDefault();
+
+           // string reqType = requestTypes.ToList().Where(x => x.ID == requestType).Select(x => x.RequestTypes).FirstOrDefault();
             var data = TempData.Peek<RequestSupportTicketData>()!;
             data.RequestTypeId = requestType;
-            data.RequestType = reqType;
+            data.RequestType = reqType?.RequestTypes;
+            data.FreshdeskRequestType = reqType?.FreshdeskRequestTypes;
             TempData.Set(data);
             var model1 = new RequestTypeViewModel(requestTypes.ToList(), data);
             if (requestType < 1)
@@ -217,20 +221,22 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 data.setImageFiles(RequestAttachmentList);
             }
 
-            data.RequestType = data.RequestType;
-            //data.UserCentreEmail = "test@gmail.com";
+            data.UserCentreEmail = "test@gmail.com";
 
-            var result = freshdeskService.CreateNewTicketAsync(data);
-            //if (result.Status.ToString() == "Ok")
-            //{
-            //    DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
-            //    TempData.Clear();
-            //    return View("SuccessPage");
-            //}
-            //else
-            //{
-            //    return View("RequestError");
-            //}
+            var result = freshdeskService.CreateNewTicket(data);
+            if (result.StatusCode == 200)
+            {
+                long? ticketId = result.TicketId;
+                //DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
+                //TempData.Clear();
+                return View("SuccessPage");
+            }
+            else
+            {
+                int? errorCode = result.StatusCode;
+                string errorMess = result.FullErrorDetails;
+                return View("RequestError");
+            }
 
             //If success
             return View("SuccessPage");

@@ -25,6 +25,7 @@ namespace DigitalLearningSolutions.Web.Models
         public string UserName { get; set; }
         public int? RequestTypeId { get; set; }
         public string? RequestType { get; set; }
+        public string? FreshdeskRequestType { get; set; }
         public string? RequestSubject { get; set; }
         public string? RequestDescription { get; set; }
         public List<IFormFile>? ImageFiles { get; set; }

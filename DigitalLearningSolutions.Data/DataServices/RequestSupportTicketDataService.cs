@@ -20,7 +20,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
         public IEnumerable<RequestType> GetRequestTypes()
         {
-            return connection.Query<RequestType>(@$"SELECT TicketTypeId as ID,TypePrompt AS RequestTypes FROM [dbo].[TicketTypes]  order by TypePrompt");
+            return connection.Query<RequestType>(@$"SELECT TicketTypeId as ID,TypePrompt AS RequestTypes,FreshdeskTicketType AS FreshdeskRequestTypes FROM [dbo].[TicketTypes]  order by TypePrompt");
         }
     }
 }
