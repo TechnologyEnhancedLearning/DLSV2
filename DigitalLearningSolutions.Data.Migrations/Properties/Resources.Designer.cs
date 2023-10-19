@@ -1205,6 +1205,54 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 18/10/2023 08:05:27 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/12/2016
+        ///-- Description:	Checks if learner has progress record against customisation.
+        ///-- Returns:
+        ///-- 0: None
+        ///-- 1: Expired
+        ///-- 2: Complete
+        ///-- 3: Current
+        ///-- =============================================
+        ///-- 18/09/2018 Adds return v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3000_CheckDelegateStatusForCustomisationFix_down {
+            get {
+                return ResourceManager.GetString("TD_3000_CheckDelegateStatusForCustomisationFix_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 17/10/2023 12:13:14 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/12/2016
+        ///-- Description:	Checks if learner has progress record against customisation.
+        ///-- Returns:
+        ///-- 0: None
+        ///-- 1: Expired
+        ///-- 2: Complete
+        ///-- 3: Current
+        ///-- =============================================
+        ///-- 18/09/2018 Adds return v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3000_CheckDelegateStatusForCustomisationFix_up {
+            get {
+                return ResourceManager.GetString("TD_3000_CheckDelegateStatusForCustomisationFix_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
