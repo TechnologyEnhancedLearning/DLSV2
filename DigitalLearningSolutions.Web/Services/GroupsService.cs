@@ -134,6 +134,8 @@
             int newJobGroupId,
             AccountDetailsData accountDetailsData
         );
+
+        bool IsDelegateGroupExist(string groupLabel);
     }
 
     public class GroupsService : IGroupsService
@@ -890,6 +892,11 @@
         private static string GetGroupNameWithPrefix(string prefix, string groupName)
         {
             return $"{prefix} - {groupName}";
+        }
+
+        public bool IsDelegateGroupExist(string groupLabel)
+        {
+            return groupsDataService.IsDelegateGroupExist(groupLabel);
         }
     }
 }

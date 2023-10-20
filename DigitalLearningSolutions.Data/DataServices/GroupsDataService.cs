@@ -91,6 +91,7 @@
             string? option,
             int? jobGroupId
         );
+        bool IsDelegateGroupExist(string groupLabel);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -555,6 +556,16 @@
                             OR (Answer5 = @option AND @linkedToField = 6)
                             OR (Answer6 = @option AND @linkedToField = 7))",
                 new { groupId, addedDate, linkedToField, centreId, option, jobGroupId }
+            );
+        }
+
+        public bool IsDelegateGroupExist(string groupLabel)
+        {
+            return connection.QuerySingle<bool>(
+                @"SELECT CASE WHEN EXISTS (select * from Groups where GroupLabel like @groupLabel and RemovedDate is null)
+                THEN CAST(1 AS BIT)
+                ELSE CAST(0 AS BIT) END",
+                new { groupLabel }
             );
         }
     }
