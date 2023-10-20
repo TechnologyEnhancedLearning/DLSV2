@@ -12,6 +12,7 @@
         public string Category { get; set; }
         public bool Supervised { get; set; }
         public int SubmittedSignedOffCount { get; set; }
+        public int SelfAssessmentId { get; set; }
 
         public override string SearchableName
         {

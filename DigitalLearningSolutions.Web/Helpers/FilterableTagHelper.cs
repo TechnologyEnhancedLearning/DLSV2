@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -204,6 +205,30 @@
             return tags;
         }
 
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForSelfAssessmentDelegate(SelfAssessmentDelegate selfAssessmentDelegate)
+        {
+            var tags = new List<SearchableTagViewModel>();
+
+            if (selfAssessmentDelegate.IsDelegateActive)
+            {
+                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive));
+            }
+
+            if (selfAssessmentDelegate.RemovedDate.HasValue)
+            {
+                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved,true));
+            }
+
+            return tags;
+        }
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateUser(
             DelegateUserCard delegateUser
         )

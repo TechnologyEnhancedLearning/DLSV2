@@ -133,7 +133,7 @@
             A.CallTo(
                     () =>
                         emailService.SendEmail(
-                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/TrackingSystem/Delegates/CourseDelegates"))
+                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/TrackingSystem/Delegates/ActivityDelegates"))
                         )
                 )
                 .MustHaveHappened();

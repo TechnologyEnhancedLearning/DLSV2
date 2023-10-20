@@ -1730,7 +1730,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         WHERE can.CentreID = @centreId AND can.SelfAssessmentID = CSA.SelfAssessmentID 
                         AND (can.SubmittedDate IS NOT NULL OR casv.SignedOff = 1)
                         ) AS SubmittedSignedOffCount,
-                        CC.Active AS Active
+                        CC.Active AS Active,
+                        sa.ID AS SelfAssessmentId
                         from CentreSelfAssessments AS csa 
                         INNER join SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
                         INNER JOIN CourseCategories AS cc ON sa.CategoryID = cc.CourseCategoryID

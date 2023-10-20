@@ -116,7 +116,7 @@
         public static readonly (string DisplayText, string PropertyName) CourseName =
             ("Course Name", nameof(CourseStatistics.CourseName));
 
-        public static readonly (string DisplayText, string PropertyName) ActivityName =("Activity Name", nameof(CourseStatistics.CourseName));
+        public static readonly (string DisplayText, string PropertyName) ActivityName = ("Activity Name", nameof(CourseStatistics.CourseName));
 
         public static readonly (string DisplayText, string PropertyName) TotalDelegates =
             ("Total Delegates", nameof(CourseStatistics.DelegateCount));
@@ -183,6 +183,54 @@
         public readonly string PropertyName;
 
         public CourseDelegatesSortByOption(int id, string name, string displayText, string propertyName)
+            : base(id, name)
+        {
+            DisplayText = displayText;
+            PropertyName = propertyName;
+        }
+    }
+
+    public class SelfAssessmentDelegatesSortByOption : Enumeration
+    {
+        public static readonly SelfAssessmentDelegatesSortByOption FullName = new SelfAssessmentDelegatesSortByOption(
+            1,
+            nameof(FullName),
+            "Name",
+            nameof(CourseDelegate.FullNameForSearchingSorting)
+        );
+
+        public static readonly SelfAssessmentDelegatesSortByOption EnrolledDate = new SelfAssessmentDelegatesSortByOption(
+            3,
+            nameof(EnrolledDate),
+            "Enrolled date",
+            nameof(CourseDelegate.Enrolled)
+        );
+
+        public static readonly SelfAssessmentDelegatesSortByOption CompleteByDate = new SelfAssessmentDelegatesSortByOption(
+            4,
+            nameof(CompleteByDate),
+            "Complete by date",
+            nameof(CourseDelegate.CompleteBy)
+        );
+
+        public static readonly SelfAssessmentDelegatesSortByOption CompletedDate = new SelfAssessmentDelegatesSortByOption(
+            5,
+            nameof(CompletedDate),
+            "Completed date",
+            nameof(CourseDelegate.Completed)
+        );
+
+        public static readonly SelfAssessmentDelegatesSortByOption DelegateId = new SelfAssessmentDelegatesSortByOption(
+            7,
+            nameof(DelegateId),
+            "Delegate ID",
+            nameof(CourseDelegate.CandidateNumber)
+        );
+
+        public readonly string DisplayText;
+        public readonly string PropertyName;
+
+        public SelfAssessmentDelegatesSortByOption(int id, string name, string displayText, string propertyName)
             : base(id, name)
         {
             DisplayText = displayText;

@@ -17,7 +17,7 @@
 
             var accessedVia = context.RouteData.Values["accessedVia"].ToString();
 
-            if (!DelegateAccessRoute.CourseDelegates.Name.Equals(accessedVia) &&
+            if (!DelegateAccessRoute.ActivityDelegates.Name.Equals(accessedVia) &&
                 !DelegateAccessRoute.ViewDelegate.Name.Equals(accessedVia))
             {
                 context.Result = new NotFoundResult();

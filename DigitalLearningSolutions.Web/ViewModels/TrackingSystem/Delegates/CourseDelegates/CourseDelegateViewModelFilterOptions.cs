@@ -6,14 +6,13 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class CourseDelegateViewModelFilterOptions
     {
         public static readonly IEnumerable<FilterOptionModel> ActiveStatusOptions = new[]
-        {
-            CourseDelegateAccountStatusFilterOptions.Inactive,
+        {            
             CourseDelegateAccountStatusFilterOptions.Active,
+            CourseDelegateAccountStatusFilterOptions.Inactive,
         };
 
         public static readonly IEnumerable<FilterOptionModel> LockedStatusOptions = new[]

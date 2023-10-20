@@ -2,42 +2,42 @@
 @model (int customisationId, int progressId)
 
 <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-  <div class="nhsuk-width-container">
-    <ol class="nhsuk-breadcrumb__list">
-      <li class="nhsuk-breadcrumb__item">
-        <a class="nhsuk-breadcrumb__link"
-           asp-controller="DelegateCourses"
-           asp-action="Index"
-           asp-route-customisationId="@Model.customisationId">
-          Delegate courses
-        </a>
-      </li>
-      <li class="nhsuk-breadcrumb__item">
-        <a class="nhsuk-breadcrumb__link"
-           asp-controller="CourseDelegates"
-           asp-action="Index"
-           asp-route-customisationId="@Model.customisationId">
-          Course delegates
-        </a>
-      </li>
-      <li class="nhsuk-breadcrumb__item">
-        <a class="nhsuk-breadcrumb__link"
-           asp-controller="DelegateProgress"
-           asp-action="Index"
-           asp-route-progressId="@Model.progressId"
-           asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
-          Delegate progress
-        </a>
-      </li>
-    </ol>
-    <p class="nhsuk-breadcrumb__back">
-      <a class="nhsuk-breadcrumb__backlink"
-         asp-controller="DelegateProgress"
-         asp-action="Index"
-         asp-route-progressId="@Model.progressId"
-         asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
-        Back to delegate progress
-      </a>
-    </p>
-  </div>
+    <div class="nhsuk-width-container">
+        <ol class="nhsuk-breadcrumb__list">
+            <li class="nhsuk-breadcrumb__item">
+                <a class="nhsuk-breadcrumb__link"
+                   asp-controller="DelegateCourses"
+                   asp-action="Index"
+                   asp-route-customisationId="@Model.customisationId">
+                    Delegate courses
+                </a>
+            </li>
+            <li class="nhsuk-breadcrumb__item">
+                <a class="nhsuk-breadcrumb__link"
+                   asp-controller="ActivityDelegates"
+                   asp-action="Index"
+                   asp-route-customisationId="@Model.customisationId">
+                    Activity delegates
+                </a>
+            </li>
+            <li class="nhsuk-breadcrumb__item">
+                <a class="nhsuk-breadcrumb__link"
+                   asp-controller="DelegateProgress"
+                   asp-action="Index"
+                   asp-route-progressId="@Model.progressId"
+                   asp-route-accessedVia="@DelegateAccessRoute.ActivityDelegates">
+                    Delegate progress
+                </a>
+            </li>
+        </ol>
+        <p class="nhsuk-breadcrumb__back">
+            <a class="nhsuk-breadcrumb__backlink"
+               asp-controller="DelegateProgress"
+               asp-action="Index"
+               asp-route-progressId="@Model.progressId"
+               asp-route-accessedVia="@DelegateAccessRoute.ActivityDelegates">
+                Back to delegate progress
+            </a>
+        </p>
+    </div>
 </nav>

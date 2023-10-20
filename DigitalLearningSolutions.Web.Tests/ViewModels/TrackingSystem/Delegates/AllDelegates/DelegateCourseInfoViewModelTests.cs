@@ -40,7 +40,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 new ReturnPageQuery(1, null)
             );
 
@@ -76,7 +76,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -97,7 +97,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -118,7 +118,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -139,7 +139,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -161,7 +161,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -183,7 +183,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -203,7 +203,7 @@
 
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -226,7 +226,7 @@
 
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -256,7 +256,7 @@
 
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -279,7 +279,7 @@
 
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 

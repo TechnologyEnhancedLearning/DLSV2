@@ -3,7 +3,8 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;    
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -16,18 +17,19 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class CourseDelegatesControllerTests
     {
         private const int UserCentreId = 3;
-        private CourseDelegatesController controller = null!;
+        private ActivityDelegatesController controller = null!;
         private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
         private IPaginateService paginateService = null!;
         private IConfiguration configuration = null!;
+        private ISelfAssessmentService selfAssessmentDelegatesService = null!;
+        private ICourseService courseService = null!;
 
         [SetUp]
         public void SetUp()
@@ -36,18 +38,22 @@
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
             paginateService = A.Fake<IPaginateService>();
             configuration = A.Fake<IConfiguration>();
+            selfAssessmentDelegatesService = A.Fake<ISelfAssessmentService>();
+            courseService= A.Fake<ICourseService>();
 
-            controller = new CourseDelegatesController(
+            controller = new ActivityDelegatesController(
                     courseDelegatesService,
                     courseDelegatesDownloadFileService,
                     paginateService,
-                    configuration
+                    configuration,
+                    selfAssessmentDelegatesService,
+                    courseService
                 )
                 .WithDefaultContext()
                  .WithMockHttpContextSession()
                 .WithMockUser(true, UserCentreId)
                 .WithMockTempData()
-                .WithMockServices(); 
+                .WithMockServices();
         }
 
         [Test]
@@ -55,9 +61,9 @@
         {
             // Given
             var course = new Course { CustomisationId = 1, Active = true };
-            
+
             A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesPerPageForCentre("", 0, 10, "SearchableName", "Ascending",
-                1, UserCentreId,null,true,null,null,null,null,null,null))
+                1, UserCentreId, null, true, null, null, null, null, null, null))
                 .Returns((new CourseDelegatesData(
                         1,
                         new List<Course> { course },
@@ -67,14 +73,34 @@
                 );
 
             // When
-            var result = controller.Index(1);
+            var result = controller.Index();
 
             // Then
-            result.Should().BeViewResult().WithDefaultViewName();
+            result.Should().BeNotFoundResult();
         }
 
         [Test]
-        public void Index_returns_Not_Found_when_service_returns_null()
+        public void Index_shows_index_page_when_no_selfAssessmentId_supplied()
+        {
+            // Given
+            var selfAssessmentDelegate = new SelfAssessmentDelegate(6, "Lname");
+
+            A.CallTo(() => selfAssessmentDelegatesService.GetSelfAssessmentDelegatesPerPage("", 0, 10, "SearchableName", "Ascending",
+                6, UserCentreId, null, null))
+                .Returns((new SelfAssessmentDelegatesData(
+                        new List<SelfAssessmentDelegate> { selfAssessmentDelegate }
+                    ), 1)
+                );
+
+            // When
+            var result = controller.Index();
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void CourseDelegates_Index_returns_Not_Found_when_service_returns_null()
         {
             // Given
             var course = new Course { CustomisationId = 1, Active = true };
@@ -93,6 +119,27 @@
 
             // Then
             result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void SelfAssessmentDelegates_Index_returns_ViewResult_with_EmptyDelegates_when_service_returns_null()
+        {
+            // Given
+            var selfAssessmentDelegate = new SelfAssessmentDelegate(6, "Lname");
+
+            A.CallTo(() => selfAssessmentDelegatesService.GetSelfAssessmentDelegatesPerPage("", 0, 10, "SearchableName", "Ascending",
+                10, UserCentreId, null, null))
+                .Returns((new SelfAssessmentDelegatesData(
+                        new List<SelfAssessmentDelegate> { selfAssessmentDelegate }
+                    ), 0)
+                );
+
+            // When
+            var result = controller.Index(null, 10);
+
+            // Then
+            result.Should().BeViewResult().ModelAs<ActivityDelegatesViewModel>()
+            .DelegatesDetails?.Delegates?.Should().BeEmpty();
         }
 
         [Test]
@@ -122,7 +169,7 @@
                         new List<Course> { course },
                         courseDelegate,
                         new List<CourseAdminField>()
-                    ),1)
+                    ), 1)
                 );
 
             var httpRequest = A.Fake<HttpRequest>();
@@ -130,11 +177,13 @@
             const string cookieName = "CourseDelegatesFilter";
             const string cookieValue = "AccountStatus|IsDelegateActive|true";
 
-            var courseDelegatesController = new CourseDelegatesController(
+            var courseDelegatesController = new ActivityDelegatesController(
                     courseDelegatesService,
                     courseDelegatesDownloadFileService,
                     paginateService,
-                    configuration
+                    configuration,
+                    selfAssessmentDelegatesService,
+                    courseService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, UserCentreId)
@@ -143,7 +192,7 @@
             A.CallTo(() => httpRequest.Cookies).Returns(A.Fake<IRequestCookieCollection>());
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToPaginateServiceReturnsResult<CourseDelegate>(
-                    paginateService, courseDelegate.Count,searchString,sortBy,sortDirection
+                    paginateService, courseDelegate.Count, searchString, sortBy, sortDirection
                 );
 
             // When
