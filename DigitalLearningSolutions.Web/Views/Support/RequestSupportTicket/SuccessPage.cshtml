@@ -1,7 +1,13 @@
-﻿<div class="nhsuk-u-margin-bottom-8">
-    <h1 class="nhsuk-heading-xl">Request [ticketnumber] submitted</h1>
+﻿@using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
+
+@model FreshDeskResponseViewModel
+@{
+   ViewData["Title"] = "Success";
+}
+<div class="nhsuk-u-margin-bottom-8">
+    <h1 class="nhsuk-heading-xl">Request @Model.TicketId submitted</h1>
     <p class="nhsuk-body-l nhsuk-u-margin-bottom-6">
-                Your request number is [ticketnumber]. This will appear in any emails relating to the request. You should also quote it in any communication with the support team.
+        Your request number is @Model.TicketId. This will appear in any emails relating to the request. You should also quote it in any communication with the support team.
             </p>
     <p class="nhsuk-body-l nhsuk-u-margin-bottom-6">
                 You will receive an email when a member of the support team responds to it

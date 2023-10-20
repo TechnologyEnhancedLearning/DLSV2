@@ -21,6 +21,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
     using System;
     using Microsoft.AspNetCore.Http;
     using System.IO;
+    using FreshdeskApi.Client.Tickets.Models;
 
     public class RequestSupportTicketController : Controller
     {
@@ -124,7 +125,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var data = TempData.Peek<RequestSupportTicketData>()!;
             data.setRequestSubjectDetails(requestDetailsmodel);
             TempData.Set(data);
-            var model = new RequestAttachmentViewModel();
+            var model = new RequestAttachmentViewModel(data);
             return View("RequestAttachment", model);
         }
         [Route("RequestSupport/RequestAttachment")]
@@ -147,6 +148,18 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 {
                     return View("RequestAttachment", requestAttachmentmodel);
                 }
+            }
+            (bool? fileExtension, bool? fileSize) = validateUploadedImages(requestAttachmentmodel);
+            if (fileExtension == true)
+            {
+                ModelState.AddModelError("FileExtensionError", "File must be in image formats like jpg, jpeg, png");
+                return View("RequestAttachment", requestAttachmentmodel);
+
+            }
+            if (fileSize == true)
+            {
+                ModelState.AddModelError("FileSizeError", "Maximum allowed file size is 20MB");
+                return View("RequestAttachment", requestAttachmentmodel);
             }
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
             foreach (var item in requestAttachmentmodel.ImageFiles)
@@ -196,11 +209,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
             string uploadDir = string.Empty;
             string fileName = null;
-#if (DEBUG)
-            uploadDir = System.IO.Path.Combine(webHostEnvironment.ContentRootPath, "Uploads\\");
-#elif (RELEASE)
                 uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
-#endif
             if (data.RequestAttachment != null)
             {
                 foreach (var file in data.RequestAttachment)
@@ -210,7 +219,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                     var attachment = new RequestAttachment()
                     {
                         Id = Guid.NewGuid().ToString(),
-                        FileName = fileName.Split('_')[2],
+                        FileName = file.FileName,
                         FullFileName = fileName,
                         Content = FileBytes
                     };
@@ -227,33 +236,28 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             if (result.StatusCode == 200)
             {
                 long? ticketId = result.TicketId;
-                //DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
-                //TempData.Clear();
-                return View("SuccessPage");
+                DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
+                TempData.Clear();
+                var responseModel = new FreshDeskResponseViewModel(ticketId,null);
+                return View("SuccessPage",responseModel);
             }
             else
             {
                 int? errorCode = result.StatusCode;
                 string errorMess = result.FullErrorDetails;
-                return View("RequestError");
+                var responseModel = new FreshDeskResponseViewModel(null,errorCode+ ": "+ errorMess);
+                TempData.Clear();
+                return View("RequestError", responseModel);
             }
 
-            //If success
-            return View("SuccessPage");
-            //
-            //else error page
-            // 
         }
         private void DeleteFilesAfterSubmitSupportTicket(List<RequestAttachment> RequestAttachment)
         {
-            string uploadDir = string.Empty;
             foreach (var attachment in RequestAttachment)
             {
-#if (DEBUG)
-                uploadDir = System.IO.Path.Combine(webHostEnvironment.ContentRootPath, "Uploads", attachment.FullFileName);
-#elif (RELEASE)
-                uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads", attachment.FullFileName);
-#endif
+
+               var uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads", attachment.FullFileName);
+
                 if (System.IO.File.Exists(uploadDir))
                 {
                     // If file found, delete it
@@ -276,11 +280,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             string fileName = null;
             if (file != null)
             {
-#if (DEBUG)
-                uploadDir = System.IO.Path.Combine(webHostEnvironment.ContentRootPath, "Uploads");
-#elif (RELEASE)
+
                 uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads");
-#endif
                 fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                 string filePath = System.IO.Path.Combine(uploadDir, fileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -289,6 +290,27 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 }
             }
             return fileName;
+        }
+        private (bool, bool) validateUploadedImages(RequestAttachmentViewModel requestAttachmentmodel)
+        {
+
+            foreach (var item in requestAttachmentmodel.ImageFiles)
+            {
+                var extension = System.IO.Path.GetExtension(item.FileName);
+
+                if (!requestAttachmentmodel.AllowedExtensions.Contains(extension))
+                {
+                    requestAttachmentmodel.FileExtensionFlag = true;
+                    return (requestAttachmentmodel.FileExtensionFlag ?? false, requestAttachmentmodel.FileSizeFlag ?? false);
+                }
+                var fileSize = Convert.ToDouble(item.Length.ToSize(FileSizeCalc.SizeUnits.MB));
+                if (fileSize > requestAttachmentmodel.SizeLimit)
+                {
+                    requestAttachmentmodel.FileSizeFlag = true;
+                }
+
+            }
+            return (requestAttachmentmodel.FileExtensionFlag ?? false, requestAttachmentmodel.FileSizeFlag ?? false);
         }
     }
 }

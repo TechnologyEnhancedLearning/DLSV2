@@ -12,9 +12,9 @@
     }
 
 }
-@if (errorHasOccurred)
+@if (errorHasOccurred )
 {
-    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ImageFiles) })" />
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ImageFiles),nameof(Model.FileSizeError),nameof(Model.FileExtensionError) })" />
 }
 <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupport" asp-action="RequestSummary">
     Back
@@ -34,51 +34,54 @@
                     <button class="nhsuk-button nhsuk-button--secondary" type="submit">Upload</button>
 
                 </form>
-
-                @if (Model.ImageFiles != null)
+                @if (Model.FileExtensionFlag == false && Model.FileSizeFlag == false)
                 {
-                    <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
-                        Files attached
-                    </p>
-                    @foreach (var a in Model.ImageFiles)
+                    @if (Model.ImageFiles != null)
                     {
-                        <dl class="nhsuk-summary-list">
-                            <div class="nhsuk-summary-list__row">
+                            <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
+                                Files attached
+                            </p>
+                        @foreach (var a in Model.ImageFiles)
+                        {
+                                    <dl class="nhsuk-summary-list">
+                                        <div class="nhsuk-summary-list__row">
 
-                                <dd class="nhsuk-summary-list__value">
-                                    @a.FileName.Split('_')[1]
-                                </dd>
-                                <dd class="nhsuk-summary-list__actions">
-                                    <a asp-action="DeleteImage" asp-route-imageName="@a.FileName">
-                                        Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
-                                    </a>
-                                </dd>
-                            </div>
-                        </dl>
+                                            <dd class="nhsuk-summary-list__value">
+                                        @a.FileName
+                                            </dd>
+                                            <dd class="nhsuk-summary-list__actions">
+                                                <a asp-action="DeleteImage" asp-route-imageName="@a.FileName">
+                                                    Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
+                                                </a>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                        }
+                    }
+                    @if (Model.RequestAttachment != null && Model.RequestAttachment.Count > 0)
+                    {
+                            <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
+                                Files attached
+                            </p>
+                        @foreach (var a in Model.RequestAttachment)
+                        {
+                                    <dl class="nhsuk-summary-list">
+                                        <div class="nhsuk-summary-list__row">
+
+                                            <dd class="nhsuk-summary-list__value">
+                                        @a.FileName.Split('_')[1]
+                                            </dd>
+                                            <dd class="nhsuk-summary-list__actions">
+                                                <a asp-action="DeleteImage" asp-route-imageName="@a.FileName" asp-route-imageId="@a.Id">
+                                                    Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
+                                                </a>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                        }
                     }
                 }
-                @if (Model.RequestAttachment != null && Model.RequestAttachment.Count > 0)
-                {
-                    <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
-                        Files attached
-                    </p>
-                    @foreach (var a in Model.RequestAttachment)
-                    {
-                        <dl class="nhsuk-summary-list">
-                            <div class="nhsuk-summary-list__row">
 
-                                <dd class="nhsuk-summary-list__value">
-                                    @a.FileName.Split('_')[1]
-                                </dd>
-                                <dd class="nhsuk-summary-list__actions">
-                                    <a asp-action="DeleteImage" asp-route-imageName="@a.FileName" asp-route-imageId="@a.Id">
-                                        Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
-                                    </a>
-                                </dd>
-                            </div>
-                        </dl>
-                    }
-                }
                 <a class="nhsuk-button" asp-controller="RequestSupport" asp-action="SupportSummary">Next</a>
                 <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" />
             </div>

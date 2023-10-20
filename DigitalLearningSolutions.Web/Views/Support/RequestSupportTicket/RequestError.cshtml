@@ -1,7 +1,12 @@
-﻿<div class="nhsuk-u-margin-bottom-8">
-    <h1 class="nhsuk-heading-xl">Request [ticketnumber] submitted</h1>
+﻿@using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
+
+@model FreshDeskResponseViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+<div class="nhsuk-u-margin-bottom-8">
     <p class="nhsuk-body-l nhsuk-u-margin-bottom-6">
-                Request error!!!
+                Request error!!! @Model.ErrorMessage
             </p>
     <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupport" asp-action="Index">
         Back to support
