@@ -246,6 +246,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 int? errorCode = result.StatusCode;
                 string errorMess = result.FullErrorDetails;
                 var responseModel = new FreshDeskResponseViewModel(null,errorCode+ ": "+ errorMess);
+                DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
                 TempData.Clear();
                 return View("RequestError", responseModel);
             }
