@@ -41,6 +41,17 @@
             int tutorialStatus
         );
 
+        void StoreAspProgressSuspendData(
+            int progressId,
+            int tutorialId,
+            string? suspendData
+            );
+
+        string? GetAspProgressSuspendData(
+            int progressId,
+            int tutorialId
+            );
+
         void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress);
 
         public SectionAndApplicationDetailsForAssessAttempts? GetSectionAndApplicationDetailsForAssessAttempts(
@@ -202,8 +213,16 @@
                 timeNow,
                 progressText ?? string.Empty
             );
-            progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime);
-            progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus);
+            progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime);
+        }
+
+        public void StoreAspProgressSuspendData(
+            int progressId,
+            int tutorialId,
+            string? suspendData
+            )
+        {
+            progressDataService.UpdateAspProgressSuspendData(tutorialId, progressId, suspendData);
         }
 
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)
@@ -233,6 +252,11 @@
         )
         {
             return progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
+        }
+
+        public string? GetAspProgressSuspendData(int progressId, int tutorialId)
+        {
+            return progressDataService.GetAspProgressSuspendData(progressId, tutorialId);
         }
     }
 }

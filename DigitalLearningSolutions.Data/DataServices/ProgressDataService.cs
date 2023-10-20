@@ -83,6 +83,19 @@
             int tutStat
         );
 
+        void UpdateAspProgressTutStatAndTime(
+            int tutorialId,
+            int progressId,
+            int tutStat,
+            int tutTime
+            );
+
+        void UpdateAspProgressSuspendData(
+           int tutorialId,
+           int progressId,
+           string? suspendData
+       );
+
         int GetCompletionStatusForProgress(int progressId);
 
         IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int progressId, int sectionNumber);
@@ -97,6 +110,8 @@
             bool status,
             int progressId
         );
+
+        string? GetAspProgressSuspendData(int progressId, int tutorialId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -571,6 +586,38 @@
             );
         }
 
+        public void UpdateAspProgressTutStatAndTime(
+            int tutorialId,
+            int progressId,
+            int tutStat,
+            int tutTime
+        )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET TutStat = Case WHEN TutStat < @tutStat THEN @tutStat ELSE TutStat END, TutTime = TutTime + @tutTime
+                    WHERE (TutorialID = @tutorialId)
+                      AND (ProgressID = @progressId)
+                      AND (TutStat < @tutStat)",
+                new { tutorialId, progressId, tutStat, tutTime }
+            );
+        }
+
+        public void UpdateAspProgressSuspendData(
+           int tutorialId,
+           int progressId,
+           string? suspendData
+       )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET SuspendData = @suspendData
+                    WHERE (TutorialID = @tutorialId)
+                      AND (ProgressID = @progressId)",
+                new { tutorialId, progressId, suspendData }
+            );
+        }
+
         public int GetCompletionStatusForProgress(int progressId)
         {
             return connection.QuerySingle<int>(
@@ -617,6 +664,17 @@
                     VALUES (@delegateId, @customisationId, @version, @insertionDate, 1, @sectionNumber, @score, @status, @progressId)",
                 new { delegateId, customisationId, version, insertionDate, sectionNumber, score, status, progressId }
             );
+        }
+
+        public string? GetAspProgressSuspendData(int progressId, int tutorialId)
+        {
+            return connection.Query<string?>(
+                @"SELECT TOP(1)
+                        SuspendData
+                    FROM dbo.aspProgress
+                    WHERE ProgressID = @progressId AND TutorialID = @tutorialId",
+                new { progressId, tutorialId }
+            ).FirstOrDefault();
         }
     }
 }
