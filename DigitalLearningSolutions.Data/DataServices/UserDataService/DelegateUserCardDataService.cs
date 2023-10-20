@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
+    using DocumentFormat.OpenXml.Drawing;
 
     public partial class UserDataService
     {
@@ -227,8 +228,17 @@
 
             string orderBy;
             string sortOrder;
-            sortOrder = " ASC ";
-            orderBy = " ORDER BY LTRIM(LastName) " + sortOrder + ", LTRIM(FirstName) OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS  FETCH NEXT @exportQueryRowLimit ROWS ONLY";
+            if (sortDirection == "Ascending")
+                sortOrder = " ASC ";
+            else
+                sortOrder = " DESC ";
+
+            if (sortBy == "SearchableName")
+                orderBy = " ORDER BY LTRIM(LastName) " + sortOrder + ", LTRIM(FirstName) ";
+            else
+                orderBy = " ORDER BY DateRegistered " + sortOrder;
+
+            orderBy += " OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS  FETCH NEXT @exportQueryRowLimit ROWS ONLY";
             var mainSql = "SELECT * FROM ( " + DelegateUserExportSelectQuery + " ) D " + DelegatewhereConditon + orderBy;
 
             IEnumerable<DelegateUserCard> delegateUserCard = connection.Query<DelegateUserCard>(
