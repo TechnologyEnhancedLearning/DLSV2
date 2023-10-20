@@ -1,24 +1,23 @@
-﻿using System;
-using DigitalLearningSolutions.Data.Exceptions;
-using DigitalLearningSolutions.Data.Models.Signposting;
-using DigitalLearningSolutions.Web.Attributes;
-using DigitalLearningSolutions.Web.Helpers;
-using DigitalLearningSolutions.Web.Models.Enums;
-using DigitalLearningSolutions.Web.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
-namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    public class SsoLinkageController : Controller
+    using System;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.Signposting;
+    using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    public class LinkAccountController : Controller
     {
-        private readonly ILogger<SsoLinkageController> logger;
+        private readonly ILogger<LinkAccountController> logger;
         private readonly IUserService userService;
         private readonly ILearningHubLinkService learningHubLinkService;
 
-        public SsoLinkageController(
-            ILogger<SsoLinkageController> logger,
+        public LinkAccountController(
+            ILogger<LinkAccountController> logger,
             IUserService userService,
             ILearningHubLinkService learningHubLinkService)
         {

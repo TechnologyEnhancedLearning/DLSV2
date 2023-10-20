@@ -222,7 +222,7 @@
 
             if (!userService.ShouldForceDetailsCheck(userEntity, centreIdToLogInto))
             {
-                return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction("Index", "SsoLinkage");
+                return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction("Index", "LinkAccount");
             }
 
             const bool isCheckDetailsRedirect = true;

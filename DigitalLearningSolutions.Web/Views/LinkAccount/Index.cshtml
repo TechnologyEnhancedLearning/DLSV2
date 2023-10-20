@@ -1,0 +1,29 @@
+﻿@{
+  ViewData["Title"] = "Link your accounts";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-u-maring-bottom-8">
+      <h1 class="nhsuk-heading-x1">Link your learning accounts</h1>
+    </div>
+    <div class="nhsuk-contents-list">
+            <p class="nhsuk-body-m">In the near future, you will be able to access DLS using the same login you use for elfh Hub and Learning Hub. Linking your learning accounts now will mean you are ready for this and it usually takes less than 2 minutes.</p>
+      <p>Linking your account will:
+        <ul>
+          <li>allow you to access Learning Hub content from DLS, saving you time</li>
+          <li>give you access to thousands of learning resources through the Learning Hub</li>
+          <li>and you will be able to log in to DLS, the Learning Hub and the elfh Hub using a single account</li>
+        </ul>
+      </p>
+    </div>
+    <div>
+      <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="LinkAccount" asp-action="LinkAccount">
+          Link your account now
+      </a>
+    </div>
+    <div>
+      <a href="home/welcome">Skip and link account later</a>
+    </div>
+  </div>
+</div>

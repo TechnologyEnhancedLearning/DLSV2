@@ -1,31 +1,30 @@
-﻿using DigitalLearningSolutions.Data.Models.Signposting;
-using DigitalLearningSolutions.Web.Controllers;
-using DigitalLearningSolutions.Web.Services;
-using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-using FakeItEasy;
-using FluentAssertions;
-using FluentAssertions.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-
-namespace DigitalLearningSolutions.Web.Tests.Controllers.SsoLinkage
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LinkAccount
 {
-    internal class SsoLinkageControllerTests
+    using DigitalLearningSolutions.Data.Models.Signposting;
+    using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using FakeItEasy;
+    using FluentAssertions;
+    using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Logging;
+    using NUnit.Framework;
+    internal class LinkAccountControllerTests
     {
-        private ILogger<SsoLinkageController> logger = null!;
+        private ILogger<LinkAccountController> logger = null!;
         private IUserService userService = null!;
         private ILearningHubLinkService learningHubLinkService = null!;
-        private SsoLinkageController controller = null!;
+        private LinkAccountController controller = null!;
 
         [SetUp]
         public void SetUp()
         {
-            logger = A.Fake<ILogger<SsoLinkageController>>();
+            logger = A.Fake<ILogger<LinkAccountController>>();
             userService = A.Fake<IUserService>();
             learningHubLinkService = A.Fake<ILearningHubLinkService>();
 
-            controller = new SsoLinkageController(
+            controller = new LinkAccountController(
                 logger,
                 userService,
                 learningHubLinkService
