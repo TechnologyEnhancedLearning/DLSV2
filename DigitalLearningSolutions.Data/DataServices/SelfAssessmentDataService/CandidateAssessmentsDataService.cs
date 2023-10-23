@@ -5,6 +5,8 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DocumentFormat.OpenXml.Drawing.Charts;
+    using DocumentFormat.OpenXml.Office2010.Excel;
     using Microsoft.Extensions.Logging;
 
     public partial class SelfAssessmentDataService
@@ -143,11 +145,11 @@
             }
         }
 
-        public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int candidateAssessmentSupervisorId)
+        public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupId)
         {
-            var numberOfAffectedRows = connection.Execute(
-                @"DELETE casv
-                    FROM CandidateAssessmentSupervisorVerifications AS casv
+            var candidateAssessmentSupervisorVerificationsId = connection.QueryFirst<int>(
+                @" SELECT casv.ID 
+                    FROM( SELECT DISTINCT casv.* FROM CandidateAssessmentSupervisorVerifications AS casv
                     INNER JOIN CandidateAssessmentSupervisors AS cas
                         ON casv.CandidateAssessmentSupervisorID = cas.ID
                     INNER JOIN CandidateAssessments AS ca
@@ -158,11 +160,22 @@
                         ON sd.SupervisorAdminID = au.AdminID
                     LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
                         ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1) AND casv.CandidateAssessmentSupervisorID =@candidateAssessmentSupervisorId AND SignedOff =0
-                        OR (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL) AND casv.CandidateAssessmentSupervisorID =@candidateAssessmentSupervisorId AND SignedOff =0",
-                new { selfAssessmentId, delegateUserId, candidateAssessmentSupervisorId }
+						  INNER JOIN SelfAssessmentStructure AS SAS 
+						  ON CA.SelfAssessmentID = SAS.SelfAssessmentID
+                    INNER JOIN CompetencyGroups AS CG 
+					ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID =@selfAssessmentId
+                    WHERE (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1) AND CG.ID =@competencyGroupId AND casv.SignedOff =0
+                        OR (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL) AND CG.ID =@competencyGroupId AND casv.SignedOff =0
+						) AS casv;
+						",
+                new { selfAssessmentId, delegateUserId, competencyGroupId }
             );
-
+            if(candidateAssessmentSupervisorVerificationsId > 0) 
+            {
+                var numberOfAffectedRows = connection.Execute(
+                  @"   DELETE FROM CandidateAssessmentSupervisorVerifications WHERE ID = @candidateAssessmentSupervisorVerificationsId ",
+                new { candidateAssessmentSupervisorVerificationsId });
+            }
         }
 
 
