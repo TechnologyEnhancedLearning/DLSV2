@@ -56,7 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             );
             var centreId = User.GetCentreIdKnownNotNull();
             var userName = userDataService.GetUserDisplayName(User.GetUserId() ?? 0);
-            var userCentreEmail = userDataService.GetCentreEmail(User.GetUserId() ?? 0, centreId);
+            var userCentreEmail = requestSupportTicketDataService.GetUserCentreEmail(User.GetUserId() ?? 0, centreId);
             var adminUserID = User.GetAdminId();
             var centreName = centresDataService.GetCentreName(centreId);
             setRequestSupportData(userName, userCentreEmail, adminUserID ?? 0, centreName);
@@ -229,9 +229,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 data.RequestAttachment.RemoveAll((x) => x.Content == null);
                 data.setImageFiles(RequestAttachmentList);
             }
-
-            data.UserCentreEmail = "test@gmail.com";
-
             var result = freshdeskService.CreateNewTicket(data);
             if (result.StatusCode == 200)
             {

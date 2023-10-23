@@ -16,8 +16,9 @@ namespace DigitalLearningSolutions.Web.Models
         {
             CentreName = centreName;
             AdminUserID = adminUserID;
-            UserCentreEmail = UserCentreEmail;
+            UserCentreEmail = userCentreEmail;
             UserName = userName;
+            CentreName = centreName;
         }
         public string? CentreName { get; set; }
         public string? UserCentreEmail { get; set; }
