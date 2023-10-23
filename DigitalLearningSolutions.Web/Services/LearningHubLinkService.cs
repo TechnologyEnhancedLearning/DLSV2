@@ -14,14 +14,24 @@
             LinkLearningHubRequest linkLearningHubRequest,
             string linkRequestSessionIdentifier
         );
+        void ValidateLinkingRequest(
+            LinkLearningHubRequest linkLearningHubRequest,
+            string linkRequestSessionIdentifier
+        );
 
         bool IsLearningHubAccountLinked(int delegateId);
 
+        bool IsLearningHubUserAccountLinked(int userId);
+
         void LinkLearningHubAccountIfNotLinked(int delegateId, int learningHubUserId);
+
+        void LinkLearningHubUserAccountIfNotLinked(int userId, int learningHubUserId);
 
         string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int authId);
 
         string GetLinkingUrlForResource(int resourceReferenceId, string sessionLinkingId);
+
+        string GetLinkingUrl(string sessionLinkingId);
     }
 
     public class LearningHubLinkService : ILearningHubLinkService
@@ -43,10 +53,16 @@
 
         private string AuthBaseUrl => ConfigurationExtensions.GetLearningHubAuthApiBaseUrl(config);
         private string ClientCode => ConfigurationExtensions.GetLearningHubAuthApiClientCode(config);
+        private string ClientCodeSso => ConfigurationExtensions.GetLearningHubAuthApiSsoClientCode(config);
 
         public bool IsLearningHubAccountLinked(int delegateId)
         {
             return userDataService.GetDelegateUserLearningHubAuthId(delegateId).HasValue;
+        }
+
+        public bool IsLearningHubUserAccountLinked(int userId)
+        {
+            return userDataService.GetUserLearningHubAuthId(userId).HasValue;
         }
 
         public void LinkLearningHubAccountIfNotLinked(int delegateId, int learningHubUserId)
@@ -58,12 +74,44 @@
             }
         }
 
+        public void LinkLearningHubUserAccountIfNotLinked(int userId, int learningHubUserId)
+        {
+            var isAccountAlreadyLinked = IsLearningHubUserAccountLinked(userId);
+            if (!isAccountAlreadyLinked)
+            {
+                userDataService.SetUserLearningHubAuthId(userId, learningHubUserId);
+            }
+        }
+
         public int? ValidateLinkingRequestAndExtractDestinationResourceId(
             LinkLearningHubRequest linkLearningHubRequest,
             string linkRequestSessionIdentifier
         )
         {
-            if (!Guid.TryParse(linkRequestSessionIdentifier, out var storedSessionIdentifier))
+            ParseIdentifierValidateId(linkLearningHubRequest,
+                linkRequestSessionIdentifier,
+                out var storedSessionIdentifier);
+
+            var parsedState = ParseAccountLinkingRequest(linkLearningHubRequest, storedSessionIdentifier);
+
+            return parsedState.resourceId;
+        }
+
+        public void ValidateLinkingRequest(
+            LinkLearningHubRequest linkLearningHubRequest,
+            string linkRequestSessionIdentifier
+            )
+        {
+            ParseIdentifierValidateId(linkLearningHubRequest,
+                linkRequestSessionIdentifier,
+                out var storedSessionIdentifier);
+        }
+
+        private void ParseIdentifierValidateId(LinkLearningHubRequest linkLearningHubRequest,
+            string linkRequestSessionIdentifier,
+            out Guid storedSessionIdentifier)
+        {
+            if (!Guid.TryParse(linkRequestSessionIdentifier, out storedSessionIdentifier))
             {
                 throw new LearningHubLinkingRequestException(
                     "Invalid Learning Hub linking request session identifier."
@@ -71,10 +119,6 @@
             }
 
             ValidateLearningHubUserId(linkLearningHubRequest);
-
-            var parsedState = ParseAccountLinkingRequest(linkLearningHubRequest, storedSessionIdentifier);
-
-            return parsedState.resourceId;
         }
 
         public string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int authId)
@@ -90,13 +134,21 @@
 
         public string GetLinkingUrlForResource(int resourceReferenceId, string sessionLinkingId)
         {
+            return CreateLinkingUrl(resourceReferenceId, sessionLinkingId, ClientCode);
+        }
+
+        public string GetLinkingUrl(string sessionLinkingId)
+        {
+            return CreateLinkingUrl(0, sessionLinkingId, ClientCodeSso);
+        }
+
+        private string CreateLinkingUrl(int resourceReferenceId, string sessionLinkingId, string clientCode)
+        {
             var state = ComposeCreateUserState(resourceReferenceId, sessionLinkingId);
             var stateHash = learningHubSsoSecurityService.GenerateHash(state);
-            var createUserQueryString = ComposeCreateUserQueryString(ClientCode, state, stateHash);
-
-            var linkingEndpoint = ConfigurationExtensions.GetLearningHubAuthApiLinkingEndpoint(config);
-
-            return AuthBaseUrl + linkingEndpoint + createUserQueryString;
+            return AuthBaseUrl
+                + ConfigurationExtensions.GetLearningHubAuthApiLinkingEndpoint(config)
+                + ComposeCreateUserQueryString(clientCode, state, stateHash);
         }
 
         private static string ComposeCreateUserState(int resourceReferenceId, string sessionLinkingId)
