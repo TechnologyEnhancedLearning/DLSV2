@@ -25,11 +25,18 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
         public string? GetUserCentreEmail(int userId, int centreId)
         {
+            //return connection.QuerySingleOrDefault<string>(
+            //    @"SELECT COALESCE(ucd.Email,u.PrimaryEmail) as Email  FROM UserCentreDetails ucd inner join users u on ucd.UserID=u.id
+            //        WHERE ucd.UserID=@userId and ucd.CentreID=@centreId",
+            //    new { userId, centreId }
+            //);
+
+            //Found user centre email null in dev DB
+
             return connection.QuerySingleOrDefault<string>(
-                @"SELECT COALESCE(ucd.Email,u.PrimaryEmail) as Email  FROM UserCentreDetails ucd inner join users u on ucd.UserID=u.id
-                    WHERE ucd.UserID=@userId and ucd.CentreID=@centreId",
-                new { userId, centreId }
-            );
+               @"SELECT PrimaryEmail FROM users WHERE id=@userId",
+               new { userId, centreId }
+           );
         }
 
     }

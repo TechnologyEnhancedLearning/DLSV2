@@ -9,20 +9,26 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
     using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
     using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.FeatureManagement;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Support;
-    using Newtonsoft.Json;
     using System.Collections.Generic;
     using System;
     using Microsoft.AspNetCore.Http;
     using System.IO;
-    using FreshdeskApi.Client.Tickets.Models;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.ServiceFilter;
 
+    [SetSelectedTab(nameof(NavMenuTab.Support))]
+    [TypeFilter(
+        typeof(ValidateAllowedDlsSubApplication),
+        Arguments = new object[]
+            { new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } }
+    )]
     public class RequestSupportTicketController : Controller
     {
         private readonly IConfiguration configuration;
