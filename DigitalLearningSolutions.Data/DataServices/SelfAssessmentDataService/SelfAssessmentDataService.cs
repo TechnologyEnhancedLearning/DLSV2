@@ -147,6 +147,8 @@
         );
 
         void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
+        (IEnumerable<SelfAssessmentDelegate>, int) GetSelfAssessmentDelegates(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -170,6 +172,132 @@
                 new { selfAssessmentId }
             );
             return name;
+        }
+
+        public (IEnumerable<SelfAssessmentDelegate>, int) GetSelfAssessmentDelegates(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed)
+        {
+            searchString = searchString == null ? string.Empty : searchString.Trim();
+            var selectColumnQuery = $@"SELECT
+                da.CandidateNumber,
+                u.ID AS DelegateUserId,
+                u.ProfessionalRegistrationNumber,
+                ca.SelfAssessmentID As SelfAssessmentId,
+                ca.StartedDate,
+                ca.EnrolmentMethodId,
+                ca.LastAccessed,
+                ca.LaunchCount,
+                ca.CompleteByDate,
+                ca.SubmittedDate,
+                ca.RemovedDate,
+                ca.CompletedDate,
+				uEnrolledBy.FirstName AS EnrolledByForename,
+                uEnrolledBy.LastName AS EnrolledBySurname,
+                aaEnrolledBy.Active AS EnrolledByAdminActive,
+				da.CandidateNumber AS CandidateNumber,
+                u.FirstName AS DelegateFirstName,
+                u.LastName AS DelegateLastName,
+                COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
+                da.Active AS IsDelegateActive ";
+
+            selectColumnQuery += ",MAX(casv.Verified) as SignedOff";
+
+            var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa 
+				INNER JOIN dbo.CandidateAssessments AS ca WITH (NOLOCK) ON sa.ID = ca.SelfAssessmentID 
+				INNER JOIN dbo.CentreSelfAssessments AS csa  WITH (NOLOCK) ON sa.ID = csa.SelfAssessmentID 
+                INNER JOIN dbo.DelegateAccounts da WITH (NOLOCK) ON ca.CentreID = da.CentreID AND ca.DelegateUserID = da.UserID AND da.CentreID = csa.CentreID
+                INNER JOIN dbo.Users u WITH (NOLOCK) ON DA.UserID = u.ID
+                LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
+				LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = ca.EnrolledByAdminID
+                LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID ";
+
+            var signedOffJoin = $@" LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
+                LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND(casv.Verified IS NOT NULL AND casv.SignedOff = 1) ";
+
+            var whereQuery = $@" WHERE sa.ID = @selfAssessmentId 
+                AND da.CentreID = @centreID AND csa.CentreID = @centreID
+                AND (ca.RemovedDate IS NULL)
+                AND ( u.FirstName + ' ' + u.LastName + ' ' + COALESCE(ucd.Email, u.PrimaryEmail) + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @searchString + N'%')
+                AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
+				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%' ";
+
+            var groupBy = $@" GROUP BY 
+				da.CandidateNumber,
+                u.ID,
+                u.ProfessionalRegistrationNumber,
+                ca.SelfAssessmentID,
+                ca.StartedDate,
+                ca.EnrolmentMethodId,
+                ca.LastAccessed,
+                ca.LaunchCount,
+                ca.CompleteByDate,
+                ca.SubmittedDate,
+                ca.RemovedDate,
+                ca.CompletedDate,
+				uEnrolledBy.FirstName,
+                uEnrolledBy.LastName,
+                aaEnrolledBy.Active,
+				da.CandidateNumber,
+                u.FirstName,
+                u.LastName,
+                COALESCE(ucd.Email, u.PrimaryEmail),
+                da.Active";
+
+            string orderBy;
+            string sortOrder = sortDirection == "Ascending" ? "ASC" : "DESC";
+
+            if (sortBy == "Enrolled")
+                orderBy = " ORDER BY ca.StartedDate " + sortOrder + ", LTRIM(u.LastName)";
+            else if (sortBy == "CompleteBy")
+                orderBy = " ORDER BY ca.CompleteByDate " + sortOrder + ", LTRIM(u.LastName)";
+            else if (sortBy == "Completed")
+                orderBy = " ORDER BY ca.CompletedDate " + sortOrder + ", LTRIM(u.LastName)";
+            else if (sortBy == "CandidateNumber")
+                orderBy = " ORDER BY da.CandidateNumber " + sortOrder + ", LTRIM(u.LastName)";
+            else
+                orderBy = " ORDER BY LTRIM(u.LastName) " + sortOrder + ", LTRIM(u.FirstName) ";
+
+            orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
+
+            var delegateQuery = selectColumnQuery + fromTableQuery + signedOffJoin + whereQuery + groupBy + orderBy;
+
+            IEnumerable<SelfAssessmentDelegate> delegateUserCard = connection.Query<SelfAssessmentDelegate>(
+                delegateQuery,
+                new
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    selfAssessmentId,
+                    centreId,
+                    isDelegateActive,
+                    removed
+                },
+                commandTimeout: 3000
+            );
+
+            var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches " + fromTableQuery + whereQuery;
+
+            int ResultCount = connection.ExecuteScalar<int>(
+                delegateCountQuery,
+                new
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    selfAssessmentId,
+                    centreId,
+                    isDelegateActive,
+                    removed
+                },
+                commandTimeout: 3000
+            );
+            return (delegateUserCard, ResultCount);
         }
     }
 }

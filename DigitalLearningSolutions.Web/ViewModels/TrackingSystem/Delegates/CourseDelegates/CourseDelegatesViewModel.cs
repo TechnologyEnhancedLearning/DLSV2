@@ -9,6 +9,7 @@
 
     public class CourseDelegatesViewModel
     {
+        public CourseDelegatesViewModel() { }
         public CourseDelegatesViewModel(
             CourseDelegatesData courseDelegatesData,
             SearchSortFilterPaginationResult<CourseDelegate> result,
