@@ -164,17 +164,11 @@
                         GroupID,
                         GroupLabel,
                         GroupDescription,
-                        (SELECT  COUNT(*) FROM ( SELECT
-							da.CentreID,
-							COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
-							u.JobGroupId
-								FROM DelegateAccounts AS da WITH (NOLOCK)
-						INNER JOIN Centres AS c WITH (NOLOCK) ON c.CentreID = da.CentreID
-						INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
-						LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
-						INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID  where c.CentreID = @centreId
-						AND u.JobGroupID = (select JobGroupID from JobGroups where JobGroupName = GroupLabel))  D  Where 
-						EmailAddress LIKE '%_@_%.__%') AS DelegateCount,
+                        (SELECT COUNT(*) FROM GroupDelegates as gd 
+                        INNER JOIN DelegateAccounts AS da ON gd.DelegateID = da.ID
+                        INNER JOIN Users AS u ON da.UserID=u.ID 
+                        LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
+                        where gd.GroupID = g.GroupID AND (TRY_CAST(u.PrimaryEmail AS UNIQUEIDENTIFIER) IS NULL OR ucd.Email IS NOT NULL)) AS DelegateCount,
                         ({CourseCountSql}) AS CoursesCount,
                         g.CreatedByAdminUserID AS AddedByAdminId,
                         au.Forename AS AddedByFirstName,
