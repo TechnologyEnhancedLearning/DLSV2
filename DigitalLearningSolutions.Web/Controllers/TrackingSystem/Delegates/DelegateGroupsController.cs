@@ -60,6 +60,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             int? itemsPerPage = 10
         )
         {
+            searchString = searchString == null ? string.Empty : searchString.Trim();
             if (string.IsNullOrEmpty(sortBy))
             {
                 sortBy = DefaultSortByOptions.Name.PropertyName;
