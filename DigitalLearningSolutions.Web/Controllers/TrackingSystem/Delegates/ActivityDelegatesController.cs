@@ -100,8 +100,8 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var adminCategoryId = User.GetAdminCategoryId();
 
-            bool? isDelegateActive, isProgressLocked, removed, hasCompleted;
-            isDelegateActive = isProgressLocked = removed = hasCompleted = null;
+            bool? isDelegateActive, isProgressLocked, removed, hasCompleted, submitted, signedOff;
+            isDelegateActive = isProgressLocked = removed = hasCompleted = submitted = signedOff = null;
 
             string? answer1, answer2, answer3;
             answer1 = answer2 = answer3 = null;
@@ -154,7 +154,13 @@
                             removed = filterValue;
 
                         if (filter.Contains("CompletionStatus"))
-                            hasCompleted = filterValue;
+                            submitted = filterValue;
+
+                        if (filter.Contains("Submitted"))
+                            signedOff = filterValue;
+
+                        if (filter.Contains("SignedOff"))
+                            signedOff = filterValue;
 
                         if (filter.Contains("Answer1"))
                             answer1 = filterValue;
@@ -189,14 +195,14 @@
                 else
                 {
                     (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
-                        selfAssessmentId, centreId, isDelegateActive, removed);
+                        selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
 
                     if (selfAssessmentDelegatesData?.Delegates?.Count() == 0 && resultCount > 0)
                     {
                         page = 1;
                         offSet = 0;
                         (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
-                            selfAssessmentId, centreId, isDelegateActive, removed);
+                            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
                     }
                 }
 

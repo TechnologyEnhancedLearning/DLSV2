@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.User;
 
     public static class GenericSortingHelper
@@ -196,35 +197,49 @@
             1,
             nameof(FullName),
             "Name",
-            nameof(CourseDelegate.FullNameForSearchingSorting)
+            nameof(SelfAssessmentDelegate.FullNameForSearchingSorting)
         );
 
-        public static readonly SelfAssessmentDelegatesSortByOption EnrolledDate = new SelfAssessmentDelegatesSortByOption(
+        public static readonly SelfAssessmentDelegatesSortByOption LastAccessed = new SelfAssessmentDelegatesSortByOption(
+            2,
+            nameof(LastAccessed),
+            "Last accessed",
+            nameof(SelfAssessmentDelegate.LastAccessed)
+        );
+
+        public static readonly SelfAssessmentDelegatesSortByOption StartedDate = new SelfAssessmentDelegatesSortByOption(
             3,
-            nameof(EnrolledDate),
-            "Enrolled date",
-            nameof(CourseDelegate.Enrolled)
+            nameof(StartedDate),
+            "Enrolled",
+            nameof(SelfAssessmentDelegate.StartedDate)
         );
 
-        public static readonly SelfAssessmentDelegatesSortByOption CompleteByDate = new SelfAssessmentDelegatesSortByOption(
+        public static readonly SelfAssessmentDelegatesSortByOption SelfAssessed = new SelfAssessmentDelegatesSortByOption(
             4,
-            nameof(CompleteByDate),
-            "Complete by date",
-            nameof(CourseDelegate.CompleteBy)
+            nameof(SelfAssessed),
+            "Competencies self assessed",
+            nameof(SelfAssessmentDelegate.SelfAssessed)
         );
 
-        public static readonly SelfAssessmentDelegatesSortByOption CompletedDate = new SelfAssessmentDelegatesSortByOption(
+        public static readonly SelfAssessmentDelegatesSortByOption Confirmed = new SelfAssessmentDelegatesSortByOption(
             5,
-            nameof(CompletedDate),
-            "Completed date",
-            nameof(CourseDelegate.Completed)
+            nameof(Confirmed),
+            "Competencies confirmed",
+            nameof(SelfAssessmentDelegate.Confirmed)
         );
 
-        public static readonly SelfAssessmentDelegatesSortByOption DelegateId = new SelfAssessmentDelegatesSortByOption(
+        public static readonly SelfAssessmentDelegatesSortByOption SignedOff = new SelfAssessmentDelegatesSortByOption(
+            6,
+            nameof(SignedOff),
+            "Signed off",
+            nameof(SelfAssessmentDelegate.SignedOff)
+        );
+
+        public static readonly SelfAssessmentDelegatesSortByOption Submitted = new SelfAssessmentDelegatesSortByOption(
             7,
-            nameof(DelegateId),
-            "Delegate ID",
-            nameof(CourseDelegate.CandidateNumber)
+            nameof(Submitted),
+            "Submitted",
+            nameof(SelfAssessmentDelegate.SubmittedDate)
         );
 
         public readonly string DisplayText;

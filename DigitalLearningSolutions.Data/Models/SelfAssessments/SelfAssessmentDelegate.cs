@@ -37,6 +37,8 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
             EnrolledByForename = delegateInfo.EnrolledByForename;
             EnrolledBySurname = delegateInfo.EnrolledBySurname;
             EnrolledByAdminActive = delegateInfo.EnrolledByAdminActive;
+            SelfAssessed = delegateInfo.SelfAssessed;
+            Confirmed = delegateInfo.Confirmed;
         }
         public int DelegateId { get; set; }
         public string? DelegateFirstName { get; set; }
@@ -59,6 +61,8 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public string? EnrolledByForename { get; set; }
         public string? EnrolledBySurname { get; set; }
         public bool? EnrolledByAdminActive { get; set; }
+        public int SelfAssessed { get; set; }
+        public int Confirmed { get; set; }
         public bool Removed => RemovedDate.HasValue;
 
         public List<SelfAssessmentSupervisor> Supervisors { get; set; } =
