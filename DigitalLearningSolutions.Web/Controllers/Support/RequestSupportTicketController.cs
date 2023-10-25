@@ -209,7 +209,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             string uploadDir = string.Empty;
             string fileName = null;
                 uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
-            if (data.RequestAttachment != null || data.RequestAttachment.Count > 0)
+            if (data.RequestAttachment != null )
             {
                 foreach (var file in data.RequestAttachment)
                 {
