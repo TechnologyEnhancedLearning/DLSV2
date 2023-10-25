@@ -243,7 +243,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             else
             {
                 int? errorCode = result.StatusCode;
-                string errorMess = result.FullErrorDetails;
+                string errorMess = result.StatusMeaning;
+                if (string.IsNullOrEmpty(errorMess))
+                { errorMess = result.FullErrorDetails; }
                 var responseModel = new FreshDeskResponseViewModel(null,errorCode+ ": "+ errorMess);
                 if (data.RequestAttachment != null)
                 {
@@ -256,18 +258,23 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
         private void DeleteFilesAfterSubmitSupportTicket(List<RequestAttachment> RequestAttachment)
         {
-            foreach (var attachment in RequestAttachment)
+            if (RequestAttachment != null)
             {
-
-               var uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads", attachment.FullFileName);
-
-                if (System.IO.File.Exists(uploadDir))
+                foreach (var attachment in RequestAttachment)
                 {
-                    // If file found, delete it
-                    System.IO.File.Delete(uploadDir);
+                    var uploadDir = System.IO.Path.Combine(
+                        webHostEnvironment.WebRootPath,
+                        "Uploads",
+                        attachment.FullFileName
+                    );
+
+                    if (System.IO.File.Exists(uploadDir))
+                    {
+                        // If file found, delete it
+                        System.IO.File.Delete(uploadDir);
+                    }
                 }
             }
-           
         }
             private void setRequestSupportData(string userName, string userCentreEmail, int adminUserID, string centreName)
         {

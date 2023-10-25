@@ -104,14 +104,31 @@ namespace DigitalLearningSolutions.Data.ApiClients
         {
             using var streamReader = new StreamReader(contentStream);
             var message = await streamReader.ReadToEndAsync();
+            string? fullErrorMessage = string.Empty;
+            string? statusMeaning = string.Empty;
 
-            var result = JsonConvert.DeserializeObject<ExportError>(message);
+            var result = JsonConvert.DeserializeObject<ExportCsv>(message);
+
+            if (result.ListExportErrors is { Count: > 0 })
+            {
+                statusMeaning = result.Description;
+               
+                foreach (var resultListExportError in result.ListExportErrors)
+                {
+                    fullErrorMessage += resultListExportError.Field + ": " + resultListExportError.Message + ";\n"; 
+                }
+            }
+            else
+            {
+                statusMeaning = result.Message;
+                fullErrorMessage = result.CodeError + ": " + result.Message;
+            }
 
             FreshDeskApiResponse freshDeskApiResponse = new FreshDeskApiResponse
             {
                 StatusCode = 400,
-                StatusMeaning = result.Message,
-                FullErrorDetails = message
+                StatusMeaning = statusMeaning,
+                FullErrorDetails = fullErrorMessage
             };
 
             return freshDeskApiResponse;
