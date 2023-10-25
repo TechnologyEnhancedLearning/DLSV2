@@ -55,7 +55,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             List<FileAttachment> filesAttachment = new List<FileAttachment>();
 
-            if (ticketDetails.RequestAttachment != null && !ticketDetails.RequestAttachment.Any())
+            if (ticketDetails.RequestAttachment != null && ticketDetails.RequestAttachment.Any())
             {
                 foreach (var requestAttachment in ticketDetails.RequestAttachment)
                 {
