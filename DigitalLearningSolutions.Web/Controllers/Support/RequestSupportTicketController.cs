@@ -22,13 +22,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.ServiceFilter;
-
-    [SetSelectedTab(nameof(NavMenuTab.Support))]
-    [TypeFilter(
-        typeof(ValidateAllowedDlsSubApplication),
-        Arguments = new object[]
-            { new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } }
-    )]
     public class RequestSupportTicketController : Controller
     {
         private readonly IConfiguration configuration;
@@ -216,7 +209,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             string uploadDir = string.Empty;
             string fileName = null;
                 uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
-            if (data.RequestAttachment != null)
+            if (data.RequestAttachment != null || data.RequestAttachment.Count > 0)
             {
                 foreach (var file in data.RequestAttachment)
                 {
@@ -239,7 +232,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             if (result.StatusCode == 200)
             {
                 long? ticketId = result.TicketId;
-                DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
+                if (data.RequestAttachment != null)
+                {
+                    DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
+                }
                 TempData.Clear();
                 var responseModel = new FreshDeskResponseViewModel(ticketId,null);
                 return View("SuccessPage",responseModel);
@@ -249,7 +245,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 int? errorCode = result.StatusCode;
                 string errorMess = result.FullErrorDetails;
                 var responseModel = new FreshDeskResponseViewModel(null,errorCode+ ": "+ errorMess);
-                DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
+                if (data.RequestAttachment != null)
+                {
+                    DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
+                }
                 TempData.Clear();
                 return View("RequestError", responseModel);
             }
