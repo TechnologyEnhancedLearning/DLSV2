@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IRequestSupportTicketDataService requestSupportTicketDataService;
         private readonly IFreshdeskService freshdeskService;
-
+        string uploadDir = string.Empty;
         public RequestSupportTicketController(IConfiguration configuration,
                                         IUserDataService userDataService, ICentresDataService centresDataService
                                        , IWebHostEnvironment webHostEnvironment 
@@ -43,6 +43,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             this.webHostEnvironment = webHostEnvironment;
             this.requestSupportTicketDataService = requestSupportTicketDataService;
             this.freshdeskService = freshdeskService;
+            uploadDir=System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
         }
         [Route("Support/RequestSupportTicket")]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
@@ -161,12 +162,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 return View("RequestAttachment", requestAttachmentmodel);
             }
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
+            //string uploadDir = string.Empty;
+            //uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
             foreach (var item in requestAttachmentmodel.ImageFiles)
             {
                 string fileName = UploadFile(item);
                 var RequestAttachment = new RequestAttachment
                 {
-                    FileName = fileName
+                    FileName = fileName,
+                    FullFileName= uploadDir+ fileName
                 };
                 RequestAttachmentList.Add(RequestAttachment);
             }
@@ -182,8 +186,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         {
 
             var data = TempData.Peek<RequestSupportTicketData>()!;
+            if (data.RequestAttachment != null)
+            {
+                DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
+            }
             data.RequestAttachment.RemoveAll((x) => x.FileName == imageName && x.Id == imageId);
+           
             TempData.Set(data);
+            
             var model = new RequestAttachmentViewModel(data);
             return View("RequestAttachment", model);
         }
@@ -206,9 +216,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
-            string uploadDir = string.Empty;
+            //string uploadDir = string.Empty;
             string fileName = null;
-                uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
+                //uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
             if (data.RequestAttachment != null )
             {
                 foreach (var file in data.RequestAttachment)
