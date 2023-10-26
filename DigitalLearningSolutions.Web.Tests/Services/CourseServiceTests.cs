@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -18,6 +16,9 @@
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class CourseServiceTests
     {
@@ -98,7 +99,7 @@
 
             // When
             var courseCount = courseService
-                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(CentreId, null)
+                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(CentreId, null, null, null, null, GenericSortingHelper.Ascending)
                 .Count();
 
             // Then

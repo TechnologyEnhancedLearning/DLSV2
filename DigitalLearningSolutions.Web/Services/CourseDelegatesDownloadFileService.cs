@@ -92,7 +92,7 @@
             {
                 offSet = ((page - 1) * itemsPerPage);
 
-                courseDelegates.AddRange(await this.courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, offSet, itemsPerPage, sortBy, sortDirection, 
+                courseDelegates.AddRange(await this.courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, offSet, itemsPerPage, sortBy, sortDirection,
                     customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3));
                 page++;
             }
@@ -226,7 +226,7 @@
             string sortDirection
         )
         {
-            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, adminCategoryId);
+            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, adminCategoryId, searchString, sortBy, filterString, sortDirection);
             var searchedCourses = GenericSearchHelper.SearchItems(details.Courses, searchString);
             var filteredCourses = FilteringHelper.FilterItems(searchedCourses.AsQueryable(), filterString);
             var sortedCourses = GenericSortingHelper.SortAllItems(

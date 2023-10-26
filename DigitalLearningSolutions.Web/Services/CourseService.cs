@@ -22,7 +22,11 @@
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
             GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(
             int centreId,
-            int? categoryId
+            int? categoryId,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
         );
 
         public bool DelegateHasCurrentProgress(int progressId);
@@ -69,7 +73,10 @@
 
         public CentreCourseDetails GetCentreCourseDetails(int centreId, int? categoryId);
 
-        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId);
+        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId, string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection);
 
         public bool DoesCourseNameExistAtCentre(
             string customisationName,
@@ -170,7 +177,11 @@
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
         GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(
             int centreId,
-            int? categoryId
+            int? categoryId,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
         )
         {
             var exportQueryRowLimit = ConfigurationExtensions.GetExportQueryRowLimit(configuration);
@@ -183,7 +194,7 @@
             List<CourseStatistics> allCourses = new List<CourseStatistics>();
             while (totalRun >= currentRun)
             {
-                allCourses.AddRange(courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId, exportQueryRowLimit, currentRun));
+                allCourses.AddRange(courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId, exportQueryRowLimit, currentRun, searchString, sortBy, filterString, sortDirection));
                 currentRun++;
             }
             return allCourses.Where(c => c.CentreId == centreId || c.AllCentres).Select(
@@ -412,9 +423,12 @@
             ), resultCount);
         }
 
-        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId)
+        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId, string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection)
         {
-            var (courses, categories, topics) = (GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(centreId, categoryId), courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+            var (courses, categories, topics) = (GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(centreId, categoryId, searchString, sortBy, filterString, sortDirection), courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                     .Select(c => c.CategoryName),
                 courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));
 

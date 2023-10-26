@@ -65,7 +65,7 @@
             courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
               .Returns("All");
-            A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._))
+            A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._, A<string?>._, A<string?>._, A<string?>._, A<string>._))
                 .Returns(details);
             A.CallTo(() => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._))
                 .Returns(applicationOptions);
