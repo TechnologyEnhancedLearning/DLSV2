@@ -232,7 +232,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             bool isExistingCentreName = centres.Where(center => center.Item1 == model.CentreId)
                 .Select(center => center.Item2)
                 .FirstOrDefault()
-                .Equals(model.CentreName);
+                .Equals(model.CentreName.Trim());
             bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
 
             if (isCentreNamePresent && !isExistingCentreName)

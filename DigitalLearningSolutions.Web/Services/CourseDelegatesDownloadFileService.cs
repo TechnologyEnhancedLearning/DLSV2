@@ -226,7 +226,7 @@
             string sortDirection
         )
         {
-            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, adminCategoryId);
+            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, adminCategoryId, searchString, sortBy, filterString, sortDirection);
             var searchedCourses = GenericSearchHelper.SearchItems(details.Courses, searchString);
             var filteredCourses = FilteringHelper.FilterItems(searchedCourses.AsQueryable(), filterString);
             var sortedCourses = GenericSortingHelper.SortAllItems(
