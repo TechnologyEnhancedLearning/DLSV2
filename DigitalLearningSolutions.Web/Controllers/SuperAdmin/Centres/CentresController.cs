@@ -250,6 +250,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
                     centreTypes, model.CentreTypeId
                 );
+                model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
                 return View(model);
             }
 
@@ -480,7 +481,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         public IActionResult AddCentre(AddCentreSuperAdminViewModel model)
         {
             var centres = centresDataService.GetAllCentres().ToList();
-            bool isCentreNamePresent = centres.Any(center => center.Item2 == model.CentreName);
+            bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
             if (isCentreNamePresent)
             {
                 ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
