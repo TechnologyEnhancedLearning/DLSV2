@@ -129,7 +129,7 @@
 
         void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
         public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed);
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -424,10 +424,10 @@
         }
 
         public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed)
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
         {
             (var delegateselfAssessments, int resultCount) = selfAssessmentDataService.GetSelfAssessmentDelegates(searchString, offSet, itemsPerPage, sortBy, sortDirection,
-            selfAssessmentId, centreId, isDelegateActive, removed);
+            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
 
             List<SelfAssessmentDelegate> selfAssessmentDelegateList = new List<SelfAssessmentDelegate>();
             foreach (var delegateInfo in delegateselfAssessments)

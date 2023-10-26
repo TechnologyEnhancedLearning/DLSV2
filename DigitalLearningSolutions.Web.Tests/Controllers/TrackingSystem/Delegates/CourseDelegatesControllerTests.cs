@@ -39,7 +39,7 @@
             paginateService = A.Fake<IPaginateService>();
             configuration = A.Fake<IConfiguration>();
             selfAssessmentDelegatesService = A.Fake<ISelfAssessmentService>();
-            courseService= A.Fake<ICourseService>();
+            courseService = A.Fake<ICourseService>();
 
             controller = new ActivityDelegatesController(
                     courseDelegatesService,
@@ -86,7 +86,7 @@
             var selfAssessmentDelegate = new SelfAssessmentDelegate(6, "Lname");
 
             A.CallTo(() => selfAssessmentDelegatesService.GetSelfAssessmentDelegatesPerPage("", 0, 10, "SearchableName", "Ascending",
-                6, UserCentreId, null, null))
+                6, UserCentreId, null, null, null, null))
                 .Returns((new SelfAssessmentDelegatesData(
                         new List<SelfAssessmentDelegate> { selfAssessmentDelegate }
                     ), 1)
@@ -128,7 +128,7 @@
             var selfAssessmentDelegate = new SelfAssessmentDelegate(6, "Lname");
 
             A.CallTo(() => selfAssessmentDelegatesService.GetSelfAssessmentDelegatesPerPage("", 0, 10, "SearchableName", "Ascending",
-                10, UserCentreId, null, null))
+                10, UserCentreId, null, null, null, null))
                 .Returns((new SelfAssessmentDelegatesData(
                         new List<SelfAssessmentDelegate> { selfAssessmentDelegate }
                     ), 0)

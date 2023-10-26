@@ -2,7 +2,6 @@
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
@@ -22,7 +21,6 @@
             FilterStatus.Warning
         );
     }
-    
 
     public static class SelfAssessmentDelegateRemovedFilterOptions
     {
@@ -41,7 +39,38 @@
         );
     }
 
-    
+    public static class SelfAssessmentAssessmentSubmittedFilterOptions
+    {
+        private const string Group = "AssessmentSubmitted";
 
+        public static readonly FilterOptionModel Submitted = new FilterOptionModel(
+            "Submitted",
+            FilteringHelper.BuildFilterValueString(Group, nameof(SelfAssessmentDelegate.SubmittedDate), "true"),
+            FilterStatus.Warning
+        );
+
+        public static readonly FilterOptionModel NotSubmitted = new FilterOptionModel(
+            "Not submitted",
+            FilteringHelper.BuildFilterValueString(Group, nameof(SelfAssessmentDelegate.SubmittedDate), "false"),
+            FilterStatus.Default
+        );
+    }
+
+    public static class SelfAssessmentSignedOffFilterOptions
+    {
+        private const string Group = "AssessmentSignedOff";
+
+        public static readonly FilterOptionModel SignedOff = new FilterOptionModel(
+            "Signed off",
+            FilteringHelper.BuildFilterValueString(Group, nameof(SelfAssessmentDelegate.SignedOff), "true"),
+            FilterStatus.Warning
+        );
+
+        public static readonly FilterOptionModel NotSignedOff = new FilterOptionModel(
+            "Not signed off",
+            FilteringHelper.BuildFilterValueString(Group, nameof(SelfAssessmentDelegate.SignedOff), "false"),
+            FilterStatus.Default
+        );
+    }
 
 }
