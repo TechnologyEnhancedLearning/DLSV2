@@ -39,7 +39,11 @@ namespace DigitalLearningSolutions.Data.DataServices
             int centreId,
             int? categoryId,
             int exportQueryRowLimit,
-            int currentRun
+            int currentRun,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
         );
 
         public int GetCourseStatisticsAtCentreFilteredByCategoryResultCount(
@@ -239,7 +243,18 @@ namespace DigitalLearningSolutions.Data.DataServices
                         ct.CourseTopic,
                         cu.LearningTimeMins AS LearningMinutes,
                         cu.IsAssessed,
-                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 1 ELSE 0 END AS Archived
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 1 ELSE 0 END AS Archived,
+                        ((SELECT COUNT(pr.CandidateID)
+		                    FROM dbo.Progress AS pr WITH (NOLOCK) 
+		                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+		                    WHERE pr.CustomisationID = cu.CustomisationID
+		                    AND can.CentreID = @centreId
+		                    AND RemovedDate IS NULL) - 
+		                (SELECT COUNT(pr.CandidateID)
+		                    FROM dbo.Progress AS pr WITH (NOLOCK) 
+		                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+		                    WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
+		                    AND can.CentreID = @centreId)) AS InProgressCount 
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
@@ -646,15 +661,32 @@ namespace DigitalLearningSolutions.Data.DataServices
             int centreId,
             int? categoryId,
             int exportQueryRowLimit,
-            int currentRun
+            int currentRun,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
         )
         {
-            string sql = @$"{CourseStatisticsQuery} ORDER BY cu.CustomisationID
+            string orderBy;
+            string sortOrder;
+
+            if (sortDirection == "Ascending")
+                sortOrder = " ASC ";
+            else
+                sortOrder = " DESC ";
+
+            if (sortBy == "CourseName" || sortBy == "SearchableName")
+                orderBy = " ORDER BY ap.ApplicationName + cu.CustomisationName " + sortOrder;
+            else
+                orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
+
+            string sql = @$"{CourseStatisticsQuery} {orderBy}
                         OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
                         FETCH NEXT @exportQueryRowLimit ROWS ONLY";
             return connection.Query<CourseStatistics>(
                 sql,
-                new { centreId, categoryId,exportQueryRowLimit,currentRun }
+                new { centreId, categoryId,exportQueryRowLimit,currentRun, orderBy }
             );
         }
 
