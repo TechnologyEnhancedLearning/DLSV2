@@ -34,7 +34,7 @@
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? CentreEmail { get; set; }
 
-        [RegularExpression(@"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}", ErrorMessage = "Enter an Ip in the correct format.")]
+        [RegularExpression(@"^([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})$", ErrorMessage = "Enter an Ip in the correct format.")]
         public string? IpPrefix { get; set; }
         public bool ShowOnMap { get; set; }
     }
