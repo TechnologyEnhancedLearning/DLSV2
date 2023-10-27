@@ -288,6 +288,8 @@
         public void DeleteUserAndAccounts(int userId);
 
         public bool PrimaryEmailInUseAtCentres(string email);
+
+        public int? GetUserIdFromLearningHubAuthId(int learningHubAuthId);
     }
 
     public partial class UserDataService : IUserDataService
@@ -738,6 +740,19 @@
                     WHERE Email = @email ",
                new { email }
            ) > 0;
+        }
+
+        public int? GetUserIdFromLearningHubAuthId(int learningHubAuthId)
+        {
+            var query = $"SELECT DISTINCT u.ID " +
+                $"FROM Users AS u " +
+                $"WHERE u.LearningHubAuthId = {learningHubAuthId}" +
+                $"ORDER BY u.ID";
+            var userId = connection.Query<int?>(
+                query
+            ).FirstOrDefault();
+
+            return userId;
         }
 
         public int? GetUserLearningHubAuthId(int userId)

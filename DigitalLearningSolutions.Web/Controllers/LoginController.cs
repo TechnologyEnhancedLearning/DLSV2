@@ -240,18 +240,38 @@
             );
         }
 
-
         public IActionResult SharedAuth()
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(
+                    "Index",
+                    "Home");
             }
-
             return new ChallengeResult(new AuthenticationProperties() { RedirectUri = "/" });
+        }
 
-            //await HttpContext.ChallengeAsync("oidc");
-            //return View();
+        public async Task<IActionResult> AccountLocked()
+        {
+            return View("AccountLocked");
+        }
+
+        public async Task<IActionResult> AccountInactive()
+        {
+            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
+            return View(
+                "AccountInactive",
+                inactiveAccountModel);
+        }
+
+        public async Task<IActionResult> RemoteFailure()
+        {
+            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
+            return View(
+                "RemoteAuthenticationFailure",
+                inactiveAccountModel);
         }
     }
 }

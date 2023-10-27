@@ -58,8 +58,8 @@ namespace DigitalLearningSolutions.Web
     using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
     using System;
     using IsolationLevel = System.Transactions.IsolationLevel;
+    using System.Collections.Concurrent;
 
->>>>>>> d4e6e0406 (First attempts at adding oidc authentication to DLS)
 
     public class Startup
     {
@@ -83,7 +83,6 @@ namespace DigitalLearningSolutions.Web
                 .PersistKeysToFileSystem(new DirectoryInfo($"C:\\keys\\{env.EnvironmentName}"))
                 .SetApplicationName("DLSSharedCookieApp");
 
-<<<<<<< HEAD
             services.AddAuthentication("Identity.Application")
                 .AddCookie(
                     "Identity.Application",
@@ -95,61 +94,6 @@ namespace DigitalLearningSolutions.Web
                         options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
                     }
                 );
-=======
-            this.SetUpAuthentication(services);
-            //services.AddAuthentication("Identity.Application")
-            //services.AddAuthentication(options =>
-            //{
-            //    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-            //    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            //})
-            //    .AddCookie(
-            //        "Identity.Application",
-            //        options =>
-            //        {
-            //            options.Cookie.Name = ".AspNet.SharedCookie";
-            //            options.Cookie.Path = "/";
-            //            options.Events.OnRedirectToLogin = RedirectToLogin;
-            //            options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
-            //        }
-            //    )
-            //    .AddOpenIdConnect("oidc", options =>
-            //    {
-            //        options.Authority = "https://lh-auth.dev.local";  //config.Authority; Need to get this value from config
-            //        options.ClientId = "digitallearningsolutions";   //config.ClientId; Need to get this from config
-            //        options.ClientSecret = "";  //config.ClientSecret; Need to get this from config
-            //        options.ResponseType = OpenIdConnectResponseType.Code;
-            //        options.Scope.Add("openid");
-            //        options.Scope.Add("profile");
-            //        options.Scope.Add("userapi");
-            //        options.Scope.Add("learninghubapi");
-            //        options.Scope.Add("offline_access"); // Enables refresh token even though Auth Service session has expired
-            //        options.Scope.Add("roles");
-
-            //        options.SaveTokens = true;
-            //        options.GetClaimsFromUserInfoEndpoint = true;
-
-            //        options.Events.OnRemoteFailure = async context =>
-            //        {
-            //            context.Response.Redirect("/"); // If login cancelled return to home page
-            //            context.HandleResponse();
-
-            //            await Task.CompletedTask;
-            //        };
-
-            //        options.ClaimActions.MapUniqueJsonKey("role", "role");
-            //        options.ClaimActions.MapUniqueJsonKey("name", "elfh_userName");
-            //        options.TokenValidationParameters = new TokenValidationParameters
-            //        {
-            //            NameClaimType = JwtClaimTypes.Name,
-            //            RoleClaimType = JwtClaimTypes.Role,
-            //        };
-
-            //        options.Events.OnRedirectToIdentityProvider = OnRedirectToIdentityProvider;
-            //        options.Events.OnTokenValidated = UserSessionBegins;
-            //        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            //    });
->>>>>>> d4e6e0406 (First attempts at adding oidc authentication to DLS)
 
             services.AddAuthorization(
                 options =>
