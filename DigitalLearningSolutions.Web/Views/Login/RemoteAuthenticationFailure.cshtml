@@ -1,0 +1,14 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Login
+@model AccountInactiveViewModel
+@{
+  ViewData["Title"] = "Remote Authentication Failed";
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+        <p class="nhsuk-body-l">
+            Your attempt to login remotely failed. If you need a assistance with this, please contact <a href="mailto:@Model.SupportEmail">@Model.SupportEmail</a>.
+        </p>
+    </div>
+</div>

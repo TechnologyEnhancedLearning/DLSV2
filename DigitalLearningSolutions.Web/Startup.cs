@@ -49,6 +49,8 @@ namespace DigitalLearningSolutions.Web
     using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
     using System;
     using IsolationLevel = System.Transactions.IsolationLevel;
+    using System.Collections.Concurrent;
+
 
     public class Startup
     {
