@@ -363,7 +363,7 @@
         public bool DelegateHasCurrentProgress(int progressId)
         {
             var progress = progressDataService.GetProgressByProgressId(progressId);
-            return progress is { Completed: null, RemovedDate: null };
+            return progress is { RemovedDate: null };
         }
 
         public IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(
@@ -444,7 +444,7 @@
         )
         {
             var currentProgressIds = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
-                .Where(p => p.Completed == null && p.RemovedDate == null)
+                .Where(p => p.RemovedDate == null)
                 .Select(p => p.ProgressId)
                 .ToList();
 
