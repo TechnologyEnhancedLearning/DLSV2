@@ -48,7 +48,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public int GetCourseStatisticsAtCentreFilteredByCategoryResultCount(
             int centreId,
-            int? categoryId
+            int? categoryId,
+            string? searchString
         );
 
         IEnumerable<CourseStatistics> GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
@@ -513,7 +514,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
             if (candidateAssessmentId > 1)
             {
-                string sqlQuery=$@"
+                string sqlQuery = $@"
                 BEGIN TRANSACTION
                 UPDATE CandidateAssessments SET RemovedDate = NULL
                   WHERE ID = @candidateAssessmentId
@@ -681,18 +682,19 @@ namespace DigitalLearningSolutions.Data.DataServices
             else
                 orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
 
-            string sql = @$"{CourseStatisticsQuery} {orderBy}
+            string sql = @$"{CourseStatisticsQuery} AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%') {orderBy}
                         OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
                         FETCH NEXT @exportQueryRowLimit ROWS ONLY";
             return connection.Query<CourseStatistics>(
                 sql,
-                new { centreId, categoryId,exportQueryRowLimit,currentRun, orderBy }
+                new { centreId, categoryId, exportQueryRowLimit, currentRun, orderBy,searchString}
             );
         }
 
         public int GetCourseStatisticsAtCentreFilteredByCategoryResultCount(
             int centreId,
-            int? categoryId
+            int? categoryId,
+            string? searchString
         )
         {
             int ResultCount = connection.ExecuteScalar<int>(@$"SELECT  COUNT(*) AS Matches FROM dbo.Customisations AS cu
@@ -703,7 +705,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
-                        AND ap.DefaultContentTypeID <> 4", new { centreId, categoryId },
+                        AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%')
+                        AND ap.DefaultContentTypeID <> 4", new { centreId, categoryId, searchString },
                     commandTimeout: 3000);
             return ResultCount;
         }
@@ -778,7 +781,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 sortOrder = " DESC ";
 
             if (sortBy == "CourseName" || sortBy == "SearchableName")
-                orderBy = " ORDER BY ap.ApplicationName + cu.CustomisationName " + sortOrder;
+                orderBy = " ORDER BY ap.ApplicationName "+sortOrder+", cu.CustomisationName " + sortOrder;
             else
                 orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
 
@@ -981,17 +984,30 @@ namespace DigitalLearningSolutions.Data.DataServices
             if (sortBy == "SearchableName" || sortBy == "FullNameForSearchingSorting")
                 orderBy = " ORDER BY LTRIM(u.LastName) " + sortOrder + ", LTRIM(u.FirstName) ";
             else
-                orderBy = " ORDER BY  "+ sortBy + sortOrder;
+                orderBy = " ORDER BY  " + sortBy + sortOrder;
 
             orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 
-            var mainSql = selectColumnQuery + fromTableQuery +  orderBy;
+            var mainSql = selectColumnQuery + fromTableQuery + orderBy;
 
             IEnumerable<DelegateCourseInfo> delegateUserCard = connection.Query<DelegateCourseInfo>(
                 mainSql,
                 new
-                {searchString, offSet, itemsPerPage, sortBy, sortDirection, customisationId,
-                    centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    customisationId,
+                    centreId,
+                    isDelegateActive,
+                    isProgressLocked,
+                    removed,
+                    hasCompleted,
+                    answer1,
+                    answer2,
+                    answer3
                 },
                 commandTimeout: 3000
             );
@@ -1001,8 +1017,21 @@ namespace DigitalLearningSolutions.Data.DataServices
             int ResultCount = connection.ExecuteScalar<int>(
                 delegateCountQuery,
                 new
-                {searchString, offSet, itemsPerPage, sortBy, sortDirection, customisationId, centreId,
-                    isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    customisationId,
+                    centreId,
+                    isDelegateActive,
+                    isProgressLocked,
+                    removed,
+                    hasCompleted,
+                    answer1,
+                    answer2,
+                    answer3
                 },
                 commandTimeout: 3000
             );
@@ -1486,7 +1515,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
 
-            
+
             var mainSql = "SELECT COUNT(*) AS TotalRecords " + fromTableQuery;
 
             return connection.ExecuteScalar<int>(
@@ -1625,7 +1654,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 commandTimeout: 3000
             );
 
-            
+
             return courseDelegates;
         }
 

@@ -186,7 +186,7 @@
         {
             var exportQueryRowLimit = ConfigurationExtensions.GetExportQueryRowLimit(configuration);
 
-            int resultCount = courseDataService.GetCourseStatisticsAtCentreFilteredByCategoryResultCount(centreId, categoryId);
+            int resultCount = courseDataService.GetCourseStatisticsAtCentreFilteredByCategoryResultCount(centreId, categoryId, searchString);
 
             int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
             int currentRun = 1;
