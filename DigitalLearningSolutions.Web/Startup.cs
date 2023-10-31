@@ -1,9 +1,10 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Collections.Generic;
-    using System.Configuration;
     using System.Data;
     using System.IO;
+    using System.Linq;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using System.Transactions;
     using System.Web;
@@ -29,8 +30,11 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentMigrator.Runner;
+    using GDS.MultiPageFormData;
+    using LearningHub.Nhs.Caching;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Authentication.OpenIdConnect;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.HttpOverrides;
@@ -59,13 +63,14 @@ namespace DigitalLearningSolutions.Web
     using System;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using System.Collections.Concurrent;
-
+    using Serilog;
 
     public class Startup
     {
         private readonly IConfiguration config;
         private readonly IHostEnvironment env;
         private const int sessionTimeoutHours = 24;
+        private const string claimsType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
 
         public Startup(IConfiguration config, IHostEnvironment env)
         {
@@ -227,102 +232,158 @@ namespace DigitalLearningSolutions.Web
 
         private void SetUpAuthentication(IServiceCollection services)
         {
-            services.AddIdentity<IdentityUser, IdentityRole>()
-            //.AddEntityFrameworkStores<User>() //Need to work out what the DbContext is here? Dapper?
-            .AddDefaultTokenProviders();
-
             services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = "oidc";
-            })
-           .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-           {
-               options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-               options.SlidingExpiration = true;
-               //options.EventsType = typeof(CookieEventHandler);
-               options.AccessDeniedPath = "/Home/AccessDenied";
-           })
-           
-           .AddOpenIdConnect("oidc", options =>
-           {
-               options.Authority = "https://lh-auth.dev.local"; //config.Authority; Need to get this value from config
-               options.ClientId = "digitallearningsolutions";   //config.ClientId; Need to get this from config
-               options.ClientSecret = "B815B7C5-63EB-4FE5-932A-843BCA81D8A5";  //config.ClientSecret; Need to get this from config
-               options.ResponseType = OpenIdConnectResponseType.Code;
-               options.Scope.Add("openid");
-               options.Scope.Add("profile");
-               options.Scope.Add("userapi");
-               options.Scope.Add("learninghubapi");
-               options.Scope.Add("offline_access"); // Enables refresh token even though Auth Service session has expired
-               options.Scope.Add("roles");
+                {
+                    options.DefaultScheme = "Identity.Application";
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                }
+            )
+            .AddCookie(
+                "Identity.Application",
+                options =>
+                {
+                    options.Cookie.Name = ".AspNet.SharedCookie";
+                    options.Cookie.Path = "/";
+                    options.Events.OnRedirectToLogin = RedirectToLogin;
+                    options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
+                }
+            )
+            .AddOpenIdConnect(
+                OpenIdConnectDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.Authority = config.GetLearningHubAuthenticationAuthority();
+                    options.ClientId = config.GetLearningHubAuthenticationClientId();
+                    options.ClientSecret = config.GetLearningHubAuthenticationClientSecret();
+                    options.ResponseType = OpenIdConnectResponseType.Code;
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
 
-               options.SaveTokens = true;
-               options.GetClaimsFromUserInfoEndpoint = true;
+                    options.SaveTokens = true;
+                    options.GetClaimsFromUserInfoEndpoint = true;
 
-               options.Events.OnRemoteFailure = async context =>
-               {
-                   context.Response.Redirect("/"); // If login cancelled return to home page
-                   context.HandleResponse();
-
-                   await Task.CompletedTask;
-               };
-
-               options.ClaimActions.MapUniqueJsonKey("role", "role");
-               options.ClaimActions.MapUniqueJsonKey("name", "elfh_userName");
-               options.TokenValidationParameters = new TokenValidationParameters
-               {
-                   NameClaimType = JwtClaimTypes.Name,
-                   RoleClaimType = JwtClaimTypes.Role,
-               };
-
-               options.Events.OnRedirectToIdentityProvider = OnRedirectToIdentityProvider;
-               options.Events.OnTokenValidated = UserSessionBegins;
-           });
+                    options.Events.OnRemoteFailure = OnRemoteFailure;
+                    options.Events.OnAuthenticationFailed = OnAuthenticationFailed;
+                    options.Events.OnTicketReceived = OnTicketReceived;
+                    options.Events.OnSignedOutCallbackRedirect = OnSignedoutCallbackRedirect;
+       
+                }
+            );
         }
 
-        private static async Task OnRedirectToIdentityProvider(RedirectContext context)
+        private static async Task OnRemoteFailure(RemoteFailureContext context)
         {
-            var referer = context.Request.Headers["Referer"].ToString();
+            context.Response.Redirect("/home/welcome");
+            context.HandleResponse();
 
-            // if valid referer only
-            if (!string.IsNullOrEmpty(referer) && Uri.TryCreate(referer, UriKind.RelativeOrAbsolute, out Uri uriReferer))
-            {
-                // only external referer
-                if (uriReferer.IsAbsoluteUri && uriReferer.Host != context.Request.Host.Host)
-                {
-                    context.ProtocolMessage.SetParameter("ext_referer", referer);
-                }
-            }
-
-            if (context.Request.Cookies.ContainsKey(".AspNetCore.Cookies"))
-            {
-                context.ProtocolMessage.SetParameter("error", "auth_timeout");
-
-                if (context.Request.Headers["x-requested-with"] == "XMLHttpRequest")
-                {
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    context.HandleResponse();
-                }
-            }
-
-            await Task.Yield();
+            await Task.CompletedTask;
         }
 
-        private static async Task UserSessionBegins(TokenValidatedContext context)
+        private static async Task OnSignedoutCallbackRedirect(RemoteSignOutContext context)
         {
-            if (context.Principal != null)
-            {
-                var userIdString = context.Principal.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            context.Response.Redirect("/home/welcome");
+            context.HandleResponse();
 
-                if (!string.IsNullOrWhiteSpace(userIdString))
+            await Task.CompletedTask;
+        }
+
+        private static async Task OnTicketReceived(TicketReceivedContext context)
+        {
+            context.Response.Cookies.Append(
+                "id_token",
+                context.Properties.GetTokenValue("id_token"));
+            context.Response.Cookies.Append(
+                "auth_method",
+                "OpenIdConnect");
+
+            var userDataService = context
+                .HttpContext
+                .RequestServices
+                .GetRequiredService<IUserDataService>();
+            var claimsIdentity = (ClaimsIdentity)context
+                .Principal
+                .Identity;
+
+            var authIdClaim = claimsIdentity
+            .Claims
+                .Where(c => c.Type == claimsType)
+                .FirstOrDefault();
+            if (authIdClaim == null)
+            {
+                context.ReturnUri = "/Login/RemoteFailure";
+            }
+            else
+            {
+                var learningHubAuthId = int.Parse(authIdClaim.Value);
+                int? userId = userDataService.GetUserIdFromLearningHubAuthId(learningHubAuthId);
+                if (userId.HasValue)
                 {
-                    var cacheService = context.HttpContext.RequestServices.GetRequiredService<ICacheService>();
-                    await cacheService.SetAsync($"{userIdString}:LoginWizard", "start");
+                    await LoginDLSUser(
+                        userId.Value,
+                        context,
+                        claimsIdentity);
+                }
+                else
+                {
+                    context.ReturnUri = "/login/NotLinked";
                 }
             }
+            
+            await Task.CompletedTask;
+        }
 
-            await Task.Yield();
+        private static async Task LoginDLSUser(
+            int LHUserId,
+            TicketReceivedContext context,
+            ClaimsIdentity claimsIdentity)
+        {
+            var userService = context
+                .HttpContext
+                .RequestServices
+                .GetService<IUserService>();
+            var loginService = context
+               .HttpContext
+               .RequestServices
+               .GetService<ILoginService>();
+            var sessionService = context
+                .HttpContext
+                .RequestServices
+                .GetRequiredService<ISessionService>();
+
+            claimsIdentity.AddClaim(new Claim(
+                "UserID",
+                LHUserId.ToString()));
+
+            var userEntity = userService.GetUserById(LHUserId);
+
+            var loginResult = loginService.AttemptLoginUserEntity(
+                userEntity,
+                userEntity
+                .UserAccount
+                .PrimaryEmail);
+
+            var config = ConfigHelper.GetAppConfig();
+            var returnUrl = config.GetCurrentSystemBaseUrl() + "/home/welcome";
+
+            var redirectString = await loginService.HandleLoginResult(
+                loginResult,
+                context,
+                returnUrl,
+                sessionService,
+                userService);
+            context.ReturnUri = redirectString;
+        }
+
+        private static async Task OnAuthenticationFailed(AuthenticationFailedContext context)
+        {
+            context
+                .Response
+                .Redirect("/Login/RemoteFailure");
+            await context
+                .HttpContext
+                .Response
+                .CompleteAsync();
+            await Task.CompletedTask;
         }
 
         private static void RegisterServices(IServiceCollection services)

@@ -1,23 +1,28 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Logout
 {
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     internal class LogoutControllerTests
     {
         private IAuthenticationService? authenticationService = null!;
+        private IConfiguration configuration = null!;
         private LogoutController controller = null!;
 
         [SetUp]
         public void SetUp()
         {
-            controller = new LogoutController()
+            configuration = A.Fake<IConfiguration>();
+            controller = new LogoutController(configuration)
                 .WithDefaultContext()
                 .WithMockUser(true)
                 .WithMockServices();
