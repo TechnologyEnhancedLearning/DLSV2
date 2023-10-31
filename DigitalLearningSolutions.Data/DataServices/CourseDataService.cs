@@ -682,7 +682,13 @@ namespace DigitalLearningSolutions.Data.DataServices
             else
                 orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
 
-            string sql = @$"{CourseStatisticsQuery} AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%') {orderBy}
+            string search = string.Empty;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                search = " AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%')";
+            }
+
+            string sql = @$"{CourseStatisticsQuery} {search} {orderBy}
                         OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
                         FETCH NEXT @exportQueryRowLimit ROWS ONLY";
             return connection.Query<CourseStatistics>(
@@ -697,6 +703,11 @@ namespace DigitalLearningSolutions.Data.DataServices
             string? searchString
         )
         {
+            string search = string.Empty;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                search = " AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%')";
+            }
             int ResultCount = connection.ExecuteScalar<int>(@$"SELECT  COUNT(*) AS Matches FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
@@ -705,7 +716,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
-                        AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%')
+                        {search}
                         AND ap.DefaultContentTypeID <> 4", new { centreId, categoryId, searchString },
                     commandTimeout: 3000);
             return ResultCount;
