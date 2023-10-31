@@ -1,0 +1,16 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Login
+@model AccountInactiveViewModel
+@{
+  ViewData["Title"] = "Account Not Linked";
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+        <p class="nhsuk-body-l">
+            Dude, you totally need to do the account linking stuff before you can login using Shared Auth.
+        </p>
+        <vc:action-link asp-controller="Logout" asp-action="LogoutSharedAuth" link-text="Logout shared auth and return to home page" />
+        <vc:action-link asp-controller="Home" asp-action="Index" link-text="return to home page" />
+    </div>
+</div>
