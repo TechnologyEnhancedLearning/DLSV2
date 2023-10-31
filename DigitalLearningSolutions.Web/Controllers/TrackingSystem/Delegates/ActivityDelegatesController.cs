@@ -1,21 +1,28 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
+    using Pipelines.Sockets.Unofficial;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -327,5 +334,41 @@
                         fileName
             );
         }
+
+        [Route("TrackingSystem/Delegates/ActivityDelegates/{candidateAssessmentsId}/Remove")]
+        [HttpGet]
+        public IActionResult RemoveDelegateSelfAssessment(int candidateAssessmentsId)
+        {
+            var centreId = User.GetCentreIdKnownNotNull();
+          var selfAssessmentDelegate = selfAssessmentService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
+
+            if (selfAssessmentDelegate == null)
+            {
+                return new NotFoundResult();
+            }
+            var model = new DelegateSelfAssessmenteViewModel(selfAssessmentDelegate);
+            return View(model);
+        }
+
+        [Route("TrackingSystem/Delegates/ActivityDelegates/{candidateAssessmentsId}/Remove")]
+        [HttpPost]
+        public IActionResult RemoveDelegateSelfAssessment(DelegateSelfAssessmenteViewModel delegateSelfAssessmenteViewModel)
+        {
+            if (ModelState.IsValid && delegateSelfAssessmenteViewModel.ActionConfirmed)
+            {
+                selfAssessmentService.RemoveDelegateSelfAssessment(delegateSelfAssessmenteViewModel.CandidateAssessmentsId);
+                return RedirectToAction("Index", new { selfAssessmentId = delegateSelfAssessmenteViewModel.SelfAssessmentID });
+            }
+            else
+            {
+                if (delegateSelfAssessmenteViewModel.ConfirmedRemove)
+                {
+                    delegateSelfAssessmenteViewModel.ConfirmedRemove = false;
+                    ModelState.ClearErrorsOnField("ActionConfirmed");
+                }
+                return View(delegateSelfAssessmenteViewModel);
+            }
+        }
     }
 }
+

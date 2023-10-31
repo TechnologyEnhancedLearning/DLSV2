@@ -149,6 +149,8 @@
         void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
         (IEnumerable<SelfAssessmentDelegate>, int) GetSelfAssessmentDelegates(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
+        RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
+       void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -196,6 +198,7 @@
                 SELECT da.CandidateNumber,
                 u.ID AS DelegateUserId,
                 u.ProfessionalRegistrationNumber,
+                ca.Id AS CandidateAssessmentsId,
                 ca.SelfAssessmentID As SelfAssessmentId,
                 ca.StartedDate,
                 ca.EnrolmentMethodId,
@@ -261,7 +264,8 @@
                 u.LastName,
                 COALESCE(ucd.Email, u.PrimaryEmail),
                 da.Active,
-                sa.Name";
+                sa.Name,
+                ca.Id";
 
             if (signedOff != null)
             {
@@ -332,6 +336,33 @@
                 commandTimeout: 3000
             );
             return (delegateUserCard, ResultCount);
+        }
+        public RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId)
+        {
+            return connection.QueryFirstOrDefault<RemoveSelfAssessmentDelegate>(
+                 @"Select
+                    ca.Id AS CandidateAssessmentsId,
+                    ca.SelfAssessmentID,
+                    da.FirstName_deprecated AS FirstName, 
+                    da.LastName_deprecated AS LastName, 
+                    COALESCE(ucd.Email, u.PrimaryEmail) AS Email
+                  FROM  dbo.SelfAssessments AS sa 
+				INNER JOIN dbo.CandidateAssessments AS ca WITH (NOLOCK) ON sa.ID = ca.SelfAssessmentID 
+				INNER JOIN dbo.CentreSelfAssessments AS csa  WITH (NOLOCK) ON sa.ID = csa.SelfAssessmentID 
+                INNER JOIN dbo.DelegateAccounts da WITH (NOLOCK) ON ca.CentreID = da.CentreID AND ca.DelegateUserID = da.UserID AND da.CentreID = csa.CentreID
+                INNER JOIN dbo.Users u WITH (NOLOCK) ON DA.UserID = u.ID
+                LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
+				WHERE  (ca.id =@candidateAssessmentsId)",
+                 new {candidateAssessmentsId}
+             );
+        }
+        public void RemoveDelegateSelfAssessment(int candidateAssessmentsId)
+        {
+            connection.Execute(
+                @"UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID =2
+                      WHERE ID = @candidateAssessmentsId",
+                new {candidateAssessmentsId}
+            );
         }
     }
 }

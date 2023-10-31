@@ -1,0 +1,58 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@using Microsoft.Extensions.Configuration
+@model DelegateSelfAssessmenteViewModel;
+@inject IConfiguration Configuration;
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Delegate Self Assessment - Confirm Remove";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full word-break">
+      @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
+    }
+        <h1 id="page-heading">Confirm Remove Delegate Self Assessment</h1>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
+        <div class="nhsuk-u-font-weight-bold">
+                    Delegate self assessment:
+        </div>
+      </div>
+      <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
+        @Model.FirstName @Model.LastName (@Model.Email)
+      </div>
+    </div>
+
+        <form method="post" asp-controller="ActivityDelegates">
+      <div class="nhsuk-checkboxes__item">
+        <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
+                                    label="I am sure that I wish to remove @Model.FirstName @Model.LastName from self assessment"
+                                    hint-text="This action will remove the delegate from your self assessment list and you will no longer be able to view this delegate from self assessments." />
+      </div>
+            <button type="submit" class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveDelegateSelfAssessment">
+        Remove
+      </button>
+      @Html.HiddenFor(m => m.CandidateAssessmentsId)
+      @Html.HiddenFor(m => m.FirstName)
+      @Html.HiddenFor(m => m.LastName)
+      @Html.HiddenFor(m => m.Email)
+      @Html.HiddenFor(m => m.SelfAssessmentID)
+    </form>
+     <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link"
+               asp-controller="ActivityDelegates" asp-action="Index" asp-route-SelfAssessmentID="@Model.SelfAssessmentID">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+       
+  </div>
+</div>
