@@ -251,12 +251,12 @@
             return new ChallengeResult(new AuthenticationProperties() { RedirectUri = "/" });
         }
 
-        public async Task<IActionResult> AccountLocked()
+        public IActionResult AccountLocked()
         {
             return View("AccountLocked");
         }
 
-        public async Task<IActionResult> AccountInactive()
+        public IActionResult AccountInactive()
         {
             var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
             var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
@@ -265,13 +265,18 @@
                 inactiveAccountModel);
         }
 
-        public async Task<IActionResult> RemoteFailure()
+        public IActionResult RemoteFailure()
         {
             var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
             var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
             return View(
                 "RemoteAuthenticationFailure",
                 inactiveAccountModel);
+        }
+
+        public IActionResult NotLinked()
+        {
+            return View("NotLinked");
         }
     }
 }
