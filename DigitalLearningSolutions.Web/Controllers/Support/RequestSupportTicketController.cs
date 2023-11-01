@@ -241,6 +241,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 data.RequestAttachment.RemoveAll((x) => x.Content == null);
                 data.setImageFiles(RequestAttachmentList);
             }
+            data.RequestSubject = data.RequestSubject + $" (DLS centre: {data.CentreName})";
             var result = freshdeskService.CreateNewTicket(data);
             if (result.StatusCode == 200)
             {

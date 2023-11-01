@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
             )
         {
             SizeLimit = 20;
-            AllowedExtensions = new string[] { ".png", ".jpg", ".jpeg" };
+            AllowedExtensions = new string[] { ".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG" };
         }
         public RequestAttachmentViewModel(RequestSupportTicketData data)
         {
