@@ -40,7 +40,7 @@
             var result = await controller.Index();
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("Home").WithActionName("Index");
+            result.Should().BeRedirectResult().WithUrl("/home");
         }
 
         [Test]
