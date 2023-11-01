@@ -271,7 +271,7 @@ namespace DigitalLearningSolutions.Web
 
         private static async Task OnRemoteFailure(RemoteFailureContext context)
         {
-            context.Response.Redirect("/home/welcome");
+            context.Response.Redirect("/home");
             context.HandleResponse();
 
             await Task.CompletedTask;
@@ -279,7 +279,7 @@ namespace DigitalLearningSolutions.Web
 
         private static async Task OnSignedoutCallbackRedirect(RemoteSignOutContext context)
         {
-            context.Response.Redirect("/home/welcome");
+            context.Response.Redirect("/home");
             context.HandleResponse();
 
             await Task.CompletedTask;
@@ -361,7 +361,7 @@ namespace DigitalLearningSolutions.Web
                 .PrimaryEmail);
 
             var config = ConfigHelper.GetAppConfig();
-            var returnUrl = config.GetCurrentSystemBaseUrl() + "/home/welcome";
+            var returnUrl = config.GetCurrentSystemBaseUrl() + "/home";
 
             var redirectString = await loginService.HandleLoginResult(
                 loginResult,

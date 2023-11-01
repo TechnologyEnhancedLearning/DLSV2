@@ -23,7 +23,7 @@
         {
             if (!(this.User?.Identity.IsAuthenticated ?? false))
             {
-                return this.RedirectToAction("/home/welcome");
+                return this.RedirectToAction("/home");
             }
 
             string? authScheme = string.Empty;
@@ -35,7 +35,7 @@
 
             if (string.IsNullOrEmpty(authScheme))
             {
-                return this.Redirect("/home/welcome");
+                return this.Redirect("/home");
             }
 
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
