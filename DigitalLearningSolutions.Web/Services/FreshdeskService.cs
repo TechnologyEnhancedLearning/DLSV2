@@ -85,10 +85,9 @@ namespace DigitalLearningSolutions.Web.Services
                 email: ticketDetails.UserCentreEmail,
                 files: filesAttachment,
                 subject: ticketDetails.RequestSubject,
-                groupId: 80000639888,
-                productId: 80000003097,
-                ticketType:ticketDetails.FreshdeskRequestType,
-                customFields: customFieldsDictionary
+                groupId: ticketDetails.GroupId,
+                productId: ticketDetails.ProductId,
+                ticketType:ticketDetails.FreshdeskRequestType
             );
 
             return ticketRequest;

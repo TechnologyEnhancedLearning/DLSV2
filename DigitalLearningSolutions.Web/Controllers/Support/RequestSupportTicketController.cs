@@ -215,6 +215,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
 
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
+            data.GroupId = configuration.GetFreshdeskCreateTicketGroupId();
+            data.ProductId = configuration.GetFreshdeskCreateTicketProductId();
+
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
             //string uploadDir = string.Empty;
             string fileName = null;

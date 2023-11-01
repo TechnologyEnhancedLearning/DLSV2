@@ -28,6 +28,8 @@ namespace DigitalLearningSolutions.Web.Models
         public string? RequestType { get; set; }
         public string? FreshdeskRequestType { get; set; }
         public string? RequestSubject { get; set; }
+        public long? GroupId { get; set; }
+        public long? ProductId { get; set; }
         public string? RequestDescription { get; set; }
         public List<IFormFile>? ImageFiles { get; set; }
         public List<RequestAttachment> RequestAttachment { get; set; }
