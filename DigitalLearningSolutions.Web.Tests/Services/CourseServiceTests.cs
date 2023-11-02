@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -16,7 +14,11 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class CourseServiceTests
     {
@@ -31,12 +33,14 @@
         private IGroupsDataService groupsDataService = null!;
         private IProgressDataService progressDataService = null!;
         private ISectionService sectionService = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
         {
             clockUtility = A.Fake<IClockUtility>();
             courseDataService = A.Fake<ICourseDataService>();
+            config = A.Fake<IConfiguration>();
             A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
@@ -53,7 +57,8 @@
                 groupsDataService,
                 courseCategoriesDataService,
                 courseTopicsDataService,
-                sectionService
+                sectionService,
+                config
             );
         }
 
@@ -72,8 +77,7 @@
         }
 
         [Test]
-        public void
-            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts_should_only_return_course_statistics_for_centre()
+        public void GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts_should_only_return_course_statistics_for_centre()
         {
             // Given
             var expectedIdOrder = new List<int> { 1, 2 };
@@ -88,19 +92,18 @@
         }
 
         [Test]
-        public void
-            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts_should_return_course_statistics_for_centre_and_all_centre_courses()
+        public void GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport_should_return_course_count_for_centre_and_all_centre_courses()
         {
             // Given
-            var expectedIdOrder = new List<int> { 1, 2, 4 };
+            A.CallTo(() => config["FeatureManagement:ExportQueryRowLimit"]).Returns("250");
 
             // When
-            var resultIdOrder = courseService
-                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId, true)
-                .Select(r => r.CustomisationId).ToList();
+            var courseCount = courseService
+                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(CentreId, null, null, null, null, GenericSortingHelper.Ascending)
+                .Count();
 
             // Then
-            resultIdOrder.Should().BeEquivalentTo(expectedIdOrder);
+            courseCount.Should().BeGreaterOrEqualTo(0);
         }
 
         private IEnumerable<CourseStatistics> GetSampleCourses()

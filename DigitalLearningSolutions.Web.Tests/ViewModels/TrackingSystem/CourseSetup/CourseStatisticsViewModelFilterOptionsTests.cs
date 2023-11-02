@@ -34,7 +34,7 @@
 
         private readonly FilterModel expectedStatusFilterViewModel = new FilterModel(
             "Active",
-            "Status",
+            "Active status",
             new[]
             {
                 new FilterOptionModel(
@@ -49,7 +49,8 @@
                     "true",
                     FilterStatus.Success
                 ),
-            }
+            },
+            "course status"
         );
 
         private readonly FilterModel expectedTopicsFilterViewModel = new FilterModel(
@@ -89,12 +90,13 @@
                     "false",
                     FilterStatus.Success
                 ),
-            }
+            },
+            "course status"
         );
 
         private readonly FilterModel expectedHasAdminFieldsFilterViewModel = new FilterModel(
             "HasAdminFields",
-            "Admin fields",
+            "Admin field status",
             new[]
             {
                 new FilterOptionModel(
@@ -109,7 +111,8 @@
                     "false",
                     FilterStatus.Default
                 )
-            }
+            },
+            "course status"
         );
 
         private readonly List<string> filterableCategories = new List<string> { "Category 1", "Category 2" };

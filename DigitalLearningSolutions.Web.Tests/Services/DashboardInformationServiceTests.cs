@@ -136,7 +136,7 @@
                         adminUser!.CategoryId
                     )
             ).Returns(courseCount);
-            A.CallTo(() => userDataService.GetNumberOfActiveAdminsAtCentre(CentreId)).Returns(adminCount);
+            A.CallTo(() => userDataService.GetNumberOfAdminsAtCentre(CentreId)).Returns(adminCount);
             A.CallTo(() => centresService.GetCentreRankForCentre(CentreId)).Returns(centreRank);
             A.CallTo(() => supportTicketDataService.GetNumberOfUnarchivedTicketsForAdminId(AdminId))
                 .Returns(ticketCountForAdmin);

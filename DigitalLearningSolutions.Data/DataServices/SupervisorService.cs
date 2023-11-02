@@ -203,7 +203,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 	                    ON cp6.CustomPromptID = ct.CustomField6PromptID 
 	                    LEFT OUTER JOIN AdminAccounts AS au2 
 		                    ON da.UserID = au2.UserID AND da.CentreID = au2.CentreID
-                    WHERE (sd.SupervisorAdminID = @adminId) AND (sd.Removed IS NULL)
+                    WHERE (sd.SupervisorAdminID = @adminId) AND (sd.Removed IS NULL) AND 
+                     (u.ID = da.UserID OR sd.DelegateUserID IS NULL)
                     ORDER BY u.LastName, COALESCE (u.FirstName, sd.DelegateEmail)
                     ", new { adminId }
                 );
@@ -554,7 +555,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  (SELECT COUNT(*) AS Expr1
                     FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL) AND (Superceded = 0)) AS ResultsVerificationRequests,
-                    ca.NonReportable
+                    ca.NonReportable,ca.DelegateUserID
                     FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
                          CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
                            SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID INNER JOIN

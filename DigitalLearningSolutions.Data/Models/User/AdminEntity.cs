@@ -59,6 +59,7 @@
 
         public string? CategoryName => AdminAccount.CategoryName;
         public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
+        public bool IsUserActive => UserAccount.Active;
         public bool IsCmsAdministrator => AdminAccount.IsCmsAdministrator;
         public bool IsCmsManager => AdminAccount.IsCmsManager;
         public bool IsCentreAdmin => AdminAccount.IsCentreAdmin;
@@ -69,7 +70,7 @@
         public bool IsCentreManager => AdminAccount.IsCentreManager;
         public bool IsSuperAdmin => AdminAccount.IsSuperAdmin;
         public bool IsReportsViewer => AdminAccount.IsReportsViewer;
-
+        public bool IsActive => AdminAccount.Active;
 
     }
 }

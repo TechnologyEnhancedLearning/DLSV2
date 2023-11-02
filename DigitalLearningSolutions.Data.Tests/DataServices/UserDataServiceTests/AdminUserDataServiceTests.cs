@@ -167,10 +167,10 @@
         }
 
         [Test]
-        public void GetNumberOfActiveAdminsAtCentre_returns_expected_count()
+        public void GetNumberOfAdminsAtCentre_returns_expected_count()
         {
             // When
-            var count = userDataService.GetNumberOfActiveAdminsAtCentre(2);
+            var count = userDataService.GetNumberOfAdminsAtCentre(2);
 
             // Then
             count.Should().Be(3);

@@ -75,8 +75,8 @@
             };
             var adminFieldFilters = new List<FilterModel>
             {
-                new FilterModel("CourseAdminField1", "System access", adminField1Options),
-                new FilterModel("CourseAdminField3", "Some Free Text Field", adminField3Options),
+                new FilterModel("CourseAdminField1", "System access", adminField1Options,"prompts"),
+                new FilterModel("CourseAdminField3", "Some Free Text Field", adminField3Options,"prompts"),
             };
 
             return (adminFields, adminFieldFilters);

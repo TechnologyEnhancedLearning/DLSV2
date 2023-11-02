@@ -1033,6 +1033,15 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1943_CookiePolicyContentHtmlOldRecord {
+            get {
+                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtmlOldRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;
         ///&lt;h2&gt;What are cookies?&lt;/h2&gt;
         ///&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;/p&gt;
@@ -1043,18 +1052,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///&lt;li&gt;make our website work&lt;/li&gt;
         ///&lt;li&gt;measure how you use our website, such as which links you clic [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1943_CookiePolicyContentHtml {
+        internal static string TD_1943_CookiesPolicy {
             get {
-                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_1943_CookiePolicyContentHtmlOldRecord {
-            get {
-                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtmlOldRecord", resourceCulture);
+                return ResourceManager.GetString("TD_1943_CookiesPolicy", resourceCulture);
             }
         }
         
@@ -1121,6 +1121,42 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 05/07/2023 08:52:32 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ============= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak {
+            get {
+                return ResourceManager.GetString("TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 05/07/2023 08:52:32 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ============= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down {
+            get {
+                return ResourceManager.GetString("TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 2/6/2023 22:11:41 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -1165,6 +1201,54 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string td_264_alterviewadminusersaddcentrename_up {
             get {
                 return ResourceManager.GetString("td_264_alterviewadminusersaddcentrename_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 18/10/2023 08:05:27 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/12/2016
+        ///-- Description:	Checks if learner has progress record against customisation.
+        ///-- Returns:
+        ///-- 0: None
+        ///-- 1: Expired
+        ///-- 2: Complete
+        ///-- 3: Current
+        ///-- =============================================
+        ///-- 18/09/2018 Adds return v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3000_CheckDelegateStatusForCustomisationFix_down {
+            get {
+                return ResourceManager.GetString("TD_3000_CheckDelegateStatusForCustomisationFix_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 17/10/2023 12:13:14 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/12/2016
+        ///-- Description:	Checks if learner has progress record against customisation.
+        ///-- Returns:
+        ///-- 0: None
+        ///-- 1: Expired
+        ///-- 2: Complete
+        ///-- 3: Current
+        ///-- =============================================
+        ///-- 18/09/2018 Adds return v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3000_CheckDelegateStatusForCustomisationFix_up {
+            get {
+                return ResourceManager.GetString("TD_3000_CheckDelegateStatusForCustomisationFix_up", resourceCulture);
             }
         }
         

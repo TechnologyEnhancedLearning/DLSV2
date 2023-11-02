@@ -53,9 +53,6 @@
         <None Remove="Scripts\supervisor\verify.ts" />
         <None Remove="Scripts\support\faqs.ts" />
         <None Remove="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
-        <None Remove="Scripts\trackingSystem\allDelegates.ts" />
-        <None Remove="Scripts\trackingSystem\centreCourseSetup.ts" />
-        <None Remove="Scripts\trackingSystem\courseDelegates.ts" />
         <None Remove="Scripts\trackingSystem\editCourseContent.ts" />
         <None Remove="Scripts\trackingSystem\emailDelegates.ts" />
         <None Remove="Scripts\trackingSystem\learningLog.ts" />
@@ -133,12 +130,9 @@
         <TypeScriptCompile Include="Scripts\support\faqs.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\addNewCentreCourseSelectCourse.ts" />
-        <TypeScriptCompile Include="Scripts\trackingSystem\courseDelegates.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />
-        <TypeScriptCompile Include="Scripts\trackingSystem\allDelegates.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
-        <TypeScriptCompile Include="Scripts\trackingSystem\centreCourseSetup.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\delegateGroups.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\learningLog.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
