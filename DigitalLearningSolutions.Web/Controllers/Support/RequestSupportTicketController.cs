@@ -79,7 +79,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var reqType = requestTypes.ToList().Where(x => x.ID == requestType)
                 .Select(ticketRequestTypes => new { ticketRequestTypes.RequestTypes, ticketRequestTypes.FreshdeskRequestTypes }).FirstOrDefault();
 
-           // string reqType = requestTypes.ToList().Where(x => x.ID == requestType).Select(x => x.RequestTypes).FirstOrDefault();
             var data = TempData.Peek<RequestSupportTicketData>()!;
             data.RequestTypeId = requestType;
             data.RequestType = reqType?.RequestTypes;
@@ -98,12 +97,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         public IActionResult RequestSummary(RequestSummaryViewModel RequestTypemodel)
 
         {
-            //if(!ModelState.IsValid)
-            //{
-            //    return View("RequestDetails", RequestTypemodel);
-            //}
             var data = TempData.Peek<RequestSupportTicketData>()!;
-
             var model = new RequestSummaryViewModel(data);
             data.setRequestSubjectDetails(model);
             return View("RequestSummary", model);
@@ -162,8 +156,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 return View("RequestAttachment", requestAttachmentmodel);
             }
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
-            //string uploadDir = string.Empty;
-            //uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
             foreach (var item in requestAttachmentmodel.ImageFiles)
             {
                 string fileName = UploadFile(item);
@@ -202,12 +194,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         public IActionResult SupportSummary(SupportSummaryViewModel supportSummaryViewModel)
 
         {
-
             var data = TempData.Peek<RequestSupportTicketData>()!;
             data.RequestType = "DLS " + data.RequestType;
             var model = new SupportSummaryViewModel(data);
             return View("SupportTicketSummaryPage", model);
-
         }
         [HttpPost]
         [Route("RequestSupport/SubmitSupportSummary")]
@@ -217,11 +207,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var data = TempData.Peek<RequestSupportTicketData>()!;
             data.GroupId = configuration.GetFreshdeskCreateTicketGroupId();
             data.ProductId = configuration.GetFreshdeskCreateTicketProductId();
-
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
-            //string uploadDir = string.Empty;
             string fileName = null;
-                //uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
             if (data.RequestAttachment != null )
             {
                 foreach (var file in data.RequestAttachment)
@@ -290,16 +277,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 }
             }
         }
-            private void setRequestSupportData(string userName, string userCentreEmail, int adminUserID, string centreName)
+        private void setRequestSupportData(string userName, string userCentreEmail, int adminUserID, string centreName)
         {
             var requestSupportData = new RequestSupportTicketData(userName, userCentreEmail, adminUserID, centreName);
             TempData.Set(requestSupportData);
         }
         private string UploadFile(IFormFile file)
         {
-            //var content = ResizeProfilePicture(file);
-            //var stream = new MemoryStream(content);
-            //IFormFile file1 = new FormFile(stream, 0, file.Length, "name", "fileName");
             string uploadDir = string.Empty;
             string fileName = null;
             if (file != null)
@@ -317,7 +301,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
         private (bool, bool) validateUploadedImages(RequestAttachmentViewModel requestAttachmentmodel)
         {
-
+            var totalFileSize = 0.00;
             foreach (var item in requestAttachmentmodel.ImageFiles)
             {
                 var extension = System.IO.Path.GetExtension(item.FileName);
@@ -328,7 +312,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                     return (requestAttachmentmodel.FileExtensionFlag ?? false, requestAttachmentmodel.FileSizeFlag ?? false);
                 }
                 var fileSize = Convert.ToDouble(item.Length.ToSize(FileSizeCalc.SizeUnits.MB));
-                if (fileSize > requestAttachmentmodel.SizeLimit)
+                totalFileSize = totalFileSize + fileSize;
+                if (fileSize > requestAttachmentmodel.SizeLimit||totalFileSize> requestAttachmentmodel.SizeLimit)
                 {
                     requestAttachmentmodel.FileSizeFlag = true;
                 }
