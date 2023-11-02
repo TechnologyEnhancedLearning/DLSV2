@@ -16,6 +16,7 @@
         private const string LearningHubAuthLoginEndpoint = "LoginEndpoint";
         private const string LearningHubAuthLinkingEndpoint = "LinkingEndpoint";
         private const string LearningHubAuthClientCode = "ClientCode";
+        private const string LearningHubAuthSsoClientCode = "ClientCodeSso";
 
         private const string MapsApiKey = "MapsAPIKey";
         private const string LearningHubSsoSectionKey = "LearningHubSSO";
@@ -70,6 +71,11 @@
         public static string GetLearningHubAuthApiClientCode(this IConfiguration config)
         {
             return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthClientCode}"];
+        }
+
+        public static string GetLearningHubAuthApiSsoClientCode(this IConfiguration config)
+        {
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthSsoClientCode}"];
         }
 
         public static string GetLearningHubAuthApiLoginEndpoint(this IConfiguration config)

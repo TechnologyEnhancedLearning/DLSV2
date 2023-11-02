@@ -96,7 +96,7 @@
 
         private readonly FilterModel expectedHasAdminFieldsFilterViewModel = new FilterModel(
             "HasAdminFields",
-            "Admin fields",
+            "Admin field status",
             new[]
             {
                 new FilterOptionModel(

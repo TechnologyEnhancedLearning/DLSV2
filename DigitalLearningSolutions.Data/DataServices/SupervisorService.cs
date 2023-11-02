@@ -1102,10 +1102,10 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
 
             int? existingId = (int?)connection.ExecuteScalar(
                 @"
-                    SELECT ID
+                   SELECT ID
                         FROM    SupervisorDelegates sd
-                        WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
-                                AND DelegateEmail = @delegateEmail ORDER BY ID DESC
+                        WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0 OR DelegateEmail = @delegateEmail)
+                        ORDER BY ID DESC
                         ",
                 new
                 {

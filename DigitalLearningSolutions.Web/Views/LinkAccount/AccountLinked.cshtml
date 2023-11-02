@@ -1,0 +1,18 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Signposting
+@model LinkLearningHubViewModel
+
+@{
+  ViewData[LayoutViewDataKeys.Title] = "Learning Hub account linked";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <h1 class="nhsuk-heading-xl">Account linked</h1>
+
+    <p>Your account has been linked with the Learning Hub.</p>
+
+    <p><vc:action-link asp-controller="Home" asp-action="Welcome" link-text="Continue to the home page" /></p>
+  </div>
+</div>

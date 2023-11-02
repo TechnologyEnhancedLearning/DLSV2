@@ -4,8 +4,8 @@
 
     public class DelegateAccessRoute : Enumeration
     {
-        public static readonly DelegateAccessRoute CourseDelegates =
-            new DelegateAccessRoute(0, "CourseDelegates");
+        public static readonly DelegateAccessRoute ActivityDelegates =
+            new DelegateAccessRoute(0, "ActivityDelegates");
 
         public static readonly DelegateAccessRoute ViewDelegate =
             new DelegateAccessRoute(1, "ViewDelegate");

@@ -59,6 +59,7 @@
             int? itemsPerPage = 10
         )
         {
+            searchString = searchString == null ? string.Empty : searchString.Trim();
             var loggedInSuperAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
             if (loggedInSuperAdmin.AdminAccount.Active == false)
             {

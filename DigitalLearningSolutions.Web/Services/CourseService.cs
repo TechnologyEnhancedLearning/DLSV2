@@ -22,7 +22,11 @@
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
             GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(
             int centreId,
-            int? categoryId
+            int? categoryId,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
         );
 
         public bool DelegateHasCurrentProgress(int progressId);
@@ -69,7 +73,10 @@
 
         public CentreCourseDetails GetCentreCourseDetails(int centreId, int? categoryId);
 
-        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId);
+        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId, string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection);
 
         public bool DoesCourseNameExistAtCentre(
             string customisationName,
@@ -174,12 +181,16 @@
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
         GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(
             int centreId,
-            int? categoryId
+            int? categoryId,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
         )
         {
             var exportQueryRowLimit = ConfigurationExtensions.GetExportQueryRowLimit(configuration);
 
-            int resultCount = courseDataService.GetCourseStatisticsAtCentreFilteredByCategoryResultCount(centreId, categoryId);
+            int resultCount = courseDataService.GetCourseStatisticsAtCentreFilteredByCategoryResultCount(centreId, categoryId, searchString);
 
             int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
             int currentRun = 1;
@@ -187,7 +198,7 @@
             List<CourseStatistics> allCourses = new List<CourseStatistics>();
             while (totalRun >= currentRun)
             {
-                allCourses.AddRange(courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId, exportQueryRowLimit, currentRun));
+                allCourses.AddRange(courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId, exportQueryRowLimit, currentRun, searchString, sortBy, filterString, sortDirection));
                 currentRun++;
             }
             return allCourses.Where(c => c.CentreId == centreId || c.AllCentres).Select(
@@ -352,7 +363,7 @@
         public bool DelegateHasCurrentProgress(int progressId)
         {
             var progress = progressDataService.GetProgressByProgressId(progressId);
-            return progress is { Completed: null, RemovedDate: null };
+            return progress is { RemovedDate: null };
         }
 
         public IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(
@@ -414,9 +425,12 @@
             ), resultCount);
         }
 
-        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId)
+        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId, string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection)
         {
-            var (courses, categories, topics) = (GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(centreId, categoryId), courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+            var (courses, categories, topics) = (GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(centreId, categoryId, searchString, sortBy, filterString, sortDirection), courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                     .Select(c => c.CategoryName),
                 courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));
 
@@ -430,7 +444,7 @@
         )
         {
             var currentProgressIds = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
-                .Where(p => p.Completed == null && p.RemovedDate == null)
+                .Where(p => p.RemovedDate == null)
                 .Select(p => p.ProgressId)
                 .ToList();
 

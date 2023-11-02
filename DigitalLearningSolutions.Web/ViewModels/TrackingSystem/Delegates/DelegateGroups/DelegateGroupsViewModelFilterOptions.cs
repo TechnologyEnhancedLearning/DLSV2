@@ -4,9 +4,11 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -37,35 +39,27 @@
         }
 
         public static IEnumerable<FilterOptionModel> GetAddedByOptions(
-            IEnumerable<(int adminId, string adminName)> admins
-        )
+            IEnumerable<GroupDelegateAdmin> admins)
         {
             return admins.Select(
                 admin => new FilterOptionModel(
-                    admin.adminName,
+                    admin.FullName,
                     nameof(Group.AddedByAdminId) + FilteringHelper.Separator + nameof(Group.AddedByAdminId) +
-                    FilteringHelper.Separator + admin.adminId,
+                    FilteringHelper.Separator + admin.AdminId,
                     FilterStatus.Default
                 )
             );
         }
 
-        public static IEnumerable<FilterModel> GetDelegateGroupFilterModels(List<Group> groups, IEnumerable<CentreRegistrationPrompt> registrationPrompts)
+        public static IEnumerable<FilterModel> GetDelegateGroupFilterModels(IEnumerable<GroupDelegateAdmin> addedByAdmins, IEnumerable<CentreRegistrationPrompt> registrationPrompts)
         {
-            var admins = groups.Select(
-                g => (g.AddedByAdminId, DisplayStringHelper.GetPotentiallyInactiveAdminName(
-                    g.AddedByFirstName,
-                    g.AddedByLastName,
-                    g.AddedByAdminActive
-                ))
-            ).Distinct();
             return new[]
             {
                 new FilterModel(
                     nameof(Group.AddedByAdminId),
                     "Added by",
-                    GetAddedByOptions(admins)
-                ),
+                    GetAddedByOptions(addedByAdmins)
+                    ),
                 new FilterModel(
                     nameof(Group.LinkedToField),
                     "Linked field",

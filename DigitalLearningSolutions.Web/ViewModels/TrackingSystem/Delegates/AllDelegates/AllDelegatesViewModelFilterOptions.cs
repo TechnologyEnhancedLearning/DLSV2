@@ -54,17 +54,17 @@
         {
             var filters = new List<FilterModel>
             {
-                new FilterModel("PasswordStatus", "Password Status", PasswordStatusOptions,"status"),
-                new FilterModel("AdminStatus", "Admin Status", AdminStatusOptions,"status"),
-                new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions,"status"),
+                new FilterModel("PasswordStatus", "Password status", PasswordStatusOptions,"status"),
+                new FilterModel("AdminStatus", "Admin status", AdminStatusOptions,"status"),
+                new FilterModel("ActiveStatus", "Active status", ActiveStatusOptions,"status"),
                 new FilterModel(
                     "JobGroupId",
                     "Job Group",
                     DelegatesViewModelFilters.GetJobGroupOptions(jobGroups)
                 ),
-                new FilterModel("RegistrationType", "Registration Type", RegistrationTypeOptions,"status"),
-                new FilterModel("AccountStatus", "Account Status", AccountStatusOptions,"status"),
-                new FilterModel("EmailStatus", "Email Status", EmailStatusOptions,"status"),
+                new FilterModel("RegistrationType", "Registration type", RegistrationTypeOptions,"status"),
+                new FilterModel("AccountStatus", "Account status", AccountStatusOptions,"status"),
+                new FilterModel("EmailStatus", "Email status", EmailStatusOptions,"status"),
             };
             filters.AddRange(
                 promptsWithOptions.Select(
