@@ -69,7 +69,7 @@
                                         <div class="nhsuk-summary-list__row">
 
                                             <dd class="nhsuk-summary-list__value">
-                                        @a.FileName.Split('_')[1]
+                                        @a.OriginalFileName
                                             </dd>
                                             <dd class="nhsuk-summary-list__actions">
                                                 <a asp-action="DeleteImage" asp-route-imageName="@a.FileName" asp-route-imageId="@a.Id">

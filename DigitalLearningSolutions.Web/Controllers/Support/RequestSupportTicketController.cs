@@ -161,6 +161,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 string fileName = UploadFile(item);
                 var RequestAttachment = new RequestAttachment
                 {
+                    OriginalFileName=item.FileName,
                     FileName = fileName,
                     FullFileName= uploadDir+ fileName
                 };
@@ -218,6 +219,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                     var attachment = new RequestAttachment()
                     {
                         Id = Guid.NewGuid().ToString(),
+                        OriginalFileName=file.OriginalFileName,
                         FileName = file.FileName,
                         FullFileName = fileName,
                         Content = FileBytes
