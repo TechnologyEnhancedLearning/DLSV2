@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.Common.Users;
@@ -129,6 +128,8 @@
         );
 
         void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
+        public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -420,6 +421,26 @@
         public string? GetSelfAssessmentNameById(int selfAssessmentId)
         {
             return selfAssessmentDataService.GetSelfAssessmentNameById(selfAssessmentId);
+        }
+
+        public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
+        {
+            (var delegateselfAssessments, int resultCount) = selfAssessmentDataService.GetSelfAssessmentDelegates(searchString, offSet, itemsPerPage, sortBy, sortDirection,
+            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
+
+            List<SelfAssessmentDelegate> selfAssessmentDelegateList = new List<SelfAssessmentDelegate>();
+            foreach (var delegateInfo in delegateselfAssessments)
+            {
+                var supervisors = selfAssessmentDataService.GetAllSupervisorsForSelfAssessmentId(
+                delegateInfo.SelfAssessmentId,
+                delegateInfo.DelegateUserId
+            ).ToList();
+
+                delegateInfo.Supervisors = supervisors;
+                selfAssessmentDelegateList.Add(new SelfAssessmentDelegate(delegateInfo));
+            }
+            return (new SelfAssessmentDelegatesData(selfAssessmentDelegateList), resultCount);
         }
     }
 }

@@ -125,16 +125,16 @@
                             @(Model.CentreEmail != null ? Model.CentreEmail : "-")
                         </span>
                         <span class="nhsuk-u-margin-right-4">
-                        @if(Model.CentreEmail!=null)
-                        {
-                            <partial name="_DelegateStatusTag" model="@Model.IsCentreEmailVerified ? (int)DelegateAccountCard.Verified : (int)DelegateAccountCard.Unverified" />
-                        }
+                            @if (Model.CentreEmail != null)
+                            {
+                                <partial name="_DelegateStatusTag" model="@Model.IsCentreEmailVerified ? (int)DelegateAccountCard.Verified : (int)DelegateAccountCard.Unverified" />
+                            }
                         </span>
                     </dd>
                     <dd class="nhsuk-summary-list__actions">
-                      @if(Model.CentreEmail!=null)
+                        @if (Model.CentreEmail != null)
                         {
-                             <a asp-controller="Delegates" asp-action="RemoveCentreEmailConfirmation" asp-route-delegateId="@Model.Id" class="nhsuk-u-margin-left-2">Remove</a>
+                            <a asp-controller="Delegates" asp-action="RemoveCentreEmailConfirmation" asp-route-delegateId="@Model.Id" class="nhsuk-u-margin-left-2">Remove</a>
                         }
                     </dd>
                 </div>
@@ -199,6 +199,6 @@
                     Activate delegate account
                 </a>
             }
-           
+        </div>
     </details>
 </div>

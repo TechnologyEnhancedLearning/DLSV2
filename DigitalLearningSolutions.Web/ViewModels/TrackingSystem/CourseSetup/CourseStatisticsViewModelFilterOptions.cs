@@ -49,7 +49,7 @@
                 ),
                 new FilterModel(
                     nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
-                    "Admin fields",
+                    "Admin field status",
                     CourseHasAdminFieldOptions,
                     "course status"
                 ),

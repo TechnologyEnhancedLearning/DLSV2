@@ -131,7 +131,11 @@
 
         int? GetDelegateUserLearningHubAuthId(int delegateId);
 
+        int? GetUserLearningHubAuthId(int userId);
+
         void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId);
+
+        void SetUserLearningHubAuthId(int userId, int learningHubAuthId);
 
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
 
@@ -622,7 +626,6 @@
                 u.Active as UserActive,
                 u.LearningHubAuthID,
                 u.EmailVerified,
-                ucd.ID,
                 ucd.UserID,
                 ucd.CentreID,
                 ucd.Email as CentreEmail,
@@ -735,6 +738,25 @@
                     WHERE Email = @email ",
                new { email }
            ) > 0;
+        }
+
+        public int? GetUserLearningHubAuthId(int userId)
+        {
+            return connection.Query<int?>(
+                @"SELECT LearningHubAuthId
+                    FROM Users
+                    WHERE ID = @userId",
+                new { userId }
+                ).Single();
+        }
+
+        public void SetUserLearningHubAuthId(int userId, int learningHubAuthId)
+        {
+            connection.Execute(
+                @"UPDATE Users
+                    SET LearningHubAuthId = @learningHubAuthId
+                    WHERE ID = @userId",
+                new { userId, learningHubAuthId });
         }
     }
 }

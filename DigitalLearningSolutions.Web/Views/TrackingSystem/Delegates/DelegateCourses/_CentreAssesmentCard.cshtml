@@ -18,7 +18,10 @@
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full nhsuk-u-margin-left-4">
       <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
-         role="button">
+         role="button"
+               asp-controller="ActivityDelegates"
+               asp-action="Index"
+               asp-route-selfAssessmentId="@Model.SelfAssessmentId">
         View self assesment delegates
       </a>
     </div>

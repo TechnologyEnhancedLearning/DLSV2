@@ -24,6 +24,7 @@
         private readonly IPlatformReportsService platformReportsService;
         private readonly IClockUtility clockUtility;
         private readonly IReportFilterService reportFilterService;
+        private readonly IPlatformUsageSummaryDownloadFileService platformUsageSummaryDownloadFileService = null!;
 
         private SelfAssessmentReportsFilterOptions GetDropdownValues(bool supervised)
         {
@@ -33,12 +34,14 @@
         public PlatformReportsController(
             IPlatformReportsService platformReportsService,
             IClockUtility clockUtility,
-            IReportFilterService reportFilterService
+            IReportFilterService reportFilterService,
+            IPlatformUsageSummaryDownloadFileService platformUsageSummaryDownloadFileService
             )
         {
             this.platformReportsService = platformReportsService;
             this.clockUtility = clockUtility;
             this.reportFilterService = reportFilterService;
+            this.platformUsageSummaryDownloadFileService = platformUsageSummaryDownloadFileService;
         }
 
         public IActionResult Index()
@@ -61,6 +64,17 @@
                 p => new SelfAssessmentActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
             );
         }
+        [Route("Export")]
+        public IActionResult Export()
+        {
+            var content = this.platformUsageSummaryDownloadFileService.GetPlatformUsageSummaryFile();
 
+            const string fileName = "Digital Learning Solutions Platform usage summary.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
+        }
     }
 }

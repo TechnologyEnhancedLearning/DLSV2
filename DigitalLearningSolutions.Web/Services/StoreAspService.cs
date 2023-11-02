@@ -39,6 +39,17 @@
             int tutorialStatus
         );
 
+        void StoreAspProgressSessionData(
+                int progressId,
+                int tutorialId,
+                string? sessionData
+            );
+
+        string? GetAspProgressSessionData(
+            int progressId,
+            int tutorialId
+            );
+
         (TrackerEndpointResponse? validationResponse, DelegateCourseInfo? progress)
             GetProgressAndValidateInputsForStoreAspAssess(
                 int? version,
@@ -51,6 +62,13 @@
             GetAndValidateSectionAssessmentDetails(
                 int? sectionId,
                 int customisationId
+            );
+        (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
+            GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+                int? progressId,
+                int? tutorialId,
+                int? candidateId,
+                int? customisationId
             );
     }
 
@@ -219,6 +237,47 @@
             }
 
             return (null, assessmentDetails);
+        }
+
+        public (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
+            GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+                int? progressId,
+                int? tutorialId,
+                int? candidateId,
+                int? customisationId
+            )
+        {
+            if (progressId == null || tutorialId == null ||
+                candidateId == null || customisationId == null)
+            {
+                return (TrackerEndpointResponse.SuspendDataException, null);
+            }
+
+            var progress = progressService.GetDetailedCourseProgress(progressId.Value);
+            if (progress == null || progress.DelegateId != candidateId ||
+                progress.CustomisationId != customisationId.Value)
+            {
+                return (TrackerEndpointResponse.SuspendDataException, null);
+            }
+
+            return (null, progress);
+        }
+
+        public void StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
+        {
+            progressService.StoreAspProgressSuspendData(
+                progressId,
+                tutorialId,
+                sessionData
+                );
+        }
+
+        public string? GetAspProgressSessionData(int progressId, int tutorialId)
+        {
+            return progressService.GetAspProgressSuspendData(
+                progressId,
+                tutorialId
+                );
         }
     }
 }

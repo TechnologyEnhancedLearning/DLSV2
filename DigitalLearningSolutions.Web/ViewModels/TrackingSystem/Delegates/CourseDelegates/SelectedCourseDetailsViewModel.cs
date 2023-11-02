@@ -30,7 +30,7 @@
             Delegates = result.ItemsToDisplay.Select(
                 d => new DelegateCourseInfoViewModel(
                     d,
-                    DelegateAccessRoute.CourseDelegates,
+                    DelegateAccessRoute.ActivityDelegates,
                     result.GetReturnPageQuery($"{d.DelegateId}-card")
                 )
             );

@@ -13,6 +13,7 @@
             Supervised = delegateAssessmentStatistics.Supervised;
             DelegateCount = delegateAssessmentStatistics.DelegateCount;
             SubmittedSignedOffCount = delegateAssessmentStatistics.SubmittedSignedOffCount;
+            SelfAssessmentId= delegateAssessmentStatistics.SelfAssessmentId;
         }
 
         public string Name { get; set; }
@@ -20,5 +21,6 @@
         public bool Supervised { get; set; }
         public int DelegateCount { get; set; }
         public int SubmittedSignedOffCount { get; set; }
+        public int SelfAssessmentId { get; set; }
     }
 }

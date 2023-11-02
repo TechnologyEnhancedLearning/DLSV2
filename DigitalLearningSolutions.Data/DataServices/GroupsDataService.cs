@@ -25,6 +25,8 @@
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
+        IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId);
+
         IEnumerable<GroupCourse> GetGroupCoursesVisibleToCentre(int centreId);
 
         GroupCourse? GetGroupCourseIfVisibleToCentre(int groupCustomisationId, int centreId);
@@ -89,6 +91,7 @@
             string? option,
             int? jobGroupId
         );
+        bool IsDelegateGroupExist(string groupLabel);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -269,6 +272,27 @@
             );
 
             return (groups, resultCount);
+        }
+
+        public IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId = 0)
+        {
+            IEnumerable<GroupDelegateAdmin> addedByAdmins = connection.Query<GroupDelegateAdmin>(
+                @$"SELECT DISTINCT g.CreatedByAdminUserID AS AdminId,
+                        au.Forename AS Forename,
+                        au.Surname AS Surname,
+                        au.Active AS Active
+                    FROM Groups AS g WITH(NOLOCK)
+                    JOIN AdminUsers AS au WITH(NOLOCK)
+                    ON au.AdminID = g.CreatedByAdminUserID
+                    JOIN Centres AS c WITH(NOLOCK)
+                    ON c.CentreID = g.CentreID
+                    WHERE RemovedDate IS NULL
+                    AND g.CentreId = @centreId",
+                new { centreId },
+                commandTimeout: 3000
+            );
+
+            return (addedByAdmins);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
@@ -532,6 +556,16 @@
                             OR (Answer5 = @option AND @linkedToField = 6)
                             OR (Answer6 = @option AND @linkedToField = 7))",
                 new { groupId, addedDate, linkedToField, centreId, option, jobGroupId }
+            );
+        }
+
+        public bool IsDelegateGroupExist(string groupLabel)
+        {
+            return connection.QuerySingle<bool>(
+                @"SELECT CASE WHEN EXISTS (select * from Groups where GroupLabel like @groupLabel and RemovedDate is null)
+                THEN CAST(1 AS BIT)
+                ELSE CAST(0 AS BIT) END",
+                new { groupLabel }
             );
         }
     }

@@ -325,11 +325,11 @@
             ReturnPageQuery? returnPageQuery
         )
         {
-            if (accessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+            if (accessedVia.Equals(DelegateAccessRoute.ActivityDelegates))
             {
                 var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
                 routeData.Add("customisationId", customisationId.ToString());
-                return RedirectToAction("Index", "CourseDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
+                return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });

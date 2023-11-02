@@ -81,10 +81,10 @@
                      view-data="@(new ViewDataDictionary(ViewData))" />
         </div>
     </div>
-    <div class="nhsuk-grid-column-one-third">
+    <div class="nhsuk-grid-column-one-third heading-button-group">
         @if (!Model.ExportToExcelHide)
         {
-            <a class="nhsuk-button nhsuk-button--secondary float-right"
+            <a class="nhsuk-button nhsuk-button--secondary"
            asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
            asp-route-selfAssessmentName="@Model.DelegateSelfAssessment.RoleName"
            asp-route-delegateUserID="@Model.DelegateSelfAssessment.DelegateUserID"
@@ -96,7 +96,8 @@
         }
         @if (
           Model.DelegateSelfAssessment.SignOffRequested > 0 &&
-          Model.DelegateSelfAssessment.ResultsVerificationRequests == 0
+          Model.DelegateSelfAssessment.ResultsVerificationRequests == 0 &&
+          competencySummaries.Sum(c => (int)c["verifiedCount"]) == competencySummaries.Sum(c => (int)c["questionsCount"])
         )
         {
             <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>

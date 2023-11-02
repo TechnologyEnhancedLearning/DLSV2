@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -98,7 +99,7 @@
 
             // When
             var courseCount = courseService
-                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(CentreId, null)
+                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(CentreId, null, null, null, null, GenericSortingHelper.Ascending)
                 .Count();
 
             // Then

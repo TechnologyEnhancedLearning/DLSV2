@@ -42,6 +42,7 @@ namespace DigitalLearningSolutions.Web
     using Serilog;
     using GDS.MultiPageFormData;
     using LearningHub.Nhs.Caching;
+    using System.Collections.Concurrent;
 
     public class Startup
     {
@@ -72,6 +73,7 @@ namespace DigitalLearningSolutions.Web
                         options.Cookie.Path = "/";
                         options.Events.OnRedirectToLogin = RedirectToLogin;
                         options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
+                        options.SessionStore = new InMemoryTicketStore(new ConcurrentDictionary<string, AuthenticationTicket>());
                     }
                 );
 
@@ -274,6 +276,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IReportFilterService, ReportFilterService>();
             services.AddScoped<IPdfService, PdfService>();
             services.AddScoped<IFreshdeskService, FreshdeskService>();
+            services.AddScoped<IPlatformUsageSummaryDownloadFileService, PlatformUsageSummaryDownloadFileService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
