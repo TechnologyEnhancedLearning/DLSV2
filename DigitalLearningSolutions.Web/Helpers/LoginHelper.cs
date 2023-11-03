@@ -21,7 +21,9 @@
         )
         {
             var claims = LoginClaimsHelper.GetClaimsForCentrelessSignIn(userAccount);
-            var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
+            var claimsIdentity = new ClaimsIdentity(
+                claims,
+                "Identity.Application");
             var authProperties = new AuthenticationProperties
             {
                 AllowRefresh = true,
