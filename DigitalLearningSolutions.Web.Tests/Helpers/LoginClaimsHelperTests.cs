@@ -8,7 +8,7 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class LoginHelperTests
+    public class LoginClaimsHelperTests
     {
         [Test]
         public void User_forename_and_surname_set_correctly()

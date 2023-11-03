@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;    
     using DigitalLearningSolutions.Data.ViewModels;
@@ -13,6 +14,8 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
 
     public class LoginServiceTests
@@ -875,6 +878,45 @@
 
             // Then
             result.Should().BeFalse();
+        }
+
+        [TestCase(LoginAttemptResult.AccountLocked, "/login/AccountLocked")]
+        [TestCase(LoginAttemptResult.InactiveAccount, "/login/AccountInactive")]
+        public void HandleLoginResult_AccountLockedOrInactive(
+            LoginAttemptResult loginAttemptResult,
+            string url)
+        {
+            // Given
+            var loginResult = new LoginResult(loginAttemptResult);
+            loginResult.UserEntity = A.Fake<UserEntity>();
+            var context = A.Fake<HttpContext>();
+            var scheme = new AuthenticationScheme(
+                "TestScheme",
+                "Test Scheme",
+                typeof(IAuthenticationHandler));
+            var options = A.Fake<RemoteAuthenticationOptions>();
+            var ticket = A.Fake<AuthenticationTicket>();
+            var ticketReceivedContext = new TicketReceivedContext(
+                context,
+                scheme,
+                options,
+                ticket);
+            var sessionService = A.Fake<ISessionService>();
+            var userService = A.Fake<IUserService>();
+
+            // When
+             var result = loginService.HandleLoginResult(
+                loginResult,
+                ticketReceivedContext,
+                "",
+                sessionService,
+                userService);
+
+            // Then
+            result
+                .Result
+                .Should()
+                .Be(url);
         }
 
         private void GivenCredsMatchUserEntity(string username, string password, UserEntity unclaimedUserEntity)

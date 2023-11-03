@@ -693,6 +693,133 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             ).MustHaveHappened();
         }
 
+        [Test]
+        public void SharedAuth_WhenUserIsAuthenticated_ReturnsRedirectToActionResult()
+        {
+            // Act
+            var result = controllerWithAuthenticatedUser.SharedAuth();
+
+            // Assert
+            result
+                .Should()
+                .BeOfType<RedirectToActionResult>();
+            result
+                .Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("Home")
+                .WithActionName("Index");
+        }
+
+        [Test]
+        public void SharedAuth_WhenUserIsNotAuthenticated_ReturnsChallengeResult()
+        {
+            // Act
+            var result = controller.SharedAuth();
+
+            // Assert
+            result
+                .Should()
+                .BeOfType<ChallengeResult>();
+            result
+                .Should()
+                .BeChallengeResult()
+                .WithRedirectUri("/");
+        }
+
+        [Test]
+        public void AccountLocked_ReturnsViewResult()
+        {
+            // Act
+            var result = controller.AccountLocked();
+
+            // Assert
+            result
+                .Should()
+                .BeOfType<ViewResult>()
+                .Which
+                .ViewName
+                .Should()
+                .Be("AccountLocked");
+        }
+
+        [Test]
+        public void AccountInactive_ReturnsViewResult()
+        {
+            // Arrange
+            var supportEmail = "support@example.com";
+            A.CallTo(() => configDataService
+                .GetConfigValue(ConfigDataService.SupportEmail))
+                .Returns(supportEmail);
+
+            // Act
+            var result = controller.AccountInactive();
+
+            // Assert
+            result
+                .Should()
+                .BeOfType<ViewResult>()
+                .Which
+                .ViewName
+                .Should()
+                .Be("AccountInactive");
+
+            var model = result
+                .As<ViewResult>()
+                .Model
+                .As<AccountInactiveViewModel>();
+            model
+                .SupportEmail
+                .Should()
+                .Be(supportEmail);
+        }
+
+        [Test]
+        public void RemoteFailure_ReturnsViewResult()
+        {
+            // Arrange
+            var supportEmail = "support@example.com";
+            A.CallTo(() => configDataService
+                .GetConfigValue(ConfigDataService.SupportEmail))
+                .Returns(supportEmail);
+
+            // Act
+            var result = controller.RemoteFailure();
+
+            // Assert
+            result
+                .Should()
+                .BeOfType<ViewResult>()
+                .Which
+                .ViewName
+                .Should()
+                .Be("RemoteAuthenticationFailure");
+
+            var model = result
+                .As<ViewResult>()
+                .Model
+                .As<AccountInactiveViewModel>();
+            model
+                .SupportEmail
+                .Should()
+                .Be(supportEmail);
+        }
+
+        [Test]
+        public void NotLinked_ReturnsViewResult()
+        {
+            // Act
+            var result = controller.NotLinked();
+
+            // Assert
+            result
+                .Should()
+                .BeOfType<ViewResult>()
+                .Which
+                .ViewName
+                .Should()
+                .Be("NotLinked");
+        }
+
         private void GivenSignInIsSuccessful()
         {
             var userEntity = new UserEntity(
