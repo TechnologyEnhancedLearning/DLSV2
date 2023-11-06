@@ -116,7 +116,13 @@
         {
             <div class="nhsuk-grid-row nhsuk-u-padding-top-5">
                 <div class="nhsuk-grid-column-full">
-                    <button class="nhsuk-button delete-button nhsuk-button--secondary">Remove from self assessment</button>
+                    <a class="nhsuk-button delete-button nhsuk-button--secondary"
+               role="button"
+               asp-controller="ActivityDelegates"
+               asp-action="RemoveDelegateSelfAssessment"
+               asp-route-candidateAssessmentsId="@Model.CandidateAssessmentsId">
+                        Remove from self assessment
+                    </a>
                 </div>
             </div>
         }

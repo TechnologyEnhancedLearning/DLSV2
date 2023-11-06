@@ -130,6 +130,8 @@
         void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
         public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
+        RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
+       void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -445,6 +447,14 @@
                 selfAssessmentDelegateList.Add(new SelfAssessmentDelegate(delegateInfo));
             }
             return (new SelfAssessmentDelegatesData(selfAssessmentDelegateList), resultCount);
+        }
+        public RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId)
+        {
+            return selfAssessmentDataService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
+        }
+        public void RemoveDelegateSelfAssessment(int candidateAssessmentsId)
+        {
+            selfAssessmentDataService.RemoveDelegateSelfAssessment(candidateAssessmentsId);
         }
     }
 }

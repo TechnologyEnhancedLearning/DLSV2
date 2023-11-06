@@ -39,8 +39,10 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
             EnrolledByAdminActive = delegateInfo.EnrolledByAdminActive;
             SelfAssessed = delegateInfo.SelfAssessed;
             Confirmed = delegateInfo.Confirmed;
+            CandidateAssessmentsId = delegateInfo.CandidateAssessmentsId;
         }
         public int DelegateId { get; set; }
+        public int CandidateAssessmentsId { get; set; }
         public string? DelegateFirstName { get; set; }
         public string DelegateLastName { get; set; }
         public string? DelegateEmail { get; set; }
