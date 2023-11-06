@@ -1356,7 +1356,6 @@
         [HttpPost]
         public IActionResult SubmitVerification()
         {
-            var delegateUserId = User.GetUserIdKnownNotNull();
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification, TempData).GetAwaiter().GetResult();
             if (sessionRequestVerification == null)
             {
