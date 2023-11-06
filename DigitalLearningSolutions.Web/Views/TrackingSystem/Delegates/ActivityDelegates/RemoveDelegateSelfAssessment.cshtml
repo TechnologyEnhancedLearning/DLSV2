@@ -32,8 +32,8 @@
         <form method="post" asp-controller="ActivityDelegates">
             <div class="nhsuk-checkboxes__item">
                 <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
-                                    label="I am sure that I wish to remove @Model.FirstName @Model.LastName from self assessment"
-                                    hint-text="This action will remove the delegate from your self assessment list and you will no longer be able to view this delegate from self assessments." />
+                                    label="I am sure that I wish to remove @Model.FirstName @Model.LastName from this self assessment."
+                                    hint-text="This action will remove the delegate from the self assessment. Their progress will be archived but can be reinstated by enrolling them on the self assessment again." />
             </div>
             <button type="submit" class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveDelegateSelfAssessment">
                 Remove
