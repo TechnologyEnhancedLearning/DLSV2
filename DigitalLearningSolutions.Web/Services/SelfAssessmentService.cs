@@ -26,7 +26,7 @@
         void SetUpdatedFlag(int selfAssessmentId, int delegateUserId, bool status);
 
         void UpdateLastAccessed(int selfAssessmentId, int delegateUserId);
-
+        void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupsId);
         void IncrementLaunchCount(int selfAssessmentId, int delegateUserId);
 
         void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
@@ -165,7 +165,11 @@
         {
             selfAssessmentDataService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
         }
-
+       
+        public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupId)
+        {
+            selfAssessmentDataService.RemoveSignoffRequests(selfAssessmentId, delegateUserId, competencyGroupId);
+        }
         public void IncrementLaunchCount(int selfAssessmentId, int delegateUserId)
         {
             selfAssessmentDataService.IncrementLaunchCount(selfAssessmentId, delegateUserId);

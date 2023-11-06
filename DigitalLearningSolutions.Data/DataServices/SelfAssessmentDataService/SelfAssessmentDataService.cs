@@ -76,7 +76,7 @@
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int delegateUserId, int selfAssessmentId);
 
         void UpdateLastAccessed(int selfAssessmentId, int delegateUserId);
-
+        void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupsId);
         void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
 
         void SetSubmittedDateNow(int selfAssessmentId, int delegateUserId);
