@@ -1378,7 +1378,7 @@
                     }
                 );
             }
-            
+
             var candidateAssessmentSupervisorId = sessionRequestVerification.CandidateAssessmentSupervisorId;
             var resultCount = sessionRequestVerification.ResultIds.Count(
                 resultId => supervisorService.InsertSelfAssessmentResultSupervisorVerification(
@@ -1386,7 +1386,7 @@
                     resultId
                 )
             );
-                        
+
             if (resultCount > 0)
             {
                 frameworkNotificationService.SendResultVerificationRequest(
