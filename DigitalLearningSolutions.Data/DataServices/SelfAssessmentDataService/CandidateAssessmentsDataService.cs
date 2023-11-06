@@ -4,9 +4,6 @@
     using System.Collections.Generic;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DocumentFormat.OpenXml.Drawing.Charts;
-    using DocumentFormat.OpenXml.Office2010.Excel;
     using Microsoft.Extensions.Logging;
 
     public partial class SelfAssessmentDataService
