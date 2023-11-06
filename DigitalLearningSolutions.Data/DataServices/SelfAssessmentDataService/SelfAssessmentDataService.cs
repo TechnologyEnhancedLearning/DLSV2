@@ -343,9 +343,10 @@
                  @"Select
                     ca.Id AS CandidateAssessmentsId,
                     ca.SelfAssessmentID,
-                    da.FirstName_deprecated AS FirstName, 
-                    da.LastName_deprecated AS LastName, 
-                    COALESCE(ucd.Email, u.PrimaryEmail) AS Email
+                    u.FirstName, 
+                    u.LastName, 
+                    COALESCE(ucd.Email, u.PrimaryEmail) AS Email,
+                    sa.Name AS SelfAssessmentsName
                   FROM  dbo.SelfAssessments AS sa 
 				INNER JOIN dbo.CandidateAssessments AS ca WITH (NOLOCK) ON sa.ID = ca.SelfAssessmentID 
 				INNER JOIN dbo.CentreSelfAssessments AS csa  WITH (NOLOCK) ON sa.ID = csa.SelfAssessmentID 
