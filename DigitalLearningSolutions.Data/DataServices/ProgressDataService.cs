@@ -95,6 +95,11 @@
            int progressId,
            string? suspendData
        );
+        void UpdateAspProgressLessonLocation(
+           int tutorialId,
+           int progressId,
+           string? lessonLocation
+       );
 
         int GetCompletionStatusForProgress(int progressId);
 
@@ -112,6 +117,7 @@
         );
 
         string? GetAspProgressSuspendData(int progressId, int tutorialId);
+        string? GetAspProgressLessonLocation(int progressId, int tutorialId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -617,6 +623,20 @@
                 new { tutorialId, progressId, suspendData }
             );
         }
+        public void UpdateAspProgressLessonLocation(
+           int tutorialId,
+           int progressId,
+           string? lessonLocation
+       )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET LessonLocation = @lessonLocation
+                    WHERE (TutorialID = @tutorialId)
+                      AND (ProgressID = @progressId)",
+                new { tutorialId, progressId, lessonLocation }
+            );
+        }
 
         public int GetCompletionStatusForProgress(int progressId)
         {
@@ -671,6 +691,16 @@
             return connection.Query<string?>(
                 @"SELECT TOP(1)
                         SuspendData
+                    FROM dbo.aspProgress
+                    WHERE ProgressID = @progressId AND TutorialID = @tutorialId",
+                new { progressId, tutorialId }
+            ).FirstOrDefault();
+        }
+        public string? GetAspProgressLessonLocation(int progressId, int tutorialId)
+        {
+            return connection.Query<string?>(
+                @"SELECT TOP(1)
+                        LessonLocation
                     FROM dbo.aspProgress
                     WHERE ProgressID = @progressId AND TutorialID = @tutorialId",
                 new { progressId, tutorialId }

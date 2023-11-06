@@ -134,6 +134,26 @@
                             );
                     }
 
+                    if (action == TrackerEndpointAction.storelessonlocation)
+                    {
+                        return trackerActionService.StoreLessonLocation(
+                            query.ProgressId,
+                            query.TutorialId,
+                            query.CandidateId,
+                            query.CustomisationId,
+                            query.LessonLocation
+                            );
+                    }
+
+                    if (action == TrackerEndpointAction.getlessonlocation)
+                    {
+                        return trackerActionService.GetLessonLocation(
+                            query.ProgressId,
+                            query.TutorialId,
+                            query.CandidateId,
+                            query.CustomisationId
+                            );
+                    }
                     throw new ArgumentOutOfRangeException();
                 }
 
