@@ -183,7 +183,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
            
             return View("RequestAttachment", model);
         }
-        public IActionResult DeleteImage(string imageName, string imageId)
+        public IActionResult DeleteImage(DlsSubApplication dlsSubApplication, string imageName, string imageId)
 
         {
 
