@@ -17,12 +17,7 @@
 
         TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning);
 
-        string? GetSuspendData(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId
-            );
+        string? GetSuspendData(int? progressId, int? tutorialId, int? customisationId, int? candidateId);
 
         TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
 
@@ -404,12 +399,7 @@
             return TrackerEndpointResponse.Success;
         }
 
-        public string? GetSuspendData(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId
-            )
+        public string? GetSuspendData(int? progressId, int? tutorialId, int? customisationId, int? candidateId)
         {
             var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
                progressId,
