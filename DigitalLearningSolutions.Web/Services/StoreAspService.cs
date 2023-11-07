@@ -39,6 +39,12 @@
             int tutorialStatus
         );
 
+        void StoreAspProgressSessionData(
+                int progressId,
+                int tutorialId,
+                string? sessionData
+            );
+
         (TrackerEndpointResponse? validationResponse, DelegateCourseInfo? progress)
             GetProgressAndValidateInputsForStoreAspAssess(
                 int? version,
@@ -51,6 +57,13 @@
             GetAndValidateSectionAssessmentDetails(
                 int? sectionId,
                 int customisationId
+            );
+        (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
+            GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
+                int? progressId,
+                int? tutorialId,
+                int? candidateId,
+                int? customisationId
             );
     }
 
@@ -219,6 +232,35 @@
             }
 
             return (null, assessmentDetails);
+        }
+
+        public (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
+            GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
+                int? progressId,
+                int? tutorialId,
+                int? candidateId,
+                int? customisationId
+            )
+        {
+            if (progressId == null || tutorialId == null ||
+                candidateId == null || customisationId == null)
+            {
+                return (TrackerEndpointResponse.StoreSuspendDataException, null);
+            }
+
+            var progress = progressService.GetDetailedCourseProgress(progressId.Value);
+            if (progress == null || progress.DelegateId != candidateId ||
+                progress.CustomisationId != customisationId.Value)
+            {
+                return (TrackerEndpointResponse.StoreSuspendDataException, null);
+            }
+
+            return (null, progress);
+        }
+
+        public void StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
+        {
+            throw new NotImplementedException();
         }
     }
 }

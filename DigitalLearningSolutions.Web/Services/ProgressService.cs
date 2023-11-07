@@ -205,6 +205,15 @@
             progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime);
         }
 
+        public void StoreAspProgressSuspendData(
+            int progressId,
+            int tutorialId,
+            string? suspendData
+            )
+        {
+            progressDataService.UpdateAspProgressSuspendData(tutorialId, progressId, suspendData);
+        }
+
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)
         {
             if (progress.Completed != null)

@@ -8,5 +8,6 @@
         storeaspprogressv2,
         storeaspprogressnosession,
         storeaspassessnosession,
+        storesuspenddata,
     }
 }
