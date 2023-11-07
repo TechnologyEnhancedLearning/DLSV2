@@ -202,16 +202,8 @@
                 timeNow,
                 progressText ?? string.Empty
             );
-            progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime);
-        }
-
-        public void StoreAspProgressSuspendData(
-            int progressId,
-            int tutorialId,
-            string? suspendData
-            )
-        {
-            progressDataService.UpdateAspProgressSuspendData(tutorialId, progressId, suspendData);
+            progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime);
+            progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus);
         }
 
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)

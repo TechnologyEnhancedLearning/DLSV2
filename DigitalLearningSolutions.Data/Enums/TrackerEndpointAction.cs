@@ -4,11 +4,9 @@
     {
         getobjectivearray,
         getobjectivearraycc,
-        getsuspenddata,
         storediagnosticjson,
         storeaspprogressv2,
         storeaspprogressnosession,
         storeaspassessnosession,
-        storesuspenddata,
     }
 }
