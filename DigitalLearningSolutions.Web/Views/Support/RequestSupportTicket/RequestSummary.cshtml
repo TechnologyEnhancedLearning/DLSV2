@@ -16,7 +16,7 @@
     <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RequestSubject),nameof(Model.RequestDescription) })" />
 }
 <div class=" nhsuk-u-margin-top-1">
-    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupport" asp-action="TypeofRequest">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupportTicket" asp-action="TypeofRequest">
         Back
     </a>
 </div>
@@ -25,7 +25,7 @@
         <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetRequestSummary">
 
             <div class="nhsuk-u-margin-bottom-8">
-                <h1 class="nhsuk-heading-xl">Request support</h1>
+                <h1 class="nhsuk-heading-xl">@Model.RequestType</h1>
 
 
             </div>

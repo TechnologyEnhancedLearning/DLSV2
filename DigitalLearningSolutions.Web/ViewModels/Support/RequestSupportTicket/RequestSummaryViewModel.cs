@@ -21,6 +21,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
             RequestSubject = data.RequestSubject;
             RequestDescription = data.RequestDescription;
         }
+        [MaxLength(250, ErrorMessage = "Summary must be 250 characters or fewer")]
         public string? RequestSubject { get; set; }
         [MaxLength(250, ErrorMessage = "Description must be 250 characters or fewer")]
         public string? RequestDescription { get; set; }

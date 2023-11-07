@@ -5,6 +5,8 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Type of Request";
+    var count = @Model.RequestTypes.Count();
+    var seperator = 0;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
 @if (errorHasOccurred)
@@ -30,14 +32,17 @@
                     <div class="nhsuk-grid-column-full">
                         @foreach (var requestType in Model.RequestTypes)
                         {
-
+                            @if (seperator == @count - 1)
+                            {
+                                <p style="margin-bottom: 8px;padding: 8px 12px 4px;"><b>or</b></p>
+                            }
                             <div class="nhsuk-radios__item">
                                 <input class="nhsuk-radios__input" id="request-@requestType.ID" type="radio" value="@requestType.ID" name="requestType" asp-for="@Model.Id">
                                 <label class="nhsuk-label nhsuk-radios__label" for="request-@requestType.ID">
                                     @requestType.RequestTypes
                                 </label>
-                                @*@Html.HiddenFor(ID=>@requestType.ID)*@
                             </div>
+                            seperator = seperator + 1;
                         }
                     </div>
                 </div>

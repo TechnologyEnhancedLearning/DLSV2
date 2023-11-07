@@ -16,7 +16,7 @@
 {
     <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ImageFiles),nameof(Model.FileSizeError),nameof(Model.FileExtensionError) })" />
 }
-<a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupport" asp-action="RequestSummary">
+<a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupportTicket" asp-action="RequestSummary">
     Back
 </a>
 <div id="form-group">
@@ -28,7 +28,7 @@
                 </div>
                 <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetAttachment" enctype="multipart/form-data">
                     <p class="nhsuk-body-s nhsuk-u-margin-bottom-3">
-                        If you have any screenshots that help illustarte your request,attach them here.
+                        If you have any screenshots that help illustrate your request,attach them here.
                     </p>
                     <input type="file" class="form-control nhsuk-input nhsuk-u-width-one-half " multiple asp-for="ImageFiles" />
                     <button class="nhsuk-button nhsuk-button--secondary" type="submit">Upload</button>
@@ -82,7 +82,7 @@
                     }
                 }
 
-                <a class="nhsuk-button" asp-controller="RequestSupport" asp-action="SupportSummary">Next</a>
+                <a class="nhsuk-button" asp-controller="RequestSupportTicket" asp-action="SupportSummary">Next</a>
                 <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" />
             </div>
         </div>

@@ -36,7 +36,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
         public string? FileExtensionError { get; set; }
         public string? FileSizeError { get; set; }
 
-        [Required(ErrorMessage = "Please select at least one image")]
         [AllowedExtensions(new[] { ".png", ".jpg", ".jpeg" }, "Upload file must be in image formats like jpg,jpeg,png")]
         [MaxFileSize(20 * 1024 * 1024, "Maximum allowed file size is 20MB")]
         public List<IFormFile>? ImageFiles { get; set; }

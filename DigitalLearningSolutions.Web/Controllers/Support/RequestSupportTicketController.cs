@@ -21,7 +21,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
     using System.IO;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.ServiceFilter;
+    [SetDlsSubApplication]
+    [SetSelectedTab(nameof(NavMenuTab.Support))]
+
     public class RequestSupportTicketController : Controller
     {
         private readonly IConfiguration configuration;
@@ -73,7 +75,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
         [HttpPost]
         [Route("RequestSupport/setRequestType")]
-        public IActionResult setRequestType(RequestTypeViewModel RequestTypemodel, int requestType)
+        public IActionResult setRequestType(DlsSubApplication dlsSubApplication, RequestTypeViewModel RequestTypemodel, int requestType)
         {
             var requestTypes = requestSupportTicketDataService.GetRequestTypes();
             var reqType = requestTypes.ToList().Where(x => x.ID == requestType)
@@ -94,7 +96,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             return View("RequestSummary", model);
         }
         [Route("RequestSupport/RequestSummary")]
-        public IActionResult RequestSummary(RequestSummaryViewModel RequestTypemodel)
+        public IActionResult RequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel RequestTypemodel)
 
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
@@ -104,12 +106,17 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
         [HttpPost]
         [Route("RequestSupport/SetRequestSummary")]
-        public IActionResult SetRequestSummary(RequestSummaryViewModel requestDetailsmodel)
+        public IActionResult SetRequestSummary(DlsSubApplication dlsSubApplication,RequestSummaryViewModel requestDetailsmodel)
 
         {
             if(requestDetailsmodel.RequestSubject==null)
             {
                 ModelState.AddModelError("RequestSubject", "Please enter request summary");
+                return View("RequestSummary", requestDetailsmodel);
+            }
+            if (requestDetailsmodel.RequestDescription == null)
+            {
+                ModelState.AddModelError("RequestDescription", "Please enter request description");
                 return View("RequestSummary", requestDetailsmodel);
             }
             if (!ModelState.IsValid)
@@ -123,7 +130,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             return View("RequestAttachment", model);
         }
         [Route("RequestSupport/RequestAttachment")]
-        public IActionResult RequestAttachment(RequestAttachmentViewModel model)
+        public IActionResult RequestAttachment(DlsSubApplication dlsSubApplication, RequestAttachmentViewModel model)
 
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
@@ -133,15 +140,17 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
         [HttpPost]
         [Route("RequestSupport/SetAttachment")]
-        public IActionResult SetAttachment(RequestAttachmentViewModel requestAttachmentmodel)
+        public IActionResult SetAttachment(DlsSubApplication dlsSubApplication, RequestAttachmentViewModel requestAttachmentmodel)
 
         {
+            if (requestAttachmentmodel.ImageFiles == null)
+            {
+                ModelState.AddModelError("ImageFiles", "Please select at least one image");
+                return View("RequestAttachment", requestAttachmentmodel);
+            }
             if (!ModelState.IsValid)
             {
-                if (requestAttachmentmodel.ImageFiles == null)
-                {
                     return View("RequestAttachment", requestAttachmentmodel);
-                }
             }
             (bool? fileExtension, bool? fileSize) = validateUploadedImages(requestAttachmentmodel);
             if (fileExtension == true)
@@ -192,17 +201,16 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
         [HttpGet]
         [Route("RequestSupport/SupportSummary")]
-        public IActionResult SupportSummary(SupportSummaryViewModel supportSummaryViewModel)
+        public IActionResult SupportSummary(DlsSubApplication dlsSubApplication, SupportSummaryViewModel supportSummaryViewModel)
 
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
-            data.RequestType = "DLS " + data.RequestType;
             var model = new SupportSummaryViewModel(data);
             return View("SupportTicketSummaryPage", model);
         }
         [HttpPost]
         [Route("RequestSupport/SubmitSupportSummary")]
-        public IActionResult SubmitSupportSummary(SupportSummaryViewModel model)
+        public IActionResult SubmitSupportSummary(DlsSubApplication dlsSubApplication, SupportSummaryViewModel model)
 
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
@@ -230,6 +238,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 data.RequestAttachment.RemoveAll((x) => x.Content == null);
                 data.setImageFiles(RequestAttachmentList);
             }
+            data.RequestType = "DLS " + data.RequestType;
             data.RequestSubject = data.RequestSubject + $" (DLS centre: {data.CentreName})";
             var result = freshdeskService.CreateNewTicket(data);
             if (result.StatusCode == 200)
