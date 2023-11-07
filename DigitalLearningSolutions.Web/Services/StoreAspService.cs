@@ -50,17 +50,6 @@
             int tutorialId
             );
 
-        void StoreAspProgressLessonLocation(
-                int progressId,
-                int tutorialId,
-                string? lessonLocation
-            );
-
-        string? GetAspProgressLessonLocation(
-            int progressId,
-            int tutorialId
-            );
-
         (TrackerEndpointResponse? validationResponse, DelegateCourseInfo? progress)
             GetProgressAndValidateInputsForStoreAspAssess(
                 int? version,
@@ -286,22 +275,6 @@
         public string? GetAspProgressSessionData(int progressId, int tutorialId)
         {
             return progressService.GetAspProgressSuspendData(
-                progressId,
-                tutorialId
-                );
-        }
-        public void StoreAspProgressLessonLocation(int progressId, int tutorialId, string? lessonLocation)
-        {
-            progressService.StoreAspProgressLessonLocation(
-                progressId,
-                tutorialId,
-                lessonLocation
-                );
-        }
-
-        public string? GetAspProgressLessonLocation(int progressId, int tutorialId)
-        {
-            return progressService.GetAspProgressLessonLocation(
                 progressId,
                 tutorialId
                 );

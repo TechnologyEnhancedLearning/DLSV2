@@ -5,12 +5,10 @@
         getobjectivearray,
         getobjectivearraycc,
         getsuspenddata,
-        getlessonlocation,
         storediagnosticjson,
         storeaspprogressv2,
         storeaspprogressnosession,
         storeaspassessnosession,
         storesuspenddata,
-        storelessonlocation
     }
 }

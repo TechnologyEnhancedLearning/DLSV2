@@ -51,16 +51,6 @@
             int progressId,
             int tutorialId
             );
-        void StoreAspProgressLessonLocation(
-            int progressId,
-            int tutorialId,
-            string? lessonLocation
-            );
-
-        string? GetAspProgressLessonLocation(
-            int progressId,
-            int tutorialId
-            );
 
         void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress);
 
@@ -235,15 +225,6 @@
             progressDataService.UpdateAspProgressSuspendData(tutorialId, progressId, suspendData);
         }
 
-        public void StoreAspProgressLessonLocation(
-            int progressId,
-            int tutorialId,
-            string? lessonLocation
-            )
-        {
-            progressDataService.UpdateAspProgressLessonLocation(tutorialId, progressId, lessonLocation);
-        }
-
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)
         {
             if (progress.Completed != null)
@@ -276,10 +257,6 @@
         public string? GetAspProgressSuspendData(int progressId, int tutorialId)
         {
             return progressDataService.GetAspProgressSuspendData(progressId, tutorialId);
-        }
-        public string? GetAspProgressLessonLocation(int progressId, int tutorialId)
-        {
-            return progressDataService.GetAspProgressLessonLocation(progressId, tutorialId);
         }
     }
 }

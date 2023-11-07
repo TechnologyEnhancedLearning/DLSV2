@@ -17,6 +17,13 @@
 
         TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning);
 
+        string? GetSuspendData(
+            int? progressId,
+            int? tutorialId,
+            int? candidateId,
+            int? customisationId
+            );
+
         TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
 
         TrackerEndpointResponse StoreAspProgressV2(
@@ -50,35 +57,12 @@
             int? customisationId,
             string? sessionId
         );
-
         TrackerEndpointResponse StoreSuspendData(
             int? progressId,
             int? tutorialId,
             int? candidateId,
             int? customisationId,
             string? suspendData
-            );
-
-        string? GetSuspendData(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId
-            );
-
-        TrackerEndpointResponse StoreLessonLocation(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId,
-            string? suspendData
-            );
-
-        string? GetLessonLocation(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId
             );
     }
 
@@ -444,73 +428,6 @@
                      tutorialId!.Value
                  );
                 return suspendData ?? "";
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.StoreAspProgressException;
-            }
-        }
-
-        public TrackerEndpointResponse StoreLessonLocation(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId,
-            string? lessonLocation
-            )
-        {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
-               progressId,
-               tutorialId,
-               candidateId,
-               customisationId
-           );
-            if (validationResponse != null)
-            {
-                return validationResponse;
-            }
-            try
-            {
-                storeAspService.StoreAspProgressLessonLocation(
-                    progressId!.Value,
-                    tutorialId!.Value,
-                    lessonLocation
-                );
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.SuspendDataException;
-            }
-
-            return TrackerEndpointResponse.Success;
-        }
-
-        public string? GetLessonLocation(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId
-            )
-        {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
-               progressId,
-               tutorialId,
-               candidateId,
-               customisationId
-           );
-            if (validationResponse != null)
-            {
-                return validationResponse;
-            }
-            try
-            {
-                var lessonLocation = storeAspService.GetAspProgressLessonLocation(
-                     progressId!.Value,
-                     tutorialId!.Value
-                 );
-                return lessonLocation ?? "";
             }
             catch (Exception ex)
             {
