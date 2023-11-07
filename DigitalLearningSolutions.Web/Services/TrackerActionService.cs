@@ -49,6 +49,7 @@
             int? customisationId,
             string? sessionId
         );
+
         TrackerEndpointResponse StoreSuspendData(
             int? progressId,
             int? tutorialId,
@@ -56,6 +57,15 @@
             int? customisationId,
             string? suspendData
             );
+
+        TrackerEndpointResponse StoreLessonLocation(
+            int? progressId,
+            int? tutorialId,
+            int? candidateId,
+            int? customisationId,
+            string? suspendData
+            );
+            
     }
 
     public class TrackerActionService : ITrackerActionService
@@ -391,6 +401,41 @@
             {
                 logger.LogError(ex, ex.Message);
                 return TrackerEndpointResponse.StoreAspProgressException;
+            }
+
+            return TrackerEndpointResponse.Success;
+        }
+
+        public TrackerEndpointResponse StoreLessonLocation(
+            int? progressId,
+            int? tutorialId,
+            int? candidateId,
+            int? customisationId,
+            string? lessonLocation
+            )
+        {
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+               progressId,
+               tutorialId,
+               candidateId,
+               customisationId
+           );
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
+            try
+            {
+                storeAspService.StoreAspProgressLessonLocation(
+                    progressId!.Value,
+                    tutorialId!.Value,
+                    lessonLocation
+                );
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return TrackerEndpointResponse.SuspendDataException;
             }
 
             return TrackerEndpointResponse.Success;

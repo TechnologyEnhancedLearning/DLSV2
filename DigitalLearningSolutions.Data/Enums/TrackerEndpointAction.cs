@@ -9,5 +9,6 @@
         storeaspprogressnosession,
         storeaspassessnosession,
         storesuspenddata,
+        storelessonlocation
     }
 }

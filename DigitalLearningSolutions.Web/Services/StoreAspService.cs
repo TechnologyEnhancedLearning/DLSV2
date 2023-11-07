@@ -45,6 +45,12 @@
                 string? sessionData
             );
 
+        void StoreAspProgressLessonLocation(
+                int progressId,
+                int tutorialId,
+                string? lessonLocation
+            );
+
         (TrackerEndpointResponse? validationResponse, DelegateCourseInfo? progress)
             GetProgressAndValidateInputsForStoreAspAssess(
                 int? version,
@@ -261,6 +267,14 @@
         public void StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
         {
             throw new NotImplementedException();
+        }
+        public void StoreAspProgressLessonLocation(int progressId, int tutorialId, string? lessonLocation)
+        {
+            progressService.StoreAspProgressLessonLocation(
+                progressId,
+                tutorialId,
+                lessonLocation
+                );
         }
     }
 }

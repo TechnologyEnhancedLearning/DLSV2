@@ -90,6 +90,11 @@
            int progressId,
            string? suspendData
        );
+        void UpdateAspProgressLessonLocation(
+           int tutorialId,
+           int progressId,
+           string? lessonLocation
+       );
 
         int GetCompletionStatusForProgress(int progressId);
 
@@ -595,6 +600,20 @@
                     WHERE (TutorialID = @tutorialId)
                       AND (ProgressID = @progressId)",
                 new { tutorialId, progressId, suspendData }
+            );
+        }
+        public void UpdateAspProgressLessonLocation(
+           int tutorialId,
+           int progressId,
+           string? lessonLocation
+       )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET LessonLocation = @lessonLocation
+                    WHERE (TutorialID = @tutorialId)
+                      AND (ProgressID = @progressId)",
+                new { tutorialId, progressId, lessonLocation }
             );
         }
 
