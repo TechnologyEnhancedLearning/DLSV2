@@ -202,8 +202,7 @@
                 timeNow,
                 progressText ?? string.Empty
             );
-            progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime);
-            progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus);
+            progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime);
         }
 
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)
