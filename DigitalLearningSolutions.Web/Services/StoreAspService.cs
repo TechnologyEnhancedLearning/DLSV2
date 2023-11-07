@@ -266,7 +266,11 @@
 
         public void StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
         {
-            throw new NotImplementedException();
+            progressService.StoreAspProgressSuspendData(
+                progressId,
+                tutorialId,
+                sessionData
+                );
         }
         public void StoreAspProgressLessonLocation(int progressId, int tutorialId, string? lessonLocation)
         {
