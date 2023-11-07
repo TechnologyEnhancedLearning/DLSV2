@@ -10,7 +10,7 @@
         }
         public override void Down()
         {
-            Delete.Column("SuspendData").FromTable("LessonLocation");
+            Delete.Column("LessonLocation").FromTable("aspProgress");
         }
     }
 }
