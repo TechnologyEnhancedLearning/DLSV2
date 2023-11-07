@@ -564,23 +564,6 @@
             );
         }
 
-        public void UpdateAspProgressTutStatAndTime(
-            int tutorialId,
-            int progressId,
-            int tutStat,
-            int tutTime
-        )
-        {
-            connection.Execute(
-                @"UPDATE aspProgress
-                    SET TutStat = Case WHEN TutStat < @tutStat THEN @tutStat ELSE TutStat END, TutTime = TutTime + @tutTime
-                    WHERE (TutorialID = @tutorialId)
-                      AND (ProgressID = @progressId)
-                      AND (TutStat < @tutStat)",
-                new { tutorialId, progressId, tutStat, tutTime }
-            );
-        }
-
         public void UpdateAspProgressSuspendData(
            int tutorialId,
            int progressId,
