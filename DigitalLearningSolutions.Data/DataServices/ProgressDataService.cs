@@ -71,17 +71,12 @@
             string progressText
         );
 
-        void UpdateAspProgressTutTime(
+        void UpdateAspProgressTutStatAndTime(
             int tutorialId,
             int progressId,
+            int tutStat,
             int tutTime
-        );
-
-        void UpdateAspProgressTutStat(
-            int tutorialId,
-            int progressId,
-            int tutStat
-        );
+            );
 
         int GetCompletionStatusForProgress(int progressId);
 
@@ -541,33 +536,20 @@
             );
         }
 
-        public void UpdateAspProgressTutTime(
+        public void UpdateAspProgressTutStatAndTime(
             int tutorialId,
             int progressId,
+            int tutStat,
             int tutTime
         )
         {
             connection.Execute(
                 @"UPDATE aspProgress
-                    SET TutTime = TutTime + @tutTime
-                    WHERE (TutorialID = @tutorialId) AND (ProgressID = @progressId)",
-                new { tutorialId, progressId, tutTime }
-            );
-        }
-
-        public void UpdateAspProgressTutStat(
-            int tutorialId,
-            int progressId,
-            int tutStat
-        )
-        {
-            connection.Execute(
-                @"UPDATE aspProgress
-                    SET TutStat = @tutStat
+                    SET TutStat = Case WHEN TutStat < @tutStat THEN @tutStat ELSE TutStat END, TutTime = TutTime + @tutTime
                     WHERE (TutorialID = @tutorialId)
                       AND (ProgressID = @progressId)
                       AND (TutStat < @tutStat)",
-                new { tutorialId, progressId, tutStat }
+                new { tutorialId, progressId, tutStat, tutTime }
             );
         }
 
