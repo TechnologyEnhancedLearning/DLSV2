@@ -414,7 +414,7 @@
             string? lessonLocation
             )
         {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
                progressId,
                tutorialId,
                candidateId,
@@ -435,7 +435,7 @@
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.SuspendDataException;
+                return TrackerEndpointResponse.StoreAspProgressException;
             }
 
             return TrackerEndpointResponse.Success;
