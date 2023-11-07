@@ -78,13 +78,6 @@
             int tutTime
             );
 
-        void UpdateAspProgressTutStatAndTime(
-            int tutorialId,
-            int progressId,
-            int tutStat,
-            int tutTime
-            );
-
         void UpdateAspProgressSuspendData(
            int tutorialId,
            int progressId,
