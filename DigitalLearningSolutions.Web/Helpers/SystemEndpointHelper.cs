@@ -12,7 +12,7 @@
 
         public static string GetTrackingUrl(IConfiguration config)
         {
-            return $"{config.GetCurrentSystemBaseUrl()}/tracking/tracker";
+            return $"{config.GetAppRootPath()}/tracking/tracker";
         }
 
         public static string GetScormPlayerUrl(IConfiguration config)
