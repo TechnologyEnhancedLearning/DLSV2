@@ -39,6 +39,12 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
             EnrolledByAdminActive = delegateInfo.EnrolledByAdminActive;
             SelfAssessed = delegateInfo.SelfAssessed;
             Confirmed = delegateInfo.Confirmed;
+            RegistrationAnswer1=  delegateInfo.RegistrationAnswer1;
+            RegistrationAnswer2 = delegateInfo.RegistrationAnswer2;
+            RegistrationAnswer3 = delegateInfo.RegistrationAnswer3;
+            RegistrationAnswer4 = delegateInfo.RegistrationAnswer4;
+            RegistrationAnswer5 = delegateInfo.RegistrationAnswer5;
+            RegistrationAnswer6 = delegateInfo.RegistrationAnswer6;
         }
         public int DelegateId { get; set; }
         public string? DelegateFirstName { get; set; }
@@ -63,8 +69,23 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public bool? EnrolledByAdminActive { get; set; }
         public int SelfAssessed { get; set; }
         public int Confirmed { get; set; }
+        public string? RegistrationAnswer1 { get; set; }
+        public string? RegistrationAnswer2 { get; set; }
+        public string? RegistrationAnswer3 { get; set; }
+        public string? RegistrationAnswer4 { get; set; }
+        public string? RegistrationAnswer5 { get; set; }
+        public string? RegistrationAnswer6 { get; set; }
         public bool Removed => RemovedDate.HasValue;
-
+        public string?[] DelegateRegistrationPrompts =>
+            new[]
+            {
+                RegistrationAnswer1,
+                RegistrationAnswer2,
+                RegistrationAnswer3,
+                RegistrationAnswer4,
+                RegistrationAnswer5,
+                RegistrationAnswer6,
+            };
         public List<SelfAssessmentSupervisor> Supervisors { get; set; } =
             new List<SelfAssessmentSupervisor>();
 

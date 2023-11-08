@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -35,6 +36,8 @@
         private readonly IConfiguration configuration;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ICourseService courseService;
+        private readonly IDelegateActivityDownloadFileService delegateActivityDownloadFileService;
+        private static readonly IClockUtility clockUtility = new ClockUtility();
 
         public ActivityDelegatesController(
             ICourseDelegatesService courseDelegatesService,
@@ -42,7 +45,7 @@
             IPaginateService paginateService,
             IConfiguration configuration,
             ISelfAssessmentService selfAssessmentService,
-            ICourseService courseService
+            ICourseService courseService, IDelegateActivityDownloadFileService delegateActivityDownloadFileService
         )
         {
             this.courseDelegatesService = courseDelegatesService;
@@ -51,6 +54,7 @@
             this.configuration = configuration;
             this.selfAssessmentService = selfAssessmentService;
             this.courseService = courseService;
+            this.delegateActivityDownloadFileService = delegateActivityDownloadFileService;
         }
 
         [NoCaching]
@@ -322,6 +326,81 @@
             );
 
             const string fileName = "Digital Learning Solutions Course Delegates.xlsx";
+            return File(content,
+                        FileHelper.GetContentTypeFromFileName(fileName),
+                        fileName
+            );
+        }
+        [Route("DownloadActivityDelegates/{selfAssessmentId:int}")]
+        public IActionResult DownloadActivityDelegates(
+            int selfAssessmentId,
+             string? searchString = null,
+            string? sortBy = null,
+            string sortDirection = GenericSortingHelper.Ascending,
+            string? existingFilterString = null
+        )
+        {
+            var centreId = User.GetCentreIdKnownNotNull();
+            searchString = searchString == null ? string.Empty : searchString.Trim();
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
+            sortDirection ??= GenericSortingHelper.Ascending;
+
+
+            bool? isDelegateActive, isProgressLocked, removed, hasCompleted;
+            isDelegateActive = isProgressLocked = removed = hasCompleted = null;
+
+            string? answer1, answer2, answer3;
+            answer1 = answer2 = answer3 = null;
+
+            if (!string.IsNullOrEmpty(existingFilterString))
+            {
+                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
+
+                if (selectedFilters.Count > 0)
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        var filterArr = filter.Split(FilteringHelper.Separator);
+                        dynamic filterValue = filterArr[2];
+                        switch (filterValue)
+                        {
+                            case FilteringHelper.EmptyValue:
+                                filterValue = "No option selected"; break;
+                            case "true":
+                                filterValue = true; break;
+                            case "false":
+                                filterValue = false; break;
+                        }
+
+                        if (filter.Contains("AccountStatus"))
+                            isDelegateActive = filterValue;
+
+                        if (filter.Contains("ProgressLocked"))
+                            isProgressLocked = filterValue;
+
+                        if (filter.Contains("ProgressRemoved"))
+                            removed = filterValue;
+
+                        if (filter.Contains("CompletionStatus"))
+                            hasCompleted = filterValue;
+
+                        if (filter.Contains("Answer1"))
+                            answer1 = filterValue;
+
+                        if (filter.Contains("Answer2"))
+                            answer2 = filterValue;
+
+                        if (filter.Contains("Answer3"))
+                            answer3 = filterValue;
+                    }
+                }
+            }
+            var itemsPerPage = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
+            var content = delegateActivityDownloadFileService.GetSelfAssessmentsInActivityDelegatesDownloadFile(searchString ?? string.Empty, itemsPerPage, sortBy, sortDirection,
+                        selfAssessmentId, centreId, isDelegateActive, removed
+            );
+
+            string fileName = $"{selfAssessmentService.GetSelfAssessmentNameById(selfAssessmentId)} delegates - {clockUtility.UtcNow:dd-MM-yyyy}.xlsx";
             return File(content,
                         FileHelper.GetContentTypeFromFileName(fileName),
                         fileName
