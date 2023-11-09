@@ -124,15 +124,6 @@
                             );
                     }
 
-                    if (action == TrackerEndpointAction.getsuspenddata)
-                    {
-                        return trackerActionService.GetSuspendData(
-                            query.ProgressId,
-                            query.TutorialId,
-                            query.CandidateId,
-                            query.CustomisationId
-                            );
-                    }
 
                     if (action == TrackerEndpointAction.storelessonlocation)
                     {
@@ -145,15 +136,6 @@
                             );
                     }
 
-                    if (action == TrackerEndpointAction.getlessonlocation)
-                    {
-                        return trackerActionService.GetLessonLocation(
-                            query.ProgressId,
-                            query.TutorialId,
-                            query.CandidateId,
-                            query.CustomisationId
-                            );
-                    }
                     throw new ArgumentOutOfRangeException();
                 }
 

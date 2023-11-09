@@ -71,18 +71,6 @@
             string progressText
         );
 
-        void UpdateAspProgressTutTime(
-            int tutorialId,
-            int progressId,
-            int tutTime
-        );
-
-        void UpdateAspProgressTutStat(
-            int tutorialId,
-            int progressId,
-            int tutStat
-        );
-
         void UpdateAspProgressTutStatAndTime(
             int tutorialId,
             int progressId,
@@ -115,9 +103,6 @@
             bool status,
             int progressId
         );
-
-        string? GetAspProgressSuspendData(int progressId, int tutorialId);
-        string? GetAspProgressLessonLocation(int progressId, int tutorialId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -562,36 +547,6 @@
             );
         }
 
-        public void UpdateAspProgressTutTime(
-            int tutorialId,
-            int progressId,
-            int tutTime
-        )
-        {
-            connection.Execute(
-                @"UPDATE aspProgress
-                    SET TutTime = TutTime + @tutTime
-                    WHERE (TutorialID = @tutorialId) AND (ProgressID = @progressId)",
-                new { tutorialId, progressId, tutTime }
-            );
-        }
-
-        public void UpdateAspProgressTutStat(
-            int tutorialId,
-            int progressId,
-            int tutStat
-        )
-        {
-            connection.Execute(
-                @"UPDATE aspProgress
-                    SET TutStat = @tutStat
-                    WHERE (TutorialID = @tutorialId)
-                      AND (ProgressID = @progressId)
-                      AND (TutStat < @tutStat)",
-                new { tutorialId, progressId, tutStat }
-            );
-        }
-
         public void UpdateAspProgressTutStatAndTime(
             int tutorialId,
             int progressId,
@@ -684,27 +639,6 @@
                     VALUES (@delegateId, @customisationId, @version, @insertionDate, 1, @sectionNumber, @score, @status, @progressId)",
                 new { delegateId, customisationId, version, insertionDate, sectionNumber, score, status, progressId }
             );
-        }
-
-        public string? GetAspProgressSuspendData(int progressId, int tutorialId)
-        {
-            return connection.Query<string?>(
-                @"SELECT TOP(1)
-                        SuspendData
-                    FROM dbo.aspProgress
-                    WHERE ProgressID = @progressId AND TutorialID = @tutorialId",
-                new { progressId, tutorialId }
-            ).FirstOrDefault();
-        }
-        public string? GetAspProgressLessonLocation(int progressId, int tutorialId)
-        {
-            return connection.Query<string?>(
-                @"SELECT TOP(1)
-                        LessonLocation
-                    FROM dbo.aspProgress
-                    WHERE ProgressID = @progressId AND TutorialID = @tutorialId",
-                new { progressId, tutorialId }
-            ).FirstOrDefault();
         }
     }
 }

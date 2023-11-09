@@ -45,20 +45,10 @@
                 string? sessionData
             );
 
-        string? GetAspProgressSessionData(
-            int progressId,
-            int tutorialId
-            );
-
         void StoreAspProgressLessonLocation(
                 int progressId,
                 int tutorialId,
                 string? lessonLocation
-            );
-
-        string? GetAspProgressLessonLocation(
-            int progressId,
-            int tutorialId
             );
 
         (TrackerEndpointResponse? validationResponse, DelegateCourseInfo? progress)
@@ -75,7 +65,7 @@
                 int customisationId
             );
         (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+            GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
                 int? progressId,
                 int? tutorialId,
                 int? candidateId,
@@ -251,7 +241,7 @@
         }
 
         public (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+            GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
                 int? progressId,
                 int? tutorialId,
                 int? candidateId,
@@ -261,14 +251,14 @@
             if (progressId == null || tutorialId == null ||
                 candidateId == null || customisationId == null)
             {
-                return (TrackerEndpointResponse.SuspendDataException, null);
+                return (TrackerEndpointResponse.StoreSuspendDataException, null);
             }
 
             var progress = progressService.GetDetailedCourseProgress(progressId.Value);
             if (progress == null || progress.DelegateId != candidateId ||
                 progress.CustomisationId != customisationId.Value)
             {
-                return (TrackerEndpointResponse.SuspendDataException, null);
+                return (TrackerEndpointResponse.StoreSuspendDataException, null);
             }
 
             return (null, progress);
@@ -282,28 +272,12 @@
                 sessionData
                 );
         }
-
-        public string? GetAspProgressSessionData(int progressId, int tutorialId)
-        {
-            return progressService.GetAspProgressSuspendData(
-                progressId,
-                tutorialId
-                );
-        }
         public void StoreAspProgressLessonLocation(int progressId, int tutorialId, string? lessonLocation)
         {
             progressService.StoreAspProgressLessonLocation(
                 progressId,
                 tutorialId,
                 lessonLocation
-                );
-        }
-
-        public string? GetAspProgressLessonLocation(int progressId, int tutorialId)
-        {
-            return progressService.GetAspProgressLessonLocation(
-                progressId,
-                tutorialId
                 );
         }
     }
