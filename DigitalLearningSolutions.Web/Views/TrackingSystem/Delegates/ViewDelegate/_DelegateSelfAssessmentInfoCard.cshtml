@@ -1,0 +1,18 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
+@model DelegateCourseInfoViewModel
+
+<div class="nhsuk-expander-group word-break @Model.Status()" id="@Model.CustomisationId-card">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text" id="@Model.CustomisationId-name" name="name">
+        @Model.CourseName
+        <span class="nhsuk-u-visually-hidden">(@Model.Status())</span>
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressDetailsWithStatusTags.cshtml" model="@Model" />
+
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressButtons.cshtml" model="@Model" />
+    </div>
+  </details>
+</div>

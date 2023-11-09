@@ -34,13 +34,13 @@
 
         void ClearAspProgressVerificationRequest(int progressId);
 
-        void SetCompletionDate(int progressId, DateTime? completeByDate);
+        void SetCompletionDate(int? progressId, DateTime? completeByDate);
 
         void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore);
 
         void UnlockProgress(int progressId);
 
-        void LockProgress(int progressId);
+        void LockProgress(int? progressId);
 
         IEnumerable<LearningLogEntry> GetLearningLogEntries(int progressId);
 
@@ -65,7 +65,7 @@
         );
 
         void UpdateProgressDetailsForStoreAspProgressV2(
-            int progressId,
+            int? progressId,
             int customisationVersion,
             DateTime submittedTime,
             string progressText
@@ -85,14 +85,14 @@
 
         void UpdateAspProgressTutStatAndTime(
             int tutorialId,
-            int progressId,
+            int? progressId,
             int tutStat,
             int tutTime
             );
 
         void UpdateAspProgressSuspendData(
            int tutorialId,
-           int progressId,
+           int? progressId,
            string? suspendData
        );
         void UpdateAspProgressLessonLocation(
@@ -101,9 +101,9 @@
            string? lessonLocation
        );
 
-        int GetCompletionStatusForProgress(int progressId);
+        int GetCompletionStatusForProgress(int? progressId);
 
-        IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int progressId, int sectionNumber);
+        IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int? progressId, int sectionNumber);
 
         void InsertAssessAttempt(
             int delegateId,
@@ -113,7 +113,7 @@
             int sectionNumber,
             int score,
             bool status,
-            int progressId
+            int? progressId
         );
 
         string? GetAspProgressSuspendData(int progressId, int tutorialId);
@@ -258,7 +258,7 @@
             );
         }
 
-        public void SetCompletionDate(int progressId, DateTime? completionDate)
+        public void SetCompletionDate(int? progressId, DateTime? completionDate)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
@@ -312,7 +312,7 @@
             );
         }
 
-        public void LockProgress(int progressId)
+        public void LockProgress(int? progressId)
         {
             connection.Execute(
                 @"UPDATE Progress SET
@@ -535,7 +535,7 @@
         }
 
         public void UpdateProgressDetailsForStoreAspProgressV2(
-            int progressId,
+            int? progressId,
             int customisationVersion,
             DateTime submittedTime,
             string progressText
@@ -594,7 +594,7 @@
 
         public void UpdateAspProgressTutStatAndTime(
             int tutorialId,
-            int progressId,
+            int? progressId,
             int tutStat,
             int tutTime
         )
@@ -611,7 +611,7 @@
 
         public void UpdateAspProgressSuspendData(
            int tutorialId,
-           int progressId,
+           int? progressId,
            string? suspendData
        )
         {
@@ -638,7 +638,7 @@
             );
         }
 
-        public int GetCompletionStatusForProgress(int progressId)
+        public int GetCompletionStatusForProgress(int? progressId)
         {
             return connection.QuerySingle<int>(
                 "GetAndReturnCompletionStatusByProgID",
@@ -647,7 +647,7 @@
             );
         }
 
-        public IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int progressId, int sectionNumber)
+        public IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int? progressId, int sectionNumber)
         {
             return connection.Query<AssessAttempt>(
                 @"SELECT
@@ -675,7 +675,7 @@
             int sectionNumber,
             int score,
             bool status,
-            int progressId
+            int? progressId
         )
         {
             connection.Execute(

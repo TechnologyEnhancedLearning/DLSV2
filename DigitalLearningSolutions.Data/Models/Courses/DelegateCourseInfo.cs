@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
     public class DelegateCourseInfo : CourseNameInfo
     {
@@ -18,6 +19,7 @@
             IsCourseActive = delegateCourseInfo.IsCourseActive;
             AllCentresCourse = delegateCourseInfo.AllCentresCourse;
             ProgressId = delegateCourseInfo.ProgressId;
+            CandidateAssessmentID = delegateCourseInfo.CandidateAssessmentID;
             IsProgressLocked = delegateCourseInfo.IsProgressLocked;
             LastUpdated = delegateCourseInfo.LastUpdated;
             CompleteBy = delegateCourseInfo.CompleteBy;
@@ -55,7 +57,8 @@
         }
 
         public DelegateCourseInfo(
-            int progressId,
+            int? progressId,
+            int? candidateAssessmentID,
             int customisationId,
             int customisationCentreId,
             bool isCourseActive,
@@ -97,6 +100,7 @@
         )
         {
             ProgressId = progressId;
+            CandidateAssessmentID = candidateAssessmentID;
             CustomisationId = customisationId;
             CustomisationCentreId = customisationCentreId;
             IsCourseActive = isCourseActive;
@@ -143,7 +147,8 @@
         public int CustomisationCentreId { get; set; }
         public bool IsCourseActive { get; set; }
         public bool AllCentresCourse { get; set; }
-        public int ProgressId { get; set; }
+        public int? ProgressId { get; set; }
+        public int? CandidateAssessmentID { get; set; }
         public bool IsProgressLocked { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime? CompleteBy { get; set; }

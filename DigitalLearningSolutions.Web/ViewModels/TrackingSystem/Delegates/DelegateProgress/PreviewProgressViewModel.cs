@@ -27,7 +27,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
             SectionDetails = courseProgressInfo.SectionProgress;
             AccessedVia = accessedVia;
         }
-        public int ProgressId { get; set; }
+        public int? ProgressId { get; set; }
         public string CandidateName { get; set; }
         public string CandidateNumber { get; set; }
         public string CourseName { get; set; }

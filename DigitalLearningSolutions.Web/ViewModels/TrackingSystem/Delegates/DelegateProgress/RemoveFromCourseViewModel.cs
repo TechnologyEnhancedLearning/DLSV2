@@ -34,7 +34,7 @@
         public int DelegateId { get; set; }
         public string Name { get; set; }
         public int CustomisationId { get; set; }
-        public int ProgressId { get; set; }
+        public int? ProgressId { get; set; }
         public string CourseName { get; set; }
         public bool Confirm { get; set; }
         public DelegateAccessRoute AccessedVia { get; set; }

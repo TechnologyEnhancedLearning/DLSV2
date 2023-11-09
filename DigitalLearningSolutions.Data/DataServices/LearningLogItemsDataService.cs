@@ -33,7 +33,7 @@
 
         void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate);
 
-        int MarkLearningLogItemsCompleteByProgressId(int progressId);
+        int MarkLearningLogItemsCompleteByProgressId(int? progressId);
     }
 
     public class LearningLogItemsDataService : ILearningLogItemsDataService
@@ -234,7 +234,7 @@
             );
         }
 
-        public int MarkLearningLogItemsCompleteByProgressId(int progressId)
+        public int MarkLearningLogItemsCompleteByProgressId(int? progressId)
         {
             return connection.Execute(
                 "UpdateLearningLogItemsMarkCompleteForRelatedCourseCompletion",

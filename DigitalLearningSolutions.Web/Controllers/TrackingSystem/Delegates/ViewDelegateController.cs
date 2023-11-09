@@ -18,6 +18,9 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
+    using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using System.Linq;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -35,7 +38,7 @@
         private readonly IUserService userService;
         private readonly IEmailVerificationService emailVerificationService;
         private readonly IEmailVerificationDataService emailVerificationDataService;
-
+        private readonly ISelfAssessmentService selfAssessmentService;
         public ViewDelegateController(
             IUserDataService userDataService,
             IUserService userService,
@@ -44,7 +47,8 @@
             IPasswordResetService passwordResetService,
             IConfiguration config,
             IEmailVerificationService emailVerificationService,
-            IEmailVerificationDataService emailVerificationDataService
+            IEmailVerificationDataService emailVerificationDataService,
+            ISelfAssessmentService selfAssessmentService
         )
         {
             this.userDataService = userDataService;
@@ -55,6 +59,7 @@
             this.config = config;
             this.emailVerificationService = emailVerificationService;
             this.emailVerificationDataService = emailVerificationDataService;
+            this.selfAssessmentService = selfAssessmentService;
         }
 
         public IActionResult Index(int delegateId, string? callType)
@@ -80,7 +85,10 @@
             var delegateCourses =
                 courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
 
-            var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses);
+            var selfAssessments =
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateEntity.UserAccount.Id, centreId);
+
+            var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses, selfAssessments);
 
             if (DisplayStringHelper.IsGuid(model.DelegateInfo.Email))
                 model.DelegateInfo.Email = null;

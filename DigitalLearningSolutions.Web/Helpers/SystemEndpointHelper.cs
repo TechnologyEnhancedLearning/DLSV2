@@ -20,7 +20,7 @@
             return $"{config.GetCurrentSystemBaseUrl()}/scoplayer/sco";
         }
 
-        public static string GetDownloadSummaryUrl(IConfiguration config, int progressId)
+        public static string GetDownloadSummaryUrl(IConfiguration config, int? progressId)
         {
             return $"{config.GetCurrentSystemBaseUrl()}/tracking/summary?ProgressID={progressId}";
         }

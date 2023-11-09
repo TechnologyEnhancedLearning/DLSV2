@@ -30,7 +30,7 @@
         }
 
         public DelegateAccessRoute AccessedVia { get; set; }
-        public int ProgressId { get; set; }
+        public int? ProgressId { get; set; }
         public int CustomisationId { get; set; }
         public string CourseName { get; set; }
         public int DelegateId { get; set; }

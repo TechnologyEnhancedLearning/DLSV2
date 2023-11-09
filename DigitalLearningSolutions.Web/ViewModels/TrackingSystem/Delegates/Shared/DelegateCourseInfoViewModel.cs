@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -38,6 +39,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         private DelegateCourseInfoViewModel(DelegateCourseInfo info)
         {
             ProgressId = info.ProgressId;
+            CandidateAssessmentID = info.CandidateAssessmentID;
             CustomisationId = info.CustomisationId;
 
             DelegateId = info.DelegateId;
@@ -98,7 +100,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
 
         public DelegateAccessRoute AccessedVia { get; set; }
         public ReturnPageQuery? ReturnPageQuery { get; set; }
-        public int ProgressId { get; set; }
+        public int? ProgressId { get; set; }
+        public int? CandidateAssessmentID { get; set; }
         public int CustomisationId { get; set; }
         public int DelegateId { get; set; }
         public string DelegateName { get; set; }

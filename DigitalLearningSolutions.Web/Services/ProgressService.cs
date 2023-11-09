@@ -33,7 +33,7 @@
         );
 
         void StoreAspProgressV2(
-            int progressId,
+            int? progressId,
             int version,
             string? progressText,
             int tutorialId,
@@ -208,7 +208,7 @@
         }
 
         public void StoreAspProgressV2(
-            int progressId,
+            int? progressId,
             int version,
             string? progressText,
             int tutorialId,

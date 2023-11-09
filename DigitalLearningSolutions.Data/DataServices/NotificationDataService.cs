@@ -11,7 +11,7 @@
     {
         UnlockData? GetUnlockData(int progressId);
 
-        ProgressCompletionData? GetProgressCompletionData(int progressId, int candidateId, int customisationId);
+        ProgressCompletionData? GetProgressCompletionData(int? progressId, int candidateId, int customisationId);
 
         IEnumerable<NotificationRecipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId);
 
@@ -53,7 +53,7 @@
             ).FirstOrDefault();
         }
 
-        public ProgressCompletionData? GetProgressCompletionData(int progressId, int candidateId, int customisationId)
+        public ProgressCompletionData? GetProgressCompletionData(int? progressId, int candidateId, int customisationId)
         {
             return connection.QuerySingle<ProgressCompletionData?>(
                 @"SELECT
