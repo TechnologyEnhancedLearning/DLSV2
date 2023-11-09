@@ -266,19 +266,19 @@
 
         public int StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
         {
-           return progressService.StoreAspProgressSuspendData(
-                progressId,
-                tutorialId,
-                sessionData
-                );
+            return progressService.StoreAspProgressSuspendData(
+                 progressId,
+                 tutorialId,
+                 sessionData
+                 );
         }
         public int StoreAspProgressLessonLocation(int progressId, int tutorialId, string? lessonLocation)
         {
-           return progressService.StoreAspProgressLessonLocation(
-                progressId,
-                tutorialId,
-                lessonLocation
-                );
+            return progressService.StoreAspProgressLessonLocation(
+                 progressId,
+                 tutorialId,
+                 lessonLocation
+                 );
         }
     }
 }

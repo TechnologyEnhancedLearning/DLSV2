@@ -65,7 +65,7 @@
             int? customisationId,
             string? suspendData
             );
-            
+
     }
 
     public class TrackerActionService : ITrackerActionService
@@ -392,11 +392,11 @@
             int rowsUpdated = 0;
             try
             {
-              rowsUpdated = storeAspService.StoreAspProgressSessionData(
-                    progressId!.Value,
-                    tutorialId!.Value,
-                    suspendData
-                );
+                rowsUpdated = storeAspService.StoreAspProgressSessionData(
+                      progressId!.Value,
+                      tutorialId!.Value,
+                      suspendData
+                  );
             }
             catch (Exception ex)
             {
@@ -445,7 +445,7 @@
                 logger.LogError(ex, ex.Message);
                 return TrackerEndpointResponse.StoreLessonLocationException;
             }
-            if (rowsUpdated > 0 )
+            if (rowsUpdated > 0)
             {
                 return TrackerEndpointResponse.Success;
             }
