@@ -24,6 +24,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
 
         private DelegateSelfAssessmentInfoViewModel(SelfAssessmentDelegate delegateInfo)
         {
+            CandidateAssessmentsId = delegateInfo.CandidateAssessmentsId;
             DelegateId = delegateInfo.DelegateId;
             SelfAssessmentId = delegateInfo.SelfAssessmentId;
             CandidateNumber = delegateInfo.CandidateNumber;
@@ -57,6 +58,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         }
         public DelegateAccessRoute AccessedVia { get; set; }
         public ReturnPageQuery? ReturnPageQuery { get; set; }
+        public int CandidateAssessmentsId { get; set; }
         public int DelegateId { get; set; }
         public int SelfAssessmentId { get; set; }
         public string? CandidateNumber { get; set; }

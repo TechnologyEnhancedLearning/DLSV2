@@ -47,9 +47,10 @@
             string? suspendData
             );
 
-        string? GetAspProgressSuspendData(
+        void StoreAspProgressLessonLocation(
             int progressId,
-            int tutorialId
+            int tutorialId,
+            string? lessonLocation
             );
 
         void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress);
@@ -225,6 +226,15 @@
             progressDataService.UpdateAspProgressSuspendData(tutorialId, progressId, suspendData);
         }
 
+        public void StoreAspProgressLessonLocation(
+            int progressId,
+            int tutorialId,
+            string? lessonLocation
+            )
+        {
+            progressDataService.UpdateAspProgressLessonLocation(tutorialId, progressId, lessonLocation);
+        }
+
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)
         {
             if (progress.Completed != null)
@@ -252,11 +262,6 @@
         )
         {
             return progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
-        }
-
-        public string? GetAspProgressSuspendData(int progressId, int tutorialId)
-        {
-            return progressDataService.GetAspProgressSuspendData(progressId, tutorialId);
         }
     }
 }

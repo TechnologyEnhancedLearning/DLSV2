@@ -45,8 +45,10 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
             RegistrationAnswer4 = delegateInfo.RegistrationAnswer4;
             RegistrationAnswer5 = delegateInfo.RegistrationAnswer5;
             RegistrationAnswer6 = delegateInfo.RegistrationAnswer6;
+            CandidateAssessmentsId = delegateInfo.CandidateAssessmentsId;
         }
         public int DelegateId { get; set; }
+        public int CandidateAssessmentsId { get; set; }
         public string? DelegateFirstName { get; set; }
         public string DelegateLastName { get; set; }
         public string? DelegateEmail { get; set; }

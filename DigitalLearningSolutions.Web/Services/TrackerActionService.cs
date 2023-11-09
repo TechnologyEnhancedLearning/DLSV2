@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Utilities;
-    using DocumentFormat.OpenXml.Bibliography;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
 
@@ -16,13 +15,6 @@
         TrackerObjectiveArray? GetObjectiveArray(int? customisationId, int? sectionId);
 
         TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning);
-
-        string? GetSuspendData(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId
-            );
 
         TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
 
@@ -57,6 +49,7 @@
             int? customisationId,
             string? sessionId
         );
+
         TrackerEndpointResponse StoreSuspendData(
             int? progressId,
             int? tutorialId,
@@ -64,6 +57,15 @@
             int? customisationId,
             string? suspendData
             );
+
+        TrackerEndpointResponse StoreLessonLocation(
+            int? progressId,
+            int? tutorialId,
+            int? candidateId,
+            int? customisationId,
+            string? suspendData
+            );
+            
     }
 
     public class TrackerActionService : ITrackerActionService
@@ -377,7 +379,7 @@
             string? suspendData
             )
         {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
                progressId,
                tutorialId,
                candidateId,
@@ -398,20 +400,21 @@
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.SuspendDataException;
+                return TrackerEndpointResponse.StoreAspProgressException;
             }
 
             return TrackerEndpointResponse.Success;
         }
 
-        public string? GetSuspendData(
+        public TrackerEndpointResponse StoreLessonLocation(
             int? progressId,
             int? tutorialId,
             int? candidateId,
-            int? customisationId
+            int? customisationId,
+            string? lessonLocation
             )
         {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
                progressId,
                tutorialId,
                candidateId,
@@ -423,17 +426,19 @@
             }
             try
             {
-                var suspendData = storeAspService.GetAspProgressSessionData(
-                     progressId!.Value,
-                     tutorialId!.Value
-                 );
-                return suspendData ?? "";
+                storeAspService.StoreAspProgressLessonLocation(
+                    progressId!.Value,
+                    tutorialId!.Value,
+                    lessonLocation
+                );
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
                 return TrackerEndpointResponse.StoreAspProgressException;
             }
+
+            return TrackerEndpointResponse.Success;
         }
     }
 }

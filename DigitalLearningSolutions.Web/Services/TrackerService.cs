@@ -124,13 +124,15 @@
                             );
                     }
 
-                    if (action == TrackerEndpointAction.getsuspenddata)
+
+                    if (action == TrackerEndpointAction.storelessonlocation)
                     {
-                        return trackerActionService.GetSuspendData(
+                        return trackerActionService.StoreLessonLocation(
                             query.ProgressId,
                             query.TutorialId,
                             query.CandidateId,
-                            query.CustomisationId
+                            query.CustomisationId,
+                            query.LessonLocation
                             );
                     }
 
