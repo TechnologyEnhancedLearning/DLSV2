@@ -26,13 +26,13 @@
 
         DelegateCourseProgressInfo? GetCourseProgressInfo(int progressId);
 
-        void UpdateCourseAdminFieldForDelegate(
+        int UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
             string? answer
         );
 
-        void StoreAspProgressV2(
+        int StoreAspProgressV2(
             int progressId,
             int version,
             string? progressText,
@@ -41,13 +41,13 @@
             int tutorialStatus
         );
 
-        void StoreAspProgressSuspendData(
+        int StoreAspProgressSuspendData(
             int progressId,
             int tutorialId,
             string? suspendData
             );
 
-        void StoreAspProgressLessonLocation(
+        int StoreAspProgressLessonLocation(
             int progressId,
             int tutorialId,
             string? lessonLocation
@@ -189,16 +189,16 @@
             return (delegateCourseProgess);
         }
 
-        public void UpdateCourseAdminFieldForDelegate(
+        public int UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
             string? answer
         )
         {
-            progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
+            return progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
         }
 
-        public void StoreAspProgressV2(
+        public int StoreAspProgressV2(
             int progressId,
             int version,
             string? progressText,
@@ -214,25 +214,25 @@
                 timeNow,
                 progressText ?? string.Empty
             );
-            progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime);
+            return progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime);
         }
 
-        public void StoreAspProgressSuspendData(
+        public int StoreAspProgressSuspendData(
             int progressId,
             int tutorialId,
             string? suspendData
             )
         {
-            progressDataService.UpdateAspProgressSuspendData(tutorialId, progressId, suspendData);
+            return progressDataService.UpdateAspProgressSuspendData(tutorialId, progressId, suspendData);
         }
 
-        public void StoreAspProgressLessonLocation(
+        public int StoreAspProgressLessonLocation(
             int progressId,
             int tutorialId,
             string? lessonLocation
             )
         {
-            progressDataService.UpdateAspProgressLessonLocation(tutorialId, progressId, lessonLocation);
+            return progressDataService.UpdateAspProgressLessonLocation(tutorialId, progressId, lessonLocation);
         }
 
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)

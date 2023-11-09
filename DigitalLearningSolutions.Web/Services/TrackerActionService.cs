@@ -346,7 +346,7 @@
             {
                 var assessmentPassed = score >= assessmentDetails.PlaPassThreshold;
 
-                progressDataService.InsertAssessAttempt(
+                var i = progressDataService.InsertAssessAttempt(
                     candidateId!.Value,
                     customisationId.Value,
                     version!.Value,
@@ -389,9 +389,10 @@
             {
                 return validationResponse;
             }
+            int rowsUpdated = 0;
             try
             {
-                storeAspService.StoreAspProgressSessionData(
+              rowsUpdated = storeAspService.StoreAspProgressSessionData(
                     progressId!.Value,
                     tutorialId!.Value,
                     suspendData
@@ -400,10 +401,16 @@
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.StoreAspProgressException;
+                return TrackerEndpointResponse.StoreSuspendDataException;
             }
-
-            return TrackerEndpointResponse.Success;
+            if (rowsUpdated > 0)
+            {
+                return TrackerEndpointResponse.Success;
+            }
+            else
+            {
+                return TrackerEndpointResponse.NoRowUpdated;
+            }
         }
 
         public TrackerEndpointResponse StoreLessonLocation(
@@ -424,9 +431,10 @@
             {
                 return validationResponse;
             }
+            int rowsUpdated = 0;
             try
             {
-                storeAspService.StoreAspProgressLessonLocation(
+                rowsUpdated = storeAspService.StoreAspProgressLessonLocation(
                     progressId!.Value,
                     tutorialId!.Value,
                     lessonLocation
@@ -435,10 +443,16 @@
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.StoreAspProgressException;
+                return TrackerEndpointResponse.StoreLessonLocationException;
             }
-
-            return TrackerEndpointResponse.Success;
+            if (rowsUpdated > 0 )
+            {
+                return TrackerEndpointResponse.Success;
+            }
+            else
+            {
+                return TrackerEndpointResponse.NoRowUpdated;
+            }
         }
     }
 }

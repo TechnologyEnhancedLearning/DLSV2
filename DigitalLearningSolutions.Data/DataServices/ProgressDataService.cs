@@ -58,32 +58,32 @@
             int customisationId
         );
 
-        void UpdateCourseAdminFieldForDelegate(
+        int UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
             string? answer
         );
 
-        void UpdateProgressDetailsForStoreAspProgressV2(
+        int UpdateProgressDetailsForStoreAspProgressV2(
             int progressId,
             int customisationVersion,
             DateTime submittedTime,
             string progressText
         );
 
-        void UpdateAspProgressTutStatAndTime(
+        int UpdateAspProgressTutStatAndTime(
             int tutorialId,
             int progressId,
             int tutStat,
             int tutTime
             );
 
-        void UpdateAspProgressSuspendData(
+        int UpdateAspProgressSuspendData(
            int tutorialId,
            int progressId,
            string? suspendData
        );
-        void UpdateAspProgressLessonLocation(
+        int UpdateAspProgressLessonLocation(
            int tutorialId,
            int progressId,
            string? lessonLocation
@@ -93,7 +93,7 @@
 
         IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int progressId, int sectionNumber);
 
-        void InsertAssessAttempt(
+        int InsertAssessAttempt(
             int delegateId,
             int customisationId,
             int version,
@@ -505,28 +505,28 @@
             ).SingleOrDefault();
         }
 
-        public void UpdateCourseAdminFieldForDelegate(
+        public int UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
             string? answer
         )
         {
-            connection.Execute(
+            return connection.Execute(
                 $@"UPDATE Progress
                         SET Answer{promptNumber} = @answer
                         WHERE ProgressID = @progressId",
                 new { progressId, promptNumber, answer }
-            );
+            ); 
         }
 
-        public void UpdateProgressDetailsForStoreAspProgressV2(
+        public int UpdateProgressDetailsForStoreAspProgressV2(
             int progressId,
             int customisationVersion,
             DateTime submittedTime,
             string progressText
         )
         {
-            connection.Execute(
+            return connection.Execute(
                 @"UPDATE Progress
                     SET
                         CustomisationVersion = @customisationVersion,
@@ -547,14 +547,14 @@
             );
         }
 
-        public void UpdateAspProgressTutStatAndTime(
+        public int UpdateAspProgressTutStatAndTime(
             int tutorialId,
             int progressId,
             int tutStat,
             int tutTime
         )
         {
-            connection.Execute(
+            return connection.Execute(
                 @"UPDATE aspProgress
                     SET TutStat = Case WHEN TutStat < @tutStat THEN @tutStat ELSE TutStat END, TutTime = TutTime + @tutTime
                     WHERE (TutorialID = @tutorialId)
@@ -564,13 +564,13 @@
             );
         }
 
-        public void UpdateAspProgressSuspendData(
+        public int UpdateAspProgressSuspendData(
            int tutorialId,
            int progressId,
            string? suspendData
        )
         {
-            connection.Execute(
+            return connection.Execute(
                 @"UPDATE aspProgress
                     SET SuspendData = @suspendData
                     WHERE (TutorialID = @tutorialId)
@@ -578,13 +578,13 @@
                 new { tutorialId, progressId, suspendData }
             );
         }
-        public void UpdateAspProgressLessonLocation(
+        public int UpdateAspProgressLessonLocation(
            int tutorialId,
            int progressId,
            string? lessonLocation
        )
         {
-            connection.Execute(
+            return connection.Execute(
                 @"UPDATE aspProgress
                     SET LessonLocation = @lessonLocation
                     WHERE (TutorialID = @tutorialId)
@@ -622,7 +622,7 @@
             );
         }
 
-        public void InsertAssessAttempt(
+        public int InsertAssessAttempt(
             int delegateId,
             int customisationId,
             int version,
@@ -633,7 +633,7 @@
             int progressId
         )
         {
-            connection.Execute(
+            return connection.Execute(
                 @"INSERT INTO AssessAttempts
                         (CandidateID, CustomisationID, CustomisationVersion, Date, AssessInstance, SectionNumber, Score, Status, ProgressID)
                     VALUES (@delegateId, @customisationId, @version, @insertionDate, 1, @sectionNumber, @score, @status, @progressId)",
