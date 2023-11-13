@@ -55,7 +55,9 @@
                     }
                 }
                 else
-                {@("-")}
+                {
+                    @("-")
+                }
             </dd>
             <dd class="nhsuk-summary-list__actions"></dd>
         </div>
@@ -87,6 +89,15 @@
             </dt>
             <dd class="nhsuk-summary-list__value" data-name-for-sorting="launch-count">
                 @Model.LaunchCount
+            </dd>
+            <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                Progress
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="progress">
+                <span style="white-space:pre">@Model.Progress</span>
             </dd>
             <dd class="nhsuk-summary-list__actions"></dd>
         </div>

@@ -211,6 +211,23 @@
                         (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
                             selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
                     }
+
+                    var adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
+
+                    foreach (var delagate in selfAssessmentDelegatesData.Delegates ?? Enumerable.Empty<SelfAssessmentDelegate>())
+                    {
+                        var competencies = selfAssessmentService.GetCandidateAssessmentResultsById(delagate.CandidateAssessmentsId, adminId).ToList();
+                        if (competencies?.Count() > 0)
+                        {
+                            var questions = competencies.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
+                            var selfAssessedCount = questions.Count(q => q.Result.HasValue);
+                            var verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required));
+
+                            delagate.Progress = "Self assessed: " + selfAssessedCount + " / " + questions.Count() + Environment.NewLine +
+                                                "Confirmed: " + verifiedCount + " / " + questions.Count();
+
+                        }
+                    }
                 }
 
                 var availableFilters = isCourseDelegate
@@ -340,7 +357,7 @@
         public IActionResult RemoveDelegateSelfAssessment(int candidateAssessmentsId)
         {
             var centreId = User.GetCentreIdKnownNotNull();
-          var selfAssessmentDelegate = selfAssessmentService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
+            var selfAssessmentDelegate = selfAssessmentService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
 
             if (selfAssessmentDelegate == null)
             {
