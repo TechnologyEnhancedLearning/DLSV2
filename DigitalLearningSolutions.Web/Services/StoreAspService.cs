@@ -39,13 +39,13 @@
             int tutorialStatus
         );
 
-        void StoreAspProgressSessionData(
+        int StoreAspProgressSessionData(
                 int progressId,
                 int tutorialId,
                 string? sessionData
             );
 
-        void StoreAspProgressLessonLocation(
+        int StoreAspProgressLessonLocation(
                 int progressId,
                 int tutorialId,
                 string? lessonLocation
@@ -264,21 +264,21 @@
             return (null, progress);
         }
 
-        public void StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
+        public int StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
         {
-            progressService.StoreAspProgressSuspendData(
-                progressId,
-                tutorialId,
-                sessionData
-                );
+            return progressService.StoreAspProgressSuspendData(
+                 progressId,
+                 tutorialId,
+                 sessionData
+                 );
         }
-        public void StoreAspProgressLessonLocation(int progressId, int tutorialId, string? lessonLocation)
+        public int StoreAspProgressLessonLocation(int progressId, int tutorialId, string? lessonLocation)
         {
-            progressService.StoreAspProgressLessonLocation(
-                progressId,
-                tutorialId,
-                lessonLocation
-                );
+            return progressService.StoreAspProgressLessonLocation(
+                 progressId,
+                 tutorialId,
+                 lessonLocation
+                 );
         }
     }
 }
