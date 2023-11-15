@@ -1,0 +1,17 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
+
+@model FreshDeskResponseViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+<div class="nhsuk-u-margin-bottom-8">
+    <p class="nhsuk-body-l nhsuk-u-margin-bottom-6">
+                Request error!!!
+            </p>
+    <p class="nhsuk-body-l nhsuk-u-margin-bottom-6">
+       @Model.ErrorMessage
+    </p>
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupportTicket" asp-action="Index">
+        Back to support
+    </a>
+</div>
