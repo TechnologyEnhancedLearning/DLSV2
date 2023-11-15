@@ -18,7 +18,7 @@
             DelegateUserCard delegateUser,
             IEnumerable<DelegateRegistrationPrompt> customFields,
             IEnumerable<DelegateCourseInfo> delegateCourses,
-            IEnumerable<SelfAssessment> selfAssessments
+            IEnumerable<CurrentSelfAssessment> selfAssessments
         )
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
@@ -38,6 +38,6 @@
         public IEnumerable<SearchableTagViewModel> Tags { get; set; }
         public string? WelcomeEmail { get; set; }
         public string? VerificationEmail { get; set; }
-        public IEnumerable<SelfAssessment> SelfAssessments { get; set; }
+        public IEnumerable<CurrentSelfAssessment> SelfAssessments { get; set; }
     }
 }

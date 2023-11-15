@@ -2,6 +2,7 @@
 @using DigitalLearningSolutions.Web.ViewModels.Common
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using  DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model ViewDelegateViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/viewDelegate.css")" asp-append-version="true">
@@ -190,11 +191,10 @@
         }
         @foreach (var delegateSelfAssessmentInfoViewModel in Model.SelfAssessments)
         {
-            if (delegateSelfAssessmentInfoViewModel != null)
+            if (delegateSelfAssessmentInfoViewModel.CandidateAssessmentId != null)
             {
-                
+                <partial name="_DelegateSelfAssessmentInfoCard" model="delegateSelfAssessmentInfoViewModel" />                
             }
-            <partial name="_DelegateSelfAssessmentInfoCard" model="delegateSelfAssessmentInfoViewModel" />
         }
     }
     @if (Model.DelegateInfo.IsActive && !string.IsNullOrEmpty(Model.DelegateInfo.Email))
@@ -206,7 +206,6 @@
            asp-route-delegateId="@Model.DelegateInfo.Id"
            asp-route-delegateUserId="@Model.DelegateInfo.UserId"
            asp-route-delegateName="@Model.DelegateInfo.Name">
-            Enrol on activity
             Enrol on activity
         </a>
     }
