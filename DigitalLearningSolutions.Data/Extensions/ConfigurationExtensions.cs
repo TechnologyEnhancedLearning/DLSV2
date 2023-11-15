@@ -39,6 +39,10 @@
         private const string LearningHubReportAPIClientIdentityKey = "LearningHubReportAPIConfig:ClientIdentityKey";
         private const string ExportQueryRowLimitKey = "FeatureManagement:ExportQueryRowLimit";
         private const string MaxBulkUploadRowsLimitKey = "FeatureManagement:MaxBulkUploadRows";
+
+        private const string FreshdeskCreateTicketGroupId = "FreshdeskAPIConfig:GroupId";
+        private const string FreshdeskCreateTicketProductId = "FreshdeskAPIConfig:ProductId";
+
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -162,6 +166,15 @@
         public static int GetMaxBulkUploadRowsLimit(this IConfiguration config)
         {
             return int.Parse(config[MaxBulkUploadRowsLimitKey]);
+        }
+
+        public static long GetFreshdeskCreateTicketGroupId(this IConfiguration config)
+        {
+            return long.Parse(config[FreshdeskCreateTicketGroupId]);
+        }
+        public static long GetFreshdeskCreateTicketProductId(this IConfiguration config)
+        {
+            return long.Parse(config[FreshdeskCreateTicketProductId]);
         }
     }
 }
