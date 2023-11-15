@@ -30,6 +30,7 @@
         private IConfiguration configuration = null!;
         private ISelfAssessmentService selfAssessmentDelegatesService = null!;
         private ICourseService courseService = null!;
+        private IDelegateActivityDownloadFileService delegateActivityDownloadFileService = null!;
 
         [SetUp]
         public void SetUp()
@@ -47,7 +48,7 @@
                     paginateService,
                     configuration,
                     selfAssessmentDelegatesService,
-                    courseService
+                    courseService, delegateActivityDownloadFileService
                 )
                 .WithDefaultContext()
                  .WithMockHttpContextSession()
@@ -183,7 +184,7 @@
                     paginateService,
                     configuration,
                     selfAssessmentDelegatesService,
-                    courseService
+                    courseService, delegateActivityDownloadFileService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, UserCentreId)

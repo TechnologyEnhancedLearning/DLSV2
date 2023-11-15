@@ -328,6 +328,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPlatformReportsDataService, PlatformReportsDataService>();
             services.AddScoped<IContractTypesDataService, ContractTypesDataService>();
             services.AddScoped<ICentresDownloadFileService, CentresDownloadFileService>();
+            services.AddScoped<IDelegateActivityDownloadFileService, DelegateActivityDownloadFileService>();
             services.AddScoped<IRequestSupportTicketDataService, RequestSupportTicketDataService>();
         }
 
