@@ -5,6 +5,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
@@ -50,20 +51,15 @@
             string? sessionId
         );
 
-        TrackerEndpointResponse StoreSuspendData(
-            int? progressId,
+        TrackerEndpointResponse UpdateLessonState(
             int? tutorialId,
+            int? progressId,
             int? candidateId,
             int? customisationId,
-            string? suspendData
-            );
-
-        TrackerEndpointResponse StoreLessonLocation(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId,
-            string? suspendData
+            int? tutStat,
+            int? tutTime,
+            string? suspendData,
+            string? lessonLocation
             );
 
     }
@@ -371,15 +367,18 @@
 
             return TrackerEndpointResponse.Success;
         }
-        public TrackerEndpointResponse StoreSuspendData(
-            int? progressId,
+        public TrackerEndpointResponse UpdateLessonState(
             int? tutorialId,
+            int? progressId,
             int? candidateId,
             int? customisationId,
-            string? suspendData
+            int? tutStat,
+            int? tutTime,
+            string? suspendData,
+            string? lessonLocation
             )
         {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForUpdateLessonStateEndpoints(
                progressId,
                tutorialId,
                candidateId,
@@ -392,58 +391,19 @@
             int rowsUpdated = 0;
             try
             {
-                rowsUpdated = storeAspService.StoreAspProgressSessionData(
-                      progressId!.Value,
+                rowsUpdated = storeAspService.UpdateLessonState(
                       tutorialId!.Value,
-                      suspendData
+                       progressId!.Value,
+                       tutStat!.Value,
+                       tutTime!.Value,
+                      suspendData,
+                      lessonLocation
                   );
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
                 return TrackerEndpointResponse.StoreSuspendDataException;
-            }
-            if (rowsUpdated > 0)
-            {
-                return TrackerEndpointResponse.Success;
-            }
-            else
-            {
-                return TrackerEndpointResponse.NoRowUpdated;
-            }
-        }
-
-        public TrackerEndpointResponse StoreLessonLocation(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId,
-            string? lessonLocation
-            )
-        {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
-               progressId,
-               tutorialId,
-               candidateId,
-               customisationId
-           );
-            if (validationResponse != null)
-            {
-                return validationResponse;
-            }
-            int rowsUpdated = 0;
-            try
-            {
-                rowsUpdated = storeAspService.StoreAspProgressLessonLocation(
-                    progressId!.Value,
-                    tutorialId!.Value,
-                    lessonLocation
-                );
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.StoreLessonLocationException;
             }
             if (rowsUpdated > 0)
             {
