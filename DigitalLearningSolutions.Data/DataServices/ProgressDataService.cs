@@ -574,8 +574,7 @@
                 @"UPDATE aspProgress
                     SET TutStat = Case WHEN TutStat < @tutStat THEN @tutStat ELSE TutStat END, TutTime = TutTime + @tutTime, SuspendData = @suspendData, LessonLocation = @lessonLocation
                     WHERE (TutorialID = @tutorialId)
-                      AND (ProgressID = @progressId)
-                      AND (TutStat < @tutStat)",
+                      AND (ProgressID = @progressId)",
                 new { tutorialId, progressId, tutStat, tutTime, suspendData, lessonLocation }
             );
         }

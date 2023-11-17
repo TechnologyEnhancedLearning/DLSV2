@@ -121,8 +121,8 @@
                             query.ProgressId,
                             query.CandidateId,
                             query.CustomisationId,
-                            Convert.ToInt32(query.TutorialTime),
                             query.TutorialStatus,
+                            Convert.ToInt32(query.TutorialTime),
                             query.SuspendData,
                             query.LessonLocation
                             );
