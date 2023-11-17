@@ -216,11 +216,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return View(model);
             }
 
-            if (!groupsService.IsDelegateGroupExist(model.GroupName))
+            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()))
             {
                 groupsService.AddDelegateGroup(
                 User.GetCentreIdKnownNotNull(),
-                model.GroupName!,
+                model.GroupName!.Trim(),
                 model.GroupDescription,
                 User.GetAdminId()!.Value
             );
@@ -228,7 +228,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
             else
             {
-                ModelState.AddModelError(nameof(model.GroupName), "Delegate Group with the same name already exists");
+                ModelState.AddModelError(nameof(model.GroupName), "Delegate group with the same name already exists");
                 return View("AddDelegateGroup", model);
             }
         }
@@ -296,11 +296,19 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return NotFound();
             }
 
-            groupsService.UpdateGroupName(
+            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()))
+            {
+                groupsService.UpdateGroupName(
                 groupId,
                 centreId,
-                model.GroupName
+                model.GroupName.Trim()
             );
+            }
+            else
+            {
+                ModelState.AddModelError(nameof(model.GroupName), "Delegate group with the same name already exists");
+                return View(model);
+            }
 
             return RedirectToAction("Index");
         }
