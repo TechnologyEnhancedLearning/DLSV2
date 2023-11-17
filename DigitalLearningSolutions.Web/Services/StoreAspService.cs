@@ -39,16 +39,13 @@
             int tutorialStatus
         );
 
-        int StoreAspProgressSessionData(
-                int progressId,
-                int tutorialId,
-                string? sessionData
-            );
-
-        int StoreAspProgressLessonLocation(
-                int progressId,
-                int tutorialId,
-                string? lessonLocation
+        int UpdateLessonState(
+            int tutorialId,
+            int progressId,
+            int tutStat,
+            int tutTime,
+           string? suspendData,
+           string? lessonLocation
             );
 
         (TrackerEndpointResponse? validationResponse, DelegateCourseInfo? progress)
@@ -65,7 +62,7 @@
                 int customisationId
             );
         (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
+            GetProgressAndValidateCommonInputsForUpdateLessonStateEndpoints(
                 int? progressId,
                 int? tutorialId,
                 int? candidateId,
@@ -241,7 +238,7 @@
         }
 
         public (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForStoreSuspendDataEndpoints(
+            GetProgressAndValidateCommonInputsForUpdateLessonStateEndpoints(
                 int? progressId,
                 int? tutorialId,
                 int? candidateId,
@@ -264,21 +261,9 @@
             return (null, progress);
         }
 
-        public int StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
+        public int UpdateLessonState(int progressId, int tutorialId, int tutStat, int tutTime, string? suspendData, string? lessonLocation)
         {
-            return progressService.StoreAspProgressSuspendData(
-                 progressId,
-                 tutorialId,
-                 sessionData
-                 );
-        }
-        public int StoreAspProgressLessonLocation(int progressId, int tutorialId, string? lessonLocation)
-        {
-            return progressService.StoreAspProgressLessonLocation(
-                 progressId,
-                 tutorialId,
-                 lessonLocation
-                 );
+            return progressService.UpdateLessonState(tutorialId, progressId, tutStat, tutTime, suspendData, lessonLocation);
         }
     }
 }
