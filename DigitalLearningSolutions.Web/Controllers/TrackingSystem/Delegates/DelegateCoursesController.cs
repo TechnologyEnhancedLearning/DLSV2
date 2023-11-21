@@ -14,6 +14,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System.Collections.Generic;
     using System.Linq;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -81,8 +82,8 @@
             var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
-            string isActive, categoryName, courseTopic, hasAdminFields;
-            isActive = categoryName = courseTopic = hasAdminFields = "Any";
+            string isActive, categoryName, courseTopic, hasAdminFields, isCourse, isSelfAssessment;
+            isActive = categoryName = courseTopic = hasAdminFields = isCourse = isSelfAssessment = "Any";
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
@@ -128,12 +129,29 @@
 
                         if (filter.Contains("HasAdminFields"))
                             hasAdminFields = filterValue;
+
+                        if (filter.Contains("Course|"))
+                            isCourse = filterValue;
+
+                        if (filter.Contains("SelfAssessment"))
+                            isSelfAssessment = filterValue;
                     }
                 }
             }
 
-            var delegateActivities = courseService.GetDelegateCourses(searchString ?? string.Empty,centreId, categoryId, true, null, isActive, categoryName, courseTopic,hasAdminFields).ToList();
-            var delegateAssessments = courseService.GetDelegateAssessments(centreId);
+            IEnumerable<DelegateAssessmentStatistics> delegateAssessments = new DelegateAssessmentStatistics[] { };
+            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> delegateActivities = new CourseStatisticsWithAdminFieldResponseCounts[] { };
+
+            if (isCourse == "Any" && isSelfAssessment == "Any")
+            {
+                delegateActivities = courseService.GetDelegateCourses(searchString ?? string.Empty, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
+                delegateAssessments = courseService.GetDelegateAssessments(centreId);
+            }
+
+            if (isCourse == "true")
+                delegateActivities = courseService.GetDelegateCourses(searchString ?? string.Empty, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
+            if (isSelfAssessment == "true")
+                delegateAssessments = courseService.GetDelegateAssessments(centreId);
 
             var allItems = delegateActivities.Cast<CourseStatistics>().ToList();
             allItems.AddRange(delegateAssessments);

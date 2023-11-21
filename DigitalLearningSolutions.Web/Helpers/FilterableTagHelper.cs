@@ -144,7 +144,10 @@
             CourseStatistics courseStatistics
         )
         {
-            var tags = new List<SearchableTagViewModel>();
+            var tags = new List<SearchableTagViewModel>
+            {
+                new SearchableTagViewModel(ActivityTypeFilterOptions.IsCourse)
+            };
 
             if (courseStatistics.Archived)
             {
@@ -224,7 +227,7 @@
             }
             else
             {
-                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved,true));
+                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true));
             }
 
             return tags;
@@ -278,6 +281,7 @@
         {
             return new List<SearchableTagViewModel>
             {
+                new SearchableTagViewModel(ActivityTypeFilterOptions.IsSelfAssessment),
                 delegateAssessmentStatistics.Active
                     ? new SearchableTagViewModel(CourseStatusFilterOptions.IsActive)
                     : new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive)
