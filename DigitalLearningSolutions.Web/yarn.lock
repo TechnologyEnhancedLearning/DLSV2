@@ -1556,10 +1556,10 @@
   resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-3.0.6.tgz#a04ca19e877687bd449f5ad37d33b104b71fdf95"
   integrity sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==
 
-"@types/js-search@^1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@types/js-search/-/js-search-1.4.3.tgz#fd7d2d216998a28609871885ff93422a1b94330a"
-  integrity sha512-C7qd0VWdjRHmg/ZOCGMioWrSSosXxceteBqkJRJF8mZoo7MRw5yuyiyanvdJmSffM9tvrtD/iKdrQNHiV/DlwA==
+"@types/js-search@^1.4.4":
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/@types/js-search/-/js-search-1.4.4.tgz#4f56b1f6552dd0ed906e6ece440ea7f8f4915e84"
+  integrity sha512-NYIBuSRTi2h6nLne0Ygx78BZaiT/q0lLU7YSkjOrDJWpSx6BioIZA/i2GZ+WmMUzEQs2VNIWcXRRAqisrG3ZNA==
 
 "@types/jsdom@^16.2.15":
   version "16.2.15"
