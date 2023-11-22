@@ -50,7 +50,7 @@
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? CentreEmail { get; set; }
 
-        [RegularExpression(@"^[\d.,\s]+$", ErrorMessage = "Ip prefix can contain only digits, stops, commas and spaces")]
+        [RegularExpression(@"^[\d.,\s]+$", ErrorMessage = "Ip Prefix can contain only digits, stops, commas and spaces")]
         public string? IpPrefix { get; set; }
         public bool ShowOnMap { get; set; }
         public string? ContactFirstName { get; set; }
