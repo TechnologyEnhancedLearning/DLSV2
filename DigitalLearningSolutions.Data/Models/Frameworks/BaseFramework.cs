@@ -10,7 +10,7 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
         public int ID { get; set; }
         [StringLength(255, MinimumLength = 3)]
         [Required]
-        public string FrameworkName { get; set; }
+        public string FrameworkName { get; set; } = string.Empty;
         public int OwnerAdminID { get; set; }
         public string? Owner { get; set; }
         public int? BrandID { get; set; }

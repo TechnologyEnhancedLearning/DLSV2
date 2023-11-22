@@ -23,6 +23,7 @@
 
         public int CentreId { get; set; }
         [Required(ErrorMessage = "Enter a centre name")]
+        [MaxLength(250, ErrorMessage = "Centre name must be 250 characters or fewer")]
         public string CentreName { get; set; }
         public int CentreTypeId { get; set; }
         public string? CentreType { get; set; }
@@ -32,6 +33,8 @@
         [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? CentreEmail { get; set; }
+
+        [RegularExpression(@"^[\d.,\s]+$", ErrorMessage = "IP Prefix can contain only digits, stops, commas and spaces")]
         public string? IpPrefix { get; set; }
         public bool ShowOnMap { get; set; }
     }

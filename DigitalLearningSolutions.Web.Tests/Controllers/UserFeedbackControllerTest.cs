@@ -21,10 +21,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private const string SourcePageTitle = "DLS Example Page Title";
         private const string FeedbackText = "Example feedback text";
 
-        private UserFeedbackController _userFeedbackController;
+        private UserFeedbackController _userFeedbackController = null!;
         private IUserFeedbackDataService _userFeedbackDataService = null!;
         private IMultiPageFormService _multiPageFormService = null!;
-        private ITempDataDictionary _tempData = null;
+        private ITempDataDictionary _tempData = null!;
 
         [SetUp]
         public void SetUp()

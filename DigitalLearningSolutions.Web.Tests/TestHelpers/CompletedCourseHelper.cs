@@ -48,10 +48,10 @@
             };
         }
 
-        public static async Task<CompletedPageViewModel> CompletedViewModelFromController(LearningPortalController controller)
+        public static async Task<CompletedPageViewModel?> CompletedViewModelFromController(LearningPortalController controller)
         {
             var result = await controller.Completed() as ViewResult;
-            return (CompletedPageViewModel)result!.Model;
+            return (CompletedPageViewModel?)result!.Model;
         }
     }
 }

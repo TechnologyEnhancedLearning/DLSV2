@@ -8,8 +8,8 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
     {
         public int FlagId { get; set; }
         public int FrameworkId { get; set; }
-        public string FlagName { get; set; }
+        public string FlagName { get; set; } = string.Empty;
         public string? FlagGroup { get; set; }
-        public string FlagTagClass { get; set; }
+        public string FlagTagClass { get; set; } = string.Empty;
     }
 }

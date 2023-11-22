@@ -24,6 +24,6 @@
 
         public int TotalMins { get; set; }
         public double PopularityRating { get; set; }
-        public IEnumerable<Section> Sections { get; set; }
+        public IEnumerable<Section> Sections { get; set; } = Enumerable.Empty<Section>();
     }
 }

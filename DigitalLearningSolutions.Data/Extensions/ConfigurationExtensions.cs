@@ -16,6 +16,7 @@
         private const string LearningHubAuthLoginEndpoint = "LoginEndpoint";
         private const string LearningHubAuthLinkingEndpoint = "LinkingEndpoint";
         private const string LearningHubAuthClientCode = "ClientCode";
+        private const string LearningHubAuthSsoClientCode = "ClientCodeSso";
 
         private const string MapsApiKey = "MapsAPIKey";
         private const string LearningHubSsoSectionKey = "LearningHubSSO";
@@ -37,6 +38,11 @@
         private const string LearningHubReportAPIClientId = "LearningHubReportAPIConfig:ClientId";
         private const string LearningHubReportAPIClientIdentityKey = "LearningHubReportAPIConfig:ClientIdentityKey";
         private const string ExportQueryRowLimitKey = "FeatureManagement:ExportQueryRowLimit";
+        private const string MaxBulkUploadRowsLimitKey = "FeatureManagement:MaxBulkUploadRows";
+
+        private const string FreshdeskCreateTicketGroupId = "FreshdeskAPIConfig:GroupId";
+        private const string FreshdeskCreateTicketProductId = "FreshdeskAPIConfig:ProductId";
+
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -65,6 +71,11 @@
         public static string GetLearningHubAuthApiClientCode(this IConfiguration config)
         {
             return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthClientCode}"];
+        }
+
+        public static string GetLearningHubAuthApiSsoClientCode(this IConfiguration config)
+        {
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthSsoClientCode}"];
         }
 
         public static string GetLearningHubAuthApiLoginEndpoint(this IConfiguration config)
@@ -152,6 +163,18 @@
         {
             return int.Parse(config[ExportQueryRowLimitKey]);
         }
+        public static int GetMaxBulkUploadRowsLimit(this IConfiguration config)
+        {
+            return int.Parse(config[MaxBulkUploadRowsLimitKey]);
+        }
 
+        public static long GetFreshdeskCreateTicketGroupId(this IConfiguration config)
+        {
+            return long.Parse(config[FreshdeskCreateTicketGroupId]);
+        }
+        public static long GetFreshdeskCreateTicketProductId(this IConfiguration config)
+        {
+            return long.Parse(config[FreshdeskCreateTicketProductId]);
+        }
     }
 }

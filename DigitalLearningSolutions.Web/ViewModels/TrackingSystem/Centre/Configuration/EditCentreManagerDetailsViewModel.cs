@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class EditCentreManagerDetailsViewModel
     {
@@ -19,12 +20,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
 
         public int CentreId { get; set; }
 		
-        [Required(ErrorMessage = "Enter a first name")]
-        [MaxLength(250, ErrorMessage = "First name must be 250 characters or fewer")]
+        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongFirstName)]
         public string? FirstName { get; set; }
 
-        [Required(ErrorMessage = "Enter a last name")]
-        [MaxLength(250, ErrorMessage = "Last name must be 250 characters or fewer")]
+        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]		
         public string? LastName { get; set; }
 
         [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
@@ -32,7 +31,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? Email { get; set; }
 
-        [MaxLength(250, ErrorMessage = "Telephone number must be 250 characters or fewer")]
+        [RegularExpression(@"^(?:\d\s*?){10,11}$", ErrorMessage = "Enter a Telephone number in the correct format.")]
         public string? Telephone { get; set; }
     }
 }

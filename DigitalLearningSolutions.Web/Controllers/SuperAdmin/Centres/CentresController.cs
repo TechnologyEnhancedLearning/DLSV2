@@ -10,6 +10,7 @@ using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
+using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
@@ -19,8 +20,6 @@ using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 {
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
-
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.SuperAdmin))]
@@ -33,8 +32,9 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         private readonly ICentresDataService centresDataService;
         private readonly IContractTypesDataService contractTypesDataService;
         private readonly ICourseDataService courseDataService;
+        private readonly ICentresDownloadFileService centresDownloadFileService;
         public CentresController(ICentresService centresService, ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IRegionDataService regionDataService, ICentresDataService centresDataService, IContractTypesDataService contractTypesDataService, ICourseDataService courseDataService)
+            IRegionDataService regionDataService, ICentresDataService centresDataService, IContractTypesDataService contractTypesDataService, ICourseDataService courseDataService, ICentresDownloadFileService centresDownloadFileService)
         {
             this.centresService = centresService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
@@ -42,6 +42,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             this.centresDataService = centresDataService;
             this.contractTypesDataService = contractTypesDataService;
             this.courseDataService = courseDataService;
+            this.centresDownloadFileService = centresDownloadFileService;
         }
 
         [Route("SuperAdmin/Centres/{page=0:int}")]
@@ -227,6 +228,18 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditCentreDetails")]
         public IActionResult EditCentreDetails(EditCentreDetailsSuperAdminViewModel model)
         {
+            var centres = centresDataService.GetAllCentres().ToList();
+            bool isExistingCentreName = centres.Where(center => center.Item1 == model.CentreId)
+                .Select(center => center.Item2)
+                .FirstOrDefault()
+                .Equals(model.CentreName.Trim());
+            bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (isCentreNamePresent && !isExistingCentreName)
+            {
+                ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
+            }
+
             if (!ModelState.IsValid)
             {
                 var regions = regionDataService.GetRegionsAlphabetical().ToList();
@@ -238,12 +251,13 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
                     centreTypes, model.CentreTypeId
                 );
+                model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
                 return View(model);
             }
 
             centresDataService.UpdateCentreDetailsForSuperAdmin(
                 model.CentreId,
-                model.CentreName,
+                model.CentreName.Trim(),
                 model.CentreTypeId,
                 model.RegionId,
                 model.CentreEmail,
@@ -468,7 +482,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         public IActionResult AddCentre(AddCentreSuperAdminViewModel model)
         {
             var centres = centresDataService.GetAllCentres().ToList();
-            bool isCentreNamePresent = centres.Any(center => center.Item2 == model.CentreName);
+            bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
             if (isCentreNamePresent)
             {
                 ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
@@ -479,11 +493,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 var regions = regionDataService.GetRegionsAlphabetical().ToList();
                 model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions, model.RegionId);
                 model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes, model.CentreTypeId);
+                model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
                 return View(model);
             }
 
             int insertedID = centresDataService.AddCentreForSuperAdmin(
-                model.CentreName,
+                model.CentreName.Trim(),
                 model.ContactFirstName,
                 model.ContactLastName,
                 model.ContactEmail,
@@ -534,7 +549,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult EditContractInfo(ContractTypeViewModel contractTypeViewModel, int? day, int? month, int? year)
         {
-            if ((day != 0 && day != null) | (month != 0 && month != null) | (year != 0 && year != null))
+            if ((day.GetValueOrDefault() != 0) || (month.GetValueOrDefault() != 0) || (year.GetValueOrDefault() != 0))
             {
                 var validationResult = DateValidator.ValidateDate(day ?? 0, month ?? 0, year ?? 0);
                 if (validationResult.ErrorMessage != null)
@@ -573,8 +588,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 return View(model);
             }
             DateTime? date = null;
-            if ((day != 0 && day != null) && (month != 0 && month != null) && (year != 0 && year != null))
-            {
+            if ((day.GetValueOrDefault() != 0) || (month.GetValueOrDefault() != 0) || (year.GetValueOrDefault() != 0))
+                {
                 date = new DateTime(year ?? 0, month ?? 0, day ?? 0);
             }
             this.centresDataService.UpdateContractTypeandCenter(contractTypeViewModel.CentreId,
@@ -584,6 +599,25 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                date
                );
             return RedirectToAction("ManageCentre", new { centreId = contractTypeViewModel.CentreId });
+        }
+
+        [Route("SuperAdmin/Centres/Export")]
+        public IActionResult Export(
+            string? searchString = null,
+            string? existingFilterString = null
+        )
+        {
+            var content = centresDownloadFileService.GetAllCentresFile(
+                searchString,
+                existingFilterString
+            );
+
+            const string fileName = "DLS Centres Export.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
         }
     }
 }

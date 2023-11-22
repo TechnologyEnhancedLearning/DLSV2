@@ -106,7 +106,7 @@
             );
 
             // Then
-            modelState[DefaultFieldName].Errors.Count.Should().Be(1);
+            modelState[DefaultFieldName]?.Errors.Count.Should().Be(1);
             AssertModelStateErrorIsExpected(DefaultFieldName, DefaultErrorMessage);
         }
 
@@ -189,7 +189,7 @@
             );
 
             // Then
-            modelState[DefaultFieldName].Errors.Count.Should().Be(1);
+            modelState[DefaultFieldName]?.Errors.Count.Should().Be(1);
 
             // note: error message is not CommonValidationErrorMessages.EmailInUseAtCentre
             AssertModelStateErrorIsExpected(DefaultFieldName, DefaultErrorMessage);
@@ -315,7 +315,7 @@
             );
 
             // Then
-            modelState[DefaultFieldName].Errors.Count.Should().Be(1);
+            modelState[DefaultFieldName]?.Errors.Count.Should().Be(1);
 
             // note: error message is not CommonValidationErrorMessages.EmailInUseAtCentre
             AssertModelStateErrorIsExpected(DefaultFieldName, DefaultErrorMessage);
@@ -430,7 +430,7 @@
             );
 
             // Then
-            modelState[DefaultFieldName].Errors.Count.Should().Be(1);
+            modelState[DefaultFieldName]?.Errors.Count.Should().Be(1);
 
             // note: error message is not CommonValidationErrorMessages.WrongEmailForCentreDuringAdminRegistration
             AssertModelStateErrorIsExpected(DefaultFieldName, DefaultErrorMessage);
@@ -478,7 +478,7 @@
             );
 
             // Then
-            modelState["EmailField"].Errors.Should()
+            modelState["EmailField"]?.Errors.Should()
                 .Contain(e => e.ErrorMessage == CommonValidationErrorMessages.EmailInUseAtCentre);
         }
 
@@ -518,7 +518,7 @@
             );
 
             // Then
-            modelState["EmailField"].Errors.Count.Should().Be(1);
+            modelState["EmailField"]?.Errors.Count.Should().Be(1);
         }
 
         [Test]
@@ -542,7 +542,7 @@
 
         private static void AssertModelStateErrorIsExpected(string modelProperty, string expectedErrorMessage)
         {
-            var errorMessage = modelState[modelProperty].Errors.First().ErrorMessage;
+            var errorMessage = modelState[modelProperty]?.Errors.First().ErrorMessage;
             errorMessage.Should().BeEquivalentTo(expectedErrorMessage);
         }
     }

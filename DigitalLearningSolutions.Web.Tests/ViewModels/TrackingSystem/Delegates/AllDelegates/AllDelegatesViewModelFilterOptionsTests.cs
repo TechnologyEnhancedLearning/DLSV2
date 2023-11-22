@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using FluentAssertions;
     using NUnit.Framework;
@@ -131,8 +131,8 @@
             };
             var customPromptFilters = new List<FilterModel>
             {
-                new FilterModel("CentreRegistrationPrompt1", "First prompt", prompt1Options),
-                new FilterModel("CentreRegistrationPrompt4", "Fourth prompt", prompt4Options),
+                new FilterModel("CentreRegistrationPrompt1", "First prompt", prompt1Options,"prompts"),
+                new FilterModel("CentreRegistrationPrompt4", "Fourth prompt", prompt4Options,"prompts"),
             };
 
             return (prompts, customPromptFilters);

@@ -5,7 +5,7 @@
     {
         public int ID { get; set; }
         [Required]
-        public string Question { get; set; }
+        public string Question { get; set; } = string.Empty;
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
         public int AssessmentQuestionInputTypeID { get; set; }

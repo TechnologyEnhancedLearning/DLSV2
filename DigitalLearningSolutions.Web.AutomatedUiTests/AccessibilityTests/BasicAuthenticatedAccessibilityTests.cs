@@ -100,8 +100,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
         [InlineData("/TrackingSystem/Delegates/Courses/1", "Delegate courses")]
-        [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
-        [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
+        [InlineData("/TrackingSystem/Delegates/ActivityDelegates", "Activity delegates")]
+        [InlineData("/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/243104", "Delegate progress")]
         [InlineData(
             "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditSupervisor",
             "Edit supervisor for Digital Literacy for the Workplace - CC Test"
@@ -123,7 +123,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "Remove enrolment"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/LearningLog",
+            "/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/243104/LearningLog",
             "Delegate learning log"
         )]
         [InlineData(

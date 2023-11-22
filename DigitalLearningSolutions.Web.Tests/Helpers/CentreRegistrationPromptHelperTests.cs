@@ -2,11 +2,11 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;    
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -111,7 +111,7 @@
             promptsService.ValidateCentreRegistrationPrompts(1, null, Answer2, null, null, null, null, modelState);
 
             // Then
-            modelState["Answer1"].Errors.Count.Should().Be(1);
+            modelState["Answer1"]?.Errors.Count.Should().Be(1);
             modelState["Answer2"].Should().BeNull();
         }
 
@@ -136,7 +136,7 @@
 
             // Then
             modelState[Answer1].Should().BeNull();
-            modelState[Answer2].Errors.Count.Should().Be(1);
+            modelState[Answer2]?.Errors.Count.Should().Be(1);
         }
 
         [Test]

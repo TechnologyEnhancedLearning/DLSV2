@@ -29,11 +29,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 
         private IUserService userService = null!;
         private IUserCentreAccountsService userCentreAccountsService = null!;
-        private IUserDataService userDataService=null;
-        private ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService=null;
-        private ISearchSortFilterPaginateService searchSortFilterPaginateService=null;
-        private IJobGroupsDataService jobGroupsDataService=null;
-        private IClockUtility clockUtility=null;
+        private IUserDataService userDataService=null!;
+        private ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService=null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService=null!;
+        private IJobGroupsDataService jobGroupsDataService=null!;
+        private IClockUtility clockUtility=null!;
         private static readonly List<int> EmptyListOfCentreIds = new List<int>();
         [SetUp]
         public void Setup()

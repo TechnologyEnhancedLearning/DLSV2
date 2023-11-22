@@ -7,9 +7,9 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Progress;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
@@ -329,7 +329,7 @@
             const string answer = "Test answer";
 
             A.CallTo(() => progressDataService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
-                .DoesNothing();
+                .Returns(0);
 
             // When
             progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
@@ -352,7 +352,7 @@
             var timeNow = new DateTime(2022, 1, 1, 1, 1, 1, 1);
 
             A.CallTo(() => progressDataService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
-                .DoesNothing();
+                .Returns(0);
             A.CallTo(() => clockUtility.UtcNow)
                 .Returns(timeNow);
 
@@ -376,9 +376,7 @@
                     )
                 )
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus))
+            A.CallTo(() => progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime))
                 .MustHaveHappenedOnceExactly();
         }
 

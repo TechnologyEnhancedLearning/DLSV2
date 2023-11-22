@@ -32,15 +32,15 @@
 
         public int LearningHubReferenceId { get; set; }
 
-        public string ResourceName { get; set; }
+        public string ResourceName { get; set; } = string.Empty;
 
-        public string ResourceDescription { get; set; }
+        public string ResourceDescription { get; set; } = string.Empty;
 
-        public string ResourceType { get; set; }
+        public string ResourceType { get; set; } = string.Empty;
 
-        public string CatalogueName { get; set; }
+        public string CatalogueName { get; set; } = string.Empty;
 
-        public string ResourceLink { get; set; }
+        public string ResourceLink { get; set; } = string.Empty;
 
         public bool IsInActionPlan { get; set; }
 

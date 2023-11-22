@@ -32,7 +32,7 @@
                     new ActionDescriptor()
                 ),
                 new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
+                new Dictionary<string, object?>(),
                 homeController
             );
         }
@@ -67,7 +67,7 @@
         public void Does_not_return_NotFound_if_route_is_from_CourseDelegates()
         {
             // Given
-            context.RouteData.Values["accessedVia"] = DelegateAccessRoute.CourseDelegates.Name;
+            context.RouteData.Values["accessedVia"] = DelegateAccessRoute.ActivityDelegates.Name;
 
             // When
             new VerifyDelegateAccessedViaValidRoute().OnActionExecuting(context);

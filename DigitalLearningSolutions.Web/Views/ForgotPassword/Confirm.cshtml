@@ -1,14 +1,14 @@
 ﻿@{
-  ViewData["Title"] = "Password Reset Email Sent";
+    ViewData["Title"] = "Password reset request submitted";
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-6">Password reset email sent</h1>
-    <p>An email has been sent to you giving details of how to reset your password.</p>
-    <p>The link provided in that email will expire in two hours.</p>
-    <p>Check your Junk folder if the email doesn't arrive.</p>
-    <p>If you have not received an email, please contact your centre administrator.</p>
-    <p>To find out your administrator details, <a asp-controller="FindYourCentre" asp-action="Index">search for your centre here</a>.</p>
-  </div>
+    <div class="nhsuk-grid-column-full">
+        <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-6">Password reset request submitted</h1>
+        <p>If an account exists that matches the email address provided, you should receive an email at that address with instructions on how to reset your password.</p>
+
+        <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Login" asp-action="Index" role="button">
+            Log in
+        </a>
+    </div>
 </div>

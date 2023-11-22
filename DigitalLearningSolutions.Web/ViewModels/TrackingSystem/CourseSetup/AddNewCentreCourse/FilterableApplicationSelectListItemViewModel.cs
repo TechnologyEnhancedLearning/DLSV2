@@ -15,7 +15,7 @@
             Selected = details.ApplicationId == selectedApplicationId;
         }
 
-        public bool Selected { get; set; }
+        public new bool Selected { get; set; }
 
         public int ApplicationId { get; set; }
 

@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
     using FluentAssertions;
     using NUnit.Framework;

@@ -1,19 +1,31 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using Dapper;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using Dapper;
-    using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public interface IGroupsDataService
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
 
+        (IEnumerable<Group>, int) GetGroupsForCentre(
+            string? search,
+            int? offset,
+            int? rows,
+            string? sortBy,
+            string? sortDirection,
+            int? centreId,
+            string? filterAddedBy,
+            string? filterLinkedField
+        );
+
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
+
+        IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId);
 
         IEnumerable<GroupCourse> GetGroupCoursesVisibleToCentre(int centreId);
 
@@ -79,15 +91,19 @@
             string? option,
             int? jobGroupId
         );
+        bool IsDelegateGroupExist(string groupLabel);
     }
 
     public class GroupsDataService : IGroupsDataService
     {
         private const string CourseCountSql = @"SELECT COUNT(*)
-                FROM GroupCustomisations AS gc
-                JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
-                INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
-                INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                FROM GroupCustomisations AS gc WITH (NOLOCK)
+                JOIN Customisations AS c WITH (NOLOCK)
+                ON c.CustomisationID = gc.CustomisationID
+                INNER JOIN dbo.CentreApplications AS ca WITH (NOLOCK)
+                ON ca.ApplicationID = c.ApplicationID
+                INNER JOIN dbo.Applications AS ap WITH (NOLOCK)
+                ON ap.ApplicationID = ca.ApplicationID
                 WHERE gc.GroupID = g.GroupID
                 AND ca.CentreId = @centreId
                 AND gc.InactivatedDate IS NULL
@@ -149,11 +165,17 @@
                         GroupID,
                         GroupLabel,
                         GroupDescription,
-                        (SELECT COUNT(*) FROM GroupDelegates as gd 
-                        INNER JOIN DelegateAccounts AS da ON gd.DelegateID = da.ID
-                        INNER JOIN Users AS u ON da.UserID=u.ID 
-                        LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
-                        where gd.GroupID = g.GroupID AND (TRY_CAST(u.PrimaryEmail AS UNIQUEIDENTIFIER) IS NULL OR ucd.Email IS NOT NULL)) AS DelegateCount,
+                        (SELECT  COUNT(*) FROM ( SELECT
+							da.CentreID,
+							COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
+							u.JobGroupId
+								FROM DelegateAccounts AS da WITH (NOLOCK)
+						INNER JOIN Centres AS c WITH (NOLOCK) ON c.CentreID = da.CentreID
+						INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+						LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
+						INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID  where c.CentreID = @centreId
+						AND u.JobGroupID = (select JobGroupID from JobGroups where JobGroupName = GroupLabel))  D  Where 
+						EmailAddress LIKE '%_@_%.__%') AS DelegateCount,
                         ({CourseCountSql}) AS CoursesCount,
                         g.CreatedByAdminUserID AS AddedByAdminId,
                         au.Forename AS AddedByFirstName,
@@ -172,9 +194,11 @@
                         END AS LinkedToFieldName,
                         AddNewRegistrants,
                         SyncFieldChanges
-                        FROM Groups AS g
-                    JOIN AdminUsers AS au ON au.AdminID = g.CreatedByAdminUserID
-                    JOIN Centres AS c ON c.CentreID = g.CentreID
+                        FROM Groups AS g WITH (NOLOCK)
+                    JOIN AdminUsers AS au WITH (NOLOCK)
+                    ON au.AdminID = g.CreatedByAdminUserID
+                    JOIN Centres AS c WITH (NOLOCK)
+                    ON c.CentreID = g.CentreID
                     WHERE RemovedDate IS NULL";
 
         public GroupsDataService(IDbConnection connection)
@@ -188,6 +212,93 @@
                 @$"{groupsSql} AND g.CentreID = @centreId",
                 new { centreId }
             );
+        }
+
+        public (IEnumerable<Group>, int) GetGroupsForCentre(
+            string? search = "",
+            int? offset = 0,
+            int? rows = 10,
+            string? sortBy = "",
+            string? sortDirection = "",
+            int? centreId = 0,
+            string? filterAddedBy = "",
+            string? filterLinkedField = "")
+        {
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+            }
+
+            var rootSqlQuery = @$"{groupsSql} AND g.CentreId = @centreId";
+
+            var filtersClause = "";
+            if (!string.IsNullOrEmpty(filterAddedBy))
+            {
+                filtersClause += @$"AND (g.CreatedByAdminUserID = " + filterAddedBy + ") ";
+            }
+            if (!string.IsNullOrEmpty(filterLinkedField))
+            {
+                filtersClause += @$"AND (LinkedToField = " + filterLinkedField + ") ";
+            }
+
+            var searchClause = "AND(COALESCE(GroupLabel, '') LIKE N'%" + search + "%' OR COALESCE(GroupDescription, '') LIKE N'%" + search + "%')";
+
+            var sortOrder = sortDirection == "Ascending" ? " ASC " : " DESC ";
+
+            if (string.IsNullOrEmpty(sortBy) || sortBy == DefaultSortByOptions.Name.PropertyName)
+            {
+                sortBy = "GroupLabel";
+            }
+            var orderByClause = " ORDER BY " + sortBy + " " + sortOrder;
+
+            var paginationClause = " OFFSET " + offset.ToString() + " ROWS FETCH NEXT " + rows + " ROWS ONLY ";
+
+            var groupsForCentreQuery = rootSqlQuery + " " + searchClause + " " + filtersClause + " " + orderByClause + " " + paginationClause;
+
+            IEnumerable<Group> groups = connection.Query<Group>(
+                groupsForCentreQuery,
+                new { centreId },
+                commandTimeout: 3000
+            );
+
+            int resultCount = connection.ExecuteScalar<int>(
+                @$"SELECT COUNT(g.GroupID) AS Matches
+                    FROM Groups AS g WITH (NOLOCK)
+                    JOIN AdminUsers AS au WITH (NOLOCK)
+                    ON au.AdminID = g.CreatedByAdminUserID
+                    JOIN Centres AS c WITH (NOLOCK)
+                    ON c.CentreID = g.CentreID
+                    WHERE RemovedDate IS NULL
+                    AND g.CentreId = @centreId
+                    AND (COALESCE(GroupLabel, '') LIKE N'%' + @search + N'%'
+                    OR COALESCE(GroupDescription, '') LIKE N'%' + @search + N'%')"
+                    + filtersClause,
+                new { centreId, search },
+                commandTimeout: 3000
+            );
+
+            return (groups, resultCount);
+        }
+
+        public IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId = 0)
+        {
+            IEnumerable<GroupDelegateAdmin> addedByAdmins = connection.Query<GroupDelegateAdmin>(
+                @$"SELECT DISTINCT g.CreatedByAdminUserID AS AdminId,
+                        au.Forename AS Forename,
+                        au.Surname AS Surname,
+                        au.Active AS Active
+                    FROM Groups AS g WITH(NOLOCK)
+                    JOIN AdminUsers AS au WITH(NOLOCK)
+                    ON au.AdminID = g.CreatedByAdminUserID
+                    JOIN Centres AS c WITH(NOLOCK)
+                    ON c.CentreID = g.CentreID
+                    WHERE RemovedDate IS NULL
+                    AND g.CentreId = @centreId",
+                new { centreId },
+                commandTimeout: 3000
+            );
+
+            return (addedByAdmins);
         }
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
@@ -289,12 +400,15 @@
         public void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink)
         {
             connection.Execute(
-                @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
-                    VALUES (
-                        @groupId,
-                        @delegateId,
-                        @addedDate,
-                        @addedByFieldLink)",
+                @"IF NOT EXISTS(SELECT 1 FROM GroupDelegates WHERE DelegateID=@delegateId AND  GroupID=@groupId)
+                    BEGIN
+                        INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                                            VALUES (
+                                                @groupId,
+                                                @delegateId,
+                                                @addedDate,
+                                                @addedByFieldLink)
+                    END",
                 new { groupId, delegateId, addedDate, addedByFieldLink }
             );
         }
@@ -420,25 +534,9 @@
         {
             return connection.QuerySingle<int>(
                 @"GroupCustomisation_Add_V2",
-                new { groupId, customisationId, centreId, completeWithinMonths, adminUserID = addedByAdminUserId, cohortLearners, supervisorAdminId=supervisorAdminId ?? 0 },
+                new { groupId, customisationId, centreId, completeWithinMonths, adminUserID = addedByAdminUserId, cohortLearners, supervisorAdminId = supervisorAdminId ?? 0 },
                 commandType: CommandType.StoredProcedure
             );
-            //return connection.QuerySingle<int>(
-            //    @"INSERT INTO GroupCustomisations
-            //            (GroupID, CustomisationID, CompleteWithinMonths, AddedByAdminUserID, CohortLearners, SupervisorAdminID)
-            //        OUTPUT Inserted.GroupCustomisationId
-            //        VALUES
-            //            (@groupId, @customisationId, @completeWithinMonths, @addedByAdminUserId, @cohortLearners, @supervisorAdminID)",
-            //    new
-            //    {
-            //        groupId,
-            //        customisationId,
-            //        completeWithinMonths,
-            //        addedByAdminUserId,
-            //        cohortLearners,
-            //        supervisorAdminId,
-            //    }
-            //);
         }
 
         public void AddDelegatesWithMatchingAnswersToGroup(
@@ -464,6 +562,16 @@
                             OR (Answer5 = @option AND @linkedToField = 6)
                             OR (Answer6 = @option AND @linkedToField = 7))",
                 new { groupId, addedDate, linkedToField, centreId, option, jobGroupId }
+            );
+        }
+
+        public bool IsDelegateGroupExist(string groupLabel)
+        {
+            return connection.QuerySingle<bool>(
+                @"SELECT CASE WHEN EXISTS (select * from Groups where GroupLabel like @groupLabel and RemovedDate is null)
+                THEN CAST(1 AS BIT)
+                ELSE CAST(0 AS BIT) END",
+                new { groupLabel }
             );
         }
     }

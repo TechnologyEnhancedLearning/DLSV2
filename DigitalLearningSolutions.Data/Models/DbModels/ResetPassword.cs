@@ -5,7 +5,7 @@ namespace DigitalLearningSolutions.Data.Models.DbModels
     public class ResetPassword
     {
         public int Id { get; set; }
-        public string ResetPasswordHash { get; set; }
+        public string ResetPasswordHash { get; set; } = string.Empty;
         public DateTime PasswordResetDateTime { get; set; }
     }
 }

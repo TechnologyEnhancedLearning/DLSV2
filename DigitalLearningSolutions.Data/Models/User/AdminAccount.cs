@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public int UserId { get; set; }
         public int CentreId { get; set; }
-        public string CentreName { get; set; }
+        public string CentreName { get; set; } = string.Empty;
         public bool CentreActive { get; set; }
         public bool IsCentreAdmin { get; set; }
         public bool IsReportsViewer { get; set; }

@@ -7,6 +7,7 @@
         Faqs,
         Resources,
         SupportTickets,
-        ChangeRequests
+        ChangeRequests,
+        RequestSupportTicket
     }
 }
