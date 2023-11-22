@@ -261,7 +261,7 @@
             return (null, progress);
         }
 
-        public int UpdateLessonState(int progressId, int tutorialId, int tutStat, int tutTime, string? suspendData, string? lessonLocation)
+        public int UpdateLessonState(int tutorialId, int progressId, int tutStat, int tutTime, string? suspendData, string? lessonLocation)
         {
             return progressService.UpdateLessonState(tutorialId, progressId, tutStat, tutTime, suspendData, lessonLocation);
         }
