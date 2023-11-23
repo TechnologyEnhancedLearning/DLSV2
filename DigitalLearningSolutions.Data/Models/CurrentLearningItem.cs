@@ -6,5 +6,7 @@
     {
         public DateTime? CompleteByDate { get; set; }
         public int EnrolmentMethodId { get; set; }
+        public int CandidateAssessmentId { get; set; }
+
     }
 }

@@ -3,6 +3,7 @@
     using System;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
 
@@ -16,8 +17,9 @@
             CompleteByDate = course.CompleteByDate;
             EnrolmentMethodId = course.EnrolmentMethodId;
             ReturnPageQuery = returnPageQuery;
+            CandidateAssessmentId = course.CandidateAssessmentId ;
         }
-
+        public int CandidateAssessmentId { get; set; }
         public DateTime? CompleteByDate { get; }
         public int EnrolmentMethodId { get; }
         public OldDateValidator.ValidationResult? CompleteByValidationResult { get; set; }

@@ -137,6 +137,10 @@
         public string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId);
         RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
        void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
+        IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID);
+        CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
+        IEnumerable<Accessor> GetAccessor(int selfAssessmentId);
+        ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -492,6 +496,23 @@
         public void RemoveDelegateSelfAssessment(int candidateAssessmentsId)
         {
             selfAssessmentDataService.RemoveDelegateSelfAssessment(candidateAssessmentsId);
+        }
+        public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID)
+        {
+            return selfAssessmentDataService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentID);
+        }
+
+        public CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
+        {
+          return   selfAssessmentDataService.GetCompetencySelfAssessmentCertificate(candidateAssessmentID);
+        }
+       public  IEnumerable<Accessor> GetAccessor(int selfAssessmentId)
+        {
+            return selfAssessmentDataService.GetAccessor(selfAssessmentId);
+        }
+        public ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
+        {
+            return selfAssessmentDataService.GetActivitySummaryCompetencySelfAssesment( CandidateAssessmentSupervisorVerificationsId);
         }
     }
 }

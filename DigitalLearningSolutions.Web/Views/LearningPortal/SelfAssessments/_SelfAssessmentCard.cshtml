@@ -52,6 +52,15 @@
                     Remove
                 </a>
             }
+           
+            <a class="nhsuk-button nhsuk-button--secondary"
+               aria-describedby="@Model.CandidateAssessmentId-name-sa"
+               asp-action="CompetencySelfAssessmentCertificate"
+               asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
+               asp-route-route="1"
+               role="button">
+                Certificate
+            </a>
         </div>
     </div>
 </div>
