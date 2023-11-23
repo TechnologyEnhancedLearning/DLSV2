@@ -9,7 +9,17 @@
     cancelLinkRouteData.Add("selfAssessmentId", Model.SelfAssessmentID.ToString());
 
 }
+<style>
+    .nhsuk-grid-column-three-quarters {
+        float: left;
+        width: 72%;
+    }
 
+    .nhsuk-grid-column-one-quarter {
+        float: left;
+        width: 28%;
+    }
+</style>
 @section NavMenuItems {
     <partial name="Shared/_NavMenuItems" />
 }
@@ -25,7 +35,7 @@
 </div>
 
 <vc:field-name-value-display display-name="Delegate" field-value="@Model.Name" />
-<vc:field-name-value-display display-name="Self_Assessment" field-value="@Model.SelfAssessmentsName" />
+<vc:field-name-value-display display-name="Self Assessment" field-value="@Model.SelfAssessmentsName" />
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
     
