@@ -8,7 +8,8 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -283,7 +284,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(() => userService.GetUserById(userAccount.Id)).MustHaveHappenedOnceExactly();
-                var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value!.Errors)
+                var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
                     .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
                 errorMessage.Should().Be("You are already registered at this centre");
                 controller.ModelState.IsValid.Should().BeFalse();

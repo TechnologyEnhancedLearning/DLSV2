@@ -11,9 +11,6 @@
         public static readonly TrackerEndpointResponse InvalidAction =
             new TrackerEndpointResponse(-2, nameof(InvalidAction));
 
-        public static readonly TrackerEndpointResponse NoRowUpdated =
-            new TrackerEndpointResponse(-3, nameof(NoRowUpdated));
-
         public static readonly TrackerEndpointResponse StoreAspAssessException =
             new TrackerEndpointResponse(-6, nameof(StoreAspAssessException));
 
@@ -28,12 +25,6 @@
 
         public static readonly TrackerEndpointResponse StoreDiagnosticScoreException =
             new TrackerEndpointResponse(-25, nameof(StoreDiagnosticScoreException));
-
-        public static readonly TrackerEndpointResponse StoreSuspendDataException =
-            new TrackerEndpointResponse(-26, nameof(StoreSuspendDataException));
-
-        public static readonly TrackerEndpointResponse StoreLessonLocationException =
-            new TrackerEndpointResponse(-27, nameof(StoreLessonLocationException));
 
         public TrackerEndpointResponse(int id, string name) : base(id, name) { }
 

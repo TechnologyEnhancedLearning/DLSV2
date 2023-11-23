@@ -7,9 +7,9 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.Tracker;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;

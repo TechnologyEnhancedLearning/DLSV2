@@ -3,8 +3,8 @@
     public class CourseAssessmentDetails : Course
     {
         public bool IsAssessed { get; set; }
-        public string CategoryName { get; set; } = string.Empty;
-        public string CourseTopic { get; set; } = string.Empty;
+        public string CategoryName { get; set; }
+        public string CourseTopic { get; set; }
         public bool HasLearning { get; set; }
         public bool HasDiagnostic { get; set; }
     }

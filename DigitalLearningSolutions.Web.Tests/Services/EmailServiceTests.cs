@@ -4,10 +4,10 @@ namespace DigitalLearningSolutions.Web.Tests.Services
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
-    using DigitalLearningSolutions.Data.Models.Email;    
+    using DigitalLearningSolutions.Data.Models.Email;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using MailKit.Net.Smtp;
     using MailKit.Security;

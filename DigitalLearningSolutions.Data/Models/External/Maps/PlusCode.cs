@@ -5,9 +5,9 @@
     public class PlusCode
     {
         [JsonProperty("compound_code")]
-        public string CompoundCode { get; set; } = string.Empty;
+        public string CompoundCode { get; set; }
 
         [JsonProperty("global_code")]
-        public string GlobalCode { get; set; } = string.Empty;
+        public string GlobalCode { get; set; }
     }
 }

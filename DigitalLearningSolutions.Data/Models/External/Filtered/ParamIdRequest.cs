@@ -4,6 +4,6 @@
     public class ParamIdRequest : FilteredApiRequest
     {
         [JsonProperty("params")]
-        public ObjectId? ObjectId { get; set; }
+        public ObjectId ObjectId { get; set; }
     }
 }

@@ -87,7 +87,7 @@
 
             // Then
             ThenMustHaveChangedPasswordForUserIdOnce(LoggedInUserId, "new-password");
-            result.Should().BeViewResult().WithViewName(null);
+            result.Should().BeViewResult().WithViewName("Success");
         }
 
         private void ThenMustHaveChangedPasswordForUserIdOnce(
@@ -95,10 +95,6 @@
             string newPassword
         )
         {
-            passwordService.ChangePasswordAsync(
-                        userId,
-                        newPassword
-                    );
             A.CallTo(
                     () => passwordService.ChangePasswordAsync(
                         userId,

@@ -1,15 +1,16 @@
-namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using FakeItEasy;
     using FluentAssertions;
@@ -18,13 +19,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using NUnit.Framework;
+
     public class DelegateGroupsControllerTests
     {
         private const string CookieName = "DelegateGroupsFilter";
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsService groupsService = null!;
-        private IPaginateService paginateService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
@@ -35,7 +36,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             groupsService = A.Fake<IGroupsService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
-            paginateService = A.Fake<IPaginateService>();
+
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieValue = "LinkedToField|LinkedToField|0";
@@ -43,8 +44,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             delegateGroupsController = new DelegateGroupsController(
                     centreRegistrationPromptsService,
                     groupsService,
-                    searchSortFilterPaginateService,
-                    paginateService
+                    searchSortFilterPaginateService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -61,29 +61,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => groupsService.GetGroupsForCentre(
-                    A<string>._,
-                    A<int>._,
-                    A<int>._,
-                    A<string>._,
-                    A<string>._,
-                    A<int>._,
-                    A<string>._,
-                    A<string>._
-                    )).MustHaveHappened();
-
+                A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).MustHaveHappened();
                 A.CallTo(
-                    () => paginateService.Paginate(
-                        A<IEnumerable<Data.Models.DelegateGroups.Group>>._,
-                        A<int>._,
-                        A<PaginationOptions>._,
-                        A<Data.Models.SearchSortFilterPaginate.FilterOptions>._,
-                        A<string>._,
-                        A<string>._,
-                        A<string>._
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                        A<IEnumerable<Group>>._,
+                        A<SearchSortFilterAndPaginateOptions>._
                     )
                 ).MustHaveHappened();
-
                 A.CallTo(
                         () => httpResponse.Cookies.Append(
                             CookieName,

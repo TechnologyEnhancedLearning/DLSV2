@@ -1,12 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;    
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
@@ -35,7 +35,7 @@
                     new ActionDescriptor()
                 ),
                 new List<IFilterMetadata>(),
-                new Dictionary<string, object?>(),
+                new Dictionary<string, object>(),
                 homeController
             );
         }

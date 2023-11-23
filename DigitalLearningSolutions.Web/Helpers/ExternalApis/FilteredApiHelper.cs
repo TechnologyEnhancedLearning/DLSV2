@@ -232,7 +232,7 @@
         {
             LearningAssetResponse learningAssetResponse = new LearningAssetResponse();
             string request = "";
-            if (id != 0)
+            if (id != null)
             {
                 request = JsonConvert.SerializeObject(GetFilteredParamAssetIdRequestJSON("5", method, id));
                 string apiResponse = await CallFilteredApi<T>(request, token);

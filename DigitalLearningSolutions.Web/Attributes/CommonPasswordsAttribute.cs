@@ -6,6 +6,8 @@
     public class CommonPasswordsAttribute : ValidationAttribute
     {
         private readonly string? errorMessage;
+
+        private static readonly HashSet<string> Passwords;
         public CommonPasswordsAttribute(string? errorMessage = null)
         {
             this.errorMessage = errorMessage;

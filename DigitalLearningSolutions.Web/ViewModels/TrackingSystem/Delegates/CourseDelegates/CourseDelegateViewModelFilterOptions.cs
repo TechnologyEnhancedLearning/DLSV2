@@ -6,13 +6,14 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class CourseDelegateViewModelFilterOptions
     {
         public static readonly IEnumerable<FilterOptionModel> ActiveStatusOptions = new[]
-        {            
-            CourseDelegateAccountStatusFilterOptions.Active,
+        {
             CourseDelegateAccountStatusFilterOptions.Inactive,
+            CourseDelegateAccountStatusFilterOptions.Active,
         };
 
         public static readonly IEnumerable<FilterOptionModel> LockedStatusOptions = new[]
@@ -37,18 +38,17 @@
         {
             var filters = new List<FilterModel>
             {
-                new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions,"status"),
-                new FilterModel("LockedStatus", "Locked Status", LockedStatusOptions, "status"),
-                new FilterModel("RemovedStatus", "Removed Status", RemovedStatusOptions, "status"),
-                new FilterModel("CompletionStatus", "Completion Status", CompletionStatusOptions, "status")
+                new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions),
+                new FilterModel("LockedStatus", "Locked Status", LockedStatusOptions),
+                new FilterModel("RemovedStatus", "Removed Status", RemovedStatusOptions),
+                new FilterModel("CompletionStatus", "Completion Status", CompletionStatusOptions)
             };
             filters.AddRange(
                 adminFields.Select(
                     field => new FilterModel(
                         $"CourseAdminField{field.PromptNumber}",
                         field.PromptText,
-                        FilteringHelper.GetPromptFilterOptions(field),
-                        "prompts"
+                        FilteringHelper.GetPromptFilterOptions(field)
                     )
                 )
             );

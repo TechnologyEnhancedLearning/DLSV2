@@ -5,9 +5,9 @@
     public class UnlockData
     {
         public int DelegateId { get; set; }
-        public string ContactForename { get; set; } = string.Empty;
-        public string ContactEmail { get; set; } = string.Empty;
-        public string CourseName { get; set; } = string.Empty;
+        public string ContactForename { get; set; }
+        public string ContactEmail { get; set; }
+        public string CourseName { get; set; }
         public int CustomisationId { get; set; }
     }
 

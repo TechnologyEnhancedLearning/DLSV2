@@ -79,7 +79,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
                TempData
-           ).GetAwaiter().GetResult();
+           ).GetAwaiter().GetResult(); 
             var selfAssessments = courseDataService.GetAvailableCourses(delegateId, centreId, categoryId ?? default(int));
 
             var model = new EnrolCurrentLearningViewModel(

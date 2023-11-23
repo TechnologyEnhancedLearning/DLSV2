@@ -3,12 +3,12 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;    
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using FakeItEasy;
     using FluentAssertions;
@@ -650,7 +650,7 @@
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<RemoveAdminFieldViewModel>();
-            controller.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)]?.Errors[0].ErrorMessage.Should()
+            controller.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)].Errors[0].ErrorMessage.Should()
                 .BeEquivalentTo(expectedErrorMessage);
         }
 
@@ -793,7 +793,7 @@
 
         private static void AssertModelStateErrorIsExpected(IActionResult result, string expectedErrorMessage)
         {
-            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value!.Errors)
+            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
                 .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
             errorMessage.Should().BeEquivalentTo(expectedErrorMessage);
         }

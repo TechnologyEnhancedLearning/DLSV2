@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
@@ -102,12 +101,9 @@
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
-        private IActivityService activityService = null!;
-        private IPaginateService paginateService = null!;
-        private ICourseCategoriesDataService courseCategoriesDataService = null!;
-        private ICourseTopicsDataService courseTopicsDataService = null!;
+        private IActivityService activityService = null;
 
-        [SetUp]
+    [SetUp]
         public void Setup()
         {
             courseService = A.Fake<ICourseService>();
@@ -115,9 +111,6 @@
             sectionService = A.Fake<ISectionService>();
             activityService = A.Fake<IActivityService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
-            paginateService = A.Fake<IPaginateService>();
-            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
-            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             config = A.Fake<IConfiguration>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
             A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
@@ -125,7 +118,8 @@
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                     A<int>._,
-                    A<int>._
+                    A<int>._,
+                    false
                 )
             ).Returns(courses);
 
@@ -142,12 +136,9 @@
                     tutorialService,
                     sectionService,
                     searchSortFilterPaginateService,
-                    paginateService,
                     config,
                     multiPageFormService,
-                    activityService,
-                    courseCategoriesDataService,
-                    courseTopicsDataService
+                    activityService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -159,12 +150,9 @@
                     tutorialService,
                     sectionService,
                     searchSortFilterPaginateService,
-                    paginateService,
                     config,
                     multiPageFormService,
-                    activityService,
-                    courseCategoriesDataService,
-                    courseTopicsDataService
+                    activityService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
@@ -180,13 +168,11 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseService.GetCentreCourses(A<string>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int?>._, A<bool>._, A<bool?>._,
-                    A<string>._, A<string>._, A<string>._, A<string>._)).MustHaveHappened();
+                A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).MustHaveHappened();
                 A.CallTo(
-                    () => paginateService.Paginate(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                         A<IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>>._,
-                        A<int>._,
-                        A<PaginationOptions>._, A<FilterOptions>._, A<string>._, A<string>._, A<string>._
+                        A<SearchSortFilterAndPaginateOptions>._
                     )
                 ).MustHaveHappened();
                 A.CallTo(
@@ -268,7 +254,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().ModelAs<SelectCourseViewModel>();
-                controller.ModelState["ApplicationId"]?.Errors[0].ErrorMessage.Should()
+                controller.ModelState["ApplicationId"].Errors[0].ErrorMessage.Should()
                     .Be("Select a course");
             }
         }
@@ -296,7 +282,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().ModelAs<SetCourseDetailsViewModel>();
-                controller.ModelState["CustomisationName"]?.Errors[0].ErrorMessage.Should()
+                controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
                     .Be("Course name must be unique, including any additions");
             }
         }
@@ -324,7 +310,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().ModelAs<SetCourseDetailsViewModel>();
-                controller.ModelState["CustomisationName"]?.Errors[0].ErrorMessage.Should()
+                controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
                     .Be("A course with no add-on already exists");
             }
         }
@@ -477,7 +463,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().ModelAs<SetCourseContentViewModel>();
-                controller.ModelState["SelectedSectionIds"]?.Errors[0].ErrorMessage.Should()
+                controller.ModelState["SelectedSectionIds"].Errors[0].ErrorMessage.Should()
                     .Be("test message");
             }
         }

@@ -155,15 +155,14 @@
              model="@competencySummaries"
              view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
         <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
-        <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs"
-             view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", competencySummaries.Sum(c => (int)c["questionsCount"]) == competencySummaries.Sum(c => (int)c["verifiedCount"]) }})" />
+        <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
         @if (Model.AllQuestionsVerifiedOrNotRequired)
         {
             @if (!Model.SupervisorSignOffs.Any())
             {
                 <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
             }
-            else if (!Model.SupervisorSignOffs.Where(x => x.Verified == null).Any() && latestResult > latestSignoff)
+            else if (latestResult > latestSignoff)
             {
                 <div class="nhsuk-warning-callout">
                     <h3 class="nhsuk-warning-callout__label">
@@ -178,18 +177,15 @@
                     </p>
                 </div>
             }
-            @if (!Model.SupervisorSignOffs.Where(x => x.Verified == null).Any()
-           && latestResult > latestSignoff
-           )
-            {
-                <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-                   asp-action="RequestSignOff"
-                   asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
-                   asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-                   role="button">
-                    Request @Model.SelfAssessment.SignOffRoleName sign-off
-                </a>
-            }
+          @if (!Model.SupervisorSignOffs.Any()) {
+            <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+       asp-action="RequestSignOff"
+       asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+       role="button">
+                Request @Model.SelfAssessment.SignOffRoleName sign-off
+            </a>
+          }
         }
         else
         {

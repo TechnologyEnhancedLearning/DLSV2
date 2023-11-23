@@ -1,16 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using System.Collections.Generic;
-    using System.Linq;
 
-    public class DelegateCoursesViewModel : BaseSearchablePageViewModel<CourseStatistics>
+    public class DelegateCoursesViewModel : BaseSearchablePageViewModel<CourseStatisticsWithAdminFieldResponseCounts>
     {
         public DelegateCoursesViewModel(
-            SearchSortFilterPaginationResult<CourseStatistics> result,
+            SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result,
             IEnumerable<FilterModel> availableFilters,
             string courseCategoryName
         ) : base(
@@ -21,46 +21,30 @@
         )
         {
             UpdateCourseActiveFlags(result);
-
-            Courses = result.ItemsToDisplay.Select<BaseSearchableItem, SearchableDelegateCourseStatisticsViewModel>(
-                activity =>
-                {
-                    return activity switch
-                    {
-                        CourseStatisticsWithAdminFieldResponseCounts currentCourse => new SearchableDelegateCourseStatisticsViewModel(currentCourse),
-                        _ => new SearchableDelegateAssessmentStatisticsViewModel((DelegateAssessmentStatistics)activity),
-                    };
-                }
-             );
-
+            Courses = result.ItemsToDisplay.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
             CourseCategoryName = courseCategoryName;
         }
 
-        private static void UpdateCourseActiveFlags(SearchSortFilterPaginationResult<CourseStatistics> result)
+        private static void UpdateCourseActiveFlags(SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result)
         {
             foreach (var course in result.ItemsToDisplay)
             {
-                if (course is CourseStatisticsWithAdminFieldResponseCounts)
+                if (course.Active && !course.Archived)
                 {
-                    CourseStatisticsWithAdminFieldResponseCounts courseStatisticsWithAdminFieldResponseCounts = (CourseStatisticsWithAdminFieldResponseCounts)course;
+                    course.Active = true;
+                }
+                else
+                {
+                    course.Active = false;
+                }
 
-                    if (courseStatisticsWithAdminFieldResponseCounts.Active && !courseStatisticsWithAdminFieldResponseCounts.Archived)
-                    {
-                        courseStatisticsWithAdminFieldResponseCounts.Active = true;
-                    }
-                    else
-                    {
-                        courseStatisticsWithAdminFieldResponseCounts.Active = false;
-                    }
-
-                    if (courseStatisticsWithAdminFieldResponseCounts.Archived)
-                    {
-                        courseStatisticsWithAdminFieldResponseCounts.Archived = true;
-                    }
-                    else
-                    {
-                        courseStatisticsWithAdminFieldResponseCounts.Archived = false;
-                    }
+                if (course.Archived)
+                {
+                    course.Archived = true;
+                }
+                else
+                {
+                    course.Archived = false;
                 }
             }
         }
@@ -70,7 +54,7 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            CourseSortByOptions.ActivityName,
+            CourseSortByOptions.CourseName,
             CourseSortByOptions.Completed,
             CourseSortByOptions.InProgress,
         };

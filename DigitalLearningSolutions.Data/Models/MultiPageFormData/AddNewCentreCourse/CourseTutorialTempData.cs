@@ -22,7 +22,7 @@
         }
 
         public int TutorialId { get; set; }
-        public string TutorialName { get; set; } = string.Empty;
+        public string TutorialName { get; set; }
         public bool LearningEnabled { get; set; }
         public bool DiagnosticEnabled { get; set; }
     }

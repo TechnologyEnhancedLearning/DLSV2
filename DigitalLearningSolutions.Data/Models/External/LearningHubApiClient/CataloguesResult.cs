@@ -6,6 +6,6 @@ namespace DigitalLearningSolutions.Data.Models.External.LearningHubApiClient
 {
     public class CataloguesResult
     {
-        public List<Catalogue> Catalogues { get; set; } = new List<Catalogue>();
+        public List<Catalogue> Catalogues { get; set; }
     }
 }

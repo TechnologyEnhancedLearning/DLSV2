@@ -4,7 +4,7 @@
     {
         public int PromptNumber { get; set; }
 
-        public string Prompt { get; set; } = string.Empty;
+        public string Prompt { get; set; }
 
         public bool Mandatory { get; set; }
 

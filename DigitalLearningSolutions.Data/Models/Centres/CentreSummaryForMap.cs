@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public string CentreName { get; set; } = string.Empty;
+        public string CentreName { get; set; }
 
         public double Latitude { get; set; }
 

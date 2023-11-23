@@ -74,7 +74,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         void DeactivateOrDeleteAdmin(int adminId);
 
-        void DeactivateOrDeleteAdminForSuperAdmin(int adminId);
+        void DeactivateOrDeleteAdminForSuperAdmin(int adminId);        
 
         UserEntity? GetUserById(int userId);
 
@@ -109,10 +109,6 @@ namespace DigitalLearningSolutions.Web.Services
         void SetEmailVerified(int userId, string email, DateTime verifiedDateTime);
 
         bool EmailIsHeldAtCentre(string? email, int centreId);
-
-        void ReactivateAdmin(int adminId);
-
-        int? GetUserLearningHubAuthId(int userId);
     }
 
     public class UserService : IUserService
@@ -248,11 +244,6 @@ namespace DigitalLearningSolutions.Web.Services
         public int? GetDelegateUserLearningHubAuthId(int delegateId)
         {
             return userDataService.GetDelegateUserLearningHubAuthId(delegateId);
-        }
-
-        public int? GetUserLearningHubAuthId(int userId)
-        {
-            return userDataService.GetUserLearningHubAuthId(userId);
         }
 
         public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)
@@ -661,13 +652,6 @@ namespace DigitalLearningSolutions.Web.Services
             }
 
             return false;
-        }
-
-        public void ReactivateAdmin(int adminId)
-        {
-            userDataService.ReactivateAdmin(adminId);
-            int? userId = userDataService.GetUserIdByAdminId(adminId);
-            userDataService.ActivateUser(userId.GetValueOrDefault());
         }
     }
 }

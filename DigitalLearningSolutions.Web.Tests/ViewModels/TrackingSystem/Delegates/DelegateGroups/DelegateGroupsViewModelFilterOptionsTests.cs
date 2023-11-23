@@ -1,9 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
-    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using FluentAssertions;
@@ -50,12 +47,7 @@
         public void GetAddedByOptions_returns_expected_filter_options()
         {
             // Given
-
-            IEnumerable<GroupDelegateAdmin> admins = new List<GroupDelegateAdmin>();
-
-            admins = admins.Append(new GroupDelegateAdmin { AdminId = 1, FullName = "Test Admin One" });
-            admins = admins.Append(new GroupDelegateAdmin { AdminId = 2, FullName = "Test Admin Two" });
-            admins = admins.Append(new GroupDelegateAdmin { AdminId = 3, FullName = "Test Admin Three" });
+            var admins = new[] { (1, "Test Admin"), (2, "Test Person") };
 
             // When
             var result = DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins).ToList();
@@ -63,8 +55,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.Count.Should().Be(3);
-                result.First().DisplayText.Should().Be("Test Admin One");
+                result.Count.Should().Be(2);
+                result.First().DisplayText.Should().Be("Test Admin");
                 result.First().FilterValue.Should().Be("AddedByAdminId|AddedByAdminId|1");
             }
         }

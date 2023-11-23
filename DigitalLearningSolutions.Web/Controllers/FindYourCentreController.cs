@@ -17,6 +17,7 @@
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
+    [RedirectDelegateOnlyToLearningPortal]
     public class FindYourCentreController : Controller
     {
         private const string FindCentreFilterCookieName = "FindCentre";

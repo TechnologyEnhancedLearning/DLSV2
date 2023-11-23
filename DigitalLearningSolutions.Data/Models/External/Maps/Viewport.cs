@@ -5,9 +5,9 @@
     public class Viewport
     {
         [JsonProperty("northeast")]
-        public Coordinates Northeast { get; set; } = new Coordinates();
+        public Coordinates Northeast { get; set; }
 
         [JsonProperty("southwest")]
-        public Coordinates Southwest { get; set; } = new Coordinates();
+        public Coordinates Southwest { get; set; }
     }
 }

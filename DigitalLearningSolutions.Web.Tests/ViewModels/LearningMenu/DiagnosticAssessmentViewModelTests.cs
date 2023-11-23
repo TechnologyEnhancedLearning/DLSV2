@@ -2,7 +2,8 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FluentAssertions;
     using NUnit.Framework;

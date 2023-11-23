@@ -4,6 +4,6 @@
     public class ResultStringResponse : FilteredResponse
     {
         [JsonProperty("result")]
-        public string Result { get; set; } = string.Empty;
+        public string Result { get; set; }
     }
 }

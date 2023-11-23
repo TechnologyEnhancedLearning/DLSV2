@@ -5,9 +5,9 @@
     public class Coordinates
     {
         [JsonProperty("lat")]
-        public string Latitude { get; set; } = string.Empty;
+        public string Latitude { get; set; }
 
         [JsonProperty("lng")]
-        public string Longitude { get; set; } = string.Empty;
+        public string Longitude { get; set; }
     }
 }

@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
     using System;
-    using DigitalLearningSolutions.Data.DataServices;    
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;

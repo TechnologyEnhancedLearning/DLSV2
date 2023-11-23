@@ -4,6 +4,6 @@
     public class SetFavouriteAssetRequest : FilteredApiRequest
     {
         [JsonProperty("params")]
-        public FavouriteAsset? FavouriteAsset { get; set; }
+        public FavouriteAsset FavouriteAsset { get; set; }
     }
 }

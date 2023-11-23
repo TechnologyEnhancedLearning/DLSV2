@@ -5,10 +5,10 @@
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Certificates;
-    using DigitalLearningSolutions.Data.Models.Email;    
+    using DigitalLearningSolutions.Data.Models.Email;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DocumentFormat.OpenXml.Wordprocessing;
     using FakeItEasy;
     using FluentAssertions;

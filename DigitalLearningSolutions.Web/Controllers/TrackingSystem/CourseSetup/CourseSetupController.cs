@@ -27,7 +27,6 @@
     using System.Linq;
     using System.Transactions;
     using GDS.MultiPageFormData.Enums;
-    using DigitalLearningSolutions.Data.DataServices;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -42,41 +41,29 @@
         private readonly ICourseService courseService;
         private readonly IMultiPageFormService multiPageFormService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
-        private readonly IPaginateService paginateService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
         private readonly IActivityService activityService;
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly ICourseTopicsDataService courseTopicsDataService;
 
         public CourseSetupController(
             ICourseService courseService,
             ITutorialService tutorialService,
             ISectionService sectionService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IPaginateService paginateService,
             IConfiguration config,
             IMultiPageFormService multiPageFormService,
-            IActivityService activityService,
-            ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseTopicsDataService courseTopicsDataService
-
+            IActivityService activityService
         )
         {
             this.courseService = courseService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
-            this.paginateService = paginateService;
             this.config = config;
             this.multiPageFormService = multiPageFormService;
             this.activityService = activityService;
-            this.courseCategoriesDataService = courseCategoriesDataService;
-            this.courseTopicsDataService = courseTopicsDataService;
-
         }
 
-        [NoCaching]
         [Route("{page=1:int}")]
         public IActionResult Index(
             string? searchString = null,
@@ -86,13 +73,10 @@
             string? newFilterToAdd = null,
             bool clearFilters = false,
             int page = 1,
-            int? itemsPerPage = 10
+            int? itemsPerPage = null
         )
         {
-            searchString = searchString == null ? string.Empty : searchString.Trim();
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            sortDirection ??= GenericSortingHelper.Ascending;
-
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
@@ -105,90 +89,28 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
-            var Categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
-            var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+            var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
-            int offSet = ((page - 1) * itemsPerPage) ?? 0;
-            string isActive, categoryName, courseTopic, hasAdminFields;
-            isActive = categoryName = courseTopic = hasAdminFields = "Any";
-            bool? hideInLearnerPortal = null;
-
-            if (!string.IsNullOrEmpty(existingFilterString))
-            {
-                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-
-                if (!string.IsNullOrEmpty(newFilterToAdd))
-                {
-                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
-                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
-                    if (dupfilters.Count() > 1)
-                    {
-                        foreach (var filter in selectedFilters)
-                        {
-                            if (filter.Contains(filterHeader))
-                            {
-                                selectedFilters.Remove(filter);
-                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (selectedFilters.Count > 0)
-                {
-                    foreach (var filter in selectedFilters)
-                    {
-                        var filterArr = filter.Split(FilteringHelper.Separator);
-                        var filterValue = filterArr[2];
-                        if (filterValue == FilteringHelper.EmptyValue) filterValue = "No option selected";
-
-                        if (filter.Contains("CategoryName"))
-                            categoryName = filterValue;
-
-                        if (filter.Contains("CourseTopic"))
-                            courseTopic = filterValue;
-
-                        if (filter.Contains("Active"))
-                            isActive = filterValue;
-
-                        if (filter.Contains("NotActive"))
-                            isActive = "false";
-
-                        if (filter.Contains("HasAdminFields"))
-                            hasAdminFields = filterValue;
-
-                        if (filter.Contains("HideInLearnerPortal"))
-                            hideInLearnerPortal = filterValue == "true" ? true : false;
-                    }
-                }
-            }
-
-            var (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, false, hideInLearnerPortal,
-                                                            isActive, categoryName, courseTopic, hasAdminFields);
-            if (courses.Count() == 0 && resultCount > 0)
-            {
-                page = 1;
-                offSet = 0;
-                (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, false, hideInLearnerPortal,
-                                                            isActive, categoryName, courseTopic, hasAdminFields);
-            }
-
+            var courses = UpdateCoursesNotActiveStatus(details.Courses);
+            
             var availableFilters = CourseStatisticsViewModelFilterOptions
-                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+                .GetFilterOptions(categoryId.HasValue ? new string[] { } : details.Categories, details.Topics).ToList();
 
-            var result = paginateService.Paginate(
-                 courses,
-                 resultCount,
-                 new PaginationOptions(page, itemsPerPage),
-                 new FilterOptions(existingFilterString, availableFilters),
-                 searchString,
-                 sortBy,
-                 sortDirection
-             );
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    CourseStatusFilterOptions.IsActive.FilterValue
+                ),
+                new PaginationOptions(page, itemsPerPage)
+            );
 
-            result.Page = page;
-            TempData["Page"] = result.Page;
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                courses,
+                searchSortPaginationOptions
+            );
 
             var model = new CourseSetupViewModel(
                 result,
@@ -197,13 +119,22 @@
                 courseCategoryName
             );
 
-            model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
-            model.MatchingSearchResults = resultCount;
             Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);
 
             return View(model);
         }
 
+        [Route("AllCourseStatistics")]
+        public IActionResult AllCourseStatistics()
+        {
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
+            var details = courseService.GetCentreCourseDetails(centreId, categoryId);
+
+            var model = new AllCourseStatisticsViewModel(details, config);
+
+            return View(model);
+        }
 
         [HttpGet("AddCourseNew")]
         public IActionResult AddCourseNew()
@@ -718,16 +649,16 @@
             {
                 if (course.Archived || course.Active == false)
                 {
-                    course.NotActive = true;
+                  course.NotActive = true;
                 }
                 else
                 {
-                    course.NotActive = false;
+                  course.NotActive = false;
                 }
             }
 
             return updatedCourses;
         }
 
-    }
+  }
 }

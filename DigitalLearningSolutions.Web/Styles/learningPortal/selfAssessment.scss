@@ -1,7 +1,6 @@
 ﻿@use "inputrange" as *;
 @use "nhsuk-frontend/packages/core/all" as *;
 @use "courses" as *;
-@use "../shared/breakpoints" as *;
 @use "../shared/searchableElements/searchableElements" as *;
 
 .competency-group-header {
@@ -203,12 +202,6 @@ details.nhsuk-details {
 
 .tag.tag-video {
   background-color: $nhsuk-link-visited-color;
-}
-
-@media only screen and (max-width: $mq-tablet) {
-  .competency-status-tag {
-    overflow: inherit;
-  }
 }
 
 .course-card {

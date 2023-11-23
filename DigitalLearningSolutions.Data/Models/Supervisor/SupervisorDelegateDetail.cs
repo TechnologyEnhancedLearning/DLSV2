@@ -5,8 +5,8 @@
 
     public class SupervisorDelegateDetail : SupervisorDelegate
     {
-        public string CandidateNumber { get; set; } = string.Empty;
-        public string CandidateEmail { get; set; } = string.Empty;
+        public string CandidateNumber { get; set; }
+        public string CandidateEmail { get; set; }
         public string? JobGroupName { get; set; }
         public string? CustomPrompt1 { get; set; }
         public string? Answer1 { get; set; }
@@ -21,12 +21,12 @@
         public string? CustomPrompt6 { get; set; }
         public string? Answer6 { get; set; }
         public byte[]? ProfileImage { get; set; }
-        public new string? SupervisorName { get; set; }
+        public string? SupervisorName { get; set; }
         public int CandidateAssessmentCount { get; set; }
         public Guid? InviteHash { get; set; }
         public bool DelegateIsNominatedSupervisor { get; set; }
         public bool DelegateIsSupervisor { get; set; }
-        public string ProfessionalRegistrationNumber { get; set; } = string.Empty;
+        public string ProfessionalRegistrationNumber { get; set; }
         public int? DelegateID { get; set; }
         public bool? Active { get; set; }
 

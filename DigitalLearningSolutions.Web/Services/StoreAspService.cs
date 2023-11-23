@@ -39,15 +39,6 @@
             int tutorialStatus
         );
 
-        int UpdateLessonState(
-            int tutorialId,
-            int progressId,
-            int tutStat,
-            int tutTime,
-           string? suspendData,
-           string? lessonLocation
-            );
-
         (TrackerEndpointResponse? validationResponse, DelegateCourseInfo? progress)
             GetProgressAndValidateInputsForStoreAspAssess(
                 int? version,
@@ -60,13 +51,6 @@
             GetAndValidateSectionAssessmentDetails(
                 int? sectionId,
                 int customisationId
-            );
-        (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForUpdateLessonStateEndpoints(
-                int? progressId,
-                int? tutorialId,
-                int? candidateId,
-                int? customisationId
             );
     }
 
@@ -235,35 +219,6 @@
             }
 
             return (null, assessmentDetails);
-        }
-
-        public (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForUpdateLessonStateEndpoints(
-                int? progressId,
-                int? tutorialId,
-                int? candidateId,
-                int? customisationId
-            )
-        {
-            if (progressId == null || tutorialId == null ||
-                candidateId == null || customisationId == null)
-            {
-                return (TrackerEndpointResponse.StoreSuspendDataException, null);
-            }
-
-            var progress = progressService.GetDetailedCourseProgress(progressId.Value);
-            if (progress == null || progress.DelegateId != candidateId ||
-                progress.CustomisationId != customisationId.Value)
-            {
-                return (TrackerEndpointResponse.StoreSuspendDataException, null);
-            }
-
-            return (null, progress);
-        }
-
-        public int UpdateLessonState(int tutorialId, int progressId, int tutStat, int tutTime, string? suspendData, string? lessonLocation)
-        {
-            return progressService.UpdateLessonState(tutorialId, progressId, tutStat, tutTime, suspendData, lessonLocation);
         }
     }
 }

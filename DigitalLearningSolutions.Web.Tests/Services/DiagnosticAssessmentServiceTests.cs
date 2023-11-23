@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;    
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Logging;

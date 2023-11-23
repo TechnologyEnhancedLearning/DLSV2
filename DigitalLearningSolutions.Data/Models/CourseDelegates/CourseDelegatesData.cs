@@ -6,7 +6,6 @@
 
     public class CourseDelegatesData
     {
-        public CourseDelegatesData() { }
         public CourseDelegatesData(
             int? customisationId,
             IEnumerable<Course> courses,
@@ -22,10 +21,10 @@
 
         public int? CustomisationId { get; set; }
 
-        public IEnumerable<Course>? Courses { get; set; }
+        public IEnumerable<Course> Courses { get; set; }
 
-        public IEnumerable<CourseDelegate>? Delegates { get; set; }
+        public IEnumerable<CourseDelegate> Delegates { get; set; }
 
-        public IEnumerable<CourseAdminField>? CourseAdminFields { get; set; }
+        public IEnumerable<CourseAdminField> CourseAdminFields { get; set; }
     }
 }

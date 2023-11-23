@@ -3,7 +3,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.SuperAdmin;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -12,29 +11,29 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates
         public readonly bool CanShowDeleteDelegateButton;
         public readonly bool CanShowInactivateDelegateButton;
         public SearchableDelegatesViewModel(
-           SuperAdminDelegateAccount delegates,
+           DelegateEntity delegates,
            ReturnPageQuery returnPageQuery
        )
         {
-            Id = delegates.Id;
-            Name = delegates.FirstName + " " + delegates.LastName;
-            FirstName = delegates?.FirstName;
-            LastName = delegates?.LastName;
-            PrimaryEmail = delegates.EmailAddress;
-            UserAccountID = delegates.UserId;
-            Centre = delegates.CentreName;
-            CentreEmail = delegates.CentreEmail;
-            DelegateNumber = delegates.CandidateNumber;
-            LearningHubID = delegates.LearningHubAuthId;
-            AccountClaimed = delegates.RegistrationConfirmationHash;
-            DateRegistered = delegates.DateRegistered?.ToString(Data.Helpers.DateHelper.StandardDateFormat);
-            SelRegistered = delegates.SelfReg;
-            IsDelegateActive = delegates.Active;
-            IsCentreEmailVerified = delegates.EmailVerified == null ? false : true;
-            CanShowInactivateDelegateButton = IsDelegateActive;
-            IsUserActive = delegates.UserActive;
-            IsApproved = delegates.Approved;
-            IsClaimed = delegates.RegistrationConfirmationHash == null ? true : false;
+            Id = delegates.DelegateAccount.Id;
+            Name = delegates.UserAccount?.FirstName + " " + delegates.UserAccount?.LastName;
+            FirstName = delegates.UserAccount?.FirstName;
+            LastName = delegates.UserAccount?.LastName;
+            PrimaryEmail = delegates.UserAccount?.PrimaryEmail;
+            UserAccountID = delegates.UserAccount.Id;
+            Centre = delegates.DelegateAccount.CentreName;
+            CentreEmail = delegates.UserCentreDetails?.Email;
+            DelegateNumber = delegates.DelegateAccount.CandidateNumber;
+            LearningHubID = delegates.UserAccount.LearningHubAuthId;
+            AccountClaimed = delegates.DelegateAccount.RegistrationConfirmationHash;
+            DateRegistered = delegates.DelegateAccount?.DateRegistered.ToString(Data.Helpers.DateHelper.StandardDateFormat);
+            SelRegistered = delegates.DelegateAccount.SelfReg;
+            IsDelegateActive = delegates.DelegateAccount.Active;
+            IsCentreEmailVerified = delegates.UserAccount.EmailVerified == null ? false : true;
+            CanShowInactivateDelegateButton = IsDelegateActive ;
+            IsUserActive = delegates.UserAccount.Active;
+            IsApproved = delegates.DelegateAccount.Approved;
+            IsClaimed = delegates.DelegateAccount.RegistrationConfirmationHash == null ? true : false;
             ReturnPageQuery = returnPageQuery;
         }
 

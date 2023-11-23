@@ -6,7 +6,7 @@
 
         public int Ranking { get; set; }
 
-        public string CentreName { get; set; } = string.Empty;
+        public string CentreName { get; set; }
 
         public int DelegateSessionCount { get; set; }
     }

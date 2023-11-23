@@ -5,7 +5,7 @@
     using System.Security.Claims;
     using System.Text;
     using System.Threading.Tasks;
-    
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using Microsoft.AspNetCore.Authentication;

@@ -36,7 +36,7 @@
                     learningAsset.Description,
                     learningAsset.DirectUrl,
                     Type = learningAsset.TypeLabel,
-                    Provider = learningAsset.Provider?.Name,
+                    Provider = learningAsset.Provider.Name,
                     Duration = learningAsset.LengthSeconds,
                     ActualDuration = learningAsset.LengthSeconds,
                     CandidateId = candidateId,

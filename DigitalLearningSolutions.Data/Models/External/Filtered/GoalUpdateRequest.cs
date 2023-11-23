@@ -4,6 +4,6 @@
     public class GoalUpdateRequest : FilteredApiRequest
     {
         [JsonProperty("params")]
-        public Goal? Goal { get; set; }
+        public Goal Goal { get; set; }
     }
 }

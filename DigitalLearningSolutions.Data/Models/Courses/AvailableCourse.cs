@@ -2,7 +2,7 @@
 {
     public class AvailableCourse : BaseLearningItem
     {
-        public string Brand { get; set; } = string.Empty;
+        public string Brand { get; set; }
         public string? Category
         {
             get => category;
@@ -16,7 +16,6 @@
             set => topic = GetValidOrNull(value);
         }
         public int DelegateStatus { get; set; }
-        public bool HideInLearnerPortal { get; set; }
 
         private string? category;
         private string? topic;

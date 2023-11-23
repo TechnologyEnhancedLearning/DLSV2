@@ -21,7 +21,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [ServiceFilter(typeof(VerifyAdminAndDelegateUserCentre))]
+    [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     [Route("TrackingSystem/Delegates/{delegateId:int}/View")]
@@ -57,7 +57,7 @@
             this.emailVerificationDataService = emailVerificationDataService;
         }
 
-        public IActionResult Index(int delegateId, string? callType)
+        public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreIdKnownNotNull();
 
@@ -68,7 +68,7 @@
                 return NotFound();
             }
 
-            if (string.IsNullOrEmpty(callType) && TempData["IsDelegatePromoted"] != null)
+            if (TempData["IsDelegatePromoted"] != null)
             {
                 TempData.Remove("IsDelegatePromoted");
             }

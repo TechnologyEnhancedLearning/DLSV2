@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
-    
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
@@ -283,7 +283,7 @@
 
             // Then
             var delegateNumber = (string?)controller.TempData.Peek("delegateNumber");
-            var passwordSet = (bool?)controller.TempData.Peek("passwordSet");
+            var passwordSet = (bool)controller.TempData.Peek("passwordSet");
             delegateNumber.Should().Be(sampleDelegateNumber);
             passwordSet.Should().Be(data.IsPasswordSet);
         }

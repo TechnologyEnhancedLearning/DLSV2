@@ -168,9 +168,9 @@
         public string? SupervisorSurname { get; set; }
         public bool? SupervisorAdminActive { get; set; }
         public int DelegateId { get; set; }
-        public string CandidateNumber { get; set; } = string.Empty;
+        public string CandidateNumber { get; set; }
         public string? DelegateFirstName { get; set; }
-        public string DelegateLastName { get; set; } = string.Empty;
+        public string DelegateLastName { get; set; }
         public string? DelegateEmail { get; set; }
         public bool IsDelegateActive { get; set; }
         public bool HasBeenPromptedForPrn { get; set; }

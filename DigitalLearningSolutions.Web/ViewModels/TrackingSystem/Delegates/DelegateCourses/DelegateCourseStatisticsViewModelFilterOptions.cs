@@ -15,17 +15,11 @@
             CourseStatusFilterOptions.IsActive,
             CourseStatusFilterOptions.NotActive,
         };
-
+    
         private static readonly IEnumerable<FilterOptionModel> CourseHasAdminFieldOptions = new[]
         {
             CourseHasAdminFieldsFilterOptions.HasAdminFields,
             CourseHasAdminFieldsFilterOptions.DoesNotHaveAdminFields,
-        };
-
-        private static readonly IEnumerable<FilterOptionModel> ActivityTypeOptions = new[]
-        {
-            ActivityTypeFilterOptions.IsCourse,
-            ActivityTypeFilterOptions.IsSelfAssessment,
         };
 
         public static IEnumerable<FilterModel> GetFilterOptions(
@@ -33,24 +27,32 @@
             IEnumerable<string> topics
         )
         {
-            var filterOptions = new List<FilterModel>();
-            filterOptions.Add(new FilterModel("Course", "Type", ActivityTypeOptions));
-            if (categories.Any())
+            var filterOptions = new[]
             {
-                filterOptions.Add(
-                    new FilterModel(nameof(CourseStatistics.CategoryName), "Category",
-                        GetCategoryOptions(categories)
-                    ));
-            }
-            filterOptions.Add(new FilterModel(nameof(CourseStatistics.CourseTopic), "Topic", GetTopicOptions(topics)));
-            filterOptions.Add(new FilterModel(nameof(CourseStatistics.Active), "Status", CourseStatusOptions));
-            filterOptions.Add(new FilterModel(
+                new FilterModel(
+                    nameof(CourseStatistics.CourseTopic),
+                    "Topic",
+                    GetTopicOptions(topics)
+                ),
+                new FilterModel(nameof(CourseStatistics.Active), "Status", CourseStatusOptions),
+                new FilterModel(
                     nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
                     "Admin fields",
                     CourseHasAdminFieldOptions
-                ));
+                ),
+            };
 
-            return filterOptions;
+            categories = categories.ToList();
+
+            return categories.Any()
+                ? filterOptions.Prepend(
+                    new FilterModel(
+                        nameof(CourseStatistics.CategoryName),
+                        "Category",
+                        GetCategoryOptions(categories)
+                    )
+                )
+                : filterOptions;
         }
 
         private static IEnumerable<FilterOptionModel> GetCategoryOptions(IEnumerable<string> categories)

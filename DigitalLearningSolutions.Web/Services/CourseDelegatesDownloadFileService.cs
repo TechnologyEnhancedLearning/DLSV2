@@ -4,18 +4,22 @@
     using System.Data;
     using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public interface ICourseDelegatesDownloadFileService
     {
-        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
+        public byte[] GetCourseDelegateDownloadFileForCourse(
+            int customisationId,
+            int centreId,
+            string? sortBy,
+            string? filterString,
+            string sortDirection = GenericSortingHelper.Ascending
         );
 
         public byte[] GetCourseDelegateDownloadFile(
@@ -69,40 +73,23 @@
             this.courseService = courseService;
         }
 
-        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
+        public byte[] GetCourseDelegateDownloadFileForCourse(
+            int customisationId,
+            int centreId,
+            string? sortBy,
+            string? filterString,
+            string sortDirection = GenericSortingHelper.Ascending
         )
         {
             using var workbook = new XLWorkbook();
 
-            var adminFields = courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId);
-
-            var customRegistrationPrompts = registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-
-            int resultCount = courseDataService.GetCourseDelegatesCountForExport(searchString ?? string.Empty, sortBy, sortDirection,
-                    customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3);
-
-
-            int page = 1;
-            int totalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
-
-            List<CourseDelegateForExport> courseDelegates = new List<CourseDelegateForExport>();
-
-            while (totalPages >= page)
-            {
-                offSet = ((page - 1) * itemsPerPage);
-
-                courseDelegates.AddRange( this.courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, offSet, itemsPerPage, sortBy, sortDirection, 
-                    customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3));
-                page++;
-            }
-
             PopulateCourseDelegatesSheetForCourse(
                 workbook,
-                adminFields,
-                customRegistrationPrompts,
-                courseDelegates,
-                customisationId
+                customisationId,
+                centreId,
+                sortBy,
+                filterString,
+                sortDirection
             );
 
             using var stream = new MemoryStream();
@@ -138,17 +125,34 @@
 
         private void PopulateCourseDelegatesSheetForCourse(
             IXLWorkbook workbook,
-           CourseAdminFields adminFields,
-           CentreRegistrationPrompts customRegistrationPrompts,
-           IEnumerable<CourseDelegateForExport> courseDelegates,
-           int customisationId
+            int customisationId,
+            int centreId,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
         )
         {
+            var adminFields = courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId);
+
+            var customRegistrationPrompts = registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+
+            var courseDelegates = courseDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
+                .ToList();
+
+            var filteredCourseDelegates =
+                FilteringHelper.FilterItems(courseDelegates.AsQueryable(), filterString).ToList();
+            var sortedCourseDelegates =
+                GenericSortingHelper.SortAllItems(
+                    filteredCourseDelegates.AsQueryable(),
+                    sortBy ?? nameof(CourseDelegateForExport.FullNameForSearchingSorting),
+                    sortDirection
+                );
+
             var dataTable = new DataTable();
 
             SetUpDataTableColumns(customRegistrationPrompts, adminFields, dataTable);
 
-            foreach (var courseDelegate in courseDelegates)
+            foreach (var courseDelegate in sortedCourseDelegates)
             {
                 AddDelegateToDataTable(dataTable, courseDelegate, customRegistrationPrompts, adminFields);
             }
@@ -226,8 +230,9 @@
             string sortDirection
         )
         {
-            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, adminCategoryId, searchString, sortBy, filterString, sortDirection);
-            var filteredCourses = FilteringHelper.FilterItems(details.Courses.AsQueryable(), filterString);
+            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, adminCategoryId);
+            var searchedCourses = GenericSearchHelper.SearchItems(details.Courses, searchString);
+            var filteredCourses = FilteringHelper.FilterItems(searchedCourses.AsQueryable(), filterString);
             var sortedCourses = GenericSortingHelper.SortAllItems(
                 filteredCourses.AsQueryable(),
                 sortBy ?? nameof(CourseStatisticsWithAdminFieldResponseCounts.CourseName),

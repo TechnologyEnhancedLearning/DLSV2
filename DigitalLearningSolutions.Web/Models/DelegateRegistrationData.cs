@@ -18,7 +18,7 @@
         }
 
         public bool IsCentreSpecificRegistration { get; set; }
-        public new int? SupervisorDelegateId { get; set; }
+        public int? SupervisorDelegateId { get; set; }
 
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }

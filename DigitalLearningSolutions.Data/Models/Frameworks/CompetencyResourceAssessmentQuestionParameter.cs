@@ -17,13 +17,13 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
         public bool Essential { get; set; }
         public int? RelevanceAssessmentQuestionId { get; set; }
         public bool CompareToRoleRequirements { get; set; }
-        public string OriginalResourceName { get; set; } = string.Empty;
-        public string OriginalResourceType { get; set; } = string.Empty;
+        public string OriginalResourceName { get; set; }
+        public string OriginalResourceType { get; set; }
         public decimal OriginalRating { get; set; }
-        public string Question { get; set; } = string.Empty;
-        public string CompareResultTo { get; set; } = string.Empty;
-        public AssessmentQuestion AssessmentQuestion { get; set; } = new AssessmentQuestion();
-        public AssessmentQuestion RelevanceAssessmentQuestion { get; set; } = new AssessmentQuestion();
+        public string Question { get; set; }
+        public string CompareResultTo { get; set; }
+        public AssessmentQuestion AssessmentQuestion { get; set; }
+        public AssessmentQuestion RelevanceAssessmentQuestion { get; set; }
         public bool IsNew { get; set; }
 
         public CompetencyResourceAssessmentQuestionParameter(bool isNew)

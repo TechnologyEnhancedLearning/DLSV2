@@ -1,5 +1,0 @@
-secret:
-  ignored-matches:
-  - match: 2cd876d916d5d06984da35b99466857b4e9b19ab643b0e2eb15d4faf29f3ba44
-    name: Generic High Entropy Secret - DigitalLearningSolutions.Data.Migrations/202310131115_AddFreshdeskApikeyConfigValue.cs
-version: 2

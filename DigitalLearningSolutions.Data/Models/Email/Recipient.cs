@@ -2,7 +2,7 @@
 {
     public class Recipient
     {
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public bool Owner { get; set; }

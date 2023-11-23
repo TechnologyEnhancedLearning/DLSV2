@@ -17,7 +17,7 @@
             Delegates = delegates.Select(
                 d => new DelegateCourseInfoViewModel(
                     d,
-                    DelegateAccessRoute.ActivityDelegates,
+                    DelegateAccessRoute.CourseDelegates,
                     new ReturnPageQuery(1, $"{d.DelegateId}-card")
                 )
             );

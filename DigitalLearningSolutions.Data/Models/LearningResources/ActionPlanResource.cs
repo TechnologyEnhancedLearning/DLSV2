@@ -26,10 +26,10 @@
 
         public DateTime? Completed { get; set; }
         public DateTime? RemovedDate { get; set; }
-        public string ResourceDescription { get; set; } = string.Empty;
-        public string ResourceLink { get; set; } = string.Empty;
-        public string CatalogueName { get; set; } = string.Empty;
-        public string ResourceType { get; set; } = string.Empty;
+        public string ResourceDescription { get; set; }
+        public string ResourceLink { get; set; }
+        public string CatalogueName { get; set; }
+        public string ResourceType { get; set; }
         public int ResourceReferenceId { get; set; }
         public bool AbsentInLearningHub { get; set; }
     }

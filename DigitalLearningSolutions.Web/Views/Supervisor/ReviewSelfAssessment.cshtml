@@ -81,24 +81,8 @@
                      view-data="@(new ViewDataDictionary(ViewData))" />
         </div>
     </div>
-    <div class="nhsuk-grid-column-one-third heading-button-group">
-        @if (!Model.ExportToExcelHide)
-        {
-            <a class="nhsuk-button nhsuk-button--secondary"
-           asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
-           asp-route-selfAssessmentName="@Model.DelegateSelfAssessment.RoleName"
-           asp-route-delegateUserID="@Model.DelegateSelfAssessment.DelegateUserID"
-           asp-route-delegateName="@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName"
-           asp-action="ExportCandidateAssessment"
-           role="button">
-                Export to Excel
-            </a>
-        }
-        @if (
-          Model.DelegateSelfAssessment.SignOffRequested > 0 &&
-          Model.DelegateSelfAssessment.ResultsVerificationRequests == 0 &&
-          competencySummaries.Sum(c => (int)c["verifiedCount"]) == competencySummaries.Sum(c => (int)c["questionsCount"])
-        )
+    <div class="nhsuk-grid-column-one-third">
+        @if (Model.DelegateSelfAssessment.SignOffRequested > 0)
         {
             <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>
         }
@@ -204,7 +188,7 @@
 {
     <div class="nhsuk-u-margin-top-4">
         <h3>Self Assessment Sign-off Status</h3>
-        <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", true }})" />
+        <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" />
     </div>
 }
 @if (Model.CompetencyGroups.Any())

@@ -2,16 +2,15 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.SuperAdmin;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using System.Collections.Generic;
     using System.Linq;
-    public class DelegatesViewModel : BaseSearchablePageViewModel<SuperAdminDelegateAccount>
+    public class DelegatesViewModel : BaseSearchablePageViewModel<DelegateEntity>
     {
         public DelegatesViewModel(
-            SearchSortFilterPaginationResult<SuperAdminDelegateAccount> result
+            SearchSortFilterPaginationResult<DelegateEntity> result
         ) : base(
             result,
             true,
@@ -22,7 +21,7 @@
             Delegates = result.ItemsToDisplay.Select(
                 delegates => new SearchableDelegatesViewModel(
                     delegates,
-                    result.GetReturnPageQuery($"{delegates.Id}-card")
+                    result.GetReturnPageQuery($"{delegates.DelegateAccount.Id}-card")
                 )
             );
         }

@@ -13,7 +13,7 @@ if (sInput != null) {
   sInput.addEventListener('oncut', handler, false);
   sInput.addEventListener('keyup', handler, false);
 }
-function handler() {
+function handler(event:any) {
   const sp = <HTMLSelectElement>document.getElementById('result-count-and-page-number');
   const btnSubmit = <HTMLSelectElement>document.getElementById('btnAddSupervisor');
   if (sp.innerText.startsWith('0 matching')) {

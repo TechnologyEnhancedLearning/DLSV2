@@ -4,6 +4,6 @@
     public class ObjectId
     {
         [JsonProperty("id")]
-        public object? Id { get; set; }
+        public object Id { get; set; }
     }
 }

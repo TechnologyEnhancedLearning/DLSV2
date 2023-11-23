@@ -7,7 +7,7 @@
         public int NRPProfessionalGroupID { get; set; }
         [StringLength(255, MinimumLength = 3)]
         [Required]
-        public string SubGroup { get; set; } = string.Empty;
+        public string SubGroup { get; set; }
         public bool Active { get; set; }
     }
 }

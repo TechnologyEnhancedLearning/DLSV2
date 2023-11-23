@@ -31,12 +31,6 @@
             AdminAccountStatusFilterOptions.IsNotLocked,
         };
 
-        public static readonly IEnumerable<FilterOptionModel> UserStatusOptions = new[]
-        {
-            UserAccountStatusFilterOptions.Active,
-            UserAccountStatusFilterOptions.Inactive,
-        };
-
         public static IEnumerable<FilterOptionModel> GetCategoryOptions(IEnumerable<string> categories)
         {
             return categories.Select(
@@ -65,11 +59,6 @@
                     "AccountStatus",
                     "Account Status",
                     AccountStatusOptions
-                ),
-                new FilterModel(
-                    "UserStatus",
-                    "User Status",
-                    UserStatusOptions
                 ),
             };
             return filters;

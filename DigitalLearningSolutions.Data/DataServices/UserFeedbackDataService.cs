@@ -32,11 +32,11 @@
 
         public void SaveUserFeedback(
                 int? userId,
-                string? userRoles,
+                string userRoles,
                 string? sourceUrl,
                 bool? taskAchieved,
                 string? taskAttempted,
-                string? feedbackText,
+                string feedbackText,
                 int? taskRating
             )
         {

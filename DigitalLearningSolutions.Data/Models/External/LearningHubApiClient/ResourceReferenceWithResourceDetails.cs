@@ -6,17 +6,17 @@
 
         public int RefId { get; set; }
 
-        public string Title { get; set; } = string.Empty;
+        public string Title { get; set; }
 
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; set; }
 
-        public Catalogue Catalogue { get; set; }  = new Catalogue();
+        public Catalogue Catalogue { get; set; }
 
-        public string ResourceType { get; set; } = string.Empty;
+        public string ResourceType { get; set; }
 
         public decimal Rating { get; set; }
 
-        public string Link { get; set; } = string.Empty;
+        public string Link { get; set; }
 
         public bool AbsentInLearningHub { get; set; }
     }

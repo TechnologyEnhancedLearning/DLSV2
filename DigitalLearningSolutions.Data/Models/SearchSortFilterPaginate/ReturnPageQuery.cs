@@ -12,12 +12,12 @@
         {
             var nameValueCollection = HttpUtility.ParseQueryString(returnPageQuery);
 
-            PageNumber = int.TryParse(nameValueCollection["pageNumber"], out var pageNumberResult) ? pageNumberResult : 0;
+            PageNumber = int.Parse(nameValueCollection["pageNumber"]);
             SearchString = nameValueCollection["searchString"];
             SortBy = nameValueCollection["sortBy"];
             SortDirection = nameValueCollection["sortDirection"];
             ItemsPerPage = !string.IsNullOrWhiteSpace(nameValueCollection["itemsPerPage"])
-                ? int.TryParse(nameValueCollection["itemsPerPage"], out var itemsPerPageResult) ? itemsPerPageResult : 0
+                ? int.Parse(nameValueCollection["itemsPerPage"])
                 : (int?)null;
             ItemIdToReturnTo = nameValueCollection["itemIdToScrollToOnReturn"];
         }

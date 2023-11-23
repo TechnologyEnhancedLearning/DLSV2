@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -14,11 +16,7 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
-    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class CourseServiceTests
     {
@@ -33,14 +31,12 @@
         private IGroupsDataService groupsDataService = null!;
         private IProgressDataService progressDataService = null!;
         private ISectionService sectionService = null!;
-        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
         {
             clockUtility = A.Fake<IClockUtility>();
             courseDataService = A.Fake<ICourseDataService>();
-            config = A.Fake<IConfiguration>();
             A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
@@ -57,8 +53,7 @@
                 groupsDataService,
                 courseCategoriesDataService,
                 courseTopicsDataService,
-                sectionService,
-                config
+                sectionService
             );
         }
 
@@ -77,7 +72,8 @@
         }
 
         [Test]
-        public void GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts_should_only_return_course_statistics_for_centre()
+        public void
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts_should_only_return_course_statistics_for_centre()
         {
             // Given
             var expectedIdOrder = new List<int> { 1, 2 };
@@ -92,18 +88,19 @@
         }
 
         [Test]
-        public void GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport_should_return_course_count_for_centre_and_all_centre_courses()
+        public void
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts_should_return_course_statistics_for_centre_and_all_centre_courses()
         {
             // Given
-            A.CallTo(() => config["FeatureManagement:ExportQueryRowLimit"]).Returns("250");
+            var expectedIdOrder = new List<int> { 1, 2, 4 };
 
             // When
-            var courseCount = courseService
-                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCountsForReport(CentreId, null, null, null, null, GenericSortingHelper.Ascending)
-                .Count();
+            var resultIdOrder = courseService
+                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId, true)
+                .Select(r => r.CustomisationId).ToList();
 
             // Then
-            courseCount.Should().BeGreaterOrEqualTo(0);
+            resultIdOrder.Should().BeEquivalentTo(expectedIdOrder);
         }
 
         private IEnumerable<CourseStatistics> GetSampleCourses()
@@ -173,7 +170,8 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanManageCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
+        public void
+            VerifyAdminUserCanManageCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
         {
             // Given
             var validationDetails = new CourseValidationDetails
@@ -955,44 +953,6 @@
                 A.CallTo(
                     () => progressDataService.GetLearningLogEntries(progressId)
                 ).MustHaveHappenedOnceExactly();
-            }
-        }
-
-        [Test]
-        public void GetDelegateCourses_GetDelegateCourseStatisticsAtCentre_ShouldBeInvokedAndReturnsCourseStatisticsWithAdminFieldResponseCounts()
-        {
-            // Given
-            var delegateCourses = Builder<CourseStatisticsWithAdminFieldResponseCounts>.CreateListOfSize(5).Build();
-            A.CallTo(() => courseDataService.GetDelegateCourseStatisticsAtCentre(string.Empty, 1, 1, true, true, string.Empty, string.Empty, string.Empty, string.Empty)).Returns(delegateCourses);
-
-            // When
-            var result = courseService.GetDelegateCourses(string.Empty, 1, 1, true, true, string.Empty, string.Empty, string.Empty, string.Empty);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => courseDataService.GetDelegateCourseStatisticsAtCentre(string.Empty, 1, 1, true, true, string.Empty, string.Empty, string.Empty, string.Empty))
-                    .MustHaveHappenedOnceExactly();
-                result.Count().Should().BeGreaterOrEqualTo(0);
-            }
-        }
-
-        [Test]
-        public void GetDelegateAssessments_GetDelegateAssessments_ShouldBeInvokedAndReturnsDelegateAssessmentStatistics()
-        {
-            // Given
-            var delegateAssessments = Builder<DelegateAssessmentStatistics>.CreateListOfSize(5).Build();
-            A.CallTo(() => courseDataService.GetDelegateAssessmentStatisticsAtCentre(1)).Returns(delegateAssessments);
-
-            // When
-            var result = courseService.GetDelegateAssessments(1);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => courseDataService.GetDelegateAssessmentStatisticsAtCentre(1))
-                    .MustHaveHappenedOnceExactly();
-                result.Count().Should().BeGreaterOrEqualTo(0);
             }
         }
     }

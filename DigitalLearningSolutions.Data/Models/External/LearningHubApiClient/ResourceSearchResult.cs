@@ -4,7 +4,7 @@
 
     public class ResourceSearchResult
     {
-        public List<ResourceMetadata> Results { get; set; } = new List<ResourceMetadata>();
+        public List<ResourceMetadata> Results { get; set; }
 
         public int Offset { get; set; }
 

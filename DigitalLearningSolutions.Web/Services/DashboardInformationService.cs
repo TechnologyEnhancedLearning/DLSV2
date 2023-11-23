@@ -47,7 +47,7 @@
                     centreId,
                     adminUser.CategoryId
                 );
-            var adminCount = userDataService.GetNumberOfAdminsAtCentre(centreId);
+            var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
             var supportTicketCount = adminUser.IsCentreManager
                 ? ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId)
                 : ticketDataService.GetNumberOfUnarchivedTicketsForAdminId(adminId);

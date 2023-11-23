@@ -17,12 +17,7 @@
             IEnumerable<FilterModel> availableFilters,
             CourseDelegatesData courseDelegatesData,
             Dictionary<string, string> routeData
-        ) : base(
-            result,
-            true,
-            availableFilters,
-            routeData: routeData,
-            searchLabel: "Search activity")
+        ) : base(result, true, availableFilters, routeData: routeData)
         {
             var currentCourse =
                 courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId);
@@ -30,7 +25,7 @@
             Delegates = result.ItemsToDisplay.Select(
                 d => new DelegateCourseInfoViewModel(
                     d,
-                    DelegateAccessRoute.ActivityDelegates,
+                    DelegateAccessRoute.CourseDelegates,
                     result.GetReturnPageQuery($"{d.DelegateId}-card")
                 )
             );

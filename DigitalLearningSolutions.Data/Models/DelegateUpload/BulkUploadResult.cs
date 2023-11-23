@@ -48,7 +48,7 @@
             Errors = delegateRows.Where(dr => dr.Error.HasValue).Select(dr => (dr.RowNumber, dr.Error!.Value));
         }
 
-        public IEnumerable<(int RowNumber, ErrorReason Reason)>? Errors { get; set; } 
+        public IEnumerable<(int RowNumber, ErrorReason Reason)> Errors { get; set; }
         public int ProcessedCount { get; set; }
         public int RegisteredCount { get; set; }
         public int UpdatedCount { get; set; }

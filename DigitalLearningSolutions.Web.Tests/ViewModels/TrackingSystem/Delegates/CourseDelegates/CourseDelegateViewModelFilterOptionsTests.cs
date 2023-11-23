@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using FluentAssertions;
     using NUnit.Framework;
@@ -75,8 +75,8 @@
             };
             var adminFieldFilters = new List<FilterModel>
             {
-                new FilterModel("CourseAdminField1", "System access", adminField1Options,"prompts"),
-                new FilterModel("CourseAdminField3", "Some Free Text Field", adminField3Options,"prompts"),
+                new FilterModel("CourseAdminField1", "System access", adminField1Options),
+                new FilterModel("CourseAdminField3", "Some Free Text Field", adminField3Options),
             };
 
             return (adminFields, adminFieldFilters);

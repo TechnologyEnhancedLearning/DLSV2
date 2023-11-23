@@ -1,14 +1,15 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.Centres;
+using DigitalLearningSolutions.Data.Tests.TestHelpers;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-using DigitalLearningSolutions.Web.Tests.TestHelpers;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
 using FakeItEasy;
 using FluentAssertions;
 using FluentAssertions.AspNetCore.Mvc;
 using FluentAssertions.Execution;
+using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         private readonly IRegionDataService regionDataService = A.Fake<IRegionDataService>();
         private readonly IContractTypesDataService contractTypesDataService = A.Fake<IContractTypesDataService>();
         private readonly ICourseDataService courseDataService = A.Fake<ICourseDataService>();
-        private readonly ICentresDownloadFileService centresDownloadFileService = A.Fake<ICentresDownloadFileService>();
         private CentresController controller = null!;
 
         [SetUp]
@@ -36,8 +36,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             regionDataService,
             centresDataService,
             contractTypesDataService,
-            courseDataService,
-            centresDownloadFileService
+            courseDataService
             )
             .WithDefaultContext()
             .WithMockUser(true);
@@ -63,8 +62,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         public void EditCentreDetails_updates_centre_and_redirects_with_successful_save()
         {
             // Given
-            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre1##") };
-            A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
             var model = new EditCentreDetailsSuperAdminViewModel
             {
                 CentreId = 374,
@@ -92,46 +89,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                                                 model.IpPrefix,
                                                 model.ShowOnMap))
                                                 .MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void EditCentreDetails_results_DuplicateCentre_error()
-        {
-            // Given
-            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##"), (610, "Alternative Futures Group") };
-            A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
-            var model = new EditCentreDetailsSuperAdminViewModel
-            {
-                CentreId = 374,
-                CentreName = "Alternative Futures Group",
-                CentreTypeId = 1,
-                CentreType = "NHS Organisation",
-                RegionName = "National",
-                CentreEmail = "no.email@hee.nhs.uk",
-                IpPrefix = "12.33.4",
-                ShowOnMap = true,
-                RegionId = 13
-            };
-
-            // When
-            var result = controller.EditCentreDetails(model);            
-            // Then
-            result.Should().BeViewResult();
-            controller.ModelState.IsValid.Should().BeFalse();
-            var centreNameErrors = controller.ModelState["CentreName"].Errors;
-            centreNameErrors.Should().NotBeEmpty();
-            centreNameErrors.Should().Contain(error => error.ErrorMessage ==
-            "The centre name you have entered already exists, please enter a different centre name");
-
-            A.CallTo(() => centresDataService.UpdateCentreDetailsForSuperAdmin(
-                                                model.CentreId,
-                                                model.CentreName,
-                                                model.CentreTypeId,
-                                                model.RegionId,
-                                                model.CentreEmail,
-                                                model.IpPrefix,
-                                                model.ShowOnMap))
-                                                .MustNotHaveHappened();
         }
 
         [Test]
@@ -201,7 +158,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             result.Should().BeViewResult();
 
             controller.ModelState.IsValid.Should().BeFalse();
-            var centreNameErrors = controller.ModelState["CentreName"]?.Errors;
+            var centreNameErrors = controller.ModelState["CentreName"].Errors;
             centreNameErrors.Should().NotBeEmpty();
             centreNameErrors.Should().Contain(error => error.ErrorMessage ==
             "The centre name you have entered already exists, please enter a different centre name");
@@ -399,25 +356,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                )).MustHaveHappened();
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
-        }
-
-        [Test]
-        public void Export_passes_in_used_parameters_to_file()
-        {
-            // Given
-            const string searchString = "Frame by Frame";
-            const string existingFilterString = "";
-
-            // When
-            controller.Export(searchString, existingFilterString);
-
-            // Then
-            A.CallTo(
-                () => centresDownloadFileService.GetAllCentresFile(
-                    searchString,
-                    existingFilterString
-                )
-            ).MustHaveHappenedOnceExactly();
         }
     }
 }

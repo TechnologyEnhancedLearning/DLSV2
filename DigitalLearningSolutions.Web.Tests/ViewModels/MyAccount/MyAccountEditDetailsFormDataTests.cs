@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
 {
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;    
+    using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using FluentAssertions;
     using NUnit.Framework;

@@ -5,12 +5,12 @@
     public class Geometry
     {
         [JsonProperty("location")]
-        public Coordinates Location { get; set; } = new Coordinates();
+        public Coordinates Location { get; set; }
 
         [JsonProperty("location_type")]
-        public string LocationType { get; set; } = string.Empty; 
+        public string LocationType { get; set; }
 
         [JsonProperty("viewport")]
-        public Viewport Viewport { get; set; } = new Viewport();
+        public Viewport Viewport { get; set; }
     }
 }

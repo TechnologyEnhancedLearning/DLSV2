@@ -5,12 +5,12 @@
     public class UserAccount
     {
         public int Id { get; set; }
-        public string PrimaryEmail { get; set; } = string.Empty;
-        public string PasswordHash { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
+        public string PrimaryEmail { get; set; }
+        public string PasswordHash { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public int JobGroupId { get; set; }
-        public string JobGroupName { get; set; } = string.Empty;
+        public string JobGroupName { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
         public byte[]? ProfileImage { get; set; }
         public bool Active { get; set; }

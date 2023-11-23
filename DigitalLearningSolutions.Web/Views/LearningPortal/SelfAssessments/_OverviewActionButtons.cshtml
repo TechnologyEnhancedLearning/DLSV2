@@ -23,7 +23,6 @@
 <feature name="@(FeatureFlags.CandidateAssessmentExcelExport)">
   <a class="nhsuk-button nhsuk-button--secondary"
      asp-route-candidateAssessmentId="@Model.SelfAssessment.CandidateAssessmentId"
-     asp-route-candidateAssessmentName="@Model.SelfAssessment.Name"
      asp-route-vocabulary="@Model.VocabPlural()"
      asp-action="ExportCandidateAssessment"
      role="button">

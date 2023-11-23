@@ -8,9 +8,9 @@
 
         public Guid TempDataGuid { get; set; }
 
-        public string Json { get; set; } = string.Empty;
+        public string Json { get; set; }
 
-        public string Feature { get; set; } = string.Empty;
+        public string Feature { get; set; }
 
         public DateTime CreatedDate { get; set; }
     }

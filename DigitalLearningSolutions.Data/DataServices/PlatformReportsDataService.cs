@@ -40,6 +40,7 @@
     public class PlatformReportsDataService : IPlatformReportsDataService
     {
         private readonly IDbConnection connection;
+        private readonly ILogger<PlatformReportsDataService> logger;
         private readonly string selectSelfAssessmentActivity = @"SELECT Cast(al.ActivityDate As Date) As ActivityDate, SUM(CAST(al.Enrolled AS Int)) AS Enrolled, SUM(CAST((al.Submitted | al.SignedOff) AS Int)) AS Completed
                                                                     FROM   ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
                                                                                      Centres AS ce WITH (NOLOCK) ON al.CentreID = ce.CentreID INNER JOIN
@@ -63,6 +64,7 @@
         public PlatformReportsDataService(IDbConnection connection)
         {
             this.connection = connection;
+            this.logger = logger;
         }
         public PlatformUsageSummary GetPlatformUsageSummary()
         {

@@ -21,7 +21,7 @@
             CategoryName = admin.AdminAccount.CategoryName ?? "All";
             EmailAddress = admin.EmailForCentreNotifications;
             IsLocked = admin.UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
-            IsActive = admin.AdminAccount.Active;
+
             CanShowDeactivateAdminButton =
                 UserPermissionsHelper.LoggedInAdminCanDeactivateUser(admin.AdminAccount, loggedInAdminAccount);
 
@@ -42,8 +42,6 @@
         public string? EmailAddress { get; set; }
 
         public bool IsLocked { get; set; }
-
-        public bool IsActive { get; set; }
 
         public ReturnPageQuery ReturnPageQuery { get; set; }
     }

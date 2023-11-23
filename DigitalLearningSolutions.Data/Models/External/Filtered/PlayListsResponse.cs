@@ -5,6 +5,6 @@
     public class PlayListsResponse : FilteredResponse
     {
         [JsonProperty("result")]
-        public IEnumerable<PlayList>? Result { get; set; }
+        public IEnumerable<PlayList> Result { get; set; }
     }
 }

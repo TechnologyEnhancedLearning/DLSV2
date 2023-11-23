@@ -5,6 +5,6 @@ namespace DigitalLearningSolutions.Data.Models.Auth
     public class ResetPasswordWithUserDetails : ResetPassword
     {
         public int UserId { get; set; }
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; }
     }
 }

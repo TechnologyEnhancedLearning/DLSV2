@@ -4,7 +4,7 @@
 
     public abstract class BaseLearningItem : BaseSearchableItem
     {
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
         public int Id { get; set; }
         public bool HasDiagnostic { get; set; }
         public bool HasLearning { get; set; }

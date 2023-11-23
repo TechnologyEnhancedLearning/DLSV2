@@ -1,26 +1,24 @@
-﻿using DigitalLearningSolutions.Data.Enums;
-using DigitalLearningSolutions.Data.Helpers;
-using DigitalLearningSolutions.Data.Models.CustomPrompts;
-using DigitalLearningSolutions.Data.Models.DelegateGroups;
-using DigitalLearningSolutions.Data.Models.Frameworks;
-using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-using DigitalLearningSolutions.Web.Attributes;
-using DigitalLearningSolutions.Web.Helpers;
-using DigitalLearningSolutions.Web.Helpers.FilterOptions;
-using DigitalLearningSolutions.Web.Models.Enums;
-using DigitalLearningSolutions.Web.ServiceFilter;
-using DigitalLearningSolutions.Web.Services;
-using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.FeatureManagement.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.FeatureManagement.Mvc;
+
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
@@ -32,159 +30,61 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IGroupsService groupsService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
-        private readonly IPaginateService paginateService;
 
         public DelegateGroupsController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IGroupsService groupsService,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IPaginateService paginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.groupsService = groupsService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
-            this.paginateService = paginateService;
         }
 
-        [NoCaching]
         [Route("{page=1:int}")]
         public IActionResult Index(
             string? searchString = null,
-            string? sortBy = "",
-            string? sortDirection = "",
+            string? sortBy = null,
+            string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null,
             string? newFilterToAdd = null,
             bool clearFilters = false,
-            int page = 1,
-            int? itemsPerPage = 10
+            int page = 1
         )
         {
-            searchString = searchString == null ? string.Empty : searchString.Trim();
-            if (string.IsNullOrEmpty(sortBy))
-            {
-                sortBy = DefaultSortByOptions.Name.PropertyName;
-            }
-            if (string.IsNullOrEmpty(sortDirection))
-            {
-                sortDirection = GenericSortingHelper.Ascending;
-            }
-
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
                 clearFilters,
                 Request,
-                DelegateGroupsFilterCookieName,
-                null
+                DelegateGroupsFilterCookieName
             );
 
             var centreId = User.GetCentreIdKnownNotNull();
-
-            var addedByAdmins = groupsService.GetAdminsForCentreGroups(centreId);
-
-            foreach (var admin in addedByAdmins)
-            {
-                admin.FullName = DisplayStringHelper.GetPotentiallyInactiveAdminName(
-                    admin.Forename,
-                    admin.Surname,
-                    admin.Active
-                );
-            }
-
-            int offSet = ((page - 1) * itemsPerPage) ?? 0;
-            string filterAddedBy = "";
-            string filterLinkedField = "";
-
-            if (!string.IsNullOrEmpty(existingFilterString))
-            {
-                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-
-                if (!string.IsNullOrEmpty(newFilterToAdd))
-                {
-                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
-                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
-                    if (dupfilters.Count() > 1)
-                    {
-                        foreach (var filter in selectedFilters)
-                        {
-                            if (filter.Contains(filterHeader))
-                            {
-                                selectedFilters.Remove(filter);
-                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (selectedFilters.Count > 0)
-                {
-                    foreach (var filter in selectedFilters)
-                    {
-                        var filterArr = filter.Split(FilteringHelper.Separator);
-                        var filterValue = filterArr[2];
-                        if (filterValue == FilteringHelper.EmptyValue) filterValue = "No option selected";
-
-                        if (filter.Contains("AddedBy"))
-                            filterAddedBy = filterValue;
-
-                        if (filter.Contains("LinkedToField"))
-                            filterLinkedField = filterValue;
-                    }
-                }
-            }
-
-            (var groups, var resultCount) = groupsService.GetGroupsForCentre(
-                search: searchString ?? string.Empty,
-                offSet,
-                rows: itemsPerPage ?? 0,
-                sortBy,
-                sortDirection,
-                centreId: centreId,
-                filterAddedBy,
-                filterLinkedField);
-
-            if (groups.Count() == 0 && resultCount > 0)
-            {
-                page = 1;
-                offSet = 0;
-
-                (groups, resultCount) = groupsService.GetGroupsForCentre(
-                    search: searchString ?? string.Empty,
-                    offSet,
-                    rows: itemsPerPage ?? 0,
-                    sortBy,
-                    sortDirection,
-                    centreId: centreId,
-                    filterAddedBy,
-                    filterLinkedField);
-            }
-
+            var groups = groupsService.GetGroupsForCentre(centreId).ToList();
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
             var availableFilters = DelegateGroupsViewModelFilterOptions
-                .GetDelegateGroupFilterModels(addedByAdmins, registrationPrompts).ToList();
+                .GetDelegateGroupFilterModels(groups, registrationPrompts).ToList();
 
-            var result = paginateService.Paginate(
-                groups,
-                resultCount,
-                new PaginationOptions(page, itemsPerPage),
-                new FilterOptions(existingFilterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),
-                searchString,
-                sortBy,
-                sortDirection
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(existingFilterString, availableFilters),
+                new PaginationOptions(page)
             );
 
-            result.Page = page;
-            TempData["Page"] = result.Page;
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                groups,
+                searchSortPaginationOptions
+            );
 
             var model = new DelegateGroupsViewModel(
                 result,
                 availableFilters
             );
 
-            model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
-            model.MatchingSearchResults = resultCount;
             Response.UpdateFilterCookie(DelegateGroupsFilterCookieName, result.FilterString);
 
             return View(model);
@@ -194,8 +94,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         public IActionResult AllDelegateGroups()
         {
             var centreId = User.GetCentreIdKnownNotNull();
-
-            var groups = groupsService.GetGroupsForCentre(centreId: centreId).ToList();
+            var groups = groupsService.GetGroupsForCentre(centreId).ToList();
 
             var model = new AllDelegateGroupsViewModel(groups, GetRegistrationPromptsWithSetOptions(centreId));
 
@@ -216,21 +115,13 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return View(model);
             }
 
-            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()))
-            {
-                groupsService.AddDelegateGroup(
+            groupsService.AddDelegateGroup(
                 User.GetCentreIdKnownNotNull(),
-                model.GroupName!.Trim(),
+                model.GroupName!,
                 model.GroupDescription,
                 User.GetAdminId()!.Value
             );
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                ModelState.AddModelError(nameof(model.GroupName), "Delegate group with the same name already exists");
-                return View("AddDelegateGroup", model);
-            }
+            return RedirectToAction("Index");
         }
 
         [HttpGet("{groupId:int}/EditDescription")]
@@ -296,19 +187,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return NotFound();
             }
 
-            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()))
-            {
-                groupsService.UpdateGroupName(
+            groupsService.UpdateGroupName(
                 groupId,
                 centreId,
-                model.GroupName.Trim()
+                model.GroupName
             );
-            }
-            else
-            {
-                ModelState.AddModelError(nameof(model.GroupName), "Delegate group with the same name already exists");
-                return View(model);
-            }
 
             return RedirectToAction("Index");
         }

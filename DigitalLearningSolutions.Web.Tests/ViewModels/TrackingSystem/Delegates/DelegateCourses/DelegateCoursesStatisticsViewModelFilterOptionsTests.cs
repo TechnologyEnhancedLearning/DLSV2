@@ -92,26 +92,6 @@
             }
         );
 
-        private readonly FilterModel expectedTypeFilterViewModel = new FilterModel(
-            "Course",
-            "Type",
-            new[]
-            {
-                new FilterOptionModel(
-                    "Course",
-                    "Type" + FilteringHelper.Separator + "Course" + FilteringHelper.Separator +
-                    "true",
-                    FilterStatus.Default
-                ),
-                new FilterOptionModel(
-                    "Self assessment",
-                    "Type" + FilteringHelper.Separator + "SelfAssessment" + FilteringHelper.Separator +
-                    "true",
-                    FilterStatus.Default
-                ),
-            }
-        );
-
         private readonly List<string> filterableCategories = new List<string> { "Category 1", "Category 2" };
 
         private readonly List<string> filterableTopics = new List<string> { "Topic 1", "Topic 2" };
@@ -127,7 +107,6 @@
             result.Should().BeEquivalentTo(
                 new List<FilterModel>
                 {
-                    expectedTypeFilterViewModel,
                     expectedCategoriesFilterViewModel,
                     expectedTopicsFilterViewModel,
                     expectedStatusFilterViewModel,
@@ -147,7 +126,6 @@
             result.Should().BeEquivalentTo(
                 new List<FilterModel>
                 {
-                    expectedTypeFilterViewModel,
                     expectedTopicsFilterViewModel,
                     expectedStatusFilterViewModel,
                     expectedHasAdminFieldsFilterViewModel,

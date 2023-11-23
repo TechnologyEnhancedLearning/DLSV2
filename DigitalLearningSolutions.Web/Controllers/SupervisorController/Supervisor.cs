@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -92,7 +91,7 @@
                 centreRegistrationPrompts
             );
             model.IsActiveSupervisorDelegateExist = IsSupervisorDelegateExistAndActive(adminId, supervisorEmail, centreId) > 0;
-            model.SelfSuperviseDelegateDetailViewModels = supervisorDelegateDetailViewModels.Where(x => x.SupervisorDelegateDetail.DelegateUserID == loggedInUserId).FirstOrDefault();
+            model.SelfSuperviseDelegateDetailViewModels= supervisorDelegateDetailViewModels.Where(x => x.SupervisorDelegateDetail.DelegateUserID == loggedInUserId).FirstOrDefault();
             ModelState.ClearErrorsForAllFieldsExcept("DelegateEmailAddress");
             return View("MyStaffList", model);
         }
@@ -102,7 +101,7 @@
             var adminId = GetAdminId();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
-
+            
             AddSupervisorDelegateAndReturnId(adminId, supervisorEmail, supervisorEmail, centreId);
             return RedirectToAction("MyStaffList");
         }
@@ -173,7 +172,7 @@
                 }
                 else
                 {
-                    ModelState.AddModelError("DelegateEmails", "User(s) with " + registeredSupervisorEmails + " email are already registered as supervisor");
+                    ModelState.AddModelError("DelegateEmails", "User(s) with " + registeredSupervisorEmails + " email are already registered as supervisor") ;
                     return View("AddMultipleSupervisorDelegates", model);
                 }
 
@@ -327,7 +326,7 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Review/{selfAssessmentResultId}")]
         public IActionResult ReviewDelegateSelfAssessment(int supervisorDelegateId, int candidateAssessmentId, int? selfAssessmentResultId = null, SearchSupervisorCompetencyViewModel searchModel = null)
         {
-            var adminId = GetAdminId();
+            var adminId = GetAdminId();      
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
@@ -348,8 +347,6 @@
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = searchModel,
-                CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle.Contains("Assessor")
             };
 
             var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
@@ -932,7 +929,7 @@
                 : supervisorService
                     .GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value).Count());
             var allowSupervisorRoleSelection = (sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId == null
-                ? false : supervisorService
+                ? false:supervisorService
                     .GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value).FirstOrDefault().AllowSupervisorRoleSelection);
             var model = new EnrolDelegateSummaryViewModel()
             {
@@ -941,7 +938,7 @@
                 SupervisorRoleName = supervisorRoleName,
                 CompleteByDate = sessionEnrolOnRoleProfile.CompleteByDate,
                 SupervisorRoleCount = supervisorRoleCount,
-                AllowSupervisorRoleSelection = allowSupervisorRoleSelection
+                AllowSupervisorRoleSelection= allowSupervisorRoleSelection
             };
             ViewBag.completeByDate = TempData["completeByDate"];
             ViewBag.completeByMonth = TempData["completeByMonth"];
@@ -982,7 +979,6 @@
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
 
-        [NoCaching]
         public IActionResult QuickAddSupervisor(int selfAssessmentId, int supervisorDelegateId, int delegateUserId)
         {
             var supervisorDelegate =
@@ -1003,12 +999,6 @@
             }
             else
             {
-                if (TempData["IsAssessmentsSupervise"] != null)
-                {
-                    TempData.Remove("IsAssessmentsSupervise");
-                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
-                }
-
                 var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile()
                 {
                     SelfAssessmentID = supervisorRoles.FirstOrDefault().SelfAssessmentID,
@@ -1029,7 +1019,7 @@
                 };
                 return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId));
             }
-
+            
 
 
         }
@@ -1096,7 +1086,6 @@
                     selfAssessmentId,
                     selfAssessmentSupervisorRoleId.Value
                 );
-                TempData["IsAssessmentsSupervise"] = true;
                 return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
             }
         }
@@ -1310,19 +1299,9 @@
                 {
                     return 0;
                 }
+
             }
             return existingId;
-        }
-
-        public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string delegateName, string selfAssessmentName, int delegateUserID)
-        {
-            var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, delegateUserID, true);
-            var fileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0, 30) : selfAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
-            return File(
-                content,
-                FileHelper.GetContentTypeFromFileName(fileName),
-                fileName
-            );
         }
     }
 }

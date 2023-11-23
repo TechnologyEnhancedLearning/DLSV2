@@ -2,9 +2,9 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -80,7 +80,7 @@
         {
             // Given
             var centres = Builder<CentreEntity>.CreateListOfSize(10).Build();
-            (var returnedCentres, var centreCount) = fakeCentresService.GetAllCentreSummariesForSuperAdmin("", 0, 10, 0, 0, 0, "Any");
+            (var returnedCentres,var centreCount) = fakeCentresService.GetAllCentreSummariesForSuperAdmin("", 0, 10, 0, 0, 0, "Any");
             returnedCentres.Equals(centres);
 
             // When
@@ -89,7 +89,7 @@
 
             A.CallTo(() => fakeCentresService.GetAllCentreSummariesForSuperAdmin("", 0, 10, 0, 0, 0, "Any")).Returns((expectedCentres, expectedCount));
 
-            (var result, var count) = fakeCentresService.GetAllCentreSummariesForSuperAdmin("", 0, 10, 0, 0, 0, "Any");
+            (var result,var count) = fakeCentresService.GetAllCentreSummariesForSuperAdmin("", 0, 10, 0, 0, 0, "Any");
 
             // Then
             result.Should().HaveCount(10);

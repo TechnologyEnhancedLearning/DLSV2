@@ -22,7 +22,7 @@
         }
 
         public int TutorialId { get; set; }
-        public string TutorialName { get; set; } = string.Empty;
+        public string TutorialName { get; set; }
         public bool? Status { get; set; }
         public bool? DiagStatus { get; set; }
         public int? OverrideTutorialMins { get; set; }

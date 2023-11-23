@@ -31,7 +31,6 @@
             ShowOnMap = centre.ShowOnMap;
         }
 
-        [MaxLength(250, ErrorMessage = "Centre name must be 250 characters or fewer")]
         [Required(ErrorMessage = "Enter a centre name")]
         public string CentreName { get; set; }
 
@@ -50,7 +49,6 @@
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? CentreEmail { get; set; }
 
-        [RegularExpression(@"^[\d.,\s]+$", ErrorMessage = "IP Prefix can contain only digits, stops, commas and spaces")]
         public string? IpPrefix { get; set; }
         public bool ShowOnMap { get; set; }
         public string? ContactFirstName { get; set; }

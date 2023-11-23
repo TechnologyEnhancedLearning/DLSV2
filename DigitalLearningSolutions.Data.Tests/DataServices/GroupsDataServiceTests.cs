@@ -55,7 +55,7 @@
             };
 
             // When
-            var result = groupsDataService.GetGroupsForCentre(centreId: 101).ToList();
+            var result = groupsDataService.GetGroupsForCentre(101).ToList();
 
             // Then
             using (new AssertionScope())

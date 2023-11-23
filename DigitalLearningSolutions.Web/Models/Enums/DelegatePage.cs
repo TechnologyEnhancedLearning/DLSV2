@@ -4,7 +4,7 @@
     {
         AllDelegates,
         DelegateGroups,
-        ActivityDelegates,
+        CourseDelegates,
         DelegateCourses,
         ApproveDelegateRegistrations,
     }

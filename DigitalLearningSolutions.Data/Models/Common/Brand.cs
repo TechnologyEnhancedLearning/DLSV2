@@ -7,6 +7,6 @@
         public int BrandID { get; set; }
         [StringLength(50, MinimumLength = 3)]
         [Required]
-        public string BrandName { get; set; } = string.Empty;
+        public string BrandName { get; set; }
     }
 }

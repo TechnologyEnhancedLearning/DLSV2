@@ -27,11 +27,11 @@
                      link-text="Resources"
                      is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
 
-    <vc:side-menu-link asp-action="Index"
-                       asp-controller="RequestSupportTicket"
-                       asp-all-route-data="@routeData"
-                       link-text="Request support"
-                       is-current-page="@(Model.CurrentPage == SupportPage.RequestSupportTicket)" />
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="SupportTickets"
+                     asp-all-route-data="@routeData"
+                     link-text="Support tickets"
+                     is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
 
   @if (Model.CurrentPage == SupportPage.ChangeRequests)
   {

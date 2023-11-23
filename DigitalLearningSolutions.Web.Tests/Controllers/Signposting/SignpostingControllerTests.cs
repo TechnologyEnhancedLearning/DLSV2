@@ -1,11 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Signposting
 {
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;    
+    using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Signposting;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;

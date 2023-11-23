@@ -14,11 +14,11 @@ namespace DigitalLearningSolutions.Web.Tests.Services
     using DigitalLearningSolutions.Data.Models.Notifications;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.Helpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;

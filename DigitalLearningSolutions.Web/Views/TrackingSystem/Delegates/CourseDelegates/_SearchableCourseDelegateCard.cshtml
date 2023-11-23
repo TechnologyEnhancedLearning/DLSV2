@@ -1,0 +1,22 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
+@model DelegateCourseInfoViewModel
+
+<div class="searchable-element nhsuk-panel word-break" id="@Model.DelegateId-card">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text word-break" id="@Model.DelegateId-name" data-name-for-sorting="name">
+        <span class="searchable-element-title">@Model.CourseDelegatesDisplayName</span>
+        <span class="searchable-element-email">@DisplayStringHelper.GetEmailDisplayString(Model.Email)</span>
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
+
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressDetails.cshtml" model="@Model" />
+
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressButtons.cshtml" model="@Model" />
+    </div>
+  </details>
+</div>

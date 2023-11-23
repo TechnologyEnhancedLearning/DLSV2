@@ -4,12 +4,12 @@
     using System.Globalization;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Certificates;
-    using DigitalLearningSolutions.Data.Models.External.Maps;    
+    using DigitalLearningSolutions.Data.Models.External.Maps;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
     using FakeItEasy;
     using FluentAssertions;
@@ -136,7 +136,7 @@
                 )
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
-            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreSignatureFile)]?.ValidationState.Should()
+            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreSignatureFile)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
         }
 
@@ -166,7 +166,7 @@
                 )
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
-            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreLogoFile)]?.ValidationState.Should()
+            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreLogoFile)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
         }
 

@@ -26,7 +26,6 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using DocumentFormat.OpenXml.EMMA;
-    using DigitalLearningSolutions.Data.Models.Supervisor;
 
     public partial class LearningPortalController
     {
@@ -235,7 +234,6 @@
                 var delegateUserId = User.GetUserIdKnownNotNull();
                 var delegateId = User.GetCandidateIdKnownNotNull();
                 var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
-                selfAssessmentService.RemoveSignoffRequests(selfAssessmentId, delegateUserId, competencyGroupId);
                 var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
                 return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, assessmentQuestions, delegateUserId, delegateId);
             }
@@ -436,6 +434,7 @@
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(assessment.Id, delegateUserId);
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, delegateUserId);
+
             var recentResults = selfAssessmentService.GetMostRecentResults(assessment.Id, delegateId).ToList();
             var competencyIds = recentResults.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
@@ -1046,7 +1045,7 @@
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
-            ).GetAwaiter().GetResult();
+            );
             var candidateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
             var delegateEntity = userDataService.GetDelegateById(candidateId);
@@ -1386,7 +1385,6 @@
                     resultId
                 )
             );
-
             if (resultCount > 0)
             {
                 frameworkNotificationService.SendResultVerificationRequest(
@@ -1536,10 +1534,10 @@
             };
             return View("SelfAssessments/SignOffHistory", model);
         }
-        public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary,string candidateAssessmentName)
+        public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary)
         {
             var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, User.GetUserIdKnownNotNull(), true);
-            var fileName = $"{((candidateAssessmentName.Length > 30) ? candidateAssessmentName.Substring(0, 30) : candidateAssessmentName)} {vocabulary} Assessment Export {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
+            var fileName = $"DLS {vocabulary} Assessment Export {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),

@@ -51,8 +51,8 @@
         public string GetPasswordHash(string password)
         {
             var salt = new byte[SaltSize];
-            RandomNumberGenerator.Fill(salt);
-           
+            new RNGCryptoServiceProvider().GetBytes(salt);
+
             var deriveBytes = new Rfc2898DeriveBytes(password, salt, PBKDF2IterationCount);
             var generatedSubkey = deriveBytes.GetBytes(PBKDF2SubkeyLength);
 

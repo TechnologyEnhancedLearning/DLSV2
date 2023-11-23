@@ -4,7 +4,7 @@
 
     public class DetailedSectionProgress
     {
-        public string SectionName { get; set; } = string.Empty;
+        public string SectionName { get; set; }
         public int SectionId { get; set; }
 
         public int Completion { get; set; }

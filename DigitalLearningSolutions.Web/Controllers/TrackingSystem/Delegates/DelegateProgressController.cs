@@ -1,14 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System;
-    using System.IO;
     using System.Net;
-    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -18,9 +14,6 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.AspNetCore.Mvc.ViewEngines;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -39,7 +32,6 @@
         private readonly IProgressService progressService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IUserService userService;
-        private readonly IPdfService pdfService;
 
         public DelegateProgressController(
             ICourseService courseService,
@@ -47,8 +39,7 @@
             IUserService userService,
             IProgressService progressService,
             IConfiguration configuration,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IPdfService pdfService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.courseService = courseService;
@@ -57,7 +48,6 @@
             this.progressService = progressService;
             this.configuration = configuration;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
-            this.pdfService = pdfService;
         }
 
         public IActionResult Index(int progressId, DelegateAccessRoute accessedVia)
@@ -275,7 +265,7 @@
         )
         {
             var progress = progressService.GetDetailedCourseProgress(progressId);
-            if (progress == null)
+            if (!courseService.DelegateHasCurrentProgress(progressId) || progress == null)
             {
                 return StatusCode((int)HttpStatusCode.Gone);
             }
@@ -325,11 +315,11 @@
             ReturnPageQuery? returnPageQuery
         )
         {
-            if (accessedVia.Equals(DelegateAccessRoute.ActivityDelegates))
+            if (accessedVia.Equals(DelegateAccessRoute.CourseDelegates))
             {
                 var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
                 routeData.Add("customisationId", customisationId.ToString());
-                return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
+                return RedirectToAction("Index", "CourseDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
@@ -397,82 +387,6 @@
 
             var model = new AllLearningLogEntriesViewModel(learningLog.Entries);
             return View(model);
-        }
-
-        [Route("ViewDelegateProgress")]
-        public IActionResult ViewDelegateProgress(int progressId, DelegateAccessRoute accessedVia)
-        {
-            var delegateCourseProgess = progressService.GetCourseProgressInfo(progressId);
-
-            if (delegateCourseProgess == null)
-            {
-                return NotFound();
-            }
-            var model = new PreviewProgressViewModel(delegateCourseProgess, accessedVia);
-            return View(model);
-        }
-        [Route("Download")]
-        public async Task<IActionResult> Download(int progressId, DelegateAccessRoute accessedVia)
-        {
-            PdfReportStatusResponse pdfReportStatusResponse = new PdfReportStatusResponse();
-            DelegateCourseProgressInfo delegateCourseProgess = null;
-            if (progressId == 0)
-            {
-                return NotFound();
-            }
-            else
-            {
-                delegateCourseProgess = progressService.GetCourseProgressInfo(progressId);
-            }
-
-            if (delegateCourseProgess == null)
-            {
-                return NotFound();
-            }
-            var model = new PreviewProgressViewModel(delegateCourseProgess, accessedVia);
-
-            var renderedViewHTML = RenderRazorViewToString(this, "DownloadProgress", model);
-
-            var delegateId = User.GetCandidateIdKnownNotNull();
-            var pdfReportResponse = await pdfService.PdfReport(progressId.ToString(), renderedViewHTML, delegateId);
-            if (pdfReportResponse != null)
-            {
-                do
-                {
-                    pdfReportStatusResponse = await pdfService.PdfReportStatus(pdfReportResponse);
-                } while (pdfReportStatusResponse.Id == 1);
-
-                var pdfReportFile = await pdfService.GetPdfReportFile(pdfReportResponse);
-                if (pdfReportFile != null)
-                {
-                    var fileName = $"Progress Summary - {model.CourseName.Substring(0, 15)} - {model.CandidateNumber}.pdf";
-                    return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
-                }
-            }
-            return View("ViewDelegateProgress", model);
-        }
-
-        public static string RenderRazorViewToString(Controller controller, string viewName, object model = null)
-        {
-            controller.ViewData.Model = model;
-            using (var sw = new StringWriter())
-            {
-                IViewEngine viewEngine =
-                    controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as
-                        ICompositeViewEngine;
-                ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, viewName, false);
-
-                ViewContext viewContext = new ViewContext(
-                    controller.ControllerContext,
-                    viewResult.View,
-                    controller.ViewData,
-                    controller.TempData,
-                    sw,
-                    new HtmlHelperOptions()
-                );
-                viewResult.View.RenderAsync(viewContext);
-                return sw.GetStringBuilder().ToString();
-            }
         }
     }
 }

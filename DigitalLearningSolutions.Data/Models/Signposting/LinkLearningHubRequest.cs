@@ -7,10 +7,10 @@
         public int UserId { get; set; }
 
         [Required]
-        public string Hash { get; set; } = string.Empty;
+        public string Hash { get; set; }
 
         [Required]
-        public string State { get; set; } = string.Empty;
+        public string State { get; set; }
 
         public static string SessionIdentifierKey = "LinkLearningHubRequestIdentifier";
     }

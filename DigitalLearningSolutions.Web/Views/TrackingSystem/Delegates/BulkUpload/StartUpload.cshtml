@@ -29,7 +29,7 @@
                      css-class="@(errorHasOccurred ? " nhsuk-u-padding-left-5 nhsuk-u-margin-bottom-3" : "")"
                      hint-text-lines="@hintTextLines" />
 
-            <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with updated information (max @(Model.MaxBulkUploadRows) rows)" hint-text="" css-class="nhsuk-u-width-one-half" />
+      <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with updated information" hint-text="" css-class="nhsuk-u-width-one-half" />
 
       <button class="nhsuk-button" type="submit">Upload and process</button>
     </form>

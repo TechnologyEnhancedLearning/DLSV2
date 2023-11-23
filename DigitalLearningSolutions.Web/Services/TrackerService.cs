@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
-    using DocumentFormat.OpenXml.Office2013.Excel;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
@@ -112,20 +111,6 @@
                             query.CustomisationId,
                             sessionVariables[TrackerEndpointSessionVariable.LmSessionId]
                         );
-                    }
-
-                    if (action == TrackerEndpointAction.updatelessonstate)
-                    {
-                        return trackerActionService.UpdateLessonState(
-                            query.TutorialId,
-                            query.ProgressId,
-                            query.CandidateId,
-                            query.CustomisationId,
-                            query.TutorialStatus,
-                            Convert.ToInt32(query.TutorialTime),
-                            query.SuspendData,
-                            query.LessonLocation
-                            );
                     }
 
                     throw new ArgumentOutOfRangeException();

@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FluentAssertions;
     using NUnit.Framework;
@@ -13,7 +13,7 @@
         {
             // Given
             var selfAssessment =
-                SelfAssessmentTestHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
 
             // When
             var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(
@@ -30,7 +30,7 @@
         {
             // Given
             var selfAssessment =
-                SelfAssessmentTestHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
 
             // When
             var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(
@@ -47,7 +47,7 @@
         {
             // Given
             var selfAssessment =
-                SelfAssessmentTestHelper.CreateDefaultSelfAssessment(
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(
                     completeByDate: DateTime.Today + TimeSpan.FromDays(100)
                 );
 

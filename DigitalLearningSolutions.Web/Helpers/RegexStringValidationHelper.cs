@@ -28,11 +28,11 @@
                     return match.Groups[1].Value + domainName;
                 }
             }
-            catch (RegexMatchTimeoutException)
+            catch (RegexMatchTimeoutException e)
             {
                 return false;
             }
-            catch (ArgumentException)
+            catch (ArgumentException e)
             {
                 return false;
             }

@@ -5,7 +5,7 @@
     public class GroupDetails
     {
         public int CentreId { get; set; }
-        public string GroupLabel { get; set; } = string.Empty;
+        public string GroupLabel { get; set; }
         public string? GroupDescription { get; set; }
         public int LinkedToField { get; set; }
         public bool SyncFieldChanges { get; set; }

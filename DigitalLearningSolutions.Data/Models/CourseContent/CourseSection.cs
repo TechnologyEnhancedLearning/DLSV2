@@ -2,7 +2,7 @@
 {
     public class CourseSection
     {
-        public string Title { get; } = string.Empty;
+        public string Title { get; }
         public int Id { get; }
         public bool HasLearning { get; }
         public double PercentComplete { get; }

@@ -41,7 +41,7 @@
         }
         public Task<PdfReportResponse?> PdfReport(CertificateInformation certificates, string strHtml, int delegateId)
         {
-            return learningHubReportApiClient.PdfReport(certificates.CourseName, strHtml, delegateId);
+            return learningHubReportApiClient.PdfReport(certificates, strHtml, delegateId);
         }
         public Task<PdfReportStatusResponse?> PdfReportStatus(PdfReportResponse pdfReportResponse)
         {

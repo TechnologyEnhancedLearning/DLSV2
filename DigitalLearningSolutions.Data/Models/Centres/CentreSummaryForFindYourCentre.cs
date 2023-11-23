@@ -7,9 +7,9 @@
     public class CentreSummaryForFindYourCentre : BaseSearchableItem
     {
         public int CentreId { get; set; }
-        public string CentreName { get; set; } = string.Empty;
+        public string CentreName { get; set; }
         public int RegionId { get; set; }
-        public string RegionName { get; set; } = string.Empty;
+        public string RegionName { get; set; }
         public string? Telephone { get; set; }
         public string? Email { get; set; }
         public string? WebUrl { get; set; }

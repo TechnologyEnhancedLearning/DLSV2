@@ -12,12 +12,7 @@
         public DelegateGroupsViewModel(
             SearchSortFilterPaginationResult<Group> result,
             IEnumerable<FilterModel> availableFilters
-        ) : base(
-            result,
-            true,
-            availableFilters,
-            "Search groups"
-        )
+        ) : base(result, true, availableFilters)
         {
             DelegateGroups = result.ItemsToDisplay.Select(g =>
                 {

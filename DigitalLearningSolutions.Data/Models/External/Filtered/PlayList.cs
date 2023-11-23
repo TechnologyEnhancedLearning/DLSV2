@@ -11,9 +11,9 @@
         [JsonProperty("type")]
         public string? Type { get; set; }
         [JsonProperty("typeExtra")]
-        public List<FilteredCompetency>? TypeExtra { get; set; }
+        public List<FilteredCompetency> TypeExtra { get; set; }
         [JsonProperty("laList")]
-        public LaList? LaList { get; set; }
+        public LaList LaList { get; set; }
         public List<LearningAsset>? LearningAssets { get; set; }
     }
 }

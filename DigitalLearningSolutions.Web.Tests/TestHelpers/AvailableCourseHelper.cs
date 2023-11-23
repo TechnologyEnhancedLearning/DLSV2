@@ -16,8 +16,7 @@
             string brand = "Brand 1",
             string? category = "Category 1",
             string? topic = "Topic 1",
-            int delegateStatus = 0,
-            bool hideInLearnerPortal = false
+            int delegateStatus = 0
         )
         {
             return new AvailableCourse
@@ -30,14 +29,13 @@
                 Brand = brand,
                 Category = category,
                 Topic = topic,
-                DelegateStatus = delegateStatus,
-                HideInLearnerPortal = hideInLearnerPortal
+                DelegateStatus = delegateStatus
             };
         }
-        public static AvailablePageViewModel? AvailableViewModelFromController(LearningPortalController controller)
+        public static AvailablePageViewModel AvailableViewModelFromController(LearningPortalController controller)
         {
             var result = controller.Available() as ViewResult;
-            return (AvailablePageViewModel?)result!.Model;
+            return (AvailablePageViewModel)result!.Model;
         }
     }
 }

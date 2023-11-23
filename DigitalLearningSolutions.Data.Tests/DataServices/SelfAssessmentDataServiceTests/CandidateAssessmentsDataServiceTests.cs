@@ -28,7 +28,7 @@
             // Then
             var expectedSelfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(
                 SelfAssessmentId,
-                "Digital Skills Assessment Tool",
+                "Digital Capability Self Assessment",
                 description,
                 32,
                 new DateTime(2020, 09, 01, 14, 10, 37, 447),

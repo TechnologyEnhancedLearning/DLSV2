@@ -8,7 +8,7 @@
         [JsonProperty("method")]
         public string? Method { get; set; }
         [JsonProperty("params")]
-        public Profile? Profile { get; set; }
+        public Profile Profile { get; set; }
         [JsonProperty("jsonrpc")]
         public string? JSonRPC { get; set; }
     }

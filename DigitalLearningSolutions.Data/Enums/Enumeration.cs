@@ -20,7 +20,6 @@ namespace DigitalLearningSolutions.Data.Enums
         protected Enumeration(int id, string name) => (Id, Name) = (id, name);
 
         public override string ToString() => Name;
-        public override int GetHashCode() => Id;
 
         public static IEnumerable<T> GetAll<T>() where T : Enumeration =>
             typeof(T).GetFields(
@@ -105,28 +104,28 @@ namespace DigitalLearningSolutions.Data.Enums
 
     public class EnumerationTypeConverter<T> : TypeConverter where T : Enumeration
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type? sourceType)
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
-            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType!);
+            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
         }
 
-        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object? value)
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             return value is string casted
                 ? Enumeration.FromName<T>(casted)
-                : base.ConvertFrom(context, culture, value!);
+                : base.ConvertFrom(context, culture, value);
         }
 
-        public override object? ConvertTo(
-            ITypeDescriptorContext? context,
-            CultureInfo? culture,
-            object? value,
-            Type? destinationType
+        public override object ConvertTo(
+            ITypeDescriptorContext context,
+            CultureInfo culture,
+            object value,
+            Type destinationType
         )
         {
             return destinationType == typeof(string) && value is Enumeration casted
                 ? casted.Name
-                : base.ConvertTo(context, culture, value, destinationType!);
+                : base.ConvertTo(context, culture, value, destinationType);
         }
     }
 }

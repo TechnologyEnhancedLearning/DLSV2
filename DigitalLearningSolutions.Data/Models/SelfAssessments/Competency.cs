@@ -8,12 +8,12 @@
     {
         public int Id { get; set; }
         public int RowNo { get; set; }
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
         public string? Description { get; set; }
         public string? QuestionLabel { get; set; }
-        public string CompetencyGroup { get; set; } = string.Empty;
+        public string CompetencyGroup { get; set; }
         public int CompetencyGroupID { get; set; }
-        public string CompetencyGroupDescription { get; set; } = string.Empty;
+        public string CompetencyGroupDescription { get; set; }
         public string? Vocabulary { get; set; }
         public bool Optional { get; set; }
         public bool AlwaysShowDescription { get; set; }
