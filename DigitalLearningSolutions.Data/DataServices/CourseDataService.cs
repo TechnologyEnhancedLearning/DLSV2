@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Data.DataServices
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public interface ICourseDataService
     {
@@ -135,7 +134,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields);
 
-        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(int centreId);
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive);
     }
 
     public class CourseDataService : ICourseDataService
@@ -696,7 +695,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         FETCH NEXT @exportQueryRowLimit ROWS ONLY";
             return connection.Query<CourseStatistics>(
                 sql,
-                new { centreId, categoryId, exportQueryRowLimit, currentRun, orderBy,searchString}
+                new { centreId, categoryId, exportQueryRowLimit, currentRun, orderBy, searchString }
             );
         }
 
@@ -795,7 +794,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 sortOrder = " DESC ";
 
             if (sortBy == "CourseName" || sortBy == "SearchableName")
-                orderBy = " ORDER BY ap.ApplicationName "+sortOrder+", cu.CustomisationName " + sortOrder;
+                orderBy = " ORDER BY ap.ApplicationName " + sortOrder + ", cu.CustomisationName " + sortOrder;
             else
                 orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
 
@@ -1554,7 +1553,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
 
-        public  IEnumerable<CourseDelegateForExport> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+        public IEnumerable<CourseDelegateForExport> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3)
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
@@ -1701,7 +1700,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString,int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,string isActive, string categoryName, string courseTopic, string hasAdminFields
+        public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields
         )
         {
             string courseStatisticsSelect = @$" SELECT
@@ -1783,9 +1782,9 @@ namespace DigitalLearningSolutions.Data.DataServices
             return courseStatistics;
         }
 
-        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(int centreId)
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive)
         {
-                string assessmentStatisticsSelectQuery = $@"SELECT
+            string assessmentStatisticsSelectQuery = $@"SELECT
                         sa.Name AS Name,
                         cc.CategoryName AS Category,
                         CASE 
@@ -1807,10 +1806,15 @@ namespace DigitalLearningSolutions.Data.DataServices
                         from CentreSelfAssessments AS csa 
                         INNER join SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
                         INNER JOIN CourseCategories AS cc ON sa.CategoryID = cc.CourseCategoryID
-                        WHERE csa.CentreID= @centreId";
+                        WHERE csa.CentreID= @centreId
+                                AND sa.[Name] LIKE '%' + @searchString + '%'
+		                        AND ((@categoryName = 'Any') OR (cc.CategoryName = @categoryName))
+		                        AND ((@isActive = 'Any') OR (@isActive = 'true' AND  sa.ArchivedDate IS NULL) OR (@isActive = 'false' AND sa.ArchivedDate IS NOT NULL))
+                                ";
 
-                IEnumerable<DelegateAssessmentStatistics> delegateAssessmentStatistics = connection.Query<DelegateAssessmentStatistics>(assessmentStatisticsSelectQuery, new { centreId }, commandTimeout: 3000);
-                return delegateAssessmentStatistics;
+            IEnumerable<DelegateAssessmentStatistics> delegateAssessmentStatistics = connection.Query<DelegateAssessmentStatistics>(assessmentStatisticsSelectQuery,
+                new { searchString, centreId, categoryName, isActive }, commandTimeout: 3000);
+            return delegateAssessmentStatistics;
         }
     }
 }
