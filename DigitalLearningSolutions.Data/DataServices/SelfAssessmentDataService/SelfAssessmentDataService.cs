@@ -159,7 +159,8 @@
 
         RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
        void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
-
+        int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
+        bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -576,6 +577,25 @@ public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExp
                       WHERE ID = @candidateAssessmentsId",
                 new { candidateAssessmentsId }
             );
+        }
+        public int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId)
+        {
+            int ResultCount = connection.ExecuteScalar<int>(
+                @"SELECT COUNT(ID)
+                    FROM [mbdbx101_uar].[dbo].[CandidateAssessmentSupervisors]
+                    WHERE CandidateAssessmentID = @candidateAssessmentsId and Removed IS NULL",
+                new { candidateAssessmentsId }
+            );
+            return ResultCount;
+        }
+        public bool CheckForSameCentre(int centreId, int candidateAssessmentsId)
+        {
+            int ResultCount = connection.ExecuteScalar<int>(
+                @"SELECT Count(DISTINCT ID) FROM CandidateAssessments WHERE ID = @candidateAssessmentsId
+                    and CentreID=@centreId",
+                new { centreId, candidateAssessmentsId }
+            );
+            return ResultCount == 1 ? true : false;
         }
     }
 }
