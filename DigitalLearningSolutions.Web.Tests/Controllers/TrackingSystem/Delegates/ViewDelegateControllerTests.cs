@@ -27,6 +27,7 @@
         private ViewDelegateController viewDelegateController = null!;
         private IEmailVerificationService emailVerificationService = null!;
         private IEmailVerificationDataService emailVerificationDataService = null!;
+        private ISelfAssessmentService selfAssessmentService = null!;
 
         [SetUp]
         public void SetUp()
@@ -40,6 +41,7 @@
             courseService = A.Fake<ICourseService>();
             config = A.Fake<IConfiguration>();
             emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
+            selfAssessmentService = A.Fake<ISelfAssessmentService>();
 
             viewDelegateController = new ViewDelegateController(
                     userDataService,
@@ -49,7 +51,8 @@
                     passwordResetService,
                     config,
                     emailVerificationService,
-                    emailVerificationDataService
+                    emailVerificationDataService,
+                    selfAssessmentService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true).WithMockTempData();
