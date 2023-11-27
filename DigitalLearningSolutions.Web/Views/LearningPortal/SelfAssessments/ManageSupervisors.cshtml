@@ -71,7 +71,7 @@
           </td>
           <td class="nhsuk-table__cell">
             <span class="nhsuk-table-responsive__heading">Actions </span>
-            @if (supervisor.AllowDelegateNomination || supervisor.AddedByDelegate)
+            @if (supervisor.AllowDelegateNomination)
             {
               <a asp-action="RemoveSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Remove</a>
             }
