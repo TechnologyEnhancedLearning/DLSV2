@@ -478,8 +478,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 15/10/2021
         ///-- Description:	Reorders the CompetencyAssessmentQuestions - moving the given competency question up or down.
         ///-- =============================================
-        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]
-        /// [rest of string was truncated]&quot;;.
+        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_379_ReorderCompetencyAssessmentQuestionsSP {
             get {
@@ -1034,24 +1033,6 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to -- Switch on versioning from FrameworkCompetencies table
-        ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetenciesHistory));
-        ///GO
-        ///
-        ///-- Switch on versioning from FrameworkCompetencyGroups table
-        ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetencyGroupsHistory));
-        ///GO
-        ///
-        ///-- Switch on versioning from Frameworks table
-        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworksHisto [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_2036_SwitchSystemVersioningOffAllTables_DOWN
-        {
-            get
-            {
-                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_DOWN", resourceCulture);
-            }
-        }
         ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;
         ///&lt;h2&gt;What are cookies?&lt;/h2&gt;
         ///&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;/p&gt;
@@ -1065,6 +1046,80 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_1943_CookiePolicyContentHtml {
             get {
                 return ResourceManager.GetString("TD_1943_CookiePolicyContentHtml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_1943_CookiePolicyContentHtmlOldRecord {
+            get {
+                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtmlOldRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Remove period field from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies ADD PERIOD FOR SYSTEM_TIME ( SysStartTime, SysEndTime ); 
+        ///GO
+        ///
+        ///-- Remove period field from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups ADD PERIOD FOR SYSTEM_TIME ( SysStartTime, SysEndTime ); 
+        ///GO
+        ///
+        ///-- Remove period field from Frameworks table
+        ///ALTER TABLE Frameworks ADD PERIOD FOR SYSTEM_TIME ( SysStartTime, SysEndTime ); 
+        ///GO
+        ///
+        ///-- Remove period field from Competencies table
+        ///ALTER TABL [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchOffPeriodFields_DOWN {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchOffPeriodFields_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Remove period field from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from Frameworks table
+        ///ALTER TABLE Frameworks DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from Competencies table
+        ///ALTER TABLE Competencies DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from Comp [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchOffPeriodFields_UP {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchOffPeriodFields_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Switch on versioning from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetenciesHistory));
+        ///GO
+        ///
+        ///-- Switch on versioning from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetencyGroupsHistory));
+        ///GO
+        ///
+        ///-- Switch on versioning from Frameworks table
+        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworksHisto [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchSystemVersioningOffAllTables_DOWN {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_DOWN", resourceCulture);
             }
         }
         
@@ -1087,18 +1142,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///-- Remove versioning from Competency [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2036_SwitchSystemVersioningOffAllTables_UP
-        {
-            get
-            {
-                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_UP", resourceCulture);
-            }
-        }
-        ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_1943_CookiePolicyContentHtmlOldRecord {
+        internal static string TD_2036_SwitchSystemVersioningOffAllTables_UP {
             get {
-                return ResourceManager.GetString("TD_1943_CookiePolicyContentHtmlOldRecord", resourceCulture);
+                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_UP", resourceCulture);
             }
         }
         
