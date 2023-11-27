@@ -45,7 +45,8 @@
                 sasr.SelfAssessmentReview,
                 sasr.ResultsReview,
                 sd.AddedByDelegate,
-                au.CentreName
+                au.CentreName,
+                sasr.AllowDelegateNomination
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId
