@@ -313,4 +313,10 @@
   <data name="TD_1943_CookiePolicyContentHtml" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TD_1943_CookiePolicyContentHtml.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="TD_2036_SwitchOffPeriodFields_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-2036-SwitchOffPeriodFields-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="TD_2036_SwitchOffPeriodFields_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-2036-SwitchOffPeriodFields-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>
