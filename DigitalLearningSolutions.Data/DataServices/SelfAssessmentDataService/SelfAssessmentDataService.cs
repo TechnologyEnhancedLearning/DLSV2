@@ -582,7 +582,7 @@ public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExp
         {
             int ResultCount = connection.ExecuteScalar<int>(
                 @"SELECT COUNT(ID)
-                    FROM [mbdbx101_uar].[dbo].[CandidateAssessmentSupervisors]
+                    FROM CandidateAssessmentSupervisors
                     WHERE CandidateAssessmentID = @candidateAssessmentsId and Removed IS NULL",
                 new { candidateAssessmentsId }
             );
