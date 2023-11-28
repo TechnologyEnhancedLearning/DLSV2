@@ -18,7 +18,10 @@
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using DigitalLearningSolutions.Data.Extensions;
+    using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
@@ -30,6 +33,7 @@
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
+        private readonly IConfiguration config;
 
         public LoginController(
             ILoginService loginService,
@@ -37,7 +41,8 @@
             ILogger<LoginController> logger,
             IUserService userService,
             IClockUtility clockUtility,
-            IConfigDataService configDataService
+            IConfigDataService configDataService,
+            IConfiguration config
         )
         {
             this.loginService = loginService;
@@ -46,6 +51,7 @@
             this.userService = userService;
             this.clockUtility = clockUtility;
             this.configDataService = configDataService;
+            this.config = config;
         }
 
         public IActionResult Index(string? returnUrl = null)
@@ -275,6 +281,15 @@
         }
 
         public IActionResult NotLinked()
+        {
+            HttpContext.SignOutAsync("Identity.Application");
+            HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            HttpContext.Response.Cookies.Append("not-linked", "true");
+
+            return RedirectToAction("LogoutSharedAuth", "Logout");
+        }
+
+        public IActionResult ShowNotLinked()
         {
             return View("NotLinked");
         }

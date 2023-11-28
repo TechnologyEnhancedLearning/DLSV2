@@ -23,6 +23,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -39,6 +40,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
         private IUrlHelper urlHelper = null!;
         private IConfigDataService configDataService = null!;
         private IUserService userService = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void SetUp()
@@ -50,6 +52,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             urlHelper = A.Fake<IUrlHelper>();
             configDataService = A.Fake<IConfigDataService>();
             clockUtility = A.Fake<IClockUtility>();
+            config = A.Fake<IConfiguration>();
 
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
@@ -59,7 +62,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                     logger,
                     userService,
                     clockUtility,
-                    configDataService
+                    configDataService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockUser(false)
@@ -78,7 +82,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                     logger,
                     userService,
                     clockUtility,
-                    configDataService
+                    configDataService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockUser(true)
@@ -813,11 +818,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             // Assert
             result
                 .Should()
-                .BeOfType<ViewResult>()
-                .Which
-                .ViewName
+                .BeOfType<RedirectToActionResult>();
+            result
                 .Should()
-                .Be("NotLinked");
+                .BeRedirectToActionResult()
+                .WithControllerName("Logout")
+                .WithActionName("LogoutSharedAuth");
         }
 
         private void GivenSignInIsSuccessful()
