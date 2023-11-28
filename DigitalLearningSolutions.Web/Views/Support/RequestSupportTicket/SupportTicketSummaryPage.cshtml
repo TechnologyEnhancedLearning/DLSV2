@@ -4,6 +4,7 @@
 @model SupportSummaryViewModel
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Request summary";
 }
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" role="button" asp-controller="RequestSupportTicket" asp-action="RequestAttachment">

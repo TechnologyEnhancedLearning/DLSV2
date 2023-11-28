@@ -8,7 +8,7 @@
     {
         errorHasOccurred = true;
     }
-    ViewData["Title"] = "Type of Request";
+    ViewData["Title"] = "Request details";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
@@ -32,7 +32,7 @@
             <h1 class="nhsuk-heading-xl">@Model.RequestType</h1>
             <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetRequestSummary">
                 <vc:text-input asp-for="RequestSubject"
-                               label="Summary of the problem or request"
+                               label="Summary of your problem or request"
                                populate-with-current-value="true"
                                type="text"
                                spell-check="false"
