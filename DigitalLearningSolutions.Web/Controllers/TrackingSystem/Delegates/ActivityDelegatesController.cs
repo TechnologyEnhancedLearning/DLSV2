@@ -363,7 +363,7 @@
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null)
-          {
+        {
             var centreId = User.GetCentreIdKnownNotNull();
             searchString = searchString == null ? string.Empty : searchString.Trim();
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
