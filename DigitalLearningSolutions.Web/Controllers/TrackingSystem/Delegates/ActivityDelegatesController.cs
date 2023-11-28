@@ -27,6 +27,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -448,6 +449,12 @@
         [HttpPost]
         public IActionResult RemoveDelegateSelfAssessment(DelegateSelfAssessmenteViewModel delegateSelfAssessmenteViewModel)
         {
+            var checkselfAssessmentDelegate = selfAssessmentService.CheckDelegateSelfAssessment(delegateSelfAssessmenteViewModel.CandidateAssessmentsId);
+
+            if (checkselfAssessmentDelegate > 0)
+            {
+                return StatusCode((int)HttpStatusCode.Gone);
+            }
             if (ModelState.IsValid && delegateSelfAssessmenteViewModel.ActionConfirmed)
             {
                 selfAssessmentService.RemoveDelegateSelfAssessment(delegateSelfAssessmenteViewModel.CandidateAssessmentsId);
