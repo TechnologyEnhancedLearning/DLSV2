@@ -161,6 +161,7 @@
        void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
         int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
         bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
+       int CheckDelegateSelfAssessment(int candidateAssessmentsId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -596,6 +597,14 @@ public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExp
                 new { centreId, candidateAssessmentsId }
             );
             return ResultCount == 1 ? true : false;
+        }
+        public int CheckDelegateSelfAssessment(int candidateAssessmentsId)
+        {
+            return connection.QueryFirstOrDefault<int>(
+                  @"SELECT COUNT(ID) Num FROM CandidateAssessments 
+                      WHERE (ID = @candidateAssessmentsId) AND ( RemovalMethodID =2)",
+                  new { candidateAssessmentsId }
+              );
         }
     }
 }
