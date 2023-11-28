@@ -92,8 +92,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 ModelState.AddModelError("Id", "Please choose a request type");
                 return View("TypeOfRequest", model1);
             }
-            var model = new RequestSummaryViewModel(data);
-            return View("RequestSummary", model);
+            return RedirectToAction("RequestSummary");
         }
         [Route("RequestSupport/RequestSummary")]
         public IActionResult RequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel RequestTypemodel)
@@ -126,8 +125,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var data = TempData.Peek<RequestSupportTicketData>()!;
             data.setRequestSubjectDetails(requestDetailsmodel);
             TempData.Set(data);
-            var model = new RequestAttachmentViewModel(data);
-            return View("RequestAttachment", model);
+            return RedirectToAction("RequestAttachment");
         }
         [Route("RequestSupport/RequestAttachment")]
         public IActionResult RequestAttachment(DlsSubApplication dlsSubApplication, RequestAttachmentViewModel model)
@@ -180,7 +178,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             data.setImageFiles(RequestAttachmentList);
             TempData.Set(data);
             var model = new RequestAttachmentViewModel(data);
-           
             return View("RequestAttachment", model);
         }
         public IActionResult DeleteImage(DlsSubApplication dlsSubApplication, string imageName, string imageId)
@@ -193,11 +190,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
             }
             data.RequestAttachment.RemoveAll((x) => x.FileName == imageName && x.Id == imageId);
-           
             TempData.Set(data);
-            
-            var model = new RequestAttachmentViewModel(data);
-            return View("RequestAttachment", model);
+            return RedirectToAction("RequestAttachment");
         }
         [HttpGet]
         [Route("RequestSupport/SupportSummary")]
