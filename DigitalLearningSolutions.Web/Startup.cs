@@ -62,6 +62,7 @@ namespace DigitalLearningSolutions.Web
     using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
     using System.Collections.Concurrent;
     using Serilog;
+    using Microsoft.AspNetCore.Http;
 
     public class Startup
     {
@@ -279,7 +280,16 @@ namespace DigitalLearningSolutions.Web
 
         private static async Task OnSignedoutCallbackRedirect(RemoteSignOutContext context)
         {
-            context.Response.Redirect("/home");
+            if (context.HttpContext.Request.Cookies.Any(c => c.Key == "not-linked"))
+            {
+                context.HttpContext.Response.Cookies.Delete("not-linked");
+                context.Response.Redirect("/Login/ShowNotLinked");
+            }
+            else
+            {
+                context.Response.Redirect("/home");
+            }
+            
             context.HandleResponse();
 
             await Task.CompletedTask;
