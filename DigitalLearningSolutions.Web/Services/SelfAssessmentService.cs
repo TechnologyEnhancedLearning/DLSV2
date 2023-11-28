@@ -132,6 +132,7 @@
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
         RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
        void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
+        int CheckDelegateSelfAssessment(int candidateAssessmentsId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -451,6 +452,10 @@
         public void RemoveDelegateSelfAssessment(int candidateAssessmentsId)
         {
             selfAssessmentDataService.RemoveDelegateSelfAssessment(candidateAssessmentsId);
+        }
+      public   int CheckDelegateSelfAssessment(int candidateAssessmentsId)
+        {
+          return   selfAssessmentDataService.CheckDelegateSelfAssessment(candidateAssessmentsId);
         }
     }
 }

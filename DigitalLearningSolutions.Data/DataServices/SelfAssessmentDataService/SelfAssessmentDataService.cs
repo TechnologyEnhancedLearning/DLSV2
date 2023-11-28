@@ -151,6 +151,7 @@
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
         RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
        void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
+        int CheckDelegateSelfAssessment(int candidateAssessmentsId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -363,6 +364,14 @@
                 @"UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID =2
                       WHERE ID = @candidateAssessmentsId",
                 new {candidateAssessmentsId}
+            );
+        }
+        public int CheckDelegateSelfAssessment(int candidateAssessmentsId)
+        {
+          return   connection.QueryFirstOrDefault<int>(
+                @"SELECT COUNT(ID) Num FROM CandidateAssessments 
+                      WHERE (ID = @candidateAssessmentsId) AND ( RemovalMethodID =2)",
+                new { candidateAssessmentsId }
             );
         }
     }
