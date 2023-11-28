@@ -173,7 +173,7 @@
 
 <div class="nhsuk-grid-column-full">
     <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Activities</h2>
-    @if (!Model.DelegateCourses.Any())
+    @if (!Model.DelegateCourses.Any() && !Model.SelfAssessments.Any())
     {
         <p class="nhsuk-u-margin-top-4">
             <b>Not currently enrolled on any activities.</b>
@@ -183,7 +183,17 @@
     {
         @foreach (var delegateCourseInfoViewModel in Model.DelegateCourses)
         {
-            <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
+            if (delegateCourseInfoViewModel.ProgressId != null)
+            {
+                <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
+            }            
+        }
+        @foreach (var delegateSelfAssessmentInfoViewModel in Model.SelfAssessments)
+        {
+            if (delegateSelfAssessmentInfoViewModel.CandidateAssessmentId != null)
+            {
+                <partial name="_DelegateSelfAssessmentInfoCard" model="delegateSelfAssessmentInfoViewModel" />
+            }
         }
     }
     @if (Model.DelegateInfo.IsActive && !string.IsNullOrEmpty(Model.DelegateInfo.Email))
