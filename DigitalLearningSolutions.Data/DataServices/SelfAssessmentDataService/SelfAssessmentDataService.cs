@@ -214,7 +214,7 @@
                 ca.EnrolmentMethodId,
                 ca.LastAccessed,
                 ca.LaunchCount,
-                ca.CompleteByDate,
+                ca.CompleteByDate AS CompleteBy,
                 ca.SubmittedDate,
                 ca.RemovedDate,
                 ca.CompletedDate,
