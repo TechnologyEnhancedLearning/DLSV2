@@ -54,7 +54,7 @@
                             Description
                         </dt>
                         <dd class="nhsuk-summary-list__value">
-                            @Model.Description
+                            @Html.Raw(@Model.Description)
                         </dd>
                         <dd class="nhsuk-summary-list__actions">
 
@@ -62,7 +62,7 @@
                     </div>
                     <div class="nhsuk-summary-list__row">
                         <dt class="nhsuk-summary-list__key">
-                            Attachements
+                            Attachments
                         </dt>
                         <dd class="nhsuk-summary-list__value">
                             @if (Model.RequestAttachment != null && Model.RequestAttachment.Count > 0)
