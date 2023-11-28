@@ -242,7 +242,7 @@
             };
 
             A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
-                .DoesNothing();
+                .Returns(0);
 
             // When
             var result = delegateProgressController.EditDelegateCourseAdminField(

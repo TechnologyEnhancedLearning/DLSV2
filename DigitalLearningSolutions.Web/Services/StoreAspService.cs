@@ -39,15 +39,13 @@
             int tutorialStatus
         );
 
-        void StoreAspProgressSessionData(
-                int progressId,
-                int tutorialId,
-                string? sessionData
-            );
-
-        string? GetAspProgressSessionData(
+        int UpdateLessonState(
+            int tutorialId,
             int progressId,
-            int tutorialId
+            int tutStat,
+            int tutTime,
+           string? suspendData,
+           string? lessonLocation
             );
 
         (TrackerEndpointResponse? validationResponse, DelegateCourseInfo? progress)
@@ -64,7 +62,7 @@
                 int customisationId
             );
         (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+            GetProgressAndValidateCommonInputsForUpdateLessonStateEndpoints(
                 int? progressId,
                 int? tutorialId,
                 int? candidateId,
@@ -240,7 +238,7 @@
         }
 
         public (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
-            GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+            GetProgressAndValidateCommonInputsForUpdateLessonStateEndpoints(
                 int? progressId,
                 int? tutorialId,
                 int? candidateId,
@@ -250,34 +248,22 @@
             if (progressId == null || tutorialId == null ||
                 candidateId == null || customisationId == null)
             {
-                return (TrackerEndpointResponse.SuspendDataException, null);
+                return (TrackerEndpointResponse.StoreSuspendDataException, null);
             }
 
             var progress = progressService.GetDetailedCourseProgress(progressId.Value);
             if (progress == null || progress.DelegateId != candidateId ||
                 progress.CustomisationId != customisationId.Value)
             {
-                return (TrackerEndpointResponse.SuspendDataException, null);
+                return (TrackerEndpointResponse.StoreSuspendDataException, null);
             }
 
             return (null, progress);
         }
 
-        public void StoreAspProgressSessionData(int progressId, int tutorialId, string? sessionData)
+        public int UpdateLessonState(int tutorialId, int progressId, int tutStat, int tutTime, string? suspendData, string? lessonLocation)
         {
-            progressService.StoreAspProgressSuspendData(
-                progressId,
-                tutorialId,
-                sessionData
-                );
-        }
-
-        public string? GetAspProgressSessionData(int progressId, int tutorialId)
-        {
-            return progressService.GetAspProgressSuspendData(
-                progressId,
-                tutorialId
-                );
+            return progressService.UpdateLessonState(tutorialId, progressId, tutStat, tutTime, suspendData, lessonLocation);
         }
     }
 }

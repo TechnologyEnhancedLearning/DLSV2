@@ -26,13 +26,13 @@
 
         DelegateCourseProgressInfo? GetCourseProgressInfo(int progressId);
 
-        void UpdateCourseAdminFieldForDelegate(
+        int UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
             string? answer
         );
 
-        void StoreAspProgressV2(
+        int StoreAspProgressV2(
             int progressId,
             int version,
             string? progressText,
@@ -41,15 +41,13 @@
             int tutorialStatus
         );
 
-        void StoreAspProgressSuspendData(
-            int progressId,
+        int UpdateLessonState(
             int tutorialId,
-            string? suspendData
-            );
-
-        string? GetAspProgressSuspendData(
             int progressId,
-            int tutorialId
+            int tutStat,
+            int tutTime,
+           string? suspendData,
+           string? lessonLocation
             );
 
         void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress);
@@ -188,16 +186,16 @@
             return (delegateCourseProgess);
         }
 
-        public void UpdateCourseAdminFieldForDelegate(
+        public int UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
             string? answer
         )
         {
-            progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
+            return progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
         }
 
-        public void StoreAspProgressV2(
+        public int StoreAspProgressV2(
             int progressId,
             int version,
             string? progressText,
@@ -213,16 +211,19 @@
                 timeNow,
                 progressText ?? string.Empty
             );
-            progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime);
+            return progressDataService.UpdateAspProgressTutStatAndTime(tutorialId, progressId, tutorialStatus, tutorialTime);
         }
 
-        public void StoreAspProgressSuspendData(
-            int progressId,
+        public int UpdateLessonState(
             int tutorialId,
-            string? suspendData
+            int progressId,
+            int tutStat,
+            int tutTime,
+           string? suspendData,
+           string? lessonLocation
             )
         {
-            progressDataService.UpdateAspProgressSuspendData(tutorialId, progressId, suspendData);
+            return progressDataService.UpdateLessonState(tutorialId, progressId, tutStat, tutTime, suspendData, lessonLocation);
         }
 
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)
@@ -252,11 +253,6 @@
         )
         {
             return progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
-        }
-
-        public string? GetAspProgressSuspendData(int progressId, int tutorialId)
-        {
-            return progressDataService.GetAspProgressSuspendData(progressId, tutorialId);
         }
     }
 }

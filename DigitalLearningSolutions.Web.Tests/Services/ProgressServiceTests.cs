@@ -329,7 +329,7 @@
             const string answer = "Test answer";
 
             A.CallTo(() => progressDataService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
-                .DoesNothing();
+                .Returns(0);
 
             // When
             progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
@@ -352,7 +352,7 @@
             var timeNow = new DateTime(2022, 1, 1, 1, 1, 1, 1);
 
             A.CallTo(() => progressDataService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
-                .DoesNothing();
+                .Returns(0);
             A.CallTo(() => clockUtility.UtcNow)
                 .Returns(timeNow);
 

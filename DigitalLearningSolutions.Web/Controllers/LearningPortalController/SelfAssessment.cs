@@ -26,6 +26,7 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using DocumentFormat.OpenXml.EMMA;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
 
     public partial class LearningPortalController
     {
@@ -234,6 +235,7 @@
                 var delegateUserId = User.GetUserIdKnownNotNull();
                 var delegateId = User.GetCandidateIdKnownNotNull();
                 var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
+                selfAssessmentService.RemoveSignoffRequests(selfAssessmentId, delegateUserId, competencyGroupId);
                 var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
                 return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, assessmentQuestions, delegateUserId, delegateId);
             }
@@ -434,7 +436,6 @@
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(assessment.Id, delegateUserId);
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, delegateUserId);
-
             var recentResults = selfAssessmentService.GetMostRecentResults(assessment.Id, delegateId).ToList();
             var competencyIds = recentResults.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
@@ -1385,6 +1386,7 @@
                     resultId
                 )
             );
+
             if (resultCount > 0)
             {
                 frameworkNotificationService.SendResultVerificationRequest(

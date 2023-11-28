@@ -17,7 +17,7 @@
         </div>
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-                Professional Registration Number
+                Professional registration number
             </dt>
             <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
             <dd class="nhsuk-summary-list__actions" />
@@ -40,7 +40,7 @@
         </div>
         <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
-                Supervisor
+                Supervisors
             </dt>
             <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
                 @if (Model.Supervisors.Any())
@@ -55,7 +55,9 @@
                     }
                 }
                 else
-                {@("-")}
+                {
+                    @("-")
+                }
             </dd>
             <dd class="nhsuk-summary-list__actions"></dd>
         </div>
@@ -90,6 +92,15 @@
             </dd>
             <dd class="nhsuk-summary-list__actions"></dd>
         </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                Progress
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="progress">
+                <span style="white-space:pre">@Model.Progress</span>
+            </dd>
+            <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
                 Signed off
@@ -117,10 +128,10 @@
             <div class="nhsuk-grid-row nhsuk-u-padding-top-5">
                 <div class="nhsuk-grid-column-full">
                     <a class="nhsuk-button delete-button nhsuk-button--secondary"
-               role="button"
-               asp-controller="ActivityDelegates"
-               asp-action="RemoveDelegateSelfAssessment"
-               asp-route-candidateAssessmentsId="@Model.CandidateAssessmentsId">
+                       role="button"
+                       asp-controller="ActivityDelegates"
+                       asp-action="RemoveDelegateSelfAssessment"
+                       asp-route-candidateAssessmentsId="@Model.CandidateAssessmentsId">
                         Remove from self assessment
                     </a>
                 </div>

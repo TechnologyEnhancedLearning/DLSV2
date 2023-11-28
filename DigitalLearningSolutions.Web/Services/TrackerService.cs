@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
+    using DocumentFormat.OpenXml.Office2013.Excel;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
@@ -113,24 +114,17 @@
                         );
                     }
 
-                    if (action == TrackerEndpointAction.storesuspenddata)
+                    if (action == TrackerEndpointAction.updatelessonstate)
                     {
-                        return trackerActionService.StoreSuspendData(
-                            query.ProgressId,
+                        return trackerActionService.UpdateLessonState(
                             query.TutorialId,
+                            query.ProgressId,
                             query.CandidateId,
                             query.CustomisationId,
-                            query.SuspendData
-                            );
-                    }
-
-                    if (action == TrackerEndpointAction.getsuspenddata)
-                    {
-                        return trackerActionService.GetSuspendData(
-                            query.ProgressId,
-                            query.TutorialId,
-                            query.CandidateId,
-                            query.CustomisationId
+                            query.TutorialStatus,
+                            Convert.ToInt32(query.TutorialTime),
+                            query.SuspendData,
+                            query.LessonLocation
                             );
                     }
 

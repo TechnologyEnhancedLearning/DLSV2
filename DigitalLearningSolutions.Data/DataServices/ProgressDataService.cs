@@ -58,49 +58,40 @@
             int customisationId
         );
 
-        void UpdateCourseAdminFieldForDelegate(
+        int UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
             string? answer
         );
 
-        void UpdateProgressDetailsForStoreAspProgressV2(
+        int UpdateProgressDetailsForStoreAspProgressV2(
             int progressId,
             int customisationVersion,
             DateTime submittedTime,
             string progressText
         );
 
-        void UpdateAspProgressTutTime(
-            int tutorialId,
-            int progressId,
-            int tutTime
-        );
-
-        void UpdateAspProgressTutStat(
-            int tutorialId,
-            int progressId,
-            int tutStat
-        );
-
-        void UpdateAspProgressTutStatAndTime(
+        int UpdateAspProgressTutStatAndTime(
             int tutorialId,
             int progressId,
             int tutStat,
             int tutTime
             );
 
-        void UpdateAspProgressSuspendData(
-           int tutorialId,
-           int progressId,
-           string? suspendData
-       );
+        int UpdateLessonState(
+            int tutorialId,
+            int progressId,
+            int tutStat,
+            int tutTime,
+           string? suspendData,
+           string? lessonLocation
+        );
 
         int GetCompletionStatusForProgress(int progressId);
 
         IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int progressId, int sectionNumber);
 
-        void InsertAssessAttempt(
+        int InsertAssessAttempt(
             int delegateId,
             int customisationId,
             int version,
@@ -110,8 +101,6 @@
             bool status,
             int progressId
         );
-
-        string? GetAspProgressSuspendData(int progressId, int tutorialId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -514,13 +503,13 @@
             ).SingleOrDefault();
         }
 
-        public void UpdateCourseAdminFieldForDelegate(
+        public int UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
             string? answer
         )
         {
-            connection.Execute(
+            return connection.Execute(
                 $@"UPDATE Progress
                         SET Answer{promptNumber} = @answer
                         WHERE ProgressID = @progressId",
@@ -528,14 +517,14 @@
             );
         }
 
-        public void UpdateProgressDetailsForStoreAspProgressV2(
+        public int UpdateProgressDetailsForStoreAspProgressV2(
             int progressId,
             int customisationVersion,
             DateTime submittedTime,
             string progressText
         )
         {
-            connection.Execute(
+            return connection.Execute(
                 @"UPDATE Progress
                     SET
                         CustomisationVersion = @customisationVersion,
@@ -556,44 +545,14 @@
             );
         }
 
-        public void UpdateAspProgressTutTime(
-            int tutorialId,
-            int progressId,
-            int tutTime
-        )
-        {
-            connection.Execute(
-                @"UPDATE aspProgress
-                    SET TutTime = TutTime + @tutTime
-                    WHERE (TutorialID = @tutorialId) AND (ProgressID = @progressId)",
-                new { tutorialId, progressId, tutTime }
-            );
-        }
-
-        public void UpdateAspProgressTutStat(
-            int tutorialId,
-            int progressId,
-            int tutStat
-        )
-        {
-            connection.Execute(
-                @"UPDATE aspProgress
-                    SET TutStat = @tutStat
-                    WHERE (TutorialID = @tutorialId)
-                      AND (ProgressID = @progressId)
-                      AND (TutStat < @tutStat)",
-                new { tutorialId, progressId, tutStat }
-            );
-        }
-
-        public void UpdateAspProgressTutStatAndTime(
+        public int UpdateAspProgressTutStatAndTime(
             int tutorialId,
             int progressId,
             int tutStat,
             int tutTime
         )
         {
-            connection.Execute(
+            return connection.Execute(
                 @"UPDATE aspProgress
                     SET TutStat = Case WHEN TutStat < @tutStat THEN @tutStat ELSE TutStat END, TutTime = TutTime + @tutTime
                     WHERE (TutorialID = @tutorialId)
@@ -602,19 +561,21 @@
                 new { tutorialId, progressId, tutStat, tutTime }
             );
         }
-
-        public void UpdateAspProgressSuspendData(
-           int tutorialId,
-           int progressId,
-           string? suspendData
-       )
+        public int UpdateLessonState(
+            int tutorialId,
+            int progressId,
+            int tutStat,
+            int tutTime,
+           string? suspendData,
+           string? lessonLocation
+        )
         {
-            connection.Execute(
+            return connection.Execute(
                 @"UPDATE aspProgress
-                    SET SuspendData = @suspendData
+                    SET TutStat = Case WHEN TutStat < @tutStat THEN @tutStat ELSE TutStat END, TutTime = TutTime + @tutTime, SuspendData = @suspendData, LessonLocation = @lessonLocation
                     WHERE (TutorialID = @tutorialId)
                       AND (ProgressID = @progressId)",
-                new { tutorialId, progressId, suspendData }
+                new { tutorialId, progressId, tutStat, tutTime, suspendData, lessonLocation }
             );
         }
 
@@ -647,7 +608,7 @@
             );
         }
 
-        public void InsertAssessAttempt(
+        public int InsertAssessAttempt(
             int delegateId,
             int customisationId,
             int version,
@@ -658,23 +619,12 @@
             int progressId
         )
         {
-            connection.Execute(
+            return connection.Execute(
                 @"INSERT INTO AssessAttempts
                         (CandidateID, CustomisationID, CustomisationVersion, Date, AssessInstance, SectionNumber, Score, Status, ProgressID)
                     VALUES (@delegateId, @customisationId, @version, @insertionDate, 1, @sectionNumber, @score, @status, @progressId)",
                 new { delegateId, customisationId, version, insertionDate, sectionNumber, score, status, progressId }
             );
-        }
-
-        public string? GetAspProgressSuspendData(int progressId, int tutorialId)
-        {
-            return connection.Query<string?>(
-                @"SELECT TOP(1)
-                        SuspendData
-                    FROM dbo.aspProgress
-                    WHERE ProgressID = @progressId AND TutorialID = @tutorialId",
-                new { progressId, tutorialId }
-            ).FirstOrDefault();
         }
     }
 }

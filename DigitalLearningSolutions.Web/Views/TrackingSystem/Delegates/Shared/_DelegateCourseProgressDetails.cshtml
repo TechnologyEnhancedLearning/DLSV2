@@ -17,7 +17,7 @@
         </div>
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-                Professional Registration Number
+                Professional registration number
             </dt>
             <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
             <dd class="nhsuk-summary-list__actions" />
@@ -161,12 +161,12 @@
             <div hidden data-filter-value="@FilteringHelper.GetFilterValueForAdminField(courseCustomPrompt)"></div>
             <dd class="nhsuk-summary-list__actions">
                 <a data-return-page-enabled="true"
-               asp-controller="DelegateProgress"
-               asp-action="EditDelegateCourseAdminField"
-               asp-route-progressId="@Model.ProgressId"
-               asp-route-promptNumber="@courseCustomPrompt.PromptNumber"
-               asp-route-accessedVia="@Model.AccessedVia"
-               asp-route-returnPageQuery="@Model.ReturnPageQuery">
+                   asp-controller="DelegateProgress"
+                   asp-action="EditDelegateCourseAdminField"
+                   asp-route-progressId="@Model.ProgressId"
+                   asp-route-promptNumber="@courseCustomPrompt.PromptNumber"
+                   asp-route-accessedVia="@Model.AccessedVia"
+                   asp-route-returnPageQuery="@Model.ReturnPageQuery">
                     Edit<span class="nhsuk-u-visually-hidden"> @courseCustomPrompt.PromptText</span>
                 </a>
             </dd>

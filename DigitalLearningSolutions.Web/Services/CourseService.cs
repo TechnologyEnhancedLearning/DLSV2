@@ -119,8 +119,7 @@
            string isActive, string categoryName, string courseTopic, string hasAdminFields);
 
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetDelegateCourses(string searchString,int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,string isActive, string categoryName, string courseTopic, string hasAdminFields);
-
-        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(int centreId);
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(string searchString, int centreId, string categoryName, string isActive);
     }
 
     public class CourseService : ICourseService
@@ -190,7 +189,7 @@
         {
             var exportQueryRowLimit = ConfigurationExtensions.GetExportQueryRowLimit(configuration);
 
-            int resultCount = courseDataService.GetCourseStatisticsAtCentreFilteredByCategoryResultCount(centreId, categoryId);
+            int resultCount = courseDataService.GetCourseStatisticsAtCentreFilteredByCategoryResultCount(centreId, categoryId, searchString);
 
             int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
             int currentRun = 1;
@@ -363,7 +362,7 @@
         public bool DelegateHasCurrentProgress(int progressId)
         {
             var progress = progressDataService.GetProgressByProgressId(progressId);
-            return progress is { Completed: null, RemovedDate: null };
+            return progress is { RemovedDate: null };
         }
 
         public IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(
@@ -444,7 +443,7 @@
         )
         {
             var currentProgressIds = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
-                .Where(p => p.Completed == null && p.RemovedDate == null)
+                .Where(p => p.RemovedDate == null)
                 .Select(p => p.ProgressId)
                 .ToList();
 
@@ -549,9 +548,9 @@
             );
         }
 
-        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(int centreId)
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(string searchString, int centreId, string categoryName, string isActive)
         {
-            return courseDataService.GetDelegateAssessmentStatisticsAtCentre(centreId);
+            return courseDataService.GetDelegateAssessmentStatisticsAtCentre(searchString, centreId, categoryName, isActive);
         }
     }
 }

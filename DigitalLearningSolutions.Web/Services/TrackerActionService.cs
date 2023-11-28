@@ -5,9 +5,9 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Utilities;
-    using DocumentFormat.OpenXml.Bibliography;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
 
@@ -16,13 +16,6 @@
         TrackerObjectiveArray? GetObjectiveArray(int? customisationId, int? sectionId);
 
         TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning);
-
-        string? GetSuspendData(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId
-            );
 
         TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
 
@@ -57,13 +50,18 @@
             int? customisationId,
             string? sessionId
         );
-        TrackerEndpointResponse StoreSuspendData(
-            int? progressId,
+
+        TrackerEndpointResponse UpdateLessonState(
             int? tutorialId,
+            int? progressId,
             int? candidateId,
             int? customisationId,
-            string? suspendData
+            int? tutStat,
+            int? tutTime,
+            string? suspendData,
+            string? lessonLocation
             );
+
     }
 
     public class TrackerActionService : ITrackerActionService
@@ -344,7 +342,7 @@
             {
                 var assessmentPassed = score >= assessmentDetails.PlaPassThreshold;
 
-                progressDataService.InsertAssessAttempt(
+                var i = progressDataService.InsertAssessAttempt(
                     candidateId!.Value,
                     customisationId.Value,
                     version!.Value,
@@ -369,15 +367,18 @@
 
             return TrackerEndpointResponse.Success;
         }
-        public TrackerEndpointResponse StoreSuspendData(
-            int? progressId,
+        public TrackerEndpointResponse UpdateLessonState(
             int? tutorialId,
+            int? progressId,
             int? candidateId,
             int? customisationId,
-            string? suspendData
+            int? tutStat,
+            int? tutTime,
+            string? suspendData,
+            string? lessonLocation
             )
         {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForUpdateLessonStateEndpoints(
                progressId,
                tutorialId,
                candidateId,
@@ -387,52 +388,30 @@
             {
                 return validationResponse;
             }
+            int rowsUpdated = 0;
             try
             {
-                storeAspService.StoreAspProgressSessionData(
-                    progressId!.Value,
-                    tutorialId!.Value,
-                    suspendData
-                );
+                rowsUpdated = storeAspService.UpdateLessonState(
+                      tutorialId!.Value,
+                       progressId!.Value,
+                       tutStat!.Value,
+                       tutTime!.Value,
+                      suspendData,
+                      lessonLocation
+                  );
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.SuspendDataException;
+                return TrackerEndpointResponse.StoreSuspendDataException;
             }
-
-            return TrackerEndpointResponse.Success;
-        }
-
-        public string? GetSuspendData(
-            int? progressId,
-            int? tutorialId,
-            int? candidateId,
-            int? customisationId
-            )
-        {
-            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForSuspendDataEndpoints(
-               progressId,
-               tutorialId,
-               candidateId,
-               customisationId
-           );
-            if (validationResponse != null)
+            if (rowsUpdated > 0)
             {
-                return validationResponse;
+                return TrackerEndpointResponse.Success;
             }
-            try
+            else
             {
-                var suspendData = storeAspService.GetAspProgressSessionData(
-                     progressId!.Value,
-                     tutorialId!.Value
-                 );
-                return suspendData ?? "";
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.StoreAspProgressException;
+                return TrackerEndpointResponse.NoRowUpdated;
             }
         }
     }
