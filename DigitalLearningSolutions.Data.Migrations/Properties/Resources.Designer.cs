@@ -1253,6 +1253,53 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 29/11/2023
+        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[SendSelfAssessmentOverdueReminders]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@EmailProfileName nvarchar(100),
+        ///	@TestOnly bit
+        ///AS
+        ///BEGIN
+        ///	-- [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP {
+            get {
+                return ResourceManager.GetString("TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 29/11/2023
+        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[SendOneMonthSelfAssessmentTBCReminders]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@EmailProfileName nvarchar(100),
+        ///	@TestOnly bit
+        ///AS
+        ///BEGIN        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
+            get {
+                return ResourceManager.GetString("TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
