@@ -8,9 +8,10 @@
     {
         errorHasOccurred = true;
     }
-    ViewData["Title"] = "Type of Request";
+    ViewData["Title"] = "Request details";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 @if (errorHasOccurred)
 {
     <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RequestSubject),nameof(Model.RequestDescription) })" />
@@ -27,45 +28,35 @@
 </div>
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetRequestSummary">
+        <div class="nhsuk-u-reading-width">
+            <h1 class="nhsuk-heading-xl">@Model.RequestType</h1>
+            <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetRequestSummary">
+                <vc:text-input asp-for="RequestSubject"
+                               label="Summary of your problem or request"
+                               populate-with-current-value="true"
+                               type="text"
+                               spell-check="false"
+                               hint-text=""
+                               autocomplete="given-name"
+                               css-class=""
+                               required="true" />
+                <vc:text-area asp-for="RequestDescription"
+                              label="Describe your problem or request"
+                              populate-with-current-value="true"
+                              rows="5"
+                              spell-check="false"
+                              hint-text="If you are reporting a problem, please tell us exactly where it occurs and steps to recreate it. If you need to add screenshots, you will be able to do this in the next step."
+                              css-class="html-editor"
+                              character-count="null" />
 
-            <div class="nhsuk-u-margin-bottom-8">
-                <h1 class="nhsuk-heading-xl">@Model.RequestType</h1>
+                <button class="nhsuk-button" type="submit">Next</button>
+            </form>
 
-
-            </div>
-            <p class="nhsuk-body-l nhsuk-u-margin-bottom-3">
-                Enter a summary of the problem or request
-            </p>
-            <vc:text-input asp-for="RequestSubject"
-                           label=""
-                           populate-with-current-value="true"
-                           type="text"
-                           spell-check="false"
-                           hint-text=""
-                           autocomplete="given-name"
-                           css-class="nhsuk-u-width-one-half"
-                           required="true" />
-            <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
-                Describe your problem or request
-            </p>
-            <p class="nhsuk-body-s nhsuk-u-width-one-half nhsuk-u-margin-bottom-2">
-                If you are reporting a problem, please tell us exactly where it occurs and steps to recreate it. If you need to add screenshots,
-                you will be able to do this in the next step.
-            </p>
-            <vc:text-area asp-for="RequestDescription"
-                          label=""
-                          populate-with-current-value="true"
-                          rows="5"
-                          spell-check="false"
-                          hint-text=""
-                          css-class="nhsuk-u-width-one-half"
-                          character-count="null" />
-
-            <button class="nhsuk-button" type="submit">Next</button>
-        </form>
-
-        <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" />
+            <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" />
+        </div>
     </div>
 </div>
+@section scripts {
+    <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+}
 

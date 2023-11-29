@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         string uploadDir = string.Empty;
         public RequestSupportTicketController(IConfiguration configuration,
                                         IUserDataService userDataService, ICentresDataService centresDataService
-                                       , IWebHostEnvironment webHostEnvironment 
+                                       , IWebHostEnvironment webHostEnvironment
                                        , IRequestSupportTicketDataService requestSupportTicketDataService
                                         , IFreshdeskService freshdeskService)
         {
@@ -45,7 +45,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             this.webHostEnvironment = webHostEnvironment;
             this.requestSupportTicketDataService = requestSupportTicketDataService;
             this.freshdeskService = freshdeskService;
-            uploadDir=System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
+            uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
         }
         [Route("Support/RequestSupportTicket")]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
@@ -92,8 +92,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 ModelState.AddModelError("Id", "Please choose a request type");
                 return View("TypeOfRequest", model1);
             }
-            var model = new RequestSummaryViewModel(data);
-            return View("RequestSummary", model);
+            return RedirectToAction("RequestSummary");
         }
         [Route("RequestSupport/RequestSummary")]
         public IActionResult RequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel RequestTypemodel)
@@ -106,10 +105,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
         [HttpPost]
         [Route("RequestSupport/SetRequestSummary")]
-        public IActionResult SetRequestSummary(DlsSubApplication dlsSubApplication,RequestSummaryViewModel requestDetailsmodel)
+        public IActionResult SetRequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel requestDetailsmodel)
 
         {
-            if(requestDetailsmodel.RequestSubject==null)
+            if (requestDetailsmodel.RequestSubject == null)
             {
                 ModelState.AddModelError("RequestSubject", "Please enter request summary");
                 return View("RequestSummary", requestDetailsmodel);
@@ -126,8 +125,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var data = TempData.Peek<RequestSupportTicketData>()!;
             data.setRequestSubjectDetails(requestDetailsmodel);
             TempData.Set(data);
-            var model = new RequestAttachmentViewModel(data);
-            return View("RequestAttachment", model);
+            return RedirectToAction("RequestAttachment");
         }
         [Route("RequestSupport/RequestAttachment")]
         public IActionResult RequestAttachment(DlsSubApplication dlsSubApplication, RequestAttachmentViewModel model)
@@ -150,7 +148,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             }
             if (!ModelState.IsValid)
             {
-                    return View("RequestAttachment", requestAttachmentmodel);
+                return View("RequestAttachment", requestAttachmentmodel);
             }
             (bool? fileExtension, bool? fileSize) = validateUploadedImages(requestAttachmentmodel);
             if (fileExtension == true)
@@ -170,9 +168,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 string fileName = UploadFile(item);
                 var RequestAttachment = new RequestAttachment
                 {
-                    OriginalFileName=item.FileName,
+                    OriginalFileName = item.FileName,
                     FileName = fileName,
-                    FullFileName= uploadDir+ fileName
+                    FullFileName = uploadDir + fileName
                 };
                 RequestAttachmentList.Add(RequestAttachment);
             }
@@ -180,7 +178,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             data.setImageFiles(RequestAttachmentList);
             TempData.Set(data);
             var model = new RequestAttachmentViewModel(data);
-           
             return View("RequestAttachment", model);
         }
         public IActionResult DeleteImage(DlsSubApplication dlsSubApplication, string imageName, string imageId)
@@ -193,11 +190,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
             }
             data.RequestAttachment.RemoveAll((x) => x.FileName == imageName && x.Id == imageId);
-           
             TempData.Set(data);
-            
-            var model = new RequestAttachmentViewModel(data);
-            return View("RequestAttachment", model);
+            return RedirectToAction("RequestAttachment");
         }
         [HttpGet]
         [Route("RequestSupport/SupportSummary")]
@@ -218,7 +212,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             data.ProductId = configuration.GetFreshdeskCreateTicketProductId();
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
             string fileName = null;
-            if (data.RequestAttachment != null )
+            if (data.RequestAttachment != null)
             {
                 foreach (var file in data.RequestAttachment)
                 {
@@ -227,7 +221,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                     var attachment = new RequestAttachment()
                     {
                         Id = Guid.NewGuid().ToString(),
-                        OriginalFileName=file.OriginalFileName,
+                        OriginalFileName = file.OriginalFileName,
                         FileName = file.FileName,
                         FullFileName = fileName,
                         Content = FileBytes
@@ -249,8 +243,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                     DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
                 }
                 TempData.Clear();
-                var responseModel = new FreshDeskResponseViewModel(ticketId,null);
-                return View("SuccessPage",responseModel);
+                var responseModel = new FreshDeskResponseViewModel(ticketId, null);
+                return View("SuccessPage", responseModel);
             }
             else
             {
@@ -258,7 +252,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 string errorMess = result.StatusMeaning;
                 if (string.IsNullOrEmpty(errorMess))
                 { errorMess = result.FullErrorDetails; }
-                var responseModel = new FreshDeskResponseViewModel(null,errorCode+ ": "+ errorMess);
+                var responseModel = new FreshDeskResponseViewModel(null, errorCode + ": " + errorMess);
                 if (data.RequestAttachment != null)
                 {
                     DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
@@ -324,7 +318,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 }
                 var fileSize = Convert.ToDouble(item.Length.ToSize(FileSizeCalc.SizeUnits.MB));
                 totalFileSize = totalFileSize + fileSize;
-                if (fileSize > requestAttachmentmodel.SizeLimit||totalFileSize> requestAttachmentmodel.SizeLimit)
+                if (fileSize > requestAttachmentmodel.SizeLimit || totalFileSize > requestAttachmentmodel.SizeLimit)
                 {
                     requestAttachmentmodel.FileSizeFlag = true;
                 }

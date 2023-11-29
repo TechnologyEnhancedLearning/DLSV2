@@ -27,12 +27,16 @@
     <div id="form-group">
         <form method="post" asp-route-ResponseTypes="@Model.RequestTypes" asp-action="setRequestType">
             <div>
-                <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
-                    Type of request
-                </h1>
-                <p class="nhsuk-body-s nhsuk-u-margin-top-4">What type of request are you submitting? Please choose the best match.</p>
-                <div class="nhsuk-grid-row">
-                    <div class="nhsuk-grid-column-full">
+                <fieldset class="nhsuk-fieldset">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                        <h1 class="nhsuk-fieldset__heading">
+                            What type of request are you submitting?
+                        </h1>
+                        <div class="nhsuk-hint nhsuk-u-margin-top-4">
+                            Please choose the best match.
+                        </div>
+                    </legend>
+                    <div class="nhsuk-radios">
                         @foreach (var requestType in Model.RequestTypes)
                         {
                             @if (seperator == @count - 1)
@@ -48,7 +52,7 @@
                             seperator = seperator + 1;
                         }
                     </div>
-                </div>
+                </fieldset>
                 <button class="nhsuk-button nhsuk-u-margin-top-6" id="save-button" type="submit">
                     Next
                 </button>

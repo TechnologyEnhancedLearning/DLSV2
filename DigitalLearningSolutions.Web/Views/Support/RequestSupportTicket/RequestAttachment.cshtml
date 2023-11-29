@@ -10,9 +10,9 @@
     {
         errorHasOccurred = true;
     }
-
+    ViewData["Title"] = "Add attachments";
 }
-@if (errorHasOccurred )
+@if (errorHasOccurred)
 {
     <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ImageFiles),nameof(Model.FileSizeError),nameof(Model.FileExtensionError) })" />
 }
@@ -28,14 +28,20 @@
     <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
             <div class="nhsuk-u-reading-width">
-                <div class="nhsuk-u-margin-bottom-8">
-                    <h1 class="nhsuk-heading-xl">Attach screenshots (optional)</h1>
-                </div>
                 <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetAttachment" enctype="multipart/form-data">
-                    <p class="nhsuk-body-s nhsuk-u-margin-bottom-3">
-                        If you have any screenshots that help illustrate your request,attach them here.
-                    </p>
-                    <input type="file" class="form-control nhsuk-input nhsuk-u-width-one-half " multiple asp-for="ImageFiles" />
+                    <fieldset class="nhsuk-fieldset">
+                        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                            <h1 class="nhsuk-fieldset__heading">
+                                Attach screenshots (optional)
+                            </h1>
+                        </legend>
+                        <div class="nhsuk-form-group">
+                            <label class="nhsuk-label" for="ImageFiles">
+                                If you have any screenshots that help illustrate your request,attach them here.
+                            </label>
+                            <input type="file" class="form-control nhsuk-input nhsuk-u-width-one-half " multiple asp-for="ImageFiles" />
+                        </div>
+                    </fieldset>
                     <button class="nhsuk-button nhsuk-button--secondary" type="submit">Upload</button>
 
                 </form>
@@ -43,46 +49,46 @@
                 {
                     @if (Model.ImageFiles != null)
                     {
-                            <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
-                                Files attached
-                            </p>
+                        <h2>
+                            Files attached
+                        </h2>
                         @foreach (var a in Model.ImageFiles)
                         {
-                                    <dl class="nhsuk-summary-list">
-                                        <div class="nhsuk-summary-list__row">
+                            <dl class="nhsuk-summary-list">
+                                <div class="nhsuk-summary-list__row">
 
-                                            <dd class="nhsuk-summary-list__value">
+                                    <dd class="nhsuk-summary-list__value">
                                         @a.FileName
-                                            </dd>
-                                            <dd class="nhsuk-summary-list__actions">
-                                                <a asp-action="DeleteImage" asp-route-imageName="@a.FileName">
-                                                    Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
-                                                </a>
-                                            </dd>
-                                        </div>
-                                    </dl>
+                                    </dd>
+                                    <dd class="nhsuk-summary-list__actions">
+                                        <a asp-action="DeleteImage" asp-route-imageName="@a.FileName">
+                                            Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
+                                        </a>
+                                    </dd>
+                                </div>
+                            </dl>
                         }
                     }
                     @if (Model.RequestAttachment != null && Model.RequestAttachment.Count > 0)
                     {
-                            <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
-                                Files attached
-                            </p>
+                        <p class="nhsuk-body-l nhsuk-u-margin-bottom-2">
+                            Files attached
+                        </p>
                         @foreach (var a in Model.RequestAttachment)
                         {
-                                    <dl class="nhsuk-summary-list">
-                                        <div class="nhsuk-summary-list__row">
+                            <dl class="nhsuk-summary-list">
+                                <div class="nhsuk-summary-list__row">
 
-                                            <dd class="nhsuk-summary-list__value">
+                                    <dd class="nhsuk-summary-list__value">
                                         @a.OriginalFileName
-                                            </dd>
-                                            <dd class="nhsuk-summary-list__actions">
-                                                <a asp-action="DeleteImage" asp-route-imageName="@a.FileName" asp-route-imageId="@a.Id">
-                                                    Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
-                                                </a>
-                                            </dd>
-                                        </div>
-                                    </dl>
+                                    </dd>
+                                    <dd class="nhsuk-summary-list__actions">
+                                        <a asp-action="DeleteImage" asp-route-imageName="@a.FileName" asp-route-imageId="@a.Id">
+                                            Delete<span class="nhsuk-u-visually-hidden"> Request type</span>
+                                        </a>
+                                    </dd>
+                                </div>
+                            </dl>
                         }
                     }
                 }
