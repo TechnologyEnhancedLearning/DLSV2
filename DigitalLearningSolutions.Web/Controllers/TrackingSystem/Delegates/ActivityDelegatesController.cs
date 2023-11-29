@@ -166,10 +166,10 @@
                             removed = filterValue;
 
                         if (filter.Contains("CompletionStatus"))
-                            submitted = filterValue;
+                            hasCompleted = filterValue;
 
                         if (filter.Contains("Submitted"))
-                            signedOff = filterValue;
+                            submitted = filterValue;
 
                         if (filter.Contains("SignedOff"))
                             signedOff = filterValue;
