@@ -31,6 +31,7 @@
         private ISelfAssessmentService selfAssessmentDelegatesService = null!;
         private ICourseService courseService = null!;
         private IDelegateActivityDownloadFileService delegateActivityDownloadFileService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -41,6 +42,7 @@
             configuration = A.Fake<IConfiguration>();
             selfAssessmentDelegatesService = A.Fake<ISelfAssessmentService>();
             courseService = A.Fake<ICourseService>();
+            userService = A.Fake<IUserService>();
 
             controller = new ActivityDelegatesController(
                     courseDelegatesService,
@@ -48,7 +50,9 @@
                     paginateService,
                     configuration,
                     selfAssessmentDelegatesService,
-                    courseService, delegateActivityDownloadFileService
+                    courseService,
+                    delegateActivityDownloadFileService,
+                    userService
                 )
                 .WithDefaultContext()
                  .WithMockHttpContextSession()
@@ -184,7 +188,9 @@
                     paginateService,
                     configuration,
                     selfAssessmentDelegatesService,
-                    courseService, delegateActivityDownloadFileService
+                    courseService,
+                    delegateActivityDownloadFileService,
+                    userService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, UserCentreId)

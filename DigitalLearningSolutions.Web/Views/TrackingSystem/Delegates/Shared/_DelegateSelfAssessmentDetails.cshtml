@@ -69,7 +69,13 @@
                 @(Model.CompleteBy?.ToString() ?? "-")
             </dd>
             <dd class="nhsuk-summary-list__actions">
-                <a data-return-page-enabled="true">
+                <a data-return-page-enabled="true"
+                   asp-controller="ActivityDelegates"
+                   asp-action="EditCompleteByDate"
+                   asp-route-delegateUserId="@Model.DelegateUserId"
+                   asp-route-selfAssessmentId="@Model.SelfAssessmentId"
+                   asp-route-accessedVia="@Model.AccessedVia"
+                   asp-route-returnPageQuery="@Model.ReturnPageQuery">
                     Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
                 </a>
             </dd>

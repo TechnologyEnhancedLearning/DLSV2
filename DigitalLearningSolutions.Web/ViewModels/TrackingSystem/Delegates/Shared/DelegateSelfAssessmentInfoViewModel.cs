@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -26,12 +27,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         {
             CandidateAssessmentsId = delegateInfo.CandidateAssessmentsId;
             DelegateId = delegateInfo.DelegateId;
+            DelegateName = delegateInfo.DelegateFirstName + " " + delegateInfo.DelegateLastName;
             SelfAssessmentId = delegateInfo.SelfAssessmentId;
             CandidateNumber = delegateInfo.CandidateNumber;
             ProfessionalRegistrationNumber = delegateInfo.ProfessionalRegistrationNumber;
             Email = delegateInfo.DelegateEmail;
             StartedDate = delegateInfo.StartedDate.ToString(DateHelper.StandardDateAndTimeFormat);
-            CompleteBy = delegateInfo.CompleteBy?.ToString(DateHelper.StandardDateAndTimeFormat);
+            CompleteBy = delegateInfo.CompleteBy?.ToString("dd/M/yyyy", CultureInfo.InvariantCulture);
             LastAccessed = delegateInfo.LastAccessed?.ToString(DateHelper.StandardDateAndTimeFormat);
             SubmittedDate = delegateInfo.SubmittedDate?.ToString(DateHelper.StandardDateAndTimeFormat);
             RemovedDate = delegateInfo.RemovedDate?.ToString(DateHelper.StandardDateAndTimeFormat);
@@ -51,7 +53,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
             EnrolmentMethod = delegateInfo.EnrolmentMethodId switch
             {
                 1 => "Self enrolled",
-                2 => enrolledByFullName==null ? "Admin/supervisor enrolled": "Enrolled by " + enrolledByFullName,
+                2 => enrolledByFullName == null ? "Admin/supervisor enrolled" : "Enrolled by " + enrolledByFullName,
                 3 => "Group",
                 _ => "System",
             };
@@ -60,6 +62,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         public ReturnPageQuery? ReturnPageQuery { get; set; }
         public int CandidateAssessmentsId { get; set; }
         public int DelegateId { get; set; }
+        public string DelegateName { get; set; }
         public int SelfAssessmentId { get; set; }
         public string? CandidateNumber { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }

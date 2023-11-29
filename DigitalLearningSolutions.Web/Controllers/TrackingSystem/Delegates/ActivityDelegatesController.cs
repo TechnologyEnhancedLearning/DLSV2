@@ -1,14 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Utilities;
-    using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -16,7 +14,6 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.Supervisor;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
@@ -44,6 +41,7 @@
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ICourseService courseService;
         private readonly IDelegateActivityDownloadFileService delegateActivityDownloadFileService;
+        private readonly IUserService userService;
         private static readonly IClockUtility clockUtility = new ClockUtility();
 
         public ActivityDelegatesController(
@@ -52,7 +50,9 @@
             IPaginateService paginateService,
             IConfiguration configuration,
             ISelfAssessmentService selfAssessmentService,
-            ICourseService courseService, IDelegateActivityDownloadFileService delegateActivityDownloadFileService
+            ICourseService courseService,
+            IDelegateActivityDownloadFileService delegateActivityDownloadFileService,
+            IUserService userService
         )
         {
             this.courseDelegatesService = courseDelegatesService;
@@ -62,6 +62,7 @@
             this.selfAssessmentService = selfAssessmentService;
             this.courseService = courseService;
             this.delegateActivityDownloadFileService = delegateActivityDownloadFileService;
+            this.userService = userService;
         }
 
         [NoCaching]
@@ -463,6 +464,72 @@
                 return View(delegateSelfAssessmenteViewModel);
             }
         }
+
+        [HttpGet]
+        [Route("{selfAssessmentId:int}/EditCompleteByDate")]
+        public IActionResult EditCompleteByDate(
+            int delegateUserId,
+            int selfAssessmentId,
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery returnPageQuery
+        )
+        {
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
+                delegateUserId,
+                selfAssessmentId
+            );
+            if (assessment == null)
+            {
+                return NotFound();
+            }
+
+            var delegateEntity = userService.GetUserById(delegateUserId)!;
+            string delegateName = delegateEntity != null ? delegateEntity.UserAccount.FirstName.ToString() + " " + delegateEntity.UserAccount.LastName.ToString() : ""; 
+
+            var model = new EditCompleteByDateViewModel(
+                assessment.Name,
+                assessment.CompleteByDate,
+                returnPageQuery,
+                accessedVia,
+                delegateUserId,
+                selfAssessmentId,
+                delegateName
+            );
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("{selfAssessmentId:int}/EditCompleteByDate")]
+        public IActionResult EditCompleteByDate(
+            EditCompleteByDateFormData formData,
+            int delegateUserId,
+            int selfAssessmentId,
+            DelegateAccessRoute accessedVia
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                var model = new EditCompleteByDateViewModel(formData, delegateUserId, selfAssessmentId, accessedVia);
+                return View(model);
+            }
+
+            var completeByDate = formData.Year != null
+                ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value)
+                : (DateTime?)null;
+
+            selfAssessmentService.SetCompleteByDate(
+                selfAssessmentId,
+                delegateUserId,
+                completeByDate
+            );
+
+            ReturnPageQuery? returnPageQuery = formData.ReturnPageQuery;
+            var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
+            routeData.Add("selfAssessmentId", selfAssessmentId.ToString());
+
+            return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
+        }        
     }
 }
 
