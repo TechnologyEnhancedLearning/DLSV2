@@ -21,6 +21,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Middleware;
     using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -42,6 +43,7 @@ namespace DigitalLearningSolutions.Web
     using Serilog;
     using GDS.MultiPageFormData;
     using LearningHub.Nhs.Caching;
+    using AspNetCoreRateLimit;
 
     public class Startup
     {
@@ -57,6 +59,8 @@ namespace DigitalLearningSolutions.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureIpRateLimiting(services);
+
             services.AddHttpContextAccessor();
 
             services.AddDataProtection()
@@ -201,6 +205,13 @@ namespace DigitalLearningSolutions.Web
             RegisterHelpers(services);
             RegisterHttpClients(services);
             RegisterWebServiceFilters(services);
+        }
+
+        private void ConfigureIpRateLimiting(IServiceCollection services)
+        {
+            services.Configure<IpRateLimitOptions>(config.GetSection("IpRateLimiting"));
+            services.AddInMemoryRateLimiting();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         }
 
         private static void RegisterServices(IServiceCollection services)
@@ -377,6 +388,7 @@ namespace DigitalLearningSolutions.Web
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
         {
+            app.UseMiddleware<DLSIPRateLimitMiddleware>();
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("content-security-policy",
