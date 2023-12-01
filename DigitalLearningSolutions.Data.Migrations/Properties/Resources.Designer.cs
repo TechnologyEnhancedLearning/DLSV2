@@ -1253,6 +1253,62 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns assessment results for a delegate
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetAssessmentResultsByDelegate]
+        ///	@selfAssessmentId as Int = 0,
+        ///	@delegateId as int = 0
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults AS
+        ///            (
+        ///                SELECT
+        ///                 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3187_CreateGetAssessmentResultsByDelegate_SP {
+            get {
+                return ResourceManager.GetString("TD_3187_CreateGetAssessmentResultsByDelegate_SP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentR [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3187_CreateGetCandidateAssessmentResultsById_SP {
+            get {
+                return ResourceManager.GetString("TD_3187_CreateGetCandidateAssessmentResultsById_SP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
