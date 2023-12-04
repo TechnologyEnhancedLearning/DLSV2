@@ -60,6 +60,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
 
+        bool GetSelfRegister(int customisationId);
+
         CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
@@ -696,7 +698,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         FETCH NEXT @exportQueryRowLimit ROWS ONLY";
             return connection.Query<CourseStatistics>(
                 sql,
-                new { centreId, categoryId, exportQueryRowLimit, currentRun, orderBy,searchString}
+                new { centreId, categoryId, exportQueryRowLimit, currentRun, orderBy, searchString }
             );
         }
 
@@ -795,7 +797,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 sortOrder = " DESC ";
 
             if (sortBy == "CourseName" || sortBy == "SearchableName")
-                orderBy = " ORDER BY ap.ApplicationName "+sortOrder+", cu.CustomisationName " + sortOrder;
+                orderBy = " ORDER BY ap.ApplicationName " + sortOrder + ", cu.CustomisationName " + sortOrder;
             else
                 orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
 
@@ -1119,6 +1121,17 @@ namespace DigitalLearningSolutions.Data.DataServices
             }
 
             return names;
+        }
+
+        public bool GetSelfRegister(int customisationId)
+        {
+            var selfRegister = connection.QueryFirstOrDefault<bool>(
+                @"SELECT SelfRegister
+                    FROM Customisations
+                    WHERE CustomisationID = @customisationId",
+                new { customisationId });
+
+            return selfRegister;
         }
 
         public IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)

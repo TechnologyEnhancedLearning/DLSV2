@@ -18,6 +18,8 @@
         string? GetCoursePassword(int customisationId);
 
         void LogPasswordSubmitted(int progressId);
+
+        int? GetProgressId(int candidateId, int customisationId);
     }
 
     public class CourseContentService : ICourseContentService
@@ -263,7 +265,7 @@
             }
         }
 
-        private int? GetProgressId(int candidateId, int customisationId)
+        public int? GetProgressId(int candidateId, int customisationId)
         {
             try
             {
