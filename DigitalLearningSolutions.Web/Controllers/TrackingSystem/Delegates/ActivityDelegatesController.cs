@@ -440,7 +440,6 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var selfAssessmentDelegate = selfAssessmentService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
-
             if (selfAssessmentDelegate == null)
             {
                 return new NotFoundResult();
