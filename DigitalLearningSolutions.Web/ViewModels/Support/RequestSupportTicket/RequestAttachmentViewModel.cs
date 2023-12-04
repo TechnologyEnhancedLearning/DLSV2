@@ -5,11 +5,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models;
-    using FluentMigrator.Infrastructure;
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     public class RequestAttachmentViewModel
     {
         public RequestAttachmentViewModel(
