@@ -145,12 +145,13 @@
             if (isCourse == "Any" && isSelfAssessment == "Any")
             {
                 delegateActivities = courseService.GetDelegateCourses(searchString, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
-                delegateAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
+                if (courseTopic == "Any" && hasAdminFields == "Any")
+                    delegateAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
             }
 
             if (isCourse == "true")
                 delegateActivities = courseService.GetDelegateCourses(searchString ?? string.Empty, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
-            if (isSelfAssessment == "true")
+            if (isSelfAssessment == "true" && courseTopic == "Any" && hasAdminFields == "Any")
                 delegateAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
 
             delegateAssessments = UpdateCompletedCount(delegateAssessments);
