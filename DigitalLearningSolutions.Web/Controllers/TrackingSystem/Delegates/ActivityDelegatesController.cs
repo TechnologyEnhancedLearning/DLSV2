@@ -434,7 +434,11 @@
         [HttpGet]
         public IActionResult RemoveDelegateSelfAssessment(int candidateAssessmentsId)
         {
-            var centreId = User.GetCentreIdKnownNotNull();
+            var checkselfAssessmentDelegate = selfAssessmentService.CheckDelegateSelfAssessment(candidateAssessmentsId);
+            if (checkselfAssessmentDelegate > 0)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
             var selfAssessmentDelegate = selfAssessmentService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
 
             if (selfAssessmentDelegate == null)
@@ -453,7 +457,7 @@
 
             if (checkselfAssessmentDelegate > 0)
             {
-                return StatusCode((int)HttpStatusCode.Gone);
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             if (ModelState.IsValid && delegateSelfAssessmenteViewModel.ActionConfirmed)
             {
