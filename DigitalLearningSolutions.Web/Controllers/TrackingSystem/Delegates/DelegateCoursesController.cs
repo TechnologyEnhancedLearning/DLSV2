@@ -21,7 +21,7 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
-    [Route("TrackingSystem/Delegates/Courses")]
+    [Route("TrackingSystem/Delegates/Activities")]
     public class DelegateCoursesController : Controller
     {
         private const string CourseFilterCookieName = "DelegateCoursesFilter";
