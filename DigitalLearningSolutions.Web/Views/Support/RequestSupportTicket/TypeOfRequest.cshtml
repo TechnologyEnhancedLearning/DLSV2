@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Support
+@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
 @model RequestTypeViewModel;
@@ -7,6 +8,7 @@
     ViewData["Title"] = "Type of Request";
     var count = @Model.RequestTypes.Count();
     var seperator = 0;
+    var cancelLinkData = Html.GetRouteValues();
 }
 <link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
 @if (errorHasOccurred)
@@ -15,7 +17,7 @@
 }
 
 <div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" role="button" asp-controller="RequestSupportTicket" asp-action="Index">
+    <a class="nhsuk-back-link__link" role="button" asp-controller="RequestSupportTicket" asp-action="Index" asp-all-route-data="@cancelLinkData">
         <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
             <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
         </svg>
@@ -25,7 +27,7 @@
 @if (Model.RequestTypes.Any())
 {
     <div id="form-group">
-        <form method="post" asp-route-ResponseTypes="@Model.RequestTypes" asp-action="setRequestType">
+        <form method="post" asp-route-ResponseTypes="@Model.RequestTypes" asp-action="setRequestType" asp-all-route-data="@cancelLinkData">
             <div>
                 <fieldset class="nhsuk-fieldset">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
@@ -58,14 +60,7 @@
                 </button>
             </div>
         </form>
-        <div class="nhsuk-back-link">
-            <a class="nhsuk-back-link__link" asp-controller="RequestSupportTicket" asp-action="Index" asp-route-SearchString="" asp-route-ExistingFilterString="" asp-route-page="" asp-fragment="">
-                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-                </svg>
-                Cancel
-            </a>
-        </div>
+        <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" asp-all-route-data="@cancelLinkData" />
     </div>
 }
 

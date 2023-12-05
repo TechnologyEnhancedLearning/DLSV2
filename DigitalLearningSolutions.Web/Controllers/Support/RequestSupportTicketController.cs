@@ -21,9 +21,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
     using System.IO;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.ServiceFilter;
+    using Microsoft.AspNetCore.Authorization;
+
+    [Route("/{dlsSubApplication}/RequestSupport")]
+    [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.Support))]
-
+    [TypeFilter(typeof(ValidateAllowedDlsSubApplication), Arguments = new object[] { new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } })]
     public class RequestSupportTicketController : Controller
     {
         private readonly IConfiguration configuration;
@@ -48,7 +53,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
         }
 
-        [Route("Support/RequestSupportTicket")]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
             TempData.Clear();
@@ -66,7 +70,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             return View("Request", model);
         }
 
-        [Route("RequestSupport/TypeofRequest")]
+        [Route("/{dlsSubApplication}/RequestSupport/TypeofRequest")]
         public IActionResult TypeofRequest(DlsSubApplication dlsSubApplication)
         {
             var requestTypes = requestSupportTicketDataService.GetRequestTypes();
@@ -76,7 +80,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
 
         [HttpPost]
-        [Route("RequestSupport/setRequestType")]
+        [Route("/{dlsSubApplication}/RequestSupport/setRequestType")]
         public IActionResult setRequestType(DlsSubApplication dlsSubApplication, RequestTypeViewModel RequestTypemodel, int requestType)
         {
             var requestTypes = requestSupportTicketDataService.GetRequestTypes();
@@ -94,12 +98,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 ModelState.AddModelError("Id", "Please choose a request type");
                 return View("TypeOfRequest", model1);
             }
-            return RedirectToAction("RequestSummary");
+            return RedirectToAction("RequestSummary", new { dlsSubApplication } );
         }
 
-        [Route("RequestSupport/RequestSummary")]
+        [Route("/{dlsSubApplication}/RequestSupport/RequestSummary")]
         public IActionResult RequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel RequestTypemodel)
-
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
             var model = new RequestSummaryViewModel(data);
@@ -108,7 +111,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
 
         [HttpPost]
-        [Route("RequestSupport/SetRequestSummary")]
+        [Route("/{dlsSubApplication}/RequestSupport/SetRequestSummary")]
         public IActionResult SetRequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel requestDetailsmodel)
         {
             if (requestDetailsmodel.RequestSubject == null)
@@ -128,10 +131,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var data = TempData.Peek<RequestSupportTicketData>()!;
             data.setRequestSubjectDetails(requestDetailsmodel);
             TempData.Set(data);
-            return RedirectToAction("RequestAttachment");
+            return RedirectToAction("RequestAttachment", new { dlsSubApplication });
         }
 
-        [Route("RequestSupport/RequestAttachment")]
+        [Route("/{dlsSubApplication}/RequestSupport/RequestAttachment")]
         public IActionResult RequestAttachment(DlsSubApplication dlsSubApplication, RequestAttachmentViewModel model)
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
@@ -141,7 +144,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
 
         [HttpPost]
-        [Route("RequestSupport/SetAttachment")]
+        [Route("/{dlsSubApplication}/RequestSupport/SetAttachment")]
         public IActionResult SetAttachment(DlsSubApplication dlsSubApplication, RequestAttachmentViewModel requestAttachmentmodel)
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
@@ -184,9 +187,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             
             data.setImageFiles(RequestAttachmentList);
             TempData.Set(data);
-            return RedirectToAction("RequestAttachment");
+            return RedirectToAction("RequestAttachment", new { dlsSubApplication });
         }
-
+        [Route("/{dlsSubApplication}/RequestSupport/SetAttachment/DeleteImage")]
         public IActionResult DeleteImage(DlsSubApplication dlsSubApplication, string imageName, string imageId)
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
@@ -196,11 +199,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             }
             data.RequestAttachment.RemoveAll((x) => x.FileName == imageName && x.Id == imageId);
             TempData.Set(data);
-            return RedirectToAction("RequestAttachment");
+            return RedirectToAction("RequestAttachment", new { dlsSubApplication });
         }
 
         [HttpGet]
-        [Route("RequestSupport/SupportSummary")]
+        [Route("/{dlsSubApplication}/RequestSupport/SupportSummary")]
         public IActionResult SupportSummary(DlsSubApplication dlsSubApplication, SupportSummaryViewModel supportSummaryViewModel)
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
@@ -209,7 +212,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
 
         [HttpPost]
-        [Route("RequestSupport/SubmitSupportSummary")]
+        [Route("/{dlsSubApplication}/RequestSupport/SubmitSupportSummary")]
         public IActionResult SubmitSupportSummary(DlsSubApplication dlsSubApplication, SupportSummaryViewModel model)
 
         {

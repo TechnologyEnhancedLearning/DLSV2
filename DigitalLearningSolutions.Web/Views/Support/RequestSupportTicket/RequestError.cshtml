@@ -1,8 +1,10 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
+﻿@using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
+@using DigitalLearningSolutions.Web.Extensions
 
 @model FreshDeskResponseViewModel
 @{
     ViewData["Title"] = "Error";
+    var cancelLinkData = Html.GetRouteValues();
 }
 <div class="nhsuk-u-margin-bottom-8">
     <p class="nhsuk-body-l nhsuk-u-margin-bottom-6">
@@ -11,7 +13,7 @@
     <p class="nhsuk-body-l nhsuk-u-margin-bottom-6">
        @Model.ErrorMessage
     </p>
-    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupportTicket" asp-action="Index">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="RequestSupportTicket" asp-all-route-data="@cancelLinkData" asp-action="Index">
         Back to support
     </a>
 </div>
