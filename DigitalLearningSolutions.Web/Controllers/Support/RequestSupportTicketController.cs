@@ -98,7 +98,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 ModelState.AddModelError("Id", "Please choose a request type");
                 return View("TypeOfRequest", model1);
             }
-            return RedirectToAction("RequestSummary", new { dlsSubApplication });
+            return RedirectToAction("RequestSummary", new { dlsSubApplication } );
         }
 
         [Route("/{dlsSubApplication}/RequestSupport/RequestSummary")]
@@ -184,7 +184,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 };
                 RequestAttachmentList.Add(RequestAttachment);
             }
-
+            
             data.setImageFiles(RequestAttachmentList);
             TempData.Set(data);
             return RedirectToAction("RequestAttachment", new { dlsSubApplication });
