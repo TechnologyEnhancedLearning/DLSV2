@@ -53,6 +53,7 @@
         int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId, string delegateEmail, int centreId);
         SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId);
         void RemoveCandidateAssessmentSupervisorVerification(int id);
+       bool RemoveDelegateSelfAssessmentsupervisor(int candidateAssessmentId, int supervisorDelegateId);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -842,6 +843,30 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             {
                 logger.LogWarning(
                     $"Not removing Candidate Assessment as db update failed. candidateAssessmentId: {candidateAssessmentId}"
+                );
+                return false;
+            }
+            return true;
+        }
+        public bool RemoveDelegateSelfAssessmentsupervisor(int candidateAssessmentId, int supervisorDelegateId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+         @"
+                BEGIN TRY
+                    BEGIN TRANSACTION
+                         UPDATE CandidateAssessmentSupervisors SET Removed = getUTCDate()
+                            WHERE (CandidateAssessmentID = @candidateAssessmentId) AND (SupervisorDelegateId=@supervisorDelegateId) AND (Removed IS NULL)
+
+                        COMMIT TRANSACTION
+                END TRY
+                BEGIN CATCH
+                    ROLLBACK TRANSACTION
+                END CATCH",
+        new { candidateAssessmentId, supervisorDelegateId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not removing Candidate Assessment Supervisors as db update failed. candidateAssessmentId: {candidateAssessmentId} " +$"supervisorDelegateId: {supervisorDelegateId}"
                 );
                 return false;
             }
