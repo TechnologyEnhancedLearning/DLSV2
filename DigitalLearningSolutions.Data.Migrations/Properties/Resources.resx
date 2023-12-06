@@ -324,6 +324,7 @@
   </data>
   <data name="TD_3187_CreateGetCandidateAssessmentResultsById_SP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-3187-CreateGetCandidateAssessmentResultsById-SP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-3190-SendOneMonthSelfAssessmentOverdueRemindersSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
