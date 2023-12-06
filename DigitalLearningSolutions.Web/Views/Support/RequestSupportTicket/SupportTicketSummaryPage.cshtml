@@ -1,13 +1,15 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Support
 @using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
 @model SupportSummaryViewModel
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Request summary";
+    var cancelLinkData = Html.GetRouteValues();
 }
 <div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" role="button" asp-controller="RequestSupportTicket" asp-action="RequestAttachment">
+    <a class="nhsuk-back-link__link" role="button" asp-controller="RequestSupportTicket" asp-action="RequestAttachment" asp-all-route-data="@cancelLinkData">
         <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
             <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
         </svg>
@@ -15,7 +17,7 @@
     </a>
 </div>
 <div class="nhsuk-grid-row">
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SubmitSupportSummary">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SubmitSupportSummary" asp-route-dlsSubApplication="@ViewContext.RouteData.Values["dlsSubApplication"]">
         <div class="nhsuk-grid-column-full">
             <h1 class="nhsuk-heading-xl">Check your request before submitting</h1>
             <div class="nhsuk-u-reading-width">
@@ -31,7 +33,7 @@
                             @Model.RequestType
                         </dd>
                         <dd class="nhsuk-summary-list__actions">
-                            <a asp-action="TypeofRequest">
+                            <a asp-action="TypeofRequest" asp-all-route-data="@cancelLinkData">
                                 Change<span class="nhsuk-u-visually-hidden"> Request type</span>
                             </a>
                         </dd>
@@ -44,7 +46,7 @@
                             @Model.RequestSubject
                         </dd>
                         <dd class="nhsuk-summary-list__actions" style="border-bottom:none !important">
-                            <a asp-action="RequestSummary">
+                            <a asp-action="RequestSummary" asp-all-route-data="@cancelLinkData">
                                 Change<span class="nhsuk-u-visually-hidden"> summary</span>
                             </a>
                         </dd>
@@ -76,7 +78,7 @@
 
                         </dd>
                         <dd class="nhsuk-summary-list__actions">
-                            <a asp-action="RequestAttachment">
+                            <a asp-action="RequestAttachment" asp-all-route-data="@cancelLinkData">
                                 Change<span class="nhsuk-u-visually-hidden"> Attachments</span>
                             </a>
                         </dd>
@@ -89,6 +91,5 @@
             </div>
         </div>
     </form>
-    <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" />
-</div>
+    <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" asp-all-route-data="@cancelLinkData" />
 </div>
