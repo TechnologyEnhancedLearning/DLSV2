@@ -1108,6 +1108,11 @@
             supervisorService.RemoveCandidateAssessment(candidateAssessmentId);
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
+        public IActionResult RemoveDelegateSelfAssessmentsupervisor(int candidateAssessmentId, int supervisorDelegateId)
+        {
+            supervisorService.RemoveDelegateSelfAssessmentsupervisor(candidateAssessmentId, supervisorDelegateId);
+            return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
+        }
 
         public IActionResult SendReminderDelegateSelfAssessment(int candidateAssessmentId, int supervisorDelegateId)
         {

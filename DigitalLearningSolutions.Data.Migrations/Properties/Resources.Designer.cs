@@ -1278,6 +1278,21 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_3187_CreateGetAssessmentResultsByDelegate_SP {
             get {
                 return ResourceManager.GetString("TD_3187_CreateGetAssessmentResultsByDelegate_SP", resourceCulture);
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 29/11/2023
+        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[SendSelfAssessmentOverdueReminders]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@EmailProfileName nvarchar(100),
+        ///	@TestOnly bit
+        ///AS
+        ///BEGIN
+        ///	-- [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP {
+            get {
+                return ResourceManager.GetString("TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP", resourceCulture);
             }
         }
         
@@ -1305,6 +1320,20 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_3187_CreateGetCandidateAssessmentResultsById_SP {
             get {
                 return ResourceManager.GetString("TD_3187_CreateGetCandidateAssessmentResultsById_SP", resourceCulture);
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 29/11/2023
+        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[SendOneMonthSelfAssessmentTBCReminders]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@EmailProfileName nvarchar(100),
+        ///	@TestOnly bit
+        ///AS
+        ///BEGIN        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
+            get {
+                return ResourceManager.GetString("TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP", resourceCulture);
             }
         }
         

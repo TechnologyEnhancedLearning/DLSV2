@@ -982,15 +982,15 @@
         {
             // Given
             var delegateAssessments = Builder<DelegateAssessmentStatistics>.CreateListOfSize(5).Build();
-            A.CallTo(() => courseDataService.GetDelegateAssessmentStatisticsAtCentre(1)).Returns(delegateAssessments);
+            A.CallTo(() => courseDataService.GetDelegateAssessmentStatisticsAtCentre(string.Empty, 1, string.Empty, string.Empty)).Returns(delegateAssessments);
 
             // When
-            var result = courseService.GetDelegateAssessments(1);
+            var result = courseService.GetDelegateAssessments(string.Empty, 1, string.Empty, string.Empty);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseDataService.GetDelegateAssessmentStatisticsAtCentre(1))
+                A.CallTo(() => courseDataService.GetDelegateAssessmentStatisticsAtCentre(string.Empty, 1, string.Empty, string.Empty))
                     .MustHaveHappenedOnceExactly();
                 result.Count().Should().BeGreaterOrEqualTo(0);
             }

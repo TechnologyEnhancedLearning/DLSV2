@@ -5,11 +5,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models;
-    using FluentMigrator.Infrastructure;
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     public class RequestAttachmentViewModel
     {
         public RequestAttachmentViewModel(
@@ -24,8 +22,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
             ImageFiles = data.ImageFiles;
             FileSizeFlag = false;
             FileExtensionFlag = false;
-
-
         }
         public string? Attachment { get; set; }
         public int? SizeLimit { get; set; }
@@ -36,10 +32,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
         public string? FileExtensionError { get; set; }
         public string? FileSizeError { get; set; }
 
-        [AllowedExtensions(new[] { ".png", ".jpg", ".jpeg" }, "Upload file must be in image formats like jpg,jpeg,png")]
+        [AllowedExtensions(new[] { ".png", ".jpg", ".jpeg", ".bmp", ".mp4" }, "Upload file must be in an image (jpg, jpeg, png, bmp) or mp4 video")]
         [MaxFileSize(20 * 1024 * 1024, "Maximum allowed file size is 20MB")]
         public List<IFormFile>? ImageFiles { get; set; }
-
 
     }
     public static class FileSizeCalc

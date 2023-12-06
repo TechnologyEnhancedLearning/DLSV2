@@ -130,7 +130,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 !string.IsNullOrEmpty(centreStatus)
             )
             {
-                result.SearchString = "SearchQuery|" + search + "";
+                result.SearchString = "SearchQuery|" + search.Trim() + "";
                 result.FilterString = "Region|" + region + "-CentreType|" + centreType + "-ContractType|" + contractType + "-CentreStatus|" + centreStatus;
             }
 

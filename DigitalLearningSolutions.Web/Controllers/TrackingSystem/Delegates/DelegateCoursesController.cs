@@ -21,7 +21,7 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
-    [Route("TrackingSystem/Delegates/Courses")]
+    [Route("TrackingSystem/Delegates/Activities")]
     public class DelegateCoursesController : Controller
     {
         private const string CourseFilterCookieName = "DelegateCoursesFilter";
@@ -144,17 +144,22 @@
 
             if (isCourse == "Any" && isSelfAssessment == "Any")
             {
-                delegateActivities = courseService.GetDelegateCourses(searchString ?? string.Empty, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
-                delegateAssessments = courseService.GetDelegateAssessments(centreId);
+                delegateActivities = courseService.GetDelegateCourses(searchString, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
+                if (courseTopic == "Any" && hasAdminFields == "Any")
+                    delegateAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
             }
 
             if (isCourse == "true")
                 delegateActivities = courseService.GetDelegateCourses(searchString ?? string.Empty, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
-            if (isSelfAssessment == "true")
-                delegateAssessments = courseService.GetDelegateAssessments(centreId);
+            if (isSelfAssessment == "true" && courseTopic == "Any" && hasAdminFields == "Any")
+                delegateAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
+
+            delegateAssessments = UpdateCompletedCount(delegateAssessments);
 
             var allItems = delegateActivities.Cast<CourseStatistics>().ToList();
             allItems.AddRange(delegateAssessments);
+
+            allItems = OrderActivities(allItems, sortBy, sortDirection);
 
             var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
                 .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
@@ -210,8 +215,40 @@
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
-                fileName
+            fileName
             );
+        }
+
+        private IEnumerable<DelegateAssessmentStatistics> UpdateCompletedCount(IEnumerable<DelegateAssessmentStatistics> statistics)
+        {
+            foreach (var statistic in statistics)
+            {
+                statistic.CompletedCount = statistic.SubmittedSignedOffCount;
+            }
+            return statistics;
+        }
+
+        private List<CourseStatistics> OrderActivities(List<CourseStatistics> allItems, string sortBy, string sortDirection)
+        {
+            if (sortBy == "InProgressCount")
+            {
+                allItems = sortDirection == "Ascending"
+                            ? allItems.OrderBy(x => x.InProgressCount).ThenBy(n => n.SearchableName).ToList()
+                            : allItems.OrderByDescending(x => x.InProgressCount).ThenBy(n => n.SearchableName).ToList();
+            }
+            else if (sortBy == "CompletedCount")
+            {
+                allItems = sortDirection == "Ascending"
+                            ? allItems.OrderBy(x => x.CompletedCount).ThenBy(n => n.SearchableName).ToList()
+                            : allItems.OrderByDescending(x => x.CompletedCount).ThenBy(n => n.SearchableName).ToList();
+            }
+            else
+            {
+                allItems = sortDirection == "Ascending"
+                            ? allItems.OrderBy(x => x.SearchableName).ToList()
+                            : allItems.OrderByDescending(x => x.SearchableName).ToList();
+            }
+            return allItems;
         }
     }
 }
