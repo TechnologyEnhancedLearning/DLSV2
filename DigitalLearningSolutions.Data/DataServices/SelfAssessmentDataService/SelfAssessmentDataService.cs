@@ -602,7 +602,7 @@ public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExp
         {
             return connection.QueryFirstOrDefault<int>(
                   @"SELECT COUNT(ID) Num FROM CandidateAssessments 
-                      WHERE (ID = @candidateAssessmentsId) AND ( RemovalMethodID =2)",
+                      WHERE (ID = @candidateAssessmentsId) AND ( RemovalMethodID =2) AND (RemovedDate IS NOT NULL)",
                   new { candidateAssessmentsId }
               );
         }
