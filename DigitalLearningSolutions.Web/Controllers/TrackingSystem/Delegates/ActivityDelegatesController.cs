@@ -24,6 +24,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -363,7 +364,7 @@
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null)
-          {
+        {
             var centreId = User.GetCentreIdKnownNotNull();
             searchString = searchString == null ? string.Empty : searchString.Trim();
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
@@ -434,9 +435,12 @@
         [HttpGet]
         public IActionResult RemoveDelegateSelfAssessment(int candidateAssessmentsId)
         {
-            var centreId = User.GetCentreIdKnownNotNull();
+            var checkselfAssessmentDelegate = selfAssessmentService.CheckDelegateSelfAssessment(candidateAssessmentsId);
+            if (checkselfAssessmentDelegate > 0)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
             var selfAssessmentDelegate = selfAssessmentService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
-
             if (selfAssessmentDelegate == null)
             {
                 return new NotFoundResult();
@@ -449,6 +453,12 @@
         [HttpPost]
         public IActionResult RemoveDelegateSelfAssessment(DelegateSelfAssessmenteViewModel delegateSelfAssessmenteViewModel)
         {
+            var checkselfAssessmentDelegate = selfAssessmentService.CheckDelegateSelfAssessment(delegateSelfAssessmenteViewModel.CandidateAssessmentsId);
+
+            if (checkselfAssessmentDelegate > 0)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
             if (ModelState.IsValid && delegateSelfAssessmenteViewModel.ActionConfirmed)
             {
                 selfAssessmentService.RemoveDelegateSelfAssessment(delegateSelfAssessmenteViewModel.CandidateAssessmentsId);
