@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -351,16 +352,15 @@
             {
                 return NotFound();
             }
-
+            var delegateId = User.GetCandidateIdKnownNotNull();
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
             if(competencymaindata == null)
             {
                 return NotFound();
             }
-            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
+            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(competencymaindata.SelfAssessmentID, delegateId);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID);
             var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
-
             var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, route, accessors, activitySummaryCompetencySelfAssesment);
             return View("Current/CompetencySelfAssessmentCertificate", model);
         }
@@ -372,15 +372,15 @@
             {
                 return NotFound();
             }
-
+            var delegateId = User.GetCandidateIdKnownNotNull();
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
-            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
+            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(competencymaindata.SelfAssessmentID, delegateId);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID);
             var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id );
-            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, 1, accessors, activitySummaryCompetencySelfAssesment);
+         
+             var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, 1, accessors, activitySummaryCompetencySelfAssesment);
             var renderedViewHTML = RenderRazorViewToString(this, "Current/DownloadCompetencySelfAssessmentCertificate", model);
 
-            var delegateId = User.GetCandidateIdKnownNotNull();
             var pdfReportResponse = await pdfService.PdfReport(candidateAssessmentId.ToString(), renderedViewHTML, delegateId);
             if (pdfReportResponse != null)
             {

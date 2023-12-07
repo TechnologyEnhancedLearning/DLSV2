@@ -81,6 +81,52 @@
                         AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
                 WHERE ca.ID = @candidateAssessmentId
             )";
+        
+             private const string CompetencyCountFields =
+            @"DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
+            C.Name AS Name,
+            C.Description AS Description,
+            CG.Name AS CompetencyGroup,
+            CG.ID AS CompetencyGroupID,
+            CG.Description AS CompetencyGroupDescription,
+            COALESCE(
+                (SELECT TOP(1) FrameworkConfig
+                FROM Frameworks F
+                INNER JOIN FrameworkCompetencies AS FC
+                    ON FC.FrameworkID = F.ID
+                WHERE FC.CompetencyID = C.ID),
+            'Capability') AS Vocabulary,
+            CASE
+                WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = SAS.SelfAssessmentID) > 0
+                THEN 1
+                ELSE 0
+            END AS HasDelegateNominatedRoles,
+            SAS.Optional,
+            C.AlwaysShowDescription,
+            AQ.ID AS Id,
+            AQ.Question,
+            AQ.MaxValueDescription,
+            AQ.MinValueDescription,
+            AQ.ScoringInstructions,
+            AQ.MinValue,
+            AQ.MaxValue,
+            AQ.AssessmentQuestionInputTypeID,
+            AQ.IncludeComments,
+            AQ.CommentsPrompt,
+            AQ.CommentsHint,
+            CAQ.Required,
+            LAR.ResultId,
+            LAR.Result,
+            LAR.ResultDateTime,
+            LAR.SupportingComments,
+            LAR.SelfAssessmentResultSupervisorVerificationId,
+            LAR.Requested,
+            LAR.Verified,
+            LAR.Comments AS SupervisorComments,
+            LAR.SignedOff,
+            LAR.UserIsVerifier,
+            LAR.ResultRAG,
+            LAR.SupervisorName";
 
         private const string CompetencyFields =
             @"C.ID AS Id,

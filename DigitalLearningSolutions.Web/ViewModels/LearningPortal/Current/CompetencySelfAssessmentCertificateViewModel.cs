@@ -2,6 +2,7 @@
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using DigitalLearningSolutions.Web.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
@@ -14,7 +15,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         public CompetencySelfAssessmentCertificateViewModel(CompetencySelfAssessmentCertificate competency,
             IEnumerable<CompetencyCountSelfAssessmentCertificate> competencies,
             int route, IEnumerable<Accessor> accessors,
-           ActivitySummaryCompetencySelfAssesment activitySummaryCompetencySelfAssesment)
+           ActivitySummaryCompetencySelfAssesment activitySummaryCompetencySelfAssesment
+         )
         {
             Route= route;
             CompetencySelfAssessmentCertificates = competency;
@@ -30,5 +32,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         public CompetencySelfAssessmentCertificate CompetencySelfAssessmentCertificates { get; set; } 
         public IEnumerable<CompetencyCountSelfAssessmentCertificate> CompetencyCountSelfAssessmentCertificate { get; set; } 
       public IEnumerable<Accessor> Accessors { get; set; }
+
+
     }
 }

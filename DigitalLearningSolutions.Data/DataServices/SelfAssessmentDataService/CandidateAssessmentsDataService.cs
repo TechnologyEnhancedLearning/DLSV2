@@ -329,18 +329,16 @@
             );
         }
 
-        public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID)
+        public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int selfAssessmentId, int delegateId)
         {
             return connection.Query<CompetencyCountSelfAssessmentCertificate>(
-                @"SELECT
-                    cg.ID AS CompetencyGroupID,
-                    cg.Name AS CompetencyGroup,
-                    COUNT(caoc.CompetencyID) AS OptionalCompetencyCount
-                    FROM   CandidateAssessmentOptionalCompetencies AS caoc INNER JOIN
-             CompetencyGroups AS cg ON caoc.CompetencyGroupID = cg.ID
-                WHERE (caoc.CandidateAssessmentID = @candidateAssessmentID) AND (caoc.IncludedInSelfAssessment = 1)
-                    GROUP BY cg.Name, cg.ID",
-                new { candidateAssessmentID }
+                $@"WITH {LatestAssessmentResults}
+                    SELECT COUNT(CompetencyGroupID) OptionalCompetencyCount,CompetencyGroup,CompetencyGroupID
+                    FROM( SELECT {CompetencyCountFields}
+                    FROM {CompetencyTables}
+                    WHERE (CAOC.IncludedInSelfAssessment = 1) AND (LAR.SignedOff =1))CompetencyCount					
+					GROUP BY CompetencyGroup,CompetencyGroupID",
+                new { selfAssessmentId, delegateId }
             );
         }
         public IEnumerable<Accessor> GetAccessor(int selfAssessmentId)
@@ -397,7 +395,7 @@
              SelfAssessmentSupervisorRoles AS sasr RIGHT OUTER JOIN
              SelfAssessments AS sa INNER JOIN
              CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
-             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID AND casv.Verified IS NULL AND cas.Removed IS NULL INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID AND (casv.SignedOff = 1)  AND  (NOT(casv.Verified IS NULL)) AND cas.Removed IS NULL INNER JOIN
              CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID ON sa.ID = ca.SelfAssessmentID ON sasr.ID = cas.SelfAssessmentSupervisorRoleID ON nsg.ID = sa.NRPSubGroupID ON npg.ID = sa.NRPProfessionalGroupID LEFT OUTER JOIN
              NRPRoles AS nr ON sa.NRPRoleID = nr.ID
               WHERE (casv.ID = @CandidateAssessmentSupervisorVerificationsId)",
