@@ -1319,6 +1319,46 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendExpiredTBCReminders]    Script Date: 07/12/2023 08:03:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 17/08/2018
+        ///-- Description:	Uses DB mail to send reminders to delegates on courses with a TBC date within 1 month.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
+        ///	-- Add the parameters for the stored p [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3197_FixLinksInCourseReminderEmails_DOWN {
+            get {
+                return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendExpiredTBCReminders]    Script Date: 07/12/2023 08:03:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 17/08/2018
+        ///-- Description:	Uses DB mail to send reminders to delegates on courses with a TBC date within 1 month.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
+        ///	-- Add the parameters for the stored p [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3197_FixLinksInCourseReminderEmails_UP {
+            get {
+                return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
