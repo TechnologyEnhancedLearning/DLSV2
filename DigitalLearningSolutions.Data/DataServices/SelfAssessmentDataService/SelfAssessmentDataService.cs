@@ -151,6 +151,8 @@
         (IEnumerable<SelfAssessmentDelegate>, int) GetSelfAssessmentDelegates(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
 
+        IEnumerable<SelfAssessmentDelegate> GetDelegatesOnSelfAssessmentForExport(int? selfAssessmentId, int centreId);
+
         IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun);
         int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
@@ -327,6 +329,89 @@
                 commandTimeout: 3000
             );
             return (delegateUserCard, ResultCount);
+        }
+
+        public IEnumerable<SelfAssessmentDelegate> GetDelegatesOnSelfAssessmentForExport(int? selfAssessmentId, int centreId)
+        {
+            var selectColumnQuery = $@"SELECT
+                da.CandidateNumber,
+                u.ID AS DelegateUserId,
+                u.ProfessionalRegistrationNumber,
+                ca.SelfAssessmentID As SelfAssessmentId,
+                ca.StartedDate,
+                ca.EnrolmentMethodId,
+                ca.LastAccessed,
+                ca.LaunchCount,
+                ca.CompleteByDate,
+                ca.SubmittedDate,
+                ca.RemovedDate,
+                ca.CompletedDate,
+				uEnrolledBy.FirstName AS EnrolledByForename,
+                uEnrolledBy.LastName AS EnrolledBySurname,
+                aaEnrolledBy.Active AS EnrolledByAdminActive,
+				da.CandidateNumber AS CandidateNumber,
+                u.FirstName AS DelegateFirstName,
+                u.LastName AS DelegateLastName,
+                COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
+                da.Active AS IsDelegateActive,
+                MAX(casv.Verified) as SignedOff,
+                da.Answer1 AS RegistrationAnswer1,da.Answer2 AS RegistrationAnswer2,da.Answer3 AS RegistrationAnswer3,da.Answer4 AS RegistrationAnswer4,da.Answer5 AS RegistrationAnswer5,da.Answer6 AS RegistrationAnswer6";
+
+            var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa 
+				INNER JOIN dbo.CandidateAssessments AS ca WITH (NOLOCK) ON sa.ID = ca.SelfAssessmentID 
+				INNER JOIN dbo.CentreSelfAssessments AS csa  WITH (NOLOCK) ON sa.ID = csa.SelfAssessmentID 
+                INNER JOIN dbo.DelegateAccounts da WITH (NOLOCK) ON ca.CentreID = da.CentreID AND ca.DelegateUserID = da.UserID AND da.CentreID = csa.CentreID
+                INNER JOIN dbo.Users u WITH (NOLOCK) ON DA.UserID = u.ID
+                LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
+				LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = ca.EnrolledByAdminID
+                LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID 
+                LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
+                LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND(casv.Verified IS NOT NULL AND casv.SignedOff = 1) ";
+
+            var whereQuery = $@" WHERE sa.ID = @selfAssessmentId 
+                AND da.CentreID = @centreID AND csa.CentreID = @centreID
+                AND (ca.RemovedDate IS NULL)
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%' ";
+
+            var groupBy = $@" GROUP BY 
+				da.CandidateNumber,
+                u.ID,
+                u.ProfessionalRegistrationNumber,
+                ca.SelfAssessmentID,
+                ca.StartedDate,
+                ca.EnrolmentMethodId,
+                ca.LastAccessed,
+                ca.LaunchCount,
+                ca.CompleteByDate,
+                ca.SubmittedDate,
+                ca.RemovedDate,
+                ca.CompletedDate,
+				uEnrolledBy.FirstName,
+                uEnrolledBy.LastName,
+                aaEnrolledBy.Active,
+				da.CandidateNumber,
+                u.FirstName,
+                u.LastName,
+                COALESCE(ucd.Email, u.PrimaryEmail),
+                da.Active,
+				da.Answer1,			
+                da.Answer2,
+                da.Answer3,
+                da.Answer4,
+                da.Answer5,
+                da.Answer6
+                ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)";
+
+
+            var delegateQuery = selectColumnQuery + fromTableQuery + whereQuery + groupBy;
+
+            IEnumerable<SelfAssessmentDelegate> delegates = connection.Query<SelfAssessmentDelegate>(
+                delegateQuery,
+                new { selfAssessmentId, centreId },
+                commandTimeout: 3000
+            );
+
+            return delegates;
         }
         public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
                     int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun)

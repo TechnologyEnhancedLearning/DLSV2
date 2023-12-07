@@ -23,11 +23,12 @@
             IXLWorkbook workbook,
             DataTable dataTable,
             string columnName,
-            XLDataType dataType
+            XLDataType dataType,
+            int workSheetNumber = 1
         )
         {
             var columnNumber = dataTable.Columns.IndexOf(columnName) + 1;
-            workbook.Worksheet(1).Column(columnNumber).CellsUsed(c => c.Address.RowNumber != 1)
+            workbook.Worksheet(workSheetNumber).Column(columnNumber).CellsUsed(c => c.Address.RowNumber != 1)
                 .SetDataType(dataType);
         }
     }
