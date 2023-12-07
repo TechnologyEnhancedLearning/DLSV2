@@ -144,7 +144,7 @@
 
         public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupId)
         {
-            var candidateAssessmentSupervisorVerificationsId = connection.QueryFirst<int>(
+            var candidateAssessmentSupervisorVerificationsId = connection.QueryFirstOrDefault<int>(
                 @" SELECT casv.ID 
                     FROM( SELECT DISTINCT casv.* FROM CandidateAssessmentSupervisorVerifications AS casv
                     INNER JOIN CandidateAssessmentSupervisors AS cas
