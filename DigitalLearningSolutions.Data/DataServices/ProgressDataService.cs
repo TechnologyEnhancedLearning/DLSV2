@@ -78,16 +78,14 @@
             int tutTime
             );
 
-        int UpdateAspProgressSuspendData(
-           int tutorialId,
-           int progressId,
-           string? suspendData
-       );
-        int UpdateAspProgressLessonLocation(
-           int tutorialId,
-           int progressId,
+        int UpdateLessonState(
+            int tutorialId,
+            int progressId,
+            int tutStat,
+            int tutTime,
+           string? suspendData,
            string? lessonLocation
-       );
+        );
 
         int GetCompletionStatusForProgress(int progressId);
 
@@ -516,7 +514,7 @@
                         SET Answer{promptNumber} = @answer
                         WHERE ProgressID = @progressId",
                 new { progressId, promptNumber, answer }
-            ); 
+            );
         }
 
         public int UpdateProgressDetailsForStoreAspProgressV2(
@@ -563,33 +561,21 @@
                 new { tutorialId, progressId, tutStat, tutTime }
             );
         }
-
-        public int UpdateAspProgressSuspendData(
-           int tutorialId,
-           int progressId,
-           string? suspendData
-       )
-        {
-            return connection.Execute(
-                @"UPDATE aspProgress
-                    SET SuspendData = @suspendData
-                    WHERE (TutorialID = @tutorialId)
-                      AND (ProgressID = @progressId)",
-                new { tutorialId, progressId, suspendData }
-            );
-        }
-        public int UpdateAspProgressLessonLocation(
-           int tutorialId,
-           int progressId,
+        public int UpdateLessonState(
+            int tutorialId,
+            int progressId,
+            int tutStat,
+            int tutTime,
+           string? suspendData,
            string? lessonLocation
-       )
+        )
         {
             return connection.Execute(
                 @"UPDATE aspProgress
-                    SET LessonLocation = @lessonLocation
+                    SET TutStat = Case WHEN TutStat < @tutStat THEN @tutStat ELSE TutStat END, TutTime = TutTime + @tutTime, SuspendData = @suspendData, LessonLocation = @lessonLocation
                     WHERE (TutorialID = @tutorialId)
                       AND (ProgressID = @progressId)",
-                new { tutorialId, progressId, lessonLocation }
+                new { tutorialId, progressId, tutStat, tutTime, suspendData, lessonLocation }
             );
         }
 
