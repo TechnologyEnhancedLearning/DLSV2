@@ -58,6 +58,11 @@
                         {
                             <a asp-action="RemoveDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Remove</a>
                         }
+                        else
+                        {
+                            <a asp-action="RemoveDelegateSelfAssessmentsupervisor" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Stop supervising</a>
+
+                        }
                     }
                     else
                     {

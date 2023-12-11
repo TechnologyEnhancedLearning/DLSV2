@@ -84,6 +84,10 @@
                 var sectionId = courseContent.Sections.First().Id;
                 return RedirectToAction("Section", "LearningMenu", new { customisationId, sectionId });
             }
+            if (UniqueIdManipulationDetected(candidateId, customisationId))
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
             if (progressId == null)
             {
@@ -582,6 +586,23 @@
                 TempData["LearningActivity"] = "Completed";
             else
                 TempData["LearningActivity"] = "Current";
+        }
+
+        private bool UniqueIdManipulationDetected(int candidateId, int customisationId)
+        {
+            int? progressId = courseContentService.GetProgressId(candidateId, customisationId);
+            if (progressId.HasValue)
+            {
+                return false;
+            }
+
+            bool isSelfRegister = courseDataService.GetSelfRegister(customisationId);
+            if (isSelfRegister)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService
 {
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Frameworks;
@@ -260,37 +261,29 @@
         public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateId)
         {
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
-                $@"WITH {LatestAssessmentResults}
-                    SELECT {CompetencyFields}
-                    FROM {CompetencyTables}
-                    WHERE (CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)
-                    ORDER BY SAS.Ordering, CAQ.Ordering",
+                $@"GetAssessmentResultsByDelegate",
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
                     return competency;
                 },
-                new { selfAssessmentId, delegateId }
+                new { selfAssessmentId, delegateId },
+                commandType: CommandType.StoredProcedure
             );
             return GroupCompetencyAssessmentQuestions(result);
         }
 
         public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null)
         {
-            var resultIdFilter = selfAssessmentResultId.HasValue ? $"ResultID = {selfAssessmentResultId.Value}" : "1=1";
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
-                $@"WITH {SpecificAssessmentResults}
-                    SELECT {CompetencyFields},
-                    LAR.SupervisorName
-                    FROM {SpecificCompetencyTables}
-                    WHERE (CAOC.IncludedInSelfAssessment = 1 OR SAS.Optional = 0) AND {resultIdFilter}
-                    ORDER BY SAS.Ordering, CAQ.Ordering",
+                $@"GetCandidateAssessmentResultsById",
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
                     return competency;
                 },
-                new { candidateAssessmentId, adminId }
+                new { candidateAssessmentId, adminId, selfAssessmentResultId },
+                commandType: CommandType.StoredProcedure
             );
             return GroupCompetencyAssessmentQuestions(result);
         }

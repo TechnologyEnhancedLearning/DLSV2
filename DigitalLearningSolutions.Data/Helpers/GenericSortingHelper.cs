@@ -214,29 +214,15 @@
             nameof(SelfAssessmentDelegate.StartedDate)
         );
 
-        public static readonly SelfAssessmentDelegatesSortByOption SelfAssessed = new SelfAssessmentDelegatesSortByOption(
-            4,
-            nameof(SelfAssessed),
-            "Competencies self assessed",
-            nameof(SelfAssessmentDelegate.SelfAssessed)
-        );
-
-        public static readonly SelfAssessmentDelegatesSortByOption Confirmed = new SelfAssessmentDelegatesSortByOption(
-            5,
-            nameof(Confirmed),
-            "Competencies confirmed",
-            nameof(SelfAssessmentDelegate.Confirmed)
-        );
-
         public static readonly SelfAssessmentDelegatesSortByOption SignedOff = new SelfAssessmentDelegatesSortByOption(
-            6,
+            4,
             nameof(SignedOff),
             "Signed off",
             nameof(SelfAssessmentDelegate.SignedOff)
         );
 
         public static readonly SelfAssessmentDelegatesSortByOption Submitted = new SelfAssessmentDelegatesSortByOption(
-            7,
+            5,
             nameof(Submitted),
             "Submitted",
             nameof(SelfAssessmentDelegate.SubmittedDate)

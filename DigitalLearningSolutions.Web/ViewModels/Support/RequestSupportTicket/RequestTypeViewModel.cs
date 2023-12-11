@@ -1,8 +1,5 @@
 ﻿using DigitalLearningSolutions.Data.Models.Support;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System.Collections.Generic;
-using System;
 using DigitalLearningSolutions.Web.Models;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket

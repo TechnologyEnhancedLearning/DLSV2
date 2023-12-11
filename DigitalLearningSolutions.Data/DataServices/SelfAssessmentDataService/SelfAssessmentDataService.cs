@@ -153,7 +153,7 @@
 
         IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun);
-        int GetSelfAssessmentActivityDelegatesExportCount(string searchString,  string sortBy, string sortDirection,
+        int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed);
         string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId);
 
@@ -163,6 +163,7 @@
        CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId);
         ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
+
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -192,19 +193,6 @@
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
-            var cteAssessmentResults = $@"
-                WITH LatestAssessmentResults AS
-					(
-						SELECT	s.DelegateUserID
-								, CASE WHEN COALESCE (rr.LevelRAG, 0) = 3 THEN s.ID ELSE NULL END AS SelfAssessed
-								, CASE WHEN sv.Verified IS NOT NULL AND sv.SignedOff = 1 AND COALESCE (rr.LevelRAG, 0) = 3 THEN s.ID ELSE NULL END AS Confirmed
-								, CASE WHEN sas.Optional = 1  THEN s.CompetencyID ELSE NULL END AS Optional
-						FROM   SelfAssessmentResults AS s LEFT OUTER JOIN
-										SelfAssessmentStructure AS sas ON s.SelfAssessmentID = sas.SelfAssessmentID AND s.CompetencyID = sas.CompetencyID LEFT OUTER JOIN
-										SelfAssessmentResultSupervisorVerifications AS sv ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0 LEFT OUTER JOIN
-										CompetencyAssessmentQuestionRoleRequirements AS rr ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
-						WHERE (s.SelfAssessmentID = @selfAssessmentId)
-					)";
 
             var selectColumnQuery = $@"
                 SELECT da.CandidateNumber,
@@ -216,7 +204,7 @@
                 ca.EnrolmentMethodId,
                 ca.LastAccessed,
                 ca.LaunchCount,
-                ca.CompleteByDate,
+                ca.CompleteByDate AS CompleteBy,
                 ca.SubmittedDate,
                 ca.RemovedDate,
                 ca.CompletedDate,
@@ -228,9 +216,7 @@
                 u.LastName AS DelegateLastName,
                 COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
                 da.Active AS IsDelegateActive,
-                sa.Name AS Name,
-                COALESCE(COUNT(DISTINCT LAR.SelfAssessed), NULL) AS SelfAssessed,
-                COALESCE(COUNT(DISTINCT LAR.Confirmed), NULL) AS Confirmed,
+                sa.Name AS [Name],
                 MAX(casv.Verified) as SignedOff";
 
             var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa 
@@ -244,7 +230,6 @@
                 LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
                 LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND
                 (casv.Verified IS NOT NULL AND casv.SignedOff = 1)
-                LEFT OUTER JOIN LatestAssessmentResults AS LAR ON LAR.DelegateUserID = ca.DelegateUserID
 
                 WHERE sa.ID = @selfAssessmentId 
                 AND da.CentreID = @centreID AND csa.CentreID = @centreID
@@ -296,16 +281,12 @@
                 orderBy = " ORDER BY SignedOff " + sortOrder;
             else if (sortBy == "SubmittedDate")
                 orderBy = " ORDER BY ca.SubmittedDate " + sortOrder;
-            else if (sortBy == "SelfAssessed")
-                orderBy = " ORDER BY SelfAssessed " + sortOrder;
-            else if (sortBy == "Confirmed")
-                orderBy = " ORDER BY Confirmed " + sortOrder;
             else
                 orderBy = " ORDER BY LTRIM(u.LastName) " + sortDirection + ", LTRIM(u.FirstName) ";
 
             orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 
-            var delegateQuery = cteAssessmentResults + selectColumnQuery + fromTableQuery + groupBy + orderBy;
+            var delegateQuery = selectColumnQuery + fromTableQuery + groupBy + orderBy;
 
             IEnumerable<SelfAssessmentDelegate> delegateUserCard = connection.Query<SelfAssessmentDelegate>(
                 delegateQuery,
@@ -326,7 +307,7 @@
                 commandTimeout: 3000
             );
 
-            var delegateCountQuery = cteAssessmentResults + @$"SELECT COUNT(Matches) from(
+            var delegateCountQuery = @$"SELECT COUNT(Matches) from(
                                     SELECT  COUNT(*) AS Matches " + fromTableQuery + groupBy + ") AS ct";
 
             int ResultCount = connection.ExecuteScalar<int>(
@@ -349,8 +330,8 @@
             );
             return (delegateUserCard, ResultCount);
         }
-public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun)
+        public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
+                    int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun)
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
             var selectColumnQuery = $@"SELECT
@@ -463,7 +444,7 @@ public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExp
 
             return delegateUserCard;
         }
-        public int GetSelfAssessmentActivityDelegatesExportCount(string searchString,  string sortBy, string sortDirection,
+        public int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed)
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
@@ -579,6 +560,33 @@ public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExp
                       WHERE ID = @candidateAssessmentsId",
                 new { candidateAssessmentsId }
             );
+        }
+        public int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId)
+        {
+            int ResultCount = connection.ExecuteScalar<int>(
+                @"SELECT COUNT(ID)
+                    FROM CandidateAssessmentSupervisors
+                    WHERE CandidateAssessmentID = @candidateAssessmentsId and Removed IS NULL",
+                new { candidateAssessmentsId }
+            );
+            return ResultCount;
+        }
+        public bool CheckForSameCentre(int centreId, int candidateAssessmentsId)
+        {
+            int ResultCount = connection.ExecuteScalar<int>(
+                @"SELECT Count(DISTINCT ID) FROM CandidateAssessments WHERE ID = @candidateAssessmentsId
+                    and CentreID=@centreId",
+                new { centreId, candidateAssessmentsId }
+            );
+            return ResultCount == 1 ? true : false;
+        }
+        public int CheckDelegateSelfAssessment(int candidateAssessmentsId)
+        {
+            return connection.QueryFirstOrDefault<int>(
+                  @"SELECT COUNT(ID) Num FROM CandidateAssessments 
+                      WHERE (ID = @candidateAssessmentsId) AND ( RemovalMethodID =2)",
+                  new { candidateAssessmentsId }
+              );
         }
     }
 }
