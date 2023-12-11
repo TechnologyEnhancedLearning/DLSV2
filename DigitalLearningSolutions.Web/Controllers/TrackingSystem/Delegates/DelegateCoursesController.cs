@@ -5,12 +5,14 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
+    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -202,16 +204,71 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
-            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFile(
+
+            searchString = searchString == null ? string.Empty : searchString.Trim();
+
+            string isActive, categoryName, courseTopic, hasAdminFields, isCourse, isSelfAssessment;
+            isActive = categoryName = courseTopic = hasAdminFields = isCourse = isSelfAssessment = "Any";
+
+            if (!string.IsNullOrEmpty(existingFilterString))
+            {
+                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
+
+                if (selectedFilters.Count > 0)
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        var filterArr = filter.Split(FilteringHelper.Separator);
+                        var filterValue = filterArr[2];
+                        if (filterValue == FilteringHelper.EmptyValue) filterValue = "No option selected";
+
+                        if (filter.Contains("CategoryName"))
+                            categoryName = filterValue;
+
+                        if (filter.Contains("Active"))
+                            isActive = filterValue;
+
+                        if (filter.Contains("Course|"))
+                            isCourse = filterValue;
+
+                        if (filter.Contains("SelfAssessment"))
+                            isSelfAssessment = filterValue;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(existingFilterString))
+            {
+                var filters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
+
+                foreach (var filter in filters)
+                {
+                    if (filter.Contains("Type|"))
+                    {
+                        filters.Remove(filter);
+                        existingFilterString = string.Join(FilteringHelper.FilterSeparator, filters);
+                        break;
+                    }
+                }
+                if (existingFilterString == "") existingFilterString = null;
+            }
+
+            var content = courseDelegatesDownloadFileService.GetActivityDelegateDownloadFile(
                 centreId,
                 categoryId,
                 searchString,
-                sortBy,
                 existingFilterString,
+                courseTopic,
+                hasAdminFields,
+                categoryName,
+                isActive,
+                isCourse,
+                isSelfAssessment,
+                sortBy,
                 sortDirection
             );
 
-            const string fileName = "Digital Learning Solutions Delegate Courses.xlsx";
+            const string fileName = "Digital Learning Solutions Delegate Activities.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),

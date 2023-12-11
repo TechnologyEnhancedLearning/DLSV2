@@ -1253,6 +1253,25 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendOneMonthSelfAssessmentTBCReminders]    Script Date: 06/12/2023 15:54:40 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 29/11/2023
+        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[SendOneMonthSelfAssessmentTBCReminders] [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3190_FixSelfAssessmentReminderQueriesSP_UP {
+            get {
+                return ResourceManager.GetString("TD_3190_FixSelfAssessmentReminderQueriesSP_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SET ANSI_NULLS ON
         ///GO
         ///SET QUOTED_IDENTIFIER ON
@@ -1352,6 +1371,46 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
             get {
                 return ResourceManager.GetString("TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendExpiredTBCReminders]    Script Date: 07/12/2023 08:03:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 17/08/2018
+        ///-- Description:	Uses DB mail to send reminders to delegates on courses with a TBC date within 1 month.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
+        ///	-- Add the parameters for the stored p [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3197_FixLinksInCourseReminderEmails_DOWN {
+            get {
+                return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendExpiredTBCReminders]    Script Date: 07/12/2023 08:03:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 17/08/2018
+        ///-- Description:	Uses DB mail to send reminders to delegates on courses with a TBC date within 1 month.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
+        ///	-- Add the parameters for the stored p [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3197_FixLinksInCourseReminderEmails_UP {
+            get {
+                return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_UP", resourceCulture);
             }
         }
         
