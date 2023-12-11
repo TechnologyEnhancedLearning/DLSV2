@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
@@ -16,6 +18,9 @@
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.AspNetCore.Mvc.ViewEngines;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -333,6 +338,83 @@
             var (resources, apiIsAccessible) =
                 await actionPlanService.GetIncompleteActionPlanResources(delegateUserId);
             return (resources.ToList(), apiIsAccessible);
+        }
+        [Route("/LearningPortal/Current/{candidateAssessmentId:int}/{route:int}/Certificate")]
+        public IActionResult CompetencySelfAssessmentCertificate(int candidateAssessmentId, int route)
+        {
+
+            if (candidateAssessmentId == 0)
+            {
+                return NotFound();
+            }
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
+            if (competencymaindata == null)
+            {
+                return NotFound();
+            }
+            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
+            var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID);
+            var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
+            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, route, accessors, activitySummaryCompetencySelfAssesment);
+            return View("Current/CompetencySelfAssessmentCertificate", model);
+        }
+        [Route("DownloadCertificate")]
+        public async Task<IActionResult> DownloadCertificate(int candidateAssessmentId)
+        {
+            PdfReportStatusResponse pdfReportStatusResponse = new PdfReportStatusResponse();
+            if (candidateAssessmentId == 0)
+            {
+                return NotFound();
+            }
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
+            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
+            var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID);
+            var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
+
+            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, 1, accessors, activitySummaryCompetencySelfAssesment);
+            var renderedViewHTML = RenderRazorViewToString(this, "Current/DownloadCompetencySelfAssessmentCertificate", model);
+
+            var pdfReportResponse = await pdfService.PdfReport(candidateAssessmentId.ToString(), renderedViewHTML, delegateId);
+            if (pdfReportResponse != null)
+            {
+                do
+                {
+                    pdfReportStatusResponse = await pdfService.PdfReportStatus(pdfReportResponse);
+                } while (pdfReportStatusResponse.Id == 1);
+
+                var pdfReportFile = await pdfService.GetPdfReportFile(pdfReportResponse);
+                if (pdfReportFile != null)
+                {
+                    var fileName = $"Competency Certificate - {model.CompetencySelfAssessmentCertificates.LearnerName.Substring(0, 15)} - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf";
+                    return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
+                }
+            }
+            return View("Current/CompetencySelfAssessmentCertificate", model);
+        }
+
+        public static string RenderRazorViewToString(Controller controller, string viewName, object model = null)
+        {
+            controller.ViewData.Model = model;
+            using (var sw = new StringWriter())
+            {
+                IViewEngine viewEngine =
+                    controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as
+                        ICompositeViewEngine;
+                ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, viewName, false);
+
+                ViewContext viewContext = new ViewContext(
+                    controller.ControllerContext,
+                    viewResult.View,
+                    controller.ViewData,
+                    controller.TempData,
+                    sw,
+                    new HtmlHelperOptions()
+                );
+                viewResult.View.RenderAsync(viewContext);
+                return sw.GetStringBuilder().ToString();
+            }
         }
     }
 }

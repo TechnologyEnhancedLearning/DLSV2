@@ -1,0 +1,341 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@model CompetencySelfAssessmentCertificateViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Competency Self Assessment Certificate";
+    var result = "0";
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHS Certificate</title>
+    <style>
+
+        .certificate {
+            width: 100%;
+            justify-content: space-around;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-print-color-adjust: exact;
+        }
+
+            .certificate .pg-1 {
+                width: 60rem;
+                display: block;
+                margin: 5rem auto;
+                border: 1px solid black;
+            }
+
+                .certificate .pg-1 .head {
+                    background-color: #0063B7;
+                    color: white;
+                    padding: 50px;
+                    position: relative;
+                }
+
+                    .certificate .pg-1 .head .logo {
+                        display: flex;
+                        justify-content: end;
+                    }
+
+                        .certificate .pg-1 .head .logo img {
+                            width: 100px;
+                        }
+
+        .fancy-box {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            bottom: -15px;
+            background-color: #0063B7;
+            transform: rotate(45deg);
+        }
+
+        .certificate .pg-1 .body {
+            padding: 50px;
+        }
+
+        .certificate .pg-1 .footer {
+            padding: 50px;
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer p.blue, .pg-1 h3 {
+            color: #0063B7;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: baseline;
+        }
+
+            .footer-logo img {
+                width: 10rem;
+            }
+
+        .strips {
+            display: flex;
+            padding: .5rem 0;
+        }
+
+        .strip-green {
+            clip-path: polygon(0 0, 100% 0%, 98% 100%, 0% 100%);
+            background-color: green;
+            height: 1rem;
+            width: 100%;
+        }
+
+        .strip-blue {
+            clip-path: polygon(2% 0, 100% 0%, 100% 100%, 0% 100%);
+            background-color: #0063B7;
+            height: 1rem;
+            width: 100%;
+        }
+
+        .pg-2 {
+            width: 60rem;
+            margin: 5rem auto;
+            border: 1px solid black;
+            position: relative;
+        }
+
+            .pg-2 .body {
+                padding: 50px;
+            }
+
+        .activity {
+            padding: 1rem 0;
+            border-bottom: 1px solid black;
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .activity p, ul {
+                width: 100%;
+            }
+
+            .activity ul {
+                width: 110%;
+            }
+
+        .activityline {
+            padding: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .activityline p {
+                width: 100%;
+            }
+
+        .pg-2 .foot-note {
+            padding: 0 50px;
+        }
+    </style>
+
+</head>
+<body>
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                @if (Model.Route == 1)
+                {
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-controller="LearningPortal" asp-action="Current">My Current Activities</a></li>
+                }
+                @if (Model.Route == 2)
+                {
+                    <li class="nhsuk-breadcrumb__item">
+                        <a class="nhsuk-breadcrumb__link" asp-controller="LearningPortal"
+                       asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural"
+                       asp-route-selfAssessmentId="@Model.CompetencySelfAssessmentCertificates.SelfAssessmentID">
+                            @(@Model.CompetencySelfAssessmentCertificates.SelfAssessment) - @(Model.CompetencySelfAssessmentCertificates.Vocabulary)
+                        </a>
+                    </li>
+                }
+                @if (Model.Route == 3)
+                {
+                    <li class="nhsuk-breadcrumb__item">
+                        <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
+                       asp-action="ReviewDelegateSelfAssessment"
+                       asp-route-supervisorDelegateId="@Model.CompetencySelfAssessmentCertificates.SupervisorDelegateId"
+                       asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID">
+                            @Model.CompetencySelfAssessmentCertificates.SelfAssessment
+                        </a>
+                    </li>
+
+                }
+            </ol>
+        </div>
+    </nav>
+    <br />
+    <div class="nhsuk-width-container">
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-full">
+                <h2>Certificate</h2>
+
+                <h2>@Model.CompetencySelfAssessmentCertificates.SelfAssessment - @Model.CompetencySelfAssessmentCertificates.LearnerName </h2>
+
+                <a class="nhsuk-button "
+                   asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID"
+                   asp-action="DownloadCertificate"
+                   role="button">
+                    Download certificate
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="certificate">
+        <div class="pg-1">
+            <div class="head">
+                <div class="logo">
+                    <img src="https://1000logos.net/wp-content/uploads/2017/09/Symbol-NHS.jpg" />
+                </div>
+
+                <div class="text">
+                    <p>This is to certify that</p>
+                    <h1>@Model.CompetencySelfAssessmentCertificates.LearnerName</h1>
+                    <p>@Model.CompetencySelfAssessmentCertificates.LearnerPRN</p>
+
+
+                    <p>has successfully completed the</p>
+                    <h1>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</h1>
+
+                    <br />
+                    <p>Signed off at @Model.CompetencySelfAssessmentCertificates.CentreName </p>
+                    <p>by @Model.CompetencySelfAssessmentCertificates.SupervisorName</p>
+                    <p> @Model.CompetencySelfAssessmentCertificates.SupervisorPRN</p>
+
+                    <p>On @Model.CompetencySelfAssessmentCertificates.FormattedDate </p>
+
+                </div>
+
+                <div class="fancy-box"></div>
+            </div>
+
+            <div class="body">
+                <h3>Including the following optional proficiencies:</h3>
+                @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
+                {
+                    <p>
+                        @entry.CompetencyGroup - @entry.OptionalCompetencyCount
+                        @if (@entry.OptionalCompetencyCount == 1)
+                        {
+                            @Model.CompetencySelfAssessmentCertificates.Vocabulary
+                        }
+                        else
+                        {
+                            @Model.VocabPlural
+                        }
+
+                    </p>
+
+                }
+
+            </div>
+
+            <div class="footer">
+                <div class="text">
+                    <p class="blue">Certificate generated on @DateTime.Today.ToString("dd/MM/yyyy")</p>
+                    <p>By NHS England Digital Learning Solutions <br /> on behalf of @Model.CompetencySelfAssessmentCertificates.CentreName</p>
+                </div>
+                <div class="footer-logo">
+                    <img src="https://www.hee.nhs.uk/sites/default/files/styles/image_658_witdh/public/Capital-Nurse-Logo.jpg?itok=8hlRIj8r" />
+
+                </div>
+            </div>
+
+            <div class="strips">
+                <div class="strip-green"></div>
+                <div class="strip-blue"></div>
+            </div>
+        </div>
+        <div class="pg-2">
+            <div class="body">
+                <h3>Activity summary report</h3>
+                <br />
+                <div class="activity">
+                    <p><b>Activity: </b>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</p>
+                </div>
+                <div class="activity">
+                    <p><b>Name: </b>@Model.CompetencySelfAssessmentCertificates.LearnerName</p>
+                </div>
+                <div class="activity">
+                    <p><b>Professional Registration Number: </b>@Model.CompetencySelfAssessmentCertificates.LearnerPRN</p>
+                </div>
+                <div class="activity">
+                    <p><b>Assessment question responses</b></p> <p>
+                        @if (Model.ActivitySummaryCompetencySelfAssesment == null)
+                        {
+
+                            @result
+                            ;
+
+                        }
+                        else
+                        {
+                            @Model.ActivitySummaryCompetencySelfAssesment.CompetencyAssessmentQuestionCount
+                            ;
+
+                        }
+                    </p>
+                </div>
+                <div class="activity">
+                    <p><b>Response meeting role requirements</b></p> <p>
+                        @if (Model.ActivitySummaryCompetencySelfAssesment == null)
+                        {
+
+                            @result
+                            ;
+                        }
+                        else
+                        {
+                            @Model.ActivitySummaryCompetencySelfAssesment.ResultCount
+                            ;
+                        }
+
+                    </p>
+                </div>
+                <div class="activity">
+                    <p><b>Responses confirmed by assessor</b></p> <p>
+                        @if (Model.ActivitySummaryCompetencySelfAssesment == null)
+                        {
+
+                            @result
+                            ;
+                        }
+                        else
+                        {
+                            @Model.ActivitySummaryCompetencySelfAssesment.VerifiedCount
+                            ;
+                        }
+                    </p>
+                </div>
+                <div class="activity">
+                    <p><b>Assessors</b></p><ul>
+                        @foreach (var accessor in Model.Accessors)
+                        {
+                            <p>
+                                @accessor.AccessorName, @accessor.AccessorPRN
+
+                            </p>
+
+                        }
+                    </ul>
+                </div>
+                <div class="activityline">
+                    <p><b>Signed Off By</b></p><p>@Model.CompetencySelfAssessmentCertificates.SupervisorName, @Model.CompetencySelfAssessmentCertificates.SupervisorPRN</p>
+                </div>
+
+            </div>
+            <p class="foot-note">Certificate generated on @DateTime.Today.ToString("dd/MM/yyyy")</p>
+        </div>
+    </div>
+</body>
+</html>
