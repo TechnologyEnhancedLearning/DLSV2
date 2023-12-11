@@ -39,6 +39,12 @@
                     }
                 </tbody>
             </table>
+            <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+               role="button"
+               asp-action="RemoveCourse" asp-controller="Centres" asp-route-applicationId="@Model.ApplicationID" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]">
+                Remove course
+            </a>
         </div>
+
     </details>
 </div>
