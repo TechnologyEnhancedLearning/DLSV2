@@ -22,7 +22,7 @@
     }
     public class PlatformUsageSummaryDownloadFileService: IPlatformUsageSummaryDownloadFileService
     {
-        public const string PlatformUsageSheetName = "PlatformUsage";
+        public const string PlatformUsageSheetName = "Platform usage";
 
         private const string ActiveCentres = "Active centres";
         private const string learners = "Active learners";
