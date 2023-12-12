@@ -20,8 +20,6 @@
                 this.logger = logger;
             }
 
-            
-
             public CentreApplication? GetCentreApplicationByCentreAndApplicationID(int centreId, int applicationId)
             {
                 var centreApplication = connection.QueryFirstOrDefault<CentreApplication?>(
@@ -33,12 +31,13 @@
                         (CentreApplications.ApplicationID = @applicationId)",
                      new { centreId, applicationId }
                     );
-                if ( centreApplication == null )
+                if (centreApplication == null)
                 {
                     logger.LogWarning($"No centre application found for centre id {centreId} and application id {applicationId}");
                 }
                 return centreApplication;
             }
+
             public void DeleteCentreApplicationByCentreAndApplicationID(int centreId, int applicationId)
             {
                 {
