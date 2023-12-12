@@ -1121,6 +1121,54 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspReturnSectionsForCandCust_V2]    Script Date: 08/12/2023 13:33:59 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15/08/2013
+        ///-- Description:	Gets section table for learning menu
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspReturnSectionsForCandCust_V2]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@ProgressID  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2481_Update_uspReturnSectionsForCandCust_V2_down {
+            get {
+                return ResourceManager.GetString("TD_2481_Update_uspReturnSectionsForCandCust_V2_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspReturnSectionsForCandCust_V2]    Script Date: 08/12/2023 13:33:59 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15/08/2013
+        ///-- Description:	Gets section table for learning menu
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspReturnSectionsForCandCust_V2]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@ProgressID  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2481_Update_uspReturnSectionsForCandCust_V2_up {
+            get {
+                return ResourceManager.GetString("TD_2481_Update_uspReturnSectionsForCandCust_V2_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 05/07/2023 08:52:32 ******/
         ///SET ANSI_NULLS ON
         ///GO

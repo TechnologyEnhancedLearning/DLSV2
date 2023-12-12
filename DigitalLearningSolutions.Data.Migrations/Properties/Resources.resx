@@ -334,4 +334,10 @@
   <data name="TD_3197_FixLinksInCourseReminderEmails_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-3197-FixLinksInCourseReminderEmails_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="TD_2481_Update_uspReturnSectionsForCandCust_V2_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-2481-Update_uspReturnSectionsForCandCust_V2_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_2481_Update_uspReturnSectionsForCandCust_V2_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-2481-Update_uspReturnSectionsForCandCust_V2_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
 </root>
