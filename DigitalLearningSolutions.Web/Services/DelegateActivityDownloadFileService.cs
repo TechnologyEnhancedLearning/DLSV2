@@ -151,8 +151,8 @@ namespace DigitalLearningSolutions.Web.Services
                     new DataColumn(SubmittedDate),
                     new DataColumn(SignedOffDate),
                     new DataColumn(SignedOffBy),
-                    new DataColumn(SelfAssessedCompetenciesCount),
-                    new DataColumn(ConfirmedCompetenciesCount),
+                    new DataColumn(SelfAssessedCompetenciesCount, typeof(int)),
+                    new DataColumn(ConfirmedCompetenciesCount, typeof(int)),
                 }
             );
 
