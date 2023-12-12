@@ -23,12 +23,13 @@
             public CentreApplication? GetCentreApplicationByCentreAndApplicationID(int centreId, int applicationId)
             {
                 var centreApplication = connection.QueryFirstOrDefault<CentreApplication?>(
-                    @"SELECT TOP (1) CentreApplications.CentreApplicationID, CentreApplications.CentreID, Centres.CentreName, CentreApplications.ApplicationID, Applications.ApplicationName
-                        FROM   CentreApplications INNER JOIN
-                             Centres ON CentreApplications.CentreID = Centres.CentreID INNER JOIN
-                             Applications ON CentreApplications.ApplicationID = Applications.ApplicationID
-                        WHERE (CentreApplications.CentreID = @centreId) AND
-                        (CentreApplications.ApplicationID = @applicationId)",
+                    @"SELECT TOP (1) cta.CentreApplicationID, cta.CentreID, ct.CentreName, cta.ApplicationID, a.ApplicationName, COUNT(cu.CustomisationID) AS CustomisationCount
+                        FROM   CentreApplications AS cta INNER JOIN
+                                     Centres AS ct ON cta.CentreID = ct.CentreID INNER JOIN
+                                     Applications AS a ON cta.ApplicationID = a.ApplicationID LEFT OUTER JOIN
+                                     Customisations AS cu ON cta.CentreID = cu.CentreID AND cta.ApplicationID = cu.ApplicationID
+                        WHERE (cta.CentreID = @centreId) AND (cta.ApplicationID = @applicationId)
+                        GROUP BY cta.CentreApplicationID, cta.CentreID, ct.CentreName, cta.ApplicationID, a.ApplicationName",
                      new { centreId, applicationId }
                     );
                 if (centreApplication == null)

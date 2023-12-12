@@ -1,27 +1,28 @@
-﻿using System;
-
-namespace DigitalLearningSolutions.Data.Models
+﻿namespace DigitalLearningSolutions.Data.Models
 {
     public class CentreApplication
     {
         public CentreApplication(
            int centreApplicationId,
-        int centreId,
+           int centreId,
            string? centreName,
            int applicationId,
            string? applicationName,
+           int customisationCount
        )
         {
             CentreApplicationID = centreApplicationId;
             ApplicationID = applicationId;
             CentreID = centreId;
+            CentreName = centreName;
             ApplicationName = applicationName;
+            CustomisationCount = customisationCount;
         }
         public int CentreApplicationID { get; set; }
         public int CentreID { get; set; }
         public string? CentreName { get; set; }
         public int ApplicationID { get; set; }
         public string? ApplicationName { get; set; }
-        
+        int CustomisationCount { get; set; }
     }
 }
