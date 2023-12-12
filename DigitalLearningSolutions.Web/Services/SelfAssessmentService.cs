@@ -131,9 +131,9 @@
         public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
         public SelfAssessmentDelegatesData GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
-           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun);
+           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff);
         public int GetSelfAssessmentActivityDelegatesExportCount(string searchString,  string sortBy, string sortDirection,
-           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed);
+           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
         public string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId);
         RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
        void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
@@ -457,10 +457,10 @@
             return (new SelfAssessmentDelegatesData(selfAssessmentDelegateList), resultCount);
         }
         public SelfAssessmentDelegatesData GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun)
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff)
         {
             var delegateselfAssessments = selfAssessmentDataService.GetSelfAssessmentActivityDelegatesExport(searchString, itemsPerPage, sortBy, sortDirection,
-            selfAssessmentId, centreId, isDelegateActive, removed, currentRun);
+            selfAssessmentId, centreId, isDelegateActive, removed, currentRun, submitted, signedOff);
 
             List<SelfAssessmentDelegate> selfAssessmentDelegateList = new List<SelfAssessmentDelegate>();
             foreach (var delegateInfo in delegateselfAssessments)
@@ -476,10 +476,10 @@
             return new SelfAssessmentDelegatesData(selfAssessmentDelegateList);
         }
         public int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
-           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed)
+           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
         {
             int resultCount = selfAssessmentDataService.GetSelfAssessmentActivityDelegatesExportCount(searchString, sortBy, sortDirection,
-            selfAssessmentId, centreId, isDelegateActive, removed);
+            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
 
 
             return resultCount;
