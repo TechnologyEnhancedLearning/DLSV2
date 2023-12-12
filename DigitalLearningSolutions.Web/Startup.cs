@@ -44,6 +44,7 @@ namespace DigitalLearningSolutions.Web
     using GDS.MultiPageFormData;
     using LearningHub.Nhs.Caching;
     using AspNetCoreRateLimit;
+    using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
 
     public class Startup
     {
@@ -341,6 +342,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentresDownloadFileService, CentresDownloadFileService>();
             services.AddScoped<IDelegateActivityDownloadFileService, DelegateActivityDownloadFileService>();
             services.AddScoped<IRequestSupportTicketDataService, RequestSupportTicketDataService>();
+            services.AddScoped<ICentreApplicationsDataService, CentreApplicationsDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
