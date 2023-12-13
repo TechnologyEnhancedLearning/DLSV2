@@ -98,7 +98,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 ModelState.AddModelError("Id", "Please choose a request type");
                 return View("TypeOfRequest", model1);
             }
-            return RedirectToAction("RequestSummary", new { dlsSubApplication } );
+            return RedirectToAction("RequestSummary", new { dlsSubApplication });
         }
 
         [Route("/{dlsSubApplication}/RequestSupport/RequestSummary")]
@@ -184,20 +184,29 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 };
                 RequestAttachmentList.Add(RequestAttachment);
             }
-            
+
             data.setImageFiles(RequestAttachmentList);
             TempData.Set(data);
             return RedirectToAction("RequestAttachment", new { dlsSubApplication });
         }
+
         [Route("/{dlsSubApplication}/RequestSupport/SetAttachment/DeleteImage")]
-        public IActionResult DeleteImage(DlsSubApplication dlsSubApplication, string imageName, string imageId)
+        public IActionResult DeleteImage(DlsSubApplication dlsSubApplication, string imageName)
         {
             var data = TempData.Peek<RequestSupportTicketData>()!;
             if (data.RequestAttachment != null)
             {
-                DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
+                var attachmentToRemove = data.RequestAttachment.FirstOrDefault(a => a.FileName == imageName);
+                if (attachmentToRemove != null)
+                {
+                    data.RequestAttachment.Remove(attachmentToRemove);
+                    var uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads", attachmentToRemove.FullFileName);
+                    if (System.IO.File.Exists(uploadDir))
+                    {
+                        System.IO.File.Delete(uploadDir);
+                    }
+                }
             }
-            data.RequestAttachment.RemoveAll((x) => x.FileName == imageName && x.Id == imageId);
             TempData.Set(data);
             return RedirectToAction("RequestAttachment", new { dlsSubApplication });
         }
