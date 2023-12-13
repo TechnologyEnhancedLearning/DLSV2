@@ -1,7 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Utilities;
+    using Microsoft.Extensions.Logging;
 
     public interface ICentreApplicationsService
     {
@@ -11,6 +14,12 @@
         public class CentreApplicationsService : ICentreApplicationsService
         {
             private readonly ICentreApplicationsDataService centreApplicationsDataService;
+            public CentreApplicationsService(
+            ICentreApplicationsDataService centreApplicationsDataService
+        )
+            {
+                this.centreApplicationsDataService = centreApplicationsDataService;
+            }
             public void DeleteCentreApplicationByCentreAndApplicationID(int centreId, int applicationId)
             {
                 centreApplicationsDataService.DeleteCentreApplicationByCentreAndApplicationID(centreId, applicationId);

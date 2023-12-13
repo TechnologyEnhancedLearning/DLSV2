@@ -45,6 +45,7 @@ namespace DigitalLearningSolutions.Web
     using LearningHub.Nhs.Caching;
     using AspNetCoreRateLimit;
     using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
+    using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
 
     public class Startup
     {
@@ -287,6 +288,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPdfService, PdfService>();
             services.AddScoped<IFreshdeskService, FreshdeskService>();
             services.AddScoped<IPlatformUsageSummaryDownloadFileService, PlatformUsageSummaryDownloadFileService>();
+            services.AddScoped<ICentreApplicationsService, CentreApplicationsService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)

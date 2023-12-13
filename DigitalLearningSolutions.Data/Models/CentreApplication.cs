@@ -23,6 +23,6 @@
         public string? CentreName { get; set; }
         public int ApplicationID { get; set; }
         public string? ApplicationName { get; set; }
-        int CustomisationCount { get; set; }
+        public int CustomisationCount { get; set; }
     }
 }

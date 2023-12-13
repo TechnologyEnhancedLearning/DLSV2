@@ -13,6 +13,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.CentreCourses
     {
         public int CustomisationID { get; set; }
         public string CustomisationName { get; set; }
-        public int DelegateCount { get; set;}
+        public int DelegateCount { get; set; }
     }
 }
