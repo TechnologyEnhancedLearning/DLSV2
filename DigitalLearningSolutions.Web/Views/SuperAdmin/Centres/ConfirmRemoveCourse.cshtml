@@ -39,7 +39,7 @@
         </div>
         <a class="nhsuk-button nhsuk-u-margin-bottom-6 nhsuk-u-margin-top-2"
            role="button"
-           asp-action="RemoveCourse" asp-controller="Centres" asp-route-applicationId="@Model.CentreApplication.ApplicationID" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]">
+           asp-action="RemoveCourse" asp-controller="Centres" asp-route-applicationId="@Model.CentreApplication.ApplicationID" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
             Confirm remove course
         </a>
         <vc:cancel-link asp-controller="Centres" asp-action="Courses" asp-all-route-data="@cancelLinkData" />

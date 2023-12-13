@@ -11,15 +11,28 @@
             </ol>
             <p class="nhsuk-breadcrumb__back">
                 <a class="nhsuk-breadcrumb__backlink"
-               asp-controller="Centres" asp-action="Index">Back to Centres</a>
+                   asp-controller="Centres" asp-action="Index">Back to Centres</a>
             </p>
         </div>
     </nav>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/superAdmin/centres.css")" asp-append-version="true">
-<h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Courses - @ViewBag.CentreName</h1>
-@foreach (var course in Model)
-{
-    <partial name="_CourseCard" model="course" />
-}
-
+<link rel="stylesheet" href="@Url.Content("~/css/shared/headingButtons.css")" asp-append-version="true">
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Courses - @ViewBag.CentreName</h1>
+    </div>
+    <div class="nhsuk-grid-column-one-third heading-button-group">
+        <a class="nhsuk-button heading-button" id="add-course" asp-action="CourseAddChooseFlow" asp-controller="Centres" role="button" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
+            Add courses
+        </a>
+    </div>
+</div>
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @foreach (var course in Model)
+        {
+            <partial name="_CourseCard" model="course" />
+        }
+    </div>
+</div>

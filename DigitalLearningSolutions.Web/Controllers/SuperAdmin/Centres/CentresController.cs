@@ -643,5 +643,18 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             centreApplicationsService.DeleteCentreApplicationByCentreAndApplicationID(centreId, applicationId);
             return RedirectToAction("Courses", new { centreId });
         }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add")]
+        public IActionResult CourseAddChooseFlow(int centreId = 0)
+        {
+            ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+            return View();
+        }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add")]
+        [HttpPost]
+        public IActionResult CourseAddChooseFlow(CourseAddChooseFlowViewModel model)
+        {
+            ViewBag.CentreName = centresDataService.GetCentreName(model.CentreId) + "  (" + model.CentreId + ")";
+            return View();
+        }
     }
 }
