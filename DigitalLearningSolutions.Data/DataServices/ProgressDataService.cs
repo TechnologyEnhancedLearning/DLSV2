@@ -477,9 +477,7 @@
                         INNER JOIN TutStatus AS ts
                         INNER JOIN aspProgress AS ap ON ts.TutStatusID = ap.TutStat ON P.ProgressID = ap.ProgressID AND t.TutorialID = ap.TutorialID
                     WHERE (t.SectionID = @sectionID)
-                        AND (p.ProgressID = @ProgressID)
-                        AND (ct.Status = 1)
-                        AND (c.Active = 1)
+                        AND (p.ProgressID = @ProgressID)        
                         AND (t.ArchivedDate IS NULL)
                         AND a.DefaultContentTypeID <> 4
                     ORDER BY t.TutorialID",

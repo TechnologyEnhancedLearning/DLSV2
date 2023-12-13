@@ -3,16 +3,20 @@ using DigitalLearningSolutions.Data.Helpers;
 using DigitalLearningSolutions.Data.Models.CourseDelegates;
 using DigitalLearningSolutions.Data.Models.CustomPrompts;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
+using DigitalLearningSolutions.Data.Models.User;
+using DigitalLearningSolutions.Web.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Services
 {
     public interface IDelegateActivityDownloadFileService
     {
         public byte[] GetSelfAssessmentsInActivityDelegatesDownloadFile(string searchString, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, int adminId
        );
     }
     public class DelegateActivityDownloadFileService : IDelegateActivityDownloadFileService
@@ -42,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Services
             this.registrationPromptsService = registrationPromptsService;
         }
         public byte[] GetSelfAssessmentsInActivityDelegatesDownloadFile(string searchString, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, int adminId
        )
         {
             using var workbook = new XLWorkbook();
@@ -52,7 +56,7 @@ namespace DigitalLearningSolutions.Web.Services
                 centreId,
                 searchString,
                 sortBy,
-                sortDirection, selfAssessmentId, isDelegateActive, removed, itemsPerPage
+                sortDirection, selfAssessmentId, isDelegateActive, removed, itemsPerPage, submitted, signedOff, adminId
             );
 
             using var stream = new MemoryStream();
@@ -64,20 +68,35 @@ namespace DigitalLearningSolutions.Web.Services
            int centreId,
            string? searchString,
        string? sortBy,
-       string sortDirection, int? selfAssessmentId, bool? isDelegateActive, bool? removed, int itemsPerPage
+       string sortDirection, int? selfAssessmentId, bool? isDelegateActive, bool? removed, int itemsPerPage, bool? submitted, bool? signedOff, int adminId
        )
         {
             var selfAssessmentDelegatesData = new SelfAssessmentDelegatesData();
             var resultCount = 0;
             resultCount = selfAssessmentService.GetSelfAssessmentActivityDelegatesExportCount(searchString ?? string.Empty, sortBy, sortDirection,
-                        selfAssessmentId, centreId, isDelegateActive, removed);
+                        selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
             int totalRun = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             int currentRun = 1;
             List<SelfAssessmentDelegatesData> SelfAssessmentDelegatesDataList = new List<SelfAssessmentDelegatesData>();
             while (totalRun >= currentRun)
             {
                 (selfAssessmentDelegatesData) = selfAssessmentService.GetSelfAssessmentActivityDelegatesExport(searchString ?? string.Empty, itemsPerPage, sortBy, sortDirection,
-                        selfAssessmentId, centreId, isDelegateActive, removed, currentRun);
+                        selfAssessmentId, centreId, isDelegateActive, removed, currentRun, submitted, signedOff);                
+                foreach (var delagate in selfAssessmentDelegatesData.Delegates ?? Enumerable.Empty<SelfAssessmentDelegate>())
+                {
+                    var competencies = selfAssessmentService.GetCandidateAssessmentResultsById(delagate.CandidateAssessmentsId, adminId).ToList();
+                    if (competencies?.Count() > 0)
+                    {
+                        var questions = competencies.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
+                        var selfAssessedCount = questions.Count(q => q.Result.HasValue);
+                        var verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required));
+
+                        delagate.Progress = "Self assessed: " + selfAssessedCount + " / " + questions.Count() + Environment.NewLine +
+                                            "Confirmed: " + verifiedCount + " / " + questions.Count();
+                        delagate.SelfAssessed = selfAssessedCount;
+                        delagate.Confirmed = verifiedCount;
+                    }
+                }
                 SelfAssessmentDelegatesDataList.Add(selfAssessmentDelegatesData);
                 currentRun++;
             }
@@ -132,6 +151,8 @@ namespace DigitalLearningSolutions.Web.Services
                     new DataColumn(SubmittedDate),
                     new DataColumn(SignedOffDate),
                     new DataColumn(SignedOffBy),
+                    new DataColumn(SelfAssessedCompetenciesCount, typeof(int)),
+                    new DataColumn(ConfirmedCompetenciesCount, typeof(int)),
                 }
             );
 
@@ -175,7 +196,8 @@ namespace DigitalLearningSolutions.Web.Services
             row[SignedOffDate] = selfAssessmentDelegatesActivityRecord.SignedOff;
             row[SignedOffBy] = selfAssessmentService.GetSelfAssessmentActivityDelegatesSupervisor
                                                     (selfAssessmentDelegatesActivityRecord.SelfAssessmentId, selfAssessmentDelegatesActivityRecord.DelegateUserId);
-
+            row[SelfAssessedCompetenciesCount] = selfAssessmentDelegatesActivityRecord.SelfAssessed;
+            row[ConfirmedCompetenciesCount] = selfAssessmentDelegatesActivityRecord.Confirmed;
             dataTable.Rows.Add(row);
         }
         private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects)

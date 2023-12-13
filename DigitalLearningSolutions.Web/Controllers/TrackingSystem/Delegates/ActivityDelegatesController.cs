@@ -371,8 +371,8 @@
             sortDirection ??= GenericSortingHelper.Ascending;
 
 
-            bool? isDelegateActive, isProgressLocked, removed, hasCompleted;
-            isDelegateActive = isProgressLocked = removed = hasCompleted = null;
+            bool? isDelegateActive, isProgressLocked, removed, hasCompleted, submitted, signedOff;
+            isDelegateActive = isProgressLocked = removed = hasCompleted = submitted = signedOff = null;
 
             string? answer1, answer2, answer3;
             answer1 = answer2 = answer3 = null;
@@ -417,12 +417,19 @@
 
                         if (filter.Contains("Answer3"))
                             answer3 = filterValue;
+
+                        if (filter.Contains("Submitted"))
+                            submitted = filterValue;
+
+                        if (filter.Contains("SignedOff"))
+                            signedOff = filterValue;
                     }
                 }
             }
+            var adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
             var itemsPerPage = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
             var content = delegateActivityDownloadFileService.GetSelfAssessmentsInActivityDelegatesDownloadFile(searchString ?? string.Empty, itemsPerPage, sortBy, sortDirection,
-                        selfAssessmentId, centreId, isDelegateActive, removed
+                        selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, adminId
             );
 
             string fileName = $"{selfAssessmentService.GetSelfAssessmentNameById(selfAssessmentId)} delegates - {clockUtility.UtcNow:dd-MM-yyyy}.xlsx";
