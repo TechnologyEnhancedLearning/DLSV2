@@ -1111,6 +1111,10 @@
         public IActionResult RemoveDelegateSelfAssessmentsupervisor(int candidateAssessmentId, int supervisorDelegateId)
         {
             supervisorService.RemoveDelegateSelfAssessmentsupervisor(candidateAssessmentId, supervisorDelegateId);
+            if (TempData["IsAssessmentsSupervise"] != null)
+            {
+                TempData.Remove("IsAssessmentsSupervise");
+            }
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
 
