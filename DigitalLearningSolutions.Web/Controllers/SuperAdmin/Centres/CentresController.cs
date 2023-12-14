@@ -13,6 +13,7 @@ using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.FeatureManagement.Mvc;
 using Org.BouncyCastle.Asn1.Misc;
 using System;
@@ -653,7 +654,30 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult CourseAddChooseFlow(CourseAddChooseFlowViewModel model)
         {
-            ViewBag.CentreName = centresDataService.GetCentreName(model.CentreId) + "  (" + model.CentreId + ")";
+            switch(model.AddCourseOption)
+            {
+                case "central":
+                    return RedirectToAction("AddCentralCourses", new { centreId = model.CentreId });
+                case "other-centre":
+                    return RedirectToAction("AddOtherCourses", new { centreId = model.CentreId });
+                case "nhs-pathways":
+                    return RedirectToAction("AddPathwaysCourses", new { centreId = model.CentreId });
+            }
+            return RedirectToAction("Courses", new { centreId = model.CentreId });
+        }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Central")]
+        public IActionResult AddCentralCourses(int centreId = 0)
+        {
+            return View();
+        }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Other")]
+        public IActionResult AddOtherCourses(int centreId = 0)
+        {
+            return View();
+        }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Pathways")]
+        public IActionResult AddPathwaysCourses(int centreId = 0)
+        {
             return View();
         }
     }
