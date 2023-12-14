@@ -1,0 +1,47 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@using DigitalLearningSolutions.Web.Extensions
+@model ConfirmRemoveCourseViewModel;
+@{
+    ViewData["Title"] = "Centre Courses - Confirm Remove";
+    var cancelLinkData = Html.GetRouteValues();
+    cancelLinkData.Remove("applicationId");
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full word-break">
+
+        <div class="nhsuk-u-reading-width">
+            <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+                Are you sure you want to remove @Model.CentreApplication.ApplicationName from @Model.CentreApplication.CentreName?
+            </h1>
+            <p>
+                @if (Model.CentreApplication.CustomisationCount > 1)
+                {
+                    <text>
+                        This course has @Model.CentreApplication.CustomisationCount customisations at this centre. If you remove it:
+                        <ul>
+                            <li>learners at the centre will no longer be able to access the customisations of this course</li>
+                            <li>this course and its customisations will not appear in the Tracking System for administrators</li>
+                        </ul>
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        This course has @Model.CentreApplication.CustomisationCount customisation at this centre. If you remove it:
+                        <ul>
+                            <li>learners at the centre will no longer be able to access this course</li>
+                            <li>the course will not appear in the Tracking System for administrators</li>
+                        </ul>
+                    </text>
+                }
+            </p>
+        </div>
+        <a class="nhsuk-button nhsuk-u-margin-bottom-6 nhsuk-u-margin-top-2"
+           role="button"
+           asp-action="RemoveCourse" asp-controller="Centres" asp-route-applicationId="@Model.CentreApplication.ApplicationID" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]">
+            Confirm remove course
+        </a>
+        <vc:cancel-link asp-controller="Centres" asp-action="Courses" asp-all-route-data="@cancelLinkData" />
+    </div>
+</div>

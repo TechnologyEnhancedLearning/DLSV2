@@ -14,6 +14,7 @@ using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuratio
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
+using Org.BouncyCastle.Asn1.Misc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,16 +28,18 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
     public class CentresController : Controller
     {
         private readonly ICentresService centresService;
+        private readonly ICentreApplicationsService centreApplicationsService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IRegionDataService regionDataService;
         private readonly ICentresDataService centresDataService;
         private readonly IContractTypesDataService contractTypesDataService;
         private readonly ICourseDataService courseDataService;
         private readonly ICentresDownloadFileService centresDownloadFileService;
-        public CentresController(ICentresService centresService, ISearchSortFilterPaginateService searchSortFilterPaginateService,
+        public CentresController(ICentresService centresService, ICentreApplicationsService centreApplicationsService, ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IRegionDataService regionDataService, ICentresDataService centresDataService, IContractTypesDataService contractTypesDataService, ICourseDataService courseDataService, ICentresDownloadFileService centresDownloadFileService)
         {
             this.centresService = centresService;
+            this.centreApplicationsService = centreApplicationsService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.regionDataService = regionDataService;
             this.centresDataService = centresDataService;
@@ -589,7 +592,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             }
             DateTime? date = null;
             if ((day.GetValueOrDefault() != 0) || (month.GetValueOrDefault() != 0) || (year.GetValueOrDefault() != 0))
-                {
+            {
                 date = new DateTime(year ?? 0, month ?? 0, day ?? 0);
             }
             this.centresDataService.UpdateContractTypeandCenter(contractTypeViewModel.CentreId,
@@ -618,6 +621,27 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 FileHelper.GetContentTypeFromFileName(fileName),
                 fileName
             );
+        }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/{applicationId}/ConfirmRemove")]
+        public IActionResult ConfirmRemoveCourse(int centreId = 0, int applicationId = 0)
+        {
+            var centreApplication = centreApplicationsService.GetCentreApplicationByCentreAndApplicationID(centreId, applicationId);
+            if (centreApplication != null)
+            {
+                var model = new ConfirmRemoveCourseViewModel();
+                model.CentreApplication = centreApplication;
+                return View("ConfirmRemoveCourse", model);
+            }
+            else
+            {
+                return RedirectToAction("Courses", new { centreId });
+            }
+
+        }
+        public IActionResult RemoveCourse(int centreId = 0, int applicationId = 0)
+        {
+            centreApplicationsService.DeleteCentreApplicationByCentreAndApplicationID(centreId, applicationId);
+            return RedirectToAction("Courses", new { centreId });
         }
     }
 }

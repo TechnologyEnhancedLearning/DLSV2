@@ -1703,12 +1703,13 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId)
         {
             return connection.Query<Course>(
-                @$"select ap.ApplicationID,ap.ApplicationName,{DelegateCountQuery},cu.CustomisationID,cu.CustomisationName 
-				from Applications as ap
-				inner join CentreApplications as ca on ap.ApplicationID = ca.ApplicationID
-				inner join Customisations as cu on ca.ApplicationID = cu.ApplicationID
-				where ca.Active = 1 and cu.Active= 1 and cu.CentreID = @centreId AND ca.CentreID=@centreId
-				order by ap.ApplicationName",
+                @$"SELECT ap.ApplicationID, ap.ApplicationName,
+                                     {DelegateCountQuery}, cu.CustomisationID, cu.CustomisationName
+                    FROM   Applications AS ap INNER JOIN
+                                 CentreApplications AS ca ON ap.ApplicationID = ca.ApplicationID LEFT OUTER JOIN
+                                 Customisations AS cu ON ca.ApplicationID = cu.ApplicationID AND ca.CentreID = cu.CentreID AND cu.Active = 1
+                    WHERE (ca.Active = 1) AND (ca.CentreID = @centreId)
+                    ORDER BY ap.ApplicationName",
                 new { centreId }
             );
         }

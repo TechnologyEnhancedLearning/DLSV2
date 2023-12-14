@@ -76,16 +76,16 @@
             @if (Model.Active)
             {
                 <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2"
-                 role="button"
-                 asp-action="DeactivateCentre" asp-controller="Centres" asp-route-centreId="@Model.CentreId">
+                   role="button"
+                   asp-action="DeactivateCentre" asp-controller="Centres" asp-route-centreId="@Model.CentreId">
                     Deactivate centre
                 </a>
             }
             else
             {
                 <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-                 role="button"
-                 asp-action="ReactivateCentre" asp-controller="Centres" asp-route-centreId="@Model.CentreId">
+                   role="button"
+                   asp-action="ReactivateCentre" asp-controller="Centres" asp-route-centreId="@Model.CentreId">
                     Reactivate centre
                 </a>
             }

@@ -19,6 +19,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
     {
         private const int CenterId = 374;
         private readonly ICentresDataService centresDataService = A.Fake<ICentresDataService>();
+        private readonly ICentreApplicationsService centreApplicationsService = A.Fake<ICentreApplicationsService>();
         private readonly ICentresService centresService = A.Fake<ICentresService>();
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
         private readonly IRegionDataService regionDataService = A.Fake<IRegionDataService>();
@@ -32,6 +33,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         {
             controller = new CentresController(
             centresService,
+            centreApplicationsService,
             searchSortFilterPaginateService,
             regionDataService,
             centresDataService,
