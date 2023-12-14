@@ -654,7 +654,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult CourseAddChooseFlow(CourseAddChooseFlowViewModel model)
         {
-            switch(model.AddCourseOption)
+            switch (model.AddCourseOption)
             {
                 case "central":
                     return RedirectToAction("AddCentralCourses", new { centreId = model.CentreId });
@@ -668,6 +668,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Central")]
         public IActionResult AddCentralCourses(int centreId = 0)
         {
+
             return View();
         }
         [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Other")]
