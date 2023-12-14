@@ -92,6 +92,7 @@
             int? jobGroupId
         );
         bool IsDelegateGroupExist(string groupLabel);
+        string GetDelegateGroupNameFromId(int groupId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -573,6 +574,15 @@
                 ELSE CAST(0 AS BIT) END",
                 new { groupLabel }
             );
+        }
+        
+        public string GetDelegateGroupNameFromId(int groupId)
+        {
+            string groupName = connection.QuerySingle<string>(
+                @"SELECT GroupLabel from Groups where GroupID = @groupId",
+                new { groupId }
+            );
+            return groupName;
         }
     }
 }

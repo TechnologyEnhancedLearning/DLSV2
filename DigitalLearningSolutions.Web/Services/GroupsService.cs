@@ -136,6 +136,7 @@
         );
 
         bool IsDelegateGroupExist(string groupLabel);
+        string GetDelegateGroupNameFromId(int groupId);
     }
 
     public class GroupsService : IGroupsService
@@ -897,6 +898,11 @@
         public bool IsDelegateGroupExist(string groupLabel)
         {
             return groupsDataService.IsDelegateGroupExist(groupLabel);
+        }
+
+        public string GetDelegateGroupNameFromId(int groupId)
+        {
+            return groupsDataService.GetDelegateGroupNameFromId(groupId);
         }
     }
 }

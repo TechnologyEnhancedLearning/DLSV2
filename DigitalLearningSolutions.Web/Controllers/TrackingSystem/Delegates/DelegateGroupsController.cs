@@ -296,7 +296,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return NotFound();
             }
 
-            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()))
+            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()) || (groupsService.GetDelegateGroupNameFromId(groupId).Trim() == model.GroupName.Trim()))
             {
                 groupsService.UpdateGroupName(
                 groupId,
