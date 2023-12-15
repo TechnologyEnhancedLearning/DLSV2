@@ -66,6 +66,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 page = 1;
             }
 
+            search = search == null ? string.Empty : search.Trim();
+
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             centreStatus = (string.IsNullOrEmpty(centreStatus) ? "Any" : centreStatus);
 
