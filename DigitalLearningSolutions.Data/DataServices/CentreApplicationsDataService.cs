@@ -14,7 +14,7 @@
     {
         CentreApplication? GetCentreApplicationByCentreAndApplicationID(int centreId, int applicationId);
         IEnumerable<CourseForPublish> GetCentralCoursesForPublish(int centreId);
-        IEnumerable<CourseForPublish> GetOtherCoursesForPublish(int centreId);
+        IEnumerable<CourseForPublish> GetOtherCoursesForPublish(int centreId, string searchTerm);
         IEnumerable<CourseForPublish> GetPathwaysCoursesForPublish(int centreId);
         void DeleteCentreApplicationByCentreAndApplicationID(int centreId, int applicationId);
         void InsertCentreApplication(int centreId, int applicationId);
@@ -89,10 +89,10 @@
             );
             }
 
-            public IEnumerable<CourseForPublish> GetOtherCoursesForPublish(int centreId)
+            public IEnumerable<CourseForPublish> GetOtherCoursesForPublish(int centreId, string searchTerm)
             {
                 return connection.Query<CourseForPublish>(
-                $@"SELECT a.ApplicationID AS Id, a.ApplicationName AS Course, c.CentreName AS Provider
+                $@"SELECT TOP(30) a.ApplicationID AS Id, a.ApplicationName AS Course, c.CentreName AS Provider
                     FROM   Applications AS a INNER JOIN
                                  Centres AS c ON a.CreatedByCentreID = c.CentreID
                     WHERE (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (a.CoreContent = 0) AND (a.Debug = 0) AND (a.DefaultContentTypeID = 1) AND (a.ApplicationID NOT IN
@@ -101,7 +101,7 @@
                                      WHERE (CentreID = @centreId))) AND (c.CentreName LIKE '%' + @searchTerm + '%') OR
                                  (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (a.CoreContent = 0) AND (a.Debug = 0) AND (a.DefaultContentTypeID = 1) AND (a.ApplicationName LIKE '%' + @searchTerm + '%')
                     ORDER BY Course",
-                new { centreId }
+                new { centreId, searchTerm }
                 );
             }
 

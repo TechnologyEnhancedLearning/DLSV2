@@ -2,6 +2,7 @@
 using DigitalLearningSolutions.Data.Enums;
 using DigitalLearningSolutions.Data.Helpers;
 using DigitalLearningSolutions.Data.Models.Centres;
+using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Extensions;
@@ -650,36 +651,66 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
             return View();
         }
+
         [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add")]
         [HttpPost]
         public IActionResult CourseAddChooseFlow(CourseAddChooseFlowViewModel model)
         {
             switch (model.AddCourseOption)
             {
-                case "central":
-                    return RedirectToAction("AddCentralCourses", new { centreId = model.CentreId });
-                case "other-centre":
-                    return RedirectToAction("AddOtherCourses", new { centreId = model.CentreId });
-                case "nhs-pathways":
-                    return RedirectToAction("AddPathwaysCourses", new { centreId = model.CentreId });
+                case "Core":
+                    return RedirectToAction(nameof(CourseAddCore), new { centreId = model.CentreId });
+
+                case "Other":
+                    return RedirectToAction(nameof(CourseAddOther), new { centreId = model.CentreId, searchTerm = model.SearchTerm.Replace(" ", "%") });
+
+                case "Pathways":
+                    return RedirectToAction(nameof(CourseAddPathways), new { centreId = model.CentreId });
+            }
+
+            return RedirectToAction(nameof(Courses), new { centreId = model.CentreId });
+        }
+
+        private CourseAddViewModel SetupCommonModel(int centreId, string courseType, IEnumerable<CourseForPublish> courses)
+        {
+            return new CourseAddViewModel
+            {
+                CourseType = courseType,
+                CentreId = centreId,
+                CentreName = $"{centresDataService.GetCentreName(centreId)} ({centreId})",
+                Courses = courses
+            };
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Core")]
+        public IActionResult CourseAddCore(int centreId = 0)
+        {
+            var model = SetupCommonModel(centreId, "Core", centreApplicationsService.GetCentralCoursesForPublish(centreId));
+            return View("CourseAdd", model);
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Other")]
+        public IActionResult CourseAddOther(int centreId, string searchTerm)
+        {
+            var model = SetupCommonModel(centreId, "Other", centreApplicationsService.GetOtherCoursesForPublish(centreId, searchTerm));
+            model.SearchTerm = searchTerm;
+            return View("CourseAdd", model);
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Pathways")]
+        public IActionResult CourseAddPathways(int centreId = 0)
+        {
+            var model = SetupCommonModel(centreId, "Pathways", centreApplicationsService.GetPathwaysCoursesForPublish(centreId));
+            return View("CourseAdd", model);
+        }
+        [HttpPost]
+        public IActionResult CourseAddCommit(CourseAddViewModel model)
+        {
+            foreach (var id in model.ApplicationIds)
+            {
+                centreApplicationsService.InsertCentreApplication(model.CentreId, id);
             }
             return RedirectToAction("Courses", new { centreId = model.CentreId });
-        }
-        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Central")]
-        public IActionResult AddCentralCourses(int centreId = 0)
-        {
-
-            return View();
-        }
-        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Other")]
-        public IActionResult AddOtherCourses(int centreId = 0)
-        {
-            return View();
-        }
-        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Pathways")]
-        public IActionResult AddPathwaysCourses(int centreId = 0)
-        {
-            return View();
         }
     }
 }
