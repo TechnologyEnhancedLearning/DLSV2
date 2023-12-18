@@ -69,7 +69,7 @@
         {
             var content = this.platformUsageSummaryDownloadFileService.GetPlatformUsageSummaryFile();
 
-            const string fileName = "Digital Learning Solutions Platform usage summary.xlsx";
+            var  fileName = $"Report platform usage summary {this.clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
