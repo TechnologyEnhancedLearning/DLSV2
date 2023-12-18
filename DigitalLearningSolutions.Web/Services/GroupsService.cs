@@ -135,7 +135,7 @@
             AccountDetailsData accountDetailsData
         );
 
-        bool IsDelegateGroupExist(string groupLabel);
+        bool IsDelegateGroupExist(string groupLabel, int centreId);
     }
 
     public class GroupsService : IGroupsService
@@ -894,9 +894,9 @@
             return $"{prefix} - {groupName}";
         }
 
-        public bool IsDelegateGroupExist(string groupLabel)
+        public bool IsDelegateGroupExist(string groupLabel, int centreId)
         {
-            return groupsDataService.IsDelegateGroupExist(groupLabel);
+            return groupsDataService.IsDelegateGroupExist(groupLabel, centreId);
         }
     }
 }

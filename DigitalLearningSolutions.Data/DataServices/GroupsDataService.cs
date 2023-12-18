@@ -91,7 +91,7 @@
             string? option,
             int? jobGroupId
         );
-        bool IsDelegateGroupExist(string groupLabel);
+        bool IsDelegateGroupExist(string groupLabel, int centreId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -565,13 +565,13 @@
             );
         }
 
-        public bool IsDelegateGroupExist(string groupLabel)
+        public bool IsDelegateGroupExist(string groupLabel, int centreId)
         {
             return connection.QuerySingle<bool>(
-                @"SELECT CASE WHEN EXISTS (select * from Groups where GroupLabel like @groupLabel and RemovedDate is null)
+                @"SELECT CASE WHEN EXISTS (select * from Groups where GroupLabel = @groupLabel and RemovedDate is null and CentreID = @centreId)
                 THEN CAST(1 AS BIT)
                 ELSE CAST(0 AS BIT) END",
-                new { groupLabel }
+                new { groupLabel, centreId }
             );
         }
     }
