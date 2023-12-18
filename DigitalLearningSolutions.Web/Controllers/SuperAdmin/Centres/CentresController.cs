@@ -2,6 +2,7 @@
 using DigitalLearningSolutions.Data.Enums;
 using DigitalLearningSolutions.Data.Helpers;
 using DigitalLearningSolutions.Data.Models.Centres;
+using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Extensions;
@@ -13,6 +14,7 @@ using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.FeatureManagement.Mvc;
 using Org.BouncyCastle.Asn1.Misc;
 using System;
@@ -644,6 +646,73 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         {
             centreApplicationsService.DeleteCentreApplicationByCentreAndApplicationID(centreId, applicationId);
             return RedirectToAction("Courses", new { centreId });
+        }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add")]
+        public IActionResult CourseAddChooseFlow(int centreId = 0)
+        {
+            ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+            return View();
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add")]
+        [HttpPost]
+        public IActionResult CourseAddChooseFlow(CourseAddChooseFlowViewModel model)
+        {
+            switch (model.AddCourseOption)
+            {
+                case "Core":
+                    return RedirectToAction(nameof(CourseAddCore), new { centreId = model.CentreId });
+
+                case "Other":
+                    return RedirectToAction(nameof(CourseAddOther), new { centreId = model.CentreId, searchTerm = model.SearchTerm.Replace(" ", "%") });
+
+                case "Pathways":
+                    return RedirectToAction(nameof(CourseAddPathways), new { centreId = model.CentreId });
+            }
+
+            return RedirectToAction(nameof(Courses), new { centreId = model.CentreId });
+        }
+
+        private CourseAddViewModel SetupCommonModel(int centreId, string courseType, IEnumerable<CourseForPublish> courses)
+        {
+            return new CourseAddViewModel
+            {
+                CourseType = courseType,
+                CentreId = centreId,
+                CentreName = $"{centresDataService.GetCentreName(centreId)} ({centreId})",
+                Courses = courses
+            };
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Core")]
+        public IActionResult CourseAddCore(int centreId = 0)
+        {
+            var model = SetupCommonModel(centreId, "Core", centreApplicationsService.GetCentralCoursesForPublish(centreId));
+            return View("CourseAdd", model);
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Other")]
+        public IActionResult CourseAddOther(int centreId, string searchTerm)
+        {
+            var model = SetupCommonModel(centreId, "Other", centreApplicationsService.GetOtherCoursesForPublish(centreId, searchTerm));
+            model.SearchTerm = searchTerm;
+            return View("CourseAdd", model);
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Pathways")]
+        public IActionResult CourseAddPathways(int centreId = 0)
+        {
+            var model = SetupCommonModel(centreId, "Pathways", centreApplicationsService.GetPathwaysCoursesForPublish(centreId));
+            return View("CourseAdd", model);
+        }
+        [HttpPost]
+        public IActionResult CourseAddCommit(CourseAddViewModel model)
+        {
+            foreach (var id in model.ApplicationIds)
+            {
+                centreApplicationsService.InsertCentreApplication(model.CentreId, id);
+            }
+            return RedirectToAction("Courses", new { centreId = model.CentreId });
         }
     }
 }

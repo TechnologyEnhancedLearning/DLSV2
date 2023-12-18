@@ -2,12 +2,20 @@
 {
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.Frameworks;
     using Microsoft.Extensions.Logging;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Data;
+    using System.Runtime.Versioning;
 
     public interface ICentreApplicationsDataService
     {
         CentreApplication? GetCentreApplicationByCentreAndApplicationID(int centreId, int applicationId);
+        IEnumerable<CourseForPublish> GetCentralCoursesForPublish(int centreId);
+        IEnumerable<CourseForPublish> GetOtherCoursesForPublish(int centreId, string searchTerm);
+        IEnumerable<CourseForPublish> GetPathwaysCoursesForPublish(int centreId);
         void DeleteCentreApplicationByCentreAndApplicationID(int centreId, int applicationId);
         void InsertCentreApplication(int centreId, int applicationId);
         public class CentreApplicationsDataService : ICentreApplicationsDataService
@@ -59,10 +67,57 @@
                                 SELECT @centreId, @applicationId
                                 WHERE (NOT EXISTS
                                 (SELECT CentreApplicationID
-                                FROM    CentreApplications AS CentreApplications_1
+                                FROM    CentreApplications
                                 WHERE (CentreID = @centreId) AND (ApplicationID = @applicationId)))",
                         new { centreId, applicationId }
                     );
+            }
+
+            public IEnumerable<CourseForPublish> GetCentralCoursesForPublish(int centreId)
+            {
+                return connection.Query<CourseForPublish>(
+                $@"SELECT a.ApplicationID AS Id, a.ApplicationName AS Course, b.BrandName AS Provider
+                    FROM   Applications AS a INNER JOIN
+                                 Brands AS b ON a.BrandID = b.BrandID INNER JOIN
+                                 Centres AS c ON a.CreatedByCentreID = c.CentreID
+                    WHERE (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (a.CoreContent = 1) AND (a.Debug = 0) AND (a.DefaultContentTypeID = 1) AND (a.ApplicationID NOT IN
+                                     (SELECT ApplicationID
+                                         FROM    CentreApplications
+                                     WHERE (CentreID = @centreId)))
+                    ORDER BY Course",
+                new { centreId }
+            );
+            }
+
+            public IEnumerable<CourseForPublish> GetOtherCoursesForPublish(int centreId, string searchTerm)
+            {
+                return connection.Query<CourseForPublish>(
+                $@"SELECT TOP(30) a.ApplicationID AS Id, a.ApplicationName AS Course, c.CentreName AS Provider
+                    FROM   Applications AS a INNER JOIN
+                                 Centres AS c ON a.CreatedByCentreID = c.CentreID
+                    WHERE (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (a.CoreContent = 0) AND (a.Debug = 0) AND (a.DefaultContentTypeID = 1) AND (a.ApplicationID NOT IN
+                                     (SELECT ApplicationID
+                                     FROM    CentreApplications
+                                     WHERE (CentreID = @centreId))) AND (c.CentreName LIKE '%' + @searchTerm + '%') OR
+                                 (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (a.CoreContent = 0) AND (a.Debug = 0) AND (a.DefaultContentTypeID = 1) AND (a.ApplicationName LIKE '%' + @searchTerm + '%')
+                    ORDER BY Course",
+                new { centreId, searchTerm }
+                );
+            }
+
+            public IEnumerable<CourseForPublish> GetPathwaysCoursesForPublish(int centreId)
+            {
+                return connection.Query<CourseForPublish>(
+                $@"SELECT a.ApplicationID AS Id, a.ApplicationName AS Course, c.CustomisationName AS Provider
+                    FROM   Customisations AS c INNER JOIN
+                                 Applications AS a ON c.ApplicationID = a.ApplicationID
+                    WHERE (a.ArchivedDate IS NULL) AND (a.ApplicationID NOT IN
+                                     (SELECT ApplicationID
+                                     FROM    CentreApplications
+                                     WHERE (CentreID = @centreId))) AND (c.CustomisationName = 'NHS PATHWAYS CENTRAL') AND (c.Active = 1)
+                    ORDER BY Course",
+                new { centreId }
+                );
             }
         }
 
