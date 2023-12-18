@@ -162,9 +162,9 @@
                     INNER JOIN CompetencyGroups AS CG 
 					ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID =@selfAssessmentId
                     WHERE ((ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1) AND
-                           (CG.ID =@competencyGroupId) AND (casv.SignedOff =0) AND (casv.Verified IS NULL))
+                           (CG.ID =@competencyGroupId) AND (casv.Verified IS NULL))
                         OR ((ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND
-                        (sasr.SelfAssessmentReview IS NULL) AND (CG.ID =@competencyGroupId) AND (casv.SignedOff =0) AND (casv.Verified IS NULL))
+                        (sasr.SelfAssessmentReview IS NULL) AND (CG.ID =@competencyGroupId) AND (casv.Verified IS NULL))
 						) AS casv;
 						",
                 new { selfAssessmentId, delegateUserId, competencyGroupId }
