@@ -248,9 +248,10 @@
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
-                var filters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
                 if (existingFilterString.Contains("NotActive"))
                     existingFilterString = existingFilterString.Replace("NotActive|true", "Active|false");
+
+                var filters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
 
                 foreach (var filter in filters)
                 {

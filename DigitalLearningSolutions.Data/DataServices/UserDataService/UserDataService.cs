@@ -626,6 +626,7 @@
                 u.Active as UserActive,
                 u.LearningHubAuthID,
                 u.EmailVerified,
+                ucd.ID as UserCentreDetailID,
                 ucd.UserID,
                 ucd.CentreID,
                 ucd.Email as CentreEmail,
