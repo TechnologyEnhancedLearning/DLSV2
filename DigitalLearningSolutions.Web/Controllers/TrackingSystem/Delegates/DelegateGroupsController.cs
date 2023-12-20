@@ -215,8 +215,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             {
                 return View(model);
             }
-
-            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()))
+            var centreId = User.GetCentreIdKnownNotNull();
+            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim(), centreId))
             {
                 groupsService.AddDelegateGroup(
                 User.GetCentreIdKnownNotNull(),
@@ -296,7 +296,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return NotFound();
             }
 
-            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()))
+            if ( (!groupsService.IsDelegateGroupExist(model.GroupName.Trim(), centreId)) || (group.GroupLabel.Trim()== model.GroupName.Trim()) )
             {
                 groupsService.UpdateGroupName(
                 groupId,
