@@ -32,7 +32,7 @@
     "js-search": "^2.0.1",
     "lodash": "^4.17.20",
     "nhsuk-frontend": "^6.2.0",
-    "regenerator-runtime": "^0.14.0"
+    "regenerator-runtime": "^0.14.1"
   },
   "devDependencies": {
     "@babel/core": "^7.23.6",
