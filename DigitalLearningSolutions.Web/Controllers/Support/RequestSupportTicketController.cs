@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Support;
@@ -23,6 +22,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using Microsoft.AspNetCore.Authorization;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
 
     [Route("/{dlsSubApplication}/RequestSupport")]
     [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
@@ -37,12 +38,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IRequestSupportTicketDataService requestSupportTicketDataService;
         private readonly IFreshdeskService freshdeskService;
+        private readonly IMultiPageFormService multiPageFormService;
         string uploadDir = string.Empty;
-        public RequestSupportTicketController(IConfiguration configuration,
-                                        IUserDataService userDataService, ICentresDataService centresDataService
-                                       , IWebHostEnvironment webHostEnvironment
-                                       , IRequestSupportTicketDataService requestSupportTicketDataService
-                                        , IFreshdeskService freshdeskService)
+        public RequestSupportTicketController(IConfiguration configuration
+                                        , IUserDataService userDataService
+                                        , ICentresDataService centresDataService
+                                        , IWebHostEnvironment webHostEnvironment
+                                        , IRequestSupportTicketDataService requestSupportTicketDataService
+                                        , IFreshdeskService freshdeskService
+                                        , IMultiPageFormService multiPageFormService)
         {
             this.configuration = configuration;
             this.userDataService = userDataService;
@@ -50,15 +54,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             this.webHostEnvironment = webHostEnvironment;
             this.requestSupportTicketDataService = requestSupportTicketDataService;
             this.freshdeskService = freshdeskService;
-            uploadDir = System.IO.Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
+            this.multiPageFormService = multiPageFormService;
+            uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
         }
 
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
-            TempData.Clear();
             var model = new RequestSupportTicketViewModel(
                 dlsSubApplication,
-            SupportPage.RequestSupportTicket,
+                SupportPage.RequestSupportTicket,
                 configuration.GetCurrentSystemBaseUrl()
             );
             var centreId = User.GetCentreIdKnownNotNull();
@@ -66,7 +70,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var userCentreEmail = requestSupportTicketDataService.GetUserCentreEmail(User.GetUserId() ?? 0, centreId);
             var adminUserID = User.GetAdminId();
             var centreName = centresDataService.GetCentreName(centreId);
-            setRequestSupportData(userName, userCentreEmail, adminUserID ?? 0, centreName);
+            setupRequestSupportData(userName, userCentreEmail, adminUserID ?? 0, centreName);
             return View("Request", model);
         }
 
@@ -74,7 +78,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         public IActionResult TypeofRequest(DlsSubApplication dlsSubApplication)
         {
             var requestTypes = requestSupportTicketDataService.GetRequestTypes();
-            var data = TempData.Peek<RequestSupportTicketData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult();
             var model = new RequestTypeViewModel(requestTypes.ToList(), data);
             return View("TypeOfRequest", model);
         }
@@ -87,11 +94,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var reqType = requestTypes.ToList().Where(x => x.ID == requestType)
                 .Select(ticketRequestTypes => new { ticketRequestTypes.RequestTypes, ticketRequestTypes.FreshdeskRequestTypes }).FirstOrDefault();
 
-            var data = TempData.Peek<RequestSupportTicketData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult(); ;
             data.RequestTypeId = requestType;
             data.RequestType = reqType?.RequestTypes;
             data.FreshdeskRequestType = reqType?.FreshdeskRequestTypes;
-            TempData.Set(data);
+            setRequestSupportTicketData(data);
             var model1 = new RequestTypeViewModel(requestTypes.ToList(), data);
             if (requestType < 1)
             {
@@ -104,7 +114,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         [Route("/{dlsSubApplication}/RequestSupport/RequestSummary")]
         public IActionResult RequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel RequestTypemodel)
         {
-            var data = TempData.Peek<RequestSupportTicketData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult(); ;
             var model = new RequestSummaryViewModel(data);
             data.setRequestSubjectDetails(model);
             return View("RequestSummary", model);
@@ -128,17 +141,23 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             {
                 return View("RequestSummary", requestDetailsmodel);
             }
-            var data = TempData.Peek<RequestSupportTicketData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult(); ;
             data.setRequestSubjectDetails(requestDetailsmodel);
-            TempData.Set(data);
+            setRequestSupportTicketData(data);
             return RedirectToAction("RequestAttachment", new { dlsSubApplication });
         }
 
         [Route("/{dlsSubApplication}/RequestSupport/RequestAttachment")]
         public IActionResult RequestAttachment(DlsSubApplication dlsSubApplication, RequestAttachmentViewModel model)
         {
-            var data = TempData.Peek<RequestSupportTicketData>()!;
-            TempData.Set(data);
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult(); ;
+            setRequestSupportTicketData(data);
             model = new RequestAttachmentViewModel(data);
             return View("RequestAttachment", model);
         }
@@ -147,7 +166,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         [Route("/{dlsSubApplication}/RequestSupport/SetAttachment")]
         public IActionResult SetAttachment(DlsSubApplication dlsSubApplication, RequestAttachmentViewModel requestAttachmentmodel)
         {
-            var data = TempData.Peek<RequestSupportTicketData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult(); ;
 
             if (requestAttachmentmodel.ImageFiles == null)
             {
@@ -186,14 +208,17 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             }
 
             data.setImageFiles(RequestAttachmentList);
-            TempData.Set(data);
+            setRequestSupportTicketData(data);
             return RedirectToAction("RequestAttachment", new { dlsSubApplication });
         }
 
         [Route("/{dlsSubApplication}/RequestSupport/SetAttachment/DeleteImage")]
         public IActionResult DeleteImage(DlsSubApplication dlsSubApplication, string imageName)
         {
-            var data = TempData.Peek<RequestSupportTicketData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult(); ;
             if (data.RequestAttachment != null)
             {
                 var attachmentToRemove = data.RequestAttachment.FirstOrDefault(a => a.FileName == imageName);
@@ -207,7 +232,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                     }
                 }
             }
-            TempData.Set(data);
+            setRequestSupportTicketData(data);
             return RedirectToAction("RequestAttachment", new { dlsSubApplication });
         }
 
@@ -215,7 +240,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         [Route("/{dlsSubApplication}/RequestSupport/SupportSummary")]
         public IActionResult SupportSummary(DlsSubApplication dlsSubApplication, SupportSummaryViewModel supportSummaryViewModel)
         {
-            var data = TempData.Peek<RequestSupportTicketData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult(); ;
             var model = new SupportSummaryViewModel(data);
             return View("SupportTicketSummaryPage", model);
         }
@@ -225,7 +253,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         public IActionResult SubmitSupportSummary(DlsSubApplication dlsSubApplication, SupportSummaryViewModel model)
 
         {
-            var data = TempData.Peek<RequestSupportTicketData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult(); ;
             data.GroupId = configuration.GetFreshdeskCreateTicketGroupId();
             data.ProductId = configuration.GetFreshdeskCreateTicketProductId();
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
@@ -260,6 +291,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 {
                     DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
                 }
+                multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"), TempData);
                 TempData.Clear();
                 var responseModel = new FreshDeskResponseViewModel(ticketId, null);
                 return View("SuccessPage", responseModel);
@@ -275,6 +307,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 {
                     DeleteFilesAfterSubmitSupportTicket(data.RequestAttachment);
                 }
+                multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"), TempData);
                 TempData.Clear();
                 return View("RequestError", responseModel);
             }
@@ -300,10 +333,21 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             }
         }
 
-        private void setRequestSupportData(string userName, string userCentreEmail, int adminUserID, string centreName)
+        private void setupRequestSupportData(string userName, string userCentreEmail, int adminUserID, string centreName)
         {
+            TempData.Clear();
+            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"), TempData);
             var requestSupportData = new RequestSupportTicketData(userName, userCentreEmail, adminUserID, centreName);
-            TempData.Set(requestSupportData);
+            setRequestSupportTicketData(requestSupportData);
+        }
+
+        private void setRequestSupportTicketData(RequestSupportTicketData requestSupportTicketData)
+        {
+            multiPageFormService.SetMultiPageFormData(
+                requestSupportTicketData,
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            );
         }
 
         private string UploadFile(IFormFile file)
@@ -314,7 +358,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             {
                 uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads");
                 fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-                string filePath = System.IO.Path.Combine(uploadDir, fileName);
+                string filePath = Path.Combine(uploadDir, fileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     file.CopyTo(fileStream);
@@ -328,7 +372,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var totalFileSize = 0.00;
             foreach (var item in requestAttachmentmodel.ImageFiles)
             {
-                var extension = System.IO.Path.GetExtension(item.FileName);
+                var extension = Path.GetExtension(item.FileName);
                 if (!requestAttachmentmodel.AllowedExtensions.Contains(extension))
                 {
                     requestAttachmentmodel.FileExtensionFlag = true;
