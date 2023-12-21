@@ -40,6 +40,9 @@
         private const string ExportQueryRowLimitKey = "FeatureManagement:ExportQueryRowLimit";
         private const string MaxBulkUploadRowsLimitKey = "FeatureManagement:MaxBulkUploadRows";
 
+        private const string FreshdeskCreateTicketGroupId = "FreshdeskAPIConfig:GroupId";
+        private const string FreshdeskCreateTicketProductId = "FreshdeskAPIConfig:ProductId";
+
         private const string LearningHubAuthenticationAuthority = "LearningHubAuthentication:Authority";
         private const string LearningHubAuthenticationClientId = "learningHubAuthentication:ClientId";
         private const string LearningHubAuthenticationClientSecret = "LearningHubAuthentication:ClientSecret";
