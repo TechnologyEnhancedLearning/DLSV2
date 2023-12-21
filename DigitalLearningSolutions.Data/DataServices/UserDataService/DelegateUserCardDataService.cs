@@ -347,6 +347,7 @@
                         WHERE da.CentreId = @centreId
                         AND da.Approved = 1
                         AND da.Active = 1
+                        AND (u.PrimaryEmail like '%_@_%.__%' OR ucd.Email IS NOT NULL)
                         AND NOT EXISTS (SELECT DelegateID FROM GroupDelegates WHERE DelegateID = da.ID
                                         AND GroupID = @groupId)",
                 new

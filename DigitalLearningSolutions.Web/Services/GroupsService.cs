@@ -524,7 +524,7 @@
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
         {
-            return groupsDataService.GetGroupDelegates(groupId).Where(gd => gd.CentreEmail != null || !Guid.TryParse(gd.PrimaryEmail, out _));
+            return groupsDataService.GetGroupDelegates(groupId);
         }
 
         public IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId)
