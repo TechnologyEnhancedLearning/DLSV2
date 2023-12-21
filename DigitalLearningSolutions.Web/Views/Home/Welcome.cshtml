@@ -23,22 +23,24 @@
       }
       else
       {
+        <p class="nhsuk-body-m">If you have linked your account you can login through the Learning hub.</p>
+        <a class="nhsuk-button auth-button--blue" role="button" asp-controller="Login" asp-action="SharedAuth">
+          Log in with Learning hub
+        </a>
+        <p class="nhsuk-u-font-weight-bold">Or</p>
         <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="Index">
           Log in
         </a>
         <a class="nhsuk-button nhsuk-button--secondary auth-button" role="button" asp-controller="Register" asp-action="Start">
           Register
         </a>
-        <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="SharedAuth">
-          Shared Auth Log in
-        </a>
       }
     </div>
-
-    <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
-
-    <p class="nhsuk-body-m">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
-
-    <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />
+    @if (Model.UserIsLoggedIn)
+    {
+      <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
+      <p class="nhsuk-body-m">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
+      <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />
+    }
   </div>
 </div>
