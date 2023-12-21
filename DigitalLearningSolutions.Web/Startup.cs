@@ -8,6 +8,7 @@ namespace DigitalLearningSolutions.Web
     using System.Threading.Tasks;
     using System.Transactions;
     using System.Web;
+    using AspNetCoreRateLimit;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
@@ -47,6 +48,12 @@ namespace DigitalLearningSolutions.Web
     using Serilog;
     using GDS.MultiPageFormData;
     using LearningHub.Nhs.Caching;
+    using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+    using Microsoft.IdentityModel.Tokens;
+    using IdentityModel;
+    using Microsoft.AspNetCore.Http;
+    using System.Linq;
+    using Microsoft.AspNetCore.Identity;
     using AspNetCoreRateLimit;
     using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
     using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
@@ -55,7 +62,8 @@ namespace DigitalLearningSolutions.Web
     using IsolationLevel = System.Transactions.IsolationLevel;
     using System.Collections.Concurrent;
     using Serilog;
-    using Microsoft.AspNetCore.Http;
+    using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
+    using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
 
     public class Startup
     {
@@ -388,6 +396,14 @@ namespace DigitalLearningSolutions.Web
                 .Response
                 .CompleteAsync();
             await Task.CompletedTask;
+        }
+
+        private void ConfigureIpRateLimiting(IServiceCollection services)
+        {
+            services.Configure<IpRateLimitOptions>(config.GetSection("IpRateLimiting"));
+            services.AddInMemoryRateLimiting();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
         }
 
         private static void RegisterServices(IServiceCollection services)
