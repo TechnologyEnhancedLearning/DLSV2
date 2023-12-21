@@ -1006,7 +1006,6 @@
                 if (TempData["IsAssessmentsSupervise"] != null)
                 {
                     TempData.Remove("IsAssessmentsSupervise");
-                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
                 }
 
                 var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile()
