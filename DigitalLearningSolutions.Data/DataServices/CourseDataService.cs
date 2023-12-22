@@ -288,7 +288,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 pr.Completed AS Completed,
                 pr.Evaluated AS Evaluated,
                 pr.LoginCount,
-                pr.Duration AS LearningTime,
+                Sum(apr.TutTime) AS LearningTime,
                 pr.DiagnosticScore,
                 LTRIM(RTRIM(pr.Answer1)) AS Answer1,
                 LTRIM(RTRIM(pr.Answer2)) AS Answer2,
@@ -317,6 +317,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             FROM Customisations cu
             INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
             INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
+            INNER JOIN aspProgress AS apr ON pr.ProgressID = apr.ProgressID
             LEFT OUTER JOIN AdminAccounts AS aaSupervisor ON aaSupervisor.ID = pr.SupervisorAdminId
             LEFT OUTER JOIN Users AS uSupervisor ON uSupervisor.ID = aaSupervisor.UserID
             LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = pr.EnrolledByAdminID
@@ -867,7 +868,47 @@ namespace DigitalLearningSolutions.Data.DataServices
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND pr.RemovedDate IS NULL
-                        AND ap.DefaultContentTypeID <> 4",
+                        AND ap.DefaultContentTypeID <> 4
+                    GROUP BY cu.CustomisationID,
+                        cu.CustomisationName,
+                        ap.ApplicationName,
+                        ap.CourseCategoryID,
+                        cu.IsAssessed,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        pr.ProgressId,
+                        pr.PLLocked,
+                        pr.SubmittedTime,
+                        pr.CompleteByDate,
+                        pr.RemovedDate,
+                        pr.Completed,
+                        pr.Evaluated,
+                        pr.LoginCount,
+                        pr.Duration,
+                        pr.DiagnosticScore,
+                        LTRIM(RTRIM(pr.Answer1)),
+                        LTRIM(RTRIM(pr.Answer2)),
+                        LTRIM(RTRIM(pr.Answer3)),
+                        pr.FirstSubmittedTime,
+                        pr.EnrollmentMethodID,
+                        uEnrolledBy.FirstName,
+                        uEnrolledBy.LastName,
+                        aaEnrolledBy.Active,
+                        aaSupervisor.ID,
+                        uSupervisor.FirstName,
+                        uSupervisor.LastName,
+                        aaSupervisor.Active,
+                        da.ID,
+                        da.CandidateNumber,
+                        u.FirstName,
+                        u.LastName,
+                        COALESCE(ucd.Email, u.PrimaryEmail),
+                        da.Active,
+                        u.HasBeenPromptedForPrn,
+                        u.ProfessionalRegistrationNumber,
+                        da.CentreID,
+                        ap.ArchivedDate",
                 new { delegateId }
             );
         }
@@ -877,7 +918,47 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.QuerySingleOrDefault<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.ProgressID = @progressId
-                        AND ap.DefaultContentTypeID <> 4",
+                        AND ap.DefaultContentTypeID <> 4
+                    GROUP BY cu.CustomisationID,
+                        cu.CustomisationName,
+                        ap.ApplicationName,
+                        ap.CourseCategoryID,
+                        cu.IsAssessed,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        pr.ProgressId,
+                        pr.PLLocked,
+                        pr.SubmittedTime,
+                        pr.CompleteByDate,
+                        pr.RemovedDate,
+                        pr.Completed,
+                        pr.Evaluated,
+                        pr.LoginCount,
+                        pr.Duration,
+                        pr.DiagnosticScore,
+                        LTRIM(RTRIM(pr.Answer1)),
+                        LTRIM(RTRIM(pr.Answer2)),
+                        LTRIM(RTRIM(pr.Answer3)),
+                        pr.FirstSubmittedTime,
+                        pr.EnrollmentMethodID,
+                        uEnrolledBy.FirstName,
+                        uEnrolledBy.LastName,
+                        aaEnrolledBy.Active,
+                        aaSupervisor.ID,
+                        uSupervisor.FirstName,
+                        uSupervisor.LastName,
+                        aaSupervisor.Active,
+                        da.ID,
+                        da.CandidateNumber,
+                        u.FirstName,
+                        u.LastName,
+                        COALESCE(ucd.Email, u.PrimaryEmail),
+                        da.Active,
+                        u.HasBeenPromptedForPrn,
+                        u.ProfessionalRegistrationNumber,
+                        da.CentreID,
+                        ap.ArchivedDate",
                 new { progressId }
             );
         }
@@ -895,7 +976,47 @@ namespace DigitalLearningSolutions.Data.DataServices
                                             cap.Active = 1)))
                         AND da.CentreID = @centreId
                         AND pr.CustomisationID = @customisationId
-                        AND ap.DefaultContentTypeID <> 4",
+                        AND ap.DefaultContentTypeID <> 4
+                    GROUP BY cu.CustomisationID,
+                        cu.CustomisationName,
+                        ap.ApplicationName,
+                        ap.CourseCategoryID,
+                        cu.IsAssessed,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        pr.ProgressId,
+                        pr.PLLocked,
+                        pr.SubmittedTime,
+                        pr.CompleteByDate,
+                        pr.RemovedDate,
+                        pr.Completed,
+                        pr.Evaluated,
+                        pr.LoginCount,
+                        pr.Duration,
+                        pr.DiagnosticScore,
+                        LTRIM(RTRIM(pr.Answer1)),
+                        LTRIM(RTRIM(pr.Answer2)),
+                        LTRIM(RTRIM(pr.Answer3)),
+                        pr.FirstSubmittedTime,
+                        pr.EnrollmentMethodID,
+                        uEnrolledBy.FirstName,
+                        uEnrolledBy.LastName,
+                        aaEnrolledBy.Active,
+                        aaSupervisor.ID,
+                        uSupervisor.FirstName,
+                        uSupervisor.LastName,
+                        aaSupervisor.Active,
+                        da.ID,
+                        da.CandidateNumber,
+                        u.FirstName,
+                        u.LastName,
+                        COALESCE(ucd.Email, u.PrimaryEmail),
+                        da.Active,
+                        u.HasBeenPromptedForPrn,
+                        u.ProfessionalRegistrationNumber,
+                        da.CentreID,
+                        ap.ArchivedDate",
                 new { customisationId, centreId }
             );
         }
