@@ -1536,11 +1536,11 @@
             };
             return View("SelfAssessments/SignOffHistory", model);
         }
-        public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary,string candidateAssessmentName)
+        public IActionResult ExportCandidateAssessment(int candidateAssessmentId,string candidateAssessmentName, string delegateName)
         {
             var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, User.GetUserIdKnownNotNull(), true);
-            var fileName = $"{((candidateAssessmentName.Length > 30) ? candidateAssessmentName.Substring(0, 30) : candidateAssessmentName)} {vocabulary} Assessment Export {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
-            return File(
+            var fileName = $"{((candidateAssessmentName.Length > 30) ? candidateAssessmentName.Substring(0, 30) : candidateAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
+             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
                 fileName
