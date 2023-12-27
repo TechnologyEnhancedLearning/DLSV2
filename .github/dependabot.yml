@@ -16,11 +16,11 @@ updates:
       - dependency-name: "Microsoft.FeatureManagement.AspNetCore*"
       # Ignore some updates to the package
       - dependency-name: "Microsoft.VisualStudio.Web.CodeGeneration.Design"
-        versions: ["7.*"]
+        versions: ["7.*, 8.*"]
       - dependency-name: "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
-        versions: ["7.*"]
+        versions: ["7.*, 8.*"]
       - dependency-name: "Microsoft.AspNetCore.Mvc.Testing"
-        versions: ["7.*"]
+        versions: ["7.*, 8.*"]
       - dependency-name: "Selenium.WebDriver.ChromeDriver"
         versions: ">=113.0.5672.1278" # Recommended version
       # For all packages, ignore all patch updates
