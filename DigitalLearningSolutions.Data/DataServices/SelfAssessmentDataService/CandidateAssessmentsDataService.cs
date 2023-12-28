@@ -99,7 +99,7 @@
                         SA.SignOffRequestorStatement,
                         SA.ManageSupervisorsDescription,
                         CA.NonReportable,
-					 DA.FirstName_deprecated +' '+ DA.LastName_deprecated AS DelegateName
+					 U.FirstName +' '+ U.LastName AS DelegateName
                     FROM CandidateAssessments CA
                     JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
@@ -111,8 +111,8 @@
                             ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID = @selfAssessmentId
                     LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                             ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
-                    INNER JOIN DelegateAccounts AS DA 
-							ON DA.ID = CA.DelegateUserID AND DA.CentreID = CA.CentreID 
+                    INNER JOIN Users AS U 
+							ON U.ID = CA.DelegateUserID 
                     WHERE CA.DelegateUserID = @delegateUserId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL
                         AND CA.CompletedDate IS NULL AND ((SAS.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                     GROUP BY
@@ -124,7 +124,7 @@
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable,
-                        DA.FirstName_deprecated , DA.LastName_deprecated",
+                        U.FirstName , U.LastName",
                 new { delegateUserId, selfAssessmentId }
             );
         }
