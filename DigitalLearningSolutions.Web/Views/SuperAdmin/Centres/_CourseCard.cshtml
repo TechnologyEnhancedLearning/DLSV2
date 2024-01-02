@@ -9,36 +9,54 @@
         </summary>
 
         <div class="nhsuk-details__text">
-            <table role="table" class="nhsuk-table-responsive">
-                <thead role="rowgroup" class="nhsuk-table__head">
-                    <tr role="row">
-                        <th role="columnheader" scope="col">
-                            <b>Customisation name (ID)</b>
-                        </th>
-                        <th role="columnheader" scope="col">
-                            <b>Total delegates</b>
-                        </th>
-                    </tr>
-                </thead>
+            @if (Model.CentreCourseCustomisations.First().CustomisationID > 0)
+            {
+                <text>
+                    <table role="table" class="nhsuk-table-responsive">
+                        <thead role="rowgroup" class="nhsuk-table__head">
+                            <tr role="row">
+                                <th role="columnheader" scope="col">
+                                    <b>Customisation name (ID)</b>
+                                </th>
+                                <th role="columnheader" scope="col">
+                                    <b>Total delegates</b>
+                                </th>
+                            </tr>
+                        </thead>
 
-                <tbody class="nhsuk-table__body">
-                    @foreach (var customisation in Model.CentreCourseCustomisations)
-                    {
-                        <tr role="row" class="nhsuk-table__row">
-                            <td role="cell" class="nhsuk-table__cell choose-centre-td">
-                                <span class="nhsuk-table-responsive__heading"><b>Customisation name (ID): </b></span>
-                                <span class="word-break">@customisation.CustomisationName (@customisation.CustomisationID)</span>
-                            </td>
-                            <td role="cell" class="nhsuk-table__cell choose-centre-td">
-                                <span class="nhsuk-table-responsive__heading">
-                                    <b>Total delegates: </b>
-                                </span>
-                                <span class="word-break">@customisation.DelegateCount</span>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        <tbody class="nhsuk-table__body">
+                            @foreach (var customisation in Model.CentreCourseCustomisations)
+                            {
+                                <tr role="row" class="nhsuk-table__row">
+                                    <td role="cell" class="nhsuk-table__cell choose-centre-td">
+                                        <span class="nhsuk-table-responsive__heading"><b>Customisation name (ID): </b></span>
+                                        <span class="word-break">@customisation.CustomisationName (@customisation.CustomisationID)</span>
+                                    </td>
+                                    <td role="cell" class="nhsuk-table__cell choose-centre-td">
+                                        <span class="nhsuk-table-responsive__heading">
+                                            <b>Total delegates: </b>
+                                        </span>
+                                        <span class="word-break">@customisation.DelegateCount</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </text>
+            }
+            else
+            {
+                <text>
+                    <p>There are no active custmomisations of this course at this centre.</p>
+                </text>
+            }
+            <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+               role="button"
+               asp-action="@(Model.CentreCourseCustomisations.First().CustomisationID > 0 ? "ConfirmRemoveCourse" : "RemoveCourse")"
+               asp-action="ConfirmRemoveCourse" asp-controller="Centres" asp-route-applicationId="@Model.ApplicationID" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
+                Remove course
+            </a>
         </div>
+
     </details>
 </div>

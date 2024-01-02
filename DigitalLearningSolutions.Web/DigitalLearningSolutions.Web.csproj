@@ -60,6 +60,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
         <PackageReference Include="FluentMigrator" Version="3.2.9" />
         <PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
         <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.9" />

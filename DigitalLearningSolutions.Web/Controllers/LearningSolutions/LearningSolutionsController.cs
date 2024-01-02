@@ -87,10 +87,10 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
                 var centreSummary = centresService.GetCentreSummaryForContactDisplay(centreId.Value);
                 return View(new ContactViewModel(contactText, centreSummary));
             }
-     
+
             var model = new ContactViewModel(contactText);
             return View(model);
-        }        
+        }
 
         public IActionResult Error()
         {
@@ -152,7 +152,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
         {
             string? bannerText = null;
             var centreId = User.GetCentreId();
-            if(centreId != null)
+            if (centreId != null)
             {
                 bannerText = centresDataService.GetBannerText((int)centreId);
             }
@@ -161,8 +161,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         public IActionResult AcceptableUsePolicy()
         {
-            var acceptableUsePolicyText = configDataService.GetConfigValue(ConfigDataService.AcceptableUsePolicyText);            
-            
+            var acceptableUsePolicyText = configDataService.GetConfigValue(ConfigDataService.AcceptableUsePolicyText);
+
             if (acceptableUsePolicyText == null)
             {
                 logger.LogError("‘Acceptable Use Policy text from Config table is null");
@@ -193,6 +193,13 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
             var model = new PrivacyNoticeViewModel(PrivacyPolicyText, lastUpdatedDate, nextReviewDate);
             return View(model);
+        }
+
+        [Route("/TooManyRequests")]
+        [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
+        public IActionResult TooManyRequests()
+        {
+            return View("Error/TooManyRequests");
         }
     }
 }
