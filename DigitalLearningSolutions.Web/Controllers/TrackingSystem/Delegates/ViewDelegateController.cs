@@ -90,6 +90,7 @@
             {
                 selfassessment.SupervisorCount = selfAssessmentService.GetSupervisorsCountFromCandidateAssessmentId(selfassessment.CandidateAssessmentId);
                 selfassessment.IsSameCentre = selfAssessmentService.CheckForSameCentre(centreId, selfassessment.CandidateAssessmentId);
+                selfassessment.DelegateUserId = selfAssessmentService.GetDelegateUserId(selfassessment.CandidateAssessmentId, selfassessment.Id);
             }
 
             var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses, selfAssessments);
