@@ -20,7 +20,8 @@
 
             // when
             Driver.Navigate().GoToUrl(BaseUrl + reportsEditFiltersUrl);
-            var result = new AxeBuilder(Driver).Analyze();
+            //Exclude conditional radios, see: https://github.com/alphagov/govuk-frontend/issues/979#issuecomment-872300557
+            var result = new AxeBuilder(Driver).Exclude("div.nhsuk-radios--conditional div.nhsuk-radios__item input.nhsuk-radios__input").Analyze();
 
             // then
             CheckAccessibilityResult(result);
@@ -28,22 +29,7 @@
 
         private static void CheckAccessibilityResult(AxeResult result)
         {
-            // Expect axe violations caused by having an aria-expanded attribute on two
-            // radio inputs and one checkbox input.
-            // The targets #course-filter-type-1, #course-filter-type-2 and #EndDate are
-            // nhs-tested components so ignore this violation.
-            result.Violations.Should().HaveCount(1);
-
-            var violation = result.Violations[0];
-
-            violation.Id.Should().Be("aria-allowed-attr");
-            violation.Nodes.Should().HaveCount(3);
-            violation.Nodes[0].Target.Should().HaveCount(1);
-            violation.Nodes[0].Target[0].Selector.Should().Be("#course-filter-type-1");
-            violation.Nodes[1].Target.Should().HaveCount(1);
-            violation.Nodes[1].Target[0].Selector.Should().Be("#course-filter-type-2");
-            violation.Nodes[2].Target.Should().HaveCount(1);
-            violation.Nodes[2].Target[0].Selector.Should().Be("#EndDate");
+            result.Violations.Should().BeEmpty();
         }
     }
 }
