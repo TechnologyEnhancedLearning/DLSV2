@@ -23,5 +23,6 @@
         public int? SupervisorCount { get; set; }
         public bool IsSameCentre { get; set; }
         public int? DelegateUserId { get; set; }
+        public string? DelegateName { get; set; }
     }
 }

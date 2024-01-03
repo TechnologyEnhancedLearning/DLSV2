@@ -170,10 +170,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
                 TempData
             ).GetAwaiter().GetResult(); ;
-
+            requestAttachmentmodel.RequestAttachment = data.RequestAttachment;
             if (requestAttachmentmodel.ImageFiles == null)
             {
-                requestAttachmentmodel.RequestAttachment = data.RequestAttachment;
+                //requestAttachmentmodel.RequestAttachment = data.RequestAttachment;
                 ModelState.AddModelError("ImageFiles", "Please select at least one image");
                 return View("RequestAttachment", requestAttachmentmodel);
             }
@@ -184,13 +184,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             (bool? fileExtension, bool? fileSize) = validateUploadedImages(requestAttachmentmodel);
             if (fileExtension == true)
             {
-                requestAttachmentmodel.RequestAttachment = data.RequestAttachment;
+                //requestAttachmentmodel.RequestAttachment = data.RequestAttachment;
                 ModelState.AddModelError("FileExtensionError", "File must be in valid image formats jpg, jpeg, png, bmp or mp4 video format");
                 return View("RequestAttachment", requestAttachmentmodel);
             }
             if (fileSize == true)
             {
-                requestAttachmentmodel.RequestAttachment = data.RequestAttachment;
+                //requestAttachmentmodel.RequestAttachment = data.RequestAttachment;
                 ModelState.AddModelError("FileSizeError", "Maximum allowed file size is 20MB");
                 return View("RequestAttachment", requestAttachmentmodel);
             }
@@ -202,7 +202,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 {
                     OriginalFileName = item.FileName,
                     FileName = fileName,
-                    FullFileName = uploadDir + fileName
+                    FullFileName = uploadDir + fileName,
+                    SizeMb = Convert.ToDouble(item.Length.ToSize(FileSizeCalc.SizeUnits.MB))
                 };
                 RequestAttachmentList.Add(RequestAttachment);
             }
@@ -370,6 +371,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         private (bool, bool) validateUploadedImages(RequestAttachmentViewModel requestAttachmentmodel)
         {
             var totalFileSize = 0.00;
+            if (requestAttachmentmodel.RequestAttachment != null)
+            {
+                foreach (var item in requestAttachmentmodel.RequestAttachment)
+                {
+                    totalFileSize = totalFileSize + item.SizeMb??0;
+                }
+            }
             foreach (var item in requestAttachmentmodel.ImageFiles)
             {
                 var extension = Path.GetExtension(item.FileName);
@@ -380,10 +388,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 }
                 var fileSize = Convert.ToDouble(item.Length.ToSize(FileSizeCalc.SizeUnits.MB));
                 totalFileSize = totalFileSize + fileSize;
-                if (fileSize > requestAttachmentmodel.SizeLimit || totalFileSize > requestAttachmentmodel.SizeLimit)
-                {
-                    requestAttachmentmodel.FileSizeFlag = true;
-                }
+
+            }
+            if (totalFileSize > requestAttachmentmodel.SizeLimit)
+            {
+                requestAttachmentmodel.FileSizeFlag = true;
             }
             return (requestAttachmentmodel.FileExtensionFlag ?? false, requestAttachmentmodel.FileSizeFlag ?? false);
         }
