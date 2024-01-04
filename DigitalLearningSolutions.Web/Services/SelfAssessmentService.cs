@@ -138,7 +138,8 @@
         RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
        void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
        public int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
-        public bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
+       public bool CheckForSameCentre(int centreId, int candidateAssessmentsId);        
+       public int? GetDelegateAccountId(int centreId, int delegateUserId);
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
     }
 
@@ -503,6 +504,10 @@
         public bool CheckForSameCentre(int centreId, int candidateAssessmentsId)
         {
             return selfAssessmentDataService.CheckForSameCentre(centreId, candidateAssessmentsId);
+        }
+        public int? GetDelegateAccountId(int centreId, int delegateUserId)
+        {
+            return selfAssessmentDataService.GetDelegateAccountId(centreId, delegateUserId);
         }
         public int CheckDelegateSelfAssessment(int candidateAssessmentsId)
         {
