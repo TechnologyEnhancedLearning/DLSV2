@@ -163,7 +163,6 @@
         void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
         int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
         bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
-        int? GetDelegateUserId(int CandidateAssessmentId, int selfAssessmentId);
         int? GetDelegateAccountId(int centreId, int delegateUserId);
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
     }
@@ -685,14 +684,6 @@
                 new { centreId, candidateAssessmentsId }
             );
             return ResultCount == 1 ? true : false;
-        }
-        public int? GetDelegateUserId(int CandidateAssessmentId, int selfAssessmentId)
-        {
-            return connection.QueryFirstOrDefault<int>(
-                  @"SELECT DelegateUserID FROM CandidateAssessments 
-                      WHERE (SelfAssessmentID = @selfAssessmentId) AND ( ID =@CandidateAssessmentId)",
-                  new { CandidateAssessmentId, selfAssessmentId}
-              );
         }
         public int? GetDelegateAccountId(int centreId, int delegateUserId)
         {
