@@ -27,9 +27,19 @@
             Complete by
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
-            @Model.CompleteByDate
+            @(Model.CompleteByDate != null ? Model.CompleteByDate : "-")
         </dd>
-        <dd class="nhsuk-summary-list__actions"></dd>
+        <dd class="nhsuk-summary-list__actions">
+            <a data-return-page-enabled="true"
+               asp-controller="ActivityDelegates"
+               asp-action="EditCompleteByDate"
+               asp-route-delegateUserId="@Model.DelegateUserId"
+               asp-route-selfAssessmentId="@Model.Id"
+               asp-route-accessedVia="ViewDelegate"
+               asp-route-returnPageQuery="null">
+                Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
+            </a>
+        </dd>
     </div>
 
     <div class="nhsuk-summary-list__row details-list-with-button__row">

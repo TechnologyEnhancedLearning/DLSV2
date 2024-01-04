@@ -14,6 +14,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.Supervisor;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
@@ -544,8 +545,17 @@
             ReturnPageQuery? returnPageQuery = formData.ReturnPageQuery;
             var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
             routeData.Add("selfAssessmentId", selfAssessmentId.ToString());
-
-            return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
+            
+            if (accessedVia.Id==1 && accessedVia.Name == "ViewDelegate")
+            {
+                var centreId = User.GetCentreIdKnownNotNull();
+                var delegateAccountId = selfAssessmentService.GetDelegateAccountId(centreId, delegateUserId);
+                return RedirectToAction("Index", "ViewDelegate", new { delegateId = delegateAccountId });
+            }
+            else
+            {
+                return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
+            }
         }        
     }
 }
