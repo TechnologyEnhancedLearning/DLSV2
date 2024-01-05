@@ -13,13 +13,13 @@
 
         public static readonly FilterOptionModel None = new FilterOptionModel(
             "None",
-            FilteringHelper.BuildFilterValueString(GroupName, nameof(Group.LinkedToField), "0"),
+            FilteringHelper.BuildFilterValueString(GroupName, "None", "0"),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionModel JobGroup = new FilterOptionModel(
             "Job group",
-            FilteringHelper.BuildFilterValueString(GroupName, nameof(Group.LinkedToField), "4"),
+            FilteringHelper.BuildFilterValueString(GroupName, "Job group", "4"),
             FilterStatus.Default
         );
     }

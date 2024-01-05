@@ -4,15 +4,10 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class DelegateGroupsViewModelFilterOptions
     {
@@ -29,7 +24,7 @@
             var promptOptions = registrationPrompts.Select(
                 prompt => new FilterOptionModel(
                     prompt.PromptText,
-                    nameof(Group.LinkedToField) + FilteringHelper.Separator + nameof(Group.LinkedToField) +
+                    nameof(Group.LinkedToField) + FilteringHelper.Separator + prompt.PromptText +
                     FilteringHelper.Separator + prompt.RegistrationField.LinkedToFieldId,
                     FilterStatus.Default
                 )
