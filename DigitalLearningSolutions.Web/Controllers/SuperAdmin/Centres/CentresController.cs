@@ -37,8 +37,9 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         private readonly IContractTypesDataService contractTypesDataService;
         private readonly ICourseDataService courseDataService;
         private readonly ICentresDownloadFileService centresDownloadFileService;
+        private readonly ICentreSelfAssessmentsService centreSelfAssessmentsService;
         public CentresController(ICentresService centresService, ICentreApplicationsService centreApplicationsService, ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IRegionDataService regionDataService, ICentresDataService centresDataService, IContractTypesDataService contractTypesDataService, ICourseDataService courseDataService, ICentresDownloadFileService centresDownloadFileService)
+            IRegionDataService regionDataService, ICentresDataService centresDataService, IContractTypesDataService contractTypesDataService, ICourseDataService courseDataService, ICentresDownloadFileService centresDownloadFileService, ICentreSelfAssessmentsService centreSelfAssessmentsService)
         {
             this.centresService = centresService;
             this.centreApplicationsService = centreApplicationsService;
@@ -48,6 +49,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             this.contractTypesDataService = contractTypesDataService;
             this.courseDataService = courseDataService;
             this.centresDownloadFileService = centresDownloadFileService;
+            this.centreSelfAssessmentsService = centreSelfAssessmentsService;
         }
 
         [Route("SuperAdmin/Centres/{page=0:int}")]
@@ -713,6 +715,15 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 centreApplicationsService.InsertCentreApplication(model.CentreId, id);
             }
             return RedirectToAction("Courses", new { centreId = model.CentreId });
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/SelfAssessments")]
+        public IActionResult SelfAssessments(int centreId = 0)
+        {
+            var selfAssessments = centreSelfAssessmentsService.GetCentreSelfAssessments(centreId);
+            var model = new CentreSelfAssessmentsViewModel() { CentreSelfAssessments = selfAssessments };
+            ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+            return View(model);
         }
     }
 }
