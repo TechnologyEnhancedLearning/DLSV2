@@ -3,8 +3,10 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Competency Self Assessment Certificate";
-    var result = "0";
+    var sumVerifiedCount = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.VerifiedCount);
+    var sumQuestions = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.Questions);
 
+    var result = "0";
 }
 
 <!DOCTYPE html>
@@ -135,6 +137,27 @@
 
         .pg-2 .foot-note {
             padding: 0 50px;
+        }
+
+        @@media screen and (max-width: 767px) {
+            .certificate {
+                width: 100%;
+                justify-content: space-around;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                -webkit-print-color-adjust: exact;
+            }
+
+                .certificate .pg-1 {
+                    width: 100%;
+                      }
+
+                 
+
+            .pg-2 {
+                width: 100%;
+                }
+
+             
         }
     </style>
 
@@ -271,50 +294,17 @@
                 </div>
                 <div class="activity">
                     <p><b>Assessment question responses</b></p> <p>
-                        @if (Model.ActivitySummaryCompetencySelfAssesment == null)
-                        {
-
-                            @result
-                            ;
-
-                        }
-                        else
-                        {
-                            @Model.ActivitySummaryCompetencySelfAssesment.CompetencyAssessmentQuestionCount
-                            ;
-
-                        }
+                        @sumQuestions
                     </p>
                 </div>
                 <div class="activity">
                     <p><b>Response meeting role requirements</b></p> <p>
-                        @if (Model.ActivitySummaryCompetencySelfAssesment == null)
-                        {
-
-                            @result
-                            ;
-                        }
-                        else
-                        {
-                            @Model.ActivitySummaryCompetencySelfAssesment.ResultCount
-                            ;
-                        }
-
+                         @Model.RoleCount
                     </p>
                 </div>
                 <div class="activity">
                     <p><b>Responses confirmed by assessor</b></p> <p>
-                        @if (Model.ActivitySummaryCompetencySelfAssesment == null)
-                        {
-
-                            @result
-                            ;
-                        }
-                        else
-                        {
-                            @Model.ActivitySummaryCompetencySelfAssesment.VerifiedCount
-                            ;
-                        }
+                        @sumVerifiedCount
                     </p>
                 </div>
                 <div class="activity">

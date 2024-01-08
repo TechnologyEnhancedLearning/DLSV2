@@ -403,5 +403,21 @@
                 new { CandidateAssessmentSupervisorVerificationsId }
             );
         }
+        public int? GetRoleCount(int CandidateId)
+        {
+            return connection.QueryFirstOrDefault<int?>(
+                @"SELECT COUNT(sas1.CompetencyID) AS RoleCount FROM    
+                              SelfAssessmentResults AS sar1 
+							  LEFT OUTER JOIN
+                              CompetencyAssessmentQuestionRoleRequirements AS caqrr1 ON sar1.Result = caqrr1.LevelValue AND sar1.CompetencyID = caqrr1.CompetencyID AND sar1.SelfAssessmentID = caqrr1.SelfAssessmentID AND 
+                              sar1.AssessmentQuestionID = caqrr1.AssessmentQuestionID RIGHT OUTER JOIN
+                              SelfAssessmentStructure AS sas1 INNER JOIN
+                              CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
+                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
+                              CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
+                 WHERE  (ca1.ID = @CandidateId ) AND (CAOC1.IncludedInSelfAssessment = 1)",
+                new { CandidateId }
+            );
+        }
     }
 }

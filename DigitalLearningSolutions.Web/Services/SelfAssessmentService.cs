@@ -146,6 +146,7 @@
         CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId);
         ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
+        int? GetRoleCount(int CandidateId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -529,6 +530,11 @@
         public ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
         {
            return selfAssessmentDataService.GetActivitySummaryCompetencySelfAssesment(CandidateAssessmentSupervisorVerificationsId);
+
+        }
+        public int? GetRoleCount(int CandidateId)
+        {
+            return selfAssessmentDataService.GetRoleCount(CandidateId);
 
         }
     }

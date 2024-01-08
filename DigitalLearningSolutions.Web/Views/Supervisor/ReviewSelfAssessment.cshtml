@@ -94,7 +94,9 @@
                 Export to Excel
             </a>
         }
-        <a class="nhsuk-button"
+        @if (Model.SupervisorSignOffs.Any())
+        {
+            <a class="nhsuk-button"
            asp-controller="LearningPortal"
            asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
            asp-action="CompetencySelfAssessmentCertificate"
@@ -102,6 +104,7 @@
            role="button">
             Certificate
         </a>
+        }
         @if (
           Model.DelegateSelfAssessment.SignOffRequested > 0 &&
           Model.DelegateSelfAssessment.ResultsVerificationRequests == 0 &&

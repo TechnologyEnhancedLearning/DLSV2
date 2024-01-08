@@ -52,7 +52,9 @@
                     Remove
                 </a>
             }
-            <a class="nhsuk-button nhsuk-button--secondary"
+            @if (Model.Id != 3)
+            {
+                <a class="nhsuk-button nhsuk-button--secondary"
                aria-describedby="@Model.CandidateAssessmentId-name-sa"
                asp-action="CompetencySelfAssessmentCertificate"
                asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
@@ -60,6 +62,7 @@
                role="button">
                 Certificate
             </a>
+            }
         </div>
     </div>
 </div>
