@@ -166,7 +166,7 @@
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
         IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID);
         CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
-        IEnumerable<Accessor> GetAccessor(int selfAssessmentId);
+        IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
         ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
         int? GetRoleCount(int CandidateId);
     }

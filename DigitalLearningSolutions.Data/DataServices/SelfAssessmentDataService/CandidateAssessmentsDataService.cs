@@ -342,21 +342,25 @@
                 new { candidateAssessmentID }
             );
         }
-        public IEnumerable<Accessor> GetAccessor(int selfAssessmentId)
+        public IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID)
         {
             return connection.Query<Accessor>(
-                @"SELECT 
-                    Accessor.FirstName + '  ' + Accessor.LastName AS AccessorName,
-                    Accessor.ProfessionalRegistrationNumber AS AccessorPRN
-             FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
-             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
-             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
-             Users AS Accessor ON ca.DelegateUserID = Accessor.ID INNER JOIN
-             SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID 
-             WHERE 
-			 (sa.id =@selfAssessmentId) and (Accessor.ProfessionalRegistrationNumber is not null) AND
-			 (casv.SignedOff = 1) AND (NOT (casv.Verified IS NULL))",
-                new { selfAssessmentId }
+                @"SELECT COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS AccessorName,
+               			u.ProfessionalRegistrationNumber AS AccessorPRN
+            FROM SupervisorDelegates AS sd
+            INNER JOIN CandidateAssessmentSupervisors AS cas
+                ON sd.ID = cas.SupervisorDelegateId
+            INNER JOIN CandidateAssessments AS ca
+                ON cas.CandidateAssessmentID = ca.ID
+            LEFT OUTER JOIN AdminUsers AS au
+                ON sd.SupervisorAdminID = au.AdminID
+            INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID AND au.CentreID = da.CentreID AND da.Active=1
+            LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
+                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+				INNER JOIN Users AS u ON U.ID =  sd.SupervisorAdminID
+             WHERE
+              (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @DelegateUserID) AND (ca.SelfAssessmentID = @selfAssessmentId)",
+                new { selfAssessmentId, delegateUserID }
             );
         }
         public ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)

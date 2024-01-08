@@ -163,20 +163,23 @@
 
 </head>
 <body>
+    @section NavMenuItems {
+        <partial name="Shared/_NavMenuItems" />
+    }
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
                 @if (Model.Route == 1)
                 {
-                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-controller="LearningPortal" asp-action="Current">My Current Activities</a></li>
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="LearningPortal" asp-action="Current">&lt; Back  </a></li>
                 }
                 @if (Model.Route == 2)
                 {
                     <li class="nhsuk-breadcrumb__item">
-                        <a class="nhsuk-breadcrumb__link" asp-controller="LearningPortal"
+                        <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="LearningPortal"
                        asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural"
                        asp-route-selfAssessmentId="@Model.CompetencySelfAssessmentCertificates.SelfAssessmentID">
-                            @(@Model.CompetencySelfAssessmentCertificates.SelfAssessment) - @(Model.CompetencySelfAssessmentCertificates.Vocabulary)
+                            &lt; Back
                         </a>
                     </li>
                 }
@@ -187,7 +190,7 @@
                        asp-action="ReviewDelegateSelfAssessment"
                        asp-route-supervisorDelegateId="@Model.CompetencySelfAssessmentCertificates.SupervisorDelegateId"
                        asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID">
-                            @Model.CompetencySelfAssessmentCertificates.SelfAssessment
+                            &lt; Back
                         </a>
                     </li>
 
