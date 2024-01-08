@@ -33,7 +33,7 @@
     {
         <div class="nhsuk-grid-column-full">
             
-                <table role="table" class="nhsuk-table-responsive">
+                <table class="nhsuk-table-responsive">
                     <caption class="nhsuk-table__caption">Self assessments published to @ViewBag.CentreName</caption>
                     <thead role="rowgroup" class="nhsuk-table__head">
                         <tr role="row">
@@ -55,16 +55,16 @@
                     @foreach (var selfAssessment in Model.CentreSelfAssessments)
                     {
                         <tr role="row" class="nhsuk-table__row">
-                            <td role="cell" class="nhsuk-table__cell">
+                            <td class="nhsuk-table__cell">
                                 <span class="nhsuk-table-responsive__heading">Self assessment </span>@selfAssessment.SelfAssessmentName
                             </td>
-                            <td role="cell" class="nhsuk-table__cell">
+                            <td class="nhsuk-table__cell">
                                 <span class="nhsuk-table-responsive__heading">Enrolled learners </span>@selfAssessment.DelegateCount
                             </td>
-                            <td role="cell" class="nhsuk-table__cell">
+                            <td class="nhsuk-table__cell">
                                 <span class="nhsuk-table-responsive__heading">Self enrolment enabled </span>@selfAssessment.SelfEnrol
                             </td>
-                            <td role="cell" class="nhsuk-table__cell">
+                            <td class="nhsuk-table__cell">
                                 <span class="nhsuk-table-responsive__heading">Action </span>
                                 <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
                                    role="button"
