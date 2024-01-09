@@ -33,6 +33,7 @@
         [InlineData("/SuperAdmin/Centres/374/Courses/Add", "Add courses to centre - NHS Digital (374)")]
         [InlineData("/SuperAdmin/Centres/374/Courses/Add/Other?searchTerm=de", "Add other courses to centre - NHS Digital (374)")]
         [InlineData("/SuperAdmin/Centres/374/Courses/818/ConfirmRemove", "Are you sure you want to remove Assessment attempts from NHS Digital?")]
+        [InlineData("/SuperAdmin/Centres/101/SelfAssessments", "Self assessments - Test Centre NHSD (101)")]
 
         [InlineData("/SuperAdmin/Reports", "Platform usage summary")]
         [InlineData("/SuperAdmin/Reports/CourseUsage", "Course usage")]
