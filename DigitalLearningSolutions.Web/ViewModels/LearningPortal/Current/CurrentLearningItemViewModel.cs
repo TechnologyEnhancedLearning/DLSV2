@@ -17,6 +17,8 @@
             EnrolmentMethodId = course.EnrolmentMethodId;
             ReturnPageQuery = returnPageQuery;
             CandidateAssessmentId = course.CandidateAssessmentId;
+            Verified = course.Verified;
+            SignedOff = course.SignedOff;
         }
         public int CandidateAssessmentId { get; set; }
         public DateTime? CompleteByDate { get; }
@@ -24,7 +26,8 @@
         public OldDateValidator.ValidationResult? CompleteByValidationResult { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; }
         private readonly IClockUtility clockUtility = new ClockUtility();
-
+        public DateTime? Verified { get; set; }
+        public bool SignedOff { get; set; }
         public string DateStyle()
         {
             var utcToday = clockUtility.UtcToday;

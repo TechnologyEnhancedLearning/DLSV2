@@ -31,20 +31,25 @@
                         1 AS IsSelfAssessment,
                         CA.SubmittedDate,
                         CR.CentreName AS CentreName,
-                        CA.EnrolmentMethodId
+                        CA.EnrolmentMethodId,
+						casv.SignedOff,
+						casv.Verified
                     FROM Centres AS CR INNER JOIN
                         CandidateAssessments AS CA INNER JOIN
                         SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID ON CR.CentreID = CA.CentreID INNER JOIN
                         CentreSelfAssessments AS csa ON csa.SelfAssessmentID = SA.ID AND csa.CentreID = @centreId LEFT OUTER JOIN
                         Competencies AS C RIGHT OUTER JOIN
-                        SelfAssessmentStructure AS SAS ON C.ID = SAS.CompetencyID ON CA.SelfAssessmentID = SAS.SelfAssessmentID
+                        SelfAssessmentStructure AS SAS ON C.ID = SAS.CompetencyID ON CA.SelfAssessmentID = SAS.SelfAssessmentID LEFT OUTER JOIN
+						CandidateAssessmentSupervisors AS cas ON  ca.ID =cas.CandidateAssessmentID  LEFT OUTER JOIN
+                        CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID 
                     WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL)
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
-                        CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId",
+                        CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId,
+                        casv.SignedOff,casv.Verified",
                 new { delegateUserId, centreId }
             );
         }
