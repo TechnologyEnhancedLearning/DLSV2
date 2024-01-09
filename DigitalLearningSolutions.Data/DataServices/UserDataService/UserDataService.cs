@@ -86,6 +86,7 @@
 
         void RemoveDelegateAccount(int delegateId);
 
+        int GetNumberOfApprovedDelegatesAtCentre(int centreId);
 
         void DeactivateDelegateUser(int delegateId);
 

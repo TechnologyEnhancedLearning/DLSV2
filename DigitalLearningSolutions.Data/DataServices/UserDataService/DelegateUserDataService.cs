@@ -343,6 +343,13 @@
             transaction.Complete();
         }
 
+        public int GetNumberOfApprovedDelegatesAtCentre(int centreId)
+        {
+            return (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND Approved = 1 AND CentreID = @centreId",
+                new { centreId }
+            );
+        }
 
         public void UpdateDelegateAccount(
             int delegateId,

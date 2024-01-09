@@ -128,6 +128,7 @@
             A.CallTo(() => userDataService.GetAdminUserById(AdminId))
                 .Returns(adminUser);
 
+            A.CallTo(() => userDataService.GetNumberOfApprovedDelegatesAtCentre(CentreId)).Returns(delegateCount);
             A.CallTo(
                 () =>
                     courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(
