@@ -1,4 +1,5 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
 using DigitalLearningSolutions.Data.Models;
 using DigitalLearningSolutions.Data.Models.Centres;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres;
@@ -28,6 +29,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         private readonly IContractTypesDataService contractTypesDataService = A.Fake<IContractTypesDataService>();
         private readonly ICourseDataService courseDataService = A.Fake<ICourseDataService>();
         private readonly ICentresDownloadFileService centresDownloadFileService = A.Fake<ICentresDownloadFileService>();
+        private readonly ICentreSelfAssessmentsService centreSelfAssessmentsService = A.Fake<ICentreSelfAssessmentsService>();
         private CentresController controller = null!;
 
         [SetUp]
@@ -41,7 +43,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             centresDataService,
             contractTypesDataService,
             courseDataService,
-            centresDownloadFileService
+            centresDownloadFileService,
+            centreSelfAssessmentsService
             )
             .WithDefaultContext()
             .WithMockUser(true);
@@ -476,7 +479,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         [Test]
         public void CourseAddCommit_ShouldInsertCentreApplicationsAndRedirectToCourses()
         {
-            // When
+            // Given
             
             var model = new CourseAddViewModel
             {
@@ -484,10 +487,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 ApplicationIds = new List<int> { 2,3,4 },
             };
 
-            // Act
+            // When
             var result = controller.CourseAddCommit(model) as RedirectToActionResult;
 
-            // Assert
+            // Then
             result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
                 .ActionName.Should().Be("Courses");
             result!.RouteValues!["centreId"].Should().Be(1);
@@ -495,6 +498,24 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             foreach (var id in model.ApplicationIds)
             {
                 A.CallTo(() => centreApplicationsService.InsertCentreApplication(1, id)).MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void Get_with_centreId_shows_SelfAssessments_page()
+        {
+            // Given
+            const int centreId = 1;           
+
+            // When
+            var result = controller.SelfAssessments(centreId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => centreSelfAssessmentsService.GetCentreSelfAssessments(centreId)).MustHaveHappenedOnceExactly();
+                result.Should().BeViewResult().ModelAs<CentreSelfAssessmentsViewModel>();
+                result.Should().BeViewResult();
             }
         }
     }
