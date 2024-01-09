@@ -106,8 +106,8 @@
 }
 else
 {
-    <h1>All core DLS ourses published to centre - @ViewBag.CentreName</h1>
-    <p>There are no core courses available to add to this centre.</p>
+    <h1>No courses available</h1>
+    <p>There are no core courses available to add to the centre @ViewBag.CentreName.</p>
 }
 
 <vc:cancel-link asp-controller="Centres" asp-action="Courses" asp-all-route-data="@cancelLinkData" />

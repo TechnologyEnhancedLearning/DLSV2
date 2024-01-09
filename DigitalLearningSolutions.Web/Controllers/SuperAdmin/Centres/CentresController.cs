@@ -666,7 +666,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                     return RedirectToAction(nameof(CourseAddCore), new { centreId = model.CentreId });
 
                 case "Other":
-                    return RedirectToAction(nameof(CourseAddOther), new { centreId = model.CentreId, searchTerm = model.SearchTerm.Replace(" ", "%") });
+                    return RedirectToAction(nameof(CourseAddOther), new { centreId = model.CentreId, searchTerm = (model.SearchTerm != null ? model.SearchTerm.Replace(" ", "%") : "") });
 
                 case "Pathways":
                     return RedirectToAction(nameof(CourseAddPathways), new { centreId = model.CentreId });
