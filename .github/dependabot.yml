@@ -1,0 +1,40 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "nuget" 
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    target-branch: "Automatic_version_update_dependabot"
+    ignore:
+      # Ignore updates to packages that start with 'Wildcards'
+      - dependency-name: "Microsoft.FeatureManagement.AspNetCore*"
+      # Ignore some updates to the package
+      - dependency-name: "Microsoft.VisualStudio.Web.CodeGeneration.Design"
+        versions: [">7.0.0"]
+      - dependency-name: "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
+        versions: [">7.0.0"]
+      - dependency-name: "Microsoft.AspNetCore.Mvc.Testing"
+        versions: [">7.0.0"]
+      - dependency-name: "Selenium.WebDriver.ChromeDriver"
+        versions: ">=113.0.5672.1278" # Recommended version
+      # For all packages, ignore all patch updates
+      #- dependency-name: "*"
+      #  update-types: ["version-update:semver-patch"]
+    
+  # Configuration for npm
+  - package-ecosystem: "npm" 
+    directory: "/DigitalLearningSolutions.Web/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    target-branch: "Automatic_version_update_dependabot"
+    #  - "dependencies"
+    open-pull-requests-limit: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
