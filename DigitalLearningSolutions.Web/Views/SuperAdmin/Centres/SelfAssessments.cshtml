@@ -1,0 +1,87 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@model CentreSelfAssessmentsViewModel
+@{
+    ViewData["Title"] = "Self assessments";
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__backlink"
+                   asp-controller="Centres" asp-action="Index">Back to Centres</a>
+            </p>
+        </div>
+    </nav>
+}
+<link rel="stylesheet" href="@Url.Content("~/css/superAdmin/centres.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/headingButtons.css")" asp-append-version="true">
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">@ViewData["Title"] - @ViewBag.CentreName</h1>
+    </div>
+    <div class="nhsuk-grid-column-one-third heading-button-group">
+        <a class="nhsuk-button heading-button" id="add-course" asp-action="SelfAssessmentAddChooseFlow" asp-controller="Centres" role="button" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
+            Add self assessment
+        </a>
+    </div>
+</div>
+<div class="nhsuk-grid-row">
+    @if (Model.CentreSelfAssessments.Any())
+    {
+        <div class="nhsuk-grid-column-full">
+            
+                <table class="nhsuk-table-responsive">
+                    <caption class="nhsuk-table__caption">Self assessments published to @ViewBag.CentreName</caption>
+                    <thead role="rowgroup" class="nhsuk-table__head">
+                        <tr role="row">
+                            <th role="columnheader" class="" scope="col">
+                                Self assessment
+                            </th>
+                            <th role="columnheader" class="" scope="col">
+                                Enrolled learners
+                            </th>
+                            <th role="columnheader" class="" scope="col">
+                                Self enrolment enabled
+                            </th>
+                            <th role="columnheader" class="" scope="col">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="nhsuk-table__body">
+                    @foreach (var selfAssessment in Model.CentreSelfAssessments)
+                    {
+                        <tr role="row" class="nhsuk-table__row">
+                            <td class="nhsuk-table__cell">
+                                <span class="nhsuk-table-responsive__heading">Self assessment </span>@selfAssessment.SelfAssessmentName
+                            </td>
+                            <td class="nhsuk-table__cell">
+                                <span class="nhsuk-table-responsive__heading">Enrolled learners </span>@selfAssessment.DelegateCount
+                            </td>
+                            <td class="nhsuk-table__cell">
+                                <span class="nhsuk-table-responsive__heading">Self enrolment enabled </span>@selfAssessment.SelfEnrol
+                            </td>
+                            <td class="nhsuk-table__cell">
+                                <span class="nhsuk-table-responsive__heading">Action </span>
+                                <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+                                   role="button"
+                                   asp-action="@(selfAssessment.DelegateCount > 0 ? "ConfirmRemoveSelfAssessment" : "RemoveSelfAssessment")"
+                                   asp-action="ConfirmRemoveCourse" asp-controller="Centres" asp-route-selfAssessmentId="@selfAssessment.SelfAssessmentId" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
+                                    Remove<span class="nhsuk-u-visually-hidden">self assessment @selfAssessment.SelfAssessmentName from centre</span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+           
+        </div>
+    }
+    else
+    {
+        <p>No Self Assessments have been published to this centre.</p>
+    }
+</div>

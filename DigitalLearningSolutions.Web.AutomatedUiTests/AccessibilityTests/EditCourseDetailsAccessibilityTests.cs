@@ -24,8 +24,7 @@
             // Exclude conditional radios, see: https://github.com/alphagov/govuk-frontend/issues/979#issuecomment-872300557
             var editResult = new AxeBuilder(Driver).Exclude("div.nhsuk-radios--conditional div.nhsuk-radios__item input.nhsuk-radios__input").Analyze();
 
-            // Expect an axe violation caused by having an aria-expanded attribute on an input
-            // The target inputs are nhs-tested components so ignore these violation
+            // then
             editResult.Violations.Should().BeEmpty();
         }
     }

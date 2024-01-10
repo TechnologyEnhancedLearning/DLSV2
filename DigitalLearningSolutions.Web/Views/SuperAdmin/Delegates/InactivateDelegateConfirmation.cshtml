@@ -29,7 +29,7 @@
             @Html.HiddenFor(x=>x.SearchString)
             @Html.HiddenFor(x=>x.ExistingFilterString)
             @Html.HiddenFor(x=>x.Page)
-            <h3>User: @Model.DisplayName</h3>
+            <h2>User: @Model.DisplayName</h2>
             <p id="IsChecked-hint">
                 <vc:single-checkbox asp-for="@nameof(Model.IsChecked)"
                                     label="I am sure that I wish to inactivate this delegate account." hint-text="This action will inactivate the delegate account. It will not inactivate any associated user accounts or admin accounts."></vc:single-checkbox>
