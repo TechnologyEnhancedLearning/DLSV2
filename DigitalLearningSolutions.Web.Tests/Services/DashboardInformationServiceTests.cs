@@ -9,6 +9,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
+    using System.Collections.Generic;
 
     public class DashboardInformationServiceTests
     {
@@ -126,7 +127,12 @@
             A.CallTo(() => centresDataService.GetCentreDetailsById(CentreId))
                 .Returns(CentreTestHelper.GetDefaultCentre(CentreId));
             A.CallTo(() => userDataService.GetAdminUserById(AdminId))
-                .Returns(adminUser);
+            .Returns(adminUser);
+
+            A.CallTo(() => userDataService.GetDelegateUserCards("", 0, 10, "SearchableName", "Ascending", CentreId,
+            "Any", "Any", "Any", "Any", "Any", "Any", 0, "Any", "Any", "Any", "Any", "Any", "Any"))
+                .Returns((new List<DelegateUserCard>(), delegateCount)
+                );
 
             A.CallTo(
                 () =>
