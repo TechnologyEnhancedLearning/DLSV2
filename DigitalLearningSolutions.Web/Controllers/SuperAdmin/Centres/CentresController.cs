@@ -270,7 +270,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 model.CentreTypeId,
                 model.RegionId,
                 model.CentreEmail,
-                model.IpPrefix,
+                model.IpPrefix?.Trim(),
                 model.ShowOnMap
             );
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
@@ -515,7 +515,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 model.CentreTypeId,
                 model.RegionId,
                 model.RegistrationEmail,
-                model.IpPrefix,
+                model.IpPrefix?.Trim(),
                 model.ShowOnMap,
                 model.AddITSPcourses
             );
