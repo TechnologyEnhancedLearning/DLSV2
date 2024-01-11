@@ -31,6 +31,7 @@
         DelegateSelfAssessment? GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId);
         DelegateSelfAssessment? GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(int candidateAssessmentId, int supervisorDelegateId);
         CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisorById(int candidateAssessmentSupervisorId);
+        CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId);
         SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
         IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
@@ -951,6 +952,18 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                @"SELECT *
                   FROM   CandidateAssessmentSupervisors
                   WHERE (ID = @candidateAssessmentSupervisorId)", new { candidateAssessmentSupervisorId }
+               ).FirstOrDefault();
+        }
+
+        public CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId)
+        {
+            return connection.Query<CandidateAssessmentSupervisor>(
+               @"SELECT *
+                  FROM   CandidateAssessmentSupervisors
+                  WHERE (CandidateAssessmentID = @candidateAssessmentID 
+                        AND SupervisorDelegateId = @supervisorDelegateId 
+                        AND SelfAssessmentSupervisorRoleId = @selfAssessmentSupervisorRoleId)",
+               new { candidateAssessmentID, supervisorDelegateId, selfAssessmentSupervisorRoleId }
                ).FirstOrDefault();
         }
 

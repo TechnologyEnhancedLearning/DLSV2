@@ -1,4 +1,6 @@
-﻿namespace DigitalLearningSolutions.Data.Models.Supervisor
+﻿using System;
+
+namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
     public class CandidateAssessmentSupervisor
     {
@@ -6,5 +8,6 @@
         public int CandidateAssessmentID { get; set; }
         public int SupervisorDelegateId { get; set; }
         public int SelfAssessmentSupervisorRoleID { get; set; }
+        public DateTime? Removed { get; set; }
     }
 }
