@@ -120,6 +120,7 @@
 
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetDelegateCourses(string searchString,int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,string isActive, string categoryName, string courseTopic, string hasAdminFields);
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(string searchString, int centreId, string categoryName, string isActive);
+        IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -551,6 +552,11 @@
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(string searchString, int centreId, string categoryName, string isActive)
         {
             return courseDataService.GetDelegateAssessmentStatisticsAtCentre(searchString, centreId, categoryName, isActive);
+        }
+
+        public IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId)
+        {
+            return courseDataService.GetAvailableCourses(delegateId, centreId, categoryId);
         }
     }
 }

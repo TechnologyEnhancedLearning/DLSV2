@@ -26,25 +26,22 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     [Route("TrackingSystem/Delegates/{delegateId:int}/Enrol/{action}")]
     public partial class EnrolController : Controller
     {
-        private readonly ICourseDataService courseDataService;
         private readonly IMultiPageFormService multiPageFormService;
         private readonly ISupervisorService supervisorService;
         private readonly IEnrolService enrolService;
-        private readonly IProgressDataService progressDataService;
+        private readonly ICourseService courseService;
 
         public EnrolController(
-            ICourseDataService courseDataService,
             IMultiPageFormService multiPageFormService,
             ISupervisorService supervisorService,
             IEnrolService enrolService,
-            IProgressDataService progressDataService
+            ICourseService courseService
         )
         {
-            this.courseDataService = courseDataService;
             this.multiPageFormService = multiPageFormService;
             this.supervisorService = supervisorService;
             this.enrolService = enrolService;
-            this.progressDataService = progressDataService;
+            this.courseService = courseService;
         }
 
         public IActionResult StartEnrolProcess(int delegateId, int delegateUserId, string delegateName)
@@ -80,7 +77,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                MultiPageFormDataFeature.EnrolDelegateInActivity,
                TempData
            ).GetAwaiter().GetResult();
-            var selfAssessments = courseDataService.GetAvailableCourses(delegateId, centreId, categoryId ?? default(int));
+            var selfAssessments = courseService.GetAvailableCourses(delegateId, centreId, categoryId ?? default(int));
 
             var model = new EnrolCurrentLearningViewModel(
                 delegateId,
@@ -100,7 +97,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                MultiPageFormDataFeature.EnrolDelegateInActivity,
                TempData
            ).GetAwaiter().GetResult();
-            var selfAssessments = courseDataService.GetAvailableCourses(delegateId, centreId, categoryId ?? default(int));
+            var selfAssessments = courseService.GetAvailableCourses(delegateId, centreId, categoryId ?? default(int));
 
             if (enrolCurrentLearningViewModel.SelectedActivity < 1)
             {
@@ -289,22 +286,16 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         public IActionResult EnrolDelegateSummary()
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var clockUtility = new ClockUtility();
-
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(MultiPageFormDataFeature.EnrolDelegateInActivity, TempData).GetAwaiter().GetResult();
             var delegateId = (int)sessionEnrol.DelegateID;
             if (!sessionEnrol.IsSelfAssessment)
             {
-                progressDataService.CreateNewDelegateProgress(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion,
-                  clockUtility.UtcNow, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
-
                 enrolService.EnrolDelegateOnCourse(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault(), "AdminEnrolDelegateOnCourse");
-
             }
             else
             {
                 var adminEmail = User.GetUserPrimaryEmailKnownNotNull();
-                var selfAssessmentId = courseDataService.EnrolOnActivitySelfAssessment(
+                var selfAssessmentId = enrolService.EnrolOnActivitySelfAssessment(
                     sessionEnrol.AssessmentID.GetValueOrDefault(),
                     delegateId,
                     sessionEnrol.SupervisorID.GetValueOrDefault(),
