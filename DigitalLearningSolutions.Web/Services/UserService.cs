@@ -623,8 +623,7 @@ namespace DigitalLearningSolutions.Web.Services
         private bool EmailIsHeldAsPrimaryEmailByUserAtCentre(string email, int centreId)
         {
             var primaryEmailOwner = userDataService.GetUserAccountByPrimaryEmail(email);
-            var primaryEmailOwnerIsAtCentre = primaryEmailOwner != null || userDataService
-                .GetDelegateAccountsByUserId(primaryEmailOwner.Id).Any(da => da.CentreId == centreId);
+            var primaryEmailOwnerIsAtCentre = primaryEmailOwner != null;
             return primaryEmailOwnerIsAtCentre;
         }
 
