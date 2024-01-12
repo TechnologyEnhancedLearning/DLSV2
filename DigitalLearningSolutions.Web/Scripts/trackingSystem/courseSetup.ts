@@ -5,7 +5,10 @@ copyLinkEls.forEach((button) => {
     var customisationId = button.id.substring(12);
     copyToClipboard(customisationId);
     removeExistingLinkCopiedText();
-    button.textContent = 'Copy course link - Link copied!';
+    if (button) {
+      button.textContent = 'Copy course link - Link copied!';
+    }
+
   });
 });
 function copyToClipboard(customisationId: string) {
@@ -25,7 +28,9 @@ function copyToClipboard(customisationId: string) {
 function removeExistingLinkCopiedText() {
   Array.prototype.forEach.call(copyLinkEls, function (el) {
     if (el.textContent === "Copy course link - Link copied!") {
-      el.textContent = "Copy course link";
+      if (el) {
+        el.textContent = "Copy course link";
+      }
     }
   });
 }
