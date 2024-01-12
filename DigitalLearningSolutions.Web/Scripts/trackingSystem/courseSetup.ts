@@ -1,37 +1,37 @@
-﻿const copyLinkEls = document.getElementsByName('copy-course-link');
+const copyLinkEls = document.getElementsByName('copy-course-link');
 
 copyLinkEls.forEach((button) => {
   button.addEventListener('click', () => {
-    var customisationId = button.id.substring(12);
+    const customisationId = button.id.substring(12);
     copyToClipboard(customisationId);
     removeExistingLinkCopiedText();
-    if (button) {
-      button.textContent = 'Copy course link - Link copied!';
+    const copyLinkButton = document.getElementById(button.id);
+    if (copyLinkButton) {
+      copyLinkButton.textContent = 'Copy course link - Link copied!';
     }
-
   });
 });
 function copyToClipboard(customisationId: string) {
-  var rootPath = (<HTMLInputElement>document.getElementById("appRootPath")).value;
-  var courseUrl = rootPath + "/LearningMenu/" + customisationId;
-  const el = document.createElement("textarea");
+  const rootPath = (<HTMLInputElement>document.getElementById('appRootPath')).value;
+  const courseUrl = `${rootPath}/LearningMenu/${customisationId}`;
+  const el = document.createElement('textarea');
   el.value = courseUrl;
-  el.setAttribute("readonly", "");
-  el.style.position = "absolute";
-  el.style.left = "-9999px";
+  el.setAttribute('readonly', '');
+  el.style.position = 'absolute';
+  el.style.left = '-9999px';
   document.body.appendChild(el);
   el.select();
-  document.execCommand("copy");
+  document.execCommand('copy');
   document.body.removeChild(el);
 }
 
 function removeExistingLinkCopiedText() {
-  Array.prototype.forEach.call(copyLinkEls, function (el) {
-    if (el.textContent === "Copy course link - Link copied!") {
-      if (el) {
-        el.textContent = "Copy course link";
+  Array.prototype.forEach.call(copyLinkEls, (el) => {
+    if (el.textContent === 'Copy course link - Link copied!') {
+      const copyLinkButton = document.getElementById(el.id);
+      if (copyLinkButton) {
+        copyLinkButton.textContent = 'Copy course link';
       }
     }
   });
 }
-
