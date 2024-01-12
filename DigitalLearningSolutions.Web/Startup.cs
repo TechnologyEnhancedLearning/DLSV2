@@ -44,6 +44,9 @@ namespace DigitalLearningSolutions.Web
     using GDS.MultiPageFormData;
     using LearningHub.Nhs.Caching;
     using AspNetCoreRateLimit;
+    using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
+    using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
+    using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
 
     public class Startup
     {
@@ -286,6 +289,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPdfService, PdfService>();
             services.AddScoped<IFreshdeskService, FreshdeskService>();
             services.AddScoped<IPlatformUsageSummaryDownloadFileService, PlatformUsageSummaryDownloadFileService>();
+            services.AddScoped<ICentreApplicationsService, CentreApplicationsService>();
+            services.AddScoped<ICentreSelfAssessmentsService, CentreSelfAssessmentsService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -341,6 +346,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentresDownloadFileService, CentresDownloadFileService>();
             services.AddScoped<IDelegateActivityDownloadFileService, DelegateActivityDownloadFileService>();
             services.AddScoped<IRequestSupportTicketDataService, RequestSupportTicketDataService>();
+            services.AddScoped<ICentreApplicationsDataService, CentreApplicationsDataService>();
+            services.AddScoped<ICentreSelfAssessmentsDataService, CentreSelfAssessmentsDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)

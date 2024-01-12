@@ -58,7 +58,7 @@
                         {
                             <a asp-action="RemoveDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Remove</a>
                         }
-                        else
+                        @if (delegateSelfAssessment.CompletedDate == null && delegateSelfAssessment.LaunchCount != 0 && delegateSelfAssessment.SupervisorRoleTitle == "Educator/Manager")
                         {
                             <a asp-action="RemoveDelegateSelfAssessmentsupervisor" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Stop supervising</a>
 

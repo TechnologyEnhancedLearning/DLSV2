@@ -2,7 +2,6 @@
 using DigitalLearningSolutions.Data.Helpers;
 using DigitalLearningSolutions.Data.Models.CustomPrompts;
 using DigitalLearningSolutions.Data.Models.DelegateGroups;
-using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Helpers;
@@ -92,6 +91,16 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 );
             }
 
+            var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
+            var availableFilters = DelegateGroupsViewModelFilterOptions
+                .GetDelegateGroupFilterModels(addedByAdmins, registrationPrompts).ToList();
+
+            if (TempData["DelegateGroupCentreId"] != null && TempData["DelegateGroupCentreId"].ToString() != User.GetCentreId().ToString()
+                    && existingFilterString != null)
+            {
+                existingFilterString = FilterHelper.RemoveNonExistingGroupFilters(availableFilters, existingFilterString);
+            }
+
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             string filterAddedBy = "";
             string filterLinkedField = "";
@@ -161,10 +170,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     filterLinkedField);
             }
 
-            var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
-            var availableFilters = DelegateGroupsViewModelFilterOptions
-                .GetDelegateGroupFilterModels(addedByAdmins, registrationPrompts).ToList();
-
             var result = paginateService.Paginate(
                 groups,
                 resultCount,
@@ -186,6 +191,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
             Response.UpdateFilterCookie(DelegateGroupsFilterCookieName, result.FilterString);
+            TempData["DelegateGroupCentreId"] = centreId;
 
             return View(model);
         }
@@ -215,8 +221,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             {
                 return View(model);
             }
-
-            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()))
+            var centreId = User.GetCentreIdKnownNotNull();
+            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim(), centreId))
             {
                 groupsService.AddDelegateGroup(
                 User.GetCentreIdKnownNotNull(),
@@ -296,7 +302,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return NotFound();
             }
 
-            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim()))
+            if ((!groupsService.IsDelegateGroupExist(model.GroupName.Trim(), centreId)) || (group.GroupLabel.Trim() == model.GroupName.Trim()))
             {
                 groupsService.UpdateGroupName(
                 groupId,

@@ -34,7 +34,7 @@
             <h1 class="nhsuk-heading-xl">@Model.RequestType</h1>
             <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetRequestSummary" asp-all-route-data="@cancelLinkData">
                 <vc:text-input asp-for="RequestSubject"
-                               label="Summary of your problem or request"
+                               label="Enter a summary of your problem or request"
                                populate-with-current-value="true"
                                type="text"
                                spell-check="false"

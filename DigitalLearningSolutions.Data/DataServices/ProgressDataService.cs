@@ -436,6 +436,8 @@
                         INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
                         INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID ON asp1.TutorialID = t.TutorialID
                         LEFT OUTER JOIN AssessAttempts AS aa ON asp1.ProgressID = aa.ProgressID AND s.SectionNumber = aa.SectionNumber
+                            AND (aa.AssessAttemptID = (SELECT TOP(1) AssessAttemptID FROM AssessAttempts AS aa1
+                                WHERE p.ProgressID = aa1.ProgressID AND S.SectionNumber = aa1.SectionNumber ORDER BY aa1.Status DESC, aa1.Score DESC))
                     WHERE
                         (ct.CustomisationID = p.CustomisationID) AND (p.ProgressID = @progressId) AND (s.ArchivedDate IS NULL)
                         AND (ct.Status = 1 OR ct.DiagStatus = 1 OR cu.IsAssessed = 1)
@@ -477,9 +479,7 @@
                         INNER JOIN TutStatus AS ts
                         INNER JOIN aspProgress AS ap ON ts.TutStatusID = ap.TutStat ON P.ProgressID = ap.ProgressID AND t.TutorialID = ap.TutorialID
                     WHERE (t.SectionID = @sectionID)
-                        AND (p.ProgressID = @ProgressID)
-                        AND (ct.Status = 1)
-                        AND (c.Active = 1)
+                        AND (p.ProgressID = @ProgressID)        
                         AND (t.ArchivedDate IS NULL)
                         AND a.DefaultContentTypeID <> 4
                     ORDER BY t.TutorialID",

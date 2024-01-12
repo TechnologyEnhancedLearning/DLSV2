@@ -80,6 +80,7 @@
 <body>
 
     <div id="pagewrapper">
+      <header>
         <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
         <partial name="_CookieConsentPartial" />
         <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
@@ -93,8 +94,7 @@
                 </div>
             </div>
         }
-
-        <header class="nhsuk-header nhsuk-header--organisation nhsuk-header--white">
+        <div class="nhsuk-header nhsuk-header--organisation nhsuk-header--white">
             <div class="nhsuk-width-container nhsuk-header__container">
                 <div class="nhsuk-header__logo">
                     <a class="nhsuk-header__link nhsuk-header__link--service"
@@ -172,10 +172,10 @@
             <feature name="@(FeatureFlags.UserFeedbackBar)">
                 <partial name="_UserFeedbackBarPartial" />
             </feature>
-        </header>
-
+        </div>
+        
         @RenderSection("NavBreadcrumbs", false)
-
+        </header>
         <div class="nhsuk-width-container" id="maincontentwrapper">
             <main class="nhsuk-main-wrapper" id="maincontent" tabindex="-1">
                 @RenderBody()

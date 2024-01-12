@@ -91,7 +91,7 @@
             string? option,
             int? jobGroupId
         );
-        bool IsDelegateGroupExist(string groupLabel);
+        bool IsDelegateGroupExist(string groupLabel, int centreId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -165,17 +165,14 @@
                         GroupID,
                         GroupLabel,
                         GroupDescription,
-                        (SELECT  COUNT(*) FROM ( SELECT
-							da.CentreID,
-							COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
-							u.JobGroupId
-								FROM DelegateAccounts AS da WITH (NOLOCK)
-						INNER JOIN Centres AS c WITH (NOLOCK) ON c.CentreID = da.CentreID
-						INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
-						LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
-						INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID  where c.CentreID = @centreId
-						AND u.JobGroupID = (select JobGroupID from JobGroups where JobGroupName = GroupLabel))  D  Where 
-						EmailAddress LIKE '%_@_%.__%') AS DelegateCount,
+                        (SELECT COUNT(*) 
+                            FROM GroupDelegates AS gd WITH (NOLOCK)
+                            JOIN DelegateAccounts AS da WITH (NOLOCK) ON da.ID = gd.DelegateID
+                            JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+                            LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
+                            WHERE gd.GroupID = g.GroupID
+                                AND (u.PrimaryEmail like '%_@_%.__%' OR ucd.Email is NOT NULL)
+                                AND da.Approved = 1 AND da.Active = 1) AS DelegateCount,
                         ({CourseCountSql}) AS CoursesCount,
                         g.CreatedByAdminUserID AS AddedByAdminId,
                         au.Forename AS AddedByFirstName,
@@ -320,7 +317,9 @@
                     JOIN DelegateAccounts AS da ON da.ID = gd.DelegateID
                     JOIN Users AS u ON u.ID = da.UserID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
-                    WHERE gd.GroupID = @groupId",
+                    WHERE gd.GroupID = @groupId
+                        AND (u.PrimaryEmail like '%_@_%.__%' OR ucd.Email is NOT NULL)
+                        AND da.Approved = 1 AND da.Active = 1",
                 new { groupId }
             );
         }
@@ -565,13 +564,13 @@
             );
         }
 
-        public bool IsDelegateGroupExist(string groupLabel)
+        public bool IsDelegateGroupExist(string groupLabel, int centreId)
         {
             return connection.QuerySingle<bool>(
-                @"SELECT CASE WHEN EXISTS (select * from Groups where GroupLabel like @groupLabel and RemovedDate is null)
+                @"SELECT CASE WHEN EXISTS (select * from Groups where GroupLabel = @groupLabel and RemovedDate is null and CentreID = @centreId)
                 THEN CAST(1 AS BIT)
                 ELSE CAST(0 AS BIT) END",
-                new { groupLabel }
+                new { groupLabel, centreId }
             );
         }
     }

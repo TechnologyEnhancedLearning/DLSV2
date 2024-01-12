@@ -225,8 +225,17 @@
                         if (filter.Contains("CategoryName"))
                             categoryName = filterValue;
 
+                        if (filter.Contains("CourseTopic"))
+                            courseTopic = filterValue;
+
                         if (filter.Contains("Active"))
                             isActive = filterValue;
+
+                        if (filter.Contains("NotActive"))
+                            isActive = "false";
+
+                        if (filter.Contains("HasAdminFields"))
+                            hasAdminFields = filterValue;
 
                         if (filter.Contains("Course|"))
                             isCourse = filterValue;
@@ -239,6 +248,9 @@
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
+                if (existingFilterString.Contains("NotActive"))
+                    existingFilterString = existingFilterString.Replace("NotActive|true", "Active|false");
+
                 var filters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
 
                 foreach (var filter in filters)

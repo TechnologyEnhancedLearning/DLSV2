@@ -20,15 +20,15 @@
                     </div>
                     <div class="nhsuk-grid-column-one-quarter heading-button-group">
                         <a class="nhsuk-button nhsuk-button--secondary heading-button"
-                       id="export"
-                       asp-controller="CourseDelegates"
-                       asp-action="DownloadCurrent"
-                       asp-route-customisationId="@Model.CustomisationId"
-                       asp-route-searchString="@Model.CourseDetails.SearchString"
-                       asp-route-sortBy="@Model.CourseDetails?.SortBy"
-                       asp-route-sortDirection="@Model.CourseDetails?.SortDirection"
-                       asp-route-existingFilterString="@Model.CourseDetails?.ExistingFilterString"
-                       role="button">
+                           id="export"
+                           asp-controller="ActivityDelegates"
+                           asp-action="DownloadCurrent"
+                           asp-route-customisationId="@Model.CustomisationId"
+                           asp-route-searchString="@Model.CourseDetails.SearchString"
+                           asp-route-sortBy="@Model.CourseDetails?.SortBy"
+                           asp-route-sortDirection="@Model.CourseDetails?.SortDirection"
+                           asp-route-existingFilterString="@Model.CourseDetails?.ExistingFilterString"
+                           role="button">
                             Export
                         </a>
                     </div>
@@ -100,15 +100,15 @@ else
                     </div>
                     <div class="nhsuk-grid-column-one-quarter heading-button-group">
                         <a class="nhsuk-button nhsuk-button--secondary heading-button"
-                       id="export"
-                       asp-controller="ActivityDelegates"
-                       asp-action="DownloadActivityDelegates"
-                       asp-route-selfAssessmentId="@Model.SelfAssessmentId"
-                       asp-route-searchString="@Model.DelegatesDetails.SearchString"
-                       asp-route-sortBy="@Model.DelegatesDetails?.SortBy"
-                       asp-route-sortDirection="@Model.DelegatesDetails?.SortDirection"
-                       asp-route-existingFilterString="@Model.DelegatesDetails?.ExistingFilterString"
-                       role="button">
+                           id="export"
+                           asp-controller="ActivityDelegates"
+                           asp-action="DownloadActivityDelegates"
+                           asp-route-selfAssessmentId="@Model.SelfAssessmentId"
+                           asp-route-searchString="@Model.DelegatesDetails.SearchString"
+                           asp-route-sortBy="@Model.DelegatesDetails?.SortBy"
+                           asp-route-sortDirection="@Model.DelegatesDetails?.SortDirection"
+                           asp-route-existingFilterString="@Model.DelegatesDetails?.ExistingFilterString"
+                           role="button">
                             Export
                         </a>
                     </div>

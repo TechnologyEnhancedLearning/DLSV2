@@ -31,6 +31,7 @@
         DelegateSelfAssessment? GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId);
         DelegateSelfAssessment? GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(int candidateAssessmentId, int supervisorDelegateId);
         CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisorById(int candidateAssessmentSupervisorId);
+        CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId);
         SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
         IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
@@ -53,7 +54,7 @@
         int IsSupervisorDelegateExistAndReturnId(int? supervisorAdminId, string delegateEmail, int centreId);
         SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId);
         void RemoveCandidateAssessmentSupervisorVerification(int id);
-       bool RemoveDelegateSelfAssessmentsupervisor(int candidateAssessmentId, int supervisorDelegateId);
+        bool RemoveDelegateSelfAssessmentsupervisor(int candidateAssessmentId, int supervisorDelegateId);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -410,14 +411,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             connection.Execute(
                 @"DELETE FROM sarsv FROM SelfAssessmentResultSupervisorVerifications as sarsv
                     LEFT JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = sarsv.CandidateAssessmentSupervisorID
-                    WHERE cas.SupervisorDelegateId IN (SELECT sd.ID
-					FROM SupervisorDelegates sd
-					JOIN (
-					  SELECT DelegateEmail
-					  FROM SupervisorDelegates
-					  WHERE ID = @supervisorDelegateId
-					) sds
-					ON sd.SupervisorEmail = sds.DelegateEmail) AND cas.Removed IS NULL AND sarsv.Verified IS NULL", new { supervisorDelegateId }
+                    WHERE cas.SupervisorDelegateId = @supervisorDelegateId AND cas.Removed IS NULL AND sarsv.Verified IS NULL", new { supervisorDelegateId }
             );
 
             var numberOfAffectedRows = connection.Execute(
@@ -866,7 +860,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    $"Not removing Candidate Assessment Supervisors as db update failed. candidateAssessmentId: {candidateAssessmentId} " +$"supervisorDelegateId: {supervisorDelegateId}"
+                    $"Not removing Candidate Assessment Supervisors as db update failed. candidateAssessmentId: {candidateAssessmentId} " + $"supervisorDelegateId: {supervisorDelegateId}"
                 );
                 return false;
             }
@@ -877,7 +871,11 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             connection.Execute(
                 @"DELETE FROM sarsv FROM SelfAssessmentResultSupervisorVerifications as sarsv
                     LEFT JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = sarsv.CandidateAssessmentSupervisorID
-                    WHERE cas.SupervisorDelegateId = @supervisorDelegateId AND cas.Removed IS NULL AND sarsv.Verified IS NULL", new { supervisorDelegateId }
+                    INNER JOIN SelfAssessmentResults AS srs ON sarsv.SelfAssessmentResultId = srs.ID
+                    INNER JOIN SelfAssessments AS sa ON srs.SelfAssessmentID = sa.ID
+                    WHERE cas.SupervisorDelegateId = @supervisorDelegateId
+                          AND cas.Removed IS NULL AND sarsv.Verified IS NULL
+                          AND sa.ID = @selfAssessmentId", new { supervisorDelegateId, selfAssessmentId }
                 );
 
             var deletedCandidateAssessmentSupervisors = connection.Execute(
@@ -954,6 +952,18 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                @"SELECT *
                   FROM   CandidateAssessmentSupervisors
                   WHERE (ID = @candidateAssessmentSupervisorId)", new { candidateAssessmentSupervisorId }
+               ).FirstOrDefault();
+        }
+
+        public CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId)
+        {
+            return connection.Query<CandidateAssessmentSupervisor>(
+               @"SELECT *
+                  FROM   CandidateAssessmentSupervisors
+                  WHERE (CandidateAssessmentID = @candidateAssessmentID 
+                        AND SupervisorDelegateId = @supervisorDelegateId 
+                        AND SelfAssessmentSupervisorRoleId = @selfAssessmentSupervisorRoleId)",
+               new { candidateAssessmentID, supervisorDelegateId, selfAssessmentSupervisorRoleId }
                ).FirstOrDefault();
         }
 

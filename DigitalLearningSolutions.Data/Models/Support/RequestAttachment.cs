@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Data.Models.Support
     {
         public string? Id { get; set; }
         public string? FileName { get; set; }
+        public double? SizeMb { get; set; }
         public string? OriginalFileName { get; set; }
         public string? FullFileName { get; set; }
         public byte[] Content { get; set; }

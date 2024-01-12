@@ -154,15 +154,16 @@
         IEnumerable<SelfAssessmentDelegate> GetDelegatesOnSelfAssessmentForExport(int? selfAssessmentId, int centreId);
 
         IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
-           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun);
+           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff);
         int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
-          int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed);
+          int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
         string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId);
 
         RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
         void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
         int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
         bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
+        int? GetDelegateAccountId(int centreId, int delegateUserId);
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
         IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID);
         CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
@@ -347,7 +348,7 @@
                 ca.EnrolmentMethodId,
                 ca.LastAccessed,
                 ca.LaunchCount,
-                ca.CompleteByDate,
+                ca.CompleteByDate AS CompleteBy,
                 ca.SubmittedDate,
                 ca.RemovedDate,
                 ca.CompletedDate,
@@ -419,11 +420,12 @@
             return delegates;
         }
         public IEnumerable<SelfAssessmentDelegate> GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
-                    int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun)
+                    int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff)
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
             var selectColumnQuery = $@"SELECT
                 da.CandidateNumber,
+                ca.Id AS CandidateAssessmentsId,
                 u.ID AS DelegateUserId,
                 u.ProfessionalRegistrationNumber,
                 ca.SelfAssessmentID As SelfAssessmentId,
@@ -431,7 +433,7 @@
                 ca.EnrolmentMethodId,
                 ca.LastAccessed,
                 ca.LaunchCount,
-                ca.CompleteByDate,
+                ca.CompleteByDate AS CompleteBy,
                 ca.SubmittedDate,
                 ca.RemovedDate,
                 ca.CompletedDate,
@@ -464,10 +466,12 @@
                 AND ( u.FirstName + ' ' + u.LastName + ' ' + COALESCE(ucd.Email, u.PrimaryEmail) + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @searchString + N'%')
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
+                AND ((@submitted IS NULL) OR (@submitted = 1 AND (ca.SubmittedDate IS NOT NULL)) OR (@submitted = 0 AND (ca.SubmittedDate IS NULL)))
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%' ";
 
             var groupBy = $@" GROUP BY 
 				da.CandidateNumber,
+                ca.Id,
                 u.ID,
                 u.ProfessionalRegistrationNumber,
                 ca.SelfAssessmentID,
@@ -494,6 +498,11 @@
                 da.Answer5,
                 da.Answer6";
 
+            if (signedOff != null)
+            {
+                groupBy += (bool)signedOff ? " HAVING MAX(casv.Verified) IS NOT NULL " : " HAVING MAX(casv.Verified) IS NULL ";
+            }
+
             string orderBy;
             string sortOrder = sortDirection == "Ascending" ? "ASC" : "DESC";
 
@@ -505,6 +514,10 @@
                 orderBy = " ORDER BY ca.CompletedDate " + sortOrder + ", LTRIM(u.LastName)";
             else if (sortBy == "CandidateNumber")
                 orderBy = " ORDER BY da.CandidateNumber " + sortOrder + ", LTRIM(u.LastName)";
+            else if (sortBy == "SubmittedDate")
+                orderBy = " ORDER BY ca.SubmittedDate " + sortOrder;
+            else if (sortBy == "SignedOff")
+                orderBy = " ORDER BY SignedOff " + sortOrder;
             else
                 orderBy = " ORDER BY LTRIM(u.LastName) " + sortOrder + ", LTRIM(u.FirstName) ";
 
@@ -524,7 +537,9 @@
                     centreId,
                     isDelegateActive,
                     removed,
-                    currentRun
+                    currentRun,
+                    submitted,
+                    signedOff
                 },
                 commandTimeout: 3000
             );
@@ -533,7 +548,7 @@
             return delegateUserCard;
         }
         public int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed)
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
 
@@ -555,6 +570,7 @@
                 AND ( u.FirstName + ' ' + u.LastName + ' ' + COALESCE(ucd.Email, u.PrimaryEmail) + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @searchString + N'%')
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
+                AND ((@submitted IS NULL) OR (@submitted = 1 AND (ca.SubmittedDate IS NOT NULL)) OR (@submitted = 0 AND (ca.SubmittedDate IS NULL)))
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%' ";
 
             var groupBy = $@" GROUP BY 
@@ -579,6 +595,10 @@
                 COALESCE(ucd.Email, u.PrimaryEmail),
                 da.Active";
 
+            if (signedOff != null)
+            {
+                groupBy += (bool)signedOff ? " HAVING MAX(casv.Verified) IS NOT NULL " : " HAVING MAX(casv.Verified) IS NULL ";
+            }
 
             var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches " + fromTableQuery + whereQuery;
 
@@ -592,7 +612,9 @@
                     selfAssessmentId,
                     centreId,
                     isDelegateActive,
-                    removed
+                    removed,
+                    submitted,
+                    signedOff
                 },
                 commandTimeout: 3000
             );
@@ -668,11 +690,19 @@
             );
             return ResultCount == 1 ? true : false;
         }
+        public int? GetDelegateAccountId(int centreId, int delegateUserId)
+        {
+            return connection.QueryFirstOrDefault<int>(
+                  @"SELECT ID FROM DelegateAccounts 
+                      WHERE (CentreID = @centreId) AND ( UserId =@delegateUserId)",
+                  new { centreId, delegateUserId }
+              );
+        }
         public int CheckDelegateSelfAssessment(int candidateAssessmentsId)
         {
             return connection.QueryFirstOrDefault<int>(
                   @"SELECT COUNT(ID) Num FROM CandidateAssessments 
-                      WHERE (ID = @candidateAssessmentsId) AND ( RemovalMethodID =2)",
+                      WHERE (ID = @candidateAssessmentsId) AND ( RemovalMethodID =2)  AND (RemovedDate IS NOT NULL)",
                   new { candidateAssessmentsId }
               );
         }

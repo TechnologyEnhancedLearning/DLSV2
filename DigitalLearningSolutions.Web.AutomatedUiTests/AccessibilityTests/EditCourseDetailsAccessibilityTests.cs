@@ -21,21 +21,11 @@
             // when
             Driver.Navigate().GoToUrl(BaseUrl + editCourseDetailsUrl);
             ValidatePageHeading("Edit course details");
-            var editResult = new AxeBuilder(Driver).Analyze();
+            // Exclude conditional radios, see: https://github.com/alphagov/govuk-frontend/issues/979#issuecomment-872300557
+            var editResult = new AxeBuilder(Driver).Exclude("div.nhsuk-radios--conditional div.nhsuk-radios__item input.nhsuk-radios__input").Analyze();
 
-            // Expect an axe violation caused by having an aria-expanded attribute on an input
-            // The target inputs are nhs-tested components so ignore these violation
-            editResult.Violations.Should().HaveCount(1);
-            var violation = editResult.Violations[0];
-
-            violation.Id.Should().Be("aria-allowed-attr");
-            violation.Nodes.Should().HaveCount(3);
-            violation.Nodes[0].Target.Should().HaveCount(1);
-            violation.Nodes[0].Target[0].Selector.Should().Be("#PasswordProtected");
-            violation.Nodes[1].Target.Should().HaveCount(1);
-            violation.Nodes[1].Target[0].Selector.Should().Be("#ReceiveNotificationEmails");
-            violation.Nodes[2].Target.Should().HaveCount(1);
-            violation.Nodes[2].Target[0].Selector.Should().Be("#OtherCompletionCriteria");
+            // then
+            editResult.Violations.Should().BeEmpty();
         }
     }
 }

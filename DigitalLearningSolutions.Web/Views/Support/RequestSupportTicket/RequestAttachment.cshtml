@@ -34,7 +34,7 @@
                         </legend>
                         <div class="nhsuk-form-group">
                             <label class="nhsuk-label" for="ImageFiles">
-                                If you have any screenshots that help illustrate your request,attach them here.
+                                If you have any screenshots that help illustrate your request, attach them here. The maximum total file size for uploaded files is 20 MB.
                             </label>
                             @if (!ViewData.ModelState.IsValid)
                             {
@@ -60,7 +60,7 @@
                             <div class="nhsuk-summary-list__row">
 
                                 <dd class="nhsuk-summary-list__value">
-                                    @a.OriginalFileName
+                                    @a.OriginalFileName (@a.SizeMb.ToString() MB)
                                 </dd>
                                 <dd class="nhsuk-summary-list__actions">
                                     <a asp-action="DeleteImage" asp-all-route-data="@cancelLinkData" asp-route-imageName="@a.FileName" asp-route-imageId="@a.Id">
