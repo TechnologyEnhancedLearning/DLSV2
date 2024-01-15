@@ -25,6 +25,7 @@
         }
 
             .certificate .pg-1 {
+                background-color: white;
                 width: 60rem;
                 display: block;
                 margin: 5rem auto;
@@ -100,6 +101,7 @@
         }
 
         .pg-2 {
+            background-color: white;
             width: 60rem;
             margin: 5rem auto;
             border: 1px solid black;
@@ -315,8 +317,7 @@
                         @foreach (var accessor in Model.Accessors)
                         {
                             <p>
-                                @accessor.AccessorName, @accessor.AccessorPRN
-
+                                @accessor.AccessorList
                             </p>
 
                         }
