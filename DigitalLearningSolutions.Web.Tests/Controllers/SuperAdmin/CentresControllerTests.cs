@@ -2,6 +2,7 @@
 using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
 using DigitalLearningSolutions.Data.Models;
 using DigitalLearningSolutions.Data.Models.Centres;
+using DigitalLearningSolutions.Data.Models.SuperAdmin;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -517,6 +518,57 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 result.Should().BeViewResult().ModelAs<CentreSelfAssessmentsViewModel>();
                 result.Should().BeViewResult();
             }
+        }
+        [Test]
+        public void ConfirmRemoveCourse_ShouldReturnView_WhenCentreSelfAssessmentExists()
+        {
+            // Given 
+            var centreApplication = new CentreSelfAssessment
+            {
+                SelfAssessmentId = 1,
+                CentreId = 1,
+                CentreName = "Test",
+                SelfAssessmentName = "Test",
+                DelegateCount = 1,
+                SelfEnrol = true
+            };
+            A.CallTo(() => centreSelfAssessmentsService.GetCentreSelfAssessmentByCentreAndID(A<int>._, A<int>._)).Returns(centreApplication);
+
+            // When
+            var result = controller.ConfirmRemoveSelfAssessment(1, 1) as ViewResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<ViewResult>().Which
+                .ViewName.Should().Be("ConfirmRemoveSelfAssessment");
+            result!.Model.Should().BeOfType<ConfirmRemoveSelfAssessmentViewModel>();
+        }
+
+        [Test]
+        public void ConfirmRemoveCourse_ShouldRedirectToCourses_WhenCentreSelfAssessmentDoesNotExist()
+        {
+            // Given
+            A.CallTo(() => centreSelfAssessmentsService.GetCentreSelfAssessmentByCentreAndID(A<int>._, A<int>._)).Returns(null);
+
+            // When
+            var result = controller.ConfirmRemoveSelfAssessment(1, 1) as RedirectToActionResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
+                .ActionName.Should().Be("SelfAssessments");
+            result!.RouteValues!["centreId"].Should().Be(1);
+        }
+
+        [Test]
+        public void RemoveCourse_ShouldRedirectToCourses_AfterDeletingSelfAssessmentApplication()
+        {
+            // When
+            var result = controller.RemoveSelfAssessment(1, 1) as RedirectToActionResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
+                .ActionName.Should().Be("SelfAssessments");
+            result!.RouteValues!["centreId"].Should().Be(1);
+            A.CallTo(() => centreSelfAssessmentsService.DeleteCentreSelfAssessment(1, 1)).MustHaveHappenedOnceExactly();
         }
     }
 }
