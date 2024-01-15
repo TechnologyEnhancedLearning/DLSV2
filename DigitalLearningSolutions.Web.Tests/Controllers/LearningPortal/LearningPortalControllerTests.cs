@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private IMultiPageFormService multiPageFormService = null!;
         private IUserDataService userDataService = null!;
         private IClockUtility clockUtility = null!;
-
+        private IPdfService pdfService = null!;
         [SetUp]
         public void SetUp()
         {
@@ -57,7 +57,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             config = A.Fake<IConfiguration>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             clockUtility = A.Fake<IClockUtility>();
-
+            pdfService = A.Fake<IPdfService>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
             var user = new ClaimsPrincipal(
@@ -86,7 +86,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 candidateAssessmentDownloadFileService,
                 searchSortFilterPaginateService,
                 multiPageFormService,
-                clockUtility
+               clockUtility,
+                pdfService
             );
             controller.ControllerContext = new ControllerContext
             { HttpContext = new DefaultHttpContext { User = user } };

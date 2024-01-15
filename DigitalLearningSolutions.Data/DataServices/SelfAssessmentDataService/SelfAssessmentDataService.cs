@@ -165,6 +165,11 @@
         bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
         int? GetDelegateAccountId(int centreId, int delegateUserId);
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
+        IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID);
+        CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
+        IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
+        ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
+        int? GetRoleCount(int CandidateId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
