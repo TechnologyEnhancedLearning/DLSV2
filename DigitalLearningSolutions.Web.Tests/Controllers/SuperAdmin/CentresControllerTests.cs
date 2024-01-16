@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             };
 
             // When
-            var result = controller.EditCentreDetails(model);            
+            var result = controller.EditCentreDetails(model);
             // Then
             result.Should().BeViewResult();
             controller.ModelState.IsValid.Should().BeFalse();
@@ -360,7 +360,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             A.CallTo(() => centresDataService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
 
             // When
-            var result = controller.EditContractInfo(centreId,28,8,2023,10024,10024,100024);
+            var result = controller.EditContractInfo(centreId, 28, 8, 2023, 10024, 10024, 100024);
 
             // Then
             using (new AssertionScope())
@@ -433,12 +433,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         {
             // Given 
             var centreApplication = new CentreApplication(
-                centreApplicationId:1,
-                centreId:1,
-                centreName:"Test",
-                applicationId:1,
-                applicationName:"Test",
-                customisationCount:1);
+                centreApplicationId: 1,
+                centreId: 1,
+                centreName: "Test",
+                applicationId: 1,
+                applicationName: "Test",
+                customisationCount: 1);
             A.CallTo(() => centreApplicationsService.GetCentreApplicationByCentreAndApplicationID(A<int>._, A<int>._)).Returns(centreApplication);
 
             // When
@@ -468,7 +468,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         [Test]
         public void RemoveCourse_ShouldRedirectToCourses_AfterDeletingCentreApplication()
         {
-           // When
+            // When
             var result = controller.RemoveCourse(1, 2) as RedirectToActionResult;
 
             // Then
@@ -481,11 +481,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         public void CourseAddCommit_ShouldInsertCentreApplicationsAndRedirectToCourses()
         {
             // Given
-            
+
             var model = new CourseAddViewModel
             {
                 CentreId = 1,
-                ApplicationIds = new List<int> { 2,3,4 },
+                ApplicationIds = new List<int> { 2, 3, 4 },
             };
 
             // When
@@ -506,7 +506,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         public void Get_with_centreId_shows_SelfAssessments_page()
         {
             // Given
-            const int centreId = 1;           
+            const int centreId = 1;
 
             // When
             var result = controller.SelfAssessments(centreId);
