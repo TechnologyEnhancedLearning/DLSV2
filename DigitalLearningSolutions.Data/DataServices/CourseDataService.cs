@@ -435,7 +435,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
             DateTime lastAccessed = startedDate;
-            dynamic completeByDateDynamic = "";
+            dynamic? completeByDateDynamic = null;
             if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
                 completeByDateDynamic = completeByDate!;
