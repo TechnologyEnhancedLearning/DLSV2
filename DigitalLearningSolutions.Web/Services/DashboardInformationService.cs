@@ -41,7 +41,8 @@
                 return null;
             }
 
-            var delegateCount = userDataService.GetNumberOfApprovedDelegatesAtCentre(centreId);
+            (var delegates, var delegateCount) = userDataService.GetDelegateUserCards("", 0, 10, "SearchableName", "Ascending", centreId,
+            "Any", "Any", "Any", "Any", "Any", "Any", 0, "Any", "Any", "Any", "Any", "Any", "Any");
             var courseCount =
                 courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(
                     centreId,
