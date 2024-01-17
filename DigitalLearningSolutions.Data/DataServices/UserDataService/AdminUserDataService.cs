@@ -426,7 +426,7 @@
             );
             return ResultCount;
         }
-        public async Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
+        public IEnumerable<AdminEntity> GetAllAdminsExport(
        string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
        )
         {

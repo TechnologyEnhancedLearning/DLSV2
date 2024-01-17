@@ -272,6 +272,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IAdminDownloadFileService, AdminDownloadFileService>();
             services.AddScoped<IPlatformReportsService, PlatformReportsService>();
             services.AddScoped<IReportFilterService, ReportFilterService>();
+            services.AddScoped<IPdfService, PdfService>();
+            services.AddScoped<IFreshdeskService, FreshdeskService>();
+            services.AddScoped<IPlatformUsageSummaryDownloadFileService, PlatformUsageSummaryDownloadFileService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -324,6 +327,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserFeedbackDataService, UserFeedbackDataService>();
             services.AddScoped<IPlatformReportsDataService, PlatformReportsDataService>();
             services.AddScoped<IContractTypesDataService, ContractTypesDataService>();
+            services.AddScoped<ICentresDownloadFileService, CentresDownloadFileService>();
+            services.AddScoped<IDelegateActivityDownloadFileService, DelegateActivityDownloadFileService>();
+            services.AddScoped<IRequestSupportTicketDataService, RequestSupportTicketDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
@@ -339,6 +345,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<ILearningHubApiClient, LearningHubApiClient>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
+            services.AddScoped<IFreshdeskApiClient, FreshdeskApiClient>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)

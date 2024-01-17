@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -475,7 +475,6 @@
             var oldJobGroupId = 2;
             var newJobGroupId = 3;
             var accountDetailsData = new AccountDetailsData("test", "tester", "fake@email.com");
-            var centreEmail = "centreEmail";
 
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var delegateAccounts = new List<DelegateAccount> { delegateAccount };

@@ -86,7 +86,7 @@
         public byte[]? ProfileImage { get; set; }
         public int? SupervisorDelegateId { get; set; }
         public string? SupervisorEmail { get; set; }
-        public string SupervisorFirstName { get; set; }
-        public string SupervisorLastName { get; set; }
+        public string SupervisorFirstName { get; set; } = string.Empty;
+        public string SupervisorLastName { get; set; } = string.Empty;
     }
 }

@@ -5,8 +5,8 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -40,7 +40,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 new ReturnPageQuery(1, null)
             );
 
@@ -76,7 +76,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -97,7 +97,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -118,7 +118,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -139,7 +139,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -161,7 +161,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -183,7 +183,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -203,7 +203,7 @@
 
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -226,7 +226,7 @@
 
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -256,7 +256,7 @@
 
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -279,7 +279,7 @@
 
             var model = new DelegateCourseInfoViewModel(
                 info,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 

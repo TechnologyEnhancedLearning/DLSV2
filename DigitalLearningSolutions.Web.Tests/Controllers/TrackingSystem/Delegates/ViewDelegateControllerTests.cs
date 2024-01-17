@@ -3,12 +3,13 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FakeItEasy;
     using FluentAssertions;
@@ -26,6 +27,7 @@
         private ViewDelegateController viewDelegateController = null!;
         private IEmailVerificationService emailVerificationService = null!;
         private IEmailVerificationDataService emailVerificationDataService = null!;
+        private ISelfAssessmentService selfAssessmentService = null!;
 
         [SetUp]
         public void SetUp()
@@ -39,6 +41,7 @@
             courseService = A.Fake<ICourseService>();
             config = A.Fake<IConfiguration>();
             emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
+            selfAssessmentService = A.Fake<ISelfAssessmentService>();
 
             viewDelegateController = new ViewDelegateController(
                     userDataService,
@@ -48,7 +51,8 @@
                     passwordResetService,
                     config,
                     emailVerificationService,
-                    emailVerificationDataService
+                    emailVerificationDataService,
+                    selfAssessmentService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true).WithMockTempData();

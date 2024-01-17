@@ -1,22 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Support
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.SupervisorController;
-    using DigitalLearningSolutions.Web.Controllers.Support;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.Support.Faqs;
     using FakeItEasy;
-    using FluentAssertions;
-    using FluentAssertions.AspNetCore.Mvc;
     using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -44,6 +35,7 @@
         private IEmailService emailService = null!;
         private IClockUtility clockUtility = null!;
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
+        private ISelfAssessmentDataService selfAssessmentDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -67,6 +59,7 @@
             emailService = A.Fake<IEmailService>();
             clockUtility = A.Fake<IClockUtility>();
             candidateAssessmentDownloadFileService = A.Fake<ICandidateAssessmentDownloadFileService>();
+            selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
 
             A.CallTo(() => candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(A<int>._, A<int>._, A<bool>._))
                 .Returns(new byte[] { });
@@ -96,6 +89,7 @@
                    emailGenerationService,
                    emailService,
                    candidateAssessmentDownloadFileService,
+                   selfAssessmentDataService,
                    clockUtility
                );
             string expectedFileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0, 30) : selfAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";

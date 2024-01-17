@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using FakeItEasy;
     using FizzWare.NBuilder;
@@ -78,7 +78,7 @@
             var completedViewModel = await CompletedCourseHelper.CompletedViewModelFromController(controller);
 
             // Then
-            completedViewModel.BannerText.Should().Be(bannerText);
+            completedViewModel?.BannerText.Should().Be(bannerText);
         }
 
         [Test]

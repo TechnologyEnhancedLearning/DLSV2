@@ -5,10 +5,10 @@ namespace DigitalLearningSolutions.Data.Models.Centres
     public class Centre
     {
         public int CentreId { get; set; }
-        public string CentreName { get; set; }
+        public string CentreName { get; set; } = string.Empty;
         public bool Active { get; set; }
         public int RegionId { get; set; }
-        public string RegionName { get; set; }
+        public string RegionName { get; set; } = string.Empty;
         public string? NotifyEmail { get; set; }
         public string? BannerText { get; set; }
         public byte[]? SignatureImage { get; set; }
@@ -38,7 +38,7 @@ namespace DigitalLearningSolutions.Data.Models.Centres
         public long ServerSpaceUsed { get; set; }
         public long ServerSpaceBytes { get; set; }
         public int CentreTypeId { get; set; }
-        public string CentreType { get; set; }
+        public string CentreType { get; set; } = string.Empty;
         public long CandidateByteLimit { get; set; }
         public DateTime? ContractReviewDate { get; set; }
         public string? RegistrationEmail { get; set; }

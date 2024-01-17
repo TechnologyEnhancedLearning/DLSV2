@@ -9,6 +9,7 @@
         {
             Id = new Guid();
             AssessmentQuestionDetail = new AssessmentQuestionDetail();
+            LevelDescriptors = new List<LevelDescriptor>(); 
         }
         public Guid Id { get; set; }
         public AssessmentQuestionDetail AssessmentQuestionDetail { get; set; }

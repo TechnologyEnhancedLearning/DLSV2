@@ -7,7 +7,7 @@
         public int ID { get; set; }
         [StringLength(255, MinimumLength = 3)]
         [Required]
-        public string RoleProfileName { get; set; }
+        public string RoleProfileName { get; set; } = string.Empty;
         public string? Description { get; set; }
         public int BrandID { get; set; }
         public int? ParentRoleProfileID { get; set; }

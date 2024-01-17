@@ -216,7 +216,8 @@
             );
             return ResultCount;
         }
-        public async Task<List<DelegateUserCard>> GetDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
+
+        public List<DelegateUserCard> GetDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
                                      string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
                                      string answer1, string answer2, string answer3, string answer4, string answer5, string answer6, int exportQueryRowLimit, int currentRun)
         {
@@ -346,6 +347,7 @@
                         WHERE da.CentreId = @centreId
                         AND da.Approved = 1
                         AND da.Active = 1
+                        AND (u.PrimaryEmail like '%_@_%.__%' OR ucd.Email IS NOT NULL)
                         AND NOT EXISTS (SELECT DelegateID FROM GroupDelegates WHERE DelegateID = da.ID
                                         AND GroupID = @groupId)",
                 new

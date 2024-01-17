@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using DigitalLearningSolutions.Data.Models.LearningResources;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.RecommendedLearning;
     using FluentAssertions;
     using NUnit.Framework;

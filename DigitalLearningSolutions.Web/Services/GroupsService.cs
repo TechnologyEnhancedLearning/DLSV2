@@ -134,6 +134,8 @@
             int newJobGroupId,
             AccountDetailsData accountDetailsData
         );
+
+        bool IsDelegateGroupExist(string groupLabel, int centreId);
     }
 
     public class GroupsService : IGroupsService
@@ -522,7 +524,7 @@
 
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
         {
-            return groupsDataService.GetGroupDelegates(groupId).Where(gd => gd.CentreEmail != null || !Guid.TryParse(gd.PrimaryEmail, out _));
+            return groupsDataService.GetGroupDelegates(groupId);
         }
 
         public IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId)
@@ -890,6 +892,11 @@
         private static string GetGroupNameWithPrefix(string prefix, string groupName)
         {
             return $"{prefix} - {groupName}";
+        }
+
+        public bool IsDelegateGroupExist(string groupLabel, int centreId)
+        {
+            return groupsDataService.IsDelegateGroupExist(groupLabel, centreId);
         }
     }
 }

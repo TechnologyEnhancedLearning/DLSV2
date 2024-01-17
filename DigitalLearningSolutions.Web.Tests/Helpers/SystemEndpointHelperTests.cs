@@ -34,7 +34,7 @@
         public void GetTrackingUrl_returns_expected()
         {
             // Given
-            const string expected = "https://www.dls.nhs.uk/tracking/tracker";
+            const string expected = "https://www.dls.nhs.uk/v2/tracking/tracker";
 
             // Then
             SystemEndpointHelper.GetTrackingUrl(config).Should().Be(expected);

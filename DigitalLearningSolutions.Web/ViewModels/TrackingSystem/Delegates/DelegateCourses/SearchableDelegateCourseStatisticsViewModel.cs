@@ -10,6 +10,12 @@
 
     public class SearchableDelegateCourseStatisticsViewModel : BaseFilterableViewModel
     {
+        public DelegateAssessmentStatistics delegateAssessmentStatistics;
+        public SearchableDelegateCourseStatisticsViewModel(DelegateAssessmentStatistics delegateAssessmentStatistics)
+        {
+            this.delegateAssessmentStatistics = delegateAssessmentStatistics;
+        }
+
         public SearchableDelegateCourseStatisticsViewModel(CourseStatisticsWithAdminFieldResponseCounts courseStatistics)
         {
             CustomisationId = courseStatistics.CustomisationId;

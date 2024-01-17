@@ -109,6 +109,11 @@
       long serverSpaceBytesInc,
       DateTime? contractReviewDate
    );
+        public int ResultCount(string search, int region, int centreType, int contractType,
+            string centreStatus);
+
+        public IEnumerable<CentresExport> GetAllCentresForSuperAdminExport(string search, int region,
+          int centreType, int contractType, string centreStatus, int exportQueryRowLimit, int currentRun);
     }
 
     public class CentresDataService : ICentresDataService
@@ -547,7 +552,7 @@
                 transaction.Commit();
                 return newCentreId;
             }
-            
+
         }
 
         public (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId)
@@ -711,7 +716,7 @@
                 new { centreId }
             );
         }
-        
+
         public CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId)
         {
             return connection.QueryFirstOrDefault<CentreSummaryForRoleLimits>(
@@ -820,6 +825,83 @@
                 return false;
             }
             return true;
+        }
+
+        public int ResultCount(string search, int region, int centreType, int contractType, string centreStatus)
+        {
+            int resultCount = connection.ExecuteScalar<int>(
+                               @$"SELECT  COUNT(*) AS Matches
+                                FROM Centres AS c
+                                INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                                INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
+                                WHERE c.CentreName LIKE N'%' + @search + N'%' AND ((c.RegionID = @region) OR (@region = 0))  AND ((c.CentreTypeId = @centreType) OR (@centreType = 0)) AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
+                   new { search, region, centreType, contractType, centreStatus },
+                   commandTimeout: 3000
+           );
+            return resultCount;
+        }
+
+        public IEnumerable<CentresExport> GetAllCentresForSuperAdminExport(string search, int region,
+          int centreType, int contractType, string centreStatus, int exportQueryRowLimit, int currentRun)
+        {
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+            }
+            string sql = @"SELECT
+                            CentreID,
+                            Active,
+                            CentreName,
+                            ContactSurname + ', ' + ContactForename AS Contact,          ContactEmail,
+                            ContactTelephone,
+                            (SELECT RegionName FROM Regions WHERE            (RegionID = c.RegionID)) AS RegionName,
+                             (SELECT CentreType FROM CentreTypes
+                               WHERE (CentreTypeID = c.CentreTypeID)) AS CentreType,
+                            IPPrefix,
+                            CentreCreated,
+                            (SELECT COUNT(*) AS Expr1 FROM Candidates
+                               WHERE (CentreID = c.CentreID)) AS Delegates,
+                            (SELECT COUNT(Progress.ProgressID) AS Registrations
+                               FROM Progress
+                               INNER JOIN                                    Candidates AS Candidates_1 ON Progress.CandidateID = Candidates_1.CandidateID
+                               WHERE (Candidates_1.CentreID = c.CentreID)) AS CourseEnrolments,
+                             (SELECT COUNT(Progress_1.ProgressID) AS Completions
+                               FROM Progress AS Progress_1
+                               INNER JOIN
+                               Candidates AS Candidates_1 ON Progress_1.CandidateID = Candidates_1.CandidateID
+                               WHERE (Progress_1.Completed IS NOT NULL) AND (Candidates_1.CentreID = c.CentreID)) AS CourseCompletions,
+                             (SELECT SUM(e.Duration) AS Expr1
+                               FROM Sessions AS e INNER JOIN
+                               Candidates AS Candidates_2 ON e.CandidateID = Candidates_2.CandidateID
+                               WHERE        (Candidates_2.CentreID = c.CentreID)) / 60 AS LearningHours,
+                             (SELECT COUNT(*) AS Expr1
+                               FROM  AdminUsers
+                               WHERE (CentreID = c.CentreID)) AS AdminUsers,
+                             (SELECT MAX(ADS.LoginTime) AS Expr1
+                               FROM AdminSessions AS ADS INNER JOIN
+                               AdminUsers AS ADU ON ADS.AdminID = ADU.AdminID
+                               WHERE (ADU.CentreID = c.CentreID)) AS LastAdminLogin,
+                             (SELECT MAX(Sessions.LoginTime) AS Expr1
+                               FROM Sessions INNER JOIN
+                               Customisations ON Sessions.CustomisationID = Customisations.CustomisationID
+                               WHERE (Customisations.CentreID = c.CentreID)) AS LastLearnerLogin, 
+							   (SELECT ContractType FROM ContractTypes WHERE ContractTypeID = c.ContractTypeID) AS ContractType, 
+							   CCLicences, ServerSpaceBytes, 
+                         ServerSpaceUsed
+                        FROM Centres AS c
+                        WHERE c.CentreName LIKE N'%' + @search + N'%'
+                        AND ((c.RegionID = @region) OR (@region = 0)) AND ((c.CentreTypeId = @centreType) OR (@centreType = 0))
+                        AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))
+                        ORDER BY LTRIM(c.CentreName)
+                            OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
+                            FETCH NEXT @exportQueryRowLimit ROWS ONLY";
+            IEnumerable<CentresExport> centres = connection.Query<CentresExport>(
+                sql,
+                new { search, region, centreType, contractType, centreStatus, exportQueryRowLimit, currentRun },
+                commandTimeout: 3000
+            );
+
+            return centres;
         }
     }
 }

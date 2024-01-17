@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.Common.Users;
@@ -27,7 +26,7 @@
         void SetUpdatedFlag(int selfAssessmentId, int delegateUserId, bool status);
 
         void UpdateLastAccessed(int selfAssessmentId, int delegateUserId);
-
+        void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupsId);
         void IncrementLaunchCount(int selfAssessmentId, int delegateUserId);
 
         void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
@@ -129,6 +128,19 @@
         );
 
         void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
+        public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
+        public SelfAssessmentDelegatesData GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
+           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff);
+        public int GetSelfAssessmentActivityDelegatesExportCount(string searchString,  string sortBy, string sortDirection,
+           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
+        public string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId);
+        RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
+       void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
+       public int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
+       public bool CheckForSameCentre(int centreId, int candidateAssessmentsId);        
+       public int? GetDelegateAccountId(int centreId, int delegateUserId);
+        int CheckDelegateSelfAssessment(int candidateAssessmentsId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -165,6 +177,10 @@
             selfAssessmentDataService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
         }
 
+        public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupId)
+        {
+            selfAssessmentDataService.RemoveSignoffRequests(selfAssessmentId, delegateUserId, competencyGroupId);
+        }
         public void IncrementLaunchCount(int selfAssessmentId, int delegateUserId)
         {
             selfAssessmentDataService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
@@ -420,6 +436,82 @@
         public string? GetSelfAssessmentNameById(int selfAssessmentId)
         {
             return selfAssessmentDataService.GetSelfAssessmentNameById(selfAssessmentId);
+        }
+
+        public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
+        {
+            (var delegateselfAssessments, int resultCount) = selfAssessmentDataService.GetSelfAssessmentDelegates(searchString, offSet, itemsPerPage, sortBy, sortDirection,
+            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
+
+            List<SelfAssessmentDelegate> selfAssessmentDelegateList = new List<SelfAssessmentDelegate>();
+            foreach (var delegateInfo in delegateselfAssessments)
+            {
+                var supervisors = selfAssessmentDataService.GetAllSupervisorsForSelfAssessmentId(
+                delegateInfo.SelfAssessmentId,
+                delegateInfo.DelegateUserId
+            ).ToList();
+
+                delegateInfo.Supervisors = supervisors;
+                selfAssessmentDelegateList.Add(new SelfAssessmentDelegate(delegateInfo));
+            }
+            return (new SelfAssessmentDelegatesData(selfAssessmentDelegateList), resultCount);
+        }
+        public SelfAssessmentDelegatesData GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff)
+        {
+            var delegateselfAssessments = selfAssessmentDataService.GetSelfAssessmentActivityDelegatesExport(searchString, itemsPerPage, sortBy, sortDirection,
+            selfAssessmentId, centreId, isDelegateActive, removed, currentRun, submitted, signedOff);
+
+            List<SelfAssessmentDelegate> selfAssessmentDelegateList = new List<SelfAssessmentDelegate>();
+            foreach (var delegateInfo in delegateselfAssessments)
+            {
+                var supervisors = selfAssessmentDataService.GetAllSupervisorsForSelfAssessmentId(
+                delegateInfo.SelfAssessmentId,
+                delegateInfo.DelegateUserId
+            ).ToList();
+
+                delegateInfo.Supervisors = supervisors;
+                selfAssessmentDelegateList.Add(new SelfAssessmentDelegate(delegateInfo));
+            }
+            return new SelfAssessmentDelegatesData(selfAssessmentDelegateList);
+        }
+        public int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
+           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
+        {
+            int resultCount = selfAssessmentDataService.GetSelfAssessmentActivityDelegatesExportCount(searchString, sortBy, sortDirection,
+            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
+
+
+            return resultCount;
+        }
+        public string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId)
+        {
+            return selfAssessmentDataService.GetSelfAssessmentActivityDelegatesSupervisor(selfAssessmentId, delegateUserId);
+        }
+        public RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId)
+        {
+            return selfAssessmentDataService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
+        }
+        public void RemoveDelegateSelfAssessment(int candidateAssessmentsId)
+        {
+            selfAssessmentDataService.RemoveDelegateSelfAssessment(candidateAssessmentsId);
+        }
+        public int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId)
+        {
+            return selfAssessmentDataService.GetSupervisorsCountFromCandidateAssessmentId(candidateAssessmentsId);
+        }
+        public bool CheckForSameCentre(int centreId, int candidateAssessmentsId)
+        {
+            return selfAssessmentDataService.CheckForSameCentre(centreId, candidateAssessmentsId);
+        }
+        public int? GetDelegateAccountId(int centreId, int delegateUserId)
+        {
+            return selfAssessmentDataService.GetDelegateAccountId(centreId, delegateUserId);
+        }
+        public int CheckDelegateSelfAssessment(int candidateAssessmentsId)
+        {
+            return selfAssessmentDataService.CheckDelegateSelfAssessment(candidateAssessmentsId);
         }
     }
 }

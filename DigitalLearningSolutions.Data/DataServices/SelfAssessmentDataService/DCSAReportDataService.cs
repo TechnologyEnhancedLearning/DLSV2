@@ -8,8 +8,8 @@
 
     public interface IDCSAReportDataService
     {
-        IEnumerable<DCSADelegateCompletionStatus> GetDelegateCompletionStatusForCentre(int centreId);
-        IEnumerable<DCSAOutcomeSummary> GetOutcomeSummaryForCentre(int centreId);
+        IEnumerable<DCSADelegateCompletionStatus> GetDelegateCompletionStatus();
+        IEnumerable<DCSAOutcomeSummary> GetOutcomeSummary();
     }
     public partial class DCSAReportDataService : IDCSAReportDataService
     {
@@ -21,7 +21,7 @@
             this.connection = connection;
             this.logger = logger;
         }
-        public IEnumerable<DCSAOutcomeSummary> GetOutcomeSummaryForCentre(int centreId)
+        public IEnumerable<DCSAOutcomeSummary> GetOutcomeSummary()
         {
             return connection.Query<DCSAOutcomeSummary>(
                 @"SELECT DATEPART(month, caa.StartedDate) AS EnrolledMonth, DATEPART(yyyy, caa.StartedDate) AS EnrolledYear, jg.JobGroupName AS JobGroup, ca.Answer1 AS CentreField1, ca.Answer2 AS CentreField2, ca.Answer3 AS CentreField3, CASE WHEN (caa.SubmittedDate IS NOT NULL) 
@@ -107,13 +107,11 @@
                 FROM   Candidates AS ca INNER JOIN
                              CandidateAssessments AS caa ON ca.UserID = caa.DelegateUserID AND ca.CentreID = caa.CentreID INNER JOIN Users AS u ON caa.DelegateUserID = u.ID INNER JOIN
                              JobGroups AS jg ON u.JobGroupID = jg.JobGroupID
-                WHERE (ca.Active = 1) AND (ca.CentreID = @centreId) AND (caa.SelfAssessmentID = 1)
-                ORDER BY EnrolledYear DESC, EnrolledMonth DESC, JobGroup, CentreField1, CentreField2, CentreField3, Status",
-                new { centreId }
-            );
+                WHERE (ca.Active = 1) AND (caa.SelfAssessmentID = 1)
+                ORDER BY EnrolledYear DESC, EnrolledMonth DESC, JobGroup, CentreField1, CentreField2, CentreField3, Status");
         }
 
-        public IEnumerable<DCSADelegateCompletionStatus> GetDelegateCompletionStatusForCentre(int centreId)
+        public IEnumerable<DCSADelegateCompletionStatus> GetDelegateCompletionStatus()
         {
             return connection.Query<DCSADelegateCompletionStatus>(
                 @"SELECT DATEPART(month, caa.StartedDate) AS EnrolledMonth, DATEPART(yyyy, caa.StartedDate) AS EnrolledYear, ca.FirstName, ca.LastName, ca.EmailAddress AS Email, ca.Answer1 AS CentreField1, ca.Answer2 AS CentreField2, ca.Answer3 AS CentreField3, CASE WHEN (caa.SubmittedDate IS NOT NULL) 
@@ -121,10 +119,8 @@
                 FROM   Candidates AS ca INNER JOIN
                              CandidateAssessments AS caa ON ca.UserID = caa.DelegateUserID AND ca.CentreID = caa.CentreID INNER JOIN
                              JobGroups AS jg ON ca.JobGroupID = jg.JobGroupID
-                WHERE (ca.Active = 1) AND (ca.CentreID = @centreId) AND (caa.SelfAssessmentID = 1) AND caa.NonReportable = 0
-                ORDER BY EnrolledYear DESC, EnrolledMonth DESC, ca.LastName, ca.FirstName",
-                new { centreId }
-            );
+                WHERE (ca.Active = 1) AND (caa.SelfAssessmentID = 1) AND  caa.NonReportable = 0
+                ORDER BY EnrolledYear DESC, EnrolledMonth DESC, ca.LastName, ca.FirstName");
         }
     }
 }

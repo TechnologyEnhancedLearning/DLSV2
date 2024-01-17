@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DigitalLearningSolutions.Data.Enums;
+﻿using DigitalLearningSolutions.Data.Enums;
 using DigitalLearningSolutions.Data.Helpers;
 using DigitalLearningSolutions.Data.Models.CustomPrompts;
 using DigitalLearningSolutions.Data.Models.DelegateGroups;
+using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Helpers;
@@ -12,12 +10,14 @@ using DigitalLearningSolutions.Web.Helpers.FilterOptions;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.ServiceFilter;
 using DigitalLearningSolutions.Web.Services;
-using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.FeatureManagement.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
@@ -60,6 +60,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             int? itemsPerPage = 10
         )
         {
+            searchString = searchString == null ? string.Empty : searchString.Trim();
             if (string.IsNullOrEmpty(sortBy))
             {
                 sortBy = DefaultSortByOptions.Name.PropertyName;
@@ -214,14 +215,22 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             {
                 return View(model);
             }
-
-            groupsService.AddDelegateGroup(
+            var centreId = User.GetCentreIdKnownNotNull();
+            if (!groupsService.IsDelegateGroupExist(model.GroupName.Trim(), centreId))
+            {
+                groupsService.AddDelegateGroup(
                 User.GetCentreIdKnownNotNull(),
-                model.GroupName!,
+                model.GroupName!.Trim(),
                 model.GroupDescription,
                 User.GetAdminId()!.Value
             );
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError(nameof(model.GroupName), "Delegate group with the same name already exists");
+                return View("AddDelegateGroup", model);
+            }
         }
 
         [HttpGet("{groupId:int}/EditDescription")]
@@ -287,11 +296,19 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return NotFound();
             }
 
-            groupsService.UpdateGroupName(
+            if ( (!groupsService.IsDelegateGroupExist(model.GroupName.Trim(), centreId)) || (group.GroupLabel.Trim()== model.GroupName.Trim()) )
+            {
+                groupsService.UpdateGroupName(
                 groupId,
                 centreId,
-                model.GroupName
+                model.GroupName.Trim()
             );
+            }
+            else
+            {
+                ModelState.AddModelError(nameof(model.GroupName), "Delegate group with the same name already exists");
+                return View(model);
+            }
 
             return RedirectToAction("Index");
         }

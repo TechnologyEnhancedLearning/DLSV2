@@ -91,6 +91,7 @@
             string? option,
             int? jobGroupId
         );
+        bool IsDelegateGroupExist(string groupLabel, int centreId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -164,11 +165,14 @@
                         GroupID,
                         GroupLabel,
                         GroupDescription,
-                        (SELECT COUNT(*) FROM GroupDelegates as gd 
-                        INNER JOIN DelegateAccounts AS da ON gd.DelegateID = da.ID
-                        INNER JOIN Users AS u ON da.UserID=u.ID 
-                        LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
-                        where gd.GroupID = g.GroupID AND (TRY_CAST(u.PrimaryEmail AS UNIQUEIDENTIFIER) IS NULL OR ucd.Email IS NOT NULL)) AS DelegateCount,
+                        (SELECT COUNT(*) 
+                            FROM GroupDelegates AS gd WITH (NOLOCK)
+                            JOIN DelegateAccounts AS da WITH (NOLOCK) ON da.ID = gd.DelegateID
+                            JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+                            LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
+                            WHERE gd.GroupID = g.GroupID
+                                AND (u.PrimaryEmail like '%_@_%.__%' OR ucd.Email is NOT NULL)
+                                AND da.Approved = 1 AND da.Active = 1) AS DelegateCount,
                         ({CourseCountSql}) AS CoursesCount,
                         g.CreatedByAdminUserID AS AddedByAdminId,
                         au.Forename AS AddedByFirstName,
@@ -313,7 +317,9 @@
                     JOIN DelegateAccounts AS da ON da.ID = gd.DelegateID
                     JOIN Users AS u ON u.ID = da.UserID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
-                    WHERE gd.GroupID = @groupId",
+                    WHERE gd.GroupID = @groupId
+                        AND (u.PrimaryEmail like '%_@_%.__%' OR ucd.Email is NOT NULL)
+                        AND da.Approved = 1 AND da.Active = 1",
                 new { groupId }
             );
         }
@@ -393,12 +399,15 @@
         public void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink)
         {
             connection.Execute(
-                @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
-                    VALUES (
-                        @groupId,
-                        @delegateId,
-                        @addedDate,
-                        @addedByFieldLink)",
+                @"IF NOT EXISTS(SELECT 1 FROM GroupDelegates WHERE DelegateID=@delegateId AND  GroupID=@groupId)
+                    BEGIN
+                        INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                                            VALUES (
+                                                @groupId,
+                                                @delegateId,
+                                                @addedDate,
+                                                @addedByFieldLink)
+                    END",
                 new { groupId, delegateId, addedDate, addedByFieldLink }
             );
         }
@@ -552,6 +561,16 @@
                             OR (Answer5 = @option AND @linkedToField = 6)
                             OR (Answer6 = @option AND @linkedToField = 7))",
                 new { groupId, addedDate, linkedToField, centreId, option, jobGroupId }
+            );
+        }
+
+        public bool IsDelegateGroupExist(string groupLabel, int centreId)
+        {
+            return connection.QuerySingle<bool>(
+                @"SELECT CASE WHEN EXISTS (select * from Groups where GroupLabel = @groupLabel and RemovedDate is null and CentreID = @centreId)
+                THEN CAST(1 AS BIT)
+                ELSE CAST(0 AS BIT) END",
+                new { groupLabel, centreId }
             );
         }
     }

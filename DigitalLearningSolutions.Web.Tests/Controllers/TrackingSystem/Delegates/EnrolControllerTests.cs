@@ -19,10 +19,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
     public class EnrolControllerTests
     {
         private EnrolController enrolController = null!;
-        private ICourseDataService courseDataService = null!;
         private IMultiPageFormService multiPageFormService = null!;
         private ISupervisorService supervisorService = null!;
-        private IProgressDataService progressDataService = null!;
+        private ICourseService courseService = null!;
         private IEnrolService enrolService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -33,11 +32,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
         [SetUp]
         public void Setup()
         {
-            courseDataService = A.Fake<ICourseDataService>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
             supervisorService = A.Fake<ISupervisorService>();
             enrolService = A.Fake<IEnrolService>();
-            progressDataService = A.Fake<IProgressDataService>();
+            courseService = A.Fake<ICourseService>();
             sessionEnrolDelegate = A.Fake<SessionEnrolDelegate>();
 
             httpRequest = A.Fake<HttpRequest>();
@@ -46,11 +44,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             tempDataDictionary = new TempDataDictionary(httpContext, A.Fake<ITempDataProvider>());
 
             enrolController = new EnrolController(
-                courseDataService,
                 multiPageFormService,
                 supervisorService,
                 enrolService,
-                progressDataService)
+                courseService)
                 .WithMockHttpContext(httpRequest, null, null, httpResponse)
                 .WithMockTempData()
                 .WithDefaultContext()

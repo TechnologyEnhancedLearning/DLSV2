@@ -11,7 +11,7 @@
 
     public interface ISelfAssessmentReportService
     {
-        byte[] GetDigitalCapabilityExcelExportForCentre(int centreId);
+        byte[] GetDigitalCapabilityExcelExport();
         byte[] GetSelfAssessmentExcelExportForCentre(int centreId, int selfAssessmentId);
         IEnumerable<SelfAssessmentSelect> GetSelfAssessmentsForReportList(int centreId, int? categoryId);
     }
@@ -34,10 +34,10 @@
             table.Theme = XLTableTheme.TableStyleLight9;
             sheet.Columns().AdjustToContents();
         }
-        public byte[] GetDigitalCapabilityExcelExportForCentre(int centreId)
+        public byte[] GetDigitalCapabilityExcelExport()
         {
-            var delegateCompletionStatus = dcsaReportDataService.GetDelegateCompletionStatusForCentre(centreId);
-            var outcomeSummary = dcsaReportDataService.GetOutcomeSummaryForCentre(centreId);
+            var delegateCompletionStatus = dcsaReportDataService.GetDelegateCompletionStatus();
+            var outcomeSummary = dcsaReportDataService.GetOutcomeSummary();
             var summary = delegateCompletionStatus.Select(
                 x => new
                 {

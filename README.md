@@ -185,14 +185,6 @@ These tests will also be run by the Jenkins job whenever you push.
 ## Running the web tests
 These tests are in the DigitalLearningSolutions.Web.(...)Tests projects. No setup is required to run them and they'll also be run by the jenkins job whenever you push. See the sections below for how to run one test, all tests in a file or all the tests in the project.
 
-## Running the data tests
-These tests are in the DigitalLearningSolutions.Data.Tests project. Some setup is required as these tests use a real db instance.
-
-You need to copy the local db you've setup so that you can use the copy for testing, make sure you name the copy `mbdbx101_test`. You can copy the db either by restoring the backup file again but making sure you change the file names, or using the SQL server copy database wizard. See https://stackoverflow.com/questions/3829271/how-can-i-clone-an-sql-server-database-on-the-same-server-in-sql-server-2008-exp for details.
-Make sure you've applied the migrations, added the self assessment data to the test database as well and enrolled the test user on the self assessment, using the same process as for the main database if you build it from the same backup file.
-
-See the sections below for how to run one test, all tests in a file or all the tests in the project.
-
 ## Run one test
 Open the test file, find the test you want to run, click the icon to the left of the test name.
 
@@ -200,7 +192,7 @@ Open the test file, find the test you want to run, click the icon to the left of
 Open the file and click the icon to the left of the class name.
 
 ## Run all the tests
-Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests, DigitalLearningSolutions.Data.Tests, etc.) and select "Run tests".
+Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests, etc.) and select "Run tests".
 
 ## Typescript tests
 The typescript tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. The tests can be run using the Task Runner Explorer, or from the terminal using `yarn test` inside DigitalLearningSolutions.Web.
@@ -242,8 +234,7 @@ This can be fixed by making sure PATH is on the top of the 'External Web Tools' 
 
 The tests may rely on new migrations which haven't been run on the test project.
 
-Running tests from the Data.Tests project should cause any new migrations to be run on the test database,
-but sometimes Rider doesn't build referenced projects when you'd expect it to,
+Sometimes Rider doesn't build referenced projects when you'd expect it to,
 so you may need to build Data.Migrations manually in order for new migrations to get picked up.
 
 Build the Data.Migrations project manually and run the failing tests again - they should pass now.

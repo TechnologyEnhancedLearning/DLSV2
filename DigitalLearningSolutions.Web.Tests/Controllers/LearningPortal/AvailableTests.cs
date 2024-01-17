@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using FakeItEasy;
     using FluentAssertions;
@@ -56,7 +56,7 @@
             var availableViewModel = AvailableCourseHelper.AvailableViewModelFromController(controller);
 
             // Then
-            availableViewModel.BannerText.Should().Be(bannerText);
+            availableViewModel?.BannerText.Should().Be(bannerText);
         }
     }
 }

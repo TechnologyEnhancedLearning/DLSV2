@@ -5,12 +5,12 @@
     public class AddressComponent
     {
         [JsonProperty("long_name")]
-        public string LongName { get; set; }
+        public string LongName { get; set; } = string.Empty;
 
         [JsonProperty("short_name")]
-        public string ShortName { get; set; }
+        public string ShortName { get; set; } = string.Empty;
 
         [JsonProperty("types")]
-        public string[] Types { get; set; }
+        public string[]? Types { get; set; }
     }
 }

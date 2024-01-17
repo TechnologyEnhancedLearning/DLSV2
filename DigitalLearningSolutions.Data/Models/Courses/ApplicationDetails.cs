@@ -26,10 +26,10 @@
         }
 
         public int ApplicationId { get; set; }
-        public string ApplicationName { get; set; }
-        public string CategoryName { get; set; }
+        public string ApplicationName { get; set; } = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
         public int CourseTopicId { get; set; }
-        public string CourseTopic { get; set; }
+        public string CourseTopic { get; set; } = string.Empty;
         public bool PLAssess { get; set; }
         public bool DiagAssess { get; set; }
         public DateTime CreatedDate { get; set; }

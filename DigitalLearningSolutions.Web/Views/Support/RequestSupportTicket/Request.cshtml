@@ -1,0 +1,37 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.Helpers
+<link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
+
+@{
+    ViewData["Title"] = "Request support";
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-quarter">
+        <nav class="side-nav-menu" aria-label="Side navigation bar">
+            <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+        </nav>
+    </div>
+    <div class="nhsuk-grid-column-three-quarters">
+        <h1>Request support</h1>
+        <p>To submit a request for support, you will need to provide:</p>
+        <ul>
+            <li>Details of the problem or request</li>
+            <li>Any supporting attachments (such as screenshots)</li>
+        </ul>
+        <p>Once you have submitted a ticket, you will receive an email when a member of support team responds to it.</p>
+        <a class="nhsuk-button" asp-controller="RequestSupportTicket" asp-action="TypeofRequest" role="button" asp-route-dlsSubApplication="@DlsSubApplication.TrackingSystem.UrlSegment">Start</a>
+
+        <div class="nhsuk-inset-text">
+            <span class="nhsuk-u-visually-hidden">Information: </span>
+            <p>
+                If you raised any tickets in the old support ticket system, you can view them here:
+                <a class="nhsuk-link--no-visited-state"
+                   asp-controller="SupportTickets"
+                   asp-action="Index"
+                   asp-route-dlsSubApplication="@DlsSubApplication.TrackingSystem.UrlSegment">
+                    View old support tickets
+                </a>
+            </p>
+        </div>
+    </div>
+</div>

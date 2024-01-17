@@ -6,13 +6,13 @@
     {
         public int ResourceId { get; set; }
 
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
-        public List<ResourceReference> References { get; set; }
+        public List<ResourceReference> References { get; set; } = new List<ResourceReference>();
 
-        public string ResourceType { get; set; }
+        public string ResourceType { get; set; } = string.Empty;
 
         public decimal Rating { get; set; }
     }

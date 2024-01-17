@@ -98,7 +98,8 @@
                             'Supervisor') AS SignOffRoleName,
                         SA.SignOffRequestorStatement,
                         SA.ManageSupervisorsDescription,
-                        CA.NonReportable
+                        CA.NonReportable,
+					 U.FirstName +' '+ U.LastName AS DelegateName
                     FROM CandidateAssessments CA
                     JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
@@ -110,6 +111,8 @@
                             ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID = @selfAssessmentId
                     LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                             ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
+                    INNER JOIN Users AS U 
+							ON U.ID = CA.DelegateUserID 
                     WHERE CA.DelegateUserID = @delegateUserId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL
                         AND CA.CompletedDate IS NULL AND ((SAS.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                     GROUP BY
@@ -120,7 +123,8 @@
                         CA.ID, CA.UserBookmark, CA.UnprocessedUpdates,
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
-                        SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable",
+                        SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable,
+                        U.FirstName , U.LastName",
                 new { delegateUserId, selfAssessmentId }
             );
         }
@@ -139,6 +143,41 @@
                     "Not updating self assessment last accessed date as db update failed. " +
                     $"Self assessment id: {selfAssessmentId}, Delegate User id: {delegateUserId}"
                 );
+            }
+        }
+
+        public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupId)
+        {
+            var candidateAssessmentSupervisorVerificationsId = connection.QueryFirstOrDefault<int>(
+                @" SELECT casv.ID 
+                    FROM( SELECT DISTINCT casv.* FROM CandidateAssessmentSupervisorVerifications AS casv
+                    INNER JOIN CandidateAssessmentSupervisors AS cas
+                        ON casv.CandidateAssessmentSupervisorID = cas.ID
+                    INNER JOIN CandidateAssessments AS ca
+                        ON cas.CandidateAssessmentID = ca.ID
+                    INNER JOIN SupervisorDelegates AS sd
+                        ON cas.SupervisorDelegateId = sd.ID
+                    INNER JOIN AdminUsers AS au
+                        ON sd.SupervisorAdminID = au.AdminID
+                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
+                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+						  INNER JOIN SelfAssessmentStructure AS SAS 
+						  ON CA.SelfAssessmentID = SAS.SelfAssessmentID
+                    INNER JOIN CompetencyGroups AS CG 
+					ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID =@selfAssessmentId
+                    WHERE ((ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1) AND
+                           (CG.ID =@competencyGroupId) AND (casv.Verified IS NULL))
+                        OR ((ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND
+                        (sasr.SelfAssessmentReview IS NULL) AND (CG.ID =@competencyGroupId) AND (casv.Verified IS NULL))
+						) AS casv;
+						",
+                new { selfAssessmentId, delegateUserId, competencyGroupId }
+            );
+            if(candidateAssessmentSupervisorVerificationsId > 0) 
+            {
+                var numberOfAffectedRows = connection.Execute(
+                  @"   DELETE FROM CandidateAssessmentSupervisorVerifications WHERE ID = @candidateAssessmentSupervisorVerificationsId ",
+                new { candidateAssessmentSupervisorVerificationsId });
             }
         }
 

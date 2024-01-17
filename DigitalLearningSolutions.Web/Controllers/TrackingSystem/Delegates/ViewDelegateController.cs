@@ -35,6 +35,7 @@
         private readonly IUserService userService;
         private readonly IEmailVerificationService emailVerificationService;
         private readonly IEmailVerificationDataService emailVerificationDataService;
+        private readonly ISelfAssessmentService selfAssessmentService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
@@ -44,7 +45,8 @@
             IPasswordResetService passwordResetService,
             IConfiguration config,
             IEmailVerificationService emailVerificationService,
-            IEmailVerificationDataService emailVerificationDataService
+            IEmailVerificationDataService emailVerificationDataService,
+            ISelfAssessmentService selfAssessmentService
         )
         {
             this.userDataService = userDataService;
@@ -55,6 +57,7 @@
             this.config = config;
             this.emailVerificationService = emailVerificationService;
             this.emailVerificationDataService = emailVerificationDataService;
+            this.selfAssessmentService = selfAssessmentService;
         }
 
         public IActionResult Index(int delegateId, string? callType)
@@ -80,7 +83,17 @@
             var delegateCourses =
                 courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
 
-            var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses);
+            var selfAssessments =
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateEntity.UserAccount.Id, centreId);
+
+            foreach (var selfassessment in selfAssessments)
+            {
+                selfassessment.SupervisorCount = selfAssessmentService.GetSupervisorsCountFromCandidateAssessmentId(selfassessment.CandidateAssessmentId);
+                selfassessment.IsSameCentre = selfAssessmentService.CheckForSameCentre(centreId, selfassessment.CandidateAssessmentId);
+                selfassessment.DelegateUserId = delegateUserCard.UserId;
+            }
+
+            var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses, selfAssessments);
 
             if (DisplayStringHelper.IsGuid(model.DelegateInfo.Email))
                 model.DelegateInfo.Email = null;

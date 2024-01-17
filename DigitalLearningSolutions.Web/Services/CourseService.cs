@@ -117,6 +117,10 @@
 
         public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
            string isActive, string categoryName, string courseTopic, string hasAdminFields);
+
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetDelegateCourses(string searchString,int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,string isActive, string categoryName, string courseTopic, string hasAdminFields);
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(string searchString, int centreId, string categoryName, string isActive);
+        IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -359,7 +363,7 @@
         public bool DelegateHasCurrentProgress(int progressId)
         {
             var progress = progressDataService.GetProgressByProgressId(progressId);
-            return progress is { Completed: null, RemovedDate: null };
+            return progress is { RemovedDate: null };
         }
 
         public IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(
@@ -407,8 +411,6 @@
             return new CentreCourseDetails(courses, categories, topics);
         }
 
-
-
         public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
            string isActive, string categoryName, string courseTopic, string hasAdminFields)
         {
@@ -442,7 +444,7 @@
         )
         {
             var currentProgressIds = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
-                .Where(p => p.Completed == null && p.RemovedDate == null)
+                .Where(p => p.RemovedDate == null)
                 .Select(p => p.ProgressId)
                 .ToList();
 
@@ -533,6 +535,28 @@
             );
             info.CourseAdminFields = coursePrompts;
             return info;
+        }
+
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetDelegateCourses(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields)
+        {
+            var allCourses = courseDataService.GetDelegateCourseStatisticsAtCentre(searchString, centreId, categoryId, allCentreCourses, hideInLearnerPortal,
+           isActive, categoryName, courseTopic, hasAdminFields);
+
+            return allCourses.Select(
+                c => new CourseStatisticsWithAdminFieldResponseCounts(
+                    c, courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                )
+            );
+        }
+
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(string searchString, int centreId, string categoryName, string isActive)
+        {
+            return courseDataService.GetDelegateAssessmentStatisticsAtCentre(searchString, centreId, categoryName, isActive);
+        }
+
+        public IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId)
+        {
+            return courseDataService.GetAvailableCourses(delegateId, centreId, categoryId);
         }
     }
 }

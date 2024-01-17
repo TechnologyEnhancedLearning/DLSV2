@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Data.ApiClients
 {
     public interface ILearningHubReportApiClient
     {
-        Task<PdfReportResponse?> PdfReport(CertificateInformation certificates, string strHtml, int delegateId);
+        Task<PdfReportResponse?> PdfReport(string reportName, string strHtml, int delegateId);
         Task<PdfReportStatusResponse?> PdfReportStatus(PdfReportResponse pdfReportResponse);
         Task<byte[]> GetPdfReportFile(PdfReportResponse pdfReportResponse);
     }
@@ -34,19 +34,19 @@ namespace DigitalLearningSolutions.Data.ApiClients
             client.DefaultRequestHeaders.Add("ClientIdentityKey", leaningHubReportApiClientIdentityKey);
             this.logger = logger;
         }
-        public async Task<PdfReportResponse?> PdfReport(CertificateInformation certificates, string strHtml, int delegateId)
+        public async Task<PdfReportResponse?> PdfReport(string reportName, string strHtml, int userId)
         {
             ReportData reportData = new ReportData();
             ReportCreateModel reportCreateModel = new ReportCreateModel();
             Reportpage reportPage = new Reportpage();
             Reportpage[] reportPages = new Reportpage[1];
             PdfReportResponse pdfReportResponse = new PdfReportResponse();
-            reportCreateModel.name = certificates.CourseName;
+            reportCreateModel.name = reportName;
             reportPages[0] = reportPage;
             reportPage.html = strHtml;
             reportCreateModel.reportPages = reportPages;
             reportData.clientId = leaningHubReportApiClientId;
-            reportData.userId = delegateId;
+            reportData.userId = userId;
             reportData.reportCreateModel = reportCreateModel;
             var json = JsonConvert.SerializeObject(reportData);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json-patch+json");

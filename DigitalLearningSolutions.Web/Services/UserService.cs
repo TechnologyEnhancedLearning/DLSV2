@@ -111,6 +111,8 @@ namespace DigitalLearningSolutions.Web.Services
         bool EmailIsHeldAtCentre(string? email, int centreId);
 
         void ReactivateAdmin(int adminId);
+
+        int? GetUserLearningHubAuthId(int userId);
     }
 
     public class UserService : IUserService
@@ -246,6 +248,11 @@ namespace DigitalLearningSolutions.Web.Services
         public int? GetDelegateUserLearningHubAuthId(int delegateId)
         {
             return userDataService.GetDelegateUserLearningHubAuthId(delegateId);
+        }
+
+        public int? GetUserLearningHubAuthId(int userId)
+        {
+            return userDataService.GetUserLearningHubAuthId(userId);
         }
 
         public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)
