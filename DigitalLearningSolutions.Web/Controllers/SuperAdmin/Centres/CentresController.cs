@@ -9,7 +9,6 @@ using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.Services;
-using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
 using Microsoft.AspNetCore.Authorization;
