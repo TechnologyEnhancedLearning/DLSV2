@@ -7,6 +7,8 @@
     public interface ICentreSelfAssessmentsService
     {
         IEnumerable<CentreSelfAssessment> GetCentreSelfAssessments(int centreId);
+        CentreSelfAssessment? GetCentreSelfAssessmentByCentreAndID(int centreId, int selfAssessmentId);
+        void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId);
         public class CentreSelfAssessmentsService : ICentreSelfAssessmentsService
         {
             private readonly ICentreSelfAssessmentsDataService centreSelfAssessmentsDataService;
@@ -21,6 +23,16 @@
             {
                 return centreSelfAssessmentsDataService.GetCentreSelfAssessments(centreId);
             }
+            public CentreSelfAssessment? GetCentreSelfAssessmentByCentreAndID(int centreId, int selfAssessmentId)
+            {
+                return centreSelfAssessmentsDataService.GetCentreSelfAssessmentByCentreAndID(centreId, selfAssessmentId);
+            }
+            public void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId)
+            {
+                centreSelfAssessmentsDataService.DeleteCentreSelfAssessment(centreId, selfAssessmentId);
+            }
+
+
         }
     }
 
