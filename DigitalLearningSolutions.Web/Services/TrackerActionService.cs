@@ -410,6 +410,7 @@
             }
             if (rowsUpdated > 0)
             {
+                progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
                 return TrackerEndpointResponse.Success;
             }
             else
