@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
@@ -153,13 +154,13 @@
             if (progressCompletionData.AdminId != null || progressCompletionData.CourseNotificationEmail != null)
             {
                 htmlActivityCompletionInfo +=
-                    "<p><b>Note:</b> This message has been copied to the administrator(s) managing this activity, for their information.</p>";
+                    "<p><b>Note:</b> This message has been sent to the administrator(s) managing this activity, for their information.</p>";
                 textActivityCompletionInfo +=
-                    " Note: This message has been copied to the administrator(s) managing this activity, for their information.";
+                    " Note: This message has been sent to the administrator(s) managing this activity, for their information.";
             }
 
             const string emailSubjectLine = "Digital Learning Solutions Activity Complete";
-            var delegateNameOrGenericTitle = progress.DelegateFirstName ?? "Digital Learning Solutions Delegate";
+            var delegateNameOrGenericTitle = progress.DelegateFirstName.ToString() + " " + progress.DelegateLastName.ToString() + " (" + progress.CandidateNumber.ToString() + ")" ?? "Digital Learning Solutions Delegate";
             var emailsToCc = GetEmailsToCc(
                 progressCompletionData.AdminId,
                 progressCompletionData.CourseNotificationEmail
@@ -176,14 +177,27 @@
                                 {htmlActivityCompletionInfo}
                             </body>",
             };
+            if (progressCompletionData.DelegateSubscribedToCompletionNotification)
+            {
+                //Learner is subscribed so send it to them:
+                var email = new Email(
+                                emailSubjectLine,
+                                builder,
+                                new[] { delegateEntity.EmailForCentreNotifications },
+                                emailsToCc
+                            );
+                emailService.SendEmail(email);
+            }
+            else
+            {
+                //Learner is not subscribed to notification - if cc addresses exist, send it to them instead:
+                if (emailsToCc != null)
+                {
+                    var email = new Email(emailSubjectLine, builder, emailsToCc);
+                    emailService.SendEmail(email);
+                }
+            }
 
-            var email = new Email(
-                emailSubjectLine,
-                builder,
-                new[] { delegateEntity.EmailForCentreNotifications },
-                emailsToCc
-            );
-            emailService.SendEmail(email);
         }
 
         private string[]? GetEmailsToCc(int? adminId, string? courseNotificationEmail)

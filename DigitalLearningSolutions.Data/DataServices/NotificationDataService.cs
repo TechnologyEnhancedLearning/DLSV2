@@ -56,32 +56,22 @@
         public ProgressCompletionData? GetProgressCompletionData(int progressId, int candidateId, int customisationId)
         {
             return connection.QuerySingle<ProgressCompletionData?>(
-                @"SELECT
-                        centres.CentreID,
-                        applications.ApplicationName + ' - ' + customisations.CustomisationName AS CourseName,
-                        (SELECT TOP (1) au.AdminID
-                            FROM AdminUsers AS au
-                            INNER JOIN Progress AS p ON au.AdminID = p.EnrolledByAdminID
-                            INNER JOIN NotificationUsers AS nu ON au.AdminID = nu.AdminUserID
-                        WHERE nu.NotificationID = 6
-                            AND p.ProgressID = @progressId
-                            AND au.Active = 1) AS AdminId,
-                        customisations.NotificationEmails AS CourseNotificationEmail,
-                        (SELECT MAX(SessionID)
-                            FROM Sessions
-                            WHERE CandidateID = @candidateId
-                            AND CustomisationID = @customisationId) AS SessionID
-                    FROM Progress AS progress
-                        INNER JOIN Candidates AS candidates
-                            ON progress.CandidateID = candidates.CandidateID
-                        INNER JOIN Centres AS centres
-                            ON candidates.CentreID = centres.CentreID
-                        INNER JOIN Customisations AS customisations
-                            ON progress.CustomisationID = customisations.CustomisationID
-                        INNER JOIN Applications AS applications
-                            ON customisations.ApplicationID = applications.ApplicationID
-                    WHERE (progress.ProgressID = @progressId) AND applications.ArchivedDate IS NULL
-                        AND applications.DefaultContentTypeID <> 4",
+                @"SELECT centres.CentreID, applications.ApplicationName + ' - ' + customisations.CustomisationName AS CourseName,
+                                 (SELECT TOP (1) au.AdminID
+                                 FROM    AdminUsers AS au INNER JOIN
+                                              Progress AS p ON au.AdminID = p.EnrolledByAdminID INNER JOIN
+                                              NotificationUsers AS nu ON au.AdminID = nu.AdminUserID
+                                 WHERE (nu.NotificationID = 6) AND (p.ProgressID = @progressId) AND (au.Active = 1)) AS AdminId, customisations.NotificationEmails AS CourseNotificationEmail,
+                                 (SELECT MAX(SessionID) AS Expr1
+                                 FROM    Sessions
+                                 WHERE (CandidateID = @candidateId) AND (CustomisationID = @customisationId)) AS SessionID, CAST(CASE WHEN nu1.NotificationID IS NOT NULL THEN 1 ELSE 0 END AS bit) AS DelegateSubscribedToCompletionNotification
+                    FROM   Progress AS progress INNER JOIN
+                             Candidates AS candidates ON progress.CandidateID = candidates.CandidateID INNER JOIN
+                             Centres AS centres ON candidates.CentreID = centres.CentreID INNER JOIN
+                             Customisations AS customisations ON progress.CustomisationID = customisations.CustomisationID INNER JOIN
+                             Applications AS applications ON customisations.ApplicationID = applications.ApplicationID LEFT OUTER JOIN
+                             NotificationUsers AS nu1 ON nu1.CandidateID = candidates.CandidateID AND nu1.NotificationID = 11
+                    WHERE (progress.ProgressID = @progressId) AND (applications.ArchivedDate IS NULL) AND (applications.DefaultContentTypeID <> 4)",
                 new { progressId, candidateId, customisationId }
             );
         }
