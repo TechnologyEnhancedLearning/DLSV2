@@ -31,9 +31,9 @@ namespace DigitalLearningSolutions.Web.Helpers
 
                         foreach (var filterOption in availableFilterOptions)
                         {
-                            if (filterOption.Any(x => x.DisplayText.Contains(filterOptionText)))
+                            if (filterOption.Any(x => x.DisplayText == filterOptionText))
                             {
-                                var filter = filterOption.Where(x => x.DisplayText.Contains(filterOptionText)).ToList().Select(x => x.FilterValue).FirstOrDefault();
+                                var filter = filterOption.Where(x => x.DisplayText == filterOptionText).ToList().Select(x => x.FilterValue).FirstOrDefault();
                                 if (!filter.Contains(promptDbText))
                                 { //when prompt filter header and selected option match but db coulum (eg. Answer1) does not match
                                   //remove from existing filter and add from available filter
