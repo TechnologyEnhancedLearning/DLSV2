@@ -95,7 +95,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var availableFilters = DelegateGroupsViewModelFilterOptions
                 .GetDelegateGroupFilterModels(addedByAdmins, registrationPrompts).ToList();
 
-            if (TempData["DelegateGroupCentreId"] != null && TempData["DelegateGroupCentreId"].ToString() != User.GetCentreId().ToString()
+            if (TempData["DelegateGroupCentreId"]?.ToString() != centreId.ToString()
                     && existingFilterString != null)
             {
                 existingFilterString = FilterHelper.RemoveNonExistingGroupFilters(availableFilters, existingFilterString);

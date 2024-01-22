@@ -109,7 +109,7 @@
 
             if (isCourseDelegate)
             {
-                if (TempData["actDelCustomisationId"] != null && TempData["actDelCustomisationId"].ToString() != customisationId.ToString()
+                if (TempData["actDelCustomisationId"]?.ToString() != customisationId.ToString()
                         && existingFilterString != null && existingFilterString.Contains("Answer"))
                 {
                     var availableCourseFilters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId.Value).AdminFields);
@@ -509,7 +509,7 @@
             }
 
             var delegateEntity = userService.GetUserById(delegateUserId)!;
-            string delegateName = delegateEntity != null ? delegateEntity.UserAccount.FirstName.ToString() + " " + delegateEntity.UserAccount.LastName.ToString() : ""; 
+            string delegateName = delegateEntity != null ? delegateEntity.UserAccount.FirstName.ToString() + " " + delegateEntity.UserAccount.LastName.ToString() : "";
 
             var model = new EditCompleteByDateViewModel(
                 assessment.Name,
@@ -552,8 +552,8 @@
             ReturnPageQuery? returnPageQuery = formData.ReturnPageQuery;
             var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
             routeData.Add("selfAssessmentId", selfAssessmentId.ToString());
-            
-            if (accessedVia.Id==1 && accessedVia.Name == "ViewDelegate")
+
+            if (accessedVia.Id == 1 && accessedVia.Name == "ViewDelegate")
             {
                 var centreId = User.GetCentreIdKnownNotNull();
                 var delegateAccountId = selfAssessmentService.GetDelegateAccountId(centreId, delegateUserId);
@@ -563,7 +563,7 @@
             {
                 return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
-        }        
+        }
     }
 }
 
