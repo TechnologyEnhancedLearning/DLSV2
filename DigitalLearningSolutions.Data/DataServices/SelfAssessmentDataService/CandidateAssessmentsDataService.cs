@@ -202,7 +202,7 @@
 						",
                 new { selfAssessmentId, delegateUserId, competencyGroupId }
             );
-            if(candidateAssessmentSupervisorVerificationsId > 0) 
+            if (candidateAssessmentSupervisorVerificationsId > 0)
             {
                 var numberOfAffectedRows = connection.Execute(
                   @"   DELETE FROM CandidateAssessmentSupervisorVerifications WHERE ID = @candidateAssessmentSupervisorVerificationsId ",
@@ -329,7 +329,24 @@
         public CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
         {
             return connection.QueryFirstOrDefault<CompetencySelfAssessmentCertificate>(
-                @"SELECT casv.ID,
+                @"SELECT
+                  LearnerDetails.ID ,
+                  LearnerDetails.SelfAssessment,
+                  LearnerDetails.LearnerName,
+                  LearnerDetails.LearnerPRN,
+                  LearnerDetails.Verified,
+                  LearnerDetails.CentreName,
+                  Supervisor.SupervisorName ,
+                  Supervisor.SupervisorPRN ,
+                  Supervisor.SupervisorCentreName,
+                  LearnerDetails.BrandName ,
+                  LearnerDetails.BrandImage,
+                  LearnerDetails.CandidateAssessmentID,
+                  LearnerDetails.SelfAssessmentID,
+                  LearnerDetails.Vocabulary,
+                  LearnerDetails.SupervisorDelegateId,
+                  LearnerDetails.FormattedDate
+                  FROM(SELECT casv.ID,
                     sa.Name AS SelfAssessment, 
                     Learner.FirstName + '  ' + Learner.LastName AS LearnerName,
                     Learner.ProfessionalRegistrationNumber AS LearnerPRN,
@@ -340,18 +357,17 @@
                     b.BrandName, 
                     b.BrandImage,
                     ca.ID  CandidateAssessmentID,
-                    ca.SelfAssessmentID ,
                     ca.SelfAssessmentID,  COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
 					cas.SupervisorDelegateId,CONVERT(VARCHAR(2), DAY(Verified)) +
-    CASE 
-        WHEN DAY(Verified) % 100 IN (11, 12, 13) THEN 'th'
-        WHEN DAY(Verified) % 10 = 1 THEN 'st'
-        WHEN DAY(Verified) % 10 = 2 THEN 'nd'
-        WHEN DAY(Verified) % 10 = 3 THEN 'rd'
-        ELSE 'th'
-    END +
-    ' ' +
-    FORMAT(Verified, 'MMMM yyyy') AS FormattedDate
+                     CASE 
+                        WHEN DAY(Verified) % 100 IN (11, 12, 13) THEN 'th'
+                        WHEN DAY(Verified) % 10 = 1 THEN 'st'
+                        WHEN DAY(Verified) % 10 = 2 THEN 'nd'
+                         WHEN DAY(Verified) % 10 = 3 THEN 'rd'
+                        ELSE 'th'
+                       END +
+                        ' ' +
+                      FORMAT(Verified, 'MMMM yyyy') AS FormattedDate
              FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
              CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
              AdminAccounts AS aa ON casv.ID = aa.ID INNER JOIN
@@ -361,7 +377,18 @@
              SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
              Brands AS b ON sa.BrandID = b.BrandID INNER JOIN
              Centres AS ce ON aa.CentreID = ce.CentreID
-             WHERE (ca.Id=@candidateAssessmentID) AND  (casv.SignedOff = 1) AND (NOT (casv.Verified IS NULL))",
+             WHERE (ca.Id=@candidateAssessmentID) AND  (casv.SignedOff = 1) AND (NOT (casv.Verified IS NULL))) LearnerDetails INNER JOIN
+			 (select casv.ID ,Supervisor.FirstName + ' ' + Supervisor.LastName AS SupervisorName, 
+                    Supervisor.ProfessionalRegistrationNumber AS SupervisorPRN,
+              ce.CentreName AS SupervisorCentreName
+              from CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+			 SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId INNER JOIN
+			 Users AS Supervisor ON Supervisor.PrimaryEmail = sd.SupervisorEmail   INNER JOIN
+			 AdminAccounts AS aa ON casv.ID = aa.ID INNER JOIN
+             Centres AS ce ON aa.CentreID = ce.CentreID
+			 where cas.CandidateAssessmentID=@candidateAssessmentID  AND  (casv.SignedOff = 1)
+                           AND (NOT (casv.Verified IS NULL))) Supervisor ON  LearnerDetails.Id =Supervisor.Id",
                 new { candidateAssessmentID }
             );
         }
