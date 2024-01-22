@@ -1097,13 +1097,13 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@hasCompleted IS NULL) OR (@hasCompleted = 1 AND pr.Completed IS NOT NULL) OR (@hasCompleted = 0 AND pr.Completed IS NULL))
 
                 AND ((@answer1 IS NULL) OR ((@answer1 = 'No option selected' OR @answer1 = 'FREETEXTBLANKVALUE') AND (pr.Answer1 IS NULL OR LTRIM(RTRIM(pr.Answer1)) = '')) 
-					OR ((@answer1 = 'FREETEXTNOTBLANKVALUE' OR (@answer1 != 'No option selected' AND @answer1 != 'FREETEXTBLANKVALUE')) AND (pr.Answer1 IS NOT NULL OR pr.Answer1 = @answer1)))
+					OR ((@answer1 = 'FREETEXTNOTBLANKVALUE' OR (@answer1 != 'No option selected' AND @answer1 != 'FREETEXTBLANKVALUE')) AND (pr.Answer1 IS NOT NULL AND pr.Answer1 = @answer1)))
 
 				AND ((@answer2 IS NULL) OR ((@answer2 = 'No option selected' OR @answer2 = 'FREETEXTBLANKVALUE') AND (pr.Answer2 IS NULL OR LTRIM(RTRIM(pr.Answer2)) = '')) 
-					OR ((@answer2 = 'FREETEXTNOTBLANKVALUE' OR (@answer2 != 'No option selected' AND @answer2 != 'FREETEXTBLANKVALUE')) AND (pr.Answer2 IS NOT NULL OR pr.Answer2 = @answer2)))
+					OR ((@answer2 = 'FREETEXTNOTBLANKVALUE' OR (@answer2 != 'No option selected' AND @answer2 != 'FREETEXTBLANKVALUE')) AND (pr.Answer2 IS NOT NULL AND pr.Answer2 = @answer2)))
 
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
-					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' OR (@answer3 != 'No option selected' AND @answer3 != 'FREETEXTBLANKVALUE')) AND (pr.Answer3 IS NOT NULL OR pr.Answer3 = @answer3)))
+					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' OR (@answer3 != 'No option selected' AND @answer3 != 'FREETEXTBLANKVALUE')) AND (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
 
