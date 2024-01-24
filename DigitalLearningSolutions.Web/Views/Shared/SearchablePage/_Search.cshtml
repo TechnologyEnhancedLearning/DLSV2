@@ -18,7 +18,14 @@
       @Model.SearchLabel
     </label>
 
-        <input class="search-box nhsuk-input" id="search-field" name="searchString" type="search" placeholder="Search by activity name" autocomplete="off" value="@Model.SearchString" />
+        @if (Model.SearchLabel == "Search courses")
+        {
+            <input class="search-box nhsuk-input" id="search-field" name="searchString" type="search" placeholder="Search by activity name" autocomplete="off" value="@Model.SearchString" />
+        }
+        else
+        {
+            <input class="search-box nhsuk-input" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchString" />
+        }
 
     <button class="nhsuk-button search-submit"
             type="submit"
