@@ -547,6 +547,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
             services.AddScoped<IFreshdeskApiClient, FreshdeskApiClient>();
+            services.AddScoped<ILearningHubUserApiClient, LearningHubUserApiClient>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)

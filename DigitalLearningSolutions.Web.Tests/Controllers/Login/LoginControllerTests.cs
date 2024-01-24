@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -16,6 +17,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Login;
+    using DocumentFormat.OpenXml.EMMA;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
@@ -41,6 +43,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
         private IConfigDataService configDataService = null!;
         private IUserService userService = null!;
         private IConfiguration config = null!;
+        private ILearningHubUserApiClient apiClient = null!;
 
         [SetUp]
         public void SetUp()
@@ -53,6 +56,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             configDataService = A.Fake<IConfigDataService>();
             clockUtility = A.Fake<IClockUtility>();
             config = A.Fake<IConfiguration>();
+            apiClient = A.Fake<ILearningHubUserApiClient>();
+            
 
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
@@ -63,7 +68,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                     userService,
                     clockUtility,
                     configDataService,
-                    config
+                    config,
+                    apiClient
                 )
                 .WithDefaultContext()
                 .WithMockUser(false)
@@ -83,7 +89,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                     userService,
                     clockUtility,
                     configDataService,
-                    config
+                    config,
+                    apiClient
                 )
                 .WithDefaultContext()
                 .WithMockUser(true)
@@ -825,6 +832,143 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                 .WithControllerName("Logout")
                 .WithActionName("LogoutSharedAuth");
         }
+
+        [Test]
+        public void ForgottenPassword_ReturnsForgottenPasswordView()
+        {
+            // Arrange
+            // Act
+            var result = controller.ForgottenPassword();
+
+            // Assert
+            result
+                .Should()
+                .BeOfType<ViewResult>()
+                .Which
+                .ViewName
+                .Should()
+                .Be("ForgottenPassword");
+
+            //var model = result
+            //    .As<ViewResult>()
+            //    .Model
+            //    .As<ForgotPasswordViewModel>();
+        }
+
+        [Test]
+        public void ForgotPassword_ReturnsMultipleUsersView()
+        {
+            // Arrange
+            var fakeModel = A.Fake<ForgotPasswordViewModel>();
+
+            var apiClient = A.Fake<ILearningHubUserApiClient>();
+            A.CallTo(() => apiClient.hasMultipleUsersForEmailAsync(A<string>._)).Returns(true);
+
+            var controller = new LoginController(
+                   loginService,
+                   sessionService,
+                   logger,
+                   userService,
+                   clockUtility,
+                   configDataService,
+                   config,
+                   apiClient
+               )
+               .WithDefaultContext()
+               .WithMockUser(false)
+               .WithMockTempData()
+               .WithMockServices()
+               .WithMockUrlHelper(urlHelper);
+
+            // Act
+            var result = controller.ForgotPassword(fakeModel);
+
+            // Assert
+            result.Result
+               .Should()
+               .BeOfType<ViewResult>()
+               .Which
+               .ViewName
+               .Should()
+               .Be("MultipleUsersForEmail");
+        }
+
+        [Test]
+        public void ForgotPassword_ReturnsForgotPasswordFailure()
+        {
+            // Arrange
+            var fakeModel = A.Fake<ForgotPasswordViewModel>();
+
+            var apiClient = A.Fake<ILearningHubUserApiClient>();
+            A.CallTo(() => apiClient.forgotPasswordAsync(A<string>._)).Returns(false);
+
+            var controller = new LoginController(
+                   loginService,
+                   sessionService,
+                   logger,
+                   userService,
+                   clockUtility,
+                   configDataService,
+                   config,
+                   apiClient
+               )
+               .WithDefaultContext()
+               .WithMockUser(false)
+               .WithMockTempData()
+               .WithMockServices()
+               .WithMockUrlHelper(urlHelper);
+
+            // Act
+            var result = controller.ForgotPassword(fakeModel);
+
+            // Assert
+            result.Result
+               .Should()
+               .BeOfType<ViewResult>()
+               .Which
+               .ViewName
+               .Should()
+               .Be("ForgotPasswordFailure");
+        }
+
+        [Test]
+        public void ForgotPassword_ReturnsForgotPasswordAcknowledgement()
+        {
+            // Arrange
+            var fakeModel = A.Fake<ForgotPasswordViewModel>();
+
+            var apiClient = A.Fake<ILearningHubUserApiClient>();
+            A.CallTo(() => apiClient.forgotPasswordAsync(A<string>._)).Returns(true);
+
+            var controller = new LoginController(
+                   loginService,
+                   sessionService,
+                   logger,
+                   userService,
+                   clockUtility,
+                   configDataService,
+                   config,
+                   apiClient
+               )
+               .WithDefaultContext()
+               .WithMockUser(false)
+               .WithMockTempData()
+               .WithMockServices()
+               .WithMockUrlHelper(urlHelper);
+
+            // Act
+            var result = controller.ForgotPassword(fakeModel);
+
+            // Assert
+            result.Result
+               .Should()
+               .BeOfType<ViewResult>()
+               .Which
+               .ViewName
+               .Should()
+               .Be("ForgotPasswordAcknowledgement");
+        }
+
 
         private void GivenSignInIsSuccessful()
         {
