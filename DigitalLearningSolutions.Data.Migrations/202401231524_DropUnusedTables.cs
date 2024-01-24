@@ -6,6 +6,31 @@
     {
         public override void Up()
         {
+            Delete.ForeignKey("FK_ApplicationGroups_ApplicationGroups").OnTable("deprecated_ApplicationGroups");
+            Delete.ForeignKey("FK_Applications_ApplicationGroups").OnTable("Applications");
+            Delete.ForeignKey("FK_aspProgressLearningLogItems_aspProgress").OnTable("deprecated_aspProgressLearningLogItems");
+            Delete.ForeignKey("FK_ConsolidationRatings_Sections").OnTable("deprecated_ConsolidationRatings");
+            Delete.ForeignKey("FK_FilteredComptenencyMapping_CompetencyID_Competencies_ID").OnTable("deprecated_FilteredComptenencyMapping");
+            Delete.ForeignKey("FK_FilteredSeniorityMapping_CompetencyGroupID_CompetencyGroups_ID").OnTable("deprecated_FilteredSeniorityMapping");
+            Delete.ForeignKey("FK_KBCentreBrandsExcludes_Brands").OnTable("deprecated_KBCentreBrandsExcludes");
+            Delete.ForeignKey("FK_KBCentreBrandsExcludes_Centres").OnTable("deprecated_KBCentreBrandsExcludes");
+            Delete.ForeignKey("FK_KBCentreCategoryExcludes_Centres").OnTable("deprecated_KBCentreCategoryExcludes");
+            Delete.ForeignKey("FK_KBCentreCategoryExcludes_CourseCategories").OnTable("deprecated_KBCentreCategoryExcludes");
+            Delete.ForeignKey("FK_tKBVideoTrack_Candidates").OnTable("deprecated_kbVideoTrack");
+            Delete.ForeignKey("FK_tKBVideoTrack_Tutorials").OnTable("deprecated_kbVideoTrack");
+            Delete.ForeignKey("FK_OrderLines_Orders").OnTable("deprecated_OrderLines");
+            Delete.ForeignKey("FK_OrderLines_Products").OnTable("deprecated_OrderLines");
+            Delete.ForeignKey("FK_Orders_Centres").OnTable("deprecated_Orders");
+            Delete.ForeignKey("FK_pl_CaseContent_pl_CaseStudies").OnTable("deprecated_pl_CaseContent");
+            Delete.ForeignKey("FK_pl_CaseStudies_Brands").OnTable("deprecated_pl_CaseStudies");
+            Delete.ForeignKey("FK_pl_CaseStudies_pl_Products").OnTable("deprecated_pl_CaseStudies");
+            Delete.ForeignKey("FK_pl_Features_pl_Products").OnTable("deprecated_pl_Features");
+            Delete.ForeignKey("FK_pl_Quotes_Brands").OnTable("deprecated_pl_Quotes");
+            Delete.ForeignKey("FK_pl_Quotes_Products").OnTable("deprecated_pl_Quotes");
+            Delete.ForeignKey("FK_ProgressContributors_Progress").OnTable("deprecated_ProgressContributors");
+            Delete.ForeignKey("FK_pwNews_Brands").OnTable("deprecated_pwNews");
+            Delete.ForeignKey("FK_pwNews_pl_Products").OnTable("deprecated_pwNews");
+            Delete.ForeignKey("FK_VideoRatings_Tutorials").OnTable("deprecated_VideoRatings");
             Delete.Table("deprecated_ApplicationGroups");
             Delete.Table("deprecated_aspProgressLearningLogItems");
             Delete.Table("deprecated_aspSelfAssessLog");

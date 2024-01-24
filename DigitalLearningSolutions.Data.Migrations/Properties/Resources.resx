@@ -349,10 +349,10 @@
   <data name="TD_2036_SwitchSystemVersioningOffAllTables_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-2036-SwitchSystemVersioningOffAllTables-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="TD_2036_SwitchSystemVersioningOffAllTables_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2036-SwitchSystemVersioningOffAllTables-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="TD_3629_DeleteDeprecatedTables_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-3629-DeleteDeprecatedTables_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="TD_2036_SwitchSystemVersioningOffAllTables_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-2036-SwitchSystemVersioningOffAllTables-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>
