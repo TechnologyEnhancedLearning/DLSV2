@@ -10,8 +10,9 @@
         </summary>
         <div class="nhsuk-details__text">
             <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateSelfAssessmentProgressDetails.cshtml" model="@Model" />
-
-            <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateSelfAssessmentProgressButtons.cshtml" model="@Model" />
+            <feature name="ShowSelfAssessmentProgressButtons">
+                <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateSelfAssessmentProgressButtons.cshtml" model="@Model" />
+            </feature>
         </div>
     </details>
 </div>
