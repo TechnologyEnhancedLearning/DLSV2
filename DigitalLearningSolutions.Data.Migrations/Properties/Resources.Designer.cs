@@ -1059,6 +1059,96 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -- Remove period field from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies ADD PERIOD FOR SYSTEM_TIME ( SysStartTime, SysEndTime ); 
+        ///GO
+        ///
+        ///-- Remove period field from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups ADD PERIOD FOR SYSTEM_TIME ( SysStartTime, SysEndTime ); 
+        ///GO
+        ///
+        ///-- Remove period field from Frameworks table
+        ///ALTER TABLE Frameworks ADD PERIOD FOR SYSTEM_TIME ( SysStartTime, SysEndTime ); 
+        ///GO
+        ///
+        ///-- Remove period field from Competencies table
+        ///ALTER TABL [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchOffPeriodFields_DOWN {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchOffPeriodFields_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Remove period field from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from Frameworks table
+        ///ALTER TABLE Frameworks DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from Competencies table
+        ///ALTER TABLE Competencies DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from Comp [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchOffPeriodFields_UP {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchOffPeriodFields_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Switch on versioning from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetenciesHistory));
+        ///GO
+        ///
+        ///-- Switch on versioning from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetencyGroupsHistory));
+        ///GO
+        ///
+        ///-- Switch on versioning from Frameworks table
+        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworksHisto [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchSystemVersioningOffAllTables_DOWN {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Remove versioning from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from Frameworks table
+        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from Competencies table
+        ///ALTER TABLE Competencies SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from Competency [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchSystemVersioningOffAllTables_UP {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 05/07/2023 08:52:32 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -1403,6 +1493,32 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_3197_FixLinksInCourseReminderEmails_UP {
             get {
                 return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///CREATE TABLE [dbo].[deprecated_ApplicationGroups](
+        ///	[AppGroupID] [int] IDENTITY(1,1) NOT NULL,
+        ///	[ApplicationGroup] [nvarchar](100) NOT NULL,
+        /// CONSTRAINT [PK_ApplicationGroups] PRIMARY KEY CLUSTERED 
+        ///(
+        ///	[AppGroupID] ASC
+        ///)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+        ///) ON [PRIMARY]
+        ///GO
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///CREATE TABLE [dbo].[deprec [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3629_DeleteDeprecatedTables_DOWN {
+            get {
+                return ResourceManager.GetString("TD_3629_DeleteDeprecatedTables_DOWN", resourceCulture);
             }
         }
         
