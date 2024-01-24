@@ -22,6 +22,7 @@
     using Microsoft.Extensions.Logging;
     using DigitalLearningSolutions.Data.Extensions;
     using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+    using DigitalLearningSolutions.Data.ApiClients;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
@@ -34,6 +35,7 @@
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
         private readonly IConfiguration config;
+        private readonly ILearningHubUserApiClient learningHubUserApiClient;
 
         public LoginController(
             ILoginService loginService,
@@ -42,7 +44,8 @@
             IUserService userService,
             IClockUtility clockUtility,
             IConfigDataService configDataService,
-            IConfiguration config
+            IConfiguration config,
+            ILearningHubUserApiClient learningHubUserApiClient
         )
         {
             this.loginService = loginService;
@@ -52,6 +55,7 @@
             this.clockUtility = clockUtility;
             this.configDataService = configDataService;
             this.config = config;
+            this.learningHubUserApiClient = learningHubUserApiClient;
         }
 
         public IActionResult Index(string? returnUrl = null)
@@ -292,6 +296,38 @@
         public IActionResult ShowNotLinked()
         {
             return View("NotLinked");
+        }
+
+        [Route("forgotten-password")]
+        public IActionResult ForgottenPassword()
+        {
+            return View(
+                "ForgottenPassword",
+                new ViewModels.Login.ForgotPasswordViewModel());
+        }
+
+        [Route("/Login/ForgotPassword")]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ViewModels.Login.ForgotPasswordViewModel model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.View("ForgottenPassword", model);
+            }
+
+            ViewData["SupportEmail"] = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var hasMultipleUsers = await this.learningHubUserApiClient.hasMultipleUsersForEmailAsync(model.EmailAddress);
+            if (hasMultipleUsers)
+            {
+                return this.View("MultipleUsersForEmail");
+            }
+
+            var requestSuccess = await this.learningHubUserApiClient.forgotPasswordAsync(model.EmailAddress);
+            if (!requestSuccess)
+            {
+                return this.View("ForgotPasswordFailure");
+            }
+            return this.View("ForgotPasswordAcknowledgement");
         }
     }
 }

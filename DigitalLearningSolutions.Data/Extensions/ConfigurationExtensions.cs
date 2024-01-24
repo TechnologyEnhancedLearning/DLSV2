@@ -46,6 +46,8 @@
         private const string LearningHubAuthenticationAuthority = "LearningHubAuthentication:Authority";
         private const string LearningHubAuthenticationClientId = "learningHubAuthentication:ClientId";
         private const string LearningHubAuthenticationClientSecret = "LearningHubAuthentication:ClientSecret";
+
+        private const string LearningHubUserAPIUserAPIUrl = "LearningHubUserApi:UserApiUrl";
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -193,6 +195,11 @@
         public static long GetFreshdeskCreateTicketProductId(this IConfiguration config)
         {
             return long.Parse(config[FreshdeskCreateTicketProductId]);
+        }
+
+        public static string GetLearningHubUserApiUrl(this IConfiguration config)
+        {
+            return config[LearningHubUserAPIUserAPIUrl];
         }
     }
 }
