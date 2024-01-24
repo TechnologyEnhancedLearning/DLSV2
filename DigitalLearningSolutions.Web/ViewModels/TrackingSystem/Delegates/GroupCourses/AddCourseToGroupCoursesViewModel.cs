@@ -19,7 +19,7 @@
             result,
             true,
             availableFilters,
-            "Search courses"
+            "Search"
         )
         {
             GroupId = groupId;
