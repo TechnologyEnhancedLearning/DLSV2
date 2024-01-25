@@ -61,6 +61,7 @@ namespace DigitalLearningSolutions.Web
     using Serilog;
     using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
     using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
+    using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
 
     public class Startup
     {
@@ -84,18 +85,6 @@ namespace DigitalLearningSolutions.Web
             services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo($"C:\\keys\\{env.EnvironmentName}"))
                 .SetApplicationName("DLSSharedCookieApp");
-
-            services.AddAuthentication("Identity.Application")
-                .AddCookie(
-                    "Identity.Application",
-                    options =>
-                    {
-                        options.Cookie.Name = ".AspNet.SharedCookie";
-                        options.Cookie.Path = "/";
-                        options.Events.OnRedirectToLogin = RedirectToLogin;
-                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
-                    }
-                );
 
             this.SetUpAuthentication(services);
 
