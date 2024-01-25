@@ -1,11 +1,13 @@
 ﻿using DigitalLearningSolutions.Data.Models.User;
+using System;
 
 namespace DigitalLearningSolutions.Data.Models.SuperAdmin
 {
-    public class SuperAdminDelegateAccount:DelegateUser
+    public class SuperAdminDelegateAccount : DelegateUser
     {
         public SuperAdminDelegateAccount() { }
-        public SuperAdminDelegateAccount(DelegateEntity delegateEntity) {
+        public SuperAdminDelegateAccount(DelegateEntity delegateEntity)
+        {
             Id = delegateEntity.DelegateAccount.Id;
             FirstName = delegateEntity.UserAccount.FirstName;
             LastName = delegateEntity.UserAccount.LastName;
@@ -26,6 +28,7 @@ namespace DigitalLearningSolutions.Data.Models.SuperAdmin
         }
         public bool SelfReg { get; set; }
         public string? CentreEmail { get; set; }
+        public DateTime? CentreEmailVerified { get; set; }
         public int? LearningHubAuthId { get; set; }
         public bool UserActive { get; set; }
     }

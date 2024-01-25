@@ -629,7 +629,7 @@
                 ucd.UserID,
                 ucd.CentreID,
                 ucd.Email as CentreEmail,
-                ucd.EmailVerified,
+                ucd.EmailVerified as CentreEmailVerified,
                 (SELECT ID
                     FROM AdminAccounts aa
                         WHERE aa.UserID = da.UserID
