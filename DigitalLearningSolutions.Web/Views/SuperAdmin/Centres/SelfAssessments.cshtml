@@ -32,26 +32,26 @@
     @if (Model.CentreSelfAssessments.Any())
     {
         <div class="nhsuk-grid-column-full">
-            
-                <table class="nhsuk-table-responsive">
-                    <caption class="nhsuk-table__caption">Self assessments published to @ViewBag.CentreName</caption>
-                    <thead role="rowgroup" class="nhsuk-table__head">
-                        <tr role="row">
-                            <th role="columnheader" class="" scope="col">
-                                Self assessment
-                            </th>
-                            <th role="columnheader" class="" scope="col">
-                                Enrolled learners
-                            </th>
-                            <th role="columnheader" class="" scope="col">
-                                Self enrolment enabled
-                            </th>
-                            <th role="columnheader" class="" scope="col">
-                                Action
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="nhsuk-table__body">
+
+            <table class="nhsuk-table-responsive">
+                <caption class="nhsuk-table__caption">Self assessments published to @ViewBag.CentreName</caption>
+                <thead role="rowgroup" class="nhsuk-table__head">
+                    <tr role="row">
+                        <th role="columnheader" class="" scope="col">
+                            Self assessment
+                        </th>
+                        <th role="columnheader" class="" scope="col">
+                            Enrolled learners
+                        </th>
+                        <th role="columnheader" class="" scope="col">
+                            Self enrolment enabled
+                        </th>
+                        <th role="columnheader" class="" scope="col">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="nhsuk-table__body">
                     @foreach (var selfAssessment in Model.CentreSelfAssessments)
                     {
                         <tr role="row" class="nhsuk-table__row">
@@ -69,15 +69,15 @@
                                 <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
                                    role="button"
                                    asp-action="@(selfAssessment.DelegateCount > 0 ? "ConfirmRemoveSelfAssessment" : "RemoveSelfAssessment")"
-                                   asp-action="ConfirmRemoveCourse" asp-controller="Centres" asp-route-selfAssessmentId="@selfAssessment.SelfAssessmentId" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
+                                   asp-controller="Centres" asp-route-selfAssessmentId="@selfAssessment.SelfAssessmentId" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
                                     Remove<span class="nhsuk-u-visually-hidden">self assessment @selfAssessment.SelfAssessmentName from centre</span>
                                 </a>
                             </td>
                         </tr>
                     }
-                    </tbody>
-                </table>
-           
+                </tbody>
+            </table>
+
         </div>
     }
     else

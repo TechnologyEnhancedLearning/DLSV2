@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates
             DateRegistered = delegates.DateRegistered?.ToString(Data.Helpers.DateHelper.StandardDateFormat);
             SelRegistered = delegates.SelfReg;
             IsDelegateActive = delegates.Active;
-            IsCentreEmailVerified = delegates.EmailVerified == null ? false : true;
+            IsCentreEmailVerified = delegates.CentreEmailVerified == null ? false : true;
             CanShowInactivateDelegateButton = IsDelegateActive;
             IsUserActive = delegates.UserActive;
             IsApproved = delegates.Approved;

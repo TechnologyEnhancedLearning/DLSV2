@@ -24,6 +24,7 @@
         }
 
             .certificate .pg-1 {
+                background-color: white;
                 width: 60rem;
                 display: block;
                 margin: 5rem auto;
@@ -99,6 +100,7 @@
         }
 
         .pg-2 {
+            background-color: white;
             width: 60rem;
             margin: 5rem auto;
             border: 1px solid black;
@@ -158,7 +160,7 @@
                     <h1>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</h1>
 
                     <br />
-                    <p>Signed off at @Model.CompetencySelfAssessmentCertificates.CentreName </p>
+                    <p>Signed off at @Model.CompetencySelfAssessmentCertificates.SupervisorCentreName </p>
                     <p>by @Model.CompetencySelfAssessmentCertificates.SupervisorName</p>
                     <p> @Model.CompetencySelfAssessmentCertificates.SupervisorPRN</p>
 
@@ -196,8 +198,14 @@
                     <p>By NHS England Digital Learning Solutions <br /> on behalf of @Model.CompetencySelfAssessmentCertificates.CentreName</p>
                 </div>
                 <div class="footer-logo">
-                    <img src="https://www.hee.nhs.uk/sites/default/files/styles/image_658_witdh/public/Capital-Nurse-Logo.jpg?itok=8hlRIj8r" />
-
+                    @if(Model.CompetencySelfAssessmentCertificates.BrandImage != null)
+                    {
+                        <img id="Logo" src="data:image;base64,@Convert.ToBase64String(Model.CompetencySelfAssessmentCertificates.BrandImage)" alt="Brand Logo Image" />
+                    }
+                    else
+                    {
+                        <img src="https://www.hee.nhs.uk/sites/default/files/styles/image_658_witdh/public/Capital-Nurse-Logo.jpg?itok=8hlRIj8r" />
+                    }
                 </div>
             </div>
 
@@ -242,8 +250,7 @@
                         @foreach (var accessor in Model.Accessors)
                         {
                             <p>
-                                @accessor.AccessorName, @accessor.AccessorPRN
-
+                                @accessor.AccessorList
                             </p>
 
                         }

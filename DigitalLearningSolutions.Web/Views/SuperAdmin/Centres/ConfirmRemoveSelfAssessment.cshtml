@@ -1,0 +1,34 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@using DigitalLearningSolutions.Web.Extensions
+@model ConfirmRemoveSelfAssessmentViewModel;
+@{
+    ViewData["Title"] = "Centre Self Assessment - Confirm Remove";
+    var cancelLinkData = Html.GetRouteValues();
+    cancelLinkData.Remove("selfAssessmentId");
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full word-break">
+
+        <div class="nhsuk-u-reading-width">
+            <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+                Are you sure you want to remove @Model.CentreSelfAssessment.SelfAssessmentName from @Model.CentreSelfAssessment.CentreName?
+            </h1>
+            <p>
+                <text>
+                    This self assessment has @Model.CentreSelfAssessment.DelegateCount learners enrolled on it at this centre. If you remove it:
+                    <ul>
+                        <li>learners at the centre will no longer be able to access the self assessment</li>
+                        <li>supervisors at the centre will no longer be able to supervise learners on the self assessment</li>
+                    </ul>
+                </text>
+            </p>
+        </div>
+        <a class="nhsuk-button nhsuk-u-margin-bottom-6 nhsuk-u-margin-top-2"
+           role="button"
+           asp-action="RemoveSelfAssessment" asp-controller="Centres" asp-route-selfAssessmentId="@Model.CentreSelfAssessment.SelfAssessmentId" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
+            Confirm remove self assessment
+        </a>
+        <vc:cancel-link asp-controller="Centres" asp-action="SelfAssessments" asp-all-route-data="@cancelLinkData" />
+    </div>
+</div>

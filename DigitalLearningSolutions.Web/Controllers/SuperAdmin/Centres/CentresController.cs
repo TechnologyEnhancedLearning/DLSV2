@@ -269,7 +269,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 model.CentreTypeId,
                 model.RegionId,
                 model.CentreEmail,
-                model.IpPrefix,
+                model.IpPrefix?.Trim(),
                 model.ShowOnMap
             );
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
@@ -514,7 +514,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 model.CentreTypeId,
                 model.RegionId,
                 model.RegistrationEmail,
-                model.IpPrefix,
+                model.IpPrefix?.Trim(),
                 model.ShowOnMap,
                 model.AddITSPcourses
             );
@@ -724,5 +724,27 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
             return View(model);
         }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/SelfAssessments/{selfAssessmentId}/ConfirmRemove")]
+        public IActionResult ConfirmRemoveSelfAssessment(int centreId = 0, int selfAssessmentId = 0)
+        {
+            var centreSelfAssessment = centreSelfAssessmentsService.GetCentreSelfAssessmentByCentreAndID(centreId, selfAssessmentId);
+            if (centreSelfAssessment != null)
+            {
+                var model = new ConfirmRemoveSelfAssessmentViewModel();
+                model.CentreSelfAssessment = centreSelfAssessment;
+                return View("ConfirmRemoveSelfAssessment", model);
+            }
+            else
+            {
+                return RedirectToAction("SelfAssessments", new { centreId });
+            }
+
+        }
+        public IActionResult RemoveSelfAssessment(int centreId = 0, int selfAssessmentId = 0)
+        {
+            centreSelfAssessmentsService.DeleteCentreSelfAssessment(centreId, selfAssessmentId);
+            return RedirectToAction("SelfAssessments", new { centreId });
+        }
+
     }
 }
