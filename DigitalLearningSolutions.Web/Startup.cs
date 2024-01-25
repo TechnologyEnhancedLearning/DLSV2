@@ -46,19 +46,10 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-    using Microsoft.IdentityModel.Tokens;
-    using IdentityModel;
-    using Microsoft.AspNetCore.Http;
-    using System.Linq;
-    using Microsoft.AspNetCore.Identity;
-    using AspNetCoreRateLimit;
-    using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
-    using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
-    using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
-    using System.Collections.Concurrent;
     using Serilog;
     using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
     using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
+    using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
 
     public class Startup
     {
@@ -82,18 +73,6 @@ namespace DigitalLearningSolutions.Web
             services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo($"C:\\keys\\{env.EnvironmentName}"))
                 .SetApplicationName("DLSSharedCookieApp");
-
-            services.AddAuthentication("Identity.Application")
-                .AddCookie(
-                    "Identity.Application",
-                    options =>
-                    {
-                        options.Cookie.Name = ".AspNet.SharedCookie";
-                        options.Cookie.Path = "/";
-                        options.Events.OnRedirectToLogin = RedirectToLogin;
-                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
-                    }
-                );
 
             this.SetUpAuthentication(services);
 
