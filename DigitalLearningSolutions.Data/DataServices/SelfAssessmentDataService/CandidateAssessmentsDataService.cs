@@ -11,7 +11,28 @@
         public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId)
         {
             return connection.Query<CurrentSelfAssessment>(
-                @"SELECT
+                @"SELECT  SelfAssessment.Id,
+                        SelfAssessment.Name,
+                        SelfAssessment.Description,
+                        SelfAssessment.IncludesSignposting,
+                        SelfAssessment.IncludeRequirementsFilters,
+                         SelfAssessment. IsSupervisorResultsReviewed,
+                        SelfAssessment.ReviewerCommentsLabel,
+                         SelfAssessment. Vocabulary,
+                         SelfAssessment. NumberOfCompetencies,
+                        SelfAssessment.StartedDate,
+                        SelfAssessment.LastAccessed,
+                        SelfAssessment.CompleteByDate,
+                        SelfAssessment.CandidateAssessmentId,
+                        SelfAssessment.UserBookmark,
+                        SelfAssessment.UnprocessedUpdates,
+                        SelfAssessment.LaunchCount,
+                        SelfAssessment. IsSelfAssessment,
+                         SelfAssessment.SubmittedDate,
+                       SelfAssessment. CentreName,
+                        SelfAssessment.EnrolmentMethodId,
+						Signoff.SignedOff,
+						Signoff.Verified FROM	(SELECT
                         CA.SelfAssessmentID AS Id,
                         SA.Name,
                         SA.Description,
@@ -31,9 +52,7 @@
                         1 AS IsSelfAssessment,
                         CA.SubmittedDate,
                         CR.CentreName AS CentreName,
-                        CA.EnrolmentMethodId,
-						casv.SignedOff,
-						casv.Verified
+                        CA.EnrolmentMethodId
                     FROM Centres AS CR INNER JOIN
                         CandidateAssessments AS CA INNER JOIN
                         SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID ON CR.CentreID = CA.CentreID INNER JOIN
@@ -48,8 +67,13 @@
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
-                        CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId,
-                        casv.SignedOff,casv.Verified",
+                        CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId)SelfAssessment LEFT OUTER JOIN
+                    (SELECT SelfAssessmentID,casv.SignedOff,casv.Verified FROM 
+                       CandidateAssessments AS CA LEFT OUTER JOIN
+						CandidateAssessmentSupervisors AS cas ON  ca.ID =cas.CandidateAssessmentID  LEFT OUTER JOIN
+                        CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID 
+						 WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL) AND (CA.CentreID =@centreId) AND (casv.SignedOff =1) AND
+						(casv.Verified IS NOT NULL))Signoff ON  SelfAssessment.Id =Signoff.SelfAssessmentID",
                 new { delegateUserId, centreId }
             );
         }
@@ -178,7 +202,7 @@
 						",
                 new { selfAssessmentId, delegateUserId, competencyGroupId }
             );
-            if(candidateAssessmentSupervisorVerificationsId > 0) 
+            if (candidateAssessmentSupervisorVerificationsId > 0)
             {
                 var numberOfAffectedRows = connection.Execute(
                   @"   DELETE FROM CandidateAssessmentSupervisorVerifications WHERE ID = @candidateAssessmentSupervisorVerificationsId ",
@@ -305,7 +329,24 @@
         public CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
         {
             return connection.QueryFirstOrDefault<CompetencySelfAssessmentCertificate>(
-                @"SELECT casv.ID,
+                @"SELECT
+                  LearnerDetails.ID ,
+                  LearnerDetails.SelfAssessment,
+                  LearnerDetails.LearnerName,
+                  LearnerDetails.LearnerPRN,
+                  LearnerDetails.Verified,
+                  LearnerDetails.CentreName,
+                  Supervisor.SupervisorName ,
+                  Supervisor.SupervisorPRN ,
+                  Supervisor.SupervisorCentreName,
+                  LearnerDetails.BrandName ,
+                  LearnerDetails.BrandImage,
+                  LearnerDetails.CandidateAssessmentID,
+                  LearnerDetails.SelfAssessmentID,
+                  LearnerDetails.Vocabulary,
+                  LearnerDetails.SupervisorDelegateId,
+                  LearnerDetails.FormattedDate
+                  FROM(SELECT casv.ID,
                     sa.Name AS SelfAssessment, 
                     Learner.FirstName + '  ' + Learner.LastName AS LearnerName,
                     Learner.ProfessionalRegistrationNumber AS LearnerPRN,
@@ -316,18 +357,17 @@
                     b.BrandName, 
                     b.BrandImage,
                     ca.ID  CandidateAssessmentID,
-                    ca.SelfAssessmentID ,
                     ca.SelfAssessmentID,  COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
 					cas.SupervisorDelegateId,CONVERT(VARCHAR(2), DAY(Verified)) +
-    CASE 
-        WHEN DAY(Verified) % 100 IN (11, 12, 13) THEN 'th'
-        WHEN DAY(Verified) % 10 = 1 THEN 'st'
-        WHEN DAY(Verified) % 10 = 2 THEN 'nd'
-        WHEN DAY(Verified) % 10 = 3 THEN 'rd'
-        ELSE 'th'
-    END +
-    ' ' +
-    FORMAT(Verified, 'MMMM yyyy') AS FormattedDate
+                     CASE 
+                        WHEN DAY(Verified) % 100 IN (11, 12, 13) THEN 'th'
+                        WHEN DAY(Verified) % 10 = 1 THEN 'st'
+                        WHEN DAY(Verified) % 10 = 2 THEN 'nd'
+                         WHEN DAY(Verified) % 10 = 3 THEN 'rd'
+                        ELSE 'th'
+                       END +
+                        ' ' +
+                      FORMAT(Verified, 'MMMM yyyy') AS FormattedDate
              FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
              CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
              AdminAccounts AS aa ON casv.ID = aa.ID INNER JOIN
@@ -337,7 +377,18 @@
              SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
              Brands AS b ON sa.BrandID = b.BrandID INNER JOIN
              Centres AS ce ON aa.CentreID = ce.CentreID
-             WHERE (ca.Id=@candidateAssessmentID) AND  (casv.SignedOff = 1) AND (NOT (casv.Verified IS NULL))",
+             WHERE (ca.Id=@candidateAssessmentID) AND  (casv.SignedOff = 1) AND (NOT (casv.Verified IS NULL))) LearnerDetails INNER JOIN
+			 (select casv.ID ,Supervisor.FirstName + ' ' + Supervisor.LastName AS SupervisorName, 
+                    Supervisor.ProfessionalRegistrationNumber AS SupervisorPRN,
+              ce.CentreName AS SupervisorCentreName
+              from CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+			 SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId INNER JOIN
+			 Users AS Supervisor ON Supervisor.PrimaryEmail = sd.SupervisorEmail   INNER JOIN
+			 AdminAccounts AS aa ON casv.ID = aa.ID INNER JOIN
+             Centres AS ce ON aa.CentreID = ce.CentreID
+			 where cas.CandidateAssessmentID=@candidateAssessmentID  AND  (casv.SignedOff = 1)
+                           AND (NOT (casv.Verified IS NULL))) Supervisor ON  LearnerDetails.Id =Supervisor.Id",
                 new { candidateAssessmentID }
             );
         }
@@ -356,7 +407,8 @@
         public IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID)
         {
             return connection.Query<Accessor>(
-                @"SELECT COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS AccessorName,
+                @"SELECT CASE  WHEN AccessorPRN IS NOT NULL THEN AccessorName+', '+AccessorPRN ELSE AccessorName END AS AccessorList,AccessorName,AccessorPRN   
+                   FROM (SELECT COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS AccessorName,
                			u.ProfessionalRegistrationNumber AS AccessorPRN
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
@@ -370,7 +422,7 @@
                 ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
 				INNER JOIN Users AS u ON U.ID =  sd.SupervisorAdminID
              WHERE
-              (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @DelegateUserID) AND (ca.SelfAssessmentID = @selfAssessmentId)",
+              (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @DelegateUserID) AND (ca.SelfAssessmentID = @selfAssessmentId)) Accessor",
                 new { selfAssessmentId, delegateUserID }
             );
         }

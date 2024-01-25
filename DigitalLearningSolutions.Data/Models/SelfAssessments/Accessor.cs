@@ -10,5 +10,6 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
     {
         public string AccessorName { get; set; } = string.Empty;
         public string AccessorPRN { get; set; } = string.Empty;
+        public string AccessorList { get; set; } = string.Empty;
     }
 }

@@ -15,10 +15,11 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public DateTime Verified { get; set; }
         public string CentreName { get; set; } = string.Empty;
         public string SupervisorName { get; set; } = string.Empty;
+        public string SupervisorCentreName { get; set; } = string.Empty;
         public string? SupervisorPRN { get; set; }
         public int CandidateAssessmentID { get; set; }
         public string BrandName { get; set; } = string.Empty;
-        public string? BrandImage { get; set; }
+        public byte[]? BrandImage { get; set; }
         public int SelfAssessmentID { get; set; }
         public string? Vocabulary { get; set; }
         public int SupervisorDelegateId { get; set; }
