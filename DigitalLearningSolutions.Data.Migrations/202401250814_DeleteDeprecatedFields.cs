@@ -29,7 +29,7 @@
             Delete.Column("LastName_deprecated").FromTable("DelegateAccounts");
             Delete.Column("JobGroupID_deprecated").FromTable("DelegateAccounts");
             Delete.Column("AliasID_deprecated").FromTable("DelegateAccounts");
-            Delete.Column("Email_deprecated").FromTable("AdminAccounts");
+            Delete.Column("Email_deprecated").FromTable("DelegateAccounts");
             Delete.Column("SkipPW_deprecated").FromTable("DelegateAccounts");
             Delete.Column("ResetHash_deprecated").FromTable("DelegateAccounts");
             Delete.Column("SkypeHandle_deprecated").FromTable("DelegateAccounts");
