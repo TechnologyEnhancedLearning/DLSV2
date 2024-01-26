@@ -220,10 +220,10 @@
                 :new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true),
                 selfAssessmentDelegate.SignedOff.HasValue
                 ?new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
-                :new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff, true),
+                :new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff),
                 selfAssessmentDelegate.SubmittedDate.HasValue
                 ?new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.Submitted)
-                :new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.NotSubmitted, true)
+                :new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.NotSubmitted)
             };
         }
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateUser(
