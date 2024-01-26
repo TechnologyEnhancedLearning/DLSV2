@@ -17,7 +17,7 @@
             result,
             true,
             availableFilters,
-            "Search by activity name"
+            "Search"
         )
         {
             UpdateCourseActiveFlags(result);

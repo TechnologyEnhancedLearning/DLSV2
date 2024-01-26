@@ -16,7 +16,7 @@
             result,
             true,
             null,
-            "Search delegates account"
+            "Search"
         )
         {
             Delegates = result.ItemsToDisplay.Select(

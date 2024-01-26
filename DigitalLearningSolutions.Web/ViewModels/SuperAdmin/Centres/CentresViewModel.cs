@@ -13,7 +13,7 @@
             result,
             true,
             null,
-            "Search centre"
+            "Search"
         )
         {
             Centres = result.ItemsToDisplay.Select(
