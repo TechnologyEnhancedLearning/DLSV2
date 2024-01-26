@@ -746,5 +746,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             return RedirectToAction("SelfAssessments", new { centreId });
         }
 
+        public IActionResult SelfAssessmentAdd(int centreId = 0)
+        {
+            var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
+            var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+            var model = new SelfAssessmentAddViewModel() { SelfAssessments = selfAssessmentsForPublish, CentreId = centreId, CentreName = centreName };
+            return View(model);
+        }
     }
 }

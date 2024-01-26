@@ -31,18 +31,8 @@
                 </h1>
             </legend>
             <div class="nhsuk-hint">
-                Which self assessments would you like to add?
+                Which self assessment would you like to add?
             </div>
-
-            @if (Model.SelfAssessments.Count() > 1)
-            {
-                <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
-                    <div class="nhsuk-grid-column-full">
-                        <a class="nhsuk-button select-all-button select-all status-tag nhsuk-u-margin-1" role="button" data-group="course-list" name="selectAll" value="true">Select all courses</a>
-                        <a class="nhsuk-button select-all-button deselect-all status-tag nhsuk-u-margin-1" role="button" data-group="course-list" name="selectAll" value="false">Deselect all courses</a>
-                    </div>
-                </div>
-            }
             <div class="nhsuk-form-group">
                 <table class="nhsuk-table-responsive">
                     <thead role="rowgroup" class="nhsuk-table__head">
@@ -78,6 +68,7 @@
                 </table>
             </div>
         </fieldset>
+
         <input type="hidden" asp-for="CentreId" />
         <button class="nhsuk-button" type="submit">
             Add selected self assessments to centre
@@ -86,8 +77,8 @@
 }
 else
 {
-    <h1>No courses available</h1>
-    <p>There are no core courses available to add to the centre @ViewBag.CentreName.</p>
+    <h1>No self assessments available</h1>
+    <p>There are no self assessments available to add to the centre @ViewBag.CentreName.</p>
 }
 
 <vc:cancel-link asp-controller="Centres" asp-action="Courses" asp-all-route-data="@cancelLinkData" />

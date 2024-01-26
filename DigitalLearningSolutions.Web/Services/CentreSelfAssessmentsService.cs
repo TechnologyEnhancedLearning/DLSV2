@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SuperAdmin;
     using System.Collections.Generic;
 
@@ -8,6 +9,7 @@
     {
         IEnumerable<CentreSelfAssessment> GetCentreSelfAssessments(int centreId);
         CentreSelfAssessment? GetCentreSelfAssessmentByCentreAndID(int centreId, int selfAssessmentId);
+        IEnumerable<SelfAssessmentForPublish> GetCentreSelfAssessmentsForPublish(int centreId);
         void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId);
         public class CentreSelfAssessmentsService : ICentreSelfAssessmentsService
         {
@@ -26,6 +28,10 @@
             public CentreSelfAssessment? GetCentreSelfAssessmentByCentreAndID(int centreId, int selfAssessmentId)
             {
                 return centreSelfAssessmentsDataService.GetCentreSelfAssessmentByCentreAndID(centreId, selfAssessmentId);
+            }
+            public IEnumerable<SelfAssessmentForPublish> GetCentreSelfAssessmentsForPublish(int centreId)
+            {
+                return centreSelfAssessmentsDataService.GetCentreSelfAssessmentsForPublish(centreId);
             }
             public void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId)
             {

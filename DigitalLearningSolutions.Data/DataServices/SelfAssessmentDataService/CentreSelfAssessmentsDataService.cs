@@ -2,6 +2,7 @@
 {
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SuperAdmin;
     using Microsoft.Extensions.Logging;
     using System;
@@ -12,6 +13,7 @@
     {
         IEnumerable<CentreSelfAssessment> GetCentreSelfAssessments(int centreId);
         CentreSelfAssessment? GetCentreSelfAssessmentByCentreAndID(int centreId, int selfAssessmentId);
+        IEnumerable<SelfAssessmentForPublish> GetCentreSelfAssessmentsForPublish(int centreId);
         void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId);
     }
     public class CentreSelfAssessmentsDataService : ICentreSelfAssessmentsDataService
@@ -60,6 +62,20 @@
                 logger.LogWarning($"No centre self assessment found for centre id {centreId} and application id {selfAssessmentId}");
             }
             return centreSelfAssessment;
+        }
+        public IEnumerable<SelfAssessmentForPublish> GetCentreSelfAssessmentsForPublish(int centreId)
+        {
+            return connection.Query<SelfAssessmentForPublish>(
+                @"SELECT sa.SelfAssessmentID, sa.Name AS SelfAssessmentName, sa.National, b.BrandName AS Provider
+                    FROM SelfAssessments AS sa LEFT OUTER JOIN Brands AS b ON sa.BrandID = b.BrandID
+                    WHERE (sa.ArchivedDate IS NULL)
+                    AND (sa.PublishStatusID = 3)
+                    AND (sa.SelfAssessmentID NOT IN
+                        (SELECT SelfAssessmentID
+                            FROM CentreSelfAssessments AS csa
+                            WHERE csa.CentreID = @centreId))
+                    ORDER BY SelfAssessmentName", new { centreId }
+                );
         }
         public void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId)
         {
