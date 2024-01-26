@@ -19,7 +19,7 @@
             result,
             true,
             availableFilters,
-            "Search courses"
+            "Search"
         )
         {
             Courses = result.ItemsToDisplay.Select(c => new SearchableCourseStatisticsViewModel(c, config));
