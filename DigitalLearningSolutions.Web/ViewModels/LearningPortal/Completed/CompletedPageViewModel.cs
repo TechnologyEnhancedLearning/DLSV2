@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             bool apiIsAccessible,
             IConfiguration config,
             string? bannerText
-        ) : base(result, false, searchLabel: "Search your completed courses")
+        ) : base(result, false, searchLabel: "Search")
         {
             ApiIsAccessible = apiIsAccessible;
             BannerText = bannerText;

@@ -13,7 +13,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.FindYourCentre
             SearchSortFilterPaginationResult<CentreSummaryForFindYourCentre> centreSummaries,
             IEnumerable<FilterModel> availableFilters
         ) :
-            base(centreSummaries, true, availableFilters, "Search Centres")
+            base(centreSummaries, true, availableFilters, "Search")
         {
             CentreSummaries = centreSummaries.ItemsToDisplay;
         }
