@@ -66,15 +66,15 @@
         public IEnumerable<SelfAssessmentForPublish> GetCentreSelfAssessmentsForPublish(int centreId)
         {
             return connection.Query<SelfAssessmentForPublish>(
-                @"SELECT sa.SelfAssessmentID, sa.Name AS SelfAssessmentName, sa.National, b.BrandName AS Provider
+                @"SELECT sa.ID, sa.Name AS SelfAssessment, sa.[National], b.BrandName AS Provider
                     FROM SelfAssessments AS sa LEFT OUTER JOIN Brands AS b ON sa.BrandID = b.BrandID
                     WHERE (sa.ArchivedDate IS NULL)
                     AND (sa.PublishStatusID = 3)
-                    AND (sa.SelfAssessmentID NOT IN
+                    AND (sa.ID NOT IN
                         (SELECT SelfAssessmentID
                             FROM CentreSelfAssessments AS csa
                             WHERE csa.CentreID = @centreId))
-                    ORDER BY SelfAssessmentName", new { centreId }
+                    ORDER BY sa.Name", new { centreId }
                 );
         }
         public void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId)

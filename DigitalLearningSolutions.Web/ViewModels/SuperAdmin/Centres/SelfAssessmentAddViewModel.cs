@@ -8,6 +8,6 @@
         public int CentreId { get; set; }
         public string CentreName { get; set; }
         public IEnumerable<SelfAssessmentForPublish> SelfAssessments { get; set; }
-        public int SelfAssessmentId { get; set; }
+        public List<int> SelfAssessmentIds { get; set; }
     }
 }

@@ -41,6 +41,9 @@
                                 Self assessment
                             </th>
                             <th role="columnheader" class="" scope="col">
+                                National?
+                            </th>
+                            <th role="columnheader" class="" scope="col">
                                 Provider
                             </th>
                         </tr>
@@ -50,13 +53,24 @@
                         {
                             <tr role="row" class="nhsuk-table__row">
                                 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
-                                    <span class="nhsuk-table-responsive__heading">Course </span>
+                                    <span class="nhsuk-table-responsive__heading">Self assessment </span>
                                     <div class="nhsuk-checkboxes__item">
-                                        <input data-group="course-list" class="nhsuk-checkboxes__input select-all-checkbox" id="self-assessment-check-@selfAssessment.Id" name="ApplicationIds" type="checkbox" value="@selfAssessment.Id">
+                                        <input data-group="course-list" class="nhsuk-checkboxes__input select-all-checkbox" id="self-assessment-check-@selfAssessment.Id" name="SelfAssessmentIds" type="checkbox" value="@selfAssessment.Id">
                                         <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="course-check-@selfAssessment.Id">
                                             @selfAssessment.SelfAssessment
                                         </label>
                                     </div>
+                                </td>
+                                <td class="nhsuk-table__cell nhsuk-u-font-size-16">
+                                    <span class="nhsuk-table-responsive__heading">National? </span>
+                                    @if (selfAssessment.National)
+                                    {
+                                        <text>Yes</text>
+                                    }
+                                    else
+                                    {
+                                        <text>No</text>
+                                    }
                                 </td>
                                 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
                                     <span class="nhsuk-table-responsive__heading">Provider </span>
