@@ -317,16 +317,13 @@
 
             ViewData["SupportEmail"] = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
             var hasMultipleUsers = await this.learningHubUserApiClient.hasMultipleUsersForEmailAsync(model.EmailAddress);
-            if (hasMultipleUsers)
-            {
-                return this.View("MultipleUsersForEmail");
-            }
-
             var requestSuccess = await this.learningHubUserApiClient.forgotPasswordAsync(model.EmailAddress);
-            if (!requestSuccess)
+            if (hasMultipleUsers || !requestSuccess)
             {
                 return this.View("ForgotPasswordFailure");
             }
+
+            ViewData["EmailAddress"] = model.EmailAddress;
             return this.View("ForgotPasswordAcknowledgement");
         }
     }

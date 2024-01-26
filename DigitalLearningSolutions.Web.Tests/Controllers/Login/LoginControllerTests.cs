@@ -848,15 +848,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                 .ViewName
                 .Should()
                 .Be("ForgottenPassword");
-
-            //var model = result
-            //    .As<ViewResult>()
-            //    .Model
-            //    .As<ForgotPasswordViewModel>();
         }
 
         [Test]
-        public void ForgotPassword_ReturnsMultipleUsersView()
+        public void ForgotPassword_MultipleUsers_ReturnsMultipleUsersView()
         {
             // Arrange
             var fakeModel = A.Fake<ForgotPasswordViewModel>();
@@ -890,7 +885,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                .Which
                .ViewName
                .Should()
-               .Be("MultipleUsersForEmail");
+               .Be("ForgotPasswordFailure");
         }
 
         [Test]
