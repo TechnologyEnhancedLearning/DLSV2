@@ -33,13 +33,19 @@
                 )
             );
 
-            Filters = SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels();
+            Filters = routeData["selfAssessmentId"]?.ToString() == "1" ?
+                SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels().Where(x => x.FilterProperty != "SignedOffStatus") :
+                SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels().Where(x => x.FilterProperty != "SubmittedStatus");
+
+            SortOptions = routeData["selfAssessmentId"]?.ToString() == "1" ?
+                Enumeration.GetAll<SelfAssessmentDelegatesSortByOption>().Where(x => x.PropertyName != "SignedOff").Select(o => (o.DisplayText, o.PropertyName)) :
+                Enumeration.GetAll<SelfAssessmentDelegatesSortByOption>().Where(x => x.PropertyName != "SubmittedDate").Select(o => (o.DisplayText, o.PropertyName));
+
         }
 
         public bool Active { get; set; }
         public IEnumerable<DelegateSelfAssessmentInfoViewModel> Delegates { get; set; }
-        public override IEnumerable<(string, string)> SortOptions { get; } =
-            Enumeration.GetAll<SelfAssessmentDelegatesSortByOption>().Select(o => (o.DisplayText, o.PropertyName));
+        public override IEnumerable<(string, string)> SortOptions { get; }
         public override bool NoDataFound => !Delegates.Any() && NoSearchOrFilter;
     }
 }

@@ -107,20 +107,26 @@
             </dd>
             <dd class="nhsuk-summary-list__actions"></dd>
         </div>
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                Signed off
-            </dt>
-            <partial name="_SummaryFieldValue" model="@Model.SignedOff" />
-            <dd class="nhsuk-summary-list__actions" />
-        </div>
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                Submitted
-            </dt>
-            <partial name="_SummaryFieldValue" model="@Model.SubmittedDate" />
-            <dd class="nhsuk-summary-list__actions" />
-        </div>
+        if (Model.SelfAssessmentId == 1)
+        {
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Submitted
+                </dt>
+                <partial name="_SummaryFieldValue" model="@Model.SubmittedDate" />
+                <dd class="nhsuk-summary-list__actions" />
+            </div>
+        }
+        else
+        {
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Signed off
+                </dt>
+                <partial name="_SummaryFieldValue" model="@Model.SignedOff" />
+                <dd class="nhsuk-summary-list__actions" />
+            </div>
+        }
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
                 Removed

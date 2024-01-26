@@ -116,6 +116,17 @@
                     existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableCourseFilters, existingFilterString);
                 }
             }
+            else
+            {
+                if (existingFilterString != null)
+                {
+                    var existingfilterList = selfAssessmentId == 1 ?
+                        existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SignedOff")).ToList() :
+                        existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SubmittedDate")).ToList();
+                    
+                    existingFilterString = existingfilterList.Any() ? string.Join(FilteringHelper.FilterSeparator, existingfilterList) : null;
+                }
+            }
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
@@ -509,7 +520,7 @@
             }
 
             var delegateEntity = userService.GetUserById(delegateUserId)!;
-            string delegateName = delegateEntity != null ? delegateEntity.UserAccount.FirstName.ToString() + " " + delegateEntity.UserAccount.LastName.ToString() : ""; 
+            string delegateName = delegateEntity != null ? delegateEntity.UserAccount.FirstName.ToString() + " " + delegateEntity.UserAccount.LastName.ToString() : "";
 
             var model = new EditCompleteByDateViewModel(
                 assessment.Name,
@@ -552,8 +563,8 @@
             ReturnPageQuery? returnPageQuery = formData.ReturnPageQuery;
             var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
             routeData.Add("selfAssessmentId", selfAssessmentId.ToString());
-            
-            if (accessedVia.Id==1 && accessedVia.Name == "ViewDelegate")
+
+            if (accessedVia.Id == 1 && accessedVia.Name == "ViewDelegate")
             {
                 var centreId = User.GetCentreIdKnownNotNull();
                 var delegateAccountId = selfAssessmentService.GetDelegateAccountId(centreId, delegateUserId);
@@ -563,7 +574,7 @@
             {
                 return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
-        }        
+        }
     }
 }
 
