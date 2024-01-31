@@ -25,6 +25,8 @@
             Delete.Column("PublicSkypeLink_deprecated").FromTable("AdminAccounts");
             Delete.Column("ResetPasswordID_deprecated").FromTable("AdminAccounts");
 
+            if (Schema.Table("DelegateAccounts").Index("IX_DelegateAccounts_Email").Exists())
+                Delete.Index("IX_DelegateAccounts_Email").OnTable("DelegateAccounts");
             Delete.Column("FirstName_deprecated").FromTable("DelegateAccounts");
             Delete.Column("LastName_deprecated").FromTable("DelegateAccounts");
             Delete.Column("JobGroupID_deprecated").FromTable("DelegateAccounts");
