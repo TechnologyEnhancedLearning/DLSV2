@@ -51,7 +51,7 @@
             var loggedInUserId = User.GetUserId();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
-            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+            var loggedInAdminUser = userDataService.GetAdminUserById(adminId);
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;

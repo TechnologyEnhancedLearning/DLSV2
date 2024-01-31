@@ -22,7 +22,7 @@
             true,
             availableFilters,
             routeData: routeData,
-            searchLabel: "Search activity")
+            searchLabel: "Search")
         {
             var currentCourse =
                 courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId);

@@ -17,7 +17,7 @@
             result,
             true,
             null,
-            "Search user account"
+            "Search"
         )
         {
             UserAccounts = result.ItemsToDisplay.Select(

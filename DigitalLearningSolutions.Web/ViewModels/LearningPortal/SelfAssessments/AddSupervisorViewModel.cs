@@ -15,7 +15,7 @@
             string? selfAssessmentName,
             int supervisorAdminID,
             SearchSortFilterPaginationResult<Administrator> result
-            ) : base(result, false, searchLabel: "Search supervisors")
+            ) : base(result, false, searchLabel: "Search")
         {
             SelfAssessmentID = selfAssessmentID;
             SelfAssessmentName = selfAssessmentName;
