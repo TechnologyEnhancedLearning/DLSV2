@@ -272,7 +272,10 @@
                 logger.LogError(ex, ex.Message);
                 return TrackerEndpointResponse.StoreAspProgressException;
             }
-
+            if (tutorialStatus!.Value > 0)
+            {
+                progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
+            }
             return TrackerEndpointResponse.Success;
         }
 
@@ -407,6 +410,7 @@
             }
             if (rowsUpdated > 0)
             {
+                progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
                 return TrackerEndpointResponse.Success;
             }
             else

@@ -16,7 +16,7 @@
             result,
             true,
             availableFilters,
-            "Search groups"
+            "Search"
         )
         {
             DelegateGroups = result.ItemsToDisplay.Select(g =>

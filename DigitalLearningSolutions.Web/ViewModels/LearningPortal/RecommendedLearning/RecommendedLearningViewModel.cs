@@ -18,7 +18,7 @@
         ) : base(
             result,
             false,
-            searchLabel: "Search resources"
+            searchLabel: "Search"
         )
         {
             ApiIsAccessible = apiIsAccessible;
