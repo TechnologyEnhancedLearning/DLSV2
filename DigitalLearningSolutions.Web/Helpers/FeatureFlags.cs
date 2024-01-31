@@ -12,5 +12,6 @@
         public const string PricingPageEnabled = "PricingPage";
         public const string RefactoredFindYourCentrePage = "RefactoredFindYourCentrePage";
         public const string UserFeedbackBar = "UserFeedbackBar";
+        public const string ShowSelfAssessmentProgressButtons = "ShowSelfAssessmentProgressButtons";
     }
 }

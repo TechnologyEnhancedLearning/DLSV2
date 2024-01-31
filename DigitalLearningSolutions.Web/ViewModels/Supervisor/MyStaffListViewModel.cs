@@ -19,7 +19,7 @@
             AdminUser adminUser,
             SearchSortFilterPaginationResult<SupervisorDelegateDetailViewModel> result,
             CentreRegistrationPrompts centreRegistrationPrompts
-        ) : base(result, false, searchLabel: "Search administrators")
+        ) : base(result, false, searchLabel: "Search")
         {
             AdminUser = adminUser;
             CentreRegistrationPrompts = centreRegistrationPrompts;

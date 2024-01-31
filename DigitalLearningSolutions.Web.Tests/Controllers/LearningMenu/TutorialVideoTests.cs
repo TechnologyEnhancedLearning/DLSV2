@@ -88,7 +88,7 @@
             controller.TutorialVideo(CustomisationId, SectionId, TutorialId);
 
             // Then
-            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._)).MustHaveHappened();
             A.CallTo(() => courseContentService.UpdateProgress(A<int>._))
                 .WhenArgumentsMatch((int id) => id != progressId)
                 .MustNotHaveHappened();

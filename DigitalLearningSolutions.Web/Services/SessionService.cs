@@ -6,7 +6,7 @@
 
     public interface ISessionService
     {
-        void StartOrUpdateDelegateSession(int candidateId, int customisationId, ISession httpContextSession);
+        int StartOrUpdateDelegateSession(int candidateId, int customisationId, ISession httpContextSession);
 
         void StopDelegateSession(int candidateId, ISession httpContextSession);
 
@@ -24,12 +24,13 @@
             this.sessionDataService = sessionDataService;
         }
 
-        public void StartOrUpdateDelegateSession(int candidateId, int customisationId, ISession httpContextSession)
+        public int StartOrUpdateDelegateSession(int candidateId, int customisationId, ISession httpContextSession)
         {
             var currentSessionId = httpContextSession.GetInt32($"SessionID-{customisationId}");
+            int returnValue = 0;
             if (currentSessionId != null)
             {
-                sessionDataService.UpdateDelegateSessionDuration(currentSessionId.Value, clockUtility.UtcNow);
+                returnValue = sessionDataService.UpdateDelegateSessionDuration(currentSessionId.Value, clockUtility.UtcNow);
             }
             else
             {
@@ -39,7 +40,9 @@
                 // Make and keep track of a new session starting at this request
                 var newSessionId = sessionDataService.StartOrRestartDelegateSession(candidateId, customisationId);
                 httpContextSession.SetInt32($"SessionID-{customisationId}", newSessionId);
+                returnValue = newSessionId;
             }
+            return returnValue;
         }
 
         public void StopDelegateSession(int candidateId, ISession httpContextSession)

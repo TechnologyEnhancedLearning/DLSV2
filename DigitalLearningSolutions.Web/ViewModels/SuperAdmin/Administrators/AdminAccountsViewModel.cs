@@ -17,7 +17,7 @@
             result,
             true,
             null,
-            "Search admin account"
+            "Search"
         )
         {
             Admins = result.ItemsToDisplay.Select(
