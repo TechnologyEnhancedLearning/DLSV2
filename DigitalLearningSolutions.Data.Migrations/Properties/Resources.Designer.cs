@@ -1523,6 +1523,30 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER OFF
+        ///GO
+        ///CREATE PROCEDURE [dbo].[aspnet_AnyDataInTables_deprecated]
+        ///    @TablesToCheck int
+        ///AS
+        ///BEGIN
+        ///    -- Check Membership table if (@TablesToCheck &amp; 1) is set
+        ///    IF ((@TablesToCheck &amp; 1) &lt;&gt; 0 AND
+        ///        (EXISTS (SELECT name FROM sysobjects WHERE (name = N&apos;vw_aspnet_MembershipUsers&apos;) AND (type = &apos;V&apos;))))
+        ///    BEGIN
+        ///        IF (EXISTS(SELECT TOP 1 UserId FROM dbo.aspnet_Membership))
+        ///        BEGIN
+        ///            SELECT N&apos;aspnet_Membership&apos;
+        ///            RETU [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3664_RestoreDroppedSPs {
+            get {
+                return ResourceManager.GetString("TD_3664_RestoreDroppedSPs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO

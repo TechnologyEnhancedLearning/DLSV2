@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Data.Migrations
             }
         }
 
-        private string[] GetProcedureNames()
+        public static string[] GetProcedureNames()
         {
             string[] oldProcedureNames =
                 {
