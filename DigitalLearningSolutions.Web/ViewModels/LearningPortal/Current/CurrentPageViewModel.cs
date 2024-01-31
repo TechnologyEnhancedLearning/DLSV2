@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             SearchSortFilterPaginationResult<CurrentLearningItem> result,
             bool apiIsAccessible,
             string? bannerText
-        ) : base(result, false, searchLabel: "Search your current courses")
+        ) : base(result, false, searchLabel: "Search")
         {
             ApiIsAccessible = apiIsAccessible;
             BannerText = bannerText;

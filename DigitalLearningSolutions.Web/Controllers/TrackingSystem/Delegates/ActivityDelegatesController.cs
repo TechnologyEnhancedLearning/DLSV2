@@ -44,6 +44,7 @@
         private readonly ICourseService courseService;
         private readonly IDelegateActivityDownloadFileService delegateActivityDownloadFileService;
         private readonly IUserService userService;
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private static readonly IClockUtility clockUtility = new ClockUtility();
 
         public ActivityDelegatesController(
@@ -54,7 +55,8 @@
             ISelfAssessmentService selfAssessmentService,
             ICourseService courseService,
             IDelegateActivityDownloadFileService delegateActivityDownloadFileService,
-            IUserService userService
+            IUserService userService,
+            ICourseAdminFieldsService courseAdminFieldsService
         )
         {
             this.courseDelegatesService = courseDelegatesService;
@@ -65,6 +67,7 @@
             this.courseService = courseService;
             this.delegateActivityDownloadFileService = delegateActivityDownloadFileService;
             this.userService = userService;
+            this.courseAdminFieldsService = courseAdminFieldsService;
         }
 
         [NoCaching]
@@ -104,11 +107,16 @@
                 CourseDelegateAccountStatusFilterOptions.Active.FilterValue
             );
 
-            if (existingFilterString != null && existingFilterString.Contains("Answer"))
+            if (isCourseDelegate)
             {
-                var filtersWithoutPromo = existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("Answer")).ToList();
-                existingFilterString = filtersWithoutPromo.Any() ? string.Join(FilteringHelper.FilterSeparator, filtersWithoutPromo) : null;
+                if (TempData["actDelCustomisationId"]?.ToString() != customisationId.ToString()
+                        && existingFilterString != null && existingFilterString.Contains("Answer"))
+                {
+                    var availableCourseFilters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId.Value).AdminFields);
+                    existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableCourseFilters, existingFilterString);
+                }
             }
+
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
             var centreId = User.GetCentreIdKnownNotNull();
@@ -200,8 +208,7 @@
 
                     if (courseDelegatesData?.Delegates.Count() == 0 && resultCount > 0)
                     {
-                        page = 1;
-                        offSet = 0;
+                        page = 1; offSet = 0;
                         (courseDelegatesData, resultCount) = courseDelegatesService.GetCoursesAndCourseDelegatesPerPageForCentre(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
                             customisationId, centreId, adminCategoryId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3);
                     }
@@ -213,8 +220,7 @@
 
                     if (selfAssessmentDelegatesData?.Delegates?.Count() == 0 && resultCount > 0)
                     {
-                        page = 1;
-                        offSet = 0;
+                        page = 1; offSet = 0;
                         (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
                             selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
                     }
@@ -260,6 +266,7 @@
                     TempData["Page"] = result.Page;
                     Response.UpdateFilterCookie(filterCookieName, result.FilterString);
                     var model = new ActivityDelegatesViewModel(courseDelegatesData, result, availableFilters, "customisationId", activityName, true);
+                    TempData["actDelCustomisationId"] = customisationId;
                     return View(model);
                 }
                 else
@@ -502,7 +509,7 @@
             }
 
             var delegateEntity = userService.GetUserById(delegateUserId)!;
-            string delegateName = delegateEntity != null ? delegateEntity.UserAccount.FirstName.ToString() + " " + delegateEntity.UserAccount.LastName.ToString() : ""; 
+            string delegateName = delegateEntity != null ? delegateEntity.UserAccount.FirstName.ToString() + " " + delegateEntity.UserAccount.LastName.ToString() : "";
 
             var model = new EditCompleteByDateViewModel(
                 assessment.Name,
@@ -545,8 +552,8 @@
             ReturnPageQuery? returnPageQuery = formData.ReturnPageQuery;
             var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
             routeData.Add("selfAssessmentId", selfAssessmentId.ToString());
-            
-            if (accessedVia.Id==1 && accessedVia.Name == "ViewDelegate")
+
+            if (accessedVia.Id == 1 && accessedVia.Name == "ViewDelegate")
             {
                 var centreId = User.GetCentreIdKnownNotNull();
                 var delegateAccountId = selfAssessmentService.GetDelegateAccountId(centreId, delegateUserId);
@@ -556,7 +563,7 @@
             {
                 return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
-        }        
+        }
     }
 }
 

@@ -77,31 +77,30 @@
                 DelegateActiveStatusFilterOptions.IsActive.FilterValue
             );
 
-            int offSet = ((page - 1) * itemsPerPage) ?? 0;            
+            int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
             var centreId = User.GetCentreIdKnownNotNull();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
 
-            string isActive = "Any";
-            string isPasswordSet = "Any";
-            string isAdmin = "Any";
-            string isUnclaimed = "Any";
-            string isEmailVerified = "Any";
-            string registrationType = "Any";
+            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions);
+
+            if (TempData["allDelegatesCentreId"]?.ToString() != centreId.ToString()
+                    && existingFilterString != null && existingFilterString.Contains("Answer"))
+            {
+                existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
+            }
+
+            string isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, answer1, answer2, answer3, answer4, answer5, answer6;
+            isActive = isPasswordSet = isAdmin = isUnclaimed = isEmailVerified = registrationType = answer1 = answer2 = answer3 = answer4 = answer5 = answer6 = "Any";
             int jobGroupId = 0;
-            string answer1 = "Any";
-            string answer2 = "Any";
-            string answer3 = "Any";
-            string answer4 = "Any";
-            string answer5 = "Any";
-            string answer6 = "Any";
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
                 var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
 
-                if(!string.IsNullOrEmpty(newFilterToAdd))
+                if (!string.IsNullOrEmpty(newFilterToAdd))
                 {
                     var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[1];
                     var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
@@ -112,7 +111,7 @@
                             if (filter.Contains(filterHeader))
                             {
                                 selectedFilters.Remove(filter);
-                                existingFilterString= string.Join(FilteringHelper.FilterSeparator,selectedFilters);
+                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
                                 break;
                             }
                         }
@@ -125,10 +124,10 @@
                     {
                         var filterArr = filter.Split(FilteringHelper.Separator);
                         var filterValue = filterArr[2];
-                        if (filterValue == "╳") filterValue = "No option selected";
+                        if (filterValue == FilteringHelper.EmptyValue) filterValue = "No option selected";
 
                         if (filter.Contains("IsPasswordSet"))
-                            isPasswordSet= filterValue;
+                            isPasswordSet = filterValue;
 
                         if (filter.Contains("IsAdmin"))
                             isAdmin = filterValue;
@@ -168,7 +167,6 @@
                     }
                 }
             }
-            
 
             (var delegates, var resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
@@ -176,18 +174,11 @@
 
             if (delegates.Count() == 0 && resultCount > 0)
             {
-                page = 1;
-                offSet = 0;
+                page = 1; offSet = 0;
                 (delegates, resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6);
             }
-
-            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
-            var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(
-            jobGroups,
-            promptsWithOptions
-            );
 
             var result = paginateService.Paginate(
                 delegates,
@@ -213,6 +204,7 @@
 
             Response.UpdateFilterCookie(DelegateFilterCookieName, existingFilterString);
             TempData.Remove("delegateRegistered");
+            TempData["allDelegatesCentreId"] = User.GetCentreId().ToString();
             return View(model);
         }
 

@@ -240,12 +240,12 @@
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
                         SET LoginCount = (SELECT COALESCE(COUNT(*), 0)
-                            FROM Sessions AS S
+                            FROM Sessions AS S WITH (NOLOCK)
                             WHERE S.CandidateID = Progress.CandidateID
                               AND S.CustomisationID = Progress.CustomisationID
                               AND S.LoginTime >= Progress.FirstSubmittedTime),
                             Duration = (SELECT COALESCE(SUM(S1.Duration), 0)
-                            FROM Sessions AS S1
+                            FROM Sessions AS S1 WITH (NOLOCK)
                             WHERE S1.CandidateID = Progress.CandidateID
                               AND S1.CustomisationID = Progress.CustomisationID
                               AND S1.LoginTime >= Progress.FirstSubmittedTime),

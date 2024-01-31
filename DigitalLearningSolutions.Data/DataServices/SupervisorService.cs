@@ -1139,7 +1139,7 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
                 @"
                    SELECT ID
                         FROM    SupervisorDelegates sd
-                        WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0 OR DelegateEmail = @delegateEmail)
+                        WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0) AND DelegateEmail = @delegateEmail
                         ORDER BY ID DESC
                         ",
                 new
