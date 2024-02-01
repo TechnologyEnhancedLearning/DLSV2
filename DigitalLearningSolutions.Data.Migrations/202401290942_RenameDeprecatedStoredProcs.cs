@@ -35,10 +35,11 @@ namespace DigitalLearningSolutions.Data.Migrations
             }
         }
 
-        private string[] GetProcedureNames()
+        public static string[] GetProcedureNames()
         {
             string[] oldProcedureNames =
                 {
+                    "aspnet_Personalization_GetApplicationId",
                     "aspnet_AnyDataInTables",
                     "aspnet_Applications_CreateApplication",
                     "aspnet_CheckSchemaVersion",
