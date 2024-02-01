@@ -15,7 +15,7 @@
             SupportPage currentPage,
             string currentSystemBaseUrl,
             SearchSortFilterPaginationResult<SearchableFaq> result
-        ) : base(result, false, searchLabel: "Search faqs")
+        ) : base(result, false, searchLabel: "Search")
         {
             CurrentPage = currentPage;
             DlsSubApplication = dlsSubApplication;

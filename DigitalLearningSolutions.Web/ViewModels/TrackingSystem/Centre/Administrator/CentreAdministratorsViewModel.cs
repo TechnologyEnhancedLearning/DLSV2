@@ -18,7 +18,7 @@
             result,
             true,
             availableFilters,
-            "Search administrators"
+            "Search"
         )
         {
             CentreId = centreId;

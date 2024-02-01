@@ -150,7 +150,7 @@
             controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(CandidateId, CustomisationId, A<ISession>._)).MustHaveHappened();
         }
 
         [Test]

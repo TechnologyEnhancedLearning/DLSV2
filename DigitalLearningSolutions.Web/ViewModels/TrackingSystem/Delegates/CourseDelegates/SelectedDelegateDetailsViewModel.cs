@@ -22,7 +22,7 @@
             true,
             availableFilters,
             routeData: routeData,
-            searchLabel: "Search activity")
+            searchLabel: "Search")
         {
 
             Delegates = result.ItemsToDisplay.Select(
