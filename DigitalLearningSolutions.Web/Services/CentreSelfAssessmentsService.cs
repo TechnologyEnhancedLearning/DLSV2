@@ -11,6 +11,7 @@
         CentreSelfAssessment? GetCentreSelfAssessmentByCentreAndID(int centreId, int selfAssessmentId);
         IEnumerable<SelfAssessmentForPublish> GetCentreSelfAssessmentsForPublish(int centreId);
         void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId);
+        void InsertCentreSelfAssessment(int centreId, int selfAssessmentId, bool selfEnrol);
         public class CentreSelfAssessmentsService : ICentreSelfAssessmentsService
         {
             private readonly ICentreSelfAssessmentsDataService centreSelfAssessmentsDataService;
@@ -38,7 +39,10 @@
                 centreSelfAssessmentsDataService.DeleteCentreSelfAssessment(centreId, selfAssessmentId);
             }
 
-
+            public void InsertCentreSelfAssessment(int centreId, int selfAssessmentId, bool selfEnrol)
+            {
+                centreSelfAssessmentsDataService.InsertCentreSelfAssessment(centreId, selfAssessmentId, selfEnrol);
+            }
         }
     }
 

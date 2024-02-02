@@ -746,12 +746,38 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             return RedirectToAction("SelfAssessments", new { centreId });
         }
 
+        [Route("SuperAdmin/Centres/{centreId=0:int}/SelfAssessments/Add")]
         public IActionResult SelfAssessmentAdd(int centreId = 0)
         {
             var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
             var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
-            var model = new SelfAssessmentAddViewModel() { SelfAssessments = selfAssessmentsForPublish, CentreId = centreId, CentreName = centreName };
+            var model = new SelfAssessmentAddViewModel() { SelfAssessments = selfAssessmentsForPublish, CentreId = centreId, CentreName = centreName, SelfAssessmentIds = new List<int>() };
             return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult SelfAssessmentAdd(SelfAssessmentAddViewModel model)
+        {
+            if(!ModelState.IsValid)
+            {
+                var centreId = model.CentreId;
+                var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
+                var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+                model.SelfAssessmentIds = model.SelfAssessmentIds ?? new List<int>();
+                model.CentreName = centreName;
+                model.SelfAssessments = selfAssessmentsForPublish;
+                return View(model);
+            }
+            var selfEnrol = model.EnableSelfEnrolment;
+            if (selfEnrol != null)
+            {
+                foreach (var id in model.SelfAssessmentIds)
+                {
+                    centreSelfAssessmentsService.InsertCentreSelfAssessment(model.CentreId, id, (bool)selfEnrol);
+                }
+            }
+
+            return RedirectToAction("SelfAssessments", new { centreId = model.CentreId });
         }
     }
 }

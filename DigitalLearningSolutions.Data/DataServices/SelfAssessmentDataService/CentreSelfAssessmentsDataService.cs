@@ -15,6 +15,7 @@
         CentreSelfAssessment? GetCentreSelfAssessmentByCentreAndID(int centreId, int selfAssessmentId);
         IEnumerable<SelfAssessmentForPublish> GetCentreSelfAssessmentsForPublish(int centreId);
         void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId);
+        void InsertCentreSelfAssessment(int centreId, int selfAssessmentId, bool selfEnrol);
     }
     public class CentreSelfAssessmentsDataService : ICentreSelfAssessmentsDataService
     {
@@ -85,6 +86,25 @@
                             WHERE (CentreID = @centreId) AND (SelfAssessmentID = @selfAssessmentId)"
             ,
                     new { centreId, selfAssessmentId }
+                );
+        }
+
+        public void InsertCentreSelfAssessment(int centreId, int selfAssessmentId, bool selfEnrol)
+        {
+            connection.Execute(
+                @"INSERT INTO CentreSelfAssessments
+                    (CentreID, SelfAssessmentID, AllowEnrolment)
+                        SELECT @centreId, @selfAssessmentId, @selfEnrol
+                        WHERE (NOT EXISTS (SELECT 1
+                        FROM CentreSelfAssessments
+                        WHERE (CentreID = @centreId)
+                        AND (SelfAssessmentID = @selfAssessmentId)))",
+                new
+                {
+                    centreId,
+                    selfAssessmentId,
+                    selfEnrol
+                }
                 );
         }
     }
