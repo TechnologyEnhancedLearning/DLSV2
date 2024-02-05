@@ -16,7 +16,8 @@
             SearchSortFilterPaginationResult<SelfAssessmentDelegate> result,
             IEnumerable<FilterModel> availableFilters,
             SelfAssessmentDelegatesData selfAssessmentDelegatesData,
-            Dictionary<string, string> routeData
+            Dictionary<string, string> routeData,
+            bool unSupervised
         ) : base(
             result,
             true,
@@ -29,15 +30,16 @@
                 d => new DelegateSelfAssessmentInfoViewModel(
                     d,
                     DelegateAccessRoute.ActivityDelegates,
-                    result.GetReturnPageQuery($"{d.DelegateId}-card")
+                    result.GetReturnPageQuery($"{d.DelegateId}-card"),
+                    unSupervised
                 )
             );
 
-            Filters = routeData["selfAssessmentId"]?.ToString() == "1" ?
+            Filters = unSupervised ?
                 SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels().Where(x => x.FilterProperty != "SignedOffStatus") :
                 SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels().Where(x => x.FilterProperty != "SubmittedStatus");
 
-            SortOptions = routeData["selfAssessmentId"]?.ToString() == "1" ?
+            SortOptions = unSupervised ?
                 Enumeration.GetAll<SelfAssessmentDelegatesSortByOption>().Where(x => x.PropertyName != "SignedOff").Select(o => (o.DisplayText, o.PropertyName)) :
                 Enumeration.GetAll<SelfAssessmentDelegatesSortByOption>().Where(x => x.PropertyName != "SubmittedDate").Select(o => (o.DisplayText, o.PropertyName));
 

@@ -92,6 +92,7 @@
             }
             searchString = searchString == null ? string.Empty : searchString.Trim();
             var isCourseDelegate = customisationId != null;
+            var isUnsupervisedSelfAssessment = false;
 
             var filterCookieName = isCourseDelegate ? courseDelegatesFilterCookieName : selfAssessmentDelegatesFilterCookieName;
 
@@ -118,12 +119,13 @@
             }
             else
             {
+                isUnsupervisedSelfAssessment = selfAssessmentService.IsUnsupervisedSelfAssessment((int)selfAssessmentId);
                 if (existingFilterString != null)
                 {
-                    var existingfilterList = selfAssessmentId == 1 ?
+                    var existingfilterList = isUnsupervisedSelfAssessment ?
                         existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SignedOff")).ToList() :
                         existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SubmittedDate")).ToList();
-                    
+
                     existingFilterString = existingfilterList.Any() ? string.Join(FilteringHelper.FilterSeparator, existingfilterList) : null;
                 }
             }
@@ -294,7 +296,7 @@
                     result.Page = page;
                     TempData["Page"] = result.Page;
                     Response.UpdateFilterCookie(filterCookieName, result.FilterString);
-                    var model = new ActivityDelegatesViewModel(selfAssessmentDelegatesData, result, availableFilters, "selfAssessmentId", selfAssessmentId, activityName, false);
+                    var model = new ActivityDelegatesViewModel(selfAssessmentDelegatesData, result, availableFilters, "selfAssessmentId", selfAssessmentId, activityName, false, isUnsupervisedSelfAssessment);
                     return View(model);
                 }
             }

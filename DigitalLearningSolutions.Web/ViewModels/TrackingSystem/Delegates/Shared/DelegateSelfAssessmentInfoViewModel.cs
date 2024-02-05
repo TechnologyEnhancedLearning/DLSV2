@@ -15,12 +15,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         public DelegateSelfAssessmentInfoViewModel(
             SelfAssessmentDelegate selfAssessmentDelegate,
             DelegateAccessRoute accessedVia,
-            ReturnPageQuery returnPageQuery
+            ReturnPageQuery returnPageQuery,
+            bool unSupervised
         ) : this(selfAssessmentDelegate)
         {
             AccessedVia = accessedVia;
             ReturnPageQuery = returnPageQuery;
             Tags = FilterableTagHelper.GetCurrentTagsForSelfAssessmentDelegate(selfAssessmentDelegate);
+            Unsupervised = unSupervised;
         }
 
         private DelegateSelfAssessmentInfoViewModel(SelfAssessmentDelegate delegateInfo)
@@ -79,6 +81,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         public int DelegateUserId { get; set; }
         public string SelfAssessmentDelegatesDisplayName { get; set; }
         public List<SelfAssessmentSupervisor> Supervisors { get; set; }
+        public bool Unsupervised { get; set; }
 
     }
 }
