@@ -68,12 +68,14 @@
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId)SelfAssessment LEFT OUTER JOIN
-                    (SELECT SelfAssessmentID,casv.SignedOff,casv.Verified FROM 
+                    (SELECT SelfAssessmentID,casv.SignedOff,MAX(casv.Verified) Verified FROM 
                        CandidateAssessments AS CA LEFT OUTER JOIN
 						CandidateAssessmentSupervisors AS cas ON  ca.ID =cas.CandidateAssessmentID  LEFT OUTER JOIN
                         CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID 
 						 WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL) AND (CA.CentreID =@centreId) AND (casv.SignedOff =1) AND
-						(casv.Verified IS NOT NULL))Signoff ON  SelfAssessment.Id =Signoff.SelfAssessmentID",
+						(casv.Verified IS NOT NULL)
+GROUP BY SelfAssessmentID,casv.SignedOff
+)Signoff ON  SelfAssessment.Id =Signoff.SelfAssessmentID",
                 new { delegateUserId, centreId }
             );
         }
@@ -329,24 +331,7 @@
         public CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
         {
             return connection.QueryFirstOrDefault<CompetencySelfAssessmentCertificate>(
-                @"SELECT
-                  LearnerDetails.ID ,
-                  LearnerDetails.SelfAssessment,
-                  LearnerDetails.LearnerName,
-                  LearnerDetails.LearnerPRN,
-                  LearnerDetails.Verified,
-                  LearnerDetails.CentreName,
-                  Supervisor.SupervisorName ,
-                  Supervisor.SupervisorPRN ,
-                  Supervisor.SupervisorCentreName,
-                  LearnerDetails.BrandName ,
-                  LearnerDetails.BrandImage,
-                  LearnerDetails.CandidateAssessmentID,
-                  LearnerDetails.SelfAssessmentID,
-                  LearnerDetails.Vocabulary,
-                  LearnerDetails.SupervisorDelegateId,
-                  LearnerDetails.FormattedDate
-                  FROM(SELECT casv.ID,
+                @"SELECT TOP 1 casv.ID,
                     sa.Name AS SelfAssessment, 
                     Learner.FirstName + '  ' + Learner.LastName AS LearnerName,
                     Learner.ProfessionalRegistrationNumber AS LearnerPRN,
@@ -377,18 +362,8 @@
              SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
              Brands AS b ON sa.BrandID = b.BrandID INNER JOIN
              Centres AS ce ON aa.CentreID = ce.CentreID
-             WHERE (ca.Id=@candidateAssessmentID) AND  (casv.SignedOff = 1) AND (NOT (casv.Verified IS NULL))) LearnerDetails INNER JOIN
-			 (select casv.ID ,Supervisor.FirstName + ' ' + Supervisor.LastName AS SupervisorName, 
-                    Supervisor.ProfessionalRegistrationNumber AS SupervisorPRN,
-              ce.CentreName AS SupervisorCentreName
-              from CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
-             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
-			 SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId INNER JOIN
-			 Users AS Supervisor ON Supervisor.PrimaryEmail = sd.SupervisorEmail   INNER JOIN
-			 AdminAccounts AS aa ON casv.ID = aa.ID INNER JOIN
-             Centres AS ce ON aa.CentreID = ce.CentreID
-			 where cas.CandidateAssessmentID=@candidateAssessmentID  AND  (casv.SignedOff = 1)
-                           AND (NOT (casv.Verified IS NULL))) Supervisor ON  LearnerDetails.Id =Supervisor.Id",
+             WHERE (ca.Id=@candidateAssessmentID) AND  (casv.SignedOff = 1) AND (NOT (casv.Verified IS NULL))
+             ORDER BY casv.Verified  DESC ",
                 new { candidateAssessmentID }
             );
         }
@@ -422,7 +397,8 @@
                 ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
 				INNER JOIN Users AS u ON U.ID =  sd.SupervisorAdminID
              WHERE
-              (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @DelegateUserID) AND (ca.SelfAssessmentID = @selfAssessmentId)) Accessor",
+              (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @DelegateUserID) AND (ca.SelfAssessmentID = @selfAssessmentId)) Accessor
+                ORDER BY AccessorPRN DESC",
                 new { selfAssessmentId, delegateUserID }
             );
         }
