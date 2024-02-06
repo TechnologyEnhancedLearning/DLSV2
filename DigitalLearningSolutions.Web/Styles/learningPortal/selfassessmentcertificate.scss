@@ -1,0 +1,148 @@
+﻿.top {
+  margin-top: -40px;
+}
+
+.certificate {
+  margin-left: 15px;
+  padding: 0 0;
+  width: 100%;
+  justify-content: start;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-print-color-adjust: exact;
+}
+
+.certificate .pg-1 {
+  background-color: white;
+  width: 100%;
+  display: block;
+  margin: 5rem 0;
+  border: 1px solid black;
+}
+
+.certificate .pg-1 .head {
+  background-color: #0063B7;
+  color: white;
+  padding: 50px;
+  position: relative;
+}
+
+.certificate .pg-1 .head .logo {
+  display: flex;
+  justify-content: end;
+}
+
+.certificate .pg-1 .head .logo img {
+  width: 100px;
+}
+
+.fancy-box {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: -15px;
+  background-color: #0063B7;
+  transform: rotate(45deg);
+}
+
+.certificate .pg-1 .body {
+  padding: 50px;
+}
+
+.certificate .pg-1 .footer {
+  padding: 50px;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer p.blue, .pg-1 h3 {
+  color: #0063B7;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: baseline;
+}
+
+.footer-logo img {
+  width: 20rem;
+}
+
+.strips {
+  display: flex;
+  padding: .5rem 0;
+}
+
+.strip-green {
+  clip-path: polygon(0 0, 100% 0%, 98% 100%, 0% 100%);
+  background-color: green;
+  height: 1rem;
+  width: 100%;
+}
+
+.strip-blue {
+  clip-path: polygon(2% 0, 100% 0%, 100% 100%, 0% 100%);
+  background-color: #0063B7;
+  height: 1rem;
+  width: 100%;
+}
+
+.pg-2 {
+  background-color: white;
+  width: 100%;
+  margin: 5rem 0;
+  border: 1px solid black;
+  position: relative;
+}
+
+.pg-2 .body {
+  padding: 50px;
+}
+
+.activity {
+  padding: 1rem 0;
+  border-bottom: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+}
+
+.activity p, ul {
+  width: 100%;
+}
+
+.activity ul {
+  width: 110%;
+}
+
+.activityline {
+  padding: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.activityline p {
+  width: 100%;
+}
+
+.pg-2 .foot-note {
+  padding: 0 50px;
+}
+
+@media screen and (max-width: 767px) {
+  .certificate {
+    width: 100%;
+    justify-content: space-around;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .certificate .pg-1 {
+    width: 100%;
+  }
+
+
+
+  .pg-2 {
+    width: 100%;
+  }
+}
