@@ -308,8 +308,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 return View(editCentreManagerDetailsViewModel);
             }
             centresService.UpdateCentreManagerDetails(editCentreManagerDetailsViewModel.CentreId, editCentreManagerDetailsViewModel.FirstName, editCentreManagerDetailsViewModel.LastName,
-                editCentreManagerDetailsViewModel.Email.Trim(),
-                editCentreManagerDetailsViewModel.Telephone.Trim());
+                editCentreManagerDetailsViewModel.Email,
+                editCentreManagerDetailsViewModel.Telephone);
             return RedirectToAction("ManageCentre", "Centres", new { centreId = editCentreManagerDetailsViewModel.CentreId });
         }
 
