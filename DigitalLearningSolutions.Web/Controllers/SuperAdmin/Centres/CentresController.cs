@@ -303,11 +303,13 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         {
             if (!ModelState.IsValid)
             {
+                editCentreManagerDetailsViewModel.FirstName = editCentreManagerDetailsViewModel.FirstName == null ? string.Empty : editCentreManagerDetailsViewModel.FirstName.Trim();
+                editCentreManagerDetailsViewModel.LastName = editCentreManagerDetailsViewModel.LastName == null ? string.Empty : editCentreManagerDetailsViewModel.LastName.Trim();
                 return View(editCentreManagerDetailsViewModel);
             }
-            centresService.UpdateCentreManagerDetails(editCentreManagerDetailsViewModel.CentreId, editCentreManagerDetailsViewModel.FirstName, editCentreManagerDetailsViewModel.LastName,
-                editCentreManagerDetailsViewModel.Email,
-                editCentreManagerDetailsViewModel.Telephone);
+            centresService.UpdateCentreManagerDetails(editCentreManagerDetailsViewModel.CentreId, editCentreManagerDetailsViewModel.FirstName.Trim(), editCentreManagerDetailsViewModel.LastName.Trim(),
+                editCentreManagerDetailsViewModel.Email.Trim(),
+                editCentreManagerDetailsViewModel.Telephone.Trim());
             return RedirectToAction("ManageCentre", "Centres", new { centreId = editCentreManagerDetailsViewModel.CentreId });
         }
 
@@ -502,6 +504,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions, model.RegionId);
                 model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes, model.CentreTypeId);
                 model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
+                model.IpPrefix = model.IpPrefix == null ? string.Empty : model.IpPrefix.Trim();
                 return View(model);
             }
 
@@ -758,7 +761,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult SelfAssessmentAdd(SelfAssessmentAddViewModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 var centreId = model.CentreId;
                 var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
