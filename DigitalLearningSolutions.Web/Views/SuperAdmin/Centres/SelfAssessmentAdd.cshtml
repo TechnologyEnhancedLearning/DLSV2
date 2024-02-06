@@ -1,0 +1,136 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@using DigitalLearningSolutions.Web.Extensions
+@model SelfAssessmentAddViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Add self assessments";
+    var cancelLinkData = Html.GetRouteValues();
+}
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">View self assessments</a></li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__backlink"
+                   asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">Back to view centre self assessments</a>
+            </p>
+        </div>
+    </nav>
+}
+
+@if (Model.SelfAssessments.Any())
+{
+    <form method="post" asp-action="SelfAssessmentAdd">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new []{ nameof(SelfAssessmentAddViewModel.SelfAssessmentIds), nameof(SelfAssessmentAddViewModel.EnableSelfEnrolment) })" />
+        }
+        <div class="@(errorHasOccurred && Model.SelfAssessmentIds.Count() == 0 ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">
+                        Which self assessments would you like to add to @Model.CentreName?
+                    </h1>
+                </legend>
+                @if (errorHasOccurred && Model.SelfAssessmentIds.Count() == 0)
+                {
+                    <span class="nhsuk-error-message" id="dob-day-error-error">
+                        <span class="nhsuk-u-visually-hidden">Error:</span> Required
+                    </span>
+                }
+                <table class="nhsuk-table-responsive" id="SelfAssessmentIds">
+                    <thead role="rowgroup" class="nhsuk-table__head">
+                        <tr role="row">
+                            <th role="columnheader" class="" scope="col">
+                                Self assessment
+                            </th>
+                            <th role="columnheader" class="" scope="col">
+                                National?
+                            </th>
+                            <th role="columnheader" class="" scope="col">
+                                Provider
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="nhsuk-table__body">
+                        @foreach (var selfAssessment in Model.SelfAssessments)
+                        {
+                            <tr role="row" class="nhsuk-table__row">
+                                <td class="nhsuk-table__cell nhsuk-u-font-size-16">
+                                    <span class="nhsuk-table-responsive__heading">Self assessment </span>
+                                    <div class="nhsuk-checkboxes__item">
+                                        <input data-group="course-list" @(Model.SelfAssessmentIds.Contains(selfAssessment.Id) ? "checked" : string.Empty) class="nhsuk-checkboxes__input select-all-checkbox" id="self-assessment-check-@selfAssessment.Id" name="SelfAssessmentIds" type="checkbox" value="@selfAssessment.Id">
+                                        <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="self-assessment-check-@selfAssessment.Id">
+                                            @selfAssessment.SelfAssessment
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="nhsuk-table__cell nhsuk-u-font-size-16">
+                                    <span class="nhsuk-table-responsive__heading">National? </span>
+                                    @if (selfAssessment.National)
+                                    {
+                                        <text>Yes</text>
+                                    }
+                                    else
+                                    {
+                                        <text>No</text>
+                                    }
+                                </td>
+                                <td class="nhsuk-table__cell nhsuk-u-font-size-16">
+                                    <span class="nhsuk-table-responsive__heading">Provider </span>
+                                    @selfAssessment.Provider
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+        <div class="@(errorHasOccurred && Model.EnableSelfEnrolment == null ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                    Allow learner self enrolment on selected self assessments?
+                </legend>
+                @if (errorHasOccurred && Model.EnableSelfEnrolment == null)
+                {
+                    <span class="nhsuk-error-message" id="dob-day-error-error">
+                        <span class="nhsuk-u-visually-hidden">Error:</span> Required
+                    </span>
+                }
+                <div class="nhsuk-radios" id="EnableSelfEnrolment">
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-yes" asp-for="EnableSelfEnrolment" type="radio" value="True">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-yes">
+                            Yes
+                        </label>
+                    </div>
+
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-no" asp-for="EnableSelfEnrolment" type="radio" value="False">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-no">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <input type="hidden" asp-for="CentreId" />
+        <button class="nhsuk-button" type="submit">
+            Add selected self assessments to centre
+        </button>
+    </form>
+}
+else
+{
+    <h1>No self assessments available</h1>
+    <p>There are no self assessments available to add to the centre @ViewBag.CentreName.</p>
+}
+
+<vc:cancel-link asp-controller="Centres" asp-action="SelfAssessments" asp-all-route-data="@cancelLinkData" />
+@section scripts {
+    <script src="@Url.Content("~/js/learningPortal/verificationPickResults.js")" asp-append-version="true"></script>
+}

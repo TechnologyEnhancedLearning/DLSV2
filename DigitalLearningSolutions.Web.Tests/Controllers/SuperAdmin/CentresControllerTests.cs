@@ -520,7 +520,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             }
         }
         [Test]
-        public void ConfirmRemoveCourse_ShouldReturnView_WhenCentreSelfAssessmentExists()
+        public void ConfirmRemoveSelfAssessment_ShouldReturnView_WhenCentreSelfAssessmentExists()
         {
             // Given 
             var centreApplication = new CentreSelfAssessment
@@ -544,7 +544,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         }
 
         [Test]
-        public void ConfirmRemoveCourse_ShouldRedirectToCourses_WhenCentreSelfAssessmentDoesNotExist()
+        public void ConfirmRemoveSelfAssessment_ShouldRedirectToCentreSelfAssessments_WhenCentreSelfAssessmentDoesNotExist()
         {
             // Given
             A.CallTo(() => centreSelfAssessmentsService.GetCentreSelfAssessmentByCentreAndID(A<int>._, A<int>._)).Returns(null);
@@ -559,7 +559,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         }
 
         [Test]
-        public void RemoveCourse_ShouldRedirectToCourses_AfterDeletingSelfAssessmentApplication()
+        public void RemoveSelfAssessment_ShouldRedirectToCentreSelfAssessments_AfterDeletingSelfAssessmentApplication()
         {
             // When
             var result = controller.RemoveSelfAssessment(1, 1) as RedirectToActionResult;
@@ -569,6 +569,32 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 .ActionName.Should().Be("SelfAssessments");
             result!.RouteValues!["centreId"].Should().Be(1);
             A.CallTo(() => centreSelfAssessmentsService.DeleteCentreSelfAssessment(1, 1)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void SelfAssessmentAddCommit_ShouldInsertCentreSelfAssessmentAndRedirectToSelfAssessments()
+        {
+            // Given
+
+            var model = new SelfAssessmentAddViewModel
+            {
+                CentreId = 1,
+                SelfAssessmentIds = new List<int> { 4, 5 },
+                EnableSelfEnrolment = false,
+            };
+
+            // When
+            var result = controller.SelfAssessmentAdd(model) as RedirectToActionResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
+                .ActionName.Should().Be("SelfAssessments");
+            result!.RouteValues!["centreId"].Should().Be(1);
+
+            foreach (var id in model.SelfAssessmentIds)
+            {
+                A.CallTo(() => centreSelfAssessmentsService.InsertCentreSelfAssessment(1, id, false)).MustHaveHappenedOnceExactly();
+            }
         }
     }
 }
