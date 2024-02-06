@@ -210,27 +210,21 @@
 
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForSelfAssessmentDelegate(SelfAssessmentDelegate selfAssessmentDelegate)
         {
-            var tags = new List<SearchableTagViewModel>();
-
-            if (selfAssessmentDelegate.IsDelegateActive)
+            return new List<SearchableTagViewModel>
             {
-                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active));
-            }
-            else
-            {
-                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive));
-            }
-
-            if (selfAssessmentDelegate.RemovedDate.HasValue)
-            {
-                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed));
-            }
-            else
-            {
-                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true));
-            }
-
-            return tags;
+                selfAssessmentDelegate.IsDelegateActive
+                ?new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active)
+                :new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive),
+                selfAssessmentDelegate.RemovedDate.HasValue
+                ?new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed)
+                :new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true),
+                selfAssessmentDelegate.SignedOff.HasValue
+                ?new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
+                :new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff),
+                selfAssessmentDelegate.SubmittedDate.HasValue
+                ?new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.Submitted)
+                :new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.NotSubmitted)
+            };
         }
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateUser(
             DelegateUserCard delegateUser
