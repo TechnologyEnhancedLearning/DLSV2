@@ -224,7 +224,9 @@
                 COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
                 da.Active AS IsDelegateActive,
                 sa.Name AS [Name],
-                MAX(casv.Verified) as SignedOff";
+                MAX(casv.Verified) as SignedOff,
+				sa.SupervisorSelfAssessmentReview,
+				sa.SupervisorResultsReview";
 
             var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa 
 				INNER JOIN dbo.CandidateAssessments AS ca WITH (NOLOCK) ON sa.ID = ca.SelfAssessmentID 
@@ -269,7 +271,9 @@
                 COALESCE(ucd.Email, u.PrimaryEmail),
                 da.Active,
                 sa.Name,
-                ca.Id";
+                ca.Id,
+				sa.SupervisorSelfAssessmentReview,
+				sa.SupervisorResultsReview";
 
             if (signedOff != null)
             {

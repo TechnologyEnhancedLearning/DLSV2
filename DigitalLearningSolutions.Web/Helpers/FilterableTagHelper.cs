@@ -210,21 +210,33 @@
 
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForSelfAssessmentDelegate(SelfAssessmentDelegate selfAssessmentDelegate)
         {
-            return new List<SearchableTagViewModel>
+            var tags = new List<SearchableTagViewModel>();
+
+            var statusTag = selfAssessmentDelegate.IsDelegateActive
+        ? new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active)
+        : new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive);
+            tags.Add(statusTag);
+
+            var removalTag = selfAssessmentDelegate.RemovedDate.HasValue
+         ? new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed)
+         : new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true);
+            tags.Add(removalTag);
+            if (selfAssessmentDelegate.SupervisorSelfAssessmentReview && selfAssessmentDelegate.SupervisorResultsReview)
             {
-                selfAssessmentDelegate.IsDelegateActive
-                ?new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active)
-                :new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive),
-                selfAssessmentDelegate.RemovedDate.HasValue
-                ?new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed)
-                :new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true),
-                selfAssessmentDelegate.SignedOff.HasValue
-                ?new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
-                :new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff),
-                selfAssessmentDelegate.SubmittedDate.HasValue
-                ?new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.Submitted)
-                :new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.NotSubmitted)
-            };
+                var signedOffTag = selfAssessmentDelegate.SignedOff.HasValue
+             ? new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
+             : new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff);
+                tags.Add(signedOffTag);
+            }
+            else
+            {
+                var submissionTag = selfAssessmentDelegate.SubmittedDate.HasValue
+            ? new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.Submitted)
+            : new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.NotSubmitted);
+                tags.Add(submissionTag);
+            }
+
+            return tags;
         }
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateUser(
             DelegateUserCard delegateUser

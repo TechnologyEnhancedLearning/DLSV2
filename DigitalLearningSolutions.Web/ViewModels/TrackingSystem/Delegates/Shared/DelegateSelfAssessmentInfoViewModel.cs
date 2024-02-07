@@ -59,7 +59,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
                 3 => "Group",
                 _ => "System",
             };
-        }
+            SupervisorSelfAssessmentReview = delegateInfo.SupervisorSelfAssessmentReview;
+            SupervisorResultsReview = delegateInfo.SupervisorResultsReview;
+    }
         public DelegateAccessRoute AccessedVia { get; set; }
         public ReturnPageQuery? ReturnPageQuery { get; set; }
         public int CandidateAssessmentsId { get; set; }
@@ -79,6 +81,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         public string? SubmittedDate { get; set; }
         public string? RemovedDate { get; set; }
         public int DelegateUserId { get; set; }
+        public bool SupervisorSelfAssessmentReview { get; set; }
+        public bool SupervisorResultsReview { get; set; }
+
         public string SelfAssessmentDelegatesDisplayName { get; set; }
         public List<SelfAssessmentSupervisor> Supervisors { get; set; }
         public bool Unsupervised { get; set; }
