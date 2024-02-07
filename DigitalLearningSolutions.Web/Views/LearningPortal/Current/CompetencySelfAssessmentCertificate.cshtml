@@ -5,180 +5,51 @@
     ViewData["Title"] = "Competency Self Assessment Certificate";
     var sumVerifiedCount = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.VerifiedCount);
     var sumQuestions = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.Questions);
-
-    var result = "0";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfassessmentcertificate.css")" asp-append-version="true">
+    <style>
+       .nhsuk-breadcrumb {
+    background-color: #f0f4f5;
+            padding: 0 0;
+   
+             }
+             .nhsuk-width-container {
+    margin: 0;
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NHS Certificate</title>
-    <style>
-
-        .certificate {
-            width: 100%;
-            justify-content: space-around;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-print-color-adjust: exact;
+        li:last-child, .nhsuk-list > li:last-child {
+            margin-bottom: 0;
+            margin-left: -10px;
         }
-
-            .certificate .pg-1 {
-                background-color: white;
-                width: 60rem;
-                display: block;
-                margin: 5rem auto;
-                border: 1px solid black;
-            }
-
-                .certificate .pg-1 .head {
-                    background-color: #0063B7;
-                    color: white;
-                    padding: 50px;
-                    position: relative;
-                }
-
-                    .certificate .pg-1 .head .logo {
-                        display: flex;
-                        justify-content: end;
-                    }
-
-                        .certificate .pg-1 .head .logo img {
-                            width: 100px;
-                        }
-
-        .fancy-box {
-            width: 30px;
-            height: 30px;
-            position: absolute;
-            bottom: -15px;
-            background-color: #0063B7;
-            transform: rotate(45deg);
+        .nhsuk-grid-column-full {
+            box-sizing: border-box;
+            padding: 0 0;
         }
-
-        .certificate .pg-1 .body {
-            padding: 50px;
-        }
-
-        .certificate .pg-1 .footer {
-            padding: 50px;
-            align-items: center;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .footer p.blue, .pg-1 h3 {
-            color: #0063B7;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: baseline;
-        }
-
-            .footer-logo img {
-                width: 10rem;
-            }
-
-        .strips {
-            display: flex;
-            padding: .5rem 0;
-        }
-
-        .strip-green {
-            clip-path: polygon(0 0, 100% 0%, 98% 100%, 0% 100%);
-            background-color: green;
-            height: 1rem;
-            width: 100%;
-        }
-
-        .strip-blue {
-            clip-path: polygon(2% 0, 100% 0%, 100% 100%, 0% 100%);
-            background-color: #0063B7;
-            height: 1rem;
-            width: 100%;
-        }
-
-        .pg-2 {
-            background-color: white;
-            width: 60rem;
-            margin: 5rem auto;
-            border: 1px solid black;
-            position: relative;
-        }
-
-            .pg-2 .body {
-                padding: 50px;
-            }
-
-        .activity {
-            padding: 1rem 0;
-            border-bottom: 1px solid black;
-            display: flex;
-            justify-content: space-between;
-        }
-
-            .activity p, ul {
-                width: 100%;
-            }
-
-            .activity ul {
-                width: 110%;
-            }
-
-        .activityline {
-            padding: 1rem 0;
-            display: flex;
-            justify-content: space-between;
-        }
-
-            .activityline p {
-                width: 100%;
-            }
-
-        .pg-2 .foot-note {
-            padding: 0 50px;
-        }
-
-        @@media screen and (max-width: 767px) {
-            .certificate {
-                width: 100%;
-                justify-content: space-around;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                -webkit-print-color-adjust: exact;
-            }
-
-                .certificate .pg-1 {
-                    width: 100%;
-                      }
-
-                 
-
-            .pg-2 {
-                width: 100%;
-                }
-
-             
+           
+        .nhsuk-breadcrumb__link:visited {
+            color: #330072;
+            background-color: #f4f4f4; 
+    border-top: 2px solid blue;
+    margin-left: -10px;
         }
     </style>
 
-</head>
-<body>
+
     @section NavMenuItems {
         <partial name="Shared/_NavMenuItems" />
     }
+  
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
                 @if (Model.Route == 1)
                 {
-                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="LearningPortal" asp-action="Current">&lt; Back  </a></li>
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader " asp-controller="LearningPortal" asp-action="Current">&lt; Back  </a></li>
                 }
                 @if (Model.Route == 2)
                 {
                     <li class="nhsuk-breadcrumb__item">
-                        <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="LearningPortal"
+                        <a class="nhsuk-breadcrumb__link trigger-loader " asp-controller="LearningPortal"
                        asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural"
                        asp-route-selfAssessmentId="@Model.CompetencySelfAssessmentCertificates.SelfAssessmentID">
                             &lt; Back
@@ -204,7 +75,7 @@
     <div class="nhsuk-width-container">
         <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-full">
-                <h2>Certificate</h2>
+                <h1>Certificate</h1>
 
                 <h2>@Model.CompetencySelfAssessmentCertificates.SelfAssessment - @Model.CompetencySelfAssessmentCertificates.LearnerName </h2>
 
@@ -216,9 +87,7 @@
                 </a>
             </div>
         </div>
-    </div>
-
-
+     </div>
     <div class="certificate">
         <div class="pg-1">
             <div class="head">
@@ -228,8 +97,9 @@
 
                 <div class="text">
                     <p>This is to certify that</p>
+
                     <h1>@Model.CompetencySelfAssessmentCertificates.LearnerName</h1>
-                    <p>@Model.CompetencySelfAssessmentCertificates.LearnerPRN</p>
+                    <p class="top">@Model.CompetencySelfAssessmentCertificates.LearnerPRN</p>
 
 
                     <p>has successfully completed the</p>
@@ -270,7 +140,7 @@
 
             <div class="footer">
                 <div class="text">
-                    <p class="blue">Certificate generated on @DateTime.Today.ToString("dd/MM/yyyy")</p>
+                    <p class="blue">Certificate generated on @Model.CompetencySelfAssessmentCertificates.Verified.ToString("dd/MM/yyyy")</p>
                     <p>By NHS England Digital Learning Solutions <br /> on behalf of @Model.CompetencySelfAssessmentCertificates.CentreName</p>
                 </div>
                 <div class="footer-logo">
@@ -310,7 +180,7 @@
                 </div>
                 <div class="activity">
                     <p><b>Response meeting role requirements</b></p> <p>
-                         @Model.RoleCount
+                        @Model.RoleCount
                     </p>
                 </div>
                 <div class="activity">
@@ -337,5 +207,3 @@
             <p class="foot-note">Certificate generated on @Model.CompetencySelfAssessmentCertificates.Verified.ToString("dd/MM/yyyy")</p>
         </div>
     </div>
-</body>
-</html>

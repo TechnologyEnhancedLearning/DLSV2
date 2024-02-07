@@ -5,7 +5,6 @@
     ViewData["Title"] = "Competency Self Assessment Certificate";
     var sumVerifiedCount = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.VerifiedCount);
     var sumQuestions = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.Questions);
-    var result = "0";
 }
 
 <!DOCTYPE html>
@@ -18,7 +17,7 @@
    <style>
         .certificate {
             width: 100%;
-            justify-content: space-around;
+            justify-content: start;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-print-color-adjust: exact;
         }
@@ -77,7 +76,7 @@
         }
 
             .footer-logo img {
-                width: 10rem;
+                width: 20rem;
             }
 
         .strips {
@@ -194,7 +193,7 @@
 
             <div class="footer">
                 <div class="text">
-                    <p class="blue">Certificate generated on @DateTime.Today.ToString("dd/MM/yyyy")</p>
+                    <p class="blue">Certificate generated on @Model.CompetencySelfAssessmentCertificates.Verified.ToString("dd/MM/yyyy")</p>
                     <p>By NHS England Digital Learning Solutions <br /> on behalf of @Model.CompetencySelfAssessmentCertificates.CentreName</p>
                 </div>
                 <div class="footer-logo">
@@ -214,7 +213,7 @@
                 <div class="strip-blue"></div>
             </div>
         </div>
-        <br />  <br />  <br />  <br /><br />  <br /><br />  <br /><br />  <br /><br />  <br />
+        <br />  <br />  <br />  <br /><br />  <br /><br />  <br /><br />  <br /><br />  <br /><br />  <br />
 
         <div class="pg-2">
             <div class="body">
@@ -261,7 +260,7 @@
                 </div>
 
             </div>
-            <p class="foot-note">Certificate generated on @DateTime.Today.ToString("dd/MM/yyyy")</p>
+            <p class="foot-note">Certificate generated on @Model.CompetencySelfAssessmentCertificates.Verified.ToString("dd/MM/yyyy")</p>
         </div>
     </div>
 </body>
