@@ -7,7 +7,7 @@
     var sumQuestions = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.Questions);
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfassessmentcertificate.css")" asp-append-version="true">
-    <style>
+   <style>
        .nhsuk-breadcrumb {
     background-color: #f0f4f5;
             padding: 0 0;
@@ -92,26 +92,40 @@
         <div class="pg-1">
             <div class="head">
                 <div class="logo">
-                    <img src="https://1000logos.net/wp-content/uploads/2017/09/Symbol-NHS.jpg" />
+                   @* <img height="60" width="150" src="https://1000logos.net/wp-content/uploads/2017/09/Symbol-NHS.jpg" />*@
+                <svg class="certificate__logo" width="150" height="60" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="40" fill="#005EB8">
+                    </rect>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0V40H100V0H0ZM22.4 36L15.7 13.9H15.6L11.1 36H3L9.9 4H20.7L27.3 26.2H27.4L31.9 4H40L33.2 36H22.4ZM55.7 36L58.5 22.3H48.4L45.6 36H37L43.7 4H52.3L49.8 16.2H60L62.4 4H71L64.3 36H55.7ZM93.9 10.8C92.2 10 89.9 9.3 86.7 9.3C83.2 9.3 80.4 9.8 80.4 12.4C80.4 16.9 93.1 15.2 93.1 24.9C93.1 33.7 84.7 36 77.1 36C73.7 36 69.8 35.2 67 34.3L69.1 27.8C70.8 28.9 74.3 29.6 77.2 29.6C79.9 29.6 84.2 29.1 84.2 25.8C84.2 20.7 71.5 22.6 71.5 13.6C71.4 5.5 78.8 3 86 3C90 3 93.8 3.4 96 4.4L93.9 10.8Z" fill="white">
+                    </path>
+                </svg>
                 </div>
 
                 <div class="text">
-                    <p>This is to certify that</p>
-
-                    <h1>@Model.CompetencySelfAssessmentCertificates.LearnerName</h1>
-                    <p class="top">@Model.CompetencySelfAssessmentCertificates.LearnerPRN</p>
-
-
-                    <p>has successfully completed the</p>
-                    <h1>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</h1>
-
-                    <br />
-                    <p>Signed off at @Model.CompetencySelfAssessmentCertificates.SupervisorCentreName </p>
-                    <p>by @Model.CompetencySelfAssessmentCertificates.SupervisorName</p>
-                    <p> @Model.CompetencySelfAssessmentCertificates.SupervisorPRN</p>
-
-                    <p>On @Model.CompetencySelfAssessmentCertificates.FormattedDate </p>
-
+                <h1 class="certificate__heading">
+                    <div class="nhsuk-u-margin-bottom-7">
+                        <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
+                            This is to certify that
+                        </span>
+                        @Model.CompetencySelfAssessmentCertificates.LearnerName
+                        <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-top-1">
+                            @Model.CompetencySelfAssessmentCertificates.LearnerPRN
+                        </span>
+                    </div>
+                    <div>
+                        <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
+                            has successfully completed the
+                        </span>
+                        @Model.CompetencySelfAssessmentCertificates.SelfAssessment
+                    </div>
+                </h1>
+                <p>
+                    Signed off at @Model.CompetencySelfAssessmentCertificates.CentreName <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">by @Model.CompetencySelfAssessmentCertificates.SupervisorName </span><span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">@Model.CompetencySelfAssessmentCertificates.SupervisorPRN</span>
+                </p>
+               
+                <p>
+                   on @Model.CompetencySelfAssessmentCertificates.FormattedDate
+                </p>
                 </div>
 
                 <div class="fancy-box"></div>
@@ -160,6 +174,7 @@
                 <div class="strip-blue"></div>
             </div>
         </div>
+   <br /><br/>
         <div class="pg-2">
             <div class="body">
                 <h3>Activity summary report</h3>

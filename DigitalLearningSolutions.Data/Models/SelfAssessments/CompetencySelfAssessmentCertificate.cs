@@ -12,6 +12,8 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public string SelfAssessment { get; set; } = string.Empty;
         public string LearnerName { get; set; } = string.Empty;
         public string LearnerPRN { get; set; } = string.Empty;
+        public int LearnerId { get; set; }
+        public int LearnerDelegateAccountId { get; set; }
         public DateTime Verified { get; set; }
         public string CentreName { get; set; } = string.Empty;
         public string SupervisorName { get; set; } = string.Empty;
