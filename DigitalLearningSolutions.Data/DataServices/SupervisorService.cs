@@ -256,7 +256,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 
             if (existingId > 0)
             {
-                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId WHERE ID = @existingId", new { delegateUserId, existingId });
+                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId, 
+                                                                DelegateEmail = @delegateEmail WHERE ID = @existingId", new { delegateUserId, delegateEmail, existingId });
                 return existingId;
             }
             else
