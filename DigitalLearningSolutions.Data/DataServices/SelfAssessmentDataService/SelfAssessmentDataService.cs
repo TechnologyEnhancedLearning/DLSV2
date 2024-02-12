@@ -170,7 +170,6 @@
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
         ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
         int? GetRoleCount(int CandidateId);
-        bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -224,9 +223,7 @@
                 COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
                 da.Active AS IsDelegateActive,
                 sa.Name AS [Name],
-                MAX(casv.Verified) as SignedOff,
-				sa.SupervisorSelfAssessmentReview,
-				sa.SupervisorResultsReview";
+                MAX(casv.Verified) as SignedOff";
 
             var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa 
 				INNER JOIN dbo.CandidateAssessments AS ca WITH (NOLOCK) ON sa.ID = ca.SelfAssessmentID 
@@ -271,9 +268,7 @@
                 COALESCE(ucd.Email, u.PrimaryEmail),
                 da.Active,
                 sa.Name,
-                ca.Id,
-				sa.SupervisorSelfAssessmentReview,
-				sa.SupervisorResultsReview";
+                ca.Id";
 
             if (signedOff != null)
             {
@@ -710,15 +705,6 @@
                       WHERE (ID = @candidateAssessmentsId) AND ( RemovalMethodID =2)  AND (RemovedDate IS NOT NULL)",
                   new { candidateAssessmentsId }
               );
-        }
-
-        public bool IsUnsupervisedSelfAssessment(int selfAssessmentId)
-        {
-            var ResultCount = connection.ExecuteScalar<int>(
-                @"SELECT COUNT(*) FROM SelfAssessments WHERE ID = @selfAssessmentId AND SupervisorSelfAssessmentReview = 0 AND SupervisorResultsReview = 0",
-                new { selfAssessmentId }
-            );
-            return ResultCount > 0;
         }
     }
 }

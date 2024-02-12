@@ -98,7 +98,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             if (TempData["DelegateGroupCentreId"] != null && TempData["DelegateGroupCentreId"].ToString() != User.GetCentreId().ToString()
                     && existingFilterString != null)
             {
-                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
+                existingFilterString = FilterHelper.RemoveNonExistingGroupFilters(availableFilters, existingFilterString);
             }
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;

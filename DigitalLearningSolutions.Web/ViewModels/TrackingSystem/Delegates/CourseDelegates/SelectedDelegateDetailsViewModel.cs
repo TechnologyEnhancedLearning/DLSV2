@@ -16,8 +16,7 @@
             SearchSortFilterPaginationResult<SelfAssessmentDelegate> result,
             IEnumerable<FilterModel> availableFilters,
             SelfAssessmentDelegatesData selfAssessmentDelegatesData,
-            Dictionary<string, string> routeData,
-            bool unSupervised
+            Dictionary<string, string> routeData
         ) : base(
             result,
             true,
@@ -30,24 +29,17 @@
                 d => new DelegateSelfAssessmentInfoViewModel(
                     d,
                     DelegateAccessRoute.ActivityDelegates,
-                    result.GetReturnPageQuery($"{d.DelegateId}-card"),
-                    unSupervised
+                    result.GetReturnPageQuery($"{d.DelegateId}-card")
                 )
             );
 
-            Filters = unSupervised ?
-                SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels().Where(x => x.FilterProperty != "SignedOffStatus") :
-                SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels().Where(x => x.FilterProperty != "SubmittedStatus");
-
-            SortOptions = unSupervised ?
-                Enumeration.GetAll<SelfAssessmentDelegatesSortByOption>().Where(x => x.PropertyName != "SignedOff").Select(o => (o.DisplayText, o.PropertyName)) :
-                Enumeration.GetAll<SelfAssessmentDelegatesSortByOption>().Where(x => x.PropertyName != "SubmittedDate").Select(o => (o.DisplayText, o.PropertyName));
-
+            Filters = SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels();
         }
 
         public bool Active { get; set; }
         public IEnumerable<DelegateSelfAssessmentInfoViewModel> Delegates { get; set; }
-        public override IEnumerable<(string, string)> SortOptions { get; }
+        public override IEnumerable<(string, string)> SortOptions { get; } =
+            Enumeration.GetAll<SelfAssessmentDelegatesSortByOption>().Select(o => (o.DisplayText, o.PropertyName));
         public override bool NoDataFound => !Delegates.Any() && NoSearchOrFilter;
     }
 }

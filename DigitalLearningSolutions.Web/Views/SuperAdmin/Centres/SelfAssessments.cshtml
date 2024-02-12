@@ -23,7 +23,7 @@
         <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">@ViewData["Title"] - @ViewBag.CentreName</h1>
     </div>
     <div class="nhsuk-grid-column-one-third heading-button-group">
-        <a class="nhsuk-button heading-button" id="add-course" asp-action="SelfAssessmentAdd" asp-controller="Centres" role="button" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
+        <a class="nhsuk-button heading-button" id="add-course" asp-action="SelfAssessmentAddChooseFlow" asp-controller="Centres" role="button" asp-route-centreId="@ViewContext.RouteData.Values["centreId"]">
             Add self assessment
         </a>
     </div>
@@ -62,14 +62,7 @@
                                 <span class="nhsuk-table-responsive__heading">Enrolled learners </span>@selfAssessment.DelegateCount
                             </td>
                             <td class="nhsuk-table__cell">
-                                <span class="nhsuk-table-responsive__heading">Self enrolment enabled </span>@if (selfAssessment.SelfEnrol)
-                                {
-                                    <text>Yes</text>
-                                }
-                                else
-                                {
-                                    <text>No</text>
-                                }
+                                <span class="nhsuk-table-responsive__heading">Self enrolment enabled </span>@selfAssessment.SelfEnrol
                             </td>
                             <td class="nhsuk-table__cell">
                                 <span class="nhsuk-table-responsive__heading">Action </span>

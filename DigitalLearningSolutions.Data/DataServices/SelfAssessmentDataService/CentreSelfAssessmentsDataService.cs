@@ -2,7 +2,6 @@
 {
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SuperAdmin;
     using Microsoft.Extensions.Logging;
     using System;
@@ -13,9 +12,7 @@
     {
         IEnumerable<CentreSelfAssessment> GetCentreSelfAssessments(int centreId);
         CentreSelfAssessment? GetCentreSelfAssessmentByCentreAndID(int centreId, int selfAssessmentId);
-        IEnumerable<SelfAssessmentForPublish> GetCentreSelfAssessmentsForPublish(int centreId);
         void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId);
-        void InsertCentreSelfAssessment(int centreId, int selfAssessmentId, bool selfEnrol);
     }
     public class CentreSelfAssessmentsDataService : ICentreSelfAssessmentsDataService
     {
@@ -64,20 +61,6 @@
             }
             return centreSelfAssessment;
         }
-        public IEnumerable<SelfAssessmentForPublish> GetCentreSelfAssessmentsForPublish(int centreId)
-        {
-            return connection.Query<SelfAssessmentForPublish>(
-                @"SELECT sa.ID, sa.Name AS SelfAssessment, sa.[National], b.BrandName AS Provider
-                    FROM SelfAssessments AS sa LEFT OUTER JOIN Brands AS b ON sa.BrandID = b.BrandID
-                    WHERE (sa.ArchivedDate IS NULL)
-                    AND (sa.PublishStatusID = 3)
-                    AND (sa.ID NOT IN
-                        (SELECT SelfAssessmentID
-                            FROM CentreSelfAssessments AS csa
-                            WHERE csa.CentreID = @centreId))
-                    ORDER BY sa.Name", new { centreId }
-                );
-        }
         public void DeleteCentreSelfAssessment(int centreId, int selfAssessmentId)
         {
             connection.Execute(
@@ -86,25 +69,6 @@
                             WHERE (CentreID = @centreId) AND (SelfAssessmentID = @selfAssessmentId)"
             ,
                     new { centreId, selfAssessmentId }
-                );
-        }
-
-        public void InsertCentreSelfAssessment(int centreId, int selfAssessmentId, bool selfEnrol)
-        {
-            connection.Execute(
-                @"INSERT INTO CentreSelfAssessments
-                    (CentreID, SelfAssessmentID, AllowEnrolment)
-                        SELECT @centreId, @selfAssessmentId, @selfEnrol
-                        WHERE (NOT EXISTS (SELECT 1
-                        FROM CentreSelfAssessments
-                        WHERE (CentreID = @centreId)
-                        AND (SelfAssessmentID = @selfAssessmentId)))",
-                new
-                {
-                    centreId,
-                    selfAssessmentId,
-                    selfEnrol
-                }
                 );
         }
     }

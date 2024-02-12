@@ -87,15 +87,6 @@
             string isActive, categoryName, courseTopic, hasAdminFields, isCourse, isSelfAssessment;
             isActive = categoryName = courseTopic = hasAdminFields = isCourse = isSelfAssessment = "Any";
 
-            var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
-               .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
-
-            if (TempData["ActivityDelegatesCentreId"] != null && TempData["ActivityDelegatesCentreId"].ToString() != User.GetCentreId().ToString()
-                    && existingFilterString != null)
-            {
-                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
-            }
-
             if (!string.IsNullOrEmpty(existingFilterString))
             {
                 var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
@@ -172,6 +163,9 @@
 
             allItems = OrderActivities(allItems, sortBy, sortDirection);
 
+            var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
+                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+
             var resultCount = allItems.Count();
 
             var result = paginateService.Paginate(
@@ -196,7 +190,6 @@
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
             Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);
-            TempData["ActivityDelegatesCentreId"] = centreId;
 
             return View(model);
         }

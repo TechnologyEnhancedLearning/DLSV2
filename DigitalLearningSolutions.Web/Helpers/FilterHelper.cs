@@ -61,10 +61,10 @@ namespace DigitalLearningSolutions.Web.Helpers
             return existingFilterString;
         }
 
-        public static string? RemoveNonExistingFilterOptions(List<FilterModel> availableFilters, string existingFilterString)
+        public static string? RemoveNonExistingGroupFilters(List<FilterModel> availableFilters, string existingFilterString)
         {
             var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-            string[] filterGroups = { "LinkedToField", "AddedByAdminId", "CourseTopic", "CategoryName" };
+            string[] filterGroups = { "AddedByAdminId", "LinkedToField" };
             foreach (var filterGroup in filterGroups)
             {
                 var existingFilters = existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => filter.Contains(filterGroup)).ToList();
@@ -78,7 +78,14 @@ namespace DigitalLearningSolutions.Web.Helpers
                     var availableFilterOptions = availableFilters.Where(x => x.FilterProperty == filterGroup).Select(o => o.FilterOptions).ToList();
                     foreach (var availableFilterOption in availableFilterOptions)
                     {
-                        if (filterGroup == "LinkedToField")
+                        if (filterGroup == "AddedByAdminId")
+                        {
+                            if (availableFilterOption.Any(x => x.FilterValue.Contains(filterOptionText)))
+                            {
+                                isFound = true; break;
+                            }
+                        }
+                        else
                         {
                             if (availableFilterOption.Any(x => x.FilterValue.Contains(filterHeader)))
                             {
@@ -89,13 +96,6 @@ namespace DigitalLearningSolutions.Web.Helpers
                                     selectedFilters.Add(filter);
                                     existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
                                 }
-                                isFound = true; break;
-                            }
-                        }
-                        else
-                        {
-                            if (availableFilterOption.Any(x => x.FilterValue.Contains(filterOptionText)))
-                            {
                                 isFound = true; break;
                             }
                         }

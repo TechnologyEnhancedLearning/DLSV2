@@ -46,7 +46,7 @@
         public static readonly FilterOptionModel Submitted = new FilterOptionModel(
             "Submitted",
             FilteringHelper.BuildFilterValueString(Group, nameof(SelfAssessmentDelegate.SubmittedDate), "true"),
-            FilterStatus.Success
+            FilterStatus.Warning
         );
 
         public static readonly FilterOptionModel NotSubmitted = new FilterOptionModel(
@@ -63,7 +63,7 @@
         public static readonly FilterOptionModel SignedOff = new FilterOptionModel(
             "Signed off",
             FilteringHelper.BuildFilterValueString(Group, nameof(SelfAssessmentDelegate.SignedOff), "true"),
-            FilterStatus.Success 
+            FilterStatus.Warning
         );
 
         public static readonly FilterOptionModel NotSignedOff = new FilterOptionModel(

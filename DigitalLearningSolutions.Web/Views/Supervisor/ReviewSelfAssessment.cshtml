@@ -94,7 +94,7 @@
                 Export to Excel
             </a>
         }
-        @if (Model.SupervisorSignOffs.Where(x => x.Verified != null && x.SignedOff).Any())
+        @if (Model.SupervisorSignOffs.Any())
         {
             <a class="nhsuk-button"
            asp-controller="LearningPortal"

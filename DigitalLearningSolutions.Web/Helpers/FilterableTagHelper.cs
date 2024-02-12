@@ -212,29 +212,22 @@
         {
             var tags = new List<SearchableTagViewModel>();
 
-            var statusTag = selfAssessmentDelegate.IsDelegateActive
-        ? new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active)
-        : new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive);
-            tags.Add(statusTag);
-
-            var removalTag = selfAssessmentDelegate.RemovedDate.HasValue
-         ? new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed)
-         : new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true);
-            tags.Add(removalTag);
-            if (!selfAssessmentDelegate.SupervisorSelfAssessmentReview && !selfAssessmentDelegate.SupervisorResultsReview)
+            if (selfAssessmentDelegate.IsDelegateActive)
             {
-                var submissionTag = selfAssessmentDelegate.SubmittedDate.HasValue
-            ? new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.Submitted)
-            : new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.NotSubmitted);
-                tags.Add(submissionTag);
+                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active));
             }
             else
             {
-                var signedOffTag = selfAssessmentDelegate.SignedOff.HasValue
-             ? new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
-             : new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff);
-                tags.Add(signedOffTag);
-                
+                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive));
+            }
+
+            if (selfAssessmentDelegate.RemovedDate.HasValue)
+            {
+                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true));
             }
 
             return tags;

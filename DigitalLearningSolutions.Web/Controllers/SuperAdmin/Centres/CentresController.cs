@@ -9,6 +9,7 @@ using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.Services;
+using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -301,8 +302,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult ManageCentreManager(EditCentreManagerDetailsViewModel editCentreManagerDetailsViewModel)
         {
-            editCentreManagerDetailsViewModel.FirstName = editCentreManagerDetailsViewModel.FirstName == null ? string.Empty : editCentreManagerDetailsViewModel.FirstName.Trim();
-            editCentreManagerDetailsViewModel.LastName = editCentreManagerDetailsViewModel.LastName == null ? string.Empty : editCentreManagerDetailsViewModel.LastName.Trim();
             if (!ModelState.IsValid)
             {
                 return View(editCentreManagerDetailsViewModel);
@@ -504,7 +503,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions, model.RegionId);
                 model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes, model.CentreTypeId);
                 model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
-                model.IpPrefix = model.IpPrefix == null ? string.Empty : model.IpPrefix.Trim();
                 return View(model);
             }
 
@@ -749,38 +747,5 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             return RedirectToAction("SelfAssessments", new { centreId });
         }
 
-        [Route("SuperAdmin/Centres/{centreId=0:int}/SelfAssessments/Add")]
-        public IActionResult SelfAssessmentAdd(int centreId = 0)
-        {
-            var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
-            var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
-            var model = new SelfAssessmentAddViewModel() { SelfAssessments = selfAssessmentsForPublish, CentreId = centreId, CentreName = centreName, SelfAssessmentIds = new List<int>() };
-            return View(model);
-        }
-
-        [HttpPost]
-        public IActionResult SelfAssessmentAdd(SelfAssessmentAddViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                var centreId = model.CentreId;
-                var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
-                var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
-                model.SelfAssessmentIds = model.SelfAssessmentIds ?? new List<int>();
-                model.CentreName = centreName;
-                model.SelfAssessments = selfAssessmentsForPublish;
-                return View(model);
-            }
-            var selfEnrol = model.EnableSelfEnrolment;
-            if (selfEnrol != null)
-            {
-                foreach (var id in model.SelfAssessmentIds)
-                {
-                    centreSelfAssessmentsService.InsertCentreSelfAssessment(model.CentreId, id, (bool)selfEnrol);
-                }
-            }
-
-            return RedirectToAction("SelfAssessments", new { centreId = model.CentreId });
-        }
     }
 }
