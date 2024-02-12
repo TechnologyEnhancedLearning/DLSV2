@@ -759,7 +759,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         }
 
         [HttpPost]
-        public IActionResult SelfAssessmentAdd(SelfAssessmentAddViewModel model)
+        public IActionResult SelfAssessmentAddSubmit(SelfAssessmentAddViewModel model)
         {
             if (!ModelState.IsValid)
             {
