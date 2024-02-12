@@ -24,26 +24,28 @@
 
             .certificate .pg-1 {
                 background-color: white;
-                width: 60rem;
+               /* width: 60rem;*/
                 display: block;
-                margin: 5rem auto;
-                border: 1px solid black;
+                /*margin: 5rem auto;*/
+                /*border: 1px solid black;*/
                 background-color: white;
                 width: 100%;
                 display: block;
                 /*margin: 5rem 0;*/
-                border: 1px solid black;
+                /*border: 1px solid black;*/
                 display: flex;
                 flex-direction: column;
-                /*width: 100%;*/
+               width: 100%;
                 max-width: 210mm;
-                          min-height: 297mm;
+                min-height: 293mm;
                 margin: 0;
                 position: relative;
                 background: white;
+               height:100%;
+              
             }
 
-                .certificate .pg-1 .head {
+               .certificate .pg-1 .head {
                     background-color: #0063B7;
                     color: white;
                     padding: 50px;
@@ -71,31 +73,42 @@
 
         .certificate .pg-1 .body {
             padding: 50px;
+            flex:0;
         }
 
         .certificate .pg-1 .footer {
             padding: 50px;
             align-items: center;
-            display: flex;
-            justify-content: space-between;
+            display: flex ;
+           /*justify-content: space-between;*/
+          
+    flex: 1;
+    justify-content: flex-start;
+    align-items: end;
         }
 
         .footer p.blue, .pg-1 h3 {
             color: #0063B7;
+
         }
 
+      
         .footer-logo {
             display: flex;
             align-items: baseline;
+            max-height:190px;
+                margin-left: 2rem;
+            
         }
 
             .footer-logo img {
-                width: 20rem;
+                max-width: 18rem;
+                height:auto;
             }
 
         .strips {
             display: flex;
-            padding: -0.1rem 0;
+            padding: 0.5rem 0;
         }
 
         .strip-green {
@@ -114,18 +127,21 @@
 
         .pg-2 {
             background-color: white;
-            width: 60rem;
+            /*width: 60rem;*/
             /*margin: 5rem auto;*/
-            border: 1px solid black;
+          /*  border: 1px solid black;*/
             position: relative;
             display: flex;
             flex-direction: column;
-            /*width: 100%;*/
-            max-width: 210mm;
-            min-height: 297mm;
+            width: 100%;
+          /*  max-width: 210mm;
+            min-height: 297mm;*/
             margin: 0;
             position: relative;
             background: white;
+
+
+            
         }
 
             .pg-2 .body {
@@ -289,7 +305,7 @@
     margin-bottom: 16px;
     color: inherit;
   }
- 
+
   @@media (min-width: 40.0625em){
     .certificate .nhsuk-body-m {
       font-size: 1.1875rem;
@@ -365,9 +381,35 @@
     }
   }
 
+        .certificate .nhsuk-u-margin-bottom-2 {
+            margin-bottom: 8px !important;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-u-margin-bottom-2 {
+                margin-bottom: 8px !important;
+            }
+        }
+
+        .pag
         .pagebreak {
             page-break-before: always;
         }
+  @@page {
+  size: A4;
+  margin: 0;
+  padding: 0;
+  margin-top: 0in;
+  margin-left: 0in;
+  border: 0px;
+}
+@@media print {
+  html, body {
+    width: 210mm;
+    height: 297mm;
+  }
+  * { box-sizing: border-box }
+}
     </style>
 
 </head>
@@ -385,23 +427,7 @@
                 </svg>
                 </div>
 
-             @*   <div class="text">
-                    <p>This is to certify that</p>
-                    <h1>@Model.CompetencySelfAssessmentCertificates.LearnerName</h1>
-                    <p>@Model.CompetencySelfAssessmentCertificates.LearnerPRN</p>
-
-
-                    <p>has successfully completed the</p>
-                    <h1>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</h1>
-
-                    <br />
-                    <p>Signed off at @Model.CompetencySelfAssessmentCertificates.SupervisorCentreName </p>
-                    <p>by @Model.CompetencySelfAssessmentCertificates.SupervisorName</p>
-                    <p> @Model.CompetencySelfAssessmentCertificates.SupervisorPRN</p>
-
-                    <p>On @Model.CompetencySelfAssessmentCertificates.FormattedDate </p>
-
-                </div>*@
+            
                 <div class="text">
                 <h1 class="certificate__heading">
                     <div class="nhsuk-u-margin-bottom-7">
@@ -433,10 +459,12 @@
             </div>
 
             <div class="body">
-                <h3>Including the following optional proficiencies:</h3>
+                <h3 class=" nhsuk-u-margin-bottom-3">
+                    Including the following optional proficiencies:
+                </h3>
                 @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
                 {
-                    <p>
+                    <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
                         @entry.CompetencyGroup - @entry.OptionalCompetencyCount
                         @if (@entry.OptionalCompetencyCount == 1)
                         {
@@ -468,6 +496,7 @@
                         <img src="https://www.hee.nhs.uk/sites/default/files/styles/image_658_witdh/public/Capital-Nurse-Logo.jpg?itok=8hlRIj8r" />
                     }
                 </div>
+                
             </div>
 
             <div class="strips">
@@ -476,10 +505,10 @@
             </div>
         </div>
         <div class="pagebreak"></div>
-
+      
         <div class="pg-2">
             <div class="body">
-                <h3>Activity summary report</h3>
+                <h2>Activity summary report</h2>
                 <br />
                 <div class="activity">
                     <p><b>Activity: </b>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</p>

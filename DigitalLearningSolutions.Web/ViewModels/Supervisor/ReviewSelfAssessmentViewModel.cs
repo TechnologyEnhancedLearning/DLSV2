@@ -21,5 +21,6 @@
         }
         public int CandidateAssessmentId { get; set; }
         public bool ExportToExcelHide { get; set; }
+        public IEnumerable<SupervisorDashboardToDoItem>? supervisorDashboardToDoItem { get; set; }
     }
 }

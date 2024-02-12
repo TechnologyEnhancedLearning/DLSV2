@@ -32,6 +32,11 @@
     border-top: 2px solid blue;
     margin-left: -10px;
         }
+       
+.pagebreak {
+  page-break-before: always;
+}
+
     </style>
 
 
@@ -132,10 +137,12 @@
             </div>
 
             <div class="body">
-                <h3>Including the following optional proficiencies:</h3>
+            <h3 class=" nhsuk-u-margin-bottom-3">
+                Including the following optional proficiencies:
+            </h3>
                 @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
                 {
-                    <p>
+                <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
                         @entry.CompetencyGroup - @entry.OptionalCompetencyCount
                         @if (@entry.OptionalCompetencyCount == 1)
                         {
@@ -177,7 +184,7 @@
    <br /><br/>
         <div class="pg-2">
             <div class="body">
-                <h3>Activity summary report</h3>
+                <h2>Activity summary report</h2>
                 <br />
                 <div class="activity">
                     <p><b>Activity: </b>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</p>
