@@ -94,16 +94,18 @@
                 Export to Excel
             </a>
         }
-        @if (Model.SupervisorSignOffs.Where(x => x.Verified != null && x.SignedOff).Any() && Model.supervisorDashboardToDoItem.Where(x => x.ProfileName == Model.DelegateSelfAssessment.RoleName && !x.ResultsReviewRequest).Any())
-        {
-            <a class="nhsuk-button"
+        @if (Model.SupervisorSignOffs.Where(x => x.Verified != null && x.SignedOff).Any() && Model.DelegateSelfAssessment.ResultsVerificationRequests ==0)
+        { 
+          
+                <a class="nhsuk-button"
            asp-controller="LearningPortal"
            asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
            asp-action="CompetencySelfAssessmentCertificate"
            asp-route-route="3"
            role="button">
-            Certificate
-        </a>
+                    Certificate
+                </a>
+            
         }
         @if (
           Model.DelegateSelfAssessment.SignOffRequested > 0 &&
