@@ -29,7 +29,7 @@
         public string ProfessionalRegistrationNumber { get; set; } = string.Empty;
         public int? DelegateID { get; set; }
         public bool? Active { get; set; }
-
+        public string DelegateStatus { get; set; } = string.Empty;
         public DlsRole DlsRole
         {
             get

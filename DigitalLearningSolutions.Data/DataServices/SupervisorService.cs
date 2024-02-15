@@ -159,7 +159,24 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId)
         {
             return connection.Query<SupervisorDelegateDetail>(
-                $@"SELECT sd.ID, 
+                $@"SELECT 
+                        delegate.ID, 
+		                delegate.SupervisorEmail, delegate.SupervisorAdminID, delegate.DelegateEmail, delegate.DelegateUserID,delegate.Active,
+                        delegate.Added, delegate.AddedByDelegate, delegate.NotificationSent, delegate.Removed, delegate.InviteHash, 
+		                delegate.FirstName, delegate.LastName, delegate.ProfessionalRegistrationNumber, delegate.CandidateEmail,
+		                delegate.JobGroupName, 
+		                delegate.Answer1, delegate.Answer2, delegate.Answer3, delegate.Answer4, delegate.Answer5, delegate.Answer6, delegate.CandidateNumber, 
+		                delegate.CustomPrompt1, delegate.CustomPrompt2, 
+		                delegate.CustomPrompt3, delegate.CustomPrompt4,             
+		                delegate.CustomPrompt5, delegate.CustomPrompt6, 
+		                delegate.CentreID, 
+		               delegate.SupervisorName,                 
+		              delegate.Expr1 ,
+					  
+					  CASE WHEN  delegate.DelegateUserID IS NULL AND  delegatestatus.PrimaryEmail IS NULL THEN 'Not register'
+					  WHEN delegate.DelegateUserID IS NOT NULL THEN 'Active'
+					  ELSE 'Inactive or not same centre' END AS DelegateStatus
+                        FROM(SELECT sd.ID, 
 		                sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID,da.Active,
                         sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, 
 		                u.FirstName, u.LastName, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail,
@@ -179,7 +196,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 		                CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, 
 		                CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) AS DelegateIsSupervisor,             
 		                da.ID AS Expr1
-                    FROM   CustomPrompts AS cp6 
+                        FROM   CustomPrompts AS cp6 
 	                    RIGHT OUTER JOIN CustomPrompts AS cp5 
 	                    RIGHT OUTER JOIN DelegateAccounts AS da
 	                    RIGHT OUTER JOIN SupervisorDelegates AS sd 
@@ -206,8 +223,14 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 	                    LEFT OUTER JOIN AdminAccounts AS au2 
 		                    ON da.UserID = au2.UserID AND da.CentreID = au2.CentreID
                     WHERE (sd.SupervisorAdminID = @adminId) AND (sd.Removed IS NULL) AND 
-                     (u.ID = da.UserID OR sd.DelegateUserID IS NULL)
-                    ORDER BY u.LastName, COALESCE (u.FirstName, sd.DelegateEmail)
+                     (u.ID = da.UserID OR sd.DelegateUserID IS NULL))delegate LEFT OUTER JOIN
+
+					(select sd.ID,u.PrimaryEmail,u.Active    from SupervisorDelegates sd LEFT OUTER JOIN 
+					users U ON sd.DelegateEmail = u.PrimaryEmail 
+					
+					 where (sd.SupervisorAdminID = @adminId) AND (sd.Removed IS NULL) AND 
+                     (sd.DelegateUserID IS NULL))delegatestatus  ON delegate.ID = delegatestatus.ID 
+					  ORDER BY delegate.LastName, COALESCE (delegate.FirstName, delegate.DelegateEmail)
                     ", new { adminId }
                 );
         }
