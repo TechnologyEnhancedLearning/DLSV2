@@ -90,7 +90,7 @@
             var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
 
-            if (TempData["ActivityDelegatesCentreId"] != null && TempData["ActivityDelegatesCentreId"].ToString() != User.GetCentreId().ToString()
+            if (TempData["DelegateActivitiesCentreId"] != null && TempData["DelegateActivitiesCentreId"].ToString() != User.GetCentreId().ToString()
                     && existingFilterString != null)
             {
                 existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
@@ -193,10 +193,19 @@
                 courseCategoryName
             );
 
+
+            for (int optionIndex = 0; model.SortOptions.Count() > optionIndex; optionIndex++)
+            {
+                if ((((string, string)[])model.SortOptions)[optionIndex].Item1 == "Completed")
+                {
+                    (((string, string)[])model.SortOptions)[optionIndex].Item1 = "Completed/Signed off/Submitted";
+                }
+            }
+
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
             Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);
-            TempData["ActivityDelegatesCentreId"] = centreId;
+            TempData["DelegateActivitiesCentreId"] = centreId;
 
             return View(model);
         }
