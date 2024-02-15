@@ -46,7 +46,9 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
             RegistrationAnswer5 = delegateInfo.RegistrationAnswer5;
             RegistrationAnswer6 = delegateInfo.RegistrationAnswer6;
             CandidateAssessmentsId = delegateInfo.CandidateAssessmentsId;
-        }
+            SupervisorSelfAssessmentReview = delegateInfo.SupervisorSelfAssessmentReview;
+        SupervisorResultsReview = delegateInfo.SupervisorResultsReview;
+    }
         public int DelegateId { get; set; }
         public int CandidateAssessmentsId { get; set; }
         public string? DelegateFirstName { get; set; }
@@ -77,6 +79,8 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public string? RegistrationAnswer4 { get; set; }
         public string? RegistrationAnswer5 { get; set; }
         public string? RegistrationAnswer6 { get; set; }
+        public bool SupervisorSelfAssessmentReview { get; set; }
+        public bool SupervisorResultsReview { get; set; }
         public bool Removed => RemovedDate.HasValue;
         public string?[] DelegateRegistrationPrompts =>
             new[]

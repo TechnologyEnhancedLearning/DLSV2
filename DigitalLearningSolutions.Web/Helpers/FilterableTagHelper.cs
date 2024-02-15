@@ -212,22 +212,28 @@
         {
             var tags = new List<SearchableTagViewModel>();
 
-            if (selfAssessmentDelegate.IsDelegateActive)
-            {
-                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active));
-            }
-            else
-            {
-                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive));
-            }
+            var statusTag = selfAssessmentDelegate.IsDelegateActive
+        ? new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active)
+        : new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive);
+            tags.Add(statusTag);
 
-            if (selfAssessmentDelegate.RemovedDate.HasValue)
+            var removalTag = selfAssessmentDelegate.RemovedDate.HasValue
+         ? new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed)
+         : new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true);
+            tags.Add(removalTag);
+            if (selfAssessmentDelegate.SupervisorSelfAssessmentReview && selfAssessmentDelegate.SupervisorResultsReview)
             {
-                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed));
+                var signedOffTag = selfAssessmentDelegate.SignedOff.HasValue
+             ? new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
+             : new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff);
+                tags.Add(signedOffTag);
             }
             else
             {
-                tags.Add(new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true));
+                var submissionTag = selfAssessmentDelegate.SubmittedDate.HasValue
+            ? new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.Submitted)
+            : new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.NotSubmitted);
+                tags.Add(submissionTag);
             }
 
             return tags;

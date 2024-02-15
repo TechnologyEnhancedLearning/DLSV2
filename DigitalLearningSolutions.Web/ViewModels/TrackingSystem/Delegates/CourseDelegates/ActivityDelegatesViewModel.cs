@@ -12,18 +12,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Cours
             IsCourseDelegate = isCourseDelegate;
             ActivityName = applicationName;
         }
-        public ActivityDelegatesViewModel(SelfAssessmentDelegatesData selfAssessmentDelegatesData, SearchSortFilterPaginationResult<SelfAssessmentDelegate> result, IEnumerable<FilterModel> availableFilters, string customisationIdQueryParameterName, int? selfAssessmentId, string selfAssessmentName, bool isCourseDelegate)
+        public ActivityDelegatesViewModel(SelfAssessmentDelegatesData selfAssessmentDelegatesData, SearchSortFilterPaginationResult<SelfAssessmentDelegate> result, IEnumerable<FilterModel> availableFilters, string customisationIdQueryParameterName, int? selfAssessmentId, string selfAssessmentName, bool isCourseDelegate, bool unSupervised)
         {
             SelfAssessmentId = selfAssessmentId;
             IsCourseDelegate = isCourseDelegate;
             ActivityName = selfAssessmentName;
+            Unsupervised = unSupervised;
             DelegatesDetails = selfAssessmentId != null
                 ? new SelectedDelegateDetailsViewModel(
                     result,
                     availableFilters,
                     selfAssessmentDelegatesData,
                     new Dictionary<string, string>
-                        { { customisationIdQueryParameterName, selfAssessmentId.ToString() } }
+                        { { customisationIdQueryParameterName, selfAssessmentId.ToString() } },
+                    Unsupervised
                 )
                 : null;
         }
@@ -31,6 +33,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Cours
         public int? SelfAssessmentId { get; set; }
         public string? ActivityName { get; set; }
         public bool IsCourseDelegate { get; set; }
+        public bool Unsupervised { get; set; }
         public SelectedDelegateDetailsViewModel? DelegatesDetails { get; set; }
     }
 }
