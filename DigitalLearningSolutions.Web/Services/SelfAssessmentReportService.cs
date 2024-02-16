@@ -34,7 +34,7 @@
             table.Theme = XLTableTheme.TableStyleLight9;
             sheet.Columns().AdjustToContents();
         }
-        
+
         public IEnumerable<SelfAssessmentSelect> GetSelfAssessmentsForReportList(int centreId, int? categoryId)
         {
             return selfAssessmentReportDataService.GetSelfAssessmentsForReportList(centreId, categoryId);

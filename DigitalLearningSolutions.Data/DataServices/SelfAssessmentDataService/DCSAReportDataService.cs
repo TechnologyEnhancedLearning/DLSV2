@@ -21,7 +21,7 @@
             this.connection = connection;
             this.logger = logger;
         }
-        
+
         public IEnumerable<DCSADelegateCompletionStatus> GetDelegateCompletionStatusForCentre(int centreId)
         {
             return connection.Query<DCSADelegateCompletionStatus>(
