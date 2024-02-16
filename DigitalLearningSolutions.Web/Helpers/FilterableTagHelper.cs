@@ -221,19 +221,20 @@
          ? new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed)
          : new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true);
             tags.Add(removalTag);
-            if (selfAssessmentDelegate.SupervisorSelfAssessmentReview && selfAssessmentDelegate.SupervisorResultsReview)
-            {
-                var signedOffTag = selfAssessmentDelegate.SignedOff.HasValue
-             ? new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
-             : new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff);
-                tags.Add(signedOffTag);
-            }
-            else
+            if (!selfAssessmentDelegate.SupervisorSelfAssessmentReview && !selfAssessmentDelegate.SupervisorResultsReview)
             {
                 var submissionTag = selfAssessmentDelegate.SubmittedDate.HasValue
             ? new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.Submitted)
             : new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.NotSubmitted);
                 tags.Add(submissionTag);
+            }
+            else
+            {
+                var signedOffTag = selfAssessmentDelegate.SignedOff.HasValue
+             ? new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
+             : new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff);
+                tags.Add(signedOffTag);
+                
             }
 
             return tags;

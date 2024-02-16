@@ -29,8 +29,8 @@
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
                 <li class="nhsuk-breadcrumb__item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-                   asp-action="DelegateProfileAssessments"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+                       asp-action="DelegateProfileAssessments"
+                       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
                         @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
                     </a>
                 </li>
@@ -43,15 +43,15 @@
             @if (ViewBag.navigatedFrom)
             {
                 <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-           asp-action="Index">
+                   asp-action="Index">
                     Back to Supervisor Dashboard
                 </a>
             }
             else
             {
                 <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-           asp-action="DelegateProfileAssessments"
-           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+                   asp-action="DelegateProfileAssessments"
+                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
                     Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
                 </a>
             }
@@ -85,15 +85,16 @@
         @if (!Model.ExportToExcelHide)
         {
             <a class="nhsuk-button nhsuk-button--secondary"
-           asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
-           asp-route-selfAssessmentName="@Model.DelegateSelfAssessment.RoleName"
-           asp-route-delegateUserID="@Model.DelegateSelfAssessment.DelegateUserID"
-           asp-route-delegateName="@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName"
-           asp-action="ExportCandidateAssessment"
-           role="button">
+               asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
+               asp-route-selfAssessmentName="@Model.DelegateSelfAssessment.RoleName"
+               asp-route-delegateUserID="@Model.DelegateSelfAssessment.DelegateUserID"
+               asp-route-delegateName="@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName"
+               asp-action="ExportCandidateAssessment"
+               role="button">
                 Export to Excel
             </a>
         }
+
         @if (Model.SupervisorSignOffs.Where(x => x.Verified != null && x.SignedOff).Any() && Model.DelegateSelfAssessment.ResultsVerificationRequests ==0)
         { 
           
@@ -105,17 +106,15 @@
            role="button">
                     Certificate
                 </a>
-            
         }
         @if (
-          Model.DelegateSelfAssessment.SignOffRequested > 0 &&
-          Model.DelegateSelfAssessment.ResultsVerificationRequests == 0 &&
-          competencySummaries.Sum(c => (int)c["verifiedCount"]) == competencySummaries.Sum(c => (int)c["questionsCount"])
+        Model.DelegateSelfAssessment.SignOffRequested > 0 &&
+        competencySummaries.Sum(c => (int)c["verifiedCount"]) == competencySummaries.Sum(c => (int)c["questionsCount"])
         )
         {
             <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>
         }
-        @if (Model.DelegateSelfAssessment.ResultsVerificationRequests > 1)
+        @if ((Model.DelegateSelfAssessment.ResultsVerificationRequests > 1) && (competencySummaries.Sum(c => (int)c["verifiedCount"]) < competencySummaries.Sum(c => (int)c["questionsCount"])))
         {
             <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Confirm multiple results</a>
         }
@@ -196,15 +195,15 @@
                             }
                         </td>
                         <partial name="Shared/_AssessmentQuestionReviewCells"
-                     model="competency.AssessmentQuestions.First()"
-                     view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
+                                 model="competency.AssessmentQuestions.First()"
+                                 view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
                     </tr>
                     @foreach (var question in competency.AssessmentQuestions.Skip(1))
                     {
                         <tr role="row" class="nhsuk-table__row">
                             <partial name="Shared/_AssessmentQuestionReviewCells"
-                     model="question"
-                     view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
+                                     model="question"
+                                     view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
                         </tr>
                     }
                 }
