@@ -105,6 +105,7 @@
                           x.ProgrammeCourse,
                           x.Organisation,
                           x.DepartmentTeam,
+                          x.OtherCentres,
                           x.DLSRole,
                           x.Registered,
                           x.Started,
