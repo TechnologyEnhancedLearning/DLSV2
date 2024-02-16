@@ -584,7 +584,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             };
 
             // When
-            var result = controller.SelfAssessmentAdd(model) as RedirectToActionResult;
+            var result = controller.SelfAssessmentAddSubmit(model) as RedirectToActionResult;
 
             // Then
             result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
