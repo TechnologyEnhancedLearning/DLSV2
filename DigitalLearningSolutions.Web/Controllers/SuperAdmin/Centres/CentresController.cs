@@ -770,7 +770,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         {
             if (!ModelState.IsValid)
             {
-                //var centreId = model.CentreId;
                 var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
                 var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
                 model.SelfAssessmentIds = model.SelfAssessmentIds ?? new List<int>();
