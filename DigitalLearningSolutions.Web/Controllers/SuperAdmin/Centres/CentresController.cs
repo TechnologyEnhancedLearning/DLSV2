@@ -260,6 +260,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                     centreTypes, model.CentreTypeId
                 );
                 model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
+                model.IpPrefix = model.IpPrefix == null ? string.Empty : model.IpPrefix.Trim();
                 return View(model);
             }
 
@@ -503,8 +504,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 var regions = regionDataService.GetRegionsAlphabetical().ToList();
                 model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions, model.RegionId);
                 model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes, model.CentreTypeId);
-                model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
-                model.IpPrefix = model.IpPrefix == null ? string.Empty : model.IpPrefix.Trim();
+                model.CentreName = model.CentreName?.Trim() ?? string.Empty;
+                model.ContactFirstName = model.ContactFirstName?.Trim() ?? string.Empty;
+                model.ContactLastName = model.ContactLastName?.Trim() ?? string.Empty;
+                model.ContactEmail = model.ContactEmail?.Trim() ?? string.Empty;
+                model.ContactPhone = model.ContactPhone?.Trim() ?? string.Empty;
+                model.IpPrefix = model.IpPrefix?.Trim() ?? string.Empty;
                 return View(model);
             }
 
@@ -759,7 +764,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         }
 
         [HttpPost]
-        public IActionResult SelfAssessmentAdd(SelfAssessmentAddViewModel model)
+        public IActionResult SelfAssessmentAddSubmit(SelfAssessmentAddViewModel model)
         {
             if (!ModelState.IsValid)
             {
