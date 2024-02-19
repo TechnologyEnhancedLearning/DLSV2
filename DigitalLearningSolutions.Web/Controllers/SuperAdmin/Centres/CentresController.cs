@@ -635,6 +635,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 fileName
             );
         }
+        [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/{applicationId}/ConfirmRemove")]
         public IActionResult ConfirmRemoveCourse(int centreId = 0, int applicationId = 0)
         {
@@ -699,7 +700,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             var model = SetupCommonModel(centreId, "Core", centreApplicationsService.GetCentralCoursesForPublish(centreId));
             return View("CourseAdd", model);
         }
-
         [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Other")]
         public IActionResult CourseAddOther(int centreId, string searchTerm)
         {
@@ -707,7 +707,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             model.SearchTerm = searchTerm;
             return View("CourseAdd", model);
         }
-
+        [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Pathways")]
         public IActionResult CourseAddPathways(int centreId = 0)
         {
@@ -732,6 +732,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
             return View(model);
         }
+        [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/SelfAssessments/{selfAssessmentId}/ConfirmRemove")]
         public IActionResult ConfirmRemoveSelfAssessment(int centreId = 0, int selfAssessmentId = 0)
         {
