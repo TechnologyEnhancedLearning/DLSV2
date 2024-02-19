@@ -55,6 +55,11 @@
                             WHERE (CentreID = @centreId) AND (ApplicationID = @applicationId)",
                     new { centreId, applicationId }
                 );
+                connection.Execute(
+                    @"UPDATE Customisations
+                        SET Active = 0
+                        WHERE (CentreID = @centreId) AND (ApplicationID = @applicationId)",
+                    new { centreId, applicationId });
             }
 
             public void InsertCentreApplication(int centreId, int applicationId)
