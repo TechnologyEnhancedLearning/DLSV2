@@ -36,7 +36,7 @@
                                      Centres AS ct ON cta.CentreID = ct.CentreID INNER JOIN
                                      Applications AS a ON cta.ApplicationID = a.ApplicationID LEFT OUTER JOIN
                                      Customisations AS cu ON cta.CentreID = cu.CentreID AND cta.ApplicationID = cu.ApplicationID
-                        WHERE (cta.CentreID = @centreId) AND (cta.ApplicationID = @applicationId)
+                        WHERE (cta.CentreID = @centreId) AND (cta.ApplicationID = @applicationId) AND (cu.Active = 1)
                         GROUP BY cta.CentreApplicationID, cta.CentreID, ct.CentreName, cta.ApplicationID, a.ApplicationName",
                      new { centreId, applicationId }
                     );
