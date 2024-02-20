@@ -754,7 +754,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             return RedirectToAction("SelfAssessments", new { centreId });
         }
 
-        [Route("SuperAdmin/Centres/{centreId=0:int}/SelfAssessments/Add")]
+        [HttpGet]
+        [Route("SuperAdmin/Centres/{centreId}/SelfAssessments/Add")]
         public IActionResult SelfAssessmentAdd(int centreId = 0)
         {
             var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
@@ -764,17 +765,17 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         }
 
         [HttpPost]
-        public IActionResult SelfAssessmentAddSubmit(SelfAssessmentAddViewModel model)
+        [Route("SuperAdmin/Centres/{centreId}/SelfAssessments/Add")]
+        public IActionResult SelfAssessmentAddSubmit(int centreId, SelfAssessmentAddViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                var centreId = model.CentreId;
                 var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
                 var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
                 model.SelfAssessmentIds = model.SelfAssessmentIds ?? new List<int>();
                 model.CentreName = centreName;
                 model.SelfAssessments = selfAssessmentsForPublish;
-                return View(model);
+                return View("SelfAssessmentAdd", model);
             }
             var selfEnrol = model.EnableSelfEnrolment;
             if (selfEnrol != null)
