@@ -18,7 +18,7 @@
     public class VerifyDelegateCanAccessActionPlanResourceTests
     {
         private const int LearningLogItemId = 1;
-        private const int DelegateId = 2;
+        private const int DelegateUserId = 2;
         private IActionPlanService actionPlanService = null!;
         private ActionExecutingContext context = null!;
 
@@ -27,7 +27,7 @@
         {
             actionPlanService = A.Fake<IActionPlanService>();
             var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData()
-                .WithMockUser(true, 101, delegateId: DelegateId);
+                .WithMockUser(true, 101, userId: DelegateUserId);
             context = new ActionExecutingContext(
                 new ActionContext(
                     new DefaultHttpContext(),
@@ -45,7 +45,7 @@
         {
             // Given
             context.RouteData.Values["learningLogItemId"] = LearningLogItemId;
-            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanResource(LearningLogItemId, DelegateId))
+            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanResource(LearningLogItemId, DelegateUserId))
                 .Returns(null);
 
             // When
@@ -60,7 +60,7 @@
         {
             // Given
             context.RouteData.Values["learningLogItemId"] = LearningLogItemId;
-            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanResource(LearningLogItemId, DelegateId))
+            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanResource(LearningLogItemId, DelegateUserId))
                 .Returns(false);
 
             // When
@@ -76,7 +76,7 @@
         {
             // Given
             context.RouteData.Values["learningLogItemId"] = LearningLogItemId;
-            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanResource(LearningLogItemId, DelegateId))
+            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanResource(LearningLogItemId, DelegateUserId))
                 .Returns(true);
 
             // When
