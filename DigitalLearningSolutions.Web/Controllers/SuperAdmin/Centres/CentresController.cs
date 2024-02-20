@@ -700,7 +700,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                     break;
             }
             model.SearchTerm = searchTerm;
-            model.CentreName = centresDataService.GetCentreName(centreId);
             return View("CourseAdd", model);
         }
 
@@ -722,6 +721,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                         model.Courses = centreApplicationsService.GetPathwaysCoursesForPublish(centreId);
                         break;
                 }
+                model.CentreName = centresDataService.GetCentreName(centreId);
                 return View("CourseAdd", model);
             }
             foreach (var id in model.ApplicationIds)
