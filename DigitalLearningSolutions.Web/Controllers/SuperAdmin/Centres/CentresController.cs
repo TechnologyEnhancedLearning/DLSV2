@@ -700,6 +700,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                     break;
             }
             model.SearchTerm = searchTerm;
+            model.CentreName = centresDataService.GetCentreName(centreId);
             return View("CourseAdd", model);
         }
 
