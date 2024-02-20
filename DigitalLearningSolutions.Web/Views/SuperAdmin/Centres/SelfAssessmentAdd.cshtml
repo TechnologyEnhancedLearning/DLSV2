@@ -24,7 +24,7 @@
 
 @if (Model.SelfAssessments.Any())
 {
-    <form method="post" asp-action="SelfAssessmentAddSubmit">
+    <form method="post" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessmentAddSubmit">
         @if (errorHasOccurred)
         {
             <vc:error-summary order-of-property-names="@(new []{ nameof(SelfAssessmentAddViewModel.SelfAssessmentIds), nameof(SelfAssessmentAddViewModel.EnableSelfEnrolment) })" />
