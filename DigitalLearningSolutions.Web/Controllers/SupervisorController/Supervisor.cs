@@ -55,7 +55,26 @@
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
-            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
+            var allSupervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
+                supervisor =>
+                {
+                    return new SupervisorDelegateDetailViewModel(
+                        supervisor,
+                        new ReturnPageQuery(
+                            page,
+                            $"{supervisor.ID}-card",
+                            PaginationOptions.DefaultItemsPerPage,
+                            searchString,
+                            sortBy,
+                            sortDirection
+                        ),
+                        isSupervisor,
+                        loggedInUserId
+                    );
+                }
+            );
+
+            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Where(x => x.DelegateUserID != loggedInUserId).Select(
                 supervisor =>
                 {
                     return new SupervisorDelegateDetailViewModel(
@@ -92,7 +111,7 @@
                 centreRegistrationPrompts
             );
             model.IsActiveSupervisorDelegateExist = IsSupervisorDelegateExistAndActive(adminId, supervisorEmail, centreId) > 0;
-            model.SelfSuperviseDelegateDetailViewModels = supervisorDelegateDetailViewModels.Where(x => x.SupervisorDelegateDetail.DelegateUserID == loggedInUserId).FirstOrDefault();
+            model.SelfSuperviseDelegateDetailViewModels = allSupervisorDelegateDetailViewModels.Where(x => x.SupervisorDelegateDetail.DelegateUserID == loggedInUserId).FirstOrDefault();
             ModelState.ClearErrorsForAllFieldsExcept("DelegateEmailAddress");
             return View("MyStaffList", model);
         }
