@@ -391,7 +391,7 @@
             // When
             var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
-                GenericDelegateId
+                delegateUserId
             );
 
             // Then
@@ -413,7 +413,7 @@
             // When
             var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
-                GenericDelegateId
+                delegateUserId
             );
 
             // Then
@@ -433,14 +433,14 @@
             var learningLogItem = Builder<LearningLogItem>.CreateNew()
                 .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
                 .And(i => i.ArchivedDate = DateTime.UtcNow)
-                .And(i => i.LoggedById = GenericDelegateId).Build();
+                .And(i => i.LoggedById = delegateUserId).Build();
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
                 .Returns(learningLogItem);
 
             // When
             var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
-                GenericDelegateId
+                delegateUserId
             );
 
             // Then
@@ -460,14 +460,14 @@
             var learningLogItem = Builder<LearningLogItem>.CreateNew()
                 .With(i => i.LearningHubResourceReferenceId = null)
                 .And(i => i.ArchivedDate = null)
-                .And(i => i.LoggedById = GenericDelegateId).Build();
+                .And(i => i.LoggedById = delegateUserId).Build();
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
                 .Returns(learningLogItem);
 
             // When
             var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
-                GenericDelegateId
+                delegateUserId
             );
 
             // Then
@@ -488,14 +488,14 @@
             var learningLogItem = Builder<LearningLogItem>.CreateNew()
                 .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
                 .And(i => i.ArchivedDate = null)
-                .And(i => i.LoggedById = GenericDelegateId + 1000).Build();
+                .And(i => i.LoggedById = delegateUserId + 1000).Build();
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
                 .Returns(learningLogItem);
 
             // When
             var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
-                GenericDelegateId
+                delegateUserId
             );
 
             // Then
@@ -515,14 +515,14 @@
             var learningLogItem = Builder<LearningLogItem>.CreateNew()
                 .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
                 .And(i => i.ArchivedDate = null)
-                .And(i => i.LoggedById = GenericDelegateId).Build();
+                .And(i => i.LoggedById = delegateUserId).Build();
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
                 .Returns(learningLogItem);
 
             // When
             var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
-                GenericDelegateId
+                delegateUserId
             );
 
             // Then
