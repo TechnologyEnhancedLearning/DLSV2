@@ -668,19 +668,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult CourseAddChooseFlow(CourseAddChooseFlowViewModel model)
         {
-            switch (model.AddCourseOption)
-            {
-                case "Core":
-                    return RedirectToAction(nameof(CourseAddCore), new { centreId = model.CentreId });
-
-                case "Other":
-                    return RedirectToAction(nameof(CourseAddOther), new { centreId = model.CentreId, searchTerm = (model.SearchTerm != null ? model.SearchTerm.Replace(" ", "%") : "") });
-
-                case "Pathways":
-                    return RedirectToAction(nameof(CourseAddPathways), new { centreId = model.CentreId });
-            }
-
-            return RedirectToAction(nameof(Courses), new { centreId = model.CentreId });
+            return RedirectToAction(nameof(CourseAdd), new { centreId = model.CentreId, courseType = model.AddCourseOption, searchTerm = (model.SearchTerm != null ? model.SearchTerm.Replace(" ", "%") : "") });
         }
 
         private CourseAddViewModel SetupCommonModel(int centreId, string courseType, IEnumerable<CourseForPublish> courses)
@@ -694,29 +682,48 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             };
         }
 
-        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Core")]
-        public IActionResult CourseAddCore(int centreId = 0)
+        [NoCaching]
+        [Route("SuperAdmin/Centres/{centreId}/Courses/Add/{courseType}")]
+        public IActionResult CourseAdd(int centreId, string courseType, string? searchTerm)
         {
-            var model = SetupCommonModel(centreId, "Core", centreApplicationsService.GetCentralCoursesForPublish(centreId));
-            return View("CourseAdd", model);
-        }
-        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Other")]
-        public IActionResult CourseAddOther(int centreId, string searchTerm)
-        {
-            var model = SetupCommonModel(centreId, "Other", centreApplicationsService.GetOtherCoursesForPublish(centreId, searchTerm));
+            CourseAddViewModel model;
+            switch (courseType)
+            {
+                case "Core":
+                    model = SetupCommonModel(centreId, "Core", centreApplicationsService.GetCentralCoursesForPublish(centreId));
+                    break;
+                case "Other":
+                    model = SetupCommonModel(centreId, "Other", centreApplicationsService.GetOtherCoursesForPublish(centreId, searchTerm));
+                    break;
+                default:
+                    model = SetupCommonModel(centreId, "Pathways", centreApplicationsService.GetPathwaysCoursesForPublish(centreId));
+                    break;
+            }
             model.SearchTerm = searchTerm;
             return View("CourseAdd", model);
         }
-        [NoCaching]
-        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Pathways")]
-        public IActionResult CourseAddPathways(int centreId = 0)
-        {
-            var model = SetupCommonModel(centreId, "Pathways", centreApplicationsService.GetPathwaysCoursesForPublish(centreId));
-            return View("CourseAdd", model);
-        }
+
         [HttpPost]
-        public IActionResult CourseAddCommit(CourseAddViewModel model)
+        [Route("SuperAdmin/Centres/{centreId}/Courses/Add/{courseType}")]
+        public IActionResult CourseAddCommit(CourseAddViewModel model, int centreId, string courseType)
         {
+            if (!ModelState.IsValid)
+            {
+                switch (courseType)
+                {
+                    case "Core":
+                        model.Courses = centreApplicationsService.GetCentralCoursesForPublish(centreId);
+                        break;
+                    case "Other":
+                        model.Courses = centreApplicationsService.GetOtherCoursesForPublish(centreId, model.SearchTerm);
+                        break;
+                    default:
+                        model.Courses = centreApplicationsService.GetPathwaysCoursesForPublish(centreId);
+                        break;
+                }
+                model.CentreName = centresDataService.GetCentreName(centreId);
+                return View("CourseAdd", model);
+            }
             foreach (var id in model.ApplicationIds)
             {
                 centreApplicationsService.InsertCentreApplication(model.CentreId, id);

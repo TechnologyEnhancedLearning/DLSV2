@@ -489,7 +489,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             };
 
             // When
-            var result = controller.CourseAddCommit(model) as RedirectToActionResult;
+            var result = controller.CourseAddCommit(model, model.CentreId, "Core") as RedirectToActionResult;
 
             // Then
             result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
