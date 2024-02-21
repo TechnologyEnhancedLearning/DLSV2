@@ -101,8 +101,7 @@
                     WHERE (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (a.CoreContent = 0) AND (a.Debug = 0) AND (a.DefaultContentTypeID = 1) AND (a.ApplicationID NOT IN
                                      (SELECT ApplicationID
                                      FROM    CentreApplications
-                                     WHERE (CentreID = @centreId))) AND (c.CentreName LIKE '%' + @searchTerm + '%') OR
-                                 (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (a.CoreContent = 0) AND (a.Debug = 0) AND (a.DefaultContentTypeID = 1) AND (a.ApplicationName LIKE '%' + @searchTerm + '%')
+                                     WHERE (CentreID = @centreId))) AND ((c.CentreName LIKE '%' + @searchTerm + '%') OR (a.ApplicationName LIKE '%' + @searchTerm + '%'))
                     ORDER BY Course",
                 new { centreId, searchTerm }
                 );
