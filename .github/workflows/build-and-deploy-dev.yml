@@ -1,0 +1,114 @@
+name: .NET Core Deploy DLS DEV to IIS
+
+on:
+      push:
+        branches: [ DEV ]
+      workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+
+    runs-on: self-hosted
+        env: 
+        # set apppool and site name from IIS
+        AppPoolName : dlsweb-dev
+        SiteName  : 'dls-uar-dev'
+        # set to site files.  In this case, the part of the path after E:/web/
+        SitePath :  dlsweb-dev
+   steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET Core SDK 6.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Add TechnologyEnhancedLearning as nuget package source
+        run: dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text
+
+      - name: Dotnet build
+        run: dotnet build DigitalLearningSolutions.sln
+      
+      - name: dotnet publish 
+        run: | 
+          dotnet publish -c Release -o E:/web/${{env.SitePath}}
+  
+      - name: Look for app_offline add as needed
+        run: |
+          try{Get-Item E:/web/${{env.SitePath}}/app_offline.htm}
+          catch{
+            Copy-Item E:/web/Offline/app_offline.htm E:/prep/${{env.SitePath}} -Recurse -Force  
+            }
+    
+      - name: Sleep for 5 seconds
+        run: Start-Sleep -s 5 
+
+      - name: Copy Files
+        run: |
+          $currentRetry = 1;
+          $backupRetry = 1;
+          $success = $false;
+          $backupSuccess = $false;
+          do{
+            echo "Attempting file copy $currentRetry"  
+            try {
+              Copy-Item E:/prep/${{env.SitePath}} 'E:/web/${{env.SitePath}}' -Recurse -Force
+              $success = $true;
+            }
+            catch {
+              echo "Copy Failed due to following Catch error:`n"
+              echo $PSItem.Exception.Message
+              echo "`n"
+              Start-Sleep -s 2
+              $currentRetry = $currentRetry + 1;
+            }
+            finally {
+              if ($currentRetry -ge 10) {
+                  echo "Copy keeps failing; restarting AppPool/Site as last resort`n"
+                  echo "Attempting to restart AppPool`n"
+                  do{
+                      $status = Get-WebAppPoolState -name '${{env.AppPoolName}}'
+                      if ($status.Value -eq "Stopped") {
+                          start-WebAppPool ${{env.AppPoolName}}
+                          echo "AppPool restarted`n---------`n"
+                          $backupSuccess = $true;
+                      }
+                      else {
+                          if ($backupRetry -ge 10) {
+                             throw "AppPool restart keeps failing. Please look into Malfurion"
+                          }
+                          echo "AppPool not stopped yet; Re-attempt #$backupRetry"
+                          Start-Sleep -s 3
+                          $backupRetry = $backupRetry + 1;
+                      }
+                  }
+                  while (!$backupSuccess -and $backupRetry -le 10)
+                  $backupRetry = 1;
+                  $backupSuccess = $false;
+                  echo "Attempting to restart Website`n"
+                  do{
+                      $status = Get-webtate -name '${{env.SiteName}}'
+                      if ($status.Value -eq "Stopped") {
+                          start-iissite ${{env.SiteName}}
+                          echo "Website restarted`n---------`n"
+                          $backupSuccess = $true;
+                      }
+                      else {
+                          if ($backupRetry -ge 10) {
+                            throw "Website restart keeps failing. Please look into Server"
+                          }
+                          echo "Website not stopped yet; Re-attempt #$backupRetry"
+                          Start-Sleep -s 3
+                          $backupRetry = $backupRetry + 1;
+                      }
+                  }
+                  while (!$backupSuccess -and $backupRetry -le 10)
+              }
+            }
+          }
+          while (!$success -and $currentRetry -le 10) 
+  
+      - name: Remove Offline
+        iE: always()
+        run: |
+          Remove-Item E:/web/${{env.SitePath}}/app_offline.htm -Force
