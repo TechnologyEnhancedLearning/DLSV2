@@ -14,7 +14,7 @@ on:
       workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy-to-dev:
 
     runs-on: self-hosted
         
@@ -36,12 +36,12 @@ jobs:
                 { 
                   dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text; 
                 }
-      - name: Dotnet build
-        run: dotnet build DigitalLearningSolutions.sln
+      #- name: Dotnet build
+      #  run: dotnet build DigitalLearningSolutions.sln
       
       - name: Dotnet publish 
         run: | 
-          dotnet publish -c Release -o E:/web/${{env.SitePath}}
+          dotnet publish DigitalLearningSolutions.sln -c Release -o E:/web/${{env.SitePath}}
   
       - name: Look for app_offline add as needed
         run: |
