@@ -48,7 +48,7 @@ jobs:
             Copy-Item E:/web/Offline/app_offline.htm E:/prep/${{env.SitePath}} -Recurse -Force  
             }
           try{Get-Item E:/web/${{env.SitePath}}/web.config}
-            {
+            finally{
               Remove-Item E:/prep/${{env.SitePath}}/web.config -Force;
               Copy-Item E:/web/${{env.SitePath}}/web.config E:/prep/${{env.SitePath}} -Recurse -Force;
             }
