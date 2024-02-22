@@ -62,7 +62,7 @@ jobs:
           do{
             echo "Attempting file copy $currentRetry"  
             try {
-              Rename-Item 'E:/web/${{env.SitePath}} ${{env.SitePath}}-PREVIOUS' 
+              Rename-Item -Path 'E:/web/${{env.SitePath}}' -NewName '${{env.SitePath}}-PREVIOUS' 
               Copy-Item E:/prep/${{env.SitePath}} 'E:/web/${{env.SitePath}}' -Recurse -Force;
               $success = $true;
             }
