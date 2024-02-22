@@ -119,7 +119,7 @@ jobs:
           }
           while (!$success -and $currentRetry -le 10) 
   
-      - name: Remove Offline and remove previous publish folder
+      - name: Remove Offline and remove previous deployment folder
         run: |
-          Remove-Item E:/web/${{env.SitePath}}-PREVIOUS'  -Force
-          Remove-Item E:/web/${{env.SitePath}}/app_offline.htm -Force
+          Remove-Item 'E:/web/${{env.SitePath}}-PREVIOUS' -Force
+          Remove-Item 'E:/web/${{env.SitePath}}/app_offline.htm' -Force
