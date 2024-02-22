@@ -6,7 +6,8 @@ env:
     SiteName  : 'dls-uar-dev'
     # set to site files.  In this case, the part of the path after E:/web/
     SitePath :  dlsweb-dev
-
+    DOTNET_INSTALL_DIR: '~/AppData/Local/Microsoft/dotnet'
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 on:
       push:
         branches: [ DEV ]
