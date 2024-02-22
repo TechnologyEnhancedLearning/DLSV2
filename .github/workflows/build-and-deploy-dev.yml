@@ -52,7 +52,7 @@ jobs:
             Copy-Item E:/web/${{env.SitePath}}/web.config E:/prep/${{env.SitePath}} -Recurse -Force;
           }
           if (Test-Path -Path E:/web/${{env.SitePath}}-PREVIOUS){
-              Remove-Item E:/web/${{env.SitePath}}-PREVIOUS -Force
+              Remove-Item -LiteralPath 'E:/web/${{env.SitePath}}-PREVIOUS' -Force -Recurse
             }        
 
       - name: Sleep for 5 seconds
@@ -129,6 +129,6 @@ jobs:
         run: |
          if (Test-Path -Path 'E:/web/${{env.SitePath}}-PREVIOUS')
           {
-            Remove-Item 'E:/web/${{env.SitePath}}-PREVIOUS' -Force
+            Remove-Item -LiteralPath 'E:/web/${{env.SitePath}}-PREVIOUS' -Force -Recurse
           }
           Remove-Item 'E:/web/${{env.SitePath}}/app_offline.htm' -Force
