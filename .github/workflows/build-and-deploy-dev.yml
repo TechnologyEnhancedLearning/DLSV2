@@ -29,14 +29,11 @@ jobs:
 
       - name: Add TechnologyEnhancedLearning as nuget package source
 
-        run: if (-not $(Get-PackageSource -Name TechnologyEnhancedLearning -ErrorAction Ignore))
-              {
-                dotnet nuget add source {{ env.NuGetSource }} --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text
-              }
+        run:  $nugetSources = dotnet nuget list source | Out-String; if(!($nugetSources -like "*TechnologyEnhancedLearning*")) { dotnet nuget add source {{ env.NuGetSource }} --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text; }
       - name: Dotnet build
         run: dotnet build DigitalLearningSolutions.sln
       
-      - name: dotnet publish 
+      - name: Dotnet publish 
         run: | 
           dotnet publish -c Release -o E:/web/${{env.SitePath}}
   
