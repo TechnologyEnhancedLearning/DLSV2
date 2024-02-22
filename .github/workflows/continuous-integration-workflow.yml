@@ -1,5 +1,9 @@
 name: Continuous Integration
 on: [push]
+branches-ignore:
+- 'UAT'
+- 'DEV'
+
 jobs:
   build:
     name: Build and test

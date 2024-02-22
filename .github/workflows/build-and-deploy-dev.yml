@@ -10,7 +10,8 @@ env:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 on:
       push:
-        branches: [ DEV ]
+        branches: 
+        - 'DEV'
       workflow_dispatch:
 
 jobs:
