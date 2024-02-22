@@ -3,9 +3,9 @@ name: Deploy DLS DEV to IIS
 env: 
     # set apppool and site name from IIS
     AppPoolName : dlsweb-dev
-    SiteName  : 'dls-uar-dev'
+    SiteName  : 'dls-dev'
     # set to site files.  In this case, the part of the path after E:/web/
-    SitePath :  dlsweb-dev
+    SitePath :  dls-dev
     DOTNET_INSTALL_DIR: '~/AppData/Local/Microsoft/dotnet'
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 on:
