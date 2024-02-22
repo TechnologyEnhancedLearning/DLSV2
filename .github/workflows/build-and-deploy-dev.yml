@@ -49,8 +49,7 @@ jobs:
           Copy-Item E:/web/Offline/app_offline.htm E:/web/${{env.SitePath}} -Recurse -Force;
           if (Test-Path -Path E:/web/${{env.SitePath}})
           {
-            Rename-Item -Path 'E:/prep/${{env.SitePath}}/web.config' -NewName 'web.config.published';
-           
+            Remove-Item -Path 'E:/prep/${{env.SitePath}}/web.config' -Force;
             Copy-Item E:/web/${{env.SitePath}}/web.config E:/prep/${{env.SitePath}} -Recurse -Force;
           }
           if (Test-Path -Path E:/web/${{env.SitePath}}-PREVIOUS){
