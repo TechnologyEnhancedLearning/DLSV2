@@ -6,7 +6,6 @@ env:
     SiteName  : 'dls-uar-dev'
     # set to site files.  In this case, the part of the path after E:/web/
     SitePath :  dlsweb-dev
-    NuGetSource: https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json
     DOTNET_INSTALL_DIR: '~/AppData/Local/Microsoft/dotnet'
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 on:
@@ -29,7 +28,11 @@ jobs:
 
       - name: Add TechnologyEnhancedLearning as nuget package source
 
-        run:  $nugetSources = dotnet nuget list source | Out-String; if(!($nugetSources -like "*TechnologyEnhancedLearning*")) { dotnet nuget add source {{ env.NuGetSource }} --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text; }
+        run:  $nugetSources = dotnet nuget list source | Out-String; 
+                if(!($nugetSources -like "*TechnologyEnhancedLearning*")) 
+                { 
+                  dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text; 
+                }
       - name: Dotnet build
         run: dotnet build DigitalLearningSolutions.sln
       
