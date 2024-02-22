@@ -51,12 +51,9 @@ jobs:
             Remove-Item E:/prep/${{env.SitePath}}/web.config -Force;
             Copy-Item E:/web/${{env.SitePath}}/web.config E:/prep/${{env.SitePath}} -Recurse -Force;
           }
-      
-      - name: Check for and remove previous publish folder
-          run: |
-            if (Test-Path -Path 'E:/web/${{env.SitePath}}-PREVIOUS'){
-              Remove-Item 'E:/web/${{env.SitePath}}-PREVIOUS' -Force
-            }
+          if (Test-Path -Path E:/web/${{env.SitePath}}-PREVIOUS){
+              Remove-Item E:/web/${{env.SitePath}}-PREVIOUS -Force
+            }        
 
       - name: Sleep for 5 seconds
         run: Start-Sleep -s 5 
