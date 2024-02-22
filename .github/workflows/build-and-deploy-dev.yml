@@ -43,20 +43,17 @@ jobs:
   
       - name: Copy app_offline and web config to publish folder
         run: |
-          try{Get-Item E:/web/${{env.SitePath}}/app_offline.htm}
-          catch{
-            Copy-Item E:/web/Offline/app_offline.htm E:/prep/${{env.SitePath}} -Recurse -Force  
-            }
-          try{Get-Item E:/web/${{env.SitePath}}/web.config}
-            finally{
-              Remove-Item E:/prep/${{env.SitePath}}/web.config -Force;
-              Copy-Item E:/web/${{env.SitePath}}/web.config E:/prep/${{env.SitePath}} -Recurse -Force;
-            }
-    
+          Copy-Item E:/web/Offline/app_offline.htm E:/prep/${{env.SitePath}} -Recurse -Force;
+          Copy-Item E:/web/Offline/app_offline.htm E:/web/${{env.SitePath}} -Recurse -Force;
+          if (Test-Path -Path E:/web/${{env.SitePath}})
+          {
+            Remove-Item E:/prep/${{env.SitePath}}/web.config -Force;
+            Copy-Item E:/web/${{env.SitePath}}/web.config E:/prep/${{env.SitePath}} -Recurse -Force;
+          }
       - name: Sleep for 5 seconds
         run: Start-Sleep -s 5 
 
-      - name: Copy Files
+      - name: Copy files over to deployment folder and restart apppool/server if necessary
         run: |
           $currentRetry = 1;
           $backupRetry = 1;
@@ -65,7 +62,8 @@ jobs:
           do{
             echo "Attempting file copy $currentRetry"  
             try {
-              Copy-Item E:/prep/${{env.SitePath}} 'E:/web/${{env.SitePath}}' -Recurse -Force
+              Rename-Item 'E:/web/${{env.SitePath}} ${{env.SitePath}}-PREVIOUS' 
+              Copy-Item E:/prep/${{env.SitePath}} 'E:/web/${{env.SitePath}}' -Recurse -Force;
               $success = $true;
             }
             catch {
@@ -121,6 +119,7 @@ jobs:
           }
           while (!$success -and $currentRetry -le 10) 
   
-      - name: Remove Offline
+      - name: Remove Offline and remove previous publish folder
         run: |
+          Remove-Item E:/web/${{env.SitePath}}-PREVIOUS'  -Force
           Remove-Item E:/web/${{env.SitePath}}/app_offline.htm -Force
