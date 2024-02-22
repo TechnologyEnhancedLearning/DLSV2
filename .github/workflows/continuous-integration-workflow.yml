@@ -1,8 +1,9 @@
 name: Continuous Integration
-on: [push]
-branches-ignore:
-- 'UAT'
-- 'DEV'
+on: 
+  push:
+    branches-ignore:
+    - 'UAT'
+    - 'DEV'
 
 jobs:
   build:
