@@ -1,4 +1,11 @@
-name: .NET Core Deploy DLS DEV to IIS
+name: Deploy DLS DEV to IIS
+
+env: 
+    # set apppool and site name from IIS
+    AppPoolName : dlsweb-dev
+    SiteName  : 'dls-uar-dev'
+    # set to site files.  In this case, the part of the path after E:/web/
+    SitePath :  dlsweb-dev
 
 on:
       push:
@@ -9,13 +16,8 @@ jobs:
   build-and-deploy:
 
     runs-on: self-hosted
-        env: 
-        # set apppool and site name from IIS
-        AppPoolName : dlsweb-dev
-        SiteName  : 'dls-uar-dev'
-        # set to site files.  In this case, the part of the path after E:/web/
-        SitePath :  dlsweb-dev
-   steps:
+        
+    steps:
       - uses: actions/checkout@v3
 
       - name: Setup .NET Core SDK 6.0
