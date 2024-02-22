@@ -29,9 +29,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+      
       - name: Add TechnologyEnhancedLearning as nuget package source
-
-        run:  $nugetSources = dotnet nuget list source | Out-String; 
+        run:  |
+              $nugetSources = dotnet nuget list source | Out-String; 
                 if(!($nugetSources -like "*TechnologyEnhancedLearning*")) 
                 { 
                   dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text; 
@@ -50,10 +51,10 @@ jobs:
             Remove-Item E:/prep/${{env.SitePath}}/web.config -Force;
             Copy-Item E:/web/${{env.SitePath}}/web.config E:/prep/${{env.SitePath}} -Recurse -Force;
           }
-      - name: Check for and remove previous publish folder (in case it got left behind)
-          run: 
-            if (Test-Path -Path 'E:/web/${{env.SitePath}}-PREVIOUS')
-            {
+      
+      - name: Check for and remove previous publish folder
+          run: |
+            if (Test-Path -Path 'E:/web/${{env.SitePath}}-PREVIOUS'){
               Remove-Item 'E:/web/${{env.SitePath}}-PREVIOUS' -Force
             }
 
