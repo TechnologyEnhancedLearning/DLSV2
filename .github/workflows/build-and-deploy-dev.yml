@@ -111,6 +111,5 @@ jobs:
           while (!$success -and $currentRetry -le 10) 
   
       - name: Remove Offline
-        iE: always()
         run: |
           Remove-Item E:/web/${{env.SitePath}}/app_offline.htm -Force
