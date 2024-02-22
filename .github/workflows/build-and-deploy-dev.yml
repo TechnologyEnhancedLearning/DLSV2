@@ -29,7 +29,7 @@ jobs:
 
       - name: Add TechnologyEnhancedLearning as nuget package source
 
-        run: $nugetHasMyUrlSource =!!(nuget source | ? { $_ -like "*${{ env.NuGetSource }}"})
+        run: $nugetHasMyUrlSource =!!(nuget source | ? { $_ -like "*${{ env.NuGetSource }}"});
               if(!$nugetHasMyUrlSource)
               {
                 dotnet nuget add source {{ env.NuGetSource }} --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text
