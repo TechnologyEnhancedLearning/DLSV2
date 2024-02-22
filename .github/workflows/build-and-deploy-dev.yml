@@ -36,18 +36,21 @@ jobs:
                 { 
                   dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text; 
                 }
-      #- name: Dotnet build
-      #  run: dotnet build DigitalLearningSolutions.sln
       
       - name: Dotnet publish 
         run: | 
-          dotnet publish DigitalLearningSolutions.sln -c Release -o E:/web/${{env.SitePath}}
+          dotnet publish DigitalLearningSolutions.sln -c Release -o E:/prep/${{env.SitePath}}
   
-      - name: Look for app_offline add as needed
+      - name: Copy app_offline and web config to publish folder
         run: |
           try{Get-Item E:/web/${{env.SitePath}}/app_offline.htm}
           catch{
             Copy-Item E:/web/Offline/app_offline.htm E:/prep/${{env.SitePath}} -Recurse -Force  
+            }
+          try{Get-Item E:/web/${{env.SitePath}}/web.config}
+            {
+              Remove-Item E:/prep/${{env.SitePath}}/web.config -Force;
+              Copy-Item E:/web/${{env.SitePath}}/web.config E:/prep/${{env.SitePath}} -Recurse -Force;
             }
     
       - name: Sleep for 5 seconds
