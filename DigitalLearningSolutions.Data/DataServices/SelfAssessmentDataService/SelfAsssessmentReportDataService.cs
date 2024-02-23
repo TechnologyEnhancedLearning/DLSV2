@@ -66,7 +66,6 @@
                     	, CASE WHEN c.CustomField1PromptID = 10 THEN da.Answer1 WHEN c.CustomField2PromptID = 10 THEN da.Answer2 WHEN c.CustomField3PromptID = 10 THEN da.Answer3 WHEN c.CustomField4PromptID = 10 THEN da.Answer4 WHEN c.CustomField5PromptID = 10 THEN da.Answer5 WHEN c.CustomField6PromptID = 10 THEN da.Answer6 ELSE '' END AS 'ProgrammeCourse'
                         , CASE WHEN c.CustomField1PromptID = 4 THEN da.Answer1 WHEN c.CustomField2PromptID = 4 THEN da.Answer2 WHEN c.CustomField3PromptID = 4 THEN da.Answer3 WHEN c.CustomField4PromptID = 4 THEN da.Answer4 WHEN c.CustomField5PromptID = 4 THEN da.Answer5 WHEN c.CustomField6PromptID = 4 THEN da.Answer6 ELSE '' END AS 'Organisation'
                         , CASE WHEN c.CustomField1PromptID = 1 THEN da.Answer1 WHEN c.CustomField2PromptID = 1 THEN da.Answer2 WHEN c.CustomField3PromptID = 1 THEN da.Answer3 WHEN c.CustomField4PromptID = 1 THEN da.Answer4 WHEN c.CustomField5PromptID = 1 THEN da.Answer5 WHEN c.CustomField6PromptID = 1 THEN da.Answer6 ELSE '' END AS 'DepartmentTeam'
-                        , dbo.GetOtherCentresForSelfAssessment(da.UserID, @SelfAssessmentID, c.CentreID) AS OtherCentres
                         , CASE
                             WHEN aa.ID IS NULL THEN 'Learner'
                             WHEN aa.IsCentreManager = 1 THEN 'Centre Manager'
@@ -108,7 +107,6 @@
 	                    , c.CustomField4PromptID
 	                    , c.CustomField5PromptID
 	                    , c.CustomField6PromptID
-                        , c.CentreID
                         , jg.JobGroupName
                         , da.ID
 	                    , da.Answer1
@@ -118,7 +116,6 @@
 	                    , da.Answer5
 	                    , da.Answer6
 	                    , da.DateRegistered
-                        , da.UserID
                         , aa.ID
                         , aa.IsCentreManager
                         , aa.IsCentreAdmin

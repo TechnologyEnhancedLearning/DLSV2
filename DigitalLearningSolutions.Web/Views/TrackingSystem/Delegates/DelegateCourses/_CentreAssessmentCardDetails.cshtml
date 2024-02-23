@@ -29,14 +29,16 @@
 
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            @if (Model.Supervised)
-            {
-                @:Signed off
-            }
-            else
-            {
-                @:Submitted
-            }
+            In progress
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @(Model.DelegateCount - Model.SubmittedSignedOffCount)
+        </dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Submitted/Signed off
         </dt>
         <dd class="nhsuk-summary-list__value" name="in-progress-count">
             @Model.SubmittedSignedOffCount
