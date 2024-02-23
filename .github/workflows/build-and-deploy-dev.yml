@@ -68,14 +68,14 @@ jobs:
           $success = $false;
           $backupSuccess = $false;
           do{
-            echo "Attempting file copy $currentRetry"  
+            echo "Attempting folder rename $currentRetry"  
             try {
               Rename-Item -Path 'E:/web/${{env.SitePath}}' -NewName '${{env.SitePath}}-PREVIOUS' 
               Rename-Item -Path 'E:/web/${{env.SitePath}}-NEW' -NewName '${{env.SitePath}}' 
               $success = $true;
             }
             catch {
-              echo "Copy Failed due to following Catch error:`n"
+              echo "Rename failed due to following Catch error:`n"
               echo $PSItem.Exception.Message
               echo "`n"
               Start-Sleep -s 2
@@ -83,7 +83,7 @@ jobs:
             }
             finally {
               if ($currentRetry -ge 10) {
-                  echo "Copy keeps failing; restarting AppPool/Site as last resort`n"
+                  echo "Rename keeps failing; restarting AppPool/Site as last resort`n"
                   echo "Attempting to restart AppPool`n"
                   do{
                       $status = Get-WebAppPoolState -name '${{env.AppPoolName}}'
