@@ -59,7 +59,7 @@ jobs:
       - name: Sleep for 5 seconds
         run: Start-Sleep -s 5 
 
-      - name: Copy files over to deployment folder and restart apppool/server if necessary
+      - name: Switch deployment and published folders restarting apppool/webapp if necessary
         run: |
 
           Import-Module WebAdministration; 
