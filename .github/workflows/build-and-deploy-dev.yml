@@ -41,16 +41,16 @@ jobs:
       
       - name: Dotnet publish 
         run: | 
-          dotnet publish DigitalLearningSolutions.sln -c Release -o E:/prep/${{env.SitePath}}
+          dotnet publish DigitalLearningSolutions.sln -c Release -o E:/web/${{env.SitePath}}-NEW
   
       - name: Copy app_offline and web config to publish folder
         run: |
-          Copy-Item E:/web/Offline/app_offline.htm E:/prep/${{env.SitePath}} -Recurse -Force;
+          Copy-Item E:/web/Offline/app_offline.htm E:/web/${{env.SitePath}}-NEW -Recurse -Force;
           Copy-Item E:/web/Offline/app_offline.htm E:/web/${{env.SitePath}} -Recurse -Force;
           if (Test-Path -Path E:/web/${{env.SitePath}})
           {
-            Remove-Item -Path 'E:/prep/${{env.SitePath}}/web.config' -Force;
-            Copy-Item E:/web/${{env.SitePath}}/web.config E:/prep/${{env.SitePath}} -Recurse -Force;
+            Remove-Item -Path 'E:/web/${{env.SitePath}}-NEW/web.config' -Force;
+            Copy-Item E:/web/${{env.SitePath}}/web.config E:/web/${{env.SitePath}}-NEW -Recurse -Force;
           }
           if (Test-Path -Path E:/web/${{env.SitePath}}-PREVIOUS){
               Remove-Item -LiteralPath 'E:/web/${{env.SitePath}}-PREVIOUS' -Force -Recurse
@@ -61,6 +61,7 @@ jobs:
 
       - name: Copy files over to deployment folder and restart apppool/server if necessary
         run: |
+
           Import-Module WebAdministration; 
           $currentRetry = 1;
           $backupRetry = 1;
@@ -70,7 +71,7 @@ jobs:
             echo "Attempting file copy $currentRetry"  
             try {
               Rename-Item -Path 'E:/web/${{env.SitePath}}' -NewName '${{env.SitePath}}-PREVIOUS' 
-              Copy-Item E:/prep/${{env.SitePath}} 'E:/web/${{env.SitePath}}' -Recurse -Force;
+              Rename-Item -Path 'E:/web/${{env.SitePath}}-NEW' -NewName '${{env.SitePath}}' 
               $success = $true;
             }
             catch {
