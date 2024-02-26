@@ -72,10 +72,10 @@
                        CandidateAssessments AS CA LEFT OUTER JOIN
 						CandidateAssessmentSupervisors AS cas ON  ca.ID =cas.CandidateAssessmentID  LEFT OUTER JOIN
                         CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID 
-						 WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL) AND (CA.CentreID =@centreId) AND (casv.SignedOff =1) AND
+						 WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL) AND (casv.SignedOff = 1) AND
 						(casv.Verified IS NOT NULL)
-GROUP BY SelfAssessmentID,casv.SignedOff
-)Signoff ON  SelfAssessment.Id =Signoff.SelfAssessmentID",
+                    GROUP BY SelfAssessmentID,casv.SignedOff
+                    )Signoff ON  SelfAssessment.Id =Signoff.SelfAssessmentID",
                 new { delegateUserId, centreId }
             );
         }
@@ -351,7 +351,7 @@ GROUP BY SelfAssessmentID,casv.SignedOff
                   LearnerDetails.FormattedDate
                   FROM(SELECT casv.ID,
                     sa.Name AS SelfAssessment, 
-                    Learner.FirstName + '  ' + Learner.LastName AS LearnerName,
+                    Learner.FirstName + ' ' + Learner.LastName AS LearnerName,
                     Learner.ProfessionalRegistrationNumber AS LearnerPRN,
                     Learner.ID  AS LearnerId,da.Id AS LearnerDelegateAccountId,
                     casv.Verified, 
