@@ -106,7 +106,7 @@ jobs:
                   $backupSuccess = $false;
                   echo "Attempting to restart Website`n"
                   do{
-                      $status = Get-websitestate -name '${{env.SiteName}}'
+                      $status = Get-WebsiteState -name '${{env.SiteName}}'
                       if ($status.Value -eq "Stopped") {
                           start-iissite ${{env.SiteName}}
                           echo "Website restarted`n---------`n"
