@@ -59,7 +59,7 @@
         [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? ContactEmail { get; set; }
-        [RegularExpression(@"^(?:\d\s*?){10,11}$", ErrorMessage = "Enter a Telephone number in the correct format.")]
+        [RegularExpression(@"^\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*(\d\s*)?\s*$", ErrorMessage = "Enter a Telephone number in the correct format.")]
         public string? ContactPhone { get; set; }
 
         [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
