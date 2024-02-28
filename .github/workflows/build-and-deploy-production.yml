@@ -1,0 +1,133 @@
+name: Deploy DLS Production to IIS
+
+env: 
+    # set apppool and site name from IIS
+    AppPoolName : dlsweb-v2
+    SiteName  : 'v2'
+    # set to site files.  In this case, the part of the path after E:/web/
+    SitePath :  dlsweb-v2
+    DOTNET_INSTALL_DIR: '~/AppData/Local/Microsoft/dotnet'
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+on:
+    workflow_dispatch:
+
+jobs:
+  deploy-to-production:
+
+    runs-on: self-hosted
+        
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET Core SDK 6.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 6.0.x
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Add TechnologyEnhancedLearning as nuget package source
+        run:  |
+              $nugetSources = dotnet nuget list source | Out-String; 
+                if(!($nugetSources -like "*TechnologyEnhancedLearning*")) 
+                { 
+                  dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text; 
+                }
+      
+      - name: Dotnet publish 
+        run: | 
+          dotnet publish DigitalLearningSolutions.sln -c Release -o E:/web/${{env.SitePath}}-NEW
+  
+      - name: Copy app_offline and web config to publish folder
+        run: |
+          Copy-Item E:/web/Offline/app_offline.htm E:/web/${{env.SitePath}}-NEW -Recurse -Force;
+          Copy-Item E:/web/Offline/app_offline.htm E:/web/${{env.SitePath}} -Recurse -Force;
+          if (Test-Path -Path E:/web/${{env.SitePath}})
+          {
+            Remove-Item -Path 'E:/web/${{env.SitePath}}-NEW/web.config' -Force;
+            Copy-Item E:/web/${{env.SitePath}}/web.config E:/web/${{env.SitePath}}-NEW -Recurse -Force;
+          }
+          if (Test-Path -Path E:/web/${{env.SitePath}}-PREVIOUS){
+              Remove-Item -LiteralPath 'E:/web/${{env.SitePath}}-PREVIOUS' -Force -Recurse
+            }        
+
+      - name: Sleep for 5 seconds
+        run: Start-Sleep -s 5 
+
+      - name: Switch deployment and published folders restarting apppool/webapp if necessary
+        run: |
+
+          Import-Module WebAdministration; 
+          $currentRetry = 1;
+          $backupRetry = 1;
+          $success = $false;
+          $backupSuccess = $false;
+          do{
+            echo "Attempting folder rename $currentRetry"  
+            try {
+              Rename-Item -Path 'E:/web/${{env.SitePath}}' -NewName '${{env.SitePath}}-PREVIOUS' 
+              Rename-Item -Path 'E:/web/${{env.SitePath}}-NEW' -NewName '${{env.SitePath}}' 
+              $success = $true;
+            }
+            catch {
+              echo "Rename failed due to following Catch error:`n"
+              echo $PSItem.Exception.Message
+              echo "`n"
+              Start-Sleep -s 2
+              $currentRetry = $currentRetry + 1;
+            }
+            finally {
+              if ($currentRetry -ge 10) {
+                  echo "Rename keeps failing; restarting AppPool/Site as last resort`n"
+                  echo "Attempting to restart AppPool`n"
+                  do{
+                      $status = Get-WebAppPoolState -name '${{env.AppPoolName}}'
+                      if ($status.Value -eq "Stopped") {
+                          start-WebAppPool ${{env.AppPoolName}}
+                          echo "AppPool restarted`n---------`n"
+                          $backupSuccess = $true;
+                      }
+                      else {
+                          if ($backupRetry -ge 10) {
+                             throw "AppPool restart keeps failing."
+                          }
+                          echo "AppPool not stopped yet; Re-attempt #$backupRetry"
+                          Start-Sleep -s 10
+                          $backupRetry = $backupRetry + 1;
+                      }
+                  }
+                  while (!$backupSuccess -and $backupRetry -le 10)
+                  $backupRetry = 1;
+                  $backupSuccess = $false;
+                  echo "Attempting to restart Website`n"
+                  do{
+                      $status = Get-WebsiteState -name '${{env.SiteName}}'
+                      if ($status.Value -eq "Stopped") {
+                          start-iissite ${{env.SiteName}}
+                          echo "Website restarted`n---------`n"
+                          $backupSuccess = $true;
+                      }
+                      else {
+                          if ($backupRetry -ge 10) {
+                            throw "Website restart keeps failing. Please look into Server"
+                          }
+                          echo "Website not stopped yet; Re-attempt #$backupRetry"
+                          Start-Sleep -s 10
+                          $backupRetry = $backupRetry + 1;
+                      }
+                  }
+                  while (!$backupSuccess -and $backupRetry -le 10)
+              }
+            }
+          }
+          while (!$success -and $currentRetry -le 10) 
+  
+      - name: Remove Offline and remove previous deployment folder
+        run: |
+         if (Test-Path -Path 'E:/web/${{env.SitePath}}-PREVIOUS')
+          {
+            Remove-Item -LiteralPath 'E:/web/${{env.SitePath}}-PREVIOUS' -Force -Recurse
+          }
+          Remove-Item 'E:/web/${{env.SitePath}}/app_offline.htm' -Force
