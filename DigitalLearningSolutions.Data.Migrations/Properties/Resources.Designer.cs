@@ -1391,25 +1391,6 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendOneMonthSelfAssessmentTBCReminders]    Script Date: 06/12/2023 15:54:40 ******/
-        ///SET ANSI_NULLS ON
-        ///GO
-        ///SET QUOTED_IDENTIFIER ON
-        ///GO
-        ///-- =============================================
-        ///-- Author:		Kevin Whittaker
-        ///-- Create date: 29/11/2023
-        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
-        ///-- =============================================
-        ///ALTER   PROCEDURE [dbo].[SendOneMonthSelfAssessmentTBCReminders] [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_3190_FixSelfAssessmentReminderQueriesSP_UP {
-            get {
-                return ResourceManager.GetString("TD_3190_FixSelfAssessmentReminderQueriesSP_UP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to SET ANSI_NULLS ON
         ///GO
         ///SET QUOTED_IDENTIFIER ON
@@ -1462,6 +1443,25 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_3187_CreateGetCandidateAssessmentResultsById_SP {
             get {
                 return ResourceManager.GetString("TD_3187_CreateGetCandidateAssessmentResultsById_SP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendOneMonthSelfAssessmentTBCReminders]    Script Date: 06/12/2023 15:54:40 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 29/11/2023
+        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[SendOneMonthSelfAssessmentTBCReminders] [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3190_FixSelfAssessmentReminderQueriesSP_UP {
+            get {
+                return ResourceManager.GetString("TD_3190_FixSelfAssessmentReminderQueriesSP_UP", resourceCulture);
             }
         }
         
@@ -1549,6 +1549,52 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_3197_FixLinksInCourseReminderEmails_UP {
             get {
                 return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 23/10/2018
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Down {
+            get {
+                return ResourceManager.GetString("TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 23/10/2018
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Up {
+            get {
+                return ResourceManager.GetString("TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Up", resourceCulture);
             }
         }
         
