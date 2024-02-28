@@ -346,20 +346,22 @@
         [Route("/LearningPortal/Current/{candidateAssessmentId:int}/{route:int}/Certificate")]
         public IActionResult CompetencySelfAssessmentCertificate(int candidateAssessmentId, int route)
         {
-           
+
             if (candidateAssessmentId == 0)
             {
                 return NotFound();
             }
-            var delegateUserId = User.GetUserIdKnownNotNull();
-            var delegateId = User.GetCandidateIdKnownNotNull();
+
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
             if (competencymaindata == null)
             {
                 return NotFound();
             }
+
+            var delegateUserId = competencymaindata.LearnerId;
+
             var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
-            var roleCount =  selfAssessmentService.GetRoleCount(candidateAssessmentId);
+            var roleCount = selfAssessmentService.GetRoleCount(candidateAssessmentId);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, competencymaindata.SelfAssessmentID);
             var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
@@ -383,13 +385,13 @@
                     }
                 }
             }
-            
+
             var CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
             var competencySummaries = from g in CompetencyGroups
                                       let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
                                       let selfAssessedCount = questions.Count(q => q.Result.HasValue)
                                       let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
-                                      
+
                                       select new
                                       {
                                           SelfAssessedCount = selfAssessedCount,
@@ -400,6 +402,8 @@
             ViewBag.CompetencySummaries = competencySummaries;
             var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
             var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, route, accessors, activitySummaryCompetencySelfAssesment, roleCount);
+            ViewBag.LoggedInSupervisorDelegatesId = TempData["CertificateSupervisorDelegateId"];
+            TempData.Remove("CertificateSupervisorDelegateId");
             return View("Current/CompetencySelfAssessmentCertificate", model);
         }
         [Route("DownloadCertificate")]
@@ -410,9 +414,15 @@
             {
                 return NotFound();
             }
-            var delegateUserId = User.GetUserIdKnownNotNull();
             var delegateId = User.GetCandidateIdKnownNotNull();
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
+
+            if (competencymaindata == null)
+            {
+                return NotFound();
+            }
+            var delegateUserId = competencymaindata.LearnerId;
+
             var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
             var roleCount = selfAssessmentService.GetRoleCount(candidateAssessmentId);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
@@ -467,7 +477,9 @@
                 var pdfReportFile = await pdfService.GetPdfReportFile(pdfReportResponse);
                 if (pdfReportFile != null)
                 {
-                    var fileName = $"Competency Certificate - {model.CompetencySelfAssessmentCertificates.LearnerName.Substring(0, 15)} - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf";
+                    var nameTextLength = string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerName) ? 0 : model.CompetencySelfAssessmentCertificates.LearnerName.Length;
+                    var isPrnExist = !string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerPRN);
+                    var fileName = $"Competency Certificate - {model.CompetencySelfAssessmentCertificates.LearnerName.Substring(0, nameTextLength >= 15 ? 15 : nameTextLength)}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf" : ".pdf");
                     return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
                 }
             }

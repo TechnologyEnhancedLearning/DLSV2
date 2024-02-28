@@ -317,7 +317,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             FROM Customisations cu
             INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
             INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
-            INNER JOIN aspProgress AS apr ON pr.ProgressID = apr.ProgressID
+            LEFT OUTER JOIN aspProgress AS apr ON pr.ProgressID = apr.ProgressID
             LEFT OUTER JOIN AdminAccounts AS aaSupervisor ON aaSupervisor.ID = pr.SupervisorAdminId
             LEFT OUTER JOIN Users AS uSupervisor ON uSupervisor.ID = aaSupervisor.UserID
             LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = pr.EnrolledByAdminID

@@ -369,13 +369,13 @@
                 CandidateAssessmentId = candidateAssessmentId,
                 ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle.Contains("Assessor"),
             };
-           
+
             var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
             foreach (var competency in competencies)
             {
                 competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
             };
-           
+
             if (superviseDelegate.DelegateUserID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
@@ -386,6 +386,7 @@
 
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             ViewBag.navigatedFrom = selfAssessmentResultId == null;
+            TempData["CertificateSupervisorDelegateId"] = supervisorDelegateId;
             return View("ReviewSelfAssessment", model);
         }
         [HttpPost]
