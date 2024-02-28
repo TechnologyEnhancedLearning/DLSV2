@@ -1,21 +1,18 @@
-name: Deploy DLS DEV to IIS
+name: Deploy DLS Production to IIS
 
 env: 
     # set apppool and site name from IIS
-    AppPoolName : dlsweb-dev
-    SiteName  : 'dls-dev'
+    AppPoolName : dlsweb-v2
+    SiteName  : 'v2'
     # set to site files.  In this case, the part of the path after E:/web/
-    SitePath :  dls-dev
+    SitePath :  dlsweb-v2
     DOTNET_INSTALL_DIR: '~/AppData/Local/Microsoft/dotnet'
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 on:
-      push:
-        branches: 
-        - 'DEV'
-      workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  deploy-to-dev:
+  deploy-to-production:
 
     runs-on: self-hosted
         

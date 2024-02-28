@@ -1,21 +1,21 @@
-name: Deploy DLS DEV to IIS
+name: Deploy DLS UAT to IIS
 
 env: 
     # set apppool and site name from IIS
-    AppPoolName : dlsweb-dev
-    SiteName  : 'dls-dev'
+    AppPoolName : dlsweb-uar
+    SiteName  : 'dls-uar-uat'
     # set to site files.  In this case, the part of the path after E:/web/
-    SitePath :  dls-dev
+    SitePath :  dls-uat
     DOTNET_INSTALL_DIR: '~/AppData/Local/Microsoft/dotnet'
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 on:
       push:
         branches: 
-        - 'DEV'
+        - 'UAT'
       workflow_dispatch:
 
 jobs:
-  deploy-to-dev:
+  deploy-to-uat:
 
     runs-on: self-hosted
         
