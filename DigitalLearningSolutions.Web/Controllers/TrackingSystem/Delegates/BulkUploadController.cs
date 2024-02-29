@@ -41,23 +41,35 @@
 
         public IActionResult Index()
         {
+            var model = new BulkUploadViewModel();
             int MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
             TempData["MaxBulkUploadRows"] = MaxBulkUploadRows;
-            return View();
+            return View(model);
         }
         private int GetMaxBulkUploadRowsLimit()
         {
             return ConfigurationExtensions.GetMaxBulkUploadRowsLimit(configuration);
 
         }
+
+        [HttpPost]
         [Route("DownloadDelegates")]
-        public IActionResult DownloadDelegates()
+        public IActionResult DownloadDelegates(int DownloadOption)
         {
-            var content =
+            byte[] content = null;
+            string fileName = "";
+            if (DownloadOption == 1)
+            {
+                content =
                 delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(
                     User.GetCentreIdKnownNotNull()
                 );
-            var fileName = $"DLS Delegates for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
+                fileName = $"DLS Delegates for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
+            }
+            else
+            {
+                fileName = $"DLS Delegates for Bulk Registration.xlsx";
+            }
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
