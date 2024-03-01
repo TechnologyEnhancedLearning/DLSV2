@@ -4,17 +4,29 @@
     ViewData["Title"] = "Review Profile Assessment";
     ViewData["Application"] = "Supervisor";
     ViewData["HeaderPathName"] = "Supervisor";
+
+    var latestSignoff = Model.SupervisorSignOffs
+        .Select(s => s.Verified)
+        .DefaultIfEmpty(DateTime.MinValue)
+        .Max();
+    var latestResult = Model.CompetencyGroups
+      .SelectMany(g => g.SelectMany(c => c.AssessmentQuestions))
+      .Select(q => q.ResultDateTime)
+      .DefaultIfEmpty(DateTime.MinValue)
+      .Max();
+
     var competencySummaries = from g in Model.CompetencyGroups
                               let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
                               let selfAssessedCount = questions.Count(q => q.Result.HasValue)
                               let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
                               select new ViewDataDictionary(ViewData)
-{
+                              {
 
-        { "questionsCount", questions.Count() },
-        { "selfAssessedCount", selfAssessedCount },
-        { "verifiedCount", verifiedCount }
-      };
+                                { "questionsCount", questions.Count() },
+                                { "selfAssessedCount", selfAssessedCount },
+                                { "verifiedCount", verifiedCount }
+                              };
+    var allComptConfirmed = competencySummaries.Sum(c => (int)c["verifiedCount"]) == competencySummaries.Sum(c => (int)c["questionsCount"]);
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -95,17 +107,20 @@
             </a>
         }
 
-        @if (Model.SupervisorSignOffs.Where(x => x.Verified != null && x.SignedOff).Any() && Model.DelegateSelfAssessment.ResultsVerificationRequests ==0)
-        { 
-          
-                <a class="nhsuk-button"
-           asp-controller="LearningPortal"
-           asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
-           asp-action="CompetencySelfAssessmentCertificate"
-           asp-route-route="3"
-           role="button">
-                    Certificate
-                </a>
+        @if (Model?.SupervisorSignOffs?.FirstOrDefault()?.Verified != null &&
+        Model.SupervisorSignOffs.FirstOrDefault().SignedOff &&
+        Model?.DelegateSelfAssessment?.ResultsVerificationRequests == 0 && allComptConfirmed && latestResult <= latestSignoff
+        )
+        {
+
+            <a class="nhsuk-button"
+               asp-controller="LearningPortal"
+               asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
+               asp-action="CompetencySelfAssessmentCertificate"
+               asp-route-route="3"
+               role="button">
+                Certificate
+            </a>
         }
         @if (
         Model.DelegateSelfAssessment.SignOffRequested > 0 &&
