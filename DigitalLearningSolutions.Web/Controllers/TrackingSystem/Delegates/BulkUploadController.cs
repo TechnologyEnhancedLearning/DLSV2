@@ -68,6 +68,10 @@
             }
             else
             {
+                content =
+                delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(
+                    0
+                );
                 fileName = $"DLS Delegates for Bulk Registration.xlsx";
             }
             return File(
@@ -92,6 +96,7 @@
         public IActionResult StartUpload(UploadDelegatesViewModel model)
         {
             int MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
+            var centreId = User.GetCentreIdKnownNotNull();
             model.MaxBulkUploadRows = MaxBulkUploadRows;
             if (!ModelState.IsValid)
             {
@@ -113,7 +118,7 @@
             {
                 var results = delegateUploadFileService.ProcessDelegatesFile(
                     model.DelegatesFile!,
-                    User.GetCentreIdKnownNotNull(),
+                    centreId,
                     model.GetWelcomeEmailDate()
                 );
                 var resultsModel = new BulkUploadResultsViewModel(results);

@@ -100,6 +100,7 @@
         private void PopulateDelegatesSheet(IXLWorkbook workbook, int centreId)
         {
             var delegateRecords = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var delegates = delegateRecords.OrderBy(x => x.LastName).Select(
                 x => new
                 {
@@ -119,8 +120,20 @@
                     PRN = x.HasBeenPromptedForPrn ? x.ProfessionalRegistrationNumber : null,
                 }
             );
-
             ClosedXmlHelper.AddSheetToWorkbook(workbook, DelegatesSheetName, delegates, TableTheme);
+            
+            foreach (var prompt in registrationPrompts.CustomPrompts)
+            {
+                var promptNumber = prompt.RegistrationField.Id;
+                var promptLabel = prompt.PromptText;
+                ClosedXmlHelper.RenameWorksheetColumn(workbook, "Answer" + promptNumber.ToString(), promptLabel);
+            }
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer1");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer2");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer3");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer4");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer5");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer6");
         }
         private void PopulateJobGroupsSheet(IXLWorkbook workbook)
         {

@@ -64,13 +64,26 @@ namespace DigitalLearningSolutions.Web.Services
             var table = OpenDelegatesTable(file);
             return ProcessDelegatesTable(table, centreId, welcomeEmailDate);
         }
+        private void FixSheetCustomPromptColumnHeaders(IXLTable table)
+        {
+            if(table.ColumnCount()==14)
+            {
+                table.Field(4).Name = "Answer1";
+                table.Field(5).Name = "Answer2";
+                table.Field(6).Name = "Answer3";
+                table.Field(7).Name = "Answer4";
+                table.Field(8).Name = "Answer5";
+                table.Field(9).Name = "Answer6";
+            }
 
-        internal IXLTable OpenDelegatesTable(IFormFile file)
+        }
+            internal IXLTable OpenDelegatesTable(IFormFile file)
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(DelegateDownloadFileService.DelegatesSheetName);
+            worksheet.Columns(1,15).Unhide();
             var table = worksheet.Tables.Table(0);
-
+            FixSheetCustomPromptColumnHeaders(table);
             if (!ValidateHeaders(table))
             {
                 throw new InvalidHeadersException();
