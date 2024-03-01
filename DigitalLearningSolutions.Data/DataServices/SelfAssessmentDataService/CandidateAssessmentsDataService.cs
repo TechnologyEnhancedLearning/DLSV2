@@ -393,7 +393,8 @@
 			 CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
              Centres AS ce ON ca.CentreID = ce.CentreID
 			 where (ca.ID=@candidateAssessmentID)  AND  (casv.SignedOff = 1)
-                           AND (NOT (casv.Verified IS NULL))) Supervisor ON  LearnerDetails.Id =Supervisor.Id",
+                           AND (NOT (casv.Verified IS NULL))) Supervisor ON  LearnerDetails.Id =Supervisor.Id
+             ORDER BY Verified DESC",
                 new { candidateAssessmentID }
             );
         }
