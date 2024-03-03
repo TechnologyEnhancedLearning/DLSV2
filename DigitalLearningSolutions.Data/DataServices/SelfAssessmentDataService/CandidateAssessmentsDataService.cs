@@ -383,16 +383,17 @@
              Centres AS ce ON CE.CentreID = ca.CentreID INNER JOIN
 			 DelegateAccounts AS da ON da.UserID = Learner.ID AND da.CentreID = ca.CentreID 
              WHERE (ca.Id=@candidateAssessmentID) AND  (casv.SignedOff = 1) AND (NOT (casv.Verified IS NULL))) LearnerDetails INNER JOIN
-			 (select casv.ID ,Supervisor.FirstName + ' ' + Supervisor.LastName AS SupervisorName, 
-                    Supervisor.ProfessionalRegistrationNumber AS SupervisorPRN,
-              ce.CentreName AS SupervisorCentreName
+			 (select sd.SupervisorAdminID, casv.ID ,u.FirstName + ' ' + u.LastName AS SupervisorName, 
+                    u.ProfessionalRegistrationNumber AS SupervisorPRN,
+              c.CentreName AS SupervisorCentreName,ca.CentreID
               from CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
              CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
 			 SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId INNER JOIN
-			 Users AS Supervisor ON Supervisor.PrimaryEmail = sd.SupervisorEmail   INNER JOIN
-			 CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
-             Centres AS ce ON ca.CentreID = ce.CentreID
-			 where (ca.ID=@candidateAssessmentID)  AND  (casv.SignedOff = 1)
+			 AdminAccounts AS aa ON sd.SupervisorAdminID = aa.ID   INNER JOIN
+			 Users AS u ON aa.UserID = u.ID INNER JOIN
+			 Centres c ON aa.CentreID = c.CentreID INNER JOIN
+			 CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID 
+			 where (ca.ID = @candidateAssessmentID)  AND  (casv.SignedOff = 1)
                            AND (NOT (casv.Verified IS NULL))) Supervisor ON  LearnerDetails.Id =Supervisor.Id
              ORDER BY Verified DESC",
                 new { candidateAssessmentID }

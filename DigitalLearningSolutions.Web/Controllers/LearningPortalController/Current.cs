@@ -344,6 +344,7 @@
             return (resources.ToList(), apiIsAccessible);
         }
         [Route("/LearningPortal/Current/{candidateAssessmentId:int}/{route:int}/Certificate")]
+        [NoCaching]
         public IActionResult CompetencySelfAssessmentCertificate(int candidateAssessmentId, int route)
         {
 
@@ -360,11 +361,18 @@
 
             var delegateUserId = competencymaindata.LearnerId;
 
+            var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
+            var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(competencymaindata.SelfAssessmentID, delegateUserId);
+
+            if (!CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs))
+            {
+                return NotFound();
+            }
+
             var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
             var roleCount = selfAssessmentService.GetRoleCount(candidateAssessmentId);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, competencymaindata.SelfAssessmentID);
-            var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
             var competencyIds = recentResults.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
             var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, null);

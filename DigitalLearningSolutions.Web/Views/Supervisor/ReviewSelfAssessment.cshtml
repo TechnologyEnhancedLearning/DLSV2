@@ -5,16 +5,6 @@
     ViewData["Application"] = "Supervisor";
     ViewData["HeaderPathName"] = "Supervisor";
 
-    var latestSignoff = Model.SupervisorSignOffs
-        .Select(s => s.Verified)
-        .DefaultIfEmpty(DateTime.MinValue)
-        .Max();
-    var latestResult = Model.CompetencyGroups
-      .SelectMany(g => g.SelectMany(c => c.AssessmentQuestions))
-      .Select(q => q.ResultDateTime)
-      .DefaultIfEmpty(DateTime.MinValue)
-      .Max();
-
     var competencySummaries = from g in Model.CompetencyGroups
                               let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
                               let selfAssessedCount = questions.Count(q => q.Result.HasValue)
@@ -26,7 +16,6 @@
                                 { "selfAssessedCount", selfAssessedCount },
                                 { "verifiedCount", verifiedCount }
                               };
-    var allComptConfirmed = competencySummaries.Sum(c => (int)c["verifiedCount"]) == competencySummaries.Sum(c => (int)c["questionsCount"]);
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -107,12 +96,8 @@
             </a>
         }
 
-        @if (Model?.SupervisorSignOffs?.FirstOrDefault()?.Verified != null &&
-        Model.SupervisorSignOffs.FirstOrDefault().SignedOff &&
-        Model?.DelegateSelfAssessment?.ResultsVerificationRequests == 0 && allComptConfirmed && latestResult <= latestSignoff
-        )
+        @if (ViewBag.CanViewCertificate)
         {
-
             <a class="nhsuk-button"
                asp-controller="LearningPortal"
                asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
