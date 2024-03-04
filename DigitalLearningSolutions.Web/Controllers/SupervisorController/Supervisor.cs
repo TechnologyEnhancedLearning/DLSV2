@@ -368,7 +368,6 @@
             ViewBag.CanViewCertificate = CertificateHelper.CanViewCertificate(reviewedCompetencies, model.SupervisorSignOffs);
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             ViewBag.navigatedFrom = selfAssessmentResultId == null;
-            TempData["CertificateSupervisorDelegateId"] = supervisorDelegateId;
             return View("ReviewSelfAssessment", model);
         }
         [HttpPost]
