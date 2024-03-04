@@ -1,30 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @using DigitalLearningSolutions.Web.Helpers
 @model SelfAssessmentOverviewViewModel
-@{
-    var latestSignoff = Model.SupervisorSignOffs
-          .Select(s => s.Verified)
-          .DefaultIfEmpty(DateTime.MinValue)
-          .Max();
-    var latestResult = Model.CompetencyGroups
-      .SelectMany(g => g.SelectMany(c => c.AssessmentQuestions))
-      .Select(q => q.ResultDateTime)
-      .DefaultIfEmpty(DateTime.MinValue)
-      .Max();
-
-    var competencySummaries = from g in Model.CompetencyGroups
-                              let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
-                              let selfAssessedCount = questions.Count(q => q.Result.HasValue)
-                              let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
-                              select new ViewDataDictionary(ViewData)
-                              {
-
-        { "questionsCount", questions.Count() },
-        { "selfAssessedCount", selfAssessedCount },
-        { "verifiedCount", verifiedCount }
-      };
-    var allComptConfirmed = competencySummaries.Sum(c => (int)c["verifiedCount"]) == competencySummaries.Sum(c => (int)c["questionsCount"]);
-}
 
 @if (Model.NumberOfOptionalCompetencies > 0)
 {
@@ -55,8 +31,7 @@
         Export to Excel
     </a>
 </feature>
-@if (Model?.SupervisorSignOffs?.FirstOrDefault()?.Verified != null &&
-   Model.SupervisorSignOffs.FirstOrDefault().SignedOff && allComptConfirmed && latestResult <= latestSignoff)
+@if (ViewBag.CanViewCertificate)
 {
     <a class="nhsuk-button "
        asp-route-candidateAssessmentId="@Model.SelfAssessment.CandidateAssessmentId"

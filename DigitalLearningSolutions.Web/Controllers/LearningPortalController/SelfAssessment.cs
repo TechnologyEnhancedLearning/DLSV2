@@ -478,6 +478,8 @@
             {
                 searchModel.IsSupervisorResultsReviewed = assessment.IsSupervisorResultsReviewed;
             }
+
+            ViewBag.CanViewCertificate = CertificateHelper.CanViewCertificate(recentResults, model.SupervisorSignOffs);
             ViewBag.SupervisorSelfAssessmentReview = assessment.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
@@ -1536,15 +1538,15 @@
             };
             return View("SelfAssessments/SignOffHistory", model);
         }
-        public IActionResult ExportCandidateAssessment(int candidateAssessmentId,string candidateAssessmentName, string delegateName)
+        public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string candidateAssessmentName, string delegateName)
         {
             var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, User.GetUserIdKnownNotNull(), true);
             var fileName = $"{((candidateAssessmentName.Length > 30) ? candidateAssessmentName.Substring(0, 30) : candidateAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
-             return File(
-                content,
-                FileHelper.GetContentTypeFromFileName(fileName),
-                fileName
-            );
+            return File(
+               content,
+               FileHelper.GetContentTypeFromFileName(fileName),
+               fileName
+           );
         }
 
         public IActionResult RemoveEnrolment(int selfAssessmentId)
