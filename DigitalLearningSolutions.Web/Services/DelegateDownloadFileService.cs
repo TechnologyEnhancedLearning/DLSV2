@@ -16,7 +16,7 @@
 
     public interface IDelegateDownloadFileService
     {
-        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId);
+        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId, bool blank);
 
         public byte[] GetAllDelegatesFileForCentre(
             int centreId,
@@ -61,11 +61,11 @@
             this.configuration = configuration;
         }
 
-        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId)
+        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId, bool blank)
         {
             using var workbook = new XLWorkbook();
 
-            PopulateDelegatesSheet(workbook, centreId);
+            PopulateDelegatesSheet(workbook, centreId, blank);
             PopulateJobGroupsSheet(workbook);
 
             using var stream = new MemoryStream();
@@ -97,9 +97,9 @@
             return stream.ToArray();
         }
 
-        private void PopulateDelegatesSheet(IXLWorkbook workbook, int centreId)
+        private void PopulateDelegatesSheet(IXLWorkbook workbook, int centreId, bool blank)
         {
-            var delegateRecords = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var delegateRecords = userDataService.GetDelegateUserCardsByCentreId(blank ? 0 : centreId);
             var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var delegates = delegateRecords.OrderBy(x => x.LastName).Select(
                 x => new
@@ -121,7 +121,7 @@
                 }
             );
             ClosedXmlHelper.AddSheetToWorkbook(workbook, DelegatesSheetName, delegates, TableTheme);
-            
+
             foreach (var prompt in registrationPrompts.CustomPrompts)
             {
                 var promptNumber = prompt.RegistrationField.Id;

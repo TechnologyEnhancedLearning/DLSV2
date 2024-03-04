@@ -56,24 +56,10 @@
         [Route("DownloadDelegates")]
         public IActionResult DownloadDelegates(int DownloadOption)
         {
-            byte[] content = null;
-            string fileName = "";
-            if (DownloadOption == 1)
-            {
-                content =
-                delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(
-                    User.GetCentreIdKnownNotNull()
+            string fileName = DownloadOption == 1 ? "DLS Delegates for Bulk Registration.xlsx" : $"DLS Delegates for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
+            var content = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(
+                    User.GetCentreIdKnownNotNull(), DownloadOption == 1 ? false : true
                 );
-                fileName = $"DLS Delegates for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
-            }
-            else
-            {
-                content =
-                delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(
-                    0
-                );
-                fileName = $"DLS Delegates for Bulk Registration.xlsx";
-            }
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
