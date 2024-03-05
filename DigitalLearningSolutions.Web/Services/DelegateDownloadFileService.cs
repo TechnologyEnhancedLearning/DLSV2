@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
 
     public interface IDelegateDownloadFileService
     {
@@ -64,13 +65,43 @@
         public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId, bool blank)
         {
             using var workbook = new XLWorkbook();
-
             PopulateDelegatesSheet(workbook, centreId, blank);
-            PopulateJobGroupsSheet(workbook);
-
+            AddCustomPromptsAndDataValidationToWorkbook(workbook, centreId);
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();
+        }
+
+        public void AddCustomPromptsAndDataValidationToWorkbook(XLWorkbook workbook, int centreId)
+        {
+            //Add job groups data validation drop down list for all centres
+            var jobGroupCount = PopulateJobGroupsSheet(workbook);
+            ClosedXmlHelper.AddValidationRangeToWorksheetCell(workbook, 4, 1, jobGroupCount, 2);
+            workbook.Worksheet(2).Hide();
+            //Add custom prompts and associated drop downs to worksheet according to centre config:
+            var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+            foreach (var prompt in registrationPrompts.CustomPrompts)
+            {
+                var promptNumber = prompt.RegistrationField.Id;
+                var promptLabel = prompt.PromptText;
+                ClosedXmlHelper.RenameWorksheetColumn(workbook, "Answer" + promptNumber.ToString(), promptLabel);
+                if(prompt.Options.Count()>0)
+                {
+                    ClosedXmlHelper.AddSheetToWorkbook(workbook, promptLabel, prompt.Options, TableTheme);
+                    var worksheetNumber = workbook.Worksheets.Count;
+                    var optionsCount = prompt.Options.Count();
+                    var columnNumber = promptNumber + 4; // 4 offset is the number of columns to the left of the first Answer column - no programmatic way to find this that I could find.
+                    ClosedXmlHelper.AddValidationRangeToWorksheetCell(workbook, columnNumber, 1, optionsCount, worksheetNumber);
+                    workbook.Worksheet(worksheetNumber).Hide();
+                }
+            }
+            //Hide all of the answer columns that still have their original names (because the centre doesn't use them):
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer1");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer2");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer3");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer4");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer5");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer6");
         }
 
         public byte[] GetAllDelegatesFileForCentre(
@@ -99,15 +130,16 @@
 
         private void PopulateDelegatesSheet(IXLWorkbook workbook, int centreId, bool blank)
         {
+            
+
             var delegateRecords = userDataService.GetDelegateUserCardsByCentreId(blank ? 0 : centreId);
-            var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var delegates = delegateRecords.OrderBy(x => x.LastName).Select(
                 x => new
                 {
                     x.LastName,
                     x.FirstName,
                     DelegateID = x.CandidateNumber,
-                    JobGroupID = x.JobGroupId,
+                    JobGroup = x.JobGroupName,
                     x.Answer1,
                     x.Answer2,
                     x.Answer3,
@@ -120,30 +152,19 @@
                     PRN = x.HasBeenPromptedForPrn ? x.ProfessionalRegistrationNumber : null,
                 }
             );
+            
             ClosedXmlHelper.AddSheetToWorkbook(workbook, DelegatesSheetName, delegates, TableTheme);
-
-            foreach (var prompt in registrationPrompts.CustomPrompts)
-            {
-                var promptNumber = prompt.RegistrationField.Id;
-                var promptLabel = prompt.PromptText;
-                ClosedXmlHelper.RenameWorksheetColumn(workbook, "Answer" + promptNumber.ToString(), promptLabel);
-            }
-            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer1");
-            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer2");
-            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer3");
-            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer4");
-            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer5");
-            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer6");
         }
-        private void PopulateJobGroupsSheet(IXLWorkbook workbook)
+        
+        private int PopulateJobGroupsSheet(IXLWorkbook workbook)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical()
-                .OrderBy(x => x.id)
                 .Select(
-                    item => new { JobGroupID = item.id, JobGroupName = item.name }
+                    item => new { JobGroupName = item.name }
                 );
 
             ClosedXmlHelper.AddSheetToWorkbook(workbook, JobGroupsSheetName, jobGroups, TableTheme);
+            return jobGroups.Count();
         }
 
         private void PopulateAllDelegatesSheet(

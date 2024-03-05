@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using ClosedXML.Excel;
@@ -52,6 +53,30 @@
                     break;
                 }
             }
+        }
+
+        public static void AddValidationListToWorksheetCell(
+            IXLWorkbook workbook,
+            int row,
+            int column,
+            List<string> optionsList,
+            int workSheetNumber = 1
+            )
+        {
+            var listOptions = $"\"{String.Join(",", optionsList)}\"";
+            workbook.Worksheet(workSheetNumber).Cell(row, column).DataValidation.List(listOptions, true);
+        }
+
+        public static void AddValidationRangeToWorksheetCell(
+             IXLWorkbook workbook,
+            int targetColumn,
+            int targetWorkSheetNumber,
+            int optionsCount,
+            int sourceWorksheetNumber
+            )
+        {
+            string sourceRange = "A2:A" + (optionsCount + 1).ToString();
+            workbook.Worksheet(targetWorkSheetNumber).Column(targetColumn).SetDataValidation().List(workbook.Worksheet(sourceWorksheetNumber).Range(sourceRange), true);
         }
 
         public static void FormatWorksheetColumn(
