@@ -66,6 +66,10 @@
         {
             using var workbook = new XLWorkbook();
             PopulateDelegatesSheet(workbook, centreId, blank);
+            if (blank)
+            {
+                ClosedXmlHelper.HideWorkSheetColumn(workbook, "DelegateID");
+            }
             AddCustomPromptsAndDataValidationToWorkbook(workbook, centreId);
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
@@ -74,9 +78,14 @@
 
         public void AddCustomPromptsAndDataValidationToWorkbook(XLWorkbook workbook, int centreId)
         {
+            //Add Active TRUE/FALSE validation
+            var options = new List<string> { "TRUE", "FALSE" };
+            ClosedXmlHelper.AddValidationListToWorksheetColumn(workbook, 11, options);
+            //Add HasPRN TRUE/FALSE validation
+            ClosedXmlHelper.AddValidationListToWorksheetColumn(workbook, 13, options);
             //Add job groups data validation drop down list for all centres
             var jobGroupCount = PopulateJobGroupsSheet(workbook);
-            ClosedXmlHelper.AddValidationRangeToWorksheetCell(workbook, 4, 1, jobGroupCount, 2);
+            ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, 4, 1, jobGroupCount, 2);
             workbook.Worksheet(2).Hide();
             //Add custom prompts and associated drop downs to worksheet according to centre config:
             var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
@@ -91,7 +100,7 @@
                     var worksheetNumber = workbook.Worksheets.Count;
                     var optionsCount = prompt.Options.Count();
                     var columnNumber = promptNumber + 4; // 4 offset is the number of columns to the left of the first Answer column - no programmatic way to find this that I could find.
-                    ClosedXmlHelper.AddValidationRangeToWorksheetCell(workbook, columnNumber, 1, optionsCount, worksheetNumber);
+                    ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, columnNumber, 1, optionsCount, worksheetNumber);
                     workbook.Worksheet(worksheetNumber).Hide();
                 }
             }

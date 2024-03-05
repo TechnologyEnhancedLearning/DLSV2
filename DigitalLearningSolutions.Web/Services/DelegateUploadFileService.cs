@@ -309,7 +309,7 @@ namespace DigitalLearningSolutions.Web.Services
                 "LastName",
                 "FirstName",
                 "DelegateID",
-                "JobGroupID",
+                "JobGroup",
                 "Answer1",
                 "Answer2",
                 "Answer3",

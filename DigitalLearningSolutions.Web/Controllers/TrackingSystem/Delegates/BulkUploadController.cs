@@ -56,7 +56,7 @@
         [Route("DownloadDelegates")]
         public IActionResult DownloadDelegates(int DownloadOption)
         {
-            string fileName = DownloadOption == 1 ? "DLS Delegates for Bulk Registration.xlsx" : $"DLS Delegates for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
+            string fileName = DownloadOption == 1 ? $"DLS Delegates for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx" : "DLS Delegates for Bulk Registration.xlsx";
             var content = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(
                     User.GetCentreIdKnownNotNull(), DownloadOption == 1 ? false : true
                 );

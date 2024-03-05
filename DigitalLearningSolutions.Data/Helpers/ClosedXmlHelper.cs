@@ -55,19 +55,18 @@
             }
         }
 
-        public static void AddValidationListToWorksheetCell(
+        public static void AddValidationListToWorksheetColumn(
             IXLWorkbook workbook,
-            int row,
-            int column,
+            int targetColumn,
             List<string> optionsList,
             int workSheetNumber = 1
             )
         {
             var listOptions = $"\"{String.Join(",", optionsList)}\"";
-            workbook.Worksheet(workSheetNumber).Cell(row, column).DataValidation.List(listOptions, true);
+            workbook.Worksheet(workSheetNumber).Column(targetColumn).SetDataValidation().List(listOptions, true);
         }
 
-        public static void AddValidationRangeToWorksheetCell(
+        public static void AddValidationRangeToWorksheetColumn(
              IXLWorkbook workbook,
             int targetColumn,
             int targetWorkSheetNumber,
