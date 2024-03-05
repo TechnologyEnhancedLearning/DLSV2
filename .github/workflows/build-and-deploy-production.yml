@@ -126,8 +126,4 @@ jobs:
   
       - name: Remove Offline and remove previous deployment folder
         run: |
-         if (Test-Path -Path 'E:/web/${{env.SitePath}}-PREVIOUS')
-          {
-            Remove-Item -LiteralPath 'E:/web/${{env.SitePath}}-PREVIOUS' -Force -Recurse
-          }
           Remove-Item 'E:/web/${{env.SitePath}}/app_offline.htm' -Force

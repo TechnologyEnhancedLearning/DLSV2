@@ -434,7 +434,7 @@
                         </div>
                     </h1>
                     <p>
-                        Signed off at @Model.CompetencySelfAssessmentCertificates.CentreName <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">by @Model.CompetencySelfAssessmentCertificates.SupervisorName </span><span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">@Model.CompetencySelfAssessmentCertificates.SupervisorPRN</span>
+                        Signed off at @Model.CompetencySelfAssessmentCertificates.SupervisorCentreName <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">by @Model.CompetencySelfAssessmentCertificates.SupervisorName </span><span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">@Model.CompetencySelfAssessmentCertificates.SupervisorPRN</span>
                     </p>
 
                     <p>
@@ -470,8 +470,8 @@
 
             <div class="footer">
                 <div class="text">
-                    <p class="blue">Certificate generated on @Model.CompetencySelfAssessmentCertificates.Verified.ToString("dd/MM/yyyy")</p>
-                    <p>By NHS England Digital Learning Solutions <br /> on behalf of @Model.CompetencySelfAssessmentCertificates.CentreName</p>
+                    <p class="blue">Certificate generated on @DateTime.Now.ToString("dd/MM/yyyy")</p>
+                    <p>By NHS England Digital Learning Solutions <br /> on behalf of @Model.CompetencySelfAssessmentCertificates.SupervisorCentreName</p>
                 </div>
                 <div class="footer-logo">
                     @if (Model.CompetencySelfAssessmentCertificates.BrandImage != null)
