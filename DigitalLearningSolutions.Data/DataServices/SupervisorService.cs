@@ -16,6 +16,7 @@
         DashboardData? GetDashboardDataForAdminId(int adminId);
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId);
+        SupervisorDelegate GetSupervisorDelegate(int adminId, int delegateUserId);
         int? ValidateDelegate(int centreId, string delegateEmail);
         IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
         DelegateSelfAssessment? GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId);
@@ -233,7 +234,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 	                        ON ucd.UserID = u.ID
                             AND ucd.CentreID = da.CentreID
                             WHERE (ucd.Email = @delegateEmail OR u.PrimaryEmail = @delegateEmail)
-                            AND u.Active = 1 
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
 
@@ -344,6 +344,18 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 supervisorDelegateDetail.CandidateEmail = delegateDetails.CandidateEmail;
                 supervisorDelegateDetail.CandidateNumber = delegateDetails.CandidateNumber;
             }
+
+            return supervisorDelegateDetail!;
+        }
+
+        public SupervisorDelegate GetSupervisorDelegate(int adminId, int delegateUserId)
+        {
+            var supervisorDelegateDetail = connection.Query<SupervisorDelegate>(
+                $@"SELECT ID,SupervisorAdminID,DelegateEmail,Added,NotificationSent,Removed,
+                    SupervisorEmail,AddedByDelegate,InviteHash,DelegateUserID
+                    FROM SupervisorDelegates
+                    WHERE DelegateUserID = @delegateUserId AND SupervisorAdminID = @adminId ", new { adminId, delegateUserId }
+            ).FirstOrDefault();
 
             return supervisorDelegateDetail!;
         }
