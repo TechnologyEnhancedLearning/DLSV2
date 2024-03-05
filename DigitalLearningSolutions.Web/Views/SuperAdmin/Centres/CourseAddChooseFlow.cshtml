@@ -1,0 +1,75 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@using DigitalLearningSolutions.Web.Extensions
+@model CourseAddChooseFlowViewModel
+@{
+    ViewData["Title"] = "Add course";
+    var cancelLinkData = Html.GetRouteValues();
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="Courses">View courses</a></li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__backlink"
+                   asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="Courses">Back to view centre courses</a>
+            </p>
+        </div>
+    </nav>
+}
+<form method="post" asp-action="CourseAddChooseFlow">
+    <fieldset class="nhsuk-fieldset">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <h1 class="nhsuk-fieldset__heading">
+                Add courses to centre - @ViewBag.CentreName
+            </h1>
+        </legend>
+        <div class="nhsuk-hint">
+            Which type of course would you like to add to this centre? Choose one of the following:
+        </div>
+        <div class="nhsuk-form-group">
+
+            <div class="nhsuk-radios nhsuk-radios--conditional">
+
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" id="option-1" asp-for="AddCourseOption" checked="checked" type="radio" value="Core">
+                    <label class="nhsuk-label nhsuk-radios__label" for="option-1">
+                        Make a core (national, centrally provided) course or courses available to this centre
+                    </label>
+                </div>
+
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" id="option-2" asp-for="AddCourseOption" type="radio" value="Other" aria-controls="search-term" aria-expanded="false">
+                    <label class="nhsuk-label nhsuk-radios__label" for="option-2">
+                        Make a course created at another centre available to this centre
+                    </label>
+                </div>
+                <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="search-term">
+                    <div class="nhsuk-form-group">
+                        <label class="nhsuk-label" for="search-term-input">
+                            Search term:
+                        </label>
+                        <div class="nhsuk-hint" id="search-term-input-hint">
+                            Enter part of the course name or providing centre name to locate the course.
+                        </div>
+                        <input class="nhsuk-input nhsuk-u-width-two-thirds" id="search-term-input" type="text" asp-for="SearchTerm" aria-describedby="search-term-input-hint">
+                    </div>
+
+                </div>
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" id="option-3" asp-for="AddCourseOption" type="radio" value="Pathways">
+                    <label class="nhsuk-label nhsuk-radios__label" for="option-3">
+                        Add NHS Pathways Central courses to this centre
+                    </label>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <input type="hidden" asp-for="CentreId" />
+    <button class="nhsuk-button" type="submit">
+        Next
+    </button>
+</form>
+<vc:cancel-link asp-controller="Centres" asp-action="Courses" asp-all-route-data="@cancelLinkData" />

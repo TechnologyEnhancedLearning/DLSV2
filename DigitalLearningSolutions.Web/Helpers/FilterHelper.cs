@@ -31,9 +31,9 @@ namespace DigitalLearningSolutions.Web.Helpers
 
                         foreach (var filterOption in availableFilterOptions)
                         {
-                            if (filterOption.Any(x => x.DisplayText == filterOptionText))
+                            if (filterOption.Any(x => x.DisplayText.Contains(filterOptionText)))
                             {
-                                var filter = filterOption.Where(x => x.DisplayText == filterOptionText).ToList().Select(x => x.FilterValue).FirstOrDefault();
+                                var filter = filterOption.Where(x => x.DisplayText.Contains(filterOptionText)).ToList().Select(x => x.FilterValue).FirstOrDefault();
                                 if (!filter.Contains(promptDbText))
                                 { //when prompt filter header and selected option match but db coulum (eg. Answer1) does not match
                                   //remove from existing filter and add from available filter
@@ -61,10 +61,10 @@ namespace DigitalLearningSolutions.Web.Helpers
             return existingFilterString;
         }
 
-        public static string? RemoveNonExistingGroupFilters(List<FilterModel> availableFilters, string existingFilterString)
+        public static string? RemoveNonExistingFilterOptions(List<FilterModel> availableFilters, string existingFilterString)
         {
             var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-            string[] filterGroups = { "AddedByAdminId", "LinkedToField" };
+            string[] filterGroups = { "LinkedToField", "AddedByAdminId", "CourseTopic", "CategoryName" };
             foreach (var filterGroup in filterGroups)
             {
                 var existingFilters = existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => filter.Contains(filterGroup)).ToList();
@@ -78,14 +78,7 @@ namespace DigitalLearningSolutions.Web.Helpers
                     var availableFilterOptions = availableFilters.Where(x => x.FilterProperty == filterGroup).Select(o => o.FilterOptions).ToList();
                     foreach (var availableFilterOption in availableFilterOptions)
                     {
-                        if (filterGroup == "AddedByAdminId")
-                        {
-                            if (availableFilterOption.Any(x => x.FilterValue.Contains(filterOptionText)))
-                            {
-                                isFound = true; break;
-                            }
-                        }
-                        else
+                        if (filterGroup == "LinkedToField")
                         {
                             if (availableFilterOption.Any(x => x.FilterValue.Contains(filterHeader)))
                             {
@@ -96,6 +89,13 @@ namespace DigitalLearningSolutions.Web.Helpers
                                     selectedFilters.Add(filter);
                                     existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
                                 }
+                                isFound = true; break;
+                            }
+                        }
+                        else
+                        {
+                            if (availableFilterOption.Any(x => x.FilterValue.Contains(filterOptionText)))
+                            {
                                 isFound = true; break;
                             }
                         }

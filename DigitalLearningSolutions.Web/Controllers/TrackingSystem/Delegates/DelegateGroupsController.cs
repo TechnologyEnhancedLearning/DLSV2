@@ -95,10 +95,10 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var availableFilters = DelegateGroupsViewModelFilterOptions
                 .GetDelegateGroupFilterModels(addedByAdmins, registrationPrompts).ToList();
 
-            if (TempData["DelegateGroupCentreId"]?.ToString() != centreId.ToString()
+            if (TempData["DelegateGroupCentreId"] != null && TempData["DelegateGroupCentreId"].ToString() != User.GetCentreId().ToString()
                     && existingFilterString != null)
             {
-                existingFilterString = FilterHelper.RemoveNonExistingGroupFilters(availableFilters, existingFilterString);
+                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
             }
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;

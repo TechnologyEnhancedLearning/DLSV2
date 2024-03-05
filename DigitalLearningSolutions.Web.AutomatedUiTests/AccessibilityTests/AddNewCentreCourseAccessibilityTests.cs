@@ -27,7 +27,8 @@
             Driver.ClickButtonByText("Next");
 
             ValidatePageHeading("Set course details");
-            var setCourseDetailsPageResult = new AxeBuilder(Driver).Analyze();
+            // Exclude conditional radios, see: https://github.com/alphagov/govuk-frontend/issues/979#issuecomment-872300557
+            var setCourseDetailsPageResult = new AxeBuilder(Driver).Exclude("div.nhsuk-radios--conditional div.nhsuk-radios__item input.nhsuk-radios__input").Analyze();
             Driver.SubmitForm();
 
             ValidatePageHeading("Set course options");
@@ -48,20 +49,7 @@
             var summaryPageResult = new AxeBuilder(Driver).Analyze();
 
             selectCoursePageResult.Violations.Should().BeEmpty();
-
-            // Expect an axe violation caused by having an aria-expanded attribute on an input
-            // The target inputs are nhs-tested components so ignore these violation
-            setCourseDetailsPageResult.Violations.Should().HaveCount(1);
-            var setCourseDetailsViolation = setCourseDetailsPageResult.Violations[0];
-            setCourseDetailsViolation.Id.Should().Be("aria-allowed-attr");
-            setCourseDetailsViolation.Nodes.Should().HaveCount(3);
-            setCourseDetailsViolation.Nodes[0].Target.Should().HaveCount(1);
-            setCourseDetailsViolation.Nodes[0].Target[0].Selector.Should().Be("#PasswordProtected");
-            setCourseDetailsViolation.Nodes[1].Target.Should().HaveCount(1);
-            setCourseDetailsViolation.Nodes[1].Target[0].Selector.Should().Be("#ReceiveNotificationEmails");
-            setCourseDetailsViolation.Nodes[2].Target.Should().HaveCount(1);
-            setCourseDetailsViolation.Nodes[2].Target[0].Selector.Should().Be("#OtherCompletionCriteria");
-
+            setCourseDetailsPageResult.Violations.Should().BeEmpty();
             setCourseOptionsPageResult.Violations.Should().BeEmpty();
             setCourseContentPageResult.Violations.Should().BeEmpty();
             setSectionContentPageResult.Violations.Should().BeEmpty();

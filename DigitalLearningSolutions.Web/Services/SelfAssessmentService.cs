@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using AngleSharp.Attributes;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Common.Users;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Models.Frameworks;
@@ -132,15 +134,21 @@
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
         public SelfAssessmentDelegatesData GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff);
-        public int GetSelfAssessmentActivityDelegatesExportCount(string searchString,  string sortBy, string sortDirection,
+        public int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
         public string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId);
         RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
-       void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
-       public int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
-       public bool CheckForSameCentre(int centreId, int candidateAssessmentsId);        
-       public int? GetDelegateAccountId(int centreId, int delegateUserId);
+        void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
+        public int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
+        public bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
+        public int? GetDelegateAccountId(int centreId, int delegateUserId);
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
+        IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID);
+        CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
+        IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
+        ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
+        int? GetRoleCount(int CandidateId);
+        bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -512,6 +520,32 @@
         public int CheckDelegateSelfAssessment(int candidateAssessmentsId)
         {
             return selfAssessmentDataService.CheckDelegateSelfAssessment(candidateAssessmentsId);
+        }
+        public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID)
+        {
+            return selfAssessmentDataService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentID);
+        }
+        public CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
+        {
+            return selfAssessmentDataService.GetCompetencySelfAssessmentCertificate(candidateAssessmentID);
+        }
+        public IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID)
+        {
+            return selfAssessmentDataService.GetAccessor(selfAssessmentId, delegateUserID);
+        }
+        public ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
+        {
+            return selfAssessmentDataService.GetActivitySummaryCompetencySelfAssesment(CandidateAssessmentSupervisorVerificationsId);
+
+        }
+        public int? GetRoleCount(int CandidateId)
+        {
+            return selfAssessmentDataService.GetRoleCount(CandidateId);
+
+        }
+        public bool IsUnsupervisedSelfAssessment(int selfAssessmentId)
+        {
+            return selfAssessmentDataService.IsUnsupervisedSelfAssessment(selfAssessmentId);
         }
     }
 }

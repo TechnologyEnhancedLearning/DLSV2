@@ -1,46 +1,52 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @model CourseSetupViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseSetup.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Centre course setup";
+    ViewData["Title"] = "Centre course setup";
+    var rootPath = @Configuration["AppRootPath"].ToString();
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <div id="no-js-styling">
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-three-quarters">
-          <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
-        </div>
-        <div class="nhsuk-grid-column-one-quarter heading-button-group">
-          <a class="nhsuk-button heading-button nhsuk-u-margin-bottom-5" asp-controller="CourseSetup" asp-action="AddCourseNew" role="button">
-            Add
-          </a>
-        </div>
-      </div>
+    <div class="nhsuk-grid-column-full">
+        <div id="no-js-styling">
+            <div class="nhsuk-grid-row">
+                <div class="nhsuk-grid-column-three-quarters">
+                    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+                </div>
+                <div class="nhsuk-grid-column-one-quarter heading-button-group">
+                    <a class="nhsuk-button heading-button nhsuk-u-margin-bottom-5" asp-controller="CourseSetup" asp-action="AddCourseNew" role="button">
+                        Add
+                    </a>
+                </div>
+            </div>
 
-      <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
+            <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
 
-      @if (Model.NoDataFound)
-      {
-        <p>The centre has no courses set up in the <span class="nhsuk-u-font-weight-bold">@Model.CourseCategoryName</span>  category yet.</p>
-      }
-      else
-      {
-        <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
-        <partial name="SearchablePage/_TopPagination" model="Model" />
-        <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
-
-        <div id="searchable-elements">
-          @foreach (var course in Model.Courses)
-          {
-            <partial name="_CentreCourseCard" model="course" />
-          }
+            @if (Model.NoDataFound)
+            {
+                <p>The centre has no courses set up in the <span class="nhsuk-u-font-weight-bold">@Model.CourseCategoryName</span>  category yet.</p>
+            }
+            else
+            {
+                <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+                <partial name="SearchablePage/_TopPagination" model="Model" />
+                <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
+                <input type="hidden" id="appRootPath" value="@rootPath" />
+                <div id="searchable-elements">
+                    @foreach (var course in Model.Courses)
+                    {
+                        <partial name="_CentreCourseCard" model="course" />
+                    }
+                </div>
+            }
+            <partial name="SearchablePage/_BottomPagination" model="Model" />
         </div>
-      }
-      <partial name="SearchablePage/_BottomPagination" model="Model" />
     </div>
-  </div>
 </div>
+@section scripts {
+    <script src="@Url.Content("~/js/trackingSystem/courseSetup.js")" asp-append-version="true"></script>
+}

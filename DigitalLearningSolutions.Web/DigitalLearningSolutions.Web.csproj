@@ -53,6 +53,7 @@
         <None Remove="Scripts\supervisor\verify.ts" />
         <None Remove="Scripts\support\faqs.ts" />
         <None Remove="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
+        <None Remove="Scripts\trackingSystem\courseSetup.ts" />
         <None Remove="Scripts\trackingSystem\editCourseContent.ts" />
         <None Remove="Scripts\trackingSystem\emailDelegates.ts" />
         <None Remove="Scripts\trackingSystem\learningLog.ts" />
@@ -60,6 +61,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
         <PackageReference Include="FluentMigrator" Version="3.2.9" />
         <PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
         <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.9" />
@@ -134,6 +136,7 @@
         <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\delegateGroups.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\courseSetup.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\learningLog.ts" />
         <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
     </ItemGroup>
@@ -145,6 +148,10 @@
     <ItemGroup>
       <ProjectReference Include="..\DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj" />
       <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ViewModels\SuperAdmin\CentreSelfAssessments\" />
     </ItemGroup>
 
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">

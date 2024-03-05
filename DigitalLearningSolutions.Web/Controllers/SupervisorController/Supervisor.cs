@@ -340,7 +340,6 @@
             var searchViewModel = searchModel == null ?
                 new SearchSupervisorCompetencyViewModel(supervisorDelegateId, searchModel?.SearchText, delegateSelfAssessment.ID, delegateSelfAssessment.IsSupervisorResultsReviewed, false, null, null)
                 : searchModel.Initialise(searchModel.AppliedFilters, competencyFlags.ToList(), delegateSelfAssessment.IsSupervisorResultsReviewed, false);
-
             var model = new ReviewSelfAssessmentViewModel()
             {
                 SupervisorDelegateDetail = superviseDelegate,
@@ -349,7 +348,7 @@
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = searchModel,
                 CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle.Contains("Assessor")
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle.Contains("Assessor"),
             };
 
             var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
@@ -366,6 +365,7 @@
                 );
             }
 
+            ViewBag.CanViewCertificate = CertificateHelper.CanViewCertificate(reviewedCompetencies, model.SupervisorSignOffs);
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             ViewBag.navigatedFrom = selfAssessmentResultId == null;
             return View("ReviewSelfAssessment", model);

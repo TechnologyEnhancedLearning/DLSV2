@@ -33,7 +33,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IMultiPageFormService multiPageFormService;
         private readonly IClockUtility clockUtility;
-
+        private readonly IPdfService pdfService;
         public LearningPortalController(
             ICentresDataService centresDataService,
             ICourseDataService courseDataService,
@@ -49,7 +49,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IMultiPageFormService multiPageFormService,
-            IClockUtility clockUtility
+            IClockUtility clockUtility,
+            IPdfService pdfService
         )
         {
             this.centresDataService = centresDataService;
@@ -67,6 +68,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.multiPageFormService = multiPageFormService;
             this.clockUtility = clockUtility;
+            this.pdfService = pdfService;
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]

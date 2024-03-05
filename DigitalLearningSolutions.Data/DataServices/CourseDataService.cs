@@ -59,6 +59,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
 
+        bool GetSelfRegister(int customisationId);
+
         CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
@@ -315,7 +317,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             FROM Customisations cu
             INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
             INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
-            INNER JOIN aspProgress AS apr ON pr.ProgressID = apr.ProgressID
+            LEFT OUTER JOIN aspProgress AS apr ON pr.ProgressID = apr.ProgressID
             LEFT OUTER JOIN AdminAccounts AS aaSupervisor ON aaSupervisor.ID = pr.SupervisorAdminId
             LEFT OUTER JOIN Users AS uSupervisor ON uSupervisor.ID = aaSupervisor.UserID
             LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = pr.EnrolledByAdminID
@@ -433,7 +435,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
             DateTime lastAccessed = startedDate;
-            dynamic completeByDateDynamic = "";
+            dynamic? completeByDateDynamic = null;
             if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
                 completeByDateDynamic = completeByDate!;
@@ -1241,6 +1243,17 @@ namespace DigitalLearningSolutions.Data.DataServices
             return names;
         }
 
+        public bool GetSelfRegister(int customisationId)
+        {
+            var selfRegister = connection.QueryFirstOrDefault<bool>(
+                @"SELECT SelfRegister
+                    FROM Customisations
+                    WHERE CustomisationID = @customisationId",
+                new { customisationId });
+
+            return selfRegister;
+        }
+
         public IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
         {
             return connection.Query<CourseAssessmentDetails>(
@@ -1811,12 +1824,13 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId)
         {
             return connection.Query<Course>(
-                @$"select ap.ApplicationID,ap.ApplicationName,{DelegateCountQuery},cu.CustomisationID,cu.CustomisationName 
-				from Applications as ap
-				inner join CentreApplications as ca on ap.ApplicationID = ca.ApplicationID
-				inner join Customisations as cu on ca.ApplicationID = cu.ApplicationID
-				where ca.Active = 1 and cu.Active= 1 and cu.CentreID = @centreId AND ca.CentreID=@centreId
-				order by ap.ApplicationName",
+                @$"SELECT ap.ApplicationID, ap.ApplicationName,
+                                     {DelegateCountQuery}, cu.CustomisationID, cu.CustomisationName
+                    FROM   Applications AS ap INNER JOIN
+                                 CentreApplications AS ca ON ap.ApplicationID = ca.ApplicationID LEFT OUTER JOIN
+                                 Customisations AS cu ON ca.ApplicationID = cu.ApplicationID AND ca.CentreID = cu.CentreID AND cu.Active = 1
+                    WHERE (ca.Active = 1) AND (ca.CentreID = @centreId)
+                    ORDER BY ap.ApplicationName",
                 new { centreId }
             );
         }
@@ -1914,14 +1928,17 @@ namespace DigitalLearningSolutions.Data.DataServices
                         END AS Supervised,
                         (SELECT COUNT(can.ID)
                         FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
-                        WHERE can.CentreID = @centreId AND can.SelfAssessmentID = csa.SelfAssessmentID) AS DelegateCount,
-                        (SELECT COUNT(can.ID)
-                        FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
-                        LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas ON can.ID = cas.CandidateAssessmentID
-                        LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
-                        WHERE can.CentreID = @centreId AND can.SelfAssessmentID = CSA.SelfAssessmentID 
-                        AND (can.SubmittedDate IS NOT NULL OR casv.SignedOff = 1)
-                        ) AS SubmittedSignedOffCount,
+                            INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = can.DelegateUserID 
+						    LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID AND ucd.centreID = can.CentreID
+                        WHERE can.CentreID = @centreId AND can.SelfAssessmentID = csa.SelfAssessmentID
+                            AND can.RemovedDate IS NULL AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS DelegateCount,
+                        (Select COUNT(*) FROM
+                            (SELECT can.ID FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
+                                LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas ON can.ID = cas.CandidateAssessmentID
+                                LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
+                                WHERE can.CentreID = @centreId AND can.SelfAssessmentID = CSA.SelfAssessmentID AND can.RemovedDate IS NULL
+                                AND (can.SubmittedDate IS NOT NULL OR (casv.SignedOff = 1 AND casv.Verified IS NOT NULL)) GROUP BY can.ID) A
+                                ) AS SubmittedSignedOffCount,
                         CC.Active AS Active,
                         sa.ID AS SelfAssessmentId
                         from CentreSelfAssessments AS csa 

@@ -58,7 +58,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData("/TrackingSystem/CourseSetup/10716/Manage/EditCourseOptions", "Edit course options")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
-        [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
+        [InlineData("/TrackingSystem/Delegates/Groups", "Delegate groups")]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/EditDescription?returnPageQuery=pageNumber%3D1",
             "Edit description for Activities worker or coordinator group (optional)"
@@ -74,8 +74,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "Add delegate to Activities worker or coordinator group"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/Groups/5/Delegates/245969/Remove?returnPageQuery=pageNumber%3D1",
-            "Are you sure you would like to remove xxxxx xxxx from this group?"
+            "/TrackingSystem/Delegates/Groups/42/Delegates/45516/Remove?returnPageQuery=pageNumber%3D1",
+            "Are you sure you would like to remove xxxx xxxxx from this group?"
         )]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Activities worker or coordinator")]
         [InlineData(
@@ -99,31 +99,31 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
-        [InlineData("/TrackingSystem/Delegates/Courses/1", "Delegate courses")]
-        [InlineData("/TrackingSystem/Delegates/ActivityDelegates", "Activity delegates")]
-        [InlineData("/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/243104", "Delegate progress")]
+        [InlineData("/TrackingSystem/Delegates/Activities/1", "Delegate activities")]
+        [InlineData("/TrackingSystem/Delegates/ActivityDelegates?customisationId=9977", "Activity delegates")]
+        [InlineData("/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/107780", "Delegate progress")]
         [InlineData(
-            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditSupervisor",
-            "Edit supervisor for Digital Literacy for the Workplace - CC Test"
+            "/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/285051/EditSupervisor?returnPageQuery=pageNumber%3D1",
+            "Edit supervisor for Practice Nurse Clinical Supervision - BWD Cohort 1"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditCompleteByDate",
-            "Edit complete by date for Digital Literacy for the Workplace - CC Test"
+            "/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/285051/EditCompleteByDate?returnPageQuery=pageNumber%3D1",
+            "Edit complete by date for Practice Nurse Clinical Supervision - BWD Cohort 1"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditCompletionDate",
-            "Edit completed date for Digital Literacy for the Workplace - CC Test"
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/285051/EditCompletionDate",
+            "Edit completed date for Practice Nurse Clinical Supervision - BWD Cohort 1"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/22657/EditAdminField/1",
-            "Edit System Access Granted field for Entry Level - Win XP, Office 2003/07 OLD - Standard"
+            "/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/285167/EditAdminField/1?returnPageQuery=pageNumber%3D1",
+            "Edit System Access Granted field for Practice Nurse Clinical Supervision - BWD Cohort 1"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/22657/Remove",
-            "Remove enrolment"
+            "/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/285051/Remove?delegateId=299250&customisationId=27914&returnPageQuery=pageNumber%3D1",
+            "Remove from activity"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/243104/LearningLog",
+            "/TrackingSystem/Delegates/ActivityDelegates/DelegateProgress/107780/LearningLog",
             "Delegate learning log"
         )]
         [InlineData(

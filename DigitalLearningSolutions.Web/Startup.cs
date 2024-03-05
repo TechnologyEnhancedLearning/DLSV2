@@ -21,6 +21,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Middleware;
     using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -42,6 +43,10 @@ namespace DigitalLearningSolutions.Web
     using Serilog;
     using GDS.MultiPageFormData;
     using LearningHub.Nhs.Caching;
+    using AspNetCoreRateLimit;
+    using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
+    using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
+    using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
 
     public class Startup
     {
@@ -57,6 +62,8 @@ namespace DigitalLearningSolutions.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureIpRateLimiting(services);
+
             services.AddHttpContextAccessor();
 
             services.AddDataProtection()
@@ -203,6 +210,13 @@ namespace DigitalLearningSolutions.Web
             RegisterWebServiceFilters(services);
         }
 
+        private void ConfigureIpRateLimiting(IServiceCollection services)
+        {
+            services.Configure<IpRateLimitOptions>(config.GetSection("IpRateLimiting"));
+            services.AddInMemoryRateLimiting();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+        }
+
         private static void RegisterServices(IServiceCollection services)
         {
             services.AddScoped<IActionPlanService, ActionPlanService>();
@@ -275,6 +289,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPdfService, PdfService>();
             services.AddScoped<IFreshdeskService, FreshdeskService>();
             services.AddScoped<IPlatformUsageSummaryDownloadFileService, PlatformUsageSummaryDownloadFileService>();
+            services.AddScoped<ICentreApplicationsService, CentreApplicationsService>();
+            services.AddScoped<ICentreSelfAssessmentsService, CentreSelfAssessmentsService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -330,6 +346,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentresDownloadFileService, CentresDownloadFileService>();
             services.AddScoped<IDelegateActivityDownloadFileService, DelegateActivityDownloadFileService>();
             services.AddScoped<IRequestSupportTicketDataService, RequestSupportTicketDataService>();
+            services.AddScoped<ICentreApplicationsDataService, CentreApplicationsDataService>();
+            services.AddScoped<ICentreSelfAssessmentsDataService, CentreSelfAssessmentsDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
@@ -377,6 +395,7 @@ namespace DigitalLearningSolutions.Web
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
         {
+            app.UseMiddleware<DLSIPRateLimitMiddleware>();
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("content-security-policy",

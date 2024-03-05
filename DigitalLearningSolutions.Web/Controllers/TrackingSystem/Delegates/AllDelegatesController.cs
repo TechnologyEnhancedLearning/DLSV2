@@ -86,7 +86,7 @@
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions);
 
-            if (TempData["allDelegatesCentreId"]?.ToString() != centreId.ToString()
+            if (TempData["allDelegatesCentreId"] != null && TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString()
                     && existingFilterString != null && existingFilterString.Contains("Answer"))
             {
                 existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
