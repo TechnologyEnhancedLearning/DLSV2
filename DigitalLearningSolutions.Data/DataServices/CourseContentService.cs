@@ -270,18 +270,18 @@
             try
             {
                 return connection.QueryFirst<int>(
-                    @"SELECT ProgressId
-                    FROM Progress
+                    @"SELECT COALESCE((SELECT ProgressID 
+					FROM Progress
                     WHERE CandidateID = @candidateId
                       AND CustomisationID = @customisationId
                       AND SystemRefreshed = 0
-                      AND RemovedDate IS NULL",
+                      AND RemovedDate IS NULL), 0) AS ProgressId",
                     new { candidateId, customisationId }
                 );
             }
             catch (InvalidOperationException)
             {
-                return null;
+                return 0;
             }
         }
     }
