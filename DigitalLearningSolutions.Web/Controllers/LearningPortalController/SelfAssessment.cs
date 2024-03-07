@@ -639,7 +639,7 @@
                User.GetCentreIdKnownNotNull(),
                selfAssessmentId,
                User.GetUserIdKnownNotNull()
-           ).Select(c => new { c.CentreID, c.CentreName }).Distinct().ToList();
+           ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
 
             if (distinctSupervisorCentres.Count() > 1)
             {
@@ -672,7 +672,7 @@
                 User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetUserIdKnownNotNull()
-            ).OrderBy(s => s.Forename).ToList();
+            ).ToList();
 
             if (sessionAddSupervisor?.CentreID != null)
             {
