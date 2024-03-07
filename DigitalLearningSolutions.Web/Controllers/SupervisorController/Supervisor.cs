@@ -308,6 +308,7 @@
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessments")]
         [Route("/Supervisor/Staff/{supervisorDelegateId}/{delegateUserId}/ProfileAssessments")]
+        [NoCaching]
         public IActionResult DelegateProfileAssessments(int supervisorDelegateId, int delegateUserId = 0)
         {
             var adminId = GetAdminId();
@@ -1155,6 +1156,10 @@
         {
             SelfAssessmentResultSummary? selfAssessmentSummary =
                 supervisorService.GetSelfAssessmentResultSummary(candidateAssessmentId, supervisorDelegateId);
+            if (selfAssessmentSummary == null)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
             SupervisorDelegateDetail? supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             IEnumerable<CandidateAssessmentSupervisorVerificationSummary>? verificationsSummary =
