@@ -446,26 +446,26 @@
             </div>
 
             <div class="body">
-                <h3 class=" nhsuk-u-margin-bottom-3">
-                    Including the following optional proficiencies:
-                </h3>
-                @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
+                @if (Model.CompetencyCountSelfAssessmentCertificate.Any())
                 {
-                    <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
-                        @entry.CompetencyGroup - @entry.OptionalCompetencyCount
-                        @if (@entry.OptionalCompetencyCount == 1)
-                        {
-                            @Model.CompetencySelfAssessmentCertificates.Vocabulary
-                        }
-                        else
-                        {
-                            @Model.VocabPlural
-                        }
-
-                    </p>
-
+                    <h3 class=" nhsuk-u-margin-bottom-3">
+                        Including the following optional proficiencies:
+                    </h3>
+                    @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
+                    {
+                        <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
+                            @entry.CompetencyGroup - @entry.OptionalCompetencyCount
+                            @if (@entry.OptionalCompetencyCount == 1)
+                            {
+                                @Model.CompetencySelfAssessmentCertificates.Vocabulary
+                            }
+                            else
+                            {
+                                @Model.VocabPlural
+                            }
+                        </p>
+                    }
                 }
-
             </div>
 
             <div class="footer">

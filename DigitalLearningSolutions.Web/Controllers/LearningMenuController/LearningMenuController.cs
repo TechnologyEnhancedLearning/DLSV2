@@ -85,10 +85,11 @@
                 var sectionId = courseContent.Sections.First().Id;
                 return RedirectToAction("Section", "LearningMenu", new { customisationId, sectionId });
             }
-            if (UniqueIdManipulationDetected(candidateId, customisationId))
-            {
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
-            }
+            // Unique Id Manipulation Detection is being disabled as part of work on TD-3838 - a bug created by its introduction
+            //if (UniqueIdManipulationDetected(candidateId, customisationId))
+            //{
+            //    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            //}
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
             if (progressId == null)
             {
@@ -97,6 +98,7 @@
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
+
             if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
             {
                 courseContentService.UpdateProgress(progressId.Value);
