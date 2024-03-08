@@ -38,6 +38,23 @@
             }
         }
 
+        public static void LockWorkSheetColumn(
+            IXLWorkbook workbook,
+            string columnName,
+            int workSheetNumber = 1
+            )
+        {
+            foreach (var cell in workbook.Worksheet(workSheetNumber).Row(1).Cells())
+            {
+                if (cell.Value.ToString() == columnName)
+                {
+                    var columnNumber = cell.Address.ColumnNumber;
+                    workbook.Worksheet(workSheetNumber).Column(columnNumber).Style.Protection.Locked = true;
+                    break;
+                }
+            }
+        }
+
         public static void RenameWorksheetColumn(
             IXLWorkbook workbook,
             string columnName,
@@ -71,11 +88,15 @@
             int targetColumn,
             int targetWorkSheetNumber,
             int optionsCount,
-            int sourceWorksheetNumber
+            int sourceWorksheetNumber,
+            string sourceColumnLetter = "A"
             )
         {
-            string sourceRange = "A2:A" + (optionsCount + 1).ToString();
-            workbook.Worksheet(targetWorkSheetNumber).Column(targetColumn).SetDataValidation().List(workbook.Worksheet(sourceWorksheetNumber).Range(sourceRange), true);
+            string sourceRange = sourceColumnLetter +"2:" + sourceColumnLetter + (optionsCount + 1).ToString();
+            var rowCount = workbook.Worksheet(targetWorkSheetNumber).RangeUsed().RowCount();
+            for (int i = 2; i < rowCount; i++) {
+                workbook.Worksheet(targetWorkSheetNumber).Column(targetColumn).Cell(i).DataValidation.List(workbook.Worksheet(sourceWorksheetNumber).Range(sourceRange), true);
+            }
         }
 
         public static void FormatWorksheetColumn(

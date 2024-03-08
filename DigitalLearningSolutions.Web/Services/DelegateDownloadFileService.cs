@@ -13,7 +13,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Options;
 
     public interface IDelegateDownloadFileService
     {
@@ -66,11 +65,11 @@
         {
             using var workbook = new XLWorkbook();
             PopulateDelegatesSheet(workbook, centreId, blank);
-            if (blank)
+            AddCustomPromptsAndDataValidationToWorkbook(workbook, centreId);
+            if(blank)
             {
                 ClosedXmlHelper.HideWorkSheetColumn(workbook, "DelegateID");
             }
-            AddCustomPromptsAndDataValidationToWorkbook(workbook, centreId);
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();
@@ -80,12 +79,13 @@
         {
             //Add Active TRUE/FALSE validation
             var options = new List<string> { "TRUE", "FALSE" };
-            ClosedXmlHelper.AddValidationListToWorksheetColumn(workbook, 11, options);
+            ClosedXmlHelper.AddValidationListToWorksheetColumn(workbook, 12, options);
             //Add HasPRN TRUE/FALSE validation
-            ClosedXmlHelper.AddValidationListToWorksheetColumn(workbook, 13, options);
+            ClosedXmlHelper.AddValidationListToWorksheetColumn(workbook, 14, options);
             //Add job groups data validation drop down list for all centres
             var jobGroupCount = PopulateJobGroupsSheet(workbook);
-            ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, 4, 1, jobGroupCount, 2);
+            ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, 5, 1, jobGroupCount, 2, "B");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "JobGroupID");
             workbook.Worksheet(2).Hide();
             //Add custom prompts and associated drop downs to worksheet according to centre config:
             var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
@@ -99,7 +99,12 @@
                     ClosedXmlHelper.AddSheetToWorkbook(workbook, promptLabel, prompt.Options, TableTheme);
                     var worksheetNumber = workbook.Worksheets.Count;
                     var optionsCount = prompt.Options.Count();
-                    var columnNumber = promptNumber + 4; // 4 offset is the number of columns to the left of the first Answer column - no programmatic way to find this that I could find.
+                    //Ensure a blank value exists in the drop down list if the prompt is not mandatory
+                    if (!prompt.Mandatory)
+                    {
+                        optionsCount++;
+                    }
+                    var columnNumber = promptNumber + 5; // 5 offset is the number of columns to the left of the first Answer column - no programmatic way to find this that I could find.
                     ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, columnNumber, 1, optionsCount, worksheetNumber);
                     workbook.Worksheet(worksheetNumber).Hide();
                 }
@@ -111,6 +116,12 @@
             ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer4");
             ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer5");
             ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer6");
+            // Add delegateID validation to deter editing
+            var rowCount = workbook.Worksheet(1).RangeUsed().RowCount();
+            ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, 1, 1, rowCount, 1);
+            // Calculate the workbook
+            workbook.CalculateMode = XLCalculateMode.Auto;
+            workbook.RecalculateAllFormulas();
         }
 
         public byte[] GetAllDelegatesFileForCentre(
@@ -145,9 +156,10 @@
             var delegates = delegateRecords.OrderBy(x => x.LastName).Select(
                 x => new
                 {
+                    DelegateID = x.CandidateNumber,
                     x.LastName,
                     x.FirstName,
-                    DelegateID = x.CandidateNumber,
+                    JobGroupID = x.JobGroupId,
                     JobGroup = x.JobGroupName,
                     x.Answer1,
                     x.Answer2,
@@ -169,7 +181,7 @@
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical()
                 .Select(
-                    item => new { JobGroupName = item.name }
+                    item => new { JobGroupID = item.id, JobGroupName = item.name }
                 );
 
             ClosedXmlHelper.AddSheetToWorkbook(workbook, JobGroupsSheetName, jobGroups, TableTheme);

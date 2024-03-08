@@ -64,34 +64,47 @@ namespace DigitalLearningSolutions.Web.Services
             var table = OpenDelegatesTable(file);
             return ProcessDelegatesTable(table, centreId, welcomeEmailDate);
         }
-        private void FixSheetCustomPromptColumnHeaders(IXLTable table)
-        {
-            if(table.ColumnCount()==14)
-            {
-                table.Field(4).Name = "Answer1";
-                table.Field(5).Name = "Answer2";
-                table.Field(6).Name = "Answer3";
-                table.Field(7).Name = "Answer4";
-                table.Field(8).Name = "Answer5";
-                table.Field(9).Name = "Answer6";
-            }
 
-        }
-            internal IXLTable OpenDelegatesTable(IFormFile file)
+        internal IXLTable OpenDelegatesTable(IFormFile file)
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(DelegateDownloadFileService.DelegatesSheetName);
-            worksheet.Columns(1,15).Unhide();
+            worksheet.Columns(1, 15).Unhide();
             var table = worksheet.Tables.Table(0);
             FixSheetCustomPromptColumnHeaders(table);
             if (!ValidateHeaders(table))
             {
                 throw new InvalidHeadersException();
             }
-
+            PopulateJobGroupIdColumn(table);
             return table;
         }
 
+        private void FixSheetCustomPromptColumnHeaders(IXLTable table)
+        {
+            if (table.ColumnCount() == 15)
+            {
+                table.Field(5).Name = "Answer1";
+                table.Field(6).Name = "Answer2";
+                table.Field(7).Name = "Answer3";
+                table.Field(8).Name = "Answer4";
+                table.Field(9).Name = "Answer5";
+                table.Field(10).Name = "Answer6";
+            }
+
+        }
+
+        private void PopulateJobGroupIdColumn(IXLTable table)
+        {
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var rowCount = table.RowCount();
+            for( var i = 2; i < rowCount; i++ )
+            {
+                var jobGroup = table.Column(5).Cell(i).Value.ToString();
+                var JobGroupId = jobGroups.FirstOrDefault(item => item.name == jobGroup).id;
+                table.Column(4).Cell(i).Value = JobGroupId;
+            }
+        }
         internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime welcomeEmailDate)
         {
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
@@ -306,9 +319,10 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var expectedHeaders = new List<string>
             {
+                "DelegateID",
                 "LastName",
                 "FirstName",
-                "DelegateID",
+                "JobGroupID",
                 "JobGroup",
                 "Answer1",
                 "Answer2",
