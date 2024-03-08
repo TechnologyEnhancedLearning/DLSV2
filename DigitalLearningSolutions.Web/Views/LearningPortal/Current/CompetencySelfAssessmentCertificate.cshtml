@@ -159,6 +159,15 @@
             }
         </div>
 
+        @if (Model.CompetencySelfAssessmentCertificates.NonReportable)
+        {
+            <div class="footer">
+                <p class="nhsuk-body-l nhsuk-u-font-weight-bold">
+                    THIS IS AN EXAMPLE ONLY, GENERATED FROM A TEST SELF ASSESSMENT
+                </p>
+            </div>
+        }
+
         <div class="footer">
             <div class="text">
                 <p class="blue">Certificate generated on @DateTime.Now.ToString("dd/MM/yyyy")</p>
@@ -186,6 +195,10 @@
         <div class="body">
             <h2>Activity summary report</h2>
             <br />
+            @if (Model.CompetencySelfAssessmentCertificates.NonReportable)
+            {
+                <h3>THIS IS AN EXAMPLE ONLY, GENERATED FROM A TEST SELF ASSESSMENT</h3>
+            }
             <div class="activity">
                 <p><b>Activity: </b>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</p>
             </div>
@@ -198,11 +211,6 @@
             <div class="activity">
                 <p><b>Assessment question responses</b></p> <p>
                     @sumQuestions
-                </p>
-            </div>
-            <div class="activity">
-                <p><b>Responses meeting role requirements</b></p> <p>
-                    @Model.RoleCount
                 </p>
             </div>
             <div class="activity">
