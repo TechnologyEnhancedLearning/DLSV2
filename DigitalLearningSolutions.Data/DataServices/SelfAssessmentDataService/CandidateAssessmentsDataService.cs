@@ -348,8 +348,10 @@
                   LearnerDetails.SelfAssessmentID,
                   LearnerDetails.Vocabulary,
                   LearnerDetails.SupervisorDelegateId,
-                  LearnerDetails.FormattedDate
+                  LearnerDetails.FormattedDate,
+                  LearnerDetails.NonReportable
                   FROM(SELECT casv.ID,
+                    ca.NonReportable,
                     sa.Name AS SelfAssessment, 
                     Learner.FirstName + ' ' + Learner.LastName AS LearnerName,
                     Learner.ProfessionalRegistrationNumber AS LearnerPRN,
