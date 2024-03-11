@@ -15,7 +15,7 @@
             XLTableTheme tableTheme
         )
         {
-            var sheet = workbook.Worksheets.Add(sheetName);
+            var sheet = workbook.Worksheets.Add(TidySheetName(sheetName));
             var table = sheet.Cell(1, 1).InsertTable(dataObjects);
             table.Theme = tableTheme;
             sheet.Columns().AdjustToContents();
@@ -110,6 +110,18 @@
             var columnNumber = dataTable.Columns.IndexOf(columnName) + 1;
             workbook.Worksheet(workSheetNumber).Column(columnNumber).CellsUsed(c => c.Address.RowNumber != 1)
                 .SetDataType(dataType);
+        }
+
+        private static string TidySheetName(string sheetName)
+        {
+            char[] charactersToRemove = { ':', '\\', '/', '?', '*', '[', ']', '\'' };
+
+            foreach (char c in charactersToRemove)
+            {
+                sheetName = sheetName.Replace(c.ToString(), "");
+            }
+
+            return sheetName;
         }
     }
 }
