@@ -41,7 +41,9 @@
 
         public IActionResult Index()
         {
-            var model = new BulkUploadViewModel();
+            TempData.Clear();
+            var model = new UploadDelegatesViewModel();
+            model.MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
             int MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
             TempData["MaxBulkUploadRows"] = MaxBulkUploadRows;
             return View(model);
@@ -52,29 +54,18 @@
 
         }
 
-        [HttpPost]
         [Route("DownloadDelegates")]
         public IActionResult DownloadDelegates(int DownloadOption)
         {
-            string fileName = DownloadOption == 1 ? $"DLS Delegates for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx" : "DLS Delegates for Bulk Registration.xlsx";
+            string fileName = DownloadOption == 2 ? $"DLS Delegates for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx" : "DLS Delegates for Bulk Registration.xlsx";
             var content = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(
-                    User.GetCentreIdKnownNotNull(), DownloadOption == 1 ? false : true
+                    User.GetCentreIdKnownNotNull(), DownloadOption == 2 ? false : true
                 );
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
                 fileName
             );
-        }
-
-        [Route("StartUpload")]
-        [HttpGet]
-        public IActionResult StartUpload()
-        {
-            TempData.Clear();
-            var model = new UploadDelegatesViewModel(clockUtility.UtcToday);
-            model.MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
-            return View("StartUpload", model);
         }
 
         [Route("StartUpload")]
@@ -105,7 +96,7 @@
                 var results = delegateUploadFileService.ProcessDelegatesFile(
                     model.DelegatesFile!,
                     centreId,
-                    model.GetWelcomeEmailDate()
+                    DateTime.Now
                 );
                 var resultsModel = new BulkUploadResultsViewModel(results);
                 return View("UploadCompleted", resultsModel);

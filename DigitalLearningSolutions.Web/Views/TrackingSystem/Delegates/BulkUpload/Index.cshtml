@@ -1,76 +1,85 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
-@model BulkUploadViewModel
+@model UploadDelegatesViewModel
+
 @{
-  ViewData["Title"] = "Bulk upload/update delegates";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Bulk upload/update delegates" : "Bulk upload/update delegates";
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+    <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-  @section NavBreadcrumbs {
-  <partial name="~/Views/TrackingSystem/Delegates/Shared/_AllDelegatesBreadcrumbs.cshtml" />
+@section NavBreadcrumbs {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_AllDelegatesBreadcrumbs.cshtml" />
 }
 
-  <div class="nhsuk-grid-row">
+<div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <h1 class="nhsuk-heading-xl">Bulk upload/update delegates</h1>
+        <h1 class="nhsuk-heading-xl">Bulk upload/update delegates</h1>
 
-      <p class="nhsuk-body-m">
-            To bulk register and/or update delegates, download a template Excel file using one of the options below.
-      </p>
-
-      <p class="nhsuk-body-m">If you are unsure about the "JobGroupID" column, a reference sheet can be found in the Excel file</p>
-        <form asp-controller="BulkUpload" asp-action="DownloadDelegates">
+        <p class="nhsuk-body-m">
+            To bulk register and/or update delegates, download an Excel workbook using one of the options below.
+        </p>
+        <form>
             <div class="nhsuk-form-group">
 
-                <fieldset class="nhsuk-fieldset">
+                <fieldset class="nhsuk-fieldset" aria-describedby="download-hint">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                         <h1 class="nhsuk-fieldset__heading">
                             What would you like to download?
                         </h1>
                     </legend>
-
-                    <div class="nhsuk-radios">
-
+                    <div class="nhsuk-hint" id="download-hint">
+                        Select one option
+                    </div>
+                    <div class="nhsuk-radios nhsuk-radios--conditional">
                         <div class="nhsuk-radios__item">
-                            <input class="nhsuk-radios__input" asp-for="DownloadOption" id="download-option-1" type="radio" value="1" aria-describedby="download-option-1-hint">
+                            <input class="nhsuk-radios__input" id="download-option-2" type="radio" name="download-option" value="1" aria-describedby="download-option-1-hint" aria-controls="conditional-download-1" aria-expanded="false">
                             <label class="nhsuk-label nhsuk-radios__label" for="download-option-1">
-                                Existing centre delegates for bulk modification
+                                Download blank template for bulk delegate registration
+                            </label>
+                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-1-hint">
+                                This Excel file will be empty. New delegates can be added by including their details on a blank row.
+                            </div>
+                        </div>
+                        <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-download-1">
+                            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-DownloadOption="1" asp-controller="BulkUpload" asp-action="DownloadDelegates" target="_blank">
+                                Download template
+                            </a>
+                        </div>
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="download-option-2" type="radio" name="download-option" value="2" aria-describedby="download-option-2-hint" aria-controls="conditional-download-2" aria-expanded="false">
+                            <label class="nhsuk-label nhsuk-radios__label" for="download-option-2">
+                                Download existing delegates for bulk modification and registration.
                             </label>
                             <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-1-hint">
                                 This Excel file will include all existing delegates, whose details you can edit. New delegates can be added by including their details on a blank row.
                             </div>
                         </div>
-
-                        <div class="nhsuk-radios__item">
-                            <input class="nhsuk-radios__input" asp-for="DownloadOption" id="download-option-2" type="radio" value="2" checked="checked" aria-describedby="download-option-2-hint">
-                            <label class="nhsuk-label nhsuk-radios__label" for="download-option-2">
-                                Blank template for bulk delegate registration
-                            </label>
-                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-2-hint">
-                                This Excel file will be empty. New delegates can be added by including their details on a blank row.
-                            </div>
+                        <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-download-2">
+                            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-DownloadOption="2" asp-controller="BulkUpload" asp-action="DownloadDelegates" target="_blank">
+                                Download delegates
+                            </a>
                         </div>
+
 
                     </div>
                 </fieldset>
 
             </div>
-            <button class="nhsuk-button nhsuk-button--secondary" type="submit" value="save">Download</button>
-      </form>
-      @* <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="BulkUpload" asp-action="DownloadDelegates" target="_blank">
-        Download delegates
-      </a> *@
+        </form>
+        <h2>Upload file</h2>
+        <p class="nhsuk-body-m">
+            Once you have an Excel delegate workbook, add or update delegates to the worksheet, save and start the upload process.
+        </p>
+        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="StartUpload" enctype="multipart/form-data">
 
-      <p class="nhsuk-body-m">
-        Once you have downloaded, amended and saved the Excel delegates sheet above, start the upload to process your changes.
-      </p>
-      <p class="nhsuk-body-m">If your spreadsheet is large, you must split it so that each uploaded sheet contains no more than @TempData["MaxBulkUploadRows"] rows.</p>
-      <a class="nhsuk-button nhsuk-u-margin-bottom-7" role="button" asp-controller="BulkUpload" asp-action="StartUpload">
-        Start upload
-      </a>
+            <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with updated information (@(Model.MaxBulkUploadRows) rows)" hint-text="" css-class="nhsuk-u-width-one-half" />
 
-      <vc:back-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null" link-text="Go back" />
+            <button class="nhsuk-button" type="submit">Start upload</button>
+        </form>
+
+        <vc:back-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null" link-text="Cancel" />
     </div>
-  </div>
+</div>
