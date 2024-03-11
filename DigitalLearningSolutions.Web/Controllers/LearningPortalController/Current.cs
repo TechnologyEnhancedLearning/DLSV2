@@ -374,7 +374,6 @@
             }
 
             var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
-            var roleCount = selfAssessmentService.GetRoleCount(candidateAssessmentId);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, competencymaindata.SelfAssessmentID);
             var competencyIds = recentResults.Select(c => c.Id).ToArray();
@@ -413,7 +412,7 @@
 
             ViewBag.CompetencySummaries = competencySummaries;
             var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
-            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, route, accessors, activitySummaryCompetencySelfAssesment, roleCount);
+            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, route, accessors, activitySummaryCompetencySelfAssesment);
             ViewBag.LoggedInSupervisorDelegatesId = supervisorDelegateId;
             return View("Current/CompetencySelfAssessmentCertificate", model);
         }
@@ -435,7 +434,6 @@
             var delegateUserId = competencymaindata.LearnerId;
 
             var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
-            var roleCount = selfAssessmentService.GetRoleCount(candidateAssessmentId);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
             var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, competencymaindata.SelfAssessmentID);
@@ -474,7 +472,7 @@
                                       };
 
             ViewBag.CompetencySummaries = competencySummaries;
-            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, 1, accessors, activitySummaryCompetencySelfAssesment, roleCount);
+            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, 1, accessors, activitySummaryCompetencySelfAssesment);
             var renderedViewHTML = RenderRazorViewToString(this, "Current/DownloadCompetencySelfAssessmentCertificate", model);
 
             var pdfReportResponse = await pdfService.PdfReport(candidateAssessmentId.ToString(), renderedViewHTML, delegateId);

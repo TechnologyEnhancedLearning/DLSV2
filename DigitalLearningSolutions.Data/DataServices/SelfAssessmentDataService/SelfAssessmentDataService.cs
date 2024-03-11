@@ -169,7 +169,6 @@
         CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
         ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
-        int? GetRoleCount(int CandidateId);
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
     }
 
