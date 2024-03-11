@@ -40,7 +40,8 @@
                                 Download blank template for bulk delegate registration
                             </label>
                             <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-1-hint">
-                                This Excel file will be empty. New delegates can be added by including their details on a blank row.
+                                This Excel file will be empty.<br/>
+                                New delegates can be added by including their details on a blank row.
                             </div>
                         </div>
                         <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-download-1">
@@ -53,8 +54,9 @@
                             <label class="nhsuk-label nhsuk-radios__label" for="download-option-2">
                                 Download existing delegates for bulk modification and registration.
                             </label>
-                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-1-hint">
-                                This Excel file will include all existing delegates, whose details you can edit. New delegates can be added by including their details on a blank row.
+                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-2-hint">
+                                This Excel file will include all existing delegates, whose details you can update.<br />
+                                New delegates can be added by including their details on a blank row.
                             </div>
                         </div>
                         <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-download-2">
@@ -75,7 +77,7 @@
         </p>
         <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="StartUpload" enctype="multipart/form-data">
 
-            <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with updated information (@(Model.MaxBulkUploadRows) rows)" hint-text="" css-class="nhsuk-u-width-one-half" />
+            <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with updated information (max @(Model.MaxBulkUploadRows) rows)" hint-text="" css-class="nhsuk-u-width-one-half" />
 
             <button class="nhsuk-button" type="submit">Start upload</button>
         </form>

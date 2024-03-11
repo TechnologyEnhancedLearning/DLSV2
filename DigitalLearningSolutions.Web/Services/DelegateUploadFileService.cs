@@ -58,7 +58,11 @@ namespace DigitalLearningSolutions.Web.Services
             this.clockUtility = clockUtility;
             this.configuration = configuration;
         }
+        //public BulkUploadResult ValidateDelegatesFile(IFormFile file, int centreId)
+        //{
+        //    var table = OpenDelegatesTable(file);
 
+        //}
         public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime welcomeEmailDate)
         {
             var table = OpenDelegatesTable(file);
