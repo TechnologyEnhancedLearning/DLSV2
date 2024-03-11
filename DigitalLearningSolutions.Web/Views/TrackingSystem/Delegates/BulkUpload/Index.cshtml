@@ -39,12 +39,12 @@
                             <label class="nhsuk-label nhsuk-radios__label" for="download-option-1">
                                 Download blank template for bulk delegate registration
                             </label>
-                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-1-hint">
-                                This Excel file will be empty.<br/>
-                                New delegates can be added by including their details on a blank row.
-                            </div>
                         </div>
                         <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-download-1">
+                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-1-hint">
+                                This Excel file will be empty.<br />
+                                New delegates can be added by including their details on a blank row.
+                            </div>
                             <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-DownloadOption="1" asp-controller="BulkUpload" asp-action="DownloadDelegates" target="_blank">
                                 Download template
                             </a>
@@ -54,12 +54,12 @@
                             <label class="nhsuk-label nhsuk-radios__label" for="download-option-2">
                                 Download existing delegates for bulk modification and registration.
                             </label>
-                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-2-hint">
-                                This Excel file will include all existing delegates, whose details you can update.<br />
-                                New delegates can be added by including their details on a blank row.
-                            </div>
                         </div>
                         <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-download-2">
+                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-2-hint">
+                                This Excel file will include all existing delegates whose details you can update.<br />
+                                New delegates can be added by including their details on a blank row.
+                            </div>
                             <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-DownloadOption="2" asp-controller="BulkUpload" asp-action="DownloadDelegates" target="_blank">
                                 Download delegates
                             </a>
