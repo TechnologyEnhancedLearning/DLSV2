@@ -98,7 +98,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var rowCount = table.RowCount();
-            for( var i = 2; i < rowCount; i++ )
+            for( var i = 2; i <= rowCount; i++ )
             {
                 var jobGroup = table.Column(5).Cell(i).Value.ToString();
                 var JobGroupId = jobGroups.FirstOrDefault(item => item.name == jobGroup).id;

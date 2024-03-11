@@ -80,9 +80,12 @@
             )
         {
             var listOptions = $"\"{String.Join(",", optionsList)}\"";
-            workbook.Worksheet(workSheetNumber).Column(targetColumn).SetDataValidation().List(listOptions, true);
+            var rowCount = workbook.Worksheet(workSheetNumber).RangeUsed().RowCount();
+            for (int i = 2; i <= rowCount; i++)
+            {
+                workbook.Worksheet(workSheetNumber).Column(targetColumn).Cell(i).DataValidation.List(listOptions, true);
+            }
         }
-
         public static void AddValidationRangeToWorksheetColumn(
              IXLWorkbook workbook,
             int targetColumn,
@@ -94,7 +97,7 @@
         {
             string sourceRange = sourceColumnLetter +"2:" + sourceColumnLetter + (optionsCount + 1).ToString();
             var rowCount = workbook.Worksheet(targetWorkSheetNumber).RangeUsed().RowCount();
-            for (int i = 2; i < rowCount; i++) {
+            for (int i = 2; i <= rowCount; i++) {
                 workbook.Worksheet(targetWorkSheetNumber).Column(targetColumn).Cell(i).DataValidation.List(workbook.Worksheet(sourceWorksheetNumber).Range(sourceRange), true);
             }
         }
