@@ -98,36 +98,38 @@
             using (new AssertionScope())
             {
                 var headers = table.Fields.Select(x => x.Name).ToList();
-                headers[0].Should().Be("LastName");
-                headers[1].Should().Be("FirstName");
-                headers[2].Should().Be("DelegateID");
+                headers[0].Should().Be("DelegateID");
+                headers[1].Should().Be("LastName");
+                headers[2].Should().Be("FirstName");
                 headers[3].Should().Be("JobGroupID");
-                headers[4].Should().Be("Answer1");
-                headers[5].Should().Be("Answer2");
-                headers[6].Should().Be("Answer3");
-                headers[7].Should().Be("Answer4");
-                headers[8].Should().Be("Answer5");
-                headers[9].Should().Be("Answer6");
-                headers[10].Should().Be("Active");
-                headers[11].Should().Be("EmailAddress");
-                headers[12].Should().Be("HasPRN");
-                headers[13].Should().Be("PRN");
+                headers[4].Should().Be("JobGroup");
+                headers[5].Should().Be("Answer1");
+                headers[6].Should().Be("Answer2");
+                headers[7].Should().Be("Answer3");
+                headers[8].Should().Be("Answer4");
+                headers[9].Should().Be("Answer5");
+                headers[10].Should().Be("Answer6");
+                headers[11].Should().Be("Active");
+                headers[12].Should().Be("EmailAddress");
+                headers[13].Should().Be("HasPRN");
+                headers[14].Should().Be("PRN");
                 table.RowCount().Should().Be(4);
                 var row = table.Row(2);
-                row.Cell(1).GetString().Should().Be("Person");
-                row.Cell(2).GetString().Should().Be("Fake");
-                row.Cell(3).GetString().Should().Be("TU67");
+                row.Cell(1).GetString().Should().Be("TU67");
+                row.Cell(2).GetString().Should().Be("Person");
+                row.Cell(3).GetString().Should().Be("Fake");
                 row.Cell(4).GetString().Should().Be("1");
-                row.Cell(5).GetString().Should().BeEmpty();
+                row.Cell(5).GetString().Should().Be("Nursing");
                 row.Cell(6).GetString().Should().BeEmpty();
                 row.Cell(7).GetString().Should().BeEmpty();
                 row.Cell(8).GetString().Should().BeEmpty();
                 row.Cell(9).GetString().Should().BeEmpty();
                 row.Cell(10).GetString().Should().BeEmpty();
-                row.Cell(11).GetString().Should().Be("True");
-                row.Cell(12).GetString().Should().Be("Test@Test");
-                row.Cell(13).GetString().Should().Be("False");
-                row.Cell(14).GetString().Should().BeEmpty();
+                row.Cell(11).GetString().Should().BeEmpty();
+                row.Cell(12).GetString().Should().Be("True");
+                row.Cell(13).GetString().Should().Be("Test@Test");
+                row.Cell(14).GetString().Should().Be("False");
+                row.Cell(15).GetString().Should().BeEmpty();
             }
         }
 

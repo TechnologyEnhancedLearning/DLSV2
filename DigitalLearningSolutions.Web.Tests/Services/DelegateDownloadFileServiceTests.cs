@@ -35,7 +35,7 @@
                 Answer6 = null,
                 Active = true,
                 JobGroupId = 1,
-                JobGroupName = "Job group 1",
+                JobGroupName = "Nursing",
                 Approved = true,
                 Password = null,
                 DateRegistered = new DateTime(2022, 3, 31),
@@ -57,7 +57,7 @@
                 Answer6 = null,
                 Active = true,
                 JobGroupId = 1,
-                JobGroupName = "Job group 1",
+                JobGroupName = "Nursing",
                 Approved = true,
                 Password = "testpassword",
                 DateRegistered = new DateTime(2022, 2, 28),
@@ -79,7 +79,7 @@
                 Answer6 = null,
                 Active = true,
                 JobGroupId = 2,
-                JobGroupName = "Job group 2",
+                JobGroupName = "Doctor",
                 Approved = true,
                 Password = "testpassword",
                 DateRegistered = new DateTime(2000, 1, 1),
@@ -116,7 +116,7 @@
             A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
 
             // When
-            var resultBytes = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(2);
+            var resultBytes = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(2, false);
             using var resultsStream = new MemoryStream(resultBytes);
             using var resultWorkbook = new XLWorkbook(resultsStream);
 
