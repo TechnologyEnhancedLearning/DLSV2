@@ -87,7 +87,7 @@
             }
         }
         public static void AddValidationRangeToWorksheetColumn(
-             IXLWorkbook workbook,
+            IXLWorkbook workbook,
             int targetColumn,
             int targetWorkSheetNumber,
             int optionsCount,
