@@ -85,20 +85,13 @@
                 ModelState.AddModelError("MaxBulkUploadRows", CommonValidationErrorMessages.InvalidBulkUploadExcelFile);
                 return View("StartUpload", model);
             }
-            int ExcelRowsCount = delegateUploadFileService.GetBulkUploadExcelRowCount(model.DelegatesFile);
-            if (ExcelRowsCount > MaxBulkUploadRows)
-            {
-                ModelState.AddModelError("MaxBulkUploadRows", string.Format(CommonValidationErrorMessages.MaxBulkUploadRowsLimit, MaxBulkUploadRows));
-                return View("StartUpload", model);
-            }
             try
             {
-                var results = delegateUploadFileService.ProcessDelegatesFile(
-                    model.DelegatesFile!,
-                    centreId,
-                    DateTime.Now
+                var table = delegateUploadFileService.OpenDelegatesTable(model.DelegatesFile!);
+                var results = delegateUploadFileService.PreProcessDelegatesFile(
+                    table
                 );
-                var resultsModel = new BulkUploadResultsViewModel(results);
+                var resultsModel = new BulkUploadPreProcessViewModel(results);
                 return View("UploadCompleted", resultsModel);
             }
             catch (InvalidHeadersException)

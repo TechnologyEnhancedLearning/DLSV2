@@ -13,6 +13,7 @@ using DigitalLearningSolutions.Data.Utilities;
 using DigitalLearningSolutions.Web.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using DigitalLearningSolutions.Data.Models.Centres;
 
 [assembly: InternalsVisibleTo("DigitalLearningSolutions.Web.Tests")]
 
@@ -21,7 +22,9 @@ namespace DigitalLearningSolutions.Web.Services
     public interface IDelegateUploadFileService
     {
         public int GetBulkUploadExcelRowCount(IFormFile delegatesFile);
-        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime welcomeEmailDate);
+        public IXLTable OpenDelegatesTable(IFormFile file);
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate);
+        public BulkUploadResult PreProcessDelegatesFile(IXLTable table);
     }
 
     public class DelegateUploadFileService : IDelegateUploadFileService
@@ -58,18 +61,18 @@ namespace DigitalLearningSolutions.Web.Services
             this.clockUtility = clockUtility;
             this.configuration = configuration;
         }
-        //public BulkUploadResult ValidateDelegatesFile(IFormFile file, int centreId)
-        //{
-        //    var table = OpenDelegatesTable(file);
 
-        //}
-        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime welcomeEmailDate)
+        public BulkUploadResult PreProcessDelegatesFile(IXLTable table)
         {
-            var table = OpenDelegatesTable(file);
+            return PreProcessDelegatesTable(table);
+        }
+
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate)
+        {
             return ProcessDelegatesTable(table, centreId, welcomeEmailDate);
         }
 
-        internal IXLTable OpenDelegatesTable(IFormFile file)
+        public IXLTable OpenDelegatesTable(IFormFile file)
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(DelegateDownloadFileService.DelegatesSheetName);
@@ -109,6 +112,18 @@ namespace DigitalLearningSolutions.Web.Services
                 table.Column(4).Cell(i).Value = JobGroupId;
             }
         }
+        internal BulkUploadResult PreProcessDelegatesTable(IXLTable table)
+        {
+            var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
+            var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row)).ToList();
+
+            foreach (var delegateRow in delegateRows)
+            {
+                PreProcessDelegateRow(delegateRow, jobGroupIds);
+            }
+
+            return new BulkUploadResult(delegateRows);
+        }
         internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime welcomeEmailDate)
         {
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
@@ -120,6 +135,25 @@ namespace DigitalLearningSolutions.Web.Services
             }
 
             return new BulkUploadResult(delegateRows);
+        }
+
+        private void PreProcessDelegateRow(
+            DelegateTableRow delegateRow,
+            IEnumerable<int> jobGroupIds
+            )
+        {
+            if (!delegateRow.Validate(jobGroupIds))
+            {
+                return;
+            }
+            if (string.IsNullOrEmpty(delegateRow.CandidateNumber))
+            {
+                delegateRow.RowStatus = RowStatus.Registered;
+            }
+            else
+            {
+                delegateRow.RowStatus = RowStatus.Updated;
+            }
         }
 
         private void ProcessDelegateRow(

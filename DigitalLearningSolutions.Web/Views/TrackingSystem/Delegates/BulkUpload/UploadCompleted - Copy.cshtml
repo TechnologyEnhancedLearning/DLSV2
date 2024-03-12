@@ -1,0 +1,42 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@model BulkUploadResultsViewModel
+
+@{
+  ViewData["Title"] = "Complete - Bulk upload/update delegates";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Bulk upload complete</h1>
+
+    <h2>Summary of results:</h2>
+    <ul>
+      <li>@Model.ProcessedCount @(Model.ProcessedCount == 1 ? "line" : "lines") processed</li>
+      <li>@Model.RegisteredCount new @(Model.RegisteredCount == 1 ? "delegate" : "delegates") registered</li>
+      <li>@Model.UpdatedCount delegate @(Model.UpdatedCount == 1 ? "record" : "records") updated</li>
+      <li>@Model.SkippedCount delegate @(Model.SkippedCount == 1 ? "record" : "records") skipped (no changes)</li>
+      <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "line" : "lines") skipped due to errors</li>
+    </ul>
+
+    @if (Model.ErrorCount > 0)
+    {
+      <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            The uploaded Excel worksheet contained errors
+          </span>
+        </h3>
+        <p>The lines below were skipped due to errors during processing:</p>
+        <ul>
+          @foreach (var (rowNumber, errorMessage) in Model.Errors)
+          {
+            <li>Line @rowNumber: @errorMessage</li>
+          }
+        </ul>
+      </div>
+    }
+
+    <vc:action-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null" link-text="Manage all delegates" />
+  </div>
+</div>

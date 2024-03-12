@@ -1,6 +1,6 @@
 ﻿@using DigitalLearningSolutions.Data.Utilities
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
-@model UploadDelegatesViewModel
+@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
+@model WelcomeEmailViewModel
 @inject IClockUtility ClockUtility
 
 @{
@@ -29,9 +29,7 @@
                      css-class="@(errorHasOccurred ? " nhsuk-u-padding-left-5 nhsuk-u-margin-bottom-3" : "")"
                      hint-text-lines="@hintTextLines" />
 
-            <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with updated information (max @(Model.MaxBulkUploadRows) rows)" hint-text="" css-class="nhsuk-u-width-one-half" />
-
-      <button class="nhsuk-button" type="submit">Upload and process</button>
+      <button class="nhsuk-button" type="submit">Continue</button>
     </form>
 
     <vc:cancel-link asp-controller="BulkUpload" asp-action="Index" />
