@@ -102,10 +102,10 @@
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
-        private IActivityService activityService = null;
-        private IPaginateService paginateService = null;
-        private ICourseCategoriesDataService courseCategoriesDataService = null;
-        private ICourseTopicsDataService courseTopicsDataService = null;
+        private IActivityService activityService = null!;
+        private IPaginateService paginateService = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private ICourseTopicsDataService courseTopicsDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -268,7 +268,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().ModelAs<SelectCourseViewModel>();
-                controller.ModelState["ApplicationId"].Errors[0].ErrorMessage.Should()
+                controller.ModelState["ApplicationId"]?.Errors[0].ErrorMessage.Should()
                     .Be("Select a course");
             }
         }
@@ -296,7 +296,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().ModelAs<SetCourseDetailsViewModel>();
-                controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
+                controller.ModelState["CustomisationName"]?.Errors[0].ErrorMessage.Should()
                     .Be("Course name must be unique, including any additions");
             }
         }
@@ -324,7 +324,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().ModelAs<SetCourseDetailsViewModel>();
-                controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
+                controller.ModelState["CustomisationName"]?.Errors[0].ErrorMessage.Should()
                     .Be("A course with no add-on already exists");
             }
         }
@@ -477,7 +477,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().ModelAs<SetCourseContentViewModel>();
-                controller.ModelState["SelectedSectionIds"].Errors[0].ErrorMessage.Should()
+                controller.ModelState["SelectedSectionIds"]?.Errors[0].ErrorMessage.Should()
                     .Be("test message");
             }
         }

@@ -18,6 +18,8 @@
         string? GetCoursePassword(int customisationId);
 
         void LogPasswordSubmitted(int progressId);
+
+        int? GetProgressId(int candidateId, int customisationId);
     }
 
     public class CourseContentService : ICourseContentService
@@ -240,12 +242,12 @@
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
                         SET LoginCount = (SELECT COALESCE(COUNT(*), 0)
-                            FROM Sessions AS S
+                            FROM Sessions AS S WITH (NOLOCK)
                             WHERE S.CandidateID = Progress.CandidateID
                               AND S.CustomisationID = Progress.CustomisationID
                               AND S.LoginTime >= Progress.FirstSubmittedTime),
                             Duration = (SELECT COALESCE(SUM(S1.Duration), 0)
-                            FROM Sessions AS S1
+                            FROM Sessions AS S1 WITH (NOLOCK)
                             WHERE S1.CandidateID = Progress.CandidateID
                               AND S1.CustomisationID = Progress.CustomisationID
                               AND S1.LoginTime >= Progress.FirstSubmittedTime),
@@ -263,23 +265,23 @@
             }
         }
 
-        private int? GetProgressId(int candidateId, int customisationId)
+        public int? GetProgressId(int candidateId, int customisationId)
         {
             try
             {
-                return connection.QueryFirst<int>(
-                    @"SELECT ProgressId
-                    FROM Progress
+                return connection.QueryFirst<int?>(
+                    @"SELECT COALESCE((SELECT ProgressID 
+					FROM Progress
                     WHERE CandidateID = @candidateId
                       AND CustomisationID = @customisationId
                       AND SystemRefreshed = 0
-                      AND RemovedDate IS NULL",
+                      AND RemovedDate IS NULL), NULL) AS ProgressId",
                     new { candidateId, customisationId }
                 );
             }
             catch (InvalidOperationException)
             {
-                return null;
+                return 0;
             }
         }
     }

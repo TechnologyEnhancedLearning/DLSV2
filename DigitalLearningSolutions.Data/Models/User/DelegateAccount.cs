@@ -8,9 +8,9 @@
         public int UserId { get; set; }
         public bool Active { get; set; }
         public int CentreId { get; set; }
-        public string CentreName { get; set; }
+        public string CentreName { get; set; } = string.Empty;
         public bool CentreActive { get; set; }
-        public string CandidateNumber { get; set; }
+        public string CandidateNumber { get; set; } = string.Empty;
         public DateTime DateRegistered { get; set; }
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }

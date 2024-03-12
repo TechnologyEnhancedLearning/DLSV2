@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -143,7 +144,10 @@
             CourseStatistics courseStatistics
         )
         {
-            var tags = new List<SearchableTagViewModel>();
+            var tags = new List<SearchableTagViewModel>
+            {
+                new SearchableTagViewModel(ActivityTypeFilterOptions.IsCourse)
+            };
 
             if (courseStatistics.Archived)
             {
@@ -204,6 +208,37 @@
             return tags;
         }
 
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForSelfAssessmentDelegate(SelfAssessmentDelegate selfAssessmentDelegate)
+        {
+            var tags = new List<SearchableTagViewModel>();
+
+            var statusTag = selfAssessmentDelegate.IsDelegateActive
+        ? new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Active)
+        : new SearchableTagViewModel(SelfAssessmentDelegateAccountStatusFilterOptions.Inactive);
+            tags.Add(statusTag);
+
+            var removalTag = selfAssessmentDelegate.RemovedDate.HasValue
+         ? new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.Removed)
+         : new SearchableTagViewModel(SelfAssessmentDelegateRemovedFilterOptions.NotRemoved, true);
+            tags.Add(removalTag);
+            if (!selfAssessmentDelegate.SupervisorSelfAssessmentReview && !selfAssessmentDelegate.SupervisorResultsReview)
+            {
+                var submissionTag = selfAssessmentDelegate.SubmittedDate.HasValue
+            ? new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.Submitted)
+            : new SearchableTagViewModel(SelfAssessmentAssessmentSubmittedFilterOptions.NotSubmitted);
+                tags.Add(submissionTag);
+            }
+            else
+            {
+                var signedOffTag = selfAssessmentDelegate.SignedOff.HasValue
+             ? new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
+             : new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff);
+                tags.Add(signedOffTag);
+                
+            }
+
+            return tags;
+        }
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateUser(
             DelegateUserCard delegateUser
         )
@@ -244,6 +279,19 @@
                 details.IsAssessed
                     ? new SearchableTagViewModel(AddCourseToGroupDiagnosticFilterOptions.HasDiagnostic)
                     : new SearchableTagViewModel(AddCourseToGroupDiagnosticFilterOptions.NoDiagnostic, true),
+            };
+        }
+
+        public static IEnumerable<SearchableTagViewModel> GetCurrentStatusTagsForDelegateAssessment(
+            DelegateAssessmentStatistics delegateAssessmentStatistics
+          )
+        {
+            return new List<SearchableTagViewModel>
+            {
+                new SearchableTagViewModel(ActivityTypeFilterOptions.IsSelfAssessment),
+                delegateAssessmentStatistics.Active
+                    ? new SearchableTagViewModel(CourseStatusFilterOptions.IsActive)
+                    : new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive)
             };
         }
     }

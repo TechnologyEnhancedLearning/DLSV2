@@ -53,7 +53,7 @@
             // Then
             var expectedExpiryTime = new DateTime(2022, 1, 1, 18, 0, 0);
             A.CallTo(
-                () => authenticationService.SignInAsync(
+                () => authenticationService!.SignInAsync(
                     A<HttpContext>._,
                     A<string>._,
                     A<ClaimsPrincipal>._,
@@ -78,7 +78,7 @@
 
             // Then
             A.CallTo(
-                () => authenticationService.SignInAsync(
+                () => authenticationService!.SignInAsync(
                     A<HttpContext>._,
                     A<string>._,
                     A<ClaimsPrincipal>._,
@@ -132,7 +132,7 @@
             await controller.Tutorial(CustomisationId, SectionId, TutorialId);
 
             // Then
-            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._)).MustHaveHappened();
         }
 
         [Test]

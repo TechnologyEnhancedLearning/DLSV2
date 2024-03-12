@@ -4,26 +4,33 @@
     using System.Data;
     using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
     public interface ICourseDelegatesDownloadFileService
     {
-        public Task<byte[]> GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
         );
 
-        public byte[] GetCourseDelegateDownloadFile(
+        public byte[] GetActivityDelegateDownloadFile(
             int centreId,
             int? adminCategoryId,
             string? searchString,
-            string? sortBy,
             string? filterString,
+            string courseTopic,
+            string hasAdminFields,
+            string categoryName,
+            string isActive,
+            string isCourse,
+            string isSelfAssessment,
+            string? sortBy,
             string sortDirection = GenericSortingHelper.Ascending
         );
     }
@@ -50,26 +57,34 @@
         private const string AdminFieldOne = "Admin field 1";
         private const string AdminFieldTwo = "Admin field 2";
         private const string AdminFieldThree = "Admin field 3";
+        private const string SelfAssessmentName = "Self assessment name";
+        private const string PRN = "PRN";
+        private const string Submitted = "Submitted";
+        private const string SignedOff = "Signed off";
+        private const string Launches = "Launches";
 
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly ICentreRegistrationPromptsService registrationPromptsService;
+        private readonly ISelfAssessmentDataService selfAssessmentDataService;
 
         public CourseDelegatesDownloadFileService(
             ICourseDataService courseDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
             ICentreRegistrationPromptsService registrationPromptsService,
-            ICourseService courseService
+            ICourseService courseService,
+            ISelfAssessmentDataService selfAssessmentDataService
         )
         {
             this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.registrationPromptsService = registrationPromptsService;
             this.courseService = courseService;
+            this.selfAssessmentDataService = selfAssessmentDataService;
         }
 
-        public async Task<byte[]> GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+        public byte[] GetCourseDelegateDownloadFileForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3
         )
         {
@@ -92,7 +107,7 @@
             {
                 offSet = ((page - 1) * itemsPerPage);
 
-                courseDelegates.AddRange(await this.courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, offSet, itemsPerPage, sortBy, sortDirection, 
+                courseDelegates.AddRange(this.courseDataService.GetCourseDelegatesForExport(searchString ?? string.Empty, offSet, itemsPerPage, sortBy, sortDirection,
                     customisationId, centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3));
                 page++;
             }
@@ -110,24 +125,36 @@
             return stream.ToArray();
         }
 
-        public byte[] GetCourseDelegateDownloadFile(
+        public byte[] GetActivityDelegateDownloadFile(
             int centreId,
             int? adminCategoryId,
             string? searchString,
-            string? sortBy,
             string? filterString,
+            string courseTopic,
+            string hasAdminFields,
+            string categoryName,
+            string isActive,
+            string isCourse,
+            string isSelfassessment,
+            string? sortBy,
             string sortDirection = GenericSortingHelper.Ascending
         )
         {
             using var workbook = new XLWorkbook();
 
-            PopulateCourseDelegatesSheetForExportAll(
+            PopulateActivityDelegatesSheetForExportAll(
                 workbook,
                 centreId,
                 adminCategoryId,
                 searchString,
-                sortBy,
                 filterString,
+                courseTopic,
+                hasAdminFields,
+                categoryName,
+                isActive,
+                isCourse,
+                isSelfassessment,
+                sortBy,
                 sortDirection
             );
 
@@ -169,13 +196,19 @@
             FormatWorksheetColumns(workbook, dataTable);
         }
 
-        private void PopulateCourseDelegatesSheetForExportAll(
+        private void PopulateActivityDelegatesSheetForExportAll(
             IXLWorkbook workbook,
             int centreId,
             int? adminCategoryId,
             string? searchString,
-            string? sortBy,
             string? filterString,
+            string courseTopic,
+            string hasAdminFields,
+            string categoryName,
+            string isActive,
+            string isCourse,
+            string isSelfAssessment,
+            string? sortBy,
             string sortDirection
         )
         {
@@ -187,16 +220,28 @@
             var customRegistrationPrompts =
                 registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
-            var courses = GetCoursesToExport(
-                centreId,
-                adminCategoryId,
-                searchString,
-                sortBy,
-                filterString,
-                sortDirection
-            );
+            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses = new CourseStatisticsWithAdminFieldResponseCounts[] { };
+            IEnumerable<DelegateAssessmentStatistics> selfAssessments = new DelegateAssessmentStatistics[] { };
+
+            if (isCourse == "Any" && isSelfAssessment == "Any")
+            {
+                courses = GetCoursesToExport(centreId, adminCategoryId, searchString, sortBy, filterString, sortDirection);
+                if (courseTopic == "Any" && hasAdminFields == "Any")
+                    selfAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
+            }
+            if (isCourse == "true")
+                courses = GetCoursesToExport(centreId, adminCategoryId, searchString, sortBy, filterString, sortDirection);
+            if (isSelfAssessment == "true" && courseTopic == "Any" && hasAdminFields == "Any")
+                selfAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
+
+            if (selfAssessments.Any())
+            {
+                selfAssessments = UpdateOrderSelfAssessments(selfAssessments, sortBy, sortDirection);
+            }
 
             var emptyTable = new DataTable();
+
+            //export courses
             SetUpDataTableColumnsForExportAll(customRegistrationPrompts, emptyTable);
             var headerTable = sheet.Cell(1, 1).InsertTable(emptyTable);
             headerTable.Theme = XLTableTheme.None;
@@ -215,6 +260,30 @@
             }
 
             FormatWorksheetColumns(workbook, emptyTable);
+
+            //export self assessments
+            sheet = workbook.Worksheets.Add("Self Assessment Delegates");
+            sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
+
+            emptyTable = new DataTable();
+            SetUpDataTableColumnsForSelfAssessment(customRegistrationPrompts, emptyTable);
+            headerTable = sheet.Cell(1, 1).InsertTable(emptyTable);
+            headerTable.Theme = XLTableTheme.None;
+
+            foreach (var selfAssessment in selfAssessments)
+            {
+                AddSelfAssessmentToSheet(sheet, centreId, selfAssessment, customRegistrationPrompts);
+            }
+
+            sheet.Columns(1, sheet.LastColumnUsed().RangeAddress.FirstAddress.ColumnNumber).AdjustToContents();
+
+            if (GetNextEmptyRowNumber(sheet) > 2)
+            {
+                headerTable.Resize(1, 1, sheet.LastRowUsed().RowNumber(), sheet.LastColumnUsed().ColumnNumber());
+                sheet.CollapseRows();
+            }
+
+            FormatWorksheetColumns(workbook, emptyTable, 2);
         }
 
         private IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetCoursesToExport(
@@ -226,9 +295,8 @@
             string sortDirection
         )
         {
-            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, adminCategoryId);
-            var searchedCourses = GenericSearchHelper.SearchItems(details.Courses, searchString);
-            var filteredCourses = FilteringHelper.FilterItems(searchedCourses.AsQueryable(), filterString);
+            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, adminCategoryId, searchString, sortBy, filterString, sortDirection);
+            var filteredCourses = FilteringHelper.FilterItems(details.Courses.AsQueryable(), filterString);
             var sortedCourses = GenericSortingHelper.SortAllItems(
                 filteredCourses.AsQueryable(),
                 sortBy ?? nameof(CourseStatisticsWithAdminFieldResponseCounts.CourseName),
@@ -263,6 +331,42 @@
             foreach (var courseDelegate in sortedCourseDelegates)
             {
                 AddDelegateToDataTableForExportAll(dataTable, courseDelegate, customRegistrationPrompts);
+            }
+
+            var insertedDataRange = sheet.Cell(GetNextEmptyRowNumber(sheet), 1).InsertData(dataTable.Rows);
+            if (dataTable.Rows.Count > 0)
+            {
+                sheet.Rows(insertedDataRange.FirstRow().RowNumber(), insertedDataRange.LastRow().RowNumber())
+                    .Group(true);
+            }
+        }
+
+        private void AddSelfAssessmentToSheet(
+            IXLWorksheet sheet,
+            int centreId,
+            DelegateAssessmentStatistics selfAssessment,
+            CentreRegistrationPrompts customRegistrationPrompts
+        )
+        {
+            var selfAssessmentNameCell = sheet.Cell(GetNextEmptyRowNumber(sheet), 1);
+            selfAssessmentNameCell.Value = selfAssessment.SearchableName;
+            selfAssessmentNameCell.Style.Font.Bold = true;
+
+            var sortedSelfAssessmentDelegates =
+                GenericSortingHelper.SortAllItems(
+                    selfAssessmentDataService.GetDelegatesOnSelfAssessmentForExport(selfAssessment.SelfAssessmentId, centreId)
+                        .AsQueryable(),
+                    nameof(SelfAssessmentDelegate.FullNameForSearchingSorting),
+                    GenericSortingHelper.Ascending
+                );
+
+            var dataTable = new DataTable();
+
+            SetUpDataTableColumnsForSelfAssessment(customRegistrationPrompts, dataTable);
+
+            foreach (var selfAssessmentDelegate in sortedSelfAssessmentDelegates)
+            {
+                AddDelegateToDataTableForSelfAssessment(dataTable, selfAssessment.Name, selfAssessmentDelegate, customRegistrationPrompts);
             }
 
             var insertedDataRange = sheet.Cell(GetNextEmptyRowNumber(sheet), 1).InsertData(dataTable.Rows);
@@ -309,6 +413,34 @@
                     new DataColumn(AdminFieldOne),
                     new DataColumn(AdminFieldTwo),
                     new DataColumn(AdminFieldThree),
+                }
+            );
+        }
+
+        private static void SetUpDataTableColumnsForSelfAssessment(
+            CentreRegistrationPrompts registrationRegistrationPrompts,
+            DataTable dataTable
+        )
+        {
+            dataTable.Columns.AddRange(
+                new[] { new DataColumn(SelfAssessmentName), new DataColumn(LastName), new DataColumn(FirstName), new DataColumn(Email), new DataColumn(PRN) }
+            );
+
+            foreach (var prompt in registrationRegistrationPrompts.CustomPrompts)
+            {
+                dataTable.Columns.Add(
+                    !dataTable.Columns.Contains(prompt.PromptText)
+                        ? prompt.PromptText
+                        : $"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"
+                );
+            }
+
+            dataTable.Columns.AddRange(
+                new[]
+                {
+                    new DataColumn(DelegateId), new DataColumn(Enrolled), new DataColumn(LastAccessed),
+                    new DataColumn(CompleteBy), new DataColumn(Submitted), new DataColumn(SignedOff),
+                    new DataColumn(Launches),
                 }
             );
         }
@@ -428,25 +560,96 @@
             row[Locked] = courseDelegate.IsProgressLocked;
         }
 
-        private static void FormatWorksheetColumns(IXLWorkbook workbook, DataTable dataTable)
+        private static void AddDelegateToDataTableForSelfAssessment(
+            DataTable dataTable,
+            string? selfAssessmentName,
+            SelfAssessmentDelegate selfAssessmentDelegate,
+            CentreRegistrationPrompts registrationRegistrationPrompts
+        )
         {
-            var dateColumns = new[] { Enrolled, LastAccessed, CompleteBy, CompletedDate, RemovedDate };
+            var row = dataTable.NewRow();
+
+            row[SelfAssessmentName] = selfAssessmentName;
+            row[LastName] = selfAssessmentDelegate.DelegateLastName;
+            row[FirstName] = selfAssessmentDelegate.DelegateFirstName;
+            row[Email] = selfAssessmentDelegate.DelegateEmail;
+            row[PRN] = selfAssessmentDelegate.ProfessionalRegistrationNumber;
+
+            foreach (var prompt in registrationRegistrationPrompts.CustomPrompts)
+            {
+                if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"))
+                {
+                    row[$"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"] =
+                        selfAssessmentDelegate.DelegateRegistrationPrompts[prompt.RegistrationField.Id - 1];
+                }
+                else
+                {
+                    row[prompt.PromptText] =
+                        selfAssessmentDelegate.DelegateRegistrationPrompts[prompt.RegistrationField.Id - 1];
+                }
+            }
+            row[DelegateId] = selfAssessmentDelegate.CandidateNumber;
+            row[Enrolled] = selfAssessmentDelegate.StartedDate.Date;
+            row[LastAccessed] = selfAssessmentDelegate.LastAccessed?.Date;
+            row[CompleteBy] = selfAssessmentDelegate.CompleteBy?.Date;
+            row[Submitted] = selfAssessmentDelegate.SubmittedDate?.Date;
+            row[SignedOff] = selfAssessmentDelegate.SignedOff?.Date;
+            row[Launches] = selfAssessmentDelegate.LaunchCount;
+
+            dataTable.Rows.Add(row);
+        }
+
+        private static void FormatWorksheetColumns(IXLWorkbook workbook, DataTable dataTable, int workSheetNumber = 1)
+        {
+            var dateColumns = new[] { Enrolled, LastAccessed, CompleteBy, CompletedDate, RemovedDate, Submitted, SignedOff };
             foreach (var columnName in dateColumns)
             {
-                ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.DateTime);
+                if (dataTable.Columns.Contains(columnName))
+                    ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.DateTime, workSheetNumber);
             }
 
-            var numberColumns = new[] { Logins, TimeMinutes, DiagnosticScore, AssessmentsPassed, PassRate };
+            var numberColumns = new[] { Logins, TimeMinutes, DiagnosticScore, AssessmentsPassed, PassRate, Launches };
             foreach (var columnName in numberColumns)
             {
-                ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Number);
+                if (dataTable.Columns.Contains(columnName))
+                    ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Number, workSheetNumber);
             }
 
             var boolColumns = new[] { Active, Locked };
             foreach (var columnName in boolColumns)
             {
-                ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Boolean);
+                if (dataTable.Columns.Contains(columnName))
+                    ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Boolean, workSheetNumber);
             }
         }
+
+        private IEnumerable<DelegateAssessmentStatistics> UpdateOrderSelfAssessments(IEnumerable<DelegateAssessmentStatistics> selfAssessments, string sortBy, string sortDirection)
+        {
+            foreach (var selfAssessment in selfAssessments)
+            {
+                selfAssessment.CompletedCount = selfAssessment.SubmittedSignedOffCount;
+            }
+
+            if (sortBy == "InProgressCount")
+            {
+                selfAssessments = sortDirection == "Ascending"
+                            ? selfAssessments.OrderBy(x => x.InProgressCount).ThenBy(n => n.SearchableName).ToList()
+                            : selfAssessments.OrderByDescending(x => x.InProgressCount).ThenBy(n => n.SearchableName).ToList();
+            }
+            else if (sortBy == "CompletedCount")
+            {
+                selfAssessments = sortDirection == "Ascending"
+                            ? selfAssessments.OrderBy(x => x.CompletedCount).ThenBy(n => n.SearchableName).ToList()
+                            : selfAssessments.OrderByDescending(x => x.CompletedCount).ThenBy(n => n.SearchableName).ToList();
+            }
+            else
+            {
+                selfAssessments = sortDirection == "Ascending"
+                            ? selfAssessments.OrderBy(x => x.SearchableName).ToList()
+                            : selfAssessments.OrderByDescending(x => x.SearchableName).ToList();
+            }
+            return selfAssessments;
+        }
+
     }
 }

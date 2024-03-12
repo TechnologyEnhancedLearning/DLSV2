@@ -18,6 +18,7 @@
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
              .Returns(expectedCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
+            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(10);
 
             // When
             var result = controller.Index(CustomisationId);
@@ -70,6 +71,7 @@
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, customisationId))
                 .Returns(expectedCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+            A.CallTo(() => courseContentService.GetProgressId(CandidateId, customisationId)).Returns(10);
 
             // When
             var result = controller.Index(customisationId);
@@ -142,12 +144,13 @@
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
              .Returns(defaultCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(progressId);
+            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(progressId);
 
             // When
             controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(CandidateId, CustomisationId, A<ISession>._)).MustHaveHappened();
         }
 
         [Test]
@@ -197,6 +200,7 @@
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
                 .Returns(defaultCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
+            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(1);
 
             // When
             controller.Index(CustomisationId);
@@ -236,6 +240,69 @@
 
             // Then
             A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+        //Deprecated in response to TD-3838 - a bug caused by this id manipulation detection functionality
+
+        //[Test]
+        //public void Index_detects_id_manipulation_no_progress_id()
+        //{
+        //    // Given
+        //    var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+        //    A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
+        //     .Returns(expectedCourseContent);
+        //    A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
+        //    A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(null);
+
+        //    // When
+        //    var result = controller.Index(CustomisationId);
+
+        //    // Then
+        //    result.Should()
+        //        .BeRedirectToActionResult()
+        //        .WithControllerName("LearningSolutions")
+        //        .WithActionName("StatusCode")
+        //        .WithRouteValue("code", 404);
+        //}
+
+        //[Test]
+        //public void Index_detects_id_manipulation_self_register_false()
+        //{
+        //    // Given
+        //    var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+        //    A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
+        //     .Returns(expectedCourseContent);
+        //    A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
+        //    A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(null);
+        //    A.CallTo(() => courseDataService.GetSelfRegister(CustomisationId)).Returns(false);
+
+        //    // When
+        //    var result = controller.Index(CustomisationId);
+
+        //    // Then
+        //    result.Should()
+        //        .BeRedirectToActionResult()
+        //        .WithControllerName("LearningSolutions")
+        //        .WithActionName("StatusCode")
+        //        .WithRouteValue("code", 404);
+        //}
+
+        [Test]
+        public void Index_not_detects_id_manipulation_self_register_true()
+        {
+            // Given
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
+             .Returns(expectedCourseContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
+            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(null);
+            A.CallTo(() => courseDataService.GetSelfRegister(CustomisationId)).Returns(true);
+
+            // When
+            var result = controller.Index(CustomisationId);
+
+            // Then
+            result.Should()
+                .BeViewResult();
         }
     }
 }

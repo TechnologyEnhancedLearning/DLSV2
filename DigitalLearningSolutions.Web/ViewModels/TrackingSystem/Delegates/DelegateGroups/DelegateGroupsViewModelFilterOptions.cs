@@ -7,10 +7,7 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class DelegateGroupsViewModelFilterOptions
     {
@@ -27,7 +24,7 @@
             var promptOptions = registrationPrompts.Select(
                 prompt => new FilterOptionModel(
                     prompt.PromptText,
-                    nameof(Group.LinkedToField) + FilteringHelper.Separator + nameof(Group.LinkedToField) +
+                    nameof(Group.LinkedToField) + FilteringHelper.Separator + prompt.PromptText +
                     FilteringHelper.Separator + prompt.RegistrationField.LinkedToFieldId,
                     FilterStatus.Default
                 )
@@ -37,35 +34,27 @@
         }
 
         public static IEnumerable<FilterOptionModel> GetAddedByOptions(
-            IEnumerable<(int adminId, string adminName)> admins
-        )
+            IEnumerable<GroupDelegateAdmin> admins)
         {
             return admins.Select(
                 admin => new FilterOptionModel(
-                    admin.adminName,
+                    admin.FullName,
                     nameof(Group.AddedByAdminId) + FilteringHelper.Separator + nameof(Group.AddedByAdminId) +
-                    FilteringHelper.Separator + admin.adminId,
+                    FilteringHelper.Separator + admin.AdminId,
                     FilterStatus.Default
                 )
             );
         }
 
-        public static IEnumerable<FilterModel> GetDelegateGroupFilterModels(List<Group> groups, IEnumerable<CentreRegistrationPrompt> registrationPrompts)
+        public static IEnumerable<FilterModel> GetDelegateGroupFilterModels(IEnumerable<GroupDelegateAdmin> addedByAdmins, IEnumerable<CentreRegistrationPrompt> registrationPrompts)
         {
-            var admins = groups.Select(
-                g => (g.AddedByAdminId, DisplayStringHelper.GetPotentiallyInactiveAdminName(
-                    g.AddedByFirstName,
-                    g.AddedByLastName,
-                    g.AddedByAdminActive
-                ))
-            ).Distinct();
             return new[]
             {
                 new FilterModel(
                     nameof(Group.AddedByAdminId),
                     "Added by",
-                    GetAddedByOptions(admins)
-                ),
+                    GetAddedByOptions(addedByAdmins)
+                    ),
                 new FilterModel(
                     nameof(Group.LinkedToField),
                     "Linked field",

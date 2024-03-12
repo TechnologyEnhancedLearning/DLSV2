@@ -86,7 +86,6 @@
 
         void RemoveDelegateAccount(int delegateId);
 
-        int GetNumberOfApprovedDelegatesAtCentre(int centreId);
 
         void DeactivateDelegateUser(int delegateId);
 
@@ -95,8 +94,12 @@
         DelegateUserCard? GetDelegateUserCardById(int id);
 
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
-        Task<List<DelegateUserCard>> GetDelegateUserCardsForExportByCentreId(int centreId, int exportQueryRowLimit, int currentRun);
-        int GetCountDelegateUserCardsForExportByCentreId(int centreId);
+        List<DelegateUserCard> GetDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
+                                    string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
+                                    string answer1, string answer2, string answer3, string answer4, string answer5, string answer6, int exportQueryRowLimit, int currentRun);
+        int GetCountDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
+                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
+                                     string answer1, string answer2, string answer3, string answer4, string answer5, string answer6);
 
         (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
@@ -127,7 +130,11 @@
 
         int? GetDelegateUserLearningHubAuthId(int delegateId);
 
+        int? GetUserLearningHubAuthId(int userId);
+
         void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId);
+
+        void SetUserLearningHubAuthId(int userId, int learningHubAuthId);
 
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
 
@@ -245,7 +252,7 @@
         (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(
       string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
       );
-        Task<IEnumerable<AdminEntity>> GetAllAdminsExport(
+        IEnumerable<AdminEntity> GetAllAdminsExport(
       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold, int exportQueryRowLimit, int currentRun
       );
 
@@ -383,7 +390,7 @@
                @"SELECT EmailVerificationHash FROM EmailVerificationHashes WHERE ID = @ID",
                new { ID }
            );
-            return EmailVerificationHash;
+            return EmailVerificationHash!;
         }
 
         public UserAccount? GetUserAccountByPrimaryEmail(string emailAddress)
@@ -618,11 +625,11 @@
                 u.Active as UserActive,
                 u.LearningHubAuthID,
                 u.EmailVerified,
-                ucd.ID,
+                ucd.ID as UserCentreDetailID,
                 ucd.UserID,
                 ucd.CentreID,
                 ucd.Email as CentreEmail,
-                ucd.EmailVerified,
+                ucd.EmailVerified as CentreEmailVerified,
                 (SELECT ID
                     FROM AdminAccounts aa
                         WHERE aa.UserID = da.UserID
@@ -731,6 +738,25 @@
                     WHERE Email = @email ",
                new { email }
            ) > 0;
+        }
+
+        public int? GetUserLearningHubAuthId(int userId)
+        {
+            return connection.Query<int?>(
+                @"SELECT LearningHubAuthId
+                    FROM Users
+                    WHERE ID = @userId",
+                new { userId }
+                ).Single();
+        }
+
+        public void SetUserLearningHubAuthId(int userId, int learningHubAuthId)
+        {
+            connection.Execute(
+                @"UPDATE Users
+                    SET LearningHubAuthId = @learningHubAuthId
+                    WHERE ID = @userId",
+                new { userId, learningHubAuthId });
         }
     }
 }

@@ -1,0 +1,18 @@
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
+@model CurrentSelfAssessment
+
+<div class="nhsuk-expander-group word-break" id="@Model.Id-card">
+    <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+            <span class="nhsuk-details__summary-text" id="@Model.Id-name" name="name">
+                @Model.Name
+            </span>
+        </summary>
+        <div class="nhsuk-details__text">
+            <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateSelfAssessmentProgressDetails.cshtml" model="@Model" />
+            <feature name="ShowSelfAssessmentProgressButtons">
+                <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateSelfAssessmentProgressButtons.cshtml" model="@Model" />
+            </feature>
+        </div>
+    </details>
+</div>

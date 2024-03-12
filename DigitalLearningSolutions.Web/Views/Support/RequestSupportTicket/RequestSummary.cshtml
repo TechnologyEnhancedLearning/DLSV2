@@ -1,0 +1,64 @@
+﻿@using DigitalLearningSolutions.Data.Models.Support
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
+@model RequestSummaryViewModel;
+@{
+    bool errorHasOccurred = false;
+    @if (Model.RequestSubject == null && !ViewData.ModelState.IsValid)
+    {
+        errorHasOccurred = true;
+    }
+    ViewData["Title"] = "Request details";
+    var cancelLinkData = Html.GetRouteValues();
+}
+<link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RequestSubject),nameof(Model.RequestDescription) })" />
+}
+<div class=" nhsuk-u-margin-top-1">
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" role="button" asp-controller="RequestSupportTicket" asp-action="TypeofRequest" asp-route-dlsSubApplication="@ViewContext.RouteData.Values["dlsSubApplication"]">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
+                <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+            </svg>
+            Back
+        </a>
+    </div>
+</div>
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <div class="nhsuk-u-reading-width">
+            <h1 class="nhsuk-heading-xl">@Model.RequestType</h1>
+            <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetRequestSummary" asp-all-route-data="@cancelLinkData">
+                <vc:text-input asp-for="RequestSubject"
+                               label="Enter a summary of your problem or request"
+                               populate-with-current-value="true"
+                               type="text"
+                               spell-check="false"
+                               hint-text=""
+                               autocomplete="given-name"
+                               css-class=""
+                               required="true" />
+                <vc:text-area asp-for="RequestDescription"
+                              label="Describe your problem or request"
+                              populate-with-current-value="true"
+                              rows="5"
+                              spell-check="false"
+                              hint-text="If you are reporting a problem, please tell us exactly where it occurs and steps to recreate it. If you need to add screenshots, you will be able to do this in the next step."
+                              css-class="html-editor"
+                              character-count="null" />
+
+                <button class="nhsuk-button" type="submit">Next</button>
+            </form>
+
+            <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+}
+

@@ -1,0 +1,153 @@
+﻿@using DigitalLearningSolutions.Data.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
+@model DelegateSelfAssessmentInfoViewModel
+
+<dl class="nhsuk-summary-list details-list-with-button word-break">
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.ActivityDelegates))
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Delegate ID
+            </dt>
+            <dd class="nhsuk-summary-list__value searchable-element-candidate-number" data-name-for-sorting="delegate-id">
+                @Model.CandidateNumber
+            </dd>
+            <dd class="nhsuk-summary-list__actions" />
+        </div>
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Professional registration number
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+            <dd class="nhsuk-summary-list__actions" />
+        </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                First enrolled
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="enrolled-date">
+                @Model.StartedDate
+            </dd>
+            <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                Enrolment method
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.EnrolmentMethod" />
+            <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                Supervisors
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
+                @if (Model.Supervisors.Any())
+                {
+                    @foreach (var supervisor in Model.Supervisors.Take(3))
+                    {
+                        <p>@supervisor.SupervisorName, @supervisor.RoleName (@supervisor.CentreName)</p>
+                    }
+                    @if (Model.Supervisors.Count() > 3)
+                    {
+                        <p>+@(Model.Supervisors.Count() - 3) more</p>
+                    }
+                }
+                else
+                {
+                    @("-")
+                }
+            </dd>
+            <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                Complete by
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
+                @(Model.CompleteBy?.ToString() ?? "-")
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+                <a data-return-page-enabled="true"
+                   asp-controller="ActivityDelegates"
+                   asp-action="EditCompleteByDate"
+                   asp-route-delegateUserId="@Model.DelegateUserId"
+                   asp-route-selfAssessmentId="@Model.SelfAssessmentId"
+                   asp-route-accessedVia="@Model.AccessedVia"
+                   asp-route-returnPageQuery="@Model.ReturnPageQuery">
+                    Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
+                </a>
+            </dd>
+        </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                Last access
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-accessed">
+                @Model.LastAccessed
+            </dd>
+            <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                Launch count
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="launch-count">
+                @Model.LaunchCount
+            </dd>
+            <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+                Progress
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-name-for-sorting="progress">
+                <span style="white-space:pre">@Model.Progress</span>
+            </dd>
+            <dd class="nhsuk-summary-list__actions"></dd>
+        </div>
+        if (Model.Unsupervised)
+        {
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Submitted
+                </dt>
+                <partial name="_SummaryFieldValue" model="@Model.SubmittedDate" />
+                <dd class="nhsuk-summary-list__actions" />
+            </div>
+        }
+        else
+        {
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Signed off
+                </dt>
+                <partial name="_SummaryFieldValue" model="@Model.SignedOff" />
+                <dd class="nhsuk-summary-list__actions" />
+            </div>
+        }
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Removed
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.RemovedDate" />
+            <dd class="nhsuk-summary-list__actions" />
+        </div>
+
+        @if (Model.RemovedDate == null)
+        {
+            <div class="nhsuk-grid-row nhsuk-u-padding-top-5">
+                <div class="nhsuk-grid-column-full">
+                    <a class="nhsuk-button delete-button nhsuk-button--secondary"
+                       role="button"
+                       asp-controller="ActivityDelegates"
+                       asp-action="RemoveDelegateSelfAssessment"
+                       asp-route-candidateAssessmentsId="@Model.CandidateAssessmentsId">
+                        Remove from self assessment
+                    </a>
+                </div>
+            </div>
+        }
+    }
+</dl>

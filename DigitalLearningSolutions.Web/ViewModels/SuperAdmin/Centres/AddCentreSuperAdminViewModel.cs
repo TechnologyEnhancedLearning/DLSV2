@@ -31,6 +31,7 @@
             ShowOnMap = centre.ShowOnMap;
         }
 
+        [MaxLength(250, ErrorMessage = "Centre name must be 250 characters or fewer")]
         [Required(ErrorMessage = "Enter a centre name")]
         public string CentreName { get; set; }
 
@@ -49,11 +50,16 @@
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? CentreEmail { get; set; }
 
+        [RegularExpression(@"^[\d.,\s]+$", ErrorMessage = "IP Prefix can contain only digits, stops, commas and spaces")]
         public string? IpPrefix { get; set; }
         public bool ShowOnMap { get; set; }
         public string? ContactFirstName { get; set; }
         public string? ContactLastName { get; set; }
+        [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
+        [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
+        [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? ContactEmail { get; set; }
+        [RegularExpression(@"^\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*(\d\s*)?\s*$", ErrorMessage = "Enter a Telephone number in the correct format.")]
         public string? ContactPhone { get; set; }
 
         [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]

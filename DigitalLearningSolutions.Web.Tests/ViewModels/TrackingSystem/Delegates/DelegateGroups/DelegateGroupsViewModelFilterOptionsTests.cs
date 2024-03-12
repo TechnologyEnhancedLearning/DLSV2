@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
+    using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -29,17 +31,17 @@
             {
                 result.Count.Should().Be(8);
                 result.Single(f => f.DisplayText == "Prompt 1").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|1");
+                    .Be("LinkedToField|Prompt 1|1");
                 result.Single(f => f.DisplayText == "Prompt 2").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|2");
+                    .Be("LinkedToField|Prompt 2|2");
                 result.Single(f => f.DisplayText == "Prompt 3").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|3");
+                    .Be("LinkedToField|Prompt 3|3");
                 result.Single(f => f.DisplayText == "Prompt 4").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|5");
+                    .Be("LinkedToField|Prompt 4|5");
                 result.Single(f => f.DisplayText == "Prompt 5").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|6");
+                    .Be("LinkedToField|Prompt 5|6");
                 result.Single(f => f.DisplayText == "Prompt 6").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|7");
+                    .Be("LinkedToField|Prompt 6|7");
             }
         }
 
@@ -47,7 +49,12 @@
         public void GetAddedByOptions_returns_expected_filter_options()
         {
             // Given
-            var admins = new[] { (1, "Test Admin"), (2, "Test Person") };
+
+            IEnumerable<GroupDelegateAdmin> admins = new List<GroupDelegateAdmin>();
+
+            admins = admins.Append(new GroupDelegateAdmin { AdminId = 1, FullName = "Test Admin One" });
+            admins = admins.Append(new GroupDelegateAdmin { AdminId = 2, FullName = "Test Admin Two" });
+            admins = admins.Append(new GroupDelegateAdmin { AdminId = 3, FullName = "Test Admin Three" });
 
             // When
             var result = DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins).ToList();
@@ -55,8 +62,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.Count.Should().Be(2);
-                result.First().DisplayText.Should().Be("Test Admin");
+                result.Count.Should().Be(3);
+                result.First().DisplayText.Should().Be("Test Admin One");
                 result.First().FilterValue.Should().Be("AddedByAdminId|AddedByAdminId|1");
             }
         }

@@ -1,0 +1,95 @@
+﻿@using DigitalLearningSolutions.Data.Models.Support
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
+@model SupportSummaryViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Request summary";
+    var cancelLinkData = Html.GetRouteValues();
+}
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" role="button" asp-controller="RequestSupportTicket" asp-action="RequestAttachment" asp-all-route-data="@cancelLinkData">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
+            <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+        </svg>
+        Back
+    </a>
+</div>
+<div class="nhsuk-grid-row">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SubmitSupportSummary" asp-route-dlsSubApplication="@ViewContext.RouteData.Values["dlsSubApplication"]">
+        <div class="nhsuk-grid-column-full">
+            <h1 class="nhsuk-heading-xl">Check your request before submitting</h1>
+            <div class="nhsuk-u-reading-width">
+                <div class="nhsuk-u-margin-bottom-8">
+                </div>
+
+                <dl class="nhsuk-summary-list">
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Request type
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @Model.RequestType
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions">
+                            <a asp-action="TypeofRequest" asp-all-route-data="@cancelLinkData">
+                                Change<span class="nhsuk-u-visually-hidden"> Request type</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key" style="border-bottom:none !important">
+                            Summary
+                        </dt>
+                        <dd class="nhsuk-summary-list__value" style="border-bottom:none !important">
+                            @Model.RequestSubject
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions" style="border-bottom:none !important">
+                            <a asp-action="RequestSummary" asp-all-route-data="@cancelLinkData">
+                                Change<span class="nhsuk-u-visually-hidden"> summary</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Description
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @Html.Raw(@Model.Description)
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions">
+
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Attachments
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @if (Model.RequestAttachment != null && Model.RequestAttachment.Count > 0)
+                            {
+                                @foreach (var file in Model.RequestAttachment)
+                                {
+                                    <p class="nhsuk-body-s" style="border-bottom:none !important;">@file.FileName.Split('_')[1]</p>
+                                    <br />
+                                }
+                            }
+
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions">
+                            <a asp-action="RequestAttachment" asp-all-route-data="@cancelLinkData">
+                                Change<span class="nhsuk-u-visually-hidden"> Attachments</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                </dl>
+
+
+                <button class="nhsuk-button" type="submit">Submit your request</button>
+            </div>
+        </div>
+    </form>
+    <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+</div>

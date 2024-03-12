@@ -1,22 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
-    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class CourseDelegatesDownloadFileServiceTests
     {
@@ -185,6 +185,7 @@
         private CourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseService courseService = null!;
         private ICentreRegistrationPromptsService registrationPromptsService = null!;
+        private ISelfAssessmentDataService selfAssessmentDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -193,18 +194,20 @@
             courseDataService = A.Fake<ICourseDataService>();
             registrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             courseService = A.Fake<ICourseService>();
-            
+            selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+
             courseDelegatesDownloadFileService = new CourseDelegatesDownloadFileService(
                 courseDataService,
                 courseAdminFieldsService,
                 registrationPromptsService,
-                courseService
+                courseService,
+                selfAssessmentDataService
             );
-            
+
         }
 
         [Test]
-        public async Task GetDelegateDownloadFileForCourse_returns_expected_excel_data()
+        public void GetDelegateDownloadFileForCourse_returns_expected_excel_data()
         {
             // Given
             const int customisationId = 1;
@@ -213,11 +216,11 @@
                 TestContext.CurrentContext.TestDirectory + CourseDelegateExportCurrentDataDownloadRelativeFilePath
             );
 
-            A.CallTo(() => courseDataService.GetCourseDelegatesCountForExport(string.Empty,"SearchableName", "Ascending",
+            A.CallTo(() => courseDataService.GetCourseDelegatesCountForExport(string.Empty, "SearchableName", "Ascending",
                    customisationId, centreId, null, null, null, null, null, null, null))
               .Returns(3);
 
-            A.CallTo(() => courseDataService.GetCourseDelegatesForExport(string.Empty,0,250, "SearchableName", "Ascending",
+            A.CallTo(() => courseDataService.GetCourseDelegatesForExport(string.Empty, 0, 250, "SearchableName", "Ascending",
                     customisationId, centreId, null, null, null, null, null, null, null))
                .Returns(courseDelegates.Where(c => c.ApplicationName == "Course One"));
 
@@ -241,7 +244,7 @@
 
             // When
 
-            var resultBytes = await courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(string.Empty,0,250, "SearchableName", "Ascending",
+            var resultBytes = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(string.Empty, 0, 250, "SearchableName", "Ascending",
                     customisationId, centreId, null, null, null, null, null, null, null
             );
 
@@ -258,11 +261,12 @@
             // Given
             const int categoryId = 1;
             const int centreId = 1;
+            const string sortDirection = GenericSortingHelper.Ascending;
             using var expectedWorkbook = new XLWorkbook(
                 TestContext.CurrentContext.TestDirectory + CourseDelegateExportAllDataDownloadRelativeFilePath
             );
 
-            A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId)).Returns(
+            A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId, null, null, null, sortDirection)).Returns(
                 new CentreCourseDetails
                 {
                     Courses = new[]
@@ -292,12 +296,12 @@
                 .Returns(new CentreRegistrationPrompts(centreId, centreRegistrationPrompts));
 
             // When
-            var resultBytes = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFile(
+            var resultBytes = courseDelegatesDownloadFileService.GetActivityDelegateDownloadFile(
                 centreId,
                 categoryId,
                 null,
                 null,
-                null
+                "Any", "Any", "Any", "Any", "true", "Any", null
             );
             using var resultsStream = new MemoryStream(resultBytes);
             using var resultWorkbook = new XLWorkbook(resultsStream);

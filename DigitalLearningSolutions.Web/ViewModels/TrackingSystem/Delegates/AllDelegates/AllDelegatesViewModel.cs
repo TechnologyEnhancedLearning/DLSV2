@@ -19,7 +19,7 @@
             result,
             true,
             availableFilters,
-            "Search delegates"
+            "Search"
         )
         {
             var promptsWithOptions =

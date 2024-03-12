@@ -1,9 +1,12 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+using DigitalLearningSolutions.Data.Models;
 using DigitalLearningSolutions.Data.Models.Centres;
-using DigitalLearningSolutions.Data.Tests.TestHelpers;
+using DigitalLearningSolutions.Data.Models.SuperAdmin;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+using DigitalLearningSolutions.Web.Tests.TestHelpers;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
 using FakeItEasy;
 using FluentAssertions;
@@ -20,11 +23,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
     {
         private const int CenterId = 374;
         private readonly ICentresDataService centresDataService = A.Fake<ICentresDataService>();
+        private readonly ICentreApplicationsService centreApplicationsService = A.Fake<ICentreApplicationsService>();
         private readonly ICentresService centresService = A.Fake<ICentresService>();
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
         private readonly IRegionDataService regionDataService = A.Fake<IRegionDataService>();
         private readonly IContractTypesDataService contractTypesDataService = A.Fake<IContractTypesDataService>();
         private readonly ICourseDataService courseDataService = A.Fake<ICourseDataService>();
+        private readonly ICentresDownloadFileService centresDownloadFileService = A.Fake<ICentresDownloadFileService>();
+        private readonly ICentreSelfAssessmentsService centreSelfAssessmentsService = A.Fake<ICentreSelfAssessmentsService>();
         private CentresController controller = null!;
 
         [SetUp]
@@ -32,11 +38,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         {
             controller = new CentresController(
             centresService,
+            centreApplicationsService,
             searchSortFilterPaginateService,
             regionDataService,
             centresDataService,
             contractTypesDataService,
-            courseDataService
+            courseDataService,
+            centresDownloadFileService,
+            centreSelfAssessmentsService
             )
             .WithDefaultContext()
             .WithMockUser(true);
@@ -97,12 +106,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         public void EditCentreDetails_results_DuplicateCentre_error()
         {
             // Given
-            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##") };
+            IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##"), (610, "Alternative Futures Group") };
             A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
             var model = new EditCentreDetailsSuperAdminViewModel
             {
                 CentreId = 374,
-                CentreName = "##HEE Demo Centre##",
+                CentreName = "Alternative Futures Group",
                 CentreTypeId = 1,
                 CentreType = "NHS Organisation",
                 RegionName = "National",
@@ -113,7 +122,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             };
 
             // When
-            var result = controller.EditCentreDetails(model);            
+            var result = controller.EditCentreDetails(model);
             // Then
             result.Should().BeViewResult();
             controller.ModelState.IsValid.Should().BeFalse();
@@ -200,7 +209,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             result.Should().BeViewResult();
 
             controller.ModelState.IsValid.Should().BeFalse();
-            var centreNameErrors = controller.ModelState["CentreName"].Errors;
+            var centreNameErrors = controller.ModelState["CentreName"]?.Errors;
             centreNameErrors.Should().NotBeEmpty();
             centreNameErrors.Should().Contain(error => error.ErrorMessage ==
             "The centre name you have entered already exists, please enter a different centre name");
@@ -351,7 +360,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             A.CallTo(() => centresDataService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
 
             // When
-            var result = controller.EditContractInfo(centreId,28,8,2023,10024,10024,100024);
+            var result = controller.EditContractInfo(centreId, 28, 8, 2023, 10024, 10024, 100024);
 
             // Then
             using (new AssertionScope())
@@ -398,6 +407,194 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                )).MustHaveHappened();
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
+        }
+
+        [Test]
+        public void Export_passes_in_used_parameters_to_file()
+        {
+            // Given
+            const string searchString = "Frame by Frame";
+            const string existingFilterString = "";
+
+            // When
+            controller.Export(searchString, existingFilterString);
+
+            // Then
+            A.CallTo(
+                () => centresDownloadFileService.GetAllCentresFile(
+                    searchString,
+                    existingFilterString
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void ConfirmRemoveCourse_ShouldReturnView_WhenCentreApplicationExists()
+        {
+            // Given 
+            var centreApplication = new CentreApplication(
+                centreApplicationId: 1,
+                centreId: 1,
+                centreName: "Test",
+                applicationId: 1,
+                applicationName: "Test",
+                customisationCount: 1);
+            A.CallTo(() => centreApplicationsService.GetCentreApplicationByCentreAndApplicationID(A<int>._, A<int>._)).Returns(centreApplication);
+
+            // When
+            var result = controller.ConfirmRemoveCourse(1, 2) as ViewResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<ViewResult>().Which
+                .ViewName.Should().Be("ConfirmRemoveCourse");
+            result!.Model.Should().BeOfType<ConfirmRemoveCourseViewModel>();
+        }
+
+        [Test]
+        public void ConfirmRemoveCourse_ShouldRedirectToCourses_WhenCentreApplicationDoesNotExist()
+        {
+            // Given
+            A.CallTo(() => centreApplicationsService.GetCentreApplicationByCentreAndApplicationID(A<int>._, A<int>._)).Returns(null);
+
+            // When
+            var result = controller.ConfirmRemoveCourse(1, 2) as RedirectToActionResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
+                .ActionName.Should().Be("Courses");
+            result!.RouteValues!["centreId"].Should().Be(1);
+        }
+
+        [Test]
+        public void RemoveCourse_ShouldRedirectToCourses_AfterDeletingCentreApplication()
+        {
+            // When
+            var result = controller.RemoveCourse(1, 2) as RedirectToActionResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
+                .ActionName.Should().Be("Courses");
+            result!.RouteValues!["centreId"].Should().Be(1);
+            A.CallTo(() => centreApplicationsService.DeleteCentreApplicationByCentreAndApplicationID(1, 2)).MustHaveHappenedOnceExactly();
+        }
+        [Test]
+        public void CourseAddCommit_ShouldInsertCentreApplicationsAndRedirectToCourses()
+        {
+            // Given
+
+            var model = new CourseAddViewModel
+            {
+                CentreId = 1,
+                ApplicationIds = new List<int> { 2, 3, 4 },
+            };
+
+            // When
+            var result = controller.CourseAddCommit(model, model.CentreId, "Core") as RedirectToActionResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
+                .ActionName.Should().Be("Courses");
+            result!.RouteValues!["centreId"].Should().Be(1);
+
+            foreach (var id in model.ApplicationIds)
+            {
+                A.CallTo(() => centreApplicationsService.InsertCentreApplication(1, id)).MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void Get_with_centreId_shows_SelfAssessments_page()
+        {
+            // Given
+            const int centreId = 1;
+
+            // When
+            var result = controller.SelfAssessments(centreId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => centreSelfAssessmentsService.GetCentreSelfAssessments(centreId)).MustHaveHappenedOnceExactly();
+                result.Should().BeViewResult().ModelAs<CentreSelfAssessmentsViewModel>();
+                result.Should().BeViewResult();
+            }
+        }
+        [Test]
+        public void ConfirmRemoveSelfAssessment_ShouldReturnView_WhenCentreSelfAssessmentExists()
+        {
+            // Given 
+            var centreApplication = new CentreSelfAssessment
+            {
+                SelfAssessmentId = 1,
+                CentreId = 1,
+                CentreName = "Test",
+                SelfAssessmentName = "Test",
+                DelegateCount = 1,
+                SelfEnrol = true
+            };
+            A.CallTo(() => centreSelfAssessmentsService.GetCentreSelfAssessmentByCentreAndID(A<int>._, A<int>._)).Returns(centreApplication);
+
+            // When
+            var result = controller.ConfirmRemoveSelfAssessment(1, 1) as ViewResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<ViewResult>().Which
+                .ViewName.Should().Be("ConfirmRemoveSelfAssessment");
+            result!.Model.Should().BeOfType<ConfirmRemoveSelfAssessmentViewModel>();
+        }
+
+        [Test]
+        public void ConfirmRemoveSelfAssessment_ShouldRedirectToCentreSelfAssessments_WhenCentreSelfAssessmentDoesNotExist()
+        {
+            // Given
+            A.CallTo(() => centreSelfAssessmentsService.GetCentreSelfAssessmentByCentreAndID(A<int>._, A<int>._)).Returns(null);
+
+            // When
+            var result = controller.ConfirmRemoveSelfAssessment(1, 1) as RedirectToActionResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
+                .ActionName.Should().Be("SelfAssessments");
+            result!.RouteValues!["centreId"].Should().Be(1);
+        }
+
+        [Test]
+        public void RemoveSelfAssessment_ShouldRedirectToCentreSelfAssessments_AfterDeletingSelfAssessmentApplication()
+        {
+            // When
+            var result = controller.RemoveSelfAssessment(1, 1) as RedirectToActionResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
+                .ActionName.Should().Be("SelfAssessments");
+            result!.RouteValues!["centreId"].Should().Be(1);
+            A.CallTo(() => centreSelfAssessmentsService.DeleteCentreSelfAssessment(1, 1)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void SelfAssessmentAddCommit_ShouldInsertCentreSelfAssessmentAndRedirectToSelfAssessments()
+        {
+            // Given
+
+            var model = new SelfAssessmentAddViewModel
+            {
+                CentreId = 1,
+                SelfAssessmentIds = new List<int> { 4, 5 },
+                EnableSelfEnrolment = false,
+            };
+
+            // When
+            var result = controller.SelfAssessmentAddSubmit(model.CentreId, model) as RedirectToActionResult;
+
+            // Then
+            result.Should().NotBeNull().And.BeOfType<RedirectToActionResult>().Which
+                .ActionName.Should().Be("SelfAssessments");
+            result!.RouteValues!["centreId"].Should().Be(1);
+
+            foreach (var id in model.SelfAssessmentIds)
+            {
+                A.CallTo(() => centreSelfAssessmentsService.InsertCentreSelfAssessment(1, id, false)).MustHaveHappenedOnceExactly();
+            }
         }
     }
 }

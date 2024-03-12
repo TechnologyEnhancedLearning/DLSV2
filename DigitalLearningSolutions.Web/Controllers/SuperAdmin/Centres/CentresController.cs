@@ -2,25 +2,26 @@
 using DigitalLearningSolutions.Data.Enums;
 using DigitalLearningSolutions.Data.Helpers;
 using DigitalLearningSolutions.Data.Models.Centres;
+using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.Services;
-using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
+using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.FeatureManagement.Mvc;
+using Org.BouncyCastle.Asn1.Misc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 {
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
-
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.SuperAdmin))]
@@ -28,20 +29,26 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
     public class CentresController : Controller
     {
         private readonly ICentresService centresService;
+        private readonly ICentreApplicationsService centreApplicationsService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IRegionDataService regionDataService;
         private readonly ICentresDataService centresDataService;
         private readonly IContractTypesDataService contractTypesDataService;
         private readonly ICourseDataService courseDataService;
-        public CentresController(ICentresService centresService, ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IRegionDataService regionDataService, ICentresDataService centresDataService, IContractTypesDataService contractTypesDataService, ICourseDataService courseDataService)
+        private readonly ICentresDownloadFileService centresDownloadFileService;
+        private readonly ICentreSelfAssessmentsService centreSelfAssessmentsService;
+        public CentresController(ICentresService centresService, ICentreApplicationsService centreApplicationsService, ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IRegionDataService regionDataService, ICentresDataService centresDataService, IContractTypesDataService contractTypesDataService, ICourseDataService courseDataService, ICentresDownloadFileService centresDownloadFileService, ICentreSelfAssessmentsService centreSelfAssessmentsService)
         {
             this.centresService = centresService;
+            this.centreApplicationsService = centreApplicationsService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.regionDataService = regionDataService;
             this.centresDataService = centresDataService;
             this.contractTypesDataService = contractTypesDataService;
             this.courseDataService = courseDataService;
+            this.centresDownloadFileService = centresDownloadFileService;
+            this.centreSelfAssessmentsService = centreSelfAssessmentsService;
         }
 
         [Route("SuperAdmin/Centres/{page=0:int}")]
@@ -61,6 +68,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             {
                 page = 1;
             }
+
+            search = search == null ? string.Empty : search.Trim();
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             centreStatus = (string.IsNullOrEmpty(centreStatus) ? "Any" : centreStatus);
@@ -129,7 +138,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 !string.IsNullOrEmpty(centreStatus)
             )
             {
-                result.SearchString = "SearchQuery|" + search + "";
+                result.SearchString = "SearchQuery|" + search.Trim() + "";
                 result.FilterString = "Region|" + region + "-CentreType|" + centreType + "-ContractType|" + contractType + "-CentreStatus|" + centreStatus;
             }
 
@@ -227,8 +236,14 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditCentreDetails")]
         public IActionResult EditCentreDetails(EditCentreDetailsSuperAdminViewModel model)
         {
-            bool isCentreNamePresent = centresDataService.GetAllCentres().Any(center => center.Item2 == model.CentreName);
-            if (isCentreNamePresent)
+            var centres = centresDataService.GetAllCentres().ToList();
+            bool isExistingCentreName = centres.Where(center => center.Item1 == model.CentreId)
+                .Select(center => center.Item2)
+                .FirstOrDefault()
+                .Equals(model.CentreName.Trim());
+            bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (isCentreNamePresent && !isExistingCentreName)
             {
                 ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
             }
@@ -244,16 +259,18 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 ViewBag.CentreTypes = SelectListHelper.MapOptionsToSelectListItems(
                     centreTypes, model.CentreTypeId
                 );
+                model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
+                model.IpPrefix = model.IpPrefix == null ? string.Empty : model.IpPrefix.Trim();
                 return View(model);
             }
 
             centresDataService.UpdateCentreDetailsForSuperAdmin(
                 model.CentreId,
-                model.CentreName,
+                model.CentreName.Trim(),
                 model.CentreTypeId,
                 model.RegionId,
                 model.CentreEmail,
-                model.IpPrefix,
+                model.IpPrefix?.Trim(),
                 model.ShowOnMap
             );
             return RedirectToAction("ManageCentre", "Centres", new { centreId = model.CentreId });
@@ -285,6 +302,9 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult ManageCentreManager(EditCentreManagerDetailsViewModel editCentreManagerDetailsViewModel)
         {
+            editCentreManagerDetailsViewModel.FirstName = editCentreManagerDetailsViewModel.FirstName == null ? string.Empty : editCentreManagerDetailsViewModel.FirstName.Trim();
+            editCentreManagerDetailsViewModel.LastName = editCentreManagerDetailsViewModel.LastName == null ? string.Empty : editCentreManagerDetailsViewModel.LastName.Trim();
+            editCentreManagerDetailsViewModel.Telephone = editCentreManagerDetailsViewModel.Telephone?.Trim() ?? string.Empty;
             if (!ModelState.IsValid)
             {
                 return View(editCentreManagerDetailsViewModel);
@@ -474,7 +494,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         public IActionResult AddCentre(AddCentreSuperAdminViewModel model)
         {
             var centres = centresDataService.GetAllCentres().ToList();
-            bool isCentreNamePresent = centres.Any(center => center.Item2 == model.CentreName);
+            bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
             if (isCentreNamePresent)
             {
                 ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
@@ -485,11 +505,17 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 var regions = regionDataService.GetRegionsAlphabetical().ToList();
                 model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions, model.RegionId);
                 model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes, model.CentreTypeId);
+                model.CentreName = model.CentreName?.Trim() ?? string.Empty;
+                model.ContactFirstName = model.ContactFirstName?.Trim() ?? string.Empty;
+                model.ContactLastName = model.ContactLastName?.Trim() ?? string.Empty;
+                model.ContactEmail = model.ContactEmail?.Trim() ?? string.Empty;
+                model.ContactPhone = model.ContactPhone?.Trim() ?? string.Empty;
+                model.IpPrefix = model.IpPrefix?.Trim() ?? string.Empty;
                 return View(model);
             }
 
             int insertedID = centresDataService.AddCentreForSuperAdmin(
-                model.CentreName,
+                model.CentreName.Trim(),
                 model.ContactFirstName,
                 model.ContactLastName,
                 model.ContactEmail,
@@ -497,7 +523,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 model.CentreTypeId,
                 model.RegionId,
                 model.RegistrationEmail,
-                model.IpPrefix,
+                model.IpPrefix?.Trim(),
                 model.ShowOnMap,
                 model.AddITSPcourses
             );
@@ -580,7 +606,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             }
             DateTime? date = null;
             if ((day.GetValueOrDefault() != 0) || (month.GetValueOrDefault() != 0) || (year.GetValueOrDefault() != 0))
-                {
+            {
                 date = new DateTime(year ?? 0, month ?? 0, day ?? 0);
             }
             this.centresDataService.UpdateContractTypeandCenter(contractTypeViewModel.CentreId,
@@ -590,6 +616,186 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                date
                );
             return RedirectToAction("ManageCentre", new { centreId = contractTypeViewModel.CentreId });
+        }
+
+        [Route("SuperAdmin/Centres/Export")]
+        public IActionResult Export(
+            string? searchString = null,
+            string? existingFilterString = null
+        )
+        {
+            var content = centresDownloadFileService.GetAllCentresFile(
+                searchString,
+                existingFilterString
+            );
+
+            const string fileName = "DLS Centres Export.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
+        }
+        [NoCaching]
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/{applicationId}/ConfirmRemove")]
+        public IActionResult ConfirmRemoveCourse(int centreId = 0, int applicationId = 0)
+        {
+            var centreApplication = centreApplicationsService.GetCentreApplicationByCentreAndApplicationID(centreId, applicationId);
+            if (centreApplication != null)
+            {
+                var model = new ConfirmRemoveCourseViewModel();
+                model.CentreApplication = centreApplication;
+                return View("ConfirmRemoveCourse", model);
+            }
+            else
+            {
+                return RedirectToAction("Courses", new { centreId });
+            }
+
+        }
+        public IActionResult RemoveCourse(int centreId = 0, int applicationId = 0)
+        {
+            centreApplicationsService.DeleteCentreApplicationByCentreAndApplicationID(centreId, applicationId);
+            return RedirectToAction("Courses", new { centreId });
+        }
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add")]
+        public IActionResult CourseAddChooseFlow(int centreId = 0)
+        {
+            ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+            return View();
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add")]
+        [HttpPost]
+        public IActionResult CourseAddChooseFlow(CourseAddChooseFlowViewModel model)
+        {
+            return RedirectToAction(nameof(CourseAdd), new { centreId = model.CentreId, courseType = model.AddCourseOption, searchTerm = (model.SearchTerm != null ? model.SearchTerm.Replace(" ", "%") : "") });
+        }
+
+        private CourseAddViewModel SetupCommonModel(int centreId, string courseType, IEnumerable<CourseForPublish> courses)
+        {
+            return new CourseAddViewModel
+            {
+                CourseType = courseType,
+                CentreId = centreId,
+                CentreName = $"{centresDataService.GetCentreName(centreId)} ({centreId})",
+                Courses = courses
+            };
+        }
+
+        [NoCaching]
+        [Route("SuperAdmin/Centres/{centreId}/Courses/Add/{courseType}")]
+        public IActionResult CourseAdd(int centreId, string courseType, string? searchTerm)
+        {
+            CourseAddViewModel model;
+            switch (courseType)
+            {
+                case "Core":
+                    model = SetupCommonModel(centreId, "Core", centreApplicationsService.GetCentralCoursesForPublish(centreId));
+                    break;
+                case "Other":
+                    model = SetupCommonModel(centreId, "Other", centreApplicationsService.GetOtherCoursesForPublish(centreId, searchTerm));
+                    break;
+                default:
+                    model = SetupCommonModel(centreId, "Pathways", centreApplicationsService.GetPathwaysCoursesForPublish(centreId));
+                    break;
+            }
+            model.SearchTerm = searchTerm;
+            return View("CourseAdd", model);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Centres/{centreId}/Courses/Add/{courseType}")]
+        public IActionResult CourseAddCommit(CourseAddViewModel model, int centreId, string courseType)
+        {
+            if (!ModelState.IsValid)
+            {
+                switch (courseType)
+                {
+                    case "Core":
+                        model.Courses = centreApplicationsService.GetCentralCoursesForPublish(centreId);
+                        break;
+                    case "Other":
+                        model.Courses = centreApplicationsService.GetOtherCoursesForPublish(centreId, model.SearchTerm);
+                        break;
+                    default:
+                        model.Courses = centreApplicationsService.GetPathwaysCoursesForPublish(centreId);
+                        break;
+                }
+                model.CentreName = centresDataService.GetCentreName(centreId);
+                return View("CourseAdd", model);
+            }
+            foreach (var id in model.ApplicationIds)
+            {
+                centreApplicationsService.InsertCentreApplication(model.CentreId, id);
+            }
+            return RedirectToAction("Courses", new { centreId = model.CentreId });
+        }
+
+        [Route("SuperAdmin/Centres/{centreId=0:int}/SelfAssessments")]
+        public IActionResult SelfAssessments(int centreId = 0)
+        {
+            var selfAssessments = centreSelfAssessmentsService.GetCentreSelfAssessments(centreId);
+            var model = new CentreSelfAssessmentsViewModel() { CentreSelfAssessments = selfAssessments };
+            ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+            return View(model);
+        }
+        [NoCaching]
+        [Route("SuperAdmin/Centres/{centreId=0:int}/SelfAssessments/{selfAssessmentId}/ConfirmRemove")]
+        public IActionResult ConfirmRemoveSelfAssessment(int centreId = 0, int selfAssessmentId = 0)
+        {
+            var centreSelfAssessment = centreSelfAssessmentsService.GetCentreSelfAssessmentByCentreAndID(centreId, selfAssessmentId);
+            if (centreSelfAssessment != null)
+            {
+                var model = new ConfirmRemoveSelfAssessmentViewModel();
+                model.CentreSelfAssessment = centreSelfAssessment;
+                return View("ConfirmRemoveSelfAssessment", model);
+            }
+            else
+            {
+                return RedirectToAction("SelfAssessments", new { centreId });
+            }
+
+        }
+        public IActionResult RemoveSelfAssessment(int centreId = 0, int selfAssessmentId = 0)
+        {
+            centreSelfAssessmentsService.DeleteCentreSelfAssessment(centreId, selfAssessmentId);
+            return RedirectToAction("SelfAssessments", new { centreId });
+        }
+
+        [HttpGet]
+        [Route("SuperAdmin/Centres/{centreId}/SelfAssessments/Add")]
+        public IActionResult SelfAssessmentAdd(int centreId = 0)
+        {
+            var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
+            var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+            var model = new SelfAssessmentAddViewModel() { SelfAssessments = selfAssessmentsForPublish, CentreId = centreId, CentreName = centreName, SelfAssessmentIds = new List<int>() };
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Centres/{centreId}/SelfAssessments/Add")]
+        public IActionResult SelfAssessmentAddSubmit(int centreId, SelfAssessmentAddViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
+                var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+                model.SelfAssessmentIds = model.SelfAssessmentIds ?? new List<int>();
+                model.CentreName = centreName;
+                model.SelfAssessments = selfAssessmentsForPublish;
+                return View("SelfAssessmentAdd", model);
+            }
+            var selfEnrol = model.EnableSelfEnrolment;
+            if (selfEnrol != null)
+            {
+                foreach (var id in model.SelfAssessmentIds)
+                {
+                    centreSelfAssessmentsService.InsertCentreSelfAssessment(model.CentreId, id, (bool)selfEnrol);
+                }
+            }
+
+            return RedirectToAction("SelfAssessments", new { centreId = model.CentreId });
         }
     }
 }

@@ -24,7 +24,7 @@
         }
 
         public int SectionId { get; set; }
-        public string SectionName { get; set; }
+        public string SectionName { get; set; } = string.Empty;
         public IEnumerable<Tutorial> Tutorials { get; set; }
     }
 }

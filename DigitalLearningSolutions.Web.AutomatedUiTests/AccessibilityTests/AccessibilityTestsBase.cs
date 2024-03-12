@@ -23,7 +23,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             ValidatePageHeading(pageTitle);
 
             // then
-            var axeResult = new AxeBuilder(Driver).Analyze();
+            // Exclude conditional radios, see: https://github.com/alphagov/govuk-frontend/issues/979#issuecomment-872300557
+            var axeResult = new AxeBuilder(Driver).Exclude("div.nhsuk-radios--conditional div.nhsuk-radios__item input.nhsuk-radios__input").Analyze();
             axeResult.Violations.Should().BeEmpty();
         }
 

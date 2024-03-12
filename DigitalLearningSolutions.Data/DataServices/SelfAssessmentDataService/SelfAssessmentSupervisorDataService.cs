@@ -45,7 +45,9 @@
                 sasr.SelfAssessmentReview,
                 sasr.ResultsReview,
                 sd.AddedByDelegate,
-                au.CentreName
+                au.CentreName,
+                sasr.AllowDelegateNomination,
+                sasr.AllowSupervisorRoleSelection
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId
@@ -74,7 +76,8 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)",
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)
+                        ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }
             );
         }
@@ -89,7 +92,8 @@
                     WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @delegateUserId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL)
                         AND (coalesce(sasr.ResultsReview, 1) = 1)
-                        AND au.Active = 1",
+                        AND au.Active = 1 
+                    ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }
             );
         }
@@ -117,7 +121,8 @@
                 INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID and au.CentreID = da.CentreID and da.Active=1
                 WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.DelegateUserID = @delegateUserId)
 		            AND (au.Supervisor = 1 OR au.NominatedSupervisor = 1) AND (au.Active = 1)
-		            AND (ca.SelfAssessmentID <> @selfAssessmentId)",
+		            AND (ca.SelfAssessmentID <> @selfAssessmentId)
+                ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }
             );
         }
@@ -142,7 +147,8 @@
                 @$"{SelectSelfAssessmentSupervisorQuery}
                     WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)
                         AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1)
-                        AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))",
+                        AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))
+                ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }
             );
         }
@@ -249,7 +255,8 @@
                         AND (cas.Removed IS NULL)
                         AND (sd.Removed IS NULL)
                         )
-                        AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (Email LIKE '%@%')",
+                        AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (Email LIKE '%@%')
+                        ORDER BY Forename, Surname",
                 new { centreId, selfAssessmentId, delegateUserId }
             );
         }

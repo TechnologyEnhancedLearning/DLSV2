@@ -12,10 +12,10 @@
     <div id="nhsuk-cookie-banner">
         <div class="nhsuk-cookie-banner  nhsuk-u-margin-top-3" id="cookiebanner">
             <div class="nhsuk-width-container ">
-                <h2>Cookies on the Digital Learning Solutions</h2>
+                <h2>Cookies on Digital Learning Solutions</h2>
                 <p>We've put some small files called cookies on your device to make our site work.</p>
                 <p>We'd also like to use analytics cookies. These send anonymous information about how our site is used to a service called Google Analytics & Hotjar Analytics. We use this information to improve our site.</p>
-                <p>Let us know if this is OK. We'll use a cookie to save your choice. You can <a id="nhsuk-cookie-banner__link" target="_blank" href="@Url.Action( "CookiePolicy","CookieConsent")" tabindex="1">read more about our cookies</a> before you choose.</p>
+                <p>Let us know if this is OK. We'll use a cookie to save your choice. You can <a id="nhsuk-cookie-banner__link" target="_blank" href="@Url.Action( "CookiePolicy","CookieConsent")">read more about our cookies</a> before you choose.</p>
                 <p>
                     <div id="cookie-banner-no-js-styling">
                         <a href="@Url.Action( "CookieConsentConfirmation","CookieConsent", new { consent="false",path = path})" class="nhsuk-button">Do not use analytics cookies</a>
@@ -38,7 +38,7 @@
 }
 @if (consentViaBannerPostTemp != null)
 {
-    <div class="nhsuk-success-banner  nhsuk-u-margin-top-3" id="nhsuk-cookie-confirmation-banner-post">
+    <div class="nhsuk-success-banner  nhsuk-u-margin-top-3" id="nhsuk-cookie-confirmation-banner-post" role="banner" aria-label="Cookies on Digital Learning Solutions">
         <div class="nhsuk-width-container">
             <p id="nhsuk-success-banner__message">You can change your cookie settings at any time using our <a href="@Url.Action( "CookiePolicy","CookieConsent")">cookies page</a>.</p>
         </div>

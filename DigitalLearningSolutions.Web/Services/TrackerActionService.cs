@@ -5,6 +5,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
@@ -49,6 +50,18 @@
             int? customisationId,
             string? sessionId
         );
+
+        TrackerEndpointResponse UpdateLessonState(
+            int? tutorialId,
+            int? progressId,
+            int? candidateId,
+            int? customisationId,
+            int? tutStat,
+            int? tutTime,
+            string? suspendData,
+            string? lessonLocation
+            );
+
     }
 
     public class TrackerActionService : ITrackerActionService
@@ -259,7 +272,10 @@
                 logger.LogError(ex, ex.Message);
                 return TrackerEndpointResponse.StoreAspProgressException;
             }
-
+            if (tutorialStatus!.Value > 0)
+            {
+                progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
+            }
             return TrackerEndpointResponse.Success;
         }
 
@@ -329,7 +345,7 @@
             {
                 var assessmentPassed = score >= assessmentDetails.PlaPassThreshold;
 
-                progressDataService.InsertAssessAttempt(
+                var i = progressDataService.InsertAssessAttempt(
                     candidateId!.Value,
                     customisationId.Value,
                     version!.Value,
@@ -353,6 +369,54 @@
             }
 
             return TrackerEndpointResponse.Success;
+        }
+        public TrackerEndpointResponse UpdateLessonState(
+            int? tutorialId,
+            int? progressId,
+            int? candidateId,
+            int? customisationId,
+            int? tutStat,
+            int? tutTime,
+            string? suspendData,
+            string? lessonLocation
+            )
+        {
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateCommonInputsForUpdateLessonStateEndpoints(
+               progressId,
+               tutorialId,
+               candidateId,
+               customisationId
+           );
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
+            int rowsUpdated = 0;
+            try
+            {
+                rowsUpdated = storeAspService.UpdateLessonState(
+                      tutorialId!.Value,
+                       progressId!.Value,
+                       tutStat!.Value,
+                       tutTime!.Value,
+                      suspendData,
+                      lessonLocation
+                  );
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return TrackerEndpointResponse.StoreSuspendDataException;
+            }
+            if (rowsUpdated > 0)
+            {
+                progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
+                return TrackerEndpointResponse.Success;
+            }
+            else
+            {
+                return TrackerEndpointResponse.NoRowUpdated;
+            }
         }
     }
 }

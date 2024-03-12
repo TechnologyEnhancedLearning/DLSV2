@@ -2,7 +2,7 @@
 {
     public class FrameworkReviewOutcomeNotification : FrameworkReview
     {
-        public string FrameworkName { get; set; }
+        public string FrameworkName { get; set; } = string.Empty;
         public string? OwnerEmail { get; set; }
         public string? OwnerFirstName { get; set; }
         public string? ReviewerFirstName { get; set; }

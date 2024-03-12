@@ -1,0 +1,83 @@
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
+@model CurrentSelfAssessment
+
+<dl class="nhsuk-summary-list details-list-with-button word-break">
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+            Enrolled
+        </dt>
+        <dd class="nhsuk-summary-list__value" data-name-for-sorting="enrolled-date">
+            @Model.StartedDate
+        </dd>
+        <dd class="nhsuk-summary-list__actions"></dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+            Supervisor count
+        </dt>
+        <dd class="nhsuk-summary-list__value" data-name-for-sorting="supervisor-count">
+          @Model.SupervisorCount
+        </dd>
+        <dd class="nhsuk-summary-list__actions"></dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+            Complete by
+        </dt>
+        <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
+            @(Model.CompleteByDate != null ? Model.CompleteByDate : "-")
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+            <a data-return-page-enabled="true"
+               asp-controller="ActivityDelegates"
+               asp-action="EditCompleteByDate"
+               asp-route-delegateUserId="@Model.DelegateUserId"
+               asp-route-selfAssessmentId="@Model.Id"
+               asp-route-accessedVia="ViewDelegate"
+               asp-route-returnPageQuery="null">
+                Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
+            </a>
+        </dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+            Last access
+        </dt>
+        <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-accessed">
+            @Model.LastAccessed
+        </dd>
+        <dd class="nhsuk-summary-list__actions"></dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+            Enrolment method
+        </dt>
+        <dd class="nhsuk-summary-list__value" data-name-for-sorting="enrolment-method">
+            @{
+                string enrolmentMethod = Model.EnrolmentMethodId switch
+                {
+                    1 => "Self enrolled",
+                    2 => "Admin/supervisor enrolled",
+                    3 => "Group",
+                    _ => "System",
+                };
+            }
+            @enrolmentMethod
+        </dd>
+        <dd class="nhsuk-summary-list__actions"></dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+            Launches
+        </dt>
+        <dd class="nhsuk-summary-list__value" data-name-for-sorting="launches">
+            @Model.LaunchCount
+        </dd>
+        <dd class="nhsuk-summary-list__actions"></dd>
+    </div>
+</dl>

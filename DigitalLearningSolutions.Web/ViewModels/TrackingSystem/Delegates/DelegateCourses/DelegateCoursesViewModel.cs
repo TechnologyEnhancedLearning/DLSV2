@@ -1,50 +1,66 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    public class DelegateCoursesViewModel : BaseSearchablePageViewModel<CourseStatisticsWithAdminFieldResponseCounts>
+    public class DelegateCoursesViewModel : BaseSearchablePageViewModel<CourseStatistics>
     {
         public DelegateCoursesViewModel(
-            SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result,
+            SearchSortFilterPaginationResult<CourseStatistics> result,
             IEnumerable<FilterModel> availableFilters,
             string courseCategoryName
         ) : base(
             result,
             true,
             availableFilters,
-            "Search courses"
+            "Search by activity name"
         )
         {
             UpdateCourseActiveFlags(result);
-            Courses = result.ItemsToDisplay.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
+
+            Courses = result.ItemsToDisplay.Select<BaseSearchableItem, SearchableDelegateCourseStatisticsViewModel>(
+                activity =>
+                {
+                    return activity switch
+                    {
+                        CourseStatisticsWithAdminFieldResponseCounts currentCourse => new SearchableDelegateCourseStatisticsViewModel(currentCourse),
+                        _ => new SearchableDelegateAssessmentStatisticsViewModel((DelegateAssessmentStatistics)activity),
+                    };
+                }
+             );
+
             CourseCategoryName = courseCategoryName;
         }
 
-        private static void UpdateCourseActiveFlags(SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result)
+        private static void UpdateCourseActiveFlags(SearchSortFilterPaginationResult<CourseStatistics> result)
         {
             foreach (var course in result.ItemsToDisplay)
             {
-                if (course.Active && !course.Archived)
+                if (course is CourseStatisticsWithAdminFieldResponseCounts)
                 {
-                    course.Active = true;
-                }
-                else
-                {
-                    course.Active = false;
-                }
+                    CourseStatisticsWithAdminFieldResponseCounts courseStatisticsWithAdminFieldResponseCounts = (CourseStatisticsWithAdminFieldResponseCounts)course;
 
-                if (course.Archived)
-                {
-                    course.Archived = true;
-                }
-                else
-                {
-                    course.Archived = false;
+                    if (courseStatisticsWithAdminFieldResponseCounts.Active && !courseStatisticsWithAdminFieldResponseCounts.Archived)
+                    {
+                        courseStatisticsWithAdminFieldResponseCounts.Active = true;
+                    }
+                    else
+                    {
+                        courseStatisticsWithAdminFieldResponseCounts.Active = false;
+                    }
+
+                    if (courseStatisticsWithAdminFieldResponseCounts.Archived)
+                    {
+                        courseStatisticsWithAdminFieldResponseCounts.Archived = true;
+                    }
+                    else
+                    {
+                        courseStatisticsWithAdminFieldResponseCounts.Archived = false;
+                    }
                 }
             }
         }
@@ -54,7 +70,7 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            CourseSortByOptions.CourseName,
+            CourseSortByOptions.ActivityName,
             CourseSortByOptions.Completed,
             CourseSortByOptions.InProgress,
         };

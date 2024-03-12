@@ -17,7 +17,7 @@
         public bool SelfRegister { get; set; }
         public bool DiagObjSelect { get; set; }
         public bool HideInLearnerPortal { get; set; }
-        public int DelegateCount { get; set; }
+        public new int DelegateCount { get; set; }
         public int CompletedCount { get; set; }
         public int CompleteWithinMonths { get; set; }
         public int ValidityMonths { get; set; }

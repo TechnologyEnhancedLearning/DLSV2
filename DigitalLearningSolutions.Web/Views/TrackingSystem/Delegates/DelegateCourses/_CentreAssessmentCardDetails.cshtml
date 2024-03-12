@@ -1,0 +1,47 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
+@model SearchableDelegateAssessmentStatisticsViewModel
+
+<dl class="nhsuk-summary-list">
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Category
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @Model.Category
+        </dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Supervised
+        </dt>
+        <partial name="_SummaryBooleanField" model="Model.Supervised" />
+    </div>
+
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Enrolled
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @Model.DelegateCount
+        </dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            In progress
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @(Model.DelegateCount - Model.SubmittedSignedOffCount)
+        </dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Submitted/Signed off
+        </dt>
+        <dd class="nhsuk-summary-list__value" name="in-progress-count">
+            @Model.SubmittedSignedOffCount
+        </dd>
+    </div>
+</dl>

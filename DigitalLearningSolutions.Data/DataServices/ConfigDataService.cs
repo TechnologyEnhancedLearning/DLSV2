@@ -33,6 +33,9 @@
         public const string SupportEmail = "SupportEmail";
         public const string AcceptableUsePolicyText = "AcceptableUse";
         public const string PrivacyPolicyText = "PrivacyPolicy";
+        public const string FreshdeskApiKey = "FreshdeskAPIKey";
+        public const string FreshdeskApiBaseUri = "FreshdeskAPIBaseUri";
+        public const string FreshdeskAPICreateTicketUri = "FreshdeskAPICreateTicketUri";
 
         private readonly IDbConnection connection;
 

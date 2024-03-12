@@ -38,7 +38,7 @@
 
         void RemoveActionPlanResource(int learningLogItemId, int delegateId);
 
-        bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateId);
+        bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateUserId);
 
         bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateUserId);
     }
@@ -220,7 +220,7 @@
             learningLogItemsDataService.RemoveLearningLogItem(learningLogItemId, delegateId, removalDate);
         }
 
-        public bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateId)
+        public bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateUserId)
         {
             if (!ConfigurationExtensions.IsSignpostingUsed(config))
             {
@@ -235,7 +235,7 @@
                 return null;
             }
 
-            return actionPlanResource.LoggedById == delegateId;
+            return actionPlanResource.LoggedById == delegateUserId;
         }
 
         public bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateUserId)

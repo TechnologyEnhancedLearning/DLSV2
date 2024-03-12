@@ -79,11 +79,17 @@
             {
                 return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId });
             }
+
             if (courseContent.Sections.Count == 1)
             {
                 var sectionId = courseContent.Sections.First().Id;
                 return RedirectToAction("Section", "LearningMenu", new { customisationId, sectionId });
             }
+            // Unique Id Manipulation Detection is being disabled as part of work on TD-3838 - a bug created by its introduction
+            //if (UniqueIdManipulationDetected(candidateId, customisationId))
+            //{
+            //    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            //}
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
             if (progressId == null)
             {
@@ -92,8 +98,11 @@
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
 
@@ -222,9 +231,10 @@
                     $"centre id: {centreId}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
 
@@ -262,8 +272,10 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
             var model = new DiagnosticAssessmentViewModel(diagnosticAssessment, customisationId, sectionId);
@@ -296,8 +308,10 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
             var model = new DiagnosticContentViewModel(
@@ -343,8 +357,10 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
             var model = new PostLearningAssessmentViewModel(postLearningAssessment, customisationId, sectionId);
@@ -377,8 +393,10 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) >= 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
             var model = new PostLearningContentViewModel(
@@ -428,8 +446,10 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
             /* Course progress doesn't get updated if the auth token expires by the end of the tutorials.
@@ -471,8 +491,10 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
             var model = new ContentViewerViewModel(
@@ -515,8 +537,10 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
             var model = new TutorialVideoViewModel(
@@ -556,8 +580,10 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
-            courseContentService.UpdateProgress(progressId.Value);
+            if (sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session) > 0)
+            {
+                courseContentService.UpdateProgress(progressId.Value);
+            };
 
             SetTempData(candidateId, customisationId);
             var model = new CourseCompletionViewModel(config, courseCompletion, progressId.Value);
@@ -582,6 +608,23 @@
                 TempData["LearningActivity"] = "Completed";
             else
                 TempData["LearningActivity"] = "Current";
+        }
+
+        private bool UniqueIdManipulationDetected(int candidateId, int customisationId)
+        {
+            int? progressId = courseContentService.GetProgressId(candidateId, customisationId);
+            if (progressId.HasValue)
+            {
+                return false;
+            }
+
+            bool isSelfRegister = courseDataService.GetSelfRegister(customisationId);
+            if (isSelfRegister)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

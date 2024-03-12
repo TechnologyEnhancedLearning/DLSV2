@@ -23,7 +23,7 @@
 
             // When
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
-            ValidatePageHeading("Digital Capability Self Assessment");
+            ValidatePageHeading("Digital Skills Assessment Tool");
             var startPageResult = new AxeBuilder(Driver).Analyze();
 
             Driver.Navigate().GoToUrl(BaseUrl + firstCapabilityUrl);
@@ -31,11 +31,11 @@
             var firstCapabilityResult = new AxeBuilder(Driver).Analyze();
 
             Driver.Navigate().GoToUrl(BaseUrl + capabilitiesUrl);
-            ValidatePageHeading("Digital Capability Self Assessment - Capabilities");
+            ValidatePageHeading("Digital Skills Assessment Tool - Capabilities");
             var capabilitiesResult = new AxeBuilder(Driver).Analyze();
 
             Driver.Navigate().GoToUrl(BaseUrl + completeByUrl);
-            ValidatePageHeading("Enter a complete by date for Digital Capability Self Assessment");
+            ValidatePageHeading("Enter a complete by date for Digital Skills Assessment Tool");
             var completeByPageResult = new AxeBuilder(Driver).Analyze();
 
             //Then

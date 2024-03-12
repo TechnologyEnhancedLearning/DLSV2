@@ -14,11 +14,11 @@
 
         public string? FirstName { get; set; }
 
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
-        public string PrimaryEmail { get; set; }
+        public string PrimaryEmail { get; set; } = string.Empty;
 
-        public string CandidateNumber { get; set; }
+        public string CandidateNumber { get; set; } = string.Empty;
 
         public DateTime AddedDate { get; set; }
 

@@ -95,14 +95,14 @@
 
         public static readonly FilterOptionModel Active = new FilterOptionModel(
             "Active",
-            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsUserActive), "true"),
-            FilterStatus.Default
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsActive), "true"),
+            FilterStatus.Success
         );
 
         public static readonly FilterOptionModel Inactive = new FilterOptionModel(
             "Inactive",
-            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsUserActive), "false"),
-            FilterStatus.Default
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminEntity.IsActive), "false"),
+            FilterStatus.Warning
         );
     }
 }

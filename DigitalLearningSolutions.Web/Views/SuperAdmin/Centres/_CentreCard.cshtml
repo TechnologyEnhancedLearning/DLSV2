@@ -68,24 +68,29 @@
                asp-controller="Centres" asp-action="ManageCentre" asp-route-centreId="@Model.CentreId">
                 Manage centre
             </a>
-            <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
+            <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
                role="button"
                asp-controller="Centres" asp-action="Courses" asp-route-centreId="@Model.CentreId">
                 View courses
             </a>
+            <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
+               role="button"
+               asp-controller="Centres" asp-action="SelfAssessments" asp-route-centreId="@Model.CentreId">
+                View self assessments
+            </a>
             @if (Model.Active)
             {
                 <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2"
-                 role="button"
-                 asp-action="DeactivateCentre" asp-controller="Centres" asp-route-centreId="@Model.CentreId">
+                   role="button"
+                   asp-action="DeactivateCentre" asp-controller="Centres" asp-route-centreId="@Model.CentreId">
                     Deactivate centre
                 </a>
             }
             else
             {
                 <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-                 role="button"
-                 asp-action="ReactivateCentre" asp-controller="Centres" asp-route-centreId="@Model.CentreId">
+                   role="button"
+                   asp-action="ReactivateCentre" asp-controller="Centres" asp-route-centreId="@Model.CentreId">
                     Reactivate centre
                 </a>
             }

@@ -1,0 +1,67 @@
+﻿@using DigitalLearningSolutions.Data.Models.Support
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
+@model RequestTypeViewModel;
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Type of Request";
+    var count = @Model.RequestTypes.Count();
+    var seperator = 0;
+    var cancelLinkData = Html.GetRouteValues();
+}
+<link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Type) })" />
+}
+
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" role="button" asp-controller="RequestSupportTicket" asp-action="Index" asp-all-route-data="@cancelLinkData">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
+            <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+        </svg>
+        Back
+    </a>
+</div>
+@if (Model.RequestTypes.Any())
+{
+    <div id="form-group">
+        <form method="post" asp-route-ResponseTypes="@Model.RequestTypes" asp-action="setRequestType" asp-all-route-data="@cancelLinkData">
+            <div>
+                <fieldset class="nhsuk-fieldset">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                        <h1 class="nhsuk-fieldset__heading">
+                            What type of request are you submitting?
+                        </h1>
+                        <div class="nhsuk-hint nhsuk-u-margin-top-4">
+                            Please choose the best match.
+                        </div>
+                    </legend>
+                    <div class="nhsuk-radios">
+                        @foreach (var requestType in Model.RequestTypes)
+                        {
+                            @if (seperator == @count - 1)
+                            {
+                                <p style="margin-bottom: 8px;padding: 8px 12px 4px;"><b>or</b></p>
+                            }
+                            <div class="nhsuk-radios__item">
+                                <input class="nhsuk-radios__input" id="request-@requestType.ID" type="radio" value="@requestType.ID" name="requestType" asp-for="@Model.Id">
+                                <label class="nhsuk-label nhsuk-radios__label" for="request-@requestType.ID">
+                                    @requestType.RequestTypes
+                                </label>
+                            </div>
+                            seperator = seperator + 1;
+                        }
+                    </div>
+                </fieldset>
+                <button class="nhsuk-button nhsuk-u-margin-top-6" id="save-button" type="submit">
+                    Next
+                </button>
+            </div>
+        </form>
+        <vc:cancel-link asp-controller="RequestSupportTicket" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+    </div>
+}
+
+

@@ -1,0 +1,249 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model PreviewProgressViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Progress summary";
+}
+<!DOCTYPE html>
+
+<html>
+<head id="Head1">
+    <style type="text/css">
+
+        .card {
+            position: relative;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid rgba(0,0,0,.125);
+            border-radius: .25rem
+        }
+
+        .card-body {
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            min-height: 1px;
+            padding: 1.25rem
+        }
+
+        .card-default {
+            border-color: #00529E !important;
+            border-style: solid !important;
+            border-width: 3px !important;
+        }
+
+        .float-right {
+            float: right !important
+        }
+
+        /*.p-4 {
+                                    padding: 1.5rem !important
+                                }
+
+                                #Logo {
+                                    max-width: 500px;
+                                    max-height: 90px;
+                                    height: auto;
+                                    width: auto;
+                                }*/
+
+        .heading2 {
+            font-size: 2rem;
+        }
+
+        .heading3 {
+            font-size: 1.75rem;
+        }
+
+        .heading4 {
+            font-size: 1.5rem;
+            font-weight: 600 !important;
+        }
+
+        .heading2, .heading3, heading4 {
+            line-height: 1.2;
+            display: block;
+            font-weight: 600 !important;
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #000000;
+            font-family: Verdana, Arial, Helvetica, sans-serif !important;
+        }
+
+        .colHeight {
+            height: 20px;
+        }
+
+        .nhsuk-table-responsive .nhsuk-table__body .nhsuk-table-responsive__heading {
+            min-width: 90px
+        }
+
+        .nhsuk-table-responsive .nhsuk-table__body .nhsuk-table__row td {
+            justify-content: flex-start;
+            text-align: left;
+        }
+
+        .nhsuk-details {
+            word-break: break-word;
+        }
+    </style>
+</head>
+<div class="nhsuk-details">
+    <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full no-print">
+            <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Download" asp-route-progressId="@Model.ProgressId">
+                <button class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0 float-right" role="button" asp-action="Index" asp-route-progressId="@Model.ProgressId" asp-route-accessedVia="@Model.AccessedVia">
+                    Cancel
+                </button>
+                <button class="nhsuk-button nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2 float-right" id="btn"
+                        asp-action="Download"
+                        asp-route-progressId="@Model.ProgressId"
+                        asp-route-accessedVia="@Model.AccessedVia">
+                    Download PDF
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="nhsuk-grid-row card-body nhsuk-details">
+        <div class="card card-body card-default">
+            <div>
+                <div class="nhsuk-grid-row">
+                    <div class="nhsuk-grid-column-full no-print">
+                        Progress as at: <span id="lblCurrentDate">@DateTime.Now.ToString("dd MMMM yyyy")</span>
+                    </div>
+                </div>
+
+                <br />
+                <h2 class="heading2" style="font-weight:bold !important; color:#000066 !important">Progress Summary for @Model.CandidateName (@Model.CandidateNumber)</h2>
+                <h3 class="heading3">@Model.CourseName</h3>
+                @if (Model.IsAssessed)
+                {
+                    <h4 class="heading4">To complete this course, you must pass all post learning assessments</h4>
+                }
+                else if (Model.DiagCompletionThreshold > 0 && Model.TutCompletionThreshold > 0 && (!Model.IsAssessed))
+                {
+                    <h4 class="heading4">To complete this course, you must achieve @Model.DiagCompletionThreshold% in the diagnostic assessment and complete @Model.TutCompletionThreshold% of the learning materials")</h4>
+                }
+                else if (Model.DiagCompletionThreshold == 0 && (!Model.IsAssessed))
+                {
+                    <h4 class="heading4">To complete this course, you must complete @Model.TutCompletionThreshold% of the learning materials</h4>
+                }
+                else if (Model.TutCompletionThreshold == 0 && (!Model.IsAssessed))
+                {
+                    <h4 class="heading4">To complete this course, you must achieve @Model.DiagCompletionThreshold% in the diagnostic assessment</h4>
+                }
+                <div style="height:20px"></div>
+                <div class="nhsuk-grid-row">
+                    <div class="nhsuk-grid-column-one-quarter "><p>Course Status:</p></div>
+                    <div class="nhsuk-grid-column-three-quarters  nhsuk-u-font-weight-bold"><p>@Model.CourseStatus</p></div>
+                </div>
+                @if (Model.DiganosticScorePercent != null && Model.DiganosticScorePercent > 0)
+                {
+                    <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-one-quarter"><p>Diagnostic Score:</p></div>
+                        <div class="nhsuk-grid-column-three-quarters"><p>@Model.DiganosticScorePercent%</p></div>
+                    </div>
+                }
+                @if (Model.LearningCompletedPercent > 0)
+                {
+                    <div class="nhsuk-grid-row ">
+                        <div class="nhsuk-grid-column-one-quarter"><p>Learning Completed:</p></div>
+                        <div class="nhsuk-grid-column-three-quarters "><p>@Model.LearningCompletedPercent%</p></div>
+                    </div>
+                }
+                <div class="nhsuk-grid-row">
+                    <div class="nhsuk-grid-column-one-quarter"><p>Assessments Passed:</p></div>
+                    <div class="nhsuk-grid-column-three-quarters"><p>@Model.AssessmentsPassed</p></div>
+                </div>
+
+                <table class="nhsuk-table-responsive">
+                    <thead class="nhsuk-table__head">
+                        <tr class="nhsuk-table__row" role="row">
+                            <th class="nhsuk-table__header" role="columnheader" scope="col">
+                                Section
+                            </th>
+                            <th class="nhsuk-table__header" role="columnheader" scope="col">
+                                Diagnostic Score
+                            </th>
+                            <th class="nhsuk-table__header" role="columnheader" scope="col">
+                                Learning % / time
+                            </th>
+                            <th class="nhsuk-table__header" role="columnheader" scope="col">
+                                Post Learning Assessment
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="nhsuk-table__body">
+                        @foreach (var entry in Model.SectionDetails)
+                        {
+                            <tr class="nhsuk-table__row">
+                                <td class="nhsuk-table__cell" data-label="Section" role="cell">
+                                    <span class="nhsuk-table-responsive__heading">Section</span>
+                                    @entry.SectionName
+                                </td>
+                                <td class="nhsuk-table__cell" data-label="Diagnostic Score" role="cell">
+                                    <span class="nhsuk-table-responsive__heading">Diagnostic Score</span>
+                                    @(entry.DiagAttempts > 0 ?
+                                        @entry.SecScore.ToString() + " / " + @entry.SecOutOf.ToString()
+                                        : "Not attempted".ToString())
+                                </td>
+                                <td class="nhsuk-table__cell">
+                                    <span class="nhsuk-table-responsive__heading">Learning % / time</span>
+                                    @(entry.PCComplete.ToString() + "% complete " + @entry.TimeMins.ToString() + " mins")
+                                </td>
+                                <td class="nhsuk-table__cell">
+                                    <span class="nhsuk-table-responsive__heading">Post Learning Assessment</span>
+                                    @{
+                                        var result = "";
+                                        if (entry.AttemptsPL > 0) result = @entry.MaxScorePL.ToString() + "% - " + @entry.AttemptsPL.ToString() + " attempt(s) ";
+                                        if (entry.AttemptsPL == 0 && entry.IsAssessed) result += "Not attempted";
+                                        if (entry.AttemptsPL > 0 && entry.PLPassed && entry.IsAssessed) result += "PASSED";
+                                        if (entry.AttemptsPL > 0 && !entry.PLPassed && entry.IsAssessed) result += "FAILED";
+                                    }
+                                    @result
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div style="height:20px"></div>
+                <h2 class="heading2">Achievements</h2>
+                <h4 class="heading4">The following post learning assessments have been passed:</h4>
+                <table class="nhsuk-table-responsive">
+                    <thead class="nhsuk-table__head">
+                        <tr class="nhsuk-table__row" role="row">
+                            <th class="nhsuk-table__header" role="columnheader" scope="col">
+                                Assessment
+                            </th>
+                            <th class="nhsuk-table__header" role="columnheader" scope="col">
+                                Outcome
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="nhsuk-table__body">
+                        @foreach (var entry in Model.SectionDetails.Where(pass => pass.PLPassed))
+                        {
+                            <tr class="nhsuk-table__row">
+                                <td class="nhsuk-table__cell" data-label="Assessment" role="cell">
+                                    <span class="nhsuk-table-responsive__heading">Assessment</span>
+                                    @entry.SectionName
+                                </td>
+                                <td class="nhsuk-table__cell" data-label="Outcome" role="cell">
+                                    <span class="nhsuk-table-responsive__heading">Outcome</span>
+                                    <span style="color:#0e6935;font-weight:normal;">@("PASSED")</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>

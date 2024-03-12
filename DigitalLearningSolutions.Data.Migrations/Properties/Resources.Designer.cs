@@ -1059,6 +1059,96 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -- Remove period field from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies ADD PERIOD FOR SYSTEM_TIME ( SysStartTime, SysEndTime ); 
+        ///GO
+        ///
+        ///-- Remove period field from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups ADD PERIOD FOR SYSTEM_TIME ( SysStartTime, SysEndTime ); 
+        ///GO
+        ///
+        ///-- Remove period field from Frameworks table
+        ///ALTER TABLE Frameworks ADD PERIOD FOR SYSTEM_TIME ( SysStartTime, SysEndTime ); 
+        ///GO
+        ///
+        ///-- Remove period field from Competencies table
+        ///ALTER TABL [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchOffPeriodFields_DOWN {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchOffPeriodFields_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Remove period field from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from Frameworks table
+        ///ALTER TABLE Frameworks DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from Competencies table
+        ///ALTER TABLE Competencies DROP PERIOD FOR SYSTEM_TIME; 
+        ///GO
+        ///
+        ///-- Remove period field from Comp [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchOffPeriodFields_UP {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchOffPeriodFields_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Switch on versioning from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetenciesHistory));
+        ///GO
+        ///
+        ///-- Switch on versioning from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworkCompetencyGroupsHistory));
+        ///GO
+        ///
+        ///-- Switch on versioning from Frameworks table
+        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworksHisto [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchSystemVersioningOffAllTables_DOWN {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Remove versioning from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from Frameworks table
+        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from Competencies table
+        ///ALTER TABLE Competencies SET (SYSTEM_VERSIONING = OFF);
+        ///GO
+        ///
+        ///-- Remove versioning from Competency [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2036_SwitchSystemVersioningOffAllTables_UP {
+            get {
+                return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 05/07/2023 08:52:32 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -1117,6 +1207,54 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP {
             get {
                 return ResourceManager.GetString("TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspReturnSectionsForCandCust_V2]    Script Date: 08/12/2023 13:33:59 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15/08/2013
+        ///-- Description:	Gets section table for learning menu
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspReturnSectionsForCandCust_V2]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@ProgressID  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2481_Update_uspReturnSectionsForCandCust_V2_down {
+            get {
+                return ResourceManager.GetString("TD_2481_Update_uspReturnSectionsForCandCust_V2_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspReturnSectionsForCandCust_V2]    Script Date: 08/12/2023 13:33:59 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15/08/2013
+        ///-- Description:	Gets section table for learning menu
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspReturnSectionsForCandCust_V2]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@ProgressID  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_2481_Update_uspReturnSectionsForCandCust_V2_up {
+            get {
+                return ResourceManager.GetString("TD_2481_Update_uspReturnSectionsForCandCust_V2_up", resourceCulture);
             }
         }
         
@@ -1201,6 +1339,312 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string td_264_alterviewadminusersaddcentrename_up {
             get {
                 return ResourceManager.GetString("td_264_alterviewadminusersaddcentrename_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 18/10/2023 08:05:27 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/12/2016
+        ///-- Description:	Checks if learner has progress record against customisation.
+        ///-- Returns:
+        ///-- 0: None
+        ///-- 1: Expired
+        ///-- 2: Complete
+        ///-- 3: Current
+        ///-- =============================================
+        ///-- 18/09/2018 Adds return v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3000_CheckDelegateStatusForCustomisationFix_down {
+            get {
+                return ResourceManager.GetString("TD_3000_CheckDelegateStatusForCustomisationFix_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 17/10/2023 12:13:14 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/12/2016
+        ///-- Description:	Checks if learner has progress record against customisation.
+        ///-- Returns:
+        ///-- 0: None
+        ///-- 1: Expired
+        ///-- 2: Complete
+        ///-- 3: Current
+        ///-- =============================================
+        ///-- 18/09/2018 Adds return v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3000_CheckDelegateStatusForCustomisationFix_up {
+            get {
+                return ResourceManager.GetString("TD_3000_CheckDelegateStatusForCustomisationFix_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns assessment results for a delegate
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetAssessmentResultsByDelegate]
+        ///	@selfAssessmentId as Int = 0,
+        ///	@delegateId as int = 0
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults AS
+        ///            (
+        ///                SELECT
+        ///                 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3187_CreateGetAssessmentResultsByDelegate_SP {
+            get {
+                return ResourceManager.GetString("TD_3187_CreateGetAssessmentResultsByDelegate_SP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentR [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3187_CreateGetCandidateAssessmentResultsById_SP {
+            get {
+                return ResourceManager.GetString("TD_3187_CreateGetCandidateAssessmentResultsById_SP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendOneMonthSelfAssessmentTBCReminders]    Script Date: 06/12/2023 15:54:40 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 29/11/2023
+        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[SendOneMonthSelfAssessmentTBCReminders] [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3190_FixSelfAssessmentReminderQueriesSP_UP {
+            get {
+                return ResourceManager.GetString("TD_3190_FixSelfAssessmentReminderQueriesSP_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 29/11/2023
+        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[SendSelfAssessmentOverdueReminders]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@EmailProfileName nvarchar(100),
+        ///	@TestOnly bit
+        ///AS
+        ///BEGIN
+        ///	-- [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP {
+            get {
+                return ResourceManager.GetString("TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 29/11/2023
+        ///-- Description:	Uses DB mail to send reminders to delegates on self assessments with a TBC date within 1 month.
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[SendOneMonthSelfAssessmentTBCReminders]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@EmailProfileName nvarchar(100),
+        ///	@TestOnly bit
+        ///AS
+        ///BEGIN        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
+            get {
+                return ResourceManager.GetString("TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendExpiredTBCReminders]    Script Date: 07/12/2023 08:03:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 17/08/2018
+        ///-- Description:	Uses DB mail to send reminders to delegates on courses with a TBC date within 1 month.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
+        ///	-- Add the parameters for the stored p [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3197_FixLinksInCourseReminderEmails_DOWN {
+            get {
+                return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendExpiredTBCReminders]    Script Date: 07/12/2023 08:03:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 17/08/2018
+        ///-- Description:	Uses DB mail to send reminders to delegates on courses with a TBC date within 1 month.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
+        ///	-- Add the parameters for the stored p [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3197_FixLinksInCourseReminderEmails_UP {
+            get {
+                return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 23/10/2018
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Down {
+            get {
+                return ResourceManager.GetString("TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 23/10/2018
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Up {
+            get {
+                return ResourceManager.GetString("TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///CREATE TABLE [dbo].[deprecated_ApplicationGroups](
+        ///	[AppGroupID] [int] IDENTITY(1,1) NOT NULL,
+        ///	[ApplicationGroup] [nvarchar](100) NOT NULL,
+        /// CONSTRAINT [PK_ApplicationGroups] PRIMARY KEY CLUSTERED 
+        ///(
+        ///	[AppGroupID] ASC
+        ///)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+        ///) ON [PRIMARY]
+        ///GO
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///CREATE TABLE [dbo].[deprec [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3629_DeleteDeprecatedTables_DOWN {
+            get {
+                return ResourceManager.GetString("TD_3629_DeleteDeprecatedTables_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER OFF
+        ///GO
+        ///CREATE PROCEDURE [dbo].[aspnet_AnyDataInTables_deprecated]
+        ///    @TablesToCheck int
+        ///AS
+        ///BEGIN
+        ///    -- Check Membership table if (@TablesToCheck &amp; 1) is set
+        ///    IF ((@TablesToCheck &amp; 1) &lt;&gt; 0 AND
+        ///        (EXISTS (SELECT name FROM sysobjects WHERE (name = N&apos;vw_aspnet_MembershipUsers&apos;) AND (type = &apos;V&apos;))))
+        ///    BEGIN
+        ///        IF (EXISTS(SELECT TOP 1 UserId FROM dbo.aspnet_Membership))
+        ///        BEGIN
+        ///            SELECT N&apos;aspnet_Membership&apos;
+        ///            RETU [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_3664_RestoreDroppedSPs {
+            get {
+                return ResourceManager.GetString("TD_3664_RestoreDroppedSPs", resourceCulture);
             }
         }
         

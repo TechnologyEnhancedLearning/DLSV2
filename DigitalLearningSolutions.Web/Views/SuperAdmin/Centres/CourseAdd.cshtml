@@ -1,0 +1,145 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@using DigitalLearningSolutions.Web.Extensions
+@model CourseAddViewModel
+@{
+    ViewData["Title"] = "Add" + Model.CourseType + " courses";
+    var cancelLinkData = Html.GetRouteValues();
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+}
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="Courses">View courses</a></li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__backlink"
+                   asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="Courses">Back to view centre courses</a>
+            </p>
+        </div>
+    </nav>
+}
+@if (Model.CourseType == "Other")
+{
+    <form method="post" asp-action="CourseAddChooseFlow" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-route-courseType="@ViewContext.RouteData.Values["courseType"]">
+        <input type="hidden" asp-for="CentreId" />
+        <input type="hidden" name="AddCourseOption" value="@Model.CourseType" />
+        <div class="search-container">
+            <div class="search-box-container" id="search">
+                <label class="nhsuk-u-visually-hidden" for="search-field">Search</label>
+                <input class="search-box nhsuk-input" asp-for="SearchTerm"
+                       style="border-bottom-right-radius: initial; border-top-right-radius: initial;"
+                       type="search" placeholder="Search course or centre name">
+                <button class="nhsuk-button search-submit" type="submit">
+                    <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 20" aria-hidden="true" focusable="false">
+                        <path d="M19.71 18.29l-4.11-4.1a7 7 0 1 0-1.41 1.41l4.1 4.11a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42zM5 10a5 5 0 1 1 5 5 5 5 0 0 1-5-5z"></path>
+                    </svg>
+                    <span class="nhsuk-u-visually-hidden">Search</span>
+                </button>
+            </div>
+        </div>
+    </form>
+}
+@if (Model.Courses.Any())
+{
+    <form method="post" asp-action="CourseAddCommit" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-route-courseType="@ViewContext.RouteData.Values["courseType"]">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new []{ nameof(CourseAddViewModel.ApplicationIds) })" />
+        }
+        <div class="@(errorHasOccurred ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
+        <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                <h1 class="nhsuk-fieldset__heading">
+                    Add @Model.CourseType.ToLower() courses to centre - @Model.CentreName
+                </h1>
+            </legend>
+            <div class="nhsuk-hint">
+                Which courses would you like to add?
+            </div>
+                @if (errorHasOccurred)
+                {
+                    <span class="nhsuk-error-message" id="dob-day-error-error">
+                        <span class="nhsuk-u-visually-hidden">Error:</span> Required
+                    </span>
+                }
+            @if (Model.Courses.Count() > 1)
+            {
+                <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
+                    <div class="nhsuk-grid-column-full">
+                        <a class="nhsuk-button select-all-button select-all status-tag nhsuk-u-margin-1" role="button" data-group="course-list" name="selectAll" value="true">Select all courses</a>
+                        <a class="nhsuk-button select-all-button deselect-all status-tag nhsuk-u-margin-1" role="button" data-group="course-list" name="selectAll" value="false">Deselect all courses</a>
+                    </div>
+                </div>
+            }
+            <div class="nhsuk-form-group">
+                <table class="nhsuk-table-responsive">
+                    <thead role="rowgroup" class="nhsuk-table__head">
+                        <tr role="row">
+                            <th role="columnheader" class="" scope="col">
+                                Course
+                            </th>
+                            <th role="columnheader" class="" scope="col">
+                                Provider
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="nhsuk-table__body">
+                        @foreach (var course in Model.Courses)
+                        {
+                            <tr role="row" class="nhsuk-table__row">
+                                <td class="nhsuk-table__cell nhsuk-u-font-size-16">
+                                    <div class="nhsuk-checkboxes__item">
+                                        <input data-group="course-list" class="nhsuk-checkboxes__input select-all-checkbox" id="course-check-@course.Id" name="ApplicationIds" type="checkbox" value="@course.Id">
+                                        <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="course-check-@course.Id">
+                                            @course.Course
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="nhsuk-table__cell nhsuk-u-font-size-16">
+                                    <span class="nhsuk-table-responsive__heading">Provider </span>
+                                    @course.Provider
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        </div>
+        <input type="hidden" asp-for="CentreId" />
+        <input type="hidden" asp-for="SearchTerm" />
+        <button class="nhsuk-button" type="submit">
+            Add selected courses to centre
+        </button>
+    </form>
+}
+else
+{
+    @if (Model.CourseType == "Other")
+    {
+        Model.SearchTerm = Model.SearchTerm ?? "";
+        if(Model.SearchTerm.Length == 0)
+        {
+            <h1>No search term</h1>
+            <p>Please enter a search term to locate a course.</p>
+        }
+        else
+        {
+            <h1>No courses match your search term</h1>
+            <p>There are no courses available that match your search term. Please adjust it and try again.</p>
+        }
+    }
+    else
+    {
+        <h1>No courses available</h1>
+        <p>There are no @Model.CourseType courses available to add to the centre @ViewBag.CentreName.</p>
+    }
+}
+
+<vc:cancel-link asp-controller="Centres" asp-action="Courses" asp-all-route-data="@cancelLinkData" />
+@section scripts {
+    <script src="@Url.Content("~/js/learningPortal/verificationPickResults.js")" asp-append-version="true"></script>
+}

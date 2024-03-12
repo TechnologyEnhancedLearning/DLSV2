@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Frameworks;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;    
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers.Frameworks;
     using DigitalLearningSolutions.Web.ViewModels.Frameworks;
     using FakeItEasy;

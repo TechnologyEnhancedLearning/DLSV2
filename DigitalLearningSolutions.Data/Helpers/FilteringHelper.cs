@@ -256,7 +256,7 @@
 
         private static bool AvailableFiltersContainsFilter(IEnumerable<FilterModel> availableFilters, string filter)
         {
-            return availableFilters.Any(filterModel => FilterOptionsContainsFilter(filter, filterModel.FilterOptions));
+            return availableFilters.Any(filterModel => FilterOptionsContainsFilter(filter, filterModel.FilterOptions!));
         }
 
         private static bool FilterOptionsContainsFilter(

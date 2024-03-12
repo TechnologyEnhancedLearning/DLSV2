@@ -6,7 +6,7 @@
         public int ID { get; set; }
         [StringLength(255, MinimumLength = 3)]
         [Required]
-        public string ProfessionalGroup { get; set; }
+        public string ProfessionalGroup { get; set; } = string.Empty;
         public bool Active { get; set; }
     }
 }

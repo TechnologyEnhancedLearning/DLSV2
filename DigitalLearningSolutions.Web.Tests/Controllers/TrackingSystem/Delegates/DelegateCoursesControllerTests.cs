@@ -50,9 +50,9 @@
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IPaginateService paginateService = null!;
-        private IActivityService activityService = null;
-        private ICourseCategoriesDataService courseCategoriesDataService = null;
-        private ICourseTopicsDataService courseTopicsDataService = null;
+        private IActivityService activityService = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private ICourseTopicsDataService courseTopicsDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -65,7 +65,7 @@
             courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
               .Returns("All");
-            A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._))
+            A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._, A<string?>._, A<string?>._, A<string?>._, A<string>._))
                 .Returns(details);
             A.CallTo(() => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._))
                 .Returns(applicationOptions);
@@ -97,15 +97,17 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseService.GetCentreCourses(A<string>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int?>._, A<bool>._, A<bool?>._,
-                    A<string>._, A<string>._, A<string>._, A<string>._)).MustHaveHappened();
+                var delegateCourses = Builder<CourseStatisticsWithAdminFieldResponseCounts>.CreateListOfSize(5).Build();
+                A.CallTo(() => courseService.GetDelegateCourses(string.Empty, 1, 1, true, true, string.Empty, string.Empty, string.Empty, string.Empty)).Returns(delegateCourses);
+
+                A.CallTo(() => courseService.GetDelegateAssessments(A<string>._, A<int>._, A<string>._, A<string>._)).MustHaveHappened();
                 A.CallTo(
-                    () => paginateService.Paginate(
-                        A<IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>>._,
+                    () => paginateService.Paginate(A<IEnumerable<CourseStatistics>>._,
                          A<int>._,
                         A<PaginationOptions>._, A<FilterOptions>._, A<string>._, A<string>._, A<string>._
                     )
                 ).MustHaveHappened();
+
                 A.CallTo(
                         () => httpResponse.Cookies.Append(
                             CookieName,

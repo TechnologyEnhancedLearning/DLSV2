@@ -6,12 +6,12 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Progress;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;    
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
@@ -30,12 +30,13 @@
         private IProgressService progressService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IUserService userService = null!;
+        private IPdfService pdfService = null!;
 
         private static IEnumerable<TestCaseData> EditEndpointRedirectTestData
         {
             get
             {
-                yield return new TestCaseData(DelegateAccessRoute.CourseDelegates, "CourseDelegates", "Index")
+                yield return new TestCaseData(DelegateAccessRoute.ActivityDelegates, "ActivityDelegates", "Index")
                     .SetName("EditPost_redirects_to_course_delegates_progress");
                 yield return
                     new TestCaseData(DelegateAccessRoute.ViewDelegate, "ViewDelegate", "Index").SetName(
@@ -49,8 +50,8 @@
             get
             {
                 yield return new TestCaseData(
-                        DelegateAccessRoute.CourseDelegates,
-                        "CourseDelegates",
+                        DelegateAccessRoute.ActivityDelegates,
+                        "ActivityDelegates",
                         "Index",
                         ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: CardId)
                     )
@@ -71,13 +72,15 @@
             progressService = A.Fake<IProgressService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             var config = A.Fake<IConfiguration>();
+            pdfService= A.Fake<IPdfService>();
             delegateProgressController = new DelegateProgressController(
                     courseService,
                     courseAdminFieldsService,
                     userService,
                     progressService,
                     config,
-                    searchSortFilterPaginateService
+                    searchSortFilterPaginateService,
+                    pdfService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);
@@ -107,7 +110,7 @@
             var result = delegateProgressController.EditSupervisor(formData, ProgressId, accessedVia);
 
             // Then
-            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? CardId : null;
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.ActivityDelegates) ? CardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
@@ -137,7 +140,7 @@
             var result = delegateProgressController.EditCompleteByDate(formData, ProgressId, accessedVia);
 
             // Then
-            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? CardId : null;
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.ActivityDelegates) ? CardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
@@ -167,7 +170,7 @@
             var result = delegateProgressController.EditCompletionDate(formData, ProgressId, accessedVia);
 
             // Then
-            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? CardId : null;
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.ActivityDelegates) ? CardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
@@ -211,7 +214,7 @@
             var result = delegateProgressController.EditDelegateCourseAdminField(
                 invalidPromptNumber,
                 ProgressId,
-                DelegateAccessRoute.CourseDelegates
+                DelegateAccessRoute.ActivityDelegates
             );
 
             // Then
@@ -239,7 +242,7 @@
             };
 
             A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
-                .DoesNothing();
+                .Returns(0);
 
             // When
             var result = delegateProgressController.EditDelegateCourseAdminField(
@@ -252,7 +255,7 @@
             // Then
             A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(ProgressId, promptNumber, answer))
                 .MustHaveHappenedOnceExactly();
-            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? CardId : null;
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.ActivityDelegates) ? CardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
@@ -287,7 +290,7 @@
                 formData,
                 promptNumber,
                 ProgressId,
-                DelegateAccessRoute.CourseDelegates
+                DelegateAccessRoute.ActivityDelegates
             );
 
             // Then
@@ -322,7 +325,7 @@
 
             // Then
             A.CallTo(() => progressService.UnlockProgress(ProgressId)).MustHaveHappened();
-            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates)
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.ActivityDelegates)
                 ? returnPageQuery!.Value.ItemIdToReturnTo
                 : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
@@ -444,14 +447,14 @@
             var model = new RemoveFromCourseViewModel
             {
                 Confirm = true,
-                AccessedVia = DelegateAccessRoute.CourseDelegates,
+                AccessedVia = DelegateAccessRoute.ActivityDelegates,
                 ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(),
             };
 
             // When
             var result = delegateProgressController.ExecuteRemoveFromCourse(
                 ProgressId,
-                DelegateAccessRoute.CourseDelegates,
+                DelegateAccessRoute.ActivityDelegates,
                 model
             );
 
@@ -459,7 +462,7 @@
             result.Should()
                 .BeRedirectToActionResult()
                 .WithActionName("Index")
-                .WithControllerName("CourseDelegates")
+                .WithControllerName("ActivityDelegates")
                 .WithRouteValue("customisationId", CustomisationId.ToString());
         }
     }

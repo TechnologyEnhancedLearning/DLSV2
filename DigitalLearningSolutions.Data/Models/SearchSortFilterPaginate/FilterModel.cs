@@ -17,11 +17,11 @@
             FilterGroupKey = filterGroupKey;
         }
 
-        public string FilterProperty { get; set; }
+        public string FilterProperty { get; set; } = string.Empty;
 
-        public string FilterName { get; set; }
+        public string FilterName { get; set; } = string.Empty;
 
-        public IEnumerable<FilterOptionModel> FilterOptions { get; set; }
-        public string FilterGroupKey { get; set; }
+        public IEnumerable<FilterOptionModel> FilterOptions { get; set; } 
+        public string? FilterGroupKey { get; set; }
     }
 }

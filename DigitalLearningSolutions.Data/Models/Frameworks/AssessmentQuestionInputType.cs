@@ -6,6 +6,6 @@
         public int ID { get; set; }
         [Required]
         [StringLength(255)]
-        public string InputTypeName { get; set; }
+        public string InputTypeName { get; set; } = string.Empty;
     }
 }

@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Data.DataServices
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public interface ICourseDataService
     {
@@ -39,12 +38,17 @@ namespace DigitalLearningSolutions.Data.DataServices
             int centreId,
             int? categoryId,
             int exportQueryRowLimit,
-            int currentRun
+            int currentRun,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
         );
 
         public int GetCourseStatisticsAtCentreFilteredByCategoryResultCount(
             int centreId,
-            int? categoryId
+            int? categoryId,
+            string? searchString
         );
 
         IEnumerable<CourseStatistics> GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
@@ -54,6 +58,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId);
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
+
+        bool GetSelfRegister(int customisationId);
 
         CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
@@ -112,7 +118,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         int GetCourseDelegatesCountForExport(string searchString, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
-        Task<IEnumerable<CourseDelegateForExport>> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+        IEnumerable<CourseDelegateForExport> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
@@ -128,6 +134,9 @@ namespace DigitalLearningSolutions.Data.DataServices
         public (IEnumerable<DelegateCourseInfo>, int) GetDelegateCourseInfosPerPageForCourse(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
+        public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields);
+
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive);
     }
 
     public class CourseDataService : ICourseDataService
@@ -239,7 +248,18 @@ namespace DigitalLearningSolutions.Data.DataServices
                         ct.CourseTopic,
                         cu.LearningTimeMins AS LearningMinutes,
                         cu.IsAssessed,
-                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 1 ELSE 0 END AS Archived
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 1 ELSE 0 END AS Archived,
+                        ((SELECT COUNT(pr.CandidateID)
+		                    FROM dbo.Progress AS pr WITH (NOLOCK) 
+		                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+		                    WHERE pr.CustomisationID = cu.CustomisationID
+		                    AND can.CentreID = @centreId
+		                    AND RemovedDate IS NULL) - 
+		                (SELECT COUNT(pr.CandidateID)
+		                    FROM dbo.Progress AS pr WITH (NOLOCK) 
+		                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+		                    WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
+		                    AND can.CentreID = @centreId)) AS InProgressCount 
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
@@ -268,7 +288,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 pr.Completed AS Completed,
                 pr.Evaluated AS Evaluated,
                 pr.LoginCount,
-                pr.Duration AS LearningTime,
+                Sum(apr.TutTime) AS LearningTime,
                 pr.DiagnosticScore,
                 LTRIM(RTRIM(pr.Answer1)) AS Answer1,
                 LTRIM(RTRIM(pr.Answer2)) AS Answer2,
@@ -297,6 +317,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             FROM Customisations cu
             INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
             INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
+            LEFT OUTER JOIN aspProgress AS apr ON pr.ProgressID = apr.ProgressID
             LEFT OUTER JOIN AdminAccounts AS aaSupervisor ON aaSupervisor.ID = pr.SupervisorAdminId
             LEFT OUTER JOIN Users AS uSupervisor ON uSupervisor.ID = aaSupervisor.UserID
             LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = pr.EnrolledByAdminID
@@ -414,10 +435,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
             DateTime lastAccessed = startedDate;
-            dynamic completeByDateDynamic = "";
+            dynamic? completeByDateDynamic = null;
             if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
-                completeByDateDynamic = completeByDate;
+                completeByDateDynamic = completeByDate!;
             }
             var candidateAssessmentId = (int)connection.ExecuteScalar(
                 @"SELECT COALESCE
@@ -498,7 +519,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
             if (candidateAssessmentId > 1)
             {
-                string sqlQuery=$@"
+                string sqlQuery = $@"
                 BEGIN TRANSACTION
                 UPDATE CandidateAssessments SET RemovedDate = NULL
                   WHERE ID = @candidateAssessmentId
@@ -646,23 +667,52 @@ namespace DigitalLearningSolutions.Data.DataServices
             int centreId,
             int? categoryId,
             int exportQueryRowLimit,
-            int currentRun
+            int currentRun,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
         )
         {
-            string sql = @$"{CourseStatisticsQuery} ORDER BY cu.CustomisationID
+            string orderBy;
+            string sortOrder;
+
+            if (sortDirection == "Ascending")
+                sortOrder = " ASC ";
+            else
+                sortOrder = " DESC ";
+
+            if (sortBy == "CourseName" || sortBy == "SearchableName")
+                orderBy = " ORDER BY ap.ApplicationName + cu.CustomisationName " + sortOrder;
+            else
+                orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
+
+            string search = string.Empty;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                search = " AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%')";
+            }
+
+            string sql = @$"{CourseStatisticsQuery} {search} {orderBy}
                         OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
                         FETCH NEXT @exportQueryRowLimit ROWS ONLY";
             return connection.Query<CourseStatistics>(
                 sql,
-                new { centreId, categoryId,exportQueryRowLimit,currentRun }
+                new { centreId, categoryId, exportQueryRowLimit, currentRun, orderBy, searchString }
             );
         }
 
         public int GetCourseStatisticsAtCentreFilteredByCategoryResultCount(
             int centreId,
-            int? categoryId
+            int? categoryId,
+            string? searchString
         )
         {
+            string search = string.Empty;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                search = " AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%')";
+            }
             int ResultCount = connection.ExecuteScalar<int>(@$"SELECT  COUNT(*) AS Matches FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
@@ -671,7 +721,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
-                        AND ap.DefaultContentTypeID <> 4", new { centreId, categoryId },
+                        {search}
+                        AND ap.DefaultContentTypeID <> 4", new { centreId, categoryId, searchString },
                     commandTimeout: 3000);
             return ResultCount;
         }
@@ -746,7 +797,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 sortOrder = " DESC ";
 
             if (sortBy == "CourseName" || sortBy == "SearchableName")
-                orderBy = " ORDER BY ap.ApplicationName + cu.CustomisationName " + sortOrder;
+                orderBy = " ORDER BY ap.ApplicationName " + sortOrder + ", cu.CustomisationName " + sortOrder;
             else
                 orderBy = " ORDER BY " + sortBy + sortOrder + ", LTRIM(RTRIM(ap.ApplicationName)) + LTRIM(RTRIM(cu.CustomisationName))";
 
@@ -817,7 +868,47 @@ namespace DigitalLearningSolutions.Data.DataServices
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND pr.RemovedDate IS NULL
-                        AND ap.DefaultContentTypeID <> 4",
+                        AND ap.DefaultContentTypeID <> 4
+                    GROUP BY cu.CustomisationID,
+                        cu.CustomisationName,
+                        ap.ApplicationName,
+                        ap.CourseCategoryID,
+                        cu.IsAssessed,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        pr.ProgressId,
+                        pr.PLLocked,
+                        pr.SubmittedTime,
+                        pr.CompleteByDate,
+                        pr.RemovedDate,
+                        pr.Completed,
+                        pr.Evaluated,
+                        pr.LoginCount,
+                        pr.Duration,
+                        pr.DiagnosticScore,
+                        LTRIM(RTRIM(pr.Answer1)),
+                        LTRIM(RTRIM(pr.Answer2)),
+                        LTRIM(RTRIM(pr.Answer3)),
+                        pr.FirstSubmittedTime,
+                        pr.EnrollmentMethodID,
+                        uEnrolledBy.FirstName,
+                        uEnrolledBy.LastName,
+                        aaEnrolledBy.Active,
+                        aaSupervisor.ID,
+                        uSupervisor.FirstName,
+                        uSupervisor.LastName,
+                        aaSupervisor.Active,
+                        da.ID,
+                        da.CandidateNumber,
+                        u.FirstName,
+                        u.LastName,
+                        COALESCE(ucd.Email, u.PrimaryEmail),
+                        da.Active,
+                        u.HasBeenPromptedForPrn,
+                        u.ProfessionalRegistrationNumber,
+                        da.CentreID,
+                        ap.ArchivedDate",
                 new { delegateId }
             );
         }
@@ -827,7 +918,47 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.QuerySingleOrDefault<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.ProgressID = @progressId
-                        AND ap.DefaultContentTypeID <> 4",
+                        AND ap.DefaultContentTypeID <> 4
+                    GROUP BY cu.CustomisationID,
+                        cu.CustomisationName,
+                        ap.ApplicationName,
+                        ap.CourseCategoryID,
+                        cu.IsAssessed,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        pr.ProgressId,
+                        pr.PLLocked,
+                        pr.SubmittedTime,
+                        pr.CompleteByDate,
+                        pr.RemovedDate,
+                        pr.Completed,
+                        pr.Evaluated,
+                        pr.LoginCount,
+                        pr.Duration,
+                        pr.DiagnosticScore,
+                        LTRIM(RTRIM(pr.Answer1)),
+                        LTRIM(RTRIM(pr.Answer2)),
+                        LTRIM(RTRIM(pr.Answer3)),
+                        pr.FirstSubmittedTime,
+                        pr.EnrollmentMethodID,
+                        uEnrolledBy.FirstName,
+                        uEnrolledBy.LastName,
+                        aaEnrolledBy.Active,
+                        aaSupervisor.ID,
+                        uSupervisor.FirstName,
+                        uSupervisor.LastName,
+                        aaSupervisor.Active,
+                        da.ID,
+                        da.CandidateNumber,
+                        u.FirstName,
+                        u.LastName,
+                        COALESCE(ucd.Email, u.PrimaryEmail),
+                        da.Active,
+                        u.HasBeenPromptedForPrn,
+                        u.ProfessionalRegistrationNumber,
+                        da.CentreID,
+                        ap.ArchivedDate",
                 new { progressId }
             );
         }
@@ -845,7 +976,47 @@ namespace DigitalLearningSolutions.Data.DataServices
                                             cap.Active = 1)))
                         AND da.CentreID = @centreId
                         AND pr.CustomisationID = @customisationId
-                        AND ap.DefaultContentTypeID <> 4",
+                        AND ap.DefaultContentTypeID <> 4
+                    GROUP BY cu.CustomisationID,
+                        cu.CustomisationName,
+                        ap.ApplicationName,
+                        ap.CourseCategoryID,
+                        cu.IsAssessed,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        pr.ProgressId,
+                        pr.PLLocked,
+                        pr.SubmittedTime,
+                        pr.CompleteByDate,
+                        pr.RemovedDate,
+                        pr.Completed,
+                        pr.Evaluated,
+                        pr.LoginCount,
+                        pr.Duration,
+                        pr.DiagnosticScore,
+                        LTRIM(RTRIM(pr.Answer1)),
+                        LTRIM(RTRIM(pr.Answer2)),
+                        LTRIM(RTRIM(pr.Answer3)),
+                        pr.FirstSubmittedTime,
+                        pr.EnrollmentMethodID,
+                        uEnrolledBy.FirstName,
+                        uEnrolledBy.LastName,
+                        aaEnrolledBy.Active,
+                        aaSupervisor.ID,
+                        uSupervisor.FirstName,
+                        uSupervisor.LastName,
+                        aaSupervisor.Active,
+                        da.ID,
+                        da.CandidateNumber,
+                        u.FirstName,
+                        u.LastName,
+                        COALESCE(ucd.Email, u.PrimaryEmail),
+                        da.Active,
+                        u.HasBeenPromptedForPrn,
+                        u.ProfessionalRegistrationNumber,
+                        da.CentreID,
+                        ap.ArchivedDate",
                 new { customisationId, centreId }
             );
         }
@@ -928,13 +1099,13 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@hasCompleted IS NULL) OR (@hasCompleted = 1 AND pr.Completed IS NOT NULL) OR (@hasCompleted = 0 AND pr.Completed IS NULL))
 
                 AND ((@answer1 IS NULL) OR ((@answer1 = 'No option selected' OR @answer1 = 'FREETEXTBLANKVALUE') AND (pr.Answer1 IS NULL OR LTRIM(RTRIM(pr.Answer1)) = '')) 
-							OR (@answer1 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer1 IS NOT NULL OR pr.Answer1 = @answer1)))
+					OR ((@answer1 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer1 IS NOT NULL AND LTRIM(RTRIM(pr.Answer1)) != '') OR (pr.Answer1 IS NOT NULL AND pr.Answer1 = @answer1)))
 
 				AND ((@answer2 IS NULL) OR ((@answer2 = 'No option selected' OR @answer2 = 'FREETEXTBLANKVALUE') AND (pr.Answer2 IS NULL OR LTRIM(RTRIM(pr.Answer2)) = '')) 
-							OR (@answer2 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer2 IS NOT NULL OR pr.Answer2 = @answer2)))
+					OR ((@answer2 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer2 IS NOT NULL AND LTRIM(RTRIM(pr.Answer2)) != '') OR (pr.Answer2 IS NOT NULL AND pr.Answer2 = @answer2)))
 
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
-							OR (@answer3 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer3 IS NOT NULL OR pr.Answer3 = @answer3)))
+					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
 
@@ -949,17 +1120,30 @@ namespace DigitalLearningSolutions.Data.DataServices
             if (sortBy == "SearchableName" || sortBy == "FullNameForSearchingSorting")
                 orderBy = " ORDER BY LTRIM(u.LastName) " + sortOrder + ", LTRIM(u.FirstName) ";
             else
-                orderBy = " ORDER BY  "+ sortBy + sortOrder;
+                orderBy = " ORDER BY  " + sortBy + sortOrder;
 
             orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 
-            var mainSql = selectColumnQuery + fromTableQuery +  orderBy;
+            var mainSql = selectColumnQuery + fromTableQuery + orderBy;
 
             IEnumerable<DelegateCourseInfo> delegateUserCard = connection.Query<DelegateCourseInfo>(
                 mainSql,
                 new
-                {searchString, offSet, itemsPerPage, sortBy, sortDirection, customisationId,
-                    centreId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    customisationId,
+                    centreId,
+                    isDelegateActive,
+                    isProgressLocked,
+                    removed,
+                    hasCompleted,
+                    answer1,
+                    answer2,
+                    answer3
                 },
                 commandTimeout: 3000
             );
@@ -969,8 +1153,21 @@ namespace DigitalLearningSolutions.Data.DataServices
             int ResultCount = connection.ExecuteScalar<int>(
                 delegateCountQuery,
                 new
-                {searchString, offSet, itemsPerPage, sortBy, sortDirection, customisationId, centreId,
-                    isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    customisationId,
+                    centreId,
+                    isDelegateActive,
+                    isProgressLocked,
+                    removed,
+                    hasCompleted,
+                    answer1,
+                    answer2,
+                    answer3
                 },
                 commandTimeout: 3000
             );
@@ -1044,6 +1241,17 @@ namespace DigitalLearningSolutions.Data.DataServices
             }
 
             return names;
+        }
+
+        public bool GetSelfRegister(int customisationId)
+        {
+            var selfRegister = connection.QueryFirstOrDefault<bool>(
+                @"SELECT SelfRegister
+                    FROM Customisations
+                    WHERE CustomisationID = @customisationId",
+                new { customisationId });
+
+            return selfRegister;
         }
 
         public IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
@@ -1285,8 +1493,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 { brandId, threeMonthsAgo }
             );
             return query.ToDictionary<dynamic?, int, int>(
-                entry => entry.ApplicationID,
-                entry => entry.NumRecentProgressRecords
+                entry => entry?.ApplicationID,
+                entry => entry?.NumRecentProgressRecords
             );
         }
 
@@ -1444,17 +1652,17 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@hasCompleted IS NULL) OR (@hasCompleted = 1 AND pr.Completed IS NOT NULL) OR (@hasCompleted = 0 AND pr.Completed IS NULL))
 
                 AND ((@answer1 IS NULL) OR ((@answer1 = 'No option selected' OR @answer1 = 'FREETEXTBLANKVALUE') AND (pr.Answer1 IS NULL OR LTRIM(RTRIM(pr.Answer1)) = '')) 
-							OR (@answer1 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer1 IS NOT NULL OR pr.Answer1 = @answer1)))
+					OR ((@answer1 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer1 IS NOT NULL AND LTRIM(RTRIM(pr.Answer1)) != '') OR (pr.Answer1 IS NOT NULL AND pr.Answer1 = @answer1)))
 
 				AND ((@answer2 IS NULL) OR ((@answer2 = 'No option selected' OR @answer2 = 'FREETEXTBLANKVALUE') AND (pr.Answer2 IS NULL OR LTRIM(RTRIM(pr.Answer2)) = '')) 
-							OR (@answer2 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer2 IS NOT NULL OR pr.Answer2 = @answer2)))
+					OR ((@answer2 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer2 IS NOT NULL AND LTRIM(RTRIM(pr.Answer2)) != '') OR (pr.Answer2 IS NOT NULL AND pr.Answer2 = @answer2)))
 
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
-							OR (@answer3 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer3 IS NOT NULL OR pr.Answer3 = @answer3)))
+					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
 
-            
+
             var mainSql = "SELECT COUNT(*) AS TotalRecords " + fromTableQuery;
 
             return connection.ExecuteScalar<int>(
@@ -1479,7 +1687,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
 
-        public async Task<IEnumerable<CourseDelegateForExport>> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+        public IEnumerable<CourseDelegateForExport> GetCourseDelegatesForExport(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3)
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
@@ -1545,13 +1753,13 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@hasCompleted IS NULL) OR (@hasCompleted = 1 AND pr.Completed IS NOT NULL) OR (@hasCompleted = 0 AND pr.Completed IS NULL))
 
                 AND ((@answer1 IS NULL) OR ((@answer1 = 'No option selected' OR @answer1 = 'FREETEXTBLANKVALUE') AND (pr.Answer1 IS NULL OR LTRIM(RTRIM(pr.Answer1)) = '')) 
-							OR (@answer1 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer1 IS NOT NULL OR pr.Answer1 = @answer1)))
+					OR ((@answer1 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer1 IS NOT NULL AND LTRIM(RTRIM(pr.Answer1)) != '') OR (pr.Answer1 IS NOT NULL AND pr.Answer1 = @answer1)))
 
 				AND ((@answer2 IS NULL) OR ((@answer2 = 'No option selected' OR @answer2 = 'FREETEXTBLANKVALUE') AND (pr.Answer2 IS NULL OR LTRIM(RTRIM(pr.Answer2)) = '')) 
-							OR (@answer2 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer2 IS NOT NULL OR pr.Answer2 = @answer2)))
+					OR ((@answer2 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer2 IS NOT NULL AND LTRIM(RTRIM(pr.Answer2)) != '') OR (pr.Answer2 IS NOT NULL AND pr.Answer2 = @answer2)))
 
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
-							OR (@answer3 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer3 IS NOT NULL OR pr.Answer3 = @answer3)))
+					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
 
@@ -1593,7 +1801,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 commandTimeout: 3000
             );
 
-            
+
             return courseDelegates;
         }
 
@@ -1616,14 +1824,135 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId)
         {
             return connection.Query<Course>(
-                @$"select ap.ApplicationID,ap.ApplicationName,{DelegateCountQuery},cu.CustomisationID,cu.CustomisationName 
-				from Applications as ap
-				inner join CentreApplications as ca on ap.ApplicationID = ca.ApplicationID
-				inner join Customisations as cu on ca.ApplicationID = cu.ApplicationID
-				where ca.Active = 1 and cu.Active= 1 and cu.CentreID = @centreId AND ca.CentreID=@centreId
-				order by ap.ApplicationName",
+                @$"SELECT ap.ApplicationID, ap.ApplicationName,
+                                     {DelegateCountQuery}, cu.CustomisationID, cu.CustomisationName
+                    FROM   Applications AS ap INNER JOIN
+                                 CentreApplications AS ca ON ap.ApplicationID = ca.ApplicationID LEFT OUTER JOIN
+                                 Customisations AS cu ON ca.ApplicationID = cu.ApplicationID AND ca.CentreID = cu.CentreID AND cu.Active = 1
+                    WHERE (ca.Active = 1) AND (ca.CentreID = @centreId)
+                    ORDER BY ap.ApplicationName",
                 new { centreId }
             );
+        }
+
+        public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields
+        )
+        {
+            string courseStatisticsSelect = @$" SELECT
+                        cu.CustomisationID,
+                        cu.CentreID,
+                        cu.Active,
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 0 ELSE cu.Active END AS Active,
+                        cu.AllCentres,
+                        ap.ApplicationId,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        {DelegateCountQuery},
+                        {CompletedCountQuery},
+                        {AllAttemptsQuery},
+                        {AttemptsPassedQuery},
+                        cu.HideInLearnerPortal,
+                        cc.CategoryName,
+                        ct.CourseTopic,
+                        cu.LearningTimeMins AS LearningMinutes,
+                        cu.IsAssessed,
+                        CASE WHEN ap.ArchivedDate IS NOT NULL THEN 1 ELSE 0 END AS Archived,
+                        ((SELECT COUNT(pr.CandidateID)
+		                    FROM dbo.Progress AS pr WITH (NOLOCK) 
+		                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+		                    WHERE pr.CustomisationID = cu.CustomisationID
+		                    AND can.CentreID = @centreId
+		                    AND RemovedDate IS NULL) - 
+		                (SELECT COUNT(pr.CandidateID)
+		                    FROM dbo.Progress AS pr WITH (NOLOCK) 
+		                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+		                    WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
+		                    AND can.CentreID = @centreId)) AS InProgressCount ";
+            string courseStatisticsFromTable = @$" FROM dbo.Customisations AS cu WITH (NOLOCK)
+                    INNER JOIN dbo.CentreApplications AS ca WITH (NOLOCK) ON ca.ApplicationID = cu.ApplicationID
+                    INNER JOIN dbo.Applications AS ap WITH (NOLOCK) ON ap.ApplicationID = ca.ApplicationID
+                    INNER JOIN dbo.CourseCategories AS cc WITH (NOLOCK) ON cc.CourseCategoryID = ap.CourseCategoryID
+                    INNER JOIN dbo.CourseTopics AS ct WITH (NOLOCK) ON ct.CourseTopicID = ap.CourseTopicId
+
+                    LEFT JOIN CoursePrompts AS cp1 WITH (NOLOCK) 
+			            ON cu.CourseField1PromptID = cp1.CoursePromptID
+		            LEFT JOIN CoursePrompts AS cp2 WITH (NOLOCK) 
+			            ON cu.CourseField2PromptID = cp2.CoursePromptID
+		            LEFT JOIN CoursePrompts AS cp3 WITH (NOLOCK) 
+			            ON cu.CourseField3PromptID = cp3.CoursePromptID
+
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = @allCentreCourses))
+                        AND ca.CentreID = @centreId
+                        AND ap.DefaultContentTypeID <> 4
+                        AND ( ap.ApplicationName + IIF(cu.CustomisationName IS NULL, '', ' - ' + cu.CustomisationName) LIKE N'%' + @searchString + N'%')
+                        AND ((@isActive = 'Any') OR (@isActive = 'true' AND (cu.Active = 1 AND ap.ArchivedDate IS NULL)) OR (@isActive = 'false' AND ((cu.Active = 0 OR ap.ArchivedDate IS NOT NULL))))
+                        AND ((@categoryName = 'Any') OR (cc.CategoryName = @categoryName))
+                        AND ((@courseTopic = 'Any') OR (ct.CourseTopic = @courseTopic))
+                        AND ((@hasAdminFields = 'Any') OR (@hasAdminFields = 'true' AND (cp1.CoursePrompt IS NOT NULL OR cp2.CoursePrompt IS NOT NULL OR cp3.CoursePrompt IS NOT NULL))
+                                                       OR (@hasAdminFields = 'false' AND (cp1.CoursePrompt IS NULL AND cp2.CoursePrompt IS NULL AND cp3.CoursePrompt IS NULL)))";
+
+            if (hideInLearnerPortal != null)
+                courseStatisticsFromTable += " AND cu.HideInLearnerPortal = @hideInLearnerPortal";
+
+            var courseStatisticsQuery = courseStatisticsSelect + courseStatisticsFromTable;
+
+            IEnumerable<CourseStatistics> courseStatistics = connection.Query<CourseStatistics>(
+                courseStatisticsQuery,
+                new
+                {
+                    searchString,
+                    centreId,
+                    categoryId,
+                    allCentreCourses,
+                    hideInLearnerPortal,
+                    isActive,
+                    categoryName,
+                    courseTopic,
+                    hasAdminFields
+                },
+                commandTimeout: 3000
+            );
+
+            return courseStatistics;
+        }
+
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive)
+        {
+            string assessmentStatisticsSelectQuery = $@"SELECT
+                        sa.Name AS Name,
+                        cc.CategoryName AS Category,
+                        CASE 
+                          WHEN sa.SupervisorSelfAssessmentReview = 1 OR sa.SupervisorResultsReview = 1 THEN 1
+                          ELSE 0
+                        END AS Supervised,
+                        (SELECT COUNT(can.ID)
+                        FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
+                            INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = can.DelegateUserID 
+						    LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID AND ucd.centreID = can.CentreID
+                        WHERE can.CentreID = @centreId AND can.SelfAssessmentID = csa.SelfAssessmentID
+                            AND can.RemovedDate IS NULL AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS DelegateCount,
+                        (Select COUNT(*) FROM
+                            (SELECT can.ID FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
+                                LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas ON can.ID = cas.CandidateAssessmentID
+                                LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
+                                WHERE can.CentreID = @centreId AND can.SelfAssessmentID = CSA.SelfAssessmentID AND can.RemovedDate IS NULL
+                                AND (can.SubmittedDate IS NOT NULL OR (casv.SignedOff = 1 AND casv.Verified IS NOT NULL)) GROUP BY can.ID) A
+                                ) AS SubmittedSignedOffCount,
+                        CC.Active AS Active,
+                        sa.ID AS SelfAssessmentId
+                        from CentreSelfAssessments AS csa 
+                        INNER join SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
+                        INNER JOIN CourseCategories AS cc ON sa.CategoryID = cc.CourseCategoryID
+                        WHERE csa.CentreID= @centreId
+                                AND sa.[Name] LIKE '%' + @searchString + '%'
+		                        AND ((@categoryName = 'Any') OR (cc.CategoryName = @categoryName))
+		                        AND ((@isActive = 'Any') OR (@isActive = 'true' AND  sa.ArchivedDate IS NULL) OR (@isActive = 'false' AND sa.ArchivedDate IS NOT NULL))
+                                ";
+
+            IEnumerable<DelegateAssessmentStatistics> delegateAssessmentStatistics = connection.Query<DelegateAssessmentStatistics>(assessmentStatisticsSelectQuery,
+                new { searchString, centreId, categoryName, isActive }, commandTimeout: 3000);
+            return delegateAssessmentStatistics;
         }
     }
 }

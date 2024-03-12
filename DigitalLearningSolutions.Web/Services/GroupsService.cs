@@ -19,6 +19,7 @@
     using Microsoft.Extensions.Logging;
     using MimeKit;
     using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public interface IGroupsService
     {
@@ -85,6 +86,7 @@
             string? filterLinkedField
         );
 
+        IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId);
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
         string? GetGroupName(int groupId, int centreId);
@@ -132,6 +134,8 @@
             int newJobGroupId,
             AccountDetailsData accountDetailsData
         );
+
+        bool IsDelegateGroupExist(string groupLabel, int centreId);
     }
 
     public class GroupsService : IGroupsService
@@ -513,9 +517,14 @@
             return groupsDataService.GetGroupsForCentre(search, offset, rows, sortBy, sortDirection, centreId, filterAddedBy, filterLinkedField);
         }
 
+        public IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId = 0)
+        {
+            return groupsDataService.GetAdminsForCentreGroups(centreId);
+        }
+
         public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
         {
-            return groupsDataService.GetGroupDelegates(groupId).Where(gd => gd.CentreEmail != null || !Guid.TryParse(gd.PrimaryEmail, out _));
+            return groupsDataService.GetGroupDelegates(groupId);
         }
 
         public IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId)
@@ -883,6 +892,11 @@
         private static string GetGroupNameWithPrefix(string prefix, string groupName)
         {
             return $"{prefix} - {groupName}";
+        }
+
+        public bool IsDelegateGroupExist(string groupLabel, int centreId)
+        {
+            return groupsDataService.IsDelegateGroupExist(groupLabel, centreId);
         }
     }
 }

@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.User;    
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewComponents;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
@@ -78,7 +78,7 @@
             );
 
             // When
-            var model = viewComponent.Invoke(inputViewModel).As<ViewViewComponentResult>().ViewData.Model
+            var model = viewComponent.Invoke(inputViewModel).As<ViewViewComponentResult>().ViewData?.Model
                 .As<CurrentFiltersViewModel>();
 
             // Then

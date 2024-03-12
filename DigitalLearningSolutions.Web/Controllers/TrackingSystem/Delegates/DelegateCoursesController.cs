@@ -1,25 +1,29 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
+    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System.Collections.Generic;
+    using System.Linq;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
-    [Route("TrackingSystem/Delegates/Courses")]
+    [Route("TrackingSystem/Delegates/Activities")]
     public class DelegateCoursesController : Controller
     {
         private const string CourseFilterCookieName = "DelegateCoursesFilter";
@@ -80,8 +84,17 @@
             var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
-            string isActive, categoryName, courseTopic, hasAdminFields;
-            isActive = categoryName = courseTopic = hasAdminFields = "Any";
+            string isActive, categoryName, courseTopic, hasAdminFields, isCourse, isSelfAssessment;
+            isActive = categoryName = courseTopic = hasAdminFields = isCourse = isSelfAssessment = "Any";
+
+            var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
+               .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+
+            if (TempData["DelegateActivitiesCentreId"] != null && TempData["DelegateActivitiesCentreId"].ToString() != User.GetCentreId().ToString()
+                    && existingFilterString != null)
+            {
+                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
+            }
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
@@ -127,25 +140,42 @@
 
                         if (filter.Contains("HasAdminFields"))
                             hasAdminFields = filterValue;
+
+                        if (filter.Contains("Course|"))
+                            isCourse = filterValue;
+
+                        if (filter.Contains("SelfAssessment"))
+                            isSelfAssessment = filterValue;
                     }
                 }
             }
 
-            var (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true, null,
-                                                            isActive, categoryName, courseTopic, hasAdminFields);
-            if (courses.Count() == 0 && resultCount > 0)
+            IEnumerable<DelegateAssessmentStatistics> delegateAssessments = new DelegateAssessmentStatistics[] { };
+            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> delegateActivities = new CourseStatisticsWithAdminFieldResponseCounts[] { };
+
+            if (isCourse == "Any" && isSelfAssessment == "Any")
             {
-                page = 1;
-                offSet = 0;
-                (courses, resultCount) = courseService.GetCentreCourses(searchString ?? string.Empty, offSet, (int)itemsPerPage, sortBy, sortDirection, centreId, categoryId, true, null,
-                                                            isActive, categoryName, courseTopic, hasAdminFields);
+                delegateActivities = courseService.GetDelegateCourses(searchString, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
+                if (courseTopic == "Any" && hasAdminFields == "Any")
+                    delegateAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
             }
 
-            var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
-                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+            if (isCourse == "true")
+                delegateActivities = courseService.GetDelegateCourses(searchString ?? string.Empty, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
+            if (isSelfAssessment == "true" && courseTopic == "Any" && hasAdminFields == "Any")
+                delegateAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
+
+            delegateAssessments = UpdateCompletedCount(delegateAssessments);
+
+            var allItems = delegateActivities.Cast<CourseStatistics>().ToList();
+            allItems.AddRange(delegateAssessments);
+
+            allItems = OrderActivities(allItems, sortBy, sortDirection);
+
+            var resultCount = allItems.Count();
 
             var result = paginateService.Paginate(
-                courses,
+                allItems,
                 resultCount,
                 new PaginationOptions(page, itemsPerPage),
                 new FilterOptions(existingFilterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),
@@ -163,9 +193,19 @@
                 courseCategoryName
             );
 
+
+            for (int optionIndex = 0; model.SortOptions.Count() > optionIndex; optionIndex++)
+            {
+                if ((((string, string)[])model.SortOptions)[optionIndex].Item1 == "Completed")
+                {
+                    (((string, string)[])model.SortOptions)[optionIndex].Item1 = "Completed/Signed off/Submitted";
+                }
+            }
+
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
             Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);
+            TempData["DelegateActivitiesCentreId"] = centreId;
 
             return View(model);
         }
@@ -180,21 +220,120 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
-            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFile(
+
+            searchString = searchString == null ? string.Empty : searchString.Trim();
+
+            string isActive, categoryName, courseTopic, hasAdminFields, isCourse, isSelfAssessment;
+            isActive = categoryName = courseTopic = hasAdminFields = isCourse = isSelfAssessment = "Any";
+
+            if (!string.IsNullOrEmpty(existingFilterString))
+            {
+                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
+
+                if (selectedFilters.Count > 0)
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        var filterArr = filter.Split(FilteringHelper.Separator);
+                        var filterValue = filterArr[2];
+                        if (filterValue == FilteringHelper.EmptyValue) filterValue = "No option selected";
+
+                        if (filter.Contains("CategoryName"))
+                            categoryName = filterValue;
+
+                        if (filter.Contains("CourseTopic"))
+                            courseTopic = filterValue;
+
+                        if (filter.Contains("Active"))
+                            isActive = filterValue;
+
+                        if (filter.Contains("NotActive"))
+                            isActive = "false";
+
+                        if (filter.Contains("HasAdminFields"))
+                            hasAdminFields = filterValue;
+
+                        if (filter.Contains("Course|"))
+                            isCourse = filterValue;
+
+                        if (filter.Contains("SelfAssessment"))
+                            isSelfAssessment = filterValue;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(existingFilterString))
+            {
+                if (existingFilterString.Contains("NotActive"))
+                    existingFilterString = existingFilterString.Replace("NotActive|true", "Active|false");
+
+                var filters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
+
+                foreach (var filter in filters)
+                {
+                    if (filter.Contains("Type|"))
+                    {
+                        filters.Remove(filter);
+                        existingFilterString = string.Join(FilteringHelper.FilterSeparator, filters);
+                        break;
+                    }
+                }
+                if (existingFilterString == "") existingFilterString = null;
+            }
+
+            var content = courseDelegatesDownloadFileService.GetActivityDelegateDownloadFile(
                 centreId,
                 categoryId,
                 searchString,
-                sortBy,
                 existingFilterString,
+                courseTopic,
+                hasAdminFields,
+                categoryName,
+                isActive,
+                isCourse,
+                isSelfAssessment,
+                sortBy,
                 sortDirection
             );
 
-            const string fileName = "Digital Learning Solutions Delegate Courses.xlsx";
+            const string fileName = "Digital Learning Solutions Delegate Activities.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
-                fileName
+            fileName
             );
+        }
+
+        private IEnumerable<DelegateAssessmentStatistics> UpdateCompletedCount(IEnumerable<DelegateAssessmentStatistics> statistics)
+        {
+            foreach (var statistic in statistics)
+            {
+                statistic.CompletedCount = statistic.SubmittedSignedOffCount;
+            }
+            return statistics;
+        }
+
+        private List<CourseStatistics> OrderActivities(List<CourseStatistics> allItems, string sortBy, string sortDirection)
+        {
+            if (sortBy == "InProgressCount")
+            {
+                allItems = sortDirection == "Ascending"
+                            ? allItems.OrderBy(x => x.InProgressCount).ThenBy(n => n.SearchableName).ToList()
+                            : allItems.OrderByDescending(x => x.InProgressCount).ThenBy(n => n.SearchableName).ToList();
+            }
+            else if (sortBy == "CompletedCount")
+            {
+                allItems = sortDirection == "Ascending"
+                            ? allItems.OrderBy(x => x.CompletedCount).ThenBy(n => n.SearchableName).ToList()
+                            : allItems.OrderByDescending(x => x.CompletedCount).ThenBy(n => n.SearchableName).ToList();
+            }
+            else
+            {
+                allItems = sortDirection == "Ascending"
+                            ? allItems.OrderBy(x => x.SearchableName).ToList()
+                            : allItems.OrderByDescending(x => x.SearchableName).ToList();
+            }
+            return allItems;
         }
     }
 }

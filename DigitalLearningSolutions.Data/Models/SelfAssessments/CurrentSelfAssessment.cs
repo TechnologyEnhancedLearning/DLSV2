@@ -3,7 +3,6 @@
     using System;
     public class CurrentSelfAssessment : SelfAssessment
     {
-        public int CandidateAssessmentId { get; set; }
         public string? UserBookmark { get; set; }
         public bool UnprocessedUpdates { get; set; }
         public int LaunchCount { get; set; }
@@ -20,5 +19,9 @@
         public string? ManageSupervisorsDescription { get; set; }
         public string? ReviewerCommentsLabel { get; set; }
         public bool NonReportable { get; set; }
+        public int? SupervisorCount { get; set; }
+        public bool IsSameCentre { get; set; }
+        public int? DelegateUserId { get; set; }
+        public string? DelegateName { get; set; }
     }
 }

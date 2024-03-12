@@ -1,8 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningMenu
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FakeItEasy;
     using FluentAssertions;
@@ -84,7 +83,7 @@
             controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
-            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._)).MustHaveHappened();
         }
 
         [Test]

@@ -4,11 +4,11 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.User;    
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using FakeItEasy;
     using FizzWare.NBuilder;
@@ -71,10 +71,9 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.GetActiveAdminsByCentreId(A<int>._)).MustHaveHappened();
+                A.CallTo(() => userDataService.GetAdminsByCentreId(A<int>._)).MustHaveHappened();
                 A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                     .MustHaveHappened();
-                A.CallTo(() => userDataService.GetActiveAdminsByCentreId(A<int>._)).MustHaveHappened();
                 A.CallTo(
                     () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                         A<IEnumerable<AdminEntity>>._,
@@ -154,7 +153,7 @@
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().WithDefaultViewName().ModelAs<DeactivateAdminViewModel>();
-                administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)].Errors[0].ErrorMessage
+                administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)]?.Errors[0].ErrorMessage
                     .Should()
                     .BeEquivalentTo(expectedErrorMessage);
                 A.CallTo(() => userDataService.DeactivateAdmin(admin.AdminAccount.Id)).MustNotHaveHappened();

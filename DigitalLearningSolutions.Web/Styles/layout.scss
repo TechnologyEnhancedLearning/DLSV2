@@ -345,14 +345,9 @@ nav, .nhsuk-header__navigation, #header-navigation {
   }
 }
 
-@media only screen and (max-width: $mq-tablet) {
-  .nhsuk-table-responsive .nhsuk-table__body .nhsuk-table__row td li {
-    text-align: justify;
-  }
-}
-
 .dls-alert-banner {
   background-color: $color_nhsuk-dark-pink;
+  padding-bottom: 0.1px;
   color: #FFFFFF;
 
   a {

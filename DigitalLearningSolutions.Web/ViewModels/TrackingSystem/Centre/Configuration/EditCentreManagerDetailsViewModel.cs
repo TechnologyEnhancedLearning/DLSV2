@@ -31,8 +31,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
         [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? Email { get; set; }
 
-        [MaxLength(250, ErrorMessage = "Telephone number must be 250 characters or fewer")]
-        [RegularExpression(@"[0-9 ]+", ErrorMessage = "Enter a Telephone number in the correct format.")]
+        [RegularExpression(@"^\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*(\d\s*)?\s*$", ErrorMessage = "Enter a Telephone number in the correct format.")]
         public string? Telephone { get; set; }
     }
 }

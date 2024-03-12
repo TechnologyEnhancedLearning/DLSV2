@@ -1,0 +1,66 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@using Microsoft.Extensions.Configuration
+@model DelegateSelfAssessmenteViewModel;
+@inject IConfiguration Configuration;
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Delegate Self Assessment - Confirm Remove";
+    var cancelLinkRouteData = new Dictionary<string, string>();
+    cancelLinkRouteData.Add("selfAssessmentId", Model.SelfAssessmentID.ToString());
+
+}
+<style>
+    .nhsuk-grid-column-three-quarters {
+        float: left;
+        width: 60%;
+    }
+
+    .nhsuk-grid-column-one-quarter {
+        float: left;
+        width: 40%;
+    }
+</style>
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
+        }
+        <h1 class="nhsuk-heading-xl">Remove from self assessment</h1>
+    </div>
+</div>
+
+<vc:field-name-value-display display-name="Delegate" field-value="@Model.Name" />
+<vc:field-name-value-display display-name="Self Assessment" field-value="@Model.SelfAssessmentsName" />
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+
+
+        <form class="nhsuk-u-margin-bottom-3" asp-controller="ActivityDelegates">
+
+            <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
+                                label="I am sure that I wish to remove @Model.FirstName @Model.LastName from this self assessment."
+                                hint-text="This action will remove the delegate from the self assessment. Their progress will be archived but can be reinstated by enrolling them on the self assessment again." />
+
+
+            <button type="submit" class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveDelegateSelfAssessment">
+                Remove from self assessment
+            </button>
+            @Html.HiddenFor(m => m.CandidateAssessmentsId)
+            @Html.HiddenFor(m => m.FirstName)
+            @Html.HiddenFor(m => m.LastName)
+            @Html.HiddenFor(m => m.Email)
+            @Html.HiddenFor(m => m.SelfAssessmentID)
+            @Html.HiddenFor(m => m.SelfAssessmentsName)
+            @Html.HiddenFor(m => m.Name)
+        </form>
+        <br />
+
+        <vc:cancel-link asp-controller=ActivityDelegates asp-action="Index" asp-all-route-data="@cancelLinkRouteData" />
+
+    </div>
+</div>
