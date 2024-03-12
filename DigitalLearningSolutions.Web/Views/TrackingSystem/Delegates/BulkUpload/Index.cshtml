@@ -75,7 +75,7 @@
         </p>
         <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="StartUpload" enctype="multipart/form-data">
 
-            <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with updated information (max @(Model.MaxBulkUploadRows) rows)" hint-text="" css-class="nhsuk-u-width-one-half" />
+            <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with new/updated delegate information" hint-text="" css-class="nhsuk-u-width-one-half" />
 
             <button class="nhsuk-button" type="submit">Start upload</button>
         </form>

@@ -13,8 +13,11 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using Microsoft.Extensions.Configuration;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
     using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
     using ClosedXML.Excel;
+    using DigitalLearningSolutions.Web.Models;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -27,25 +30,26 @@
         private readonly IDelegateUploadFileService delegateUploadFileService;
         private readonly IClockUtility clockUtility;
         private readonly IConfiguration configuration;
+        private readonly IMultiPageFormService multiPageFormService;
         public BulkUploadController(
-            IDelegateDownloadFileService delegateDownloadFileService,
-            IDelegateUploadFileService delegateUploadFileService,
-            IClockUtility clockUtility, IConfiguration configuration
+            IDelegateDownloadFileService delegateDownloadFileService
+            , IDelegateUploadFileService delegateUploadFileService
+            , IClockUtility clockUtility
+            , IConfiguration configuration
+            , IMultiPageFormService multiPageFormService
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
             this.delegateUploadFileService = delegateUploadFileService;
             this.clockUtility = clockUtility;
             this.configuration = configuration;
+            this.multiPageFormService = multiPageFormService;
         }
 
         public IActionResult Index()
         {
             TempData.Clear();
             var model = new UploadDelegatesViewModel();
-            model.MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
-            int MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
-            TempData["MaxBulkUploadRows"] = MaxBulkUploadRows;
             return View(model);
         }
         private int GetMaxBulkUploadRowsLimit()
@@ -67,14 +71,29 @@
                 fileName
             );
         }
-
+        private void setupBulkUploadData(int centreId, int adminUserID, IXLTable delegateTable)
+        {
+            TempData.Clear();
+            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"), TempData);
+            int maxBulkUploadRows = GetMaxBulkUploadRowsLimit();
+            var bulkUploadData = new BulkUploadData(centreId, adminUserID, delegateTable, maxBulkUploadRows);
+            setBulkUploadData(bulkUploadData);
+        }
+        private void setBulkUploadData(BulkUploadData bulkUploadData)
+        {
+            multiPageFormService.SetMultiPageFormData(
+                bulkUploadData,
+                MultiPageFormDataFeature.AddCustomWebForm("BulkUploadDataCWF"),
+                TempData
+            );
+        }
         [Route("StartUpload")]
         [HttpPost]
         public IActionResult StartUpload(UploadDelegatesViewModel model)
         {
-            int MaxBulkUploadRows = GetMaxBulkUploadRowsLimit();
+            
             var centreId = User.GetCentreIdKnownNotNull();
-            model.MaxBulkUploadRows = MaxBulkUploadRows;
+            var adminUserID = User.GetAdminIdKnownNotNull();
             if (!ModelState.IsValid)
             {
                 return View("StartUpload", model);
@@ -88,6 +107,7 @@
             try
             {
                 var table = delegateUploadFileService.OpenDelegatesTable(model.DelegatesFile!);
+                setupBulkUploadData(centreId, adminUserID, table);
                 var results = delegateUploadFileService.PreProcessDelegatesFile(
                     table
                 );

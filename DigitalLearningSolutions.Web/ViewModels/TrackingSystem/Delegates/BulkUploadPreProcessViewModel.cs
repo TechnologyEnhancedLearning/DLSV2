@@ -3,9 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using ClosedXML.Excel;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
+    using DigitalLearningSolutions.Web.Services;
+    using Microsoft.AspNetCore.Http;
 
-    public class BulkUploadPreProcessViewModel
+    public class BulkUploadPreProcessViewModel : UploadDelegatesViewModel
     {
         public BulkUploadPreProcessViewModel(BulkUploadResult bulkUploadResult)
         {
