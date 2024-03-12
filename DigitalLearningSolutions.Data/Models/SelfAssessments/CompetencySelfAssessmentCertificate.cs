@@ -26,5 +26,6 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public string? Vocabulary { get; set; }
         public int SupervisorDelegateId { get; set; }
         public string FormattedDate { get; set; } = string.Empty;
+        public bool NonReportable { get; set; }
     }
 }
