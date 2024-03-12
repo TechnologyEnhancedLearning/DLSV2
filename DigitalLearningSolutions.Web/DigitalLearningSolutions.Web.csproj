@@ -73,6 +73,10 @@
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
         <PackageReference Include="Microsoft.FeatureManagement" Version="3.1.0" />
         <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.5.1" />
+        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.4.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
         <PackageReference Include="NHSUKViewComponents.Web" Version="1.0.13" />
