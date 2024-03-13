@@ -34,11 +34,17 @@ jobs:
       - name: Add TechnologyEnhancedLearning as nuget package source
         run:  |
               $nugetSources = dotnet nuget list source | Out-String; 
-                if(!($nugetSources -like "*TechnologyEnhancedLearning*")) 
-                { 
-                  dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text; 
+              if($nugetSources -like "*TechnologyEnhancedLearning*") 
+              {
+                # Update the source (in case PAT has been updated)
+                dotnet nuget update source TechnologyEnhancedLearning --source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text
+                } 
+                else
+                {
+                  # Add the source
+                  dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password ${{ secrets.AZURE_DEVOPS_PAT }} --store-password-in-clear-text
                 }
-      
+              
       - name: Dotnet publish 
         run: | 
           dotnet publish DigitalLearningSolutions.sln -c Release -o E:/web/${{env.SitePath}}-NEW
