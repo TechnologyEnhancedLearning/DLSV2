@@ -137,27 +137,36 @@
         </div>
 
         <div class="body">
-            <h3 class=" nhsuk-u-margin-bottom-3">
-                Including the following optional proficiencies:
-            </h3>
-            @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
+            @if (Model.CompetencyCountSelfAssessmentCertificate.Any())
             {
-                <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
-                    @entry.CompetencyGroup - @entry.OptionalCompetencyCount
-                    @if (@entry.OptionalCompetencyCount == 1)
-                    {
-                        @Model.CompetencySelfAssessmentCertificates.Vocabulary
-                    }
-                    else
-                    {
-                        @Model.VocabPlural
-                    }
-
-                </p>
-
+                <h3 class=" nhsuk-u-margin-bottom-3">
+                    Including the following optional proficiencies:
+                </h3>
+                @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
+                {
+                    <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
+                        @entry.CompetencyGroup - @entry.OptionalCompetencyCount
+                        @if (@entry.OptionalCompetencyCount == 1)
+                        {
+                            @Model.CompetencySelfAssessmentCertificates.Vocabulary
+                        }
+                        else
+                        {
+                            @Model.VocabPlural
+                        }
+                    </p>
+                }
             }
-
         </div>
+
+        @if (Model.CompetencySelfAssessmentCertificates.NonReportable)
+        {
+            <div class="footer">
+                <p class="nhsuk-body-l nhsuk-u-font-weight-bold">
+                    THIS IS AN EXAMPLE ONLY, GENERATED FROM A TEST SELF ASSESSMENT
+                </p>
+            </div>
+        }
 
         <div class="footer">
             <div class="text">
@@ -186,6 +195,10 @@
         <div class="body">
             <h2>Activity summary report</h2>
             <br />
+            @if (Model.CompetencySelfAssessmentCertificates.NonReportable)
+            {
+                <h3>THIS IS AN EXAMPLE ONLY, GENERATED FROM A TEST SELF ASSESSMENT</h3>
+            }
             <div class="activity">
                 <p><b>Activity: </b>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</p>
             </div>
@@ -198,11 +211,6 @@
             <div class="activity">
                 <p><b>Assessment question responses</b></p> <p>
                     @sumQuestions
-                </p>
-            </div>
-            <div class="activity">
-                <p><b>Response meeting role requirements</b></p> <p>
-                    @Model.RoleCount
                 </p>
             </div>
             <div class="activity">
