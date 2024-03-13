@@ -38,7 +38,7 @@ jobs:
                   dotnet nuget remove source TechnologyEnhancedLearning;
                 } 
               # Add the source
-              dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker@hee.nhs.uk' --password $env:AZURE_DEVOPS_PAT --store-password-in-clear-text
+              dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevin.whittaker' --password $env:SELF_HOSTED_RUNNER_DEVOPS_KEY --store-password-in-clear-text
 
       - name: Dotnet publish 
         run: | 
