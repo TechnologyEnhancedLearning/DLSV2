@@ -35,15 +35,11 @@ jobs:
         run:  |
               $nugetSources = dotnet nuget list source | Out-String; 
               if($nugetSources -like "*TechnologyEnhancedLearning*") {
-                # Update the existing source
-                dotnet nuget update source TechnologyEnhancedLearning --source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --username 'kevwhitt-hee' --password $env:AZURE_DEVOPS_PAT --store-password-in-clear-text
+                  dotnet nuget remove source TechnologyEnhancedLearning;
                 } 
-                else 
-                {
-                # Add the new source
-                dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevwhitt-hee' --password $env:AZURE_DEVOPS_PAT --store-password-in-clear-text
-                }
-      
+              # Add the source
+              dotnet nuget add source https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json --name TechnologyEnhancedLearning --username 'kevwhitt-hee' --password $env:AZURE_DEVOPS_PAT --store-password-in-clear-text
+
       - name: Dotnet publish 
         run: | 
           dotnet publish DigitalLearningSolutions.sln -c Release -o E:/web/${{env.SitePath}}-NEW
