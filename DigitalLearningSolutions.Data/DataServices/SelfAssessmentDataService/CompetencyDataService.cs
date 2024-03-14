@@ -27,6 +27,7 @@
                     sv.Comments,
                     sv.SignedOff,
                     adu.Forename + ' ' + adu.Surname AS SupervisorName,
+                    adu.CentreName AS CentreName,
                     sv.CandidateAssessmentSupervisorID,
                     sv.EmailSent,
                     0 AS UserIsVerifier,
@@ -128,7 +129,8 @@
             LAR.SignedOff,
             LAR.UserIsVerifier,
             LAR.ResultRAG,
-            LAR.SupervisorName";
+            LAR.SupervisorName,
+            LAR.CentreName AS CentreName";
 
         private const string CompetencyTables =
             @"Competencies AS C
