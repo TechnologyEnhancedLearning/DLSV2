@@ -41,7 +41,7 @@
             </ul>
             @if (Model.ErrorCount == 0)
             {
-                <button class="nhsuk-button">Start processing</button>
+                <a asp-controller="BulkUpload" asp-action="@(Model.ToRegisterCount == 0 ? "AddUsersToGroup" : "SendUsersWelcomeEmail")" class="nhsuk-button">Continue</a>
             }
             else
             {

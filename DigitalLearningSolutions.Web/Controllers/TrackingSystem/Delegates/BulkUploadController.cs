@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Utilities;
@@ -15,9 +14,13 @@
     using Microsoft.Extensions.Configuration;
     using GDS.MultiPageFormData;
     using GDS.MultiPageFormData.Enums;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
+    using ConfigurationExtensions = Data.Extensions.ConfigurationExtensions;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Web.Models;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Hosting;
+    using DocumentFormat.OpenXml.EMMA;
+    using System.IO;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -31,12 +34,14 @@
         private readonly IClockUtility clockUtility;
         private readonly IConfiguration configuration;
         private readonly IMultiPageFormService multiPageFormService;
+        private readonly IWebHostEnvironment webHostEnvironment;
         public BulkUploadController(
             IDelegateDownloadFileService delegateDownloadFileService
             , IDelegateUploadFileService delegateUploadFileService
             , IClockUtility clockUtility
             , IConfiguration configuration
             , IMultiPageFormService multiPageFormService
+            , IWebHostEnvironment webHostEnvironment
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
@@ -44,6 +49,7 @@
             this.clockUtility = clockUtility;
             this.configuration = configuration;
             this.multiPageFormService = multiPageFormService;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -71,27 +77,11 @@
                 fileName
             );
         }
-        private void setupBulkUploadData(int centreId, int adminUserID, IXLTable delegateTable)
-        {
-            TempData.Clear();
-            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"), TempData);
-            int maxBulkUploadRows = GetMaxBulkUploadRowsLimit();
-            var bulkUploadData = new BulkUploadData(centreId, adminUserID, delegateTable, maxBulkUploadRows);
-            setBulkUploadData(bulkUploadData);
-        }
-        private void setBulkUploadData(BulkUploadData bulkUploadData)
-        {
-            multiPageFormService.SetMultiPageFormData(
-                bulkUploadData,
-                MultiPageFormDataFeature.AddCustomWebForm("BulkUploadDataCWF"),
-                TempData
-            );
-        }
         [Route("StartUpload")]
         [HttpPost]
         public IActionResult StartUpload(UploadDelegatesViewModel model)
         {
-            
+
             var centreId = User.GetCentreIdKnownNotNull();
             var adminUserID = User.GetAdminIdKnownNotNull();
             if (!ModelState.IsValid)
@@ -104,20 +94,71 @@
                 ModelState.AddModelError("MaxBulkUploadRows", CommonValidationErrorMessages.InvalidBulkUploadExcelFile);
                 return View("StartUpload", model);
             }
+            var delegateFileName = FileHelper.UploadFile(webHostEnvironment, model.DelegatesFile);
+            setupBulkUploadData(centreId, adminUserID, delegateFileName);
+
+            return RedirectToAction("UploadComplete");
+        }
+
+        [Route("UploadComplete")]
+        public IActionResult UploadComplete()
+        {
+            var data = GetBulkUploadData();
+            var uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
+            var filePath = Path.Combine(uploadDir, data.DelegatesFileName);
+            var workbook = new XLWorkbook(filePath);
+            var table = delegateUploadFileService.OpenDelegatesTable(workbook);
             try
             {
-                var table = delegateUploadFileService.OpenDelegatesTable(model.DelegatesFile!);
-                setupBulkUploadData(centreId, adminUserID, table);
                 var results = delegateUploadFileService.PreProcessDelegatesFile(
-                    table
-                );
+                  table
+              );
                 var resultsModel = new BulkUploadPreProcessViewModel(results);
                 return View("UploadCompleted", resultsModel);
             }
             catch (InvalidHeadersException)
             {
+                FileHelper.DeleteFile(webHostEnvironment, data.DelegatesFileName);
                 return View("UploadFailed");
-            }
+            }            
+        }
+
+        [Route("SendUsersWelcomeEmail")]
+        public IActionResult SendUsersWelcomeEmail()
+        {
+            return View();
+        }
+
+        [Route("AddUsersToGroup")]
+        public IActionResult AddUsersToGroup()
+        {
+            return View();
+        }
+
+        private void setupBulkUploadData(int centreId, int adminUserID, string delegatesFileName)
+        {
+            TempData.Clear();
+            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("BulkUploadDataCWF"), TempData);
+            int maxBulkUploadRows = GetMaxBulkUploadRowsLimit();
+            var bulkUploadData = new BulkUploadData(centreId, adminUserID, delegatesFileName, maxBulkUploadRows);
+            setBulkUploadData(bulkUploadData);
+        }
+        private void setBulkUploadData(BulkUploadData bulkUploadData)
+        {
+           multiPageFormService.SetMultiPageFormData(
+                bulkUploadData,
+                MultiPageFormDataFeature.AddCustomWebForm("BulkUploadDataCWF"),
+                TempData
+            );
+        }
+
+        private BulkUploadData GetBulkUploadData()
+        {
+            var data = multiPageFormService.GetMultiPageFormData<BulkUploadData>(
+               MultiPageFormDataFeature.AddCustomWebForm("BulkUploadDataCWF"),
+               TempData
+           ).GetAwaiter().GetResult();
+            return data;
         }
     }
 }

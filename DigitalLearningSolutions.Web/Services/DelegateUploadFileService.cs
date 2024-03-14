@@ -21,8 +21,7 @@ namespace DigitalLearningSolutions.Web.Services
 {
     public interface IDelegateUploadFileService
     {
-        public int GetBulkUploadExcelRowCount(IFormFile delegatesFile);
-        public IXLTable OpenDelegatesTable(IFormFile file);
+        public IXLTable OpenDelegatesTable(XLWorkbook workbook);
         public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate);
         public BulkUploadResult PreProcessDelegatesFile(IXLTable table);
     }
@@ -72,9 +71,8 @@ namespace DigitalLearningSolutions.Web.Services
             return ProcessDelegatesTable(table, centreId, welcomeEmailDate);
         }
 
-        public IXLTable OpenDelegatesTable(IFormFile file)
+        public IXLTable OpenDelegatesTable(XLWorkbook workbook)
         {
-            var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(DelegateDownloadFileService.DelegatesSheetName);
             worksheet.Columns(1, 15).Unhide();
             var table = worksheet.Tables.Table(0);
@@ -375,10 +373,6 @@ namespace DigitalLearningSolutions.Web.Services
             }.OrderBy(x => x);
             var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);
-        }
-        public int GetBulkUploadExcelRowCount(IFormFile delegatesFile)
-        {
-            return OpenDelegatesTable(delegatesFile).AsNativeDataTable().Rows.Count;
         }
     }
 }

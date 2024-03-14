@@ -30,15 +30,15 @@
             return reason switch
             {
                 BulkUploadResult.ErrorReason.InvalidJobGroupId =>
-                    "Job group is not valid, please ensure a valid job group is selected from the provided list",
+                    "Job group is not valid. Please choose a job group from the list provided",
                 BulkUploadResult.ErrorReason.MissingLastName =>
                     "LastName is blank. Last name is a required field and cannot be left blank",
                 BulkUploadResult.ErrorReason.MissingFirstName =>
                     "FirstName is blank. First name is a required field and cannot be left blank",
                 BulkUploadResult.ErrorReason.MissingEmail =>
-                    "EmailAddress is blank. EmailAddress is a required field and cannot be left blank",
+                    "EmailAddress is blank. Email address is a required field and cannot be left blank",
                 BulkUploadResult.ErrorReason.InvalidActive =>
-                    "Active field is invalid. The Active field should contain 'TRUE' or 'FALSE'",
+                    "Active field is invalid. The Active field must contain 'TRUE' or 'FALSE'",
                 BulkUploadResult.ErrorReason.TooLongFirstName => "FirstName must be 250 characters or fewer",
                 BulkUploadResult.ErrorReason.TooLongLastName => "LastName must be 250 characters or fewer",
                 BulkUploadResult.ErrorReason.TooLongEmail => "EmailAddress must be 250 characters or fewer",

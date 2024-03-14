@@ -1,9 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
     using ClosedXML.Excel;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
+    using Microsoft.AspNetCore.Http;
     using System.Collections.Generic;
 
     using System.ComponentModel.DataAnnotations;
@@ -11,19 +10,19 @@
     public class BulkUploadData
     {
         public BulkUploadData() { }
-        public BulkUploadData(int centreId, int adminUserId, IXLTable delegatesTable, int maxBulkUploadRows)
+        public BulkUploadData(int centreId, int adminUserId, string delegatesFileName, int maxRowsToProcess)
         {
             CentreId = centreId;
             AdminUserId = adminUserId;
-            DelegatesTable = delegatesTable;
-            MaxBulkUploadRows = maxBulkUploadRows;
+            DelegatesFileName = delegatesFileName;
+            MaxRowsToProcess = maxRowsToProcess;
             ToProcessCount = 0;
             ToRegisterCount = 0;
             ToUpdateCount = 0;
         }
         public int CentreId { get; set; }
         public int AdminUserId { get; set; }
-        public IXLTable DelegatesTable { get; set; }
+        public string DelegatesFileName { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
@@ -32,7 +31,7 @@
         public int ToProcessCount { get; set; }
         public int ToRegisterCount { get; set; }
         public int ToUpdateCount { get; set; }
-        public int MaxBulkUploadRows { get; set; }
+        public int MaxRowsToProcess { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
