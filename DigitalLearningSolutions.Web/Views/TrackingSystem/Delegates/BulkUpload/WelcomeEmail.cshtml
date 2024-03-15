@@ -1,0 +1,37 @@
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
+@model WelcomeEmailViewModel
+@inject IClockUtility ClockUtility
+
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Send a welcome email" : "Send a welcome emai";
+    const string dateInputId = "welcome-email-date";
+    var exampleDate = ClockUtility.UtcToday;
+    var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
+        }
+
+        <h1 class="nhsuk-heading-xl">Send new delegates a welcome email</h1>
+
+        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SubmitWelcomeEmail" enctype="multipart/form-data">
+            <vc:date-input id="@dateInputId"
+                           label="Set a date when you would like to send welcome email to the @Model.DelegatesToRegister delegates being registered. The email will direct these users to DLS and guide them to access it as a delegate at your centre."
+                           day-id="Day"
+                           month-id="Month"
+                           year-id="Year"
+                           css-class="@(errorHasOccurred ? " nhsuk-u-padding-left-5 nhsuk-u-margin-bottom-3" : "")"
+                           hint-text-lines="@hintTextLines" />
+
+            <button class="nhsuk-button" type="submit">Continue</button>
+        </form>
+
+        <vc:cancel-link asp-controller="BulkUpload" asp-action="CancelUpload" />
+    </div>
+</div>

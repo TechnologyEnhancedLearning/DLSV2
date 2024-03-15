@@ -19,6 +19,7 @@
             ToProcessCount = 0;
             ToRegisterCount = 0;
             ToUpdateCount = 0;
+            IncludeUpdatedDelegates = false;
         }
         public int CentreId { get; set; }
         public int AdminUserId { get; set; }
@@ -26,12 +27,15 @@
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
+        public int? AddToGroupOption { get; set; }
         public string? NewGroupName { get; set; }
+        public string? NewGroupDescription { get; set; }
         public int? ExistingGroupId { get; set; }
         public int ToProcessCount { get; set; }
         public int ToRegisterCount { get; set; }
         public int ToUpdateCount { get; set; }
         public int MaxRowsToProcess { get; set; }
+        public bool IncludeUpdatedDelegates { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
