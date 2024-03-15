@@ -18,7 +18,7 @@
             <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
         }
 
-        <h1 class="nhsuk-heading-xl">Send new delegates a welcome email</h1>
+        <h1 class="nhsuk-heading-xl">Send newly registered delegates a welcome email</h1>
 
         <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SubmitWelcomeEmail" enctype="multipart/form-data">
             <vc:date-input id="@dateInputId"

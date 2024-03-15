@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -20,6 +19,7 @@
     using Microsoft.AspNetCore.Hosting;
     using System.IO;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -212,7 +212,23 @@
         [Route("AddWhoToGroup")]
         public IActionResult AddWhoToGroup()
         {
-            return View();
+            var data = GetBulkUploadData();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var groupName = data.NewGroupName;
+            if (groupName == null && data.ExistingGroupId != null)
+            {
+                var group = groupsService.GetGroupAtCentreById((int)data.ExistingGroupId, centreId);
+                if (group != null)
+                {
+                    groupName = group.GroupLabel;
+                }
+            }
+            if (groupName == null)
+            {
+                return RedirectToAction("UploadSummary");
+            }
+            var model = new AddWhoToGroupViewModel(groupName!, data.IncludeUpdatedDelegates, data.ToProcessCount, data.ToRegisterCount);
+            return View(model);
         }
 
         [Route("UploadSummary")]

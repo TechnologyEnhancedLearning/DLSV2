@@ -1,8 +1,8 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload
 @model AddToGroupViewModel
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Add" + (!Model.RegisteringDelegates ? " updated " : !Model.UpdatingDelegates ? " registered " : " ") + "delegates to a group";
+    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Add" + (!Model.RegisteringDelegates ? " updated " : !Model.UpdatingDelegates ? " registered " : " ") + "delegates to a group";
 }
 
 <div class="nhsuk-grid-row">
@@ -88,7 +88,7 @@
             </fieldset>
             <input type="hidden" asp-for="RegisteringDelegates" />
             <input type="hidden" asp-for="UpdatingDelegates" />
-            <button class="nhsuk-button" type="submit">Continue</button>
+            <button class="nhsuk-button" type="submit">Next</button>
         </form>
 
         <vc:cancel-link asp-controller="BulkUpload" asp-action="CancelUpload" />

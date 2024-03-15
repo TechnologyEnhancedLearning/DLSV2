@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload
 {
     using Microsoft.AspNetCore.Mvc.Rendering;
     using System.Collections.Generic;
@@ -39,7 +39,7 @@
             {
                 yield return new ValidationResult("Please select an existing group", new[] { nameof(ExistingGroupId) });
             }
-            else if (AddToGroupOption == 2 && (string.IsNullOrEmpty(NewGroupName)))
+            else if (AddToGroupOption == 2 && string.IsNullOrEmpty(NewGroupName))
             {
                 yield return new ValidationResult("Please specify a name for the new group", new[] { nameof(NewGroupName) });
             }

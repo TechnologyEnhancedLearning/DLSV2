@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload
 {
     using System;
     using System.Collections.Generic;
