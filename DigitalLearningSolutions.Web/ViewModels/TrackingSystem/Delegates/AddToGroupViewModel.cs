@@ -37,11 +37,11 @@
         {
             if (AddToGroupOption == 1 && (ExistingGroupId == null || ExistingGroupId <= 0))
             {
-                yield return new ValidationResult("Existing must be selected if you wish to add to an existing group", new[] { nameof(ExistingGroupId) });
+                yield return new ValidationResult("Please select an existing group", new[] { nameof(ExistingGroupId) });
             }
             else if (AddToGroupOption == 2 && (string.IsNullOrEmpty(NewGroupName)))
             {
-                yield return new ValidationResult("A group name must be specified if you are creating a new group", new[] { nameof(NewGroupName) });
+                yield return new ValidationResult("Please specify a name for the new group", new[] { nameof(NewGroupName) });
             }
         }
     }

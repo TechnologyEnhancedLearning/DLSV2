@@ -1,16 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
-    using ClosedXML.Excel;
     using DigitalLearningSolutions.Web.Helpers;
-    using Microsoft.AspNetCore.Http;
+    using System;
     using System.Collections.Generic;
-
     using System.ComponentModel.DataAnnotations;
-
     public class BulkUploadData
     {
         public BulkUploadData() { }
-        public BulkUploadData(int centreId, int adminUserId, string delegatesFileName, int maxRowsToProcess)
+        public BulkUploadData(int centreId, int adminUserId, string delegatesFileName, int maxRowsToProcess, DateTime today)
         {
             CentreId = centreId;
             AdminUserId = adminUserId;
@@ -20,6 +17,9 @@
             ToRegisterCount = 0;
             ToUpdateCount = 0;
             IncludeUpdatedDelegates = false;
+            Day = today.Day;
+            Month = today.Month;
+            Year = today.Year;
         }
         public int CentreId { get; set; }
         public int AdminUserId { get; set; }

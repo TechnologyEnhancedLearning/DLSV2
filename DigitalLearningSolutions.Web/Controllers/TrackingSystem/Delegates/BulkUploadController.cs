@@ -20,8 +20,6 @@
     using Microsoft.AspNetCore.Hosting;
     using System.IO;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
-    using System.Linq;
-    using DocumentFormat.OpenXml.Drawing.Charts;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -161,10 +159,7 @@
         {
             var data = GetBulkUploadData();
             var centreId = User.GetCentreIdKnownNotNull();
-            var groups = groupsService.GetGroupsForCentre(centreId)
-                .Where(item => item.LinkedToField == 0)
-                .Select(item => (id: item.GroupId, value: item.GroupLabel));
-            var groupSelect = SelectListHelper.MapOptionsToSelectListItems(groups, data.ExistingGroupId);
+            var groupSelect = groupsService.GetUnlinkedGroupsSelectListForCentre(centreId, data.ExistingGroupId);
             var model = new AddToGroupViewModel(data.AddToGroupOption, existingGroups: groupSelect, data.ExistingGroupId, data.NewGroupName, data.NewGroupDescription, registeringDelegates: data.ToRegisterCount > 0, updatingDelegates: data.ToUpdateCount > 0);
             return View(model);
         }
@@ -239,7 +234,8 @@
             TempData.Clear();
             multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("BulkUploadDataCWF"), TempData);
             int maxBulkUploadRows = GetMaxBulkUploadRowsLimit();
-            var bulkUploadData = new BulkUploadData(centreId, adminUserID, delegatesFileName, maxBulkUploadRows);
+            var today = clockUtility.UtcToday;
+            var bulkUploadData = new BulkUploadData(centreId, adminUserID, delegatesFileName, maxBulkUploadRows, today);
             setBulkUploadData(bulkUploadData);
         }
         private void setBulkUploadData(BulkUploadData bulkUploadData)
