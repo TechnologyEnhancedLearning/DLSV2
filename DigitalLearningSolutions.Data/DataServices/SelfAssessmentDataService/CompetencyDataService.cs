@@ -27,7 +27,6 @@
                     sv.Comments,
                     sv.SignedOff,
                     adu.Forename + ' ' + adu.Surname AS SupervisorName,
-                    adu.CentreName AS CentreName,
                     sv.CandidateAssessmentSupervisorID,
                     sv.EmailSent,
                     0 AS UserIsVerifier,
