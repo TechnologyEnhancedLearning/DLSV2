@@ -129,8 +129,7 @@
             LAR.SignedOff,
             LAR.UserIsVerifier,
             LAR.ResultRAG,
-            LAR.SupervisorName,
-            LAR.CentreName AS CentreName";
+            LAR.SupervisorName";
 
         private const string CompetencyTables =
             @"Competencies AS C
@@ -272,6 +271,7 @@
                 LAR.EmailSent,
                 LAR.Requested AS SupervisorVerificationRequested,
                 COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS SupervisorName,
+                au.CentreName,
                 SelfAssessmentResultSupervisorVerificationId AS SupervisorVerificationId,
                 CandidateAssessmentSupervisorID";
             const string supervisorTables = @"

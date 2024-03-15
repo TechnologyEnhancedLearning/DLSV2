@@ -20,7 +20,6 @@
         public bool IncludeComments { get; set; }
         public IEnumerable<LevelDescriptor> LevelDescriptors { get; set; } = new List<LevelDescriptor>();
         public string? SupervisorName { get; set; }
-        public string? CentreName { get; set; }
         public string? SupportingComments { get; set; }
         public int? SelfAssessmentResultSupervisorVerificationId { get; set; }
         public DateTime? Requested { get; set; }
