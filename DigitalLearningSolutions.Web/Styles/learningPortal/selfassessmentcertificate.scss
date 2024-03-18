@@ -3,7 +3,6 @@
 }
 
 .certificate {
-  margin-left: 15px;
   padding: 0 0;
   width: 100%;
   justify-content: start;
@@ -78,7 +77,7 @@
 
 .footer-logo img {
   max-width: 18rem;
-  height: auto;
+  width: 100%;
 }
 
 .strips {
@@ -103,7 +102,7 @@
 .pg-2 {
   background-color: white;
   width: 100%;
-   position: relative;
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
