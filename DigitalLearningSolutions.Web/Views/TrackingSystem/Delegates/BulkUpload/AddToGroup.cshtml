@@ -88,6 +88,10 @@
             </fieldset>
             <input type="hidden" asp-for="RegisteringDelegates" />
             <input type="hidden" asp-for="UpdatingDelegates" />
+            @if (Model.RegisteringDelegates)
+            {
+                <a asp-controller="BulkUpload" asp-action="WelcomeEmail" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+            }
             <button class="nhsuk-button" type="submit">Next</button>
         </form>
 
