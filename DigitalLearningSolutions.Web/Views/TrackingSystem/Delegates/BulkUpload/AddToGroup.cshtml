@@ -6,7 +6,7 @@
 }
 
 <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-grid-column-full nhsuk-u-reading-width">
         @if (errorHasOccurred)
         {
             <vc:error-summary order-of-property-names="@(new []{ nameof(AddToGroupViewModel.ExistingGroupId), nameof(AddToGroupViewModel.NewGroupName) })" />

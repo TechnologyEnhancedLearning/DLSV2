@@ -20,6 +20,7 @@
     using System.IO;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload;
+    using DigitalLearningSolutions.Data.Models.Centres;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -168,14 +169,21 @@
         [Route("SubmitAddToGroup")]
         public IActionResult SubmitAddToGroup(AddToGroupViewModel model)
         {
+            var centreId = User.GetCentreIdKnownNotNull();
             if (model.AddToGroupOption == 3)
             {
                 return RedirectToAction("UploadSummary");
             }
             var data = GetBulkUploadData();
+            if (model.AddToGroupOption == 2)
+            {
+                if (groupsService.IsDelegateGroupExist(model.NewGroupName.Trim(), centreId))
+                {
+                    ModelState.AddModelError(nameof(model.NewGroupName), "A group with the same name already exists (if it does not appear in the list of groups, it may be linked to a centre registration field)");
+                }
+            }
             if (!ModelState.IsValid)
             {
-                var centreId = User.GetCentreIdKnownNotNull();
                 var groupSelect = groupsService.GetUnlinkedGroupsSelectListForCentre(centreId, data.ExistingGroupId);
                 model.ExistingGroups = groupSelect;
                 model.RegisteringDelegates = data.ToRegisterCount > 0;
@@ -231,10 +239,43 @@
             return View(model);
         }
 
-        [Route("UploadSummary")]
+        [HttpPost]
+        [Route("AddWhoToGroup")]
+        public IActionResult SubmitAddWhoToGroup(AddWhoToGroupViewModel model)
+        {
+            var data = GetBulkUploadData();
+            data.IncludeUpdatedDelegates = model.IncludeUpdatedDelegates;
+            setBulkUploadData(data);
+            return RedirectToAction("UploadSummary");
+        }
+
+            [Route("UploadSummary")]
         public IActionResult UploadSummary()
         {
-            return View();
+            var data = GetBulkUploadData();
+            var centreId = User.GetCentreIdKnownNotNull();
+            string? groupName;
+            if (data.AddToGroupOption == 1 && data.ExistingGroupId != null)
+            {
+                groupName = groupsService.GetGroupName((int)data.ExistingGroupId, centreId);
+            }
+            else
+            {
+                groupName = data.NewGroupName;
+            }
+            var model = new UploadSummaryViewModel(
+                data.ToProcessCount,
+                data.ToRegisterCount,
+                data.ToUpdateCount,
+                data.MaxRowsToProcess,
+                (int)data.AddToGroupOption,
+                groupName,
+                data.Day,
+                data.Month,
+                data.Year,
+                data.IncludeUpdatedDelegates
+                );
+            return View(model);
         }
 
         [Route("CancelUpload")]
