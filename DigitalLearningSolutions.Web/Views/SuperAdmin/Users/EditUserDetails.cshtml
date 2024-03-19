@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Users;
 @model EditUserDetailsViewModel;
 @{
-    ViewData["Title"] = "User Accounts";
+    ViewData["Title"] = "Edit User Account Details";
     var errorHasOccurred = !ViewData.ModelState.IsValid;
 }
 @if (errorHasOccurred)
@@ -27,11 +27,11 @@
             </h1>
             <div class="nhsuk-grid-row divider">
                 <div class="nhsuk-grid-column-full">
-                    @Html.HiddenFor(x=>x.Id)
-                    @Html.HiddenFor(x=>x.Page)
-                    @Html.HiddenFor(x=>x.EmailVerified)
-                    @Html.HiddenFor(x=>x.SearchString)
-                    @Html.HiddenFor(x=>x.ExistingFilterString)
+                    @Html.HiddenFor(x => x.Id)
+                    @Html.HiddenFor(x => x.Page)
+                    @Html.HiddenFor(x => x.EmailVerified)
+                    @Html.HiddenFor(x => x.SearchString)
+                    @Html.HiddenFor(x => x.ExistingFilterString)
                     <div class="nhsuk-grid-row">
                         <div class="nhsuk-grid-column-one-half">
                             <vc:text-input asp-for="@(nameof(Model.FirstName))"
