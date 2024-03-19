@@ -1267,7 +1267,7 @@
                 var competencies = PopulateCompetencyLevelDescriptors(
                     selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
                         selfAssessmentId,
-                        User.GetUserIdKnownNotNull()
+                        User.GetCandidateIdKnownNotNull()
                     ).ToList()
                 );
                 model.CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
