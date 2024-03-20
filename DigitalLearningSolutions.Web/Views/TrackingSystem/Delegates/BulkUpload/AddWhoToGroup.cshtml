@@ -2,7 +2,7 @@
 @model AddWhoToGroupViewModel
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = (errorHasOccurred? "Error: " : "")  + "Add which delegates to a group";
+    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Add which delegates to a group";
 }
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
@@ -28,7 +28,7 @@
                         <div class="nhsuk-radios__item">
                             <input class="nhsuk-radios__input" id="option-2" asp-for="IncludeUpdatedDelegates" type="radio" value="false" aria-describedby="option-1-hint">
                             <label class="nhsuk-label nhsuk-radios__label" for="option-2">
-                                Only add newly registered delegates to this group 
+                                Only add newly registered delegates to this group
                             </label>
                             <div class="nhsuk-hint nhsuk-radios__hint" id="option-2-hint">
                                 @Model.ToRegisterCount delegates will be added to the group @Model.GroupName
@@ -50,7 +50,6 @@
             <a asp-controller="BulkUpload" asp-action="AddToGroup" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
             <button class="nhsuk-button" type="submit">Next</button>
         </form>
-
         <vc:cancel-link asp-controller="BulkUpload" asp-action="CancelUpload" />
     </div>
 </div>

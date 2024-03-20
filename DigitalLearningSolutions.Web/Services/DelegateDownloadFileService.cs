@@ -66,7 +66,7 @@
             using var workbook = new XLWorkbook();
             PopulateDelegatesSheet(workbook, centreId, blank);
             AddCustomPromptsAndDataValidationToWorkbook(workbook, centreId);
-            if(blank)
+            if (blank)
             {
                 ClosedXmlHelper.HideWorkSheetColumn(workbook, "DelegateID");
             }
@@ -94,7 +94,7 @@
                 var promptNumber = prompt.RegistrationField.Id;
                 var promptLabel = prompt.PromptText;
                 ClosedXmlHelper.RenameWorksheetColumn(workbook, "Answer" + promptNumber.ToString(), promptLabel);
-                if(prompt.Options.Count()>0)
+                if (prompt.Options.Count() > 0)
                 {
                     ClosedXmlHelper.AddSheetToWorkbook(workbook, promptLabel, prompt.Options, TableTheme);
                     var worksheetNumber = workbook.Worksheets.Count;
@@ -150,7 +150,7 @@
 
         private void PopulateDelegatesSheet(IXLWorkbook workbook, int centreId, bool blank)
         {
-            
+
 
             var delegateRecords = userDataService.GetDelegateUserCardsByCentreId(blank ? 0 : centreId);
             var delegates = delegateRecords.OrderBy(x => x.LastName).Select(
@@ -173,10 +173,10 @@
                     PRN = x.HasBeenPromptedForPrn ? x.ProfessionalRegistrationNumber : null,
                 }
             );
-            
+
             ClosedXmlHelper.AddSheetToWorkbook(workbook, DelegatesSheetName, delegates, TableTheme);
         }
-        
+
         private int PopulateJobGroupsSheet(IXLWorkbook workbook)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical()

@@ -20,7 +20,9 @@
     using System.IO;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload;
-    using DigitalLearningSolutions.Data.Models.Centres;
+    using System;
+    using DigitalLearningSolutions.Data.Models.DelegateUpload;
+    using System.Linq;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -170,10 +172,6 @@
         public IActionResult SubmitAddToGroup(AddToGroupViewModel model)
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            if (model.AddToGroupOption == 3)
-            {
-                return RedirectToAction("UploadSummary");
-            }
             var data = GetBulkUploadData();
             if (model.AddToGroupOption == 2)
             {
@@ -249,7 +247,7 @@
             return RedirectToAction("UploadSummary");
         }
 
-            [Route("UploadSummary")]
+        [Route("UploadSummary")]
         public IActionResult UploadSummary()
         {
             var data = GetBulkUploadData();
@@ -278,13 +276,111 @@
             return View(model);
         }
 
+        [Route("StartProcessing")]
+        public IActionResult StartProcessing()
+        {
+            var centreId = User.GetCentreIdKnownNotNull();
+            var data = GetBulkUploadData();
+            var adminId = User.GetAdminIdKnownNotNull();
+            if (data.AddToGroupOption == 2 && data.NewGroupName != null)
+            {
+                data.ExistingGroupId = groupsService.AddDelegateGroup(centreId, data.NewGroupName, data.NewGroupDescription, adminId);
+            }
+            return RedirectToAction("ProcessNextStep");
+        }
+
+        [Route("ProcessNextStep")]
+        public IActionResult ProcessNextStep()
+        {
+            var centreId = User.GetCentreIdKnownNotNull();
+            var data = GetBulkUploadData();
+            var adminId = User.GetAdminIdKnownNotNull();
+
+            int processSteps = data.ToProcessCount / data.MaxRowsToProcess + 1;
+            int step = data.LastRowProcessed / data.MaxRowsToProcess + 1;
+            var uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
+            var filePath = Path.Combine(uploadDir, data.DelegatesFileName);
+            var workbook = new XLWorkbook(filePath);
+            var welcomeEmailDate = new DateTime(data.Year!.Value, data.Month!.Value, data.Day!.Value);
+            var table = delegateUploadFileService.OpenDelegatesTable(workbook);
+            var results = delegateUploadFileService.ProcessDelegatesFile(
+                  table,
+                  centreId,
+                  welcomeEmailDate,
+                  data.LastRowProcessed,
+                  data.MaxRowsToProcess,
+                  data.IncludeUpdatedDelegates,
+                  adminId,
+            data.ExistingGroupId
+                  );
+            bool moreSteps = data.MaxRowsToProcess < (data.ToProcessCount - data.LastRowProcessed);
+            if (moreSteps)
+            {
+                data.LastRowProcessed = data.LastRowProcessed + data.MaxRowsToProcess;
+            }
+            else
+            {
+                data.LastRowProcessed = data.ToProcessCount;
+            }
+            data.SubtotalDelegatesRegistered += results.RegisteredCount;
+            data.SubtotalDelegatesUpdated += results.UpdatedCount;
+            data.SubTotalSkipped += results.SkippedCount;
+            data.Errors = data.Errors.Concat(results.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason))));
+            setBulkUploadData(data);
+            if (data.LastRowProcessed >= data.ToProcessCount)
+            {
+                return RedirectToAction("BulkUploadResults");
+            }
+            return RedirectToAction("ProcessBulkDelegates", new { step = step, totalSteps = processSteps });
+        }
+
+        [Route("ProcessBulkDelegates/step/{step}/{totalSteps}/")]
+        public IActionResult ProcessBulkDelegates(int step, int totalSteps)
+        {
+            var data = GetBulkUploadData();
+            var model = new ProcessBulkDelegatesViewModel(
+                stepNumber: step,
+                totalSteps: totalSteps,
+                rowsProcessed: data.LastRowProcessed,
+                totalRows: data.ToProcessCount,
+                maxRowsPerStep: data.MaxRowsToProcess,
+                delegatesRegistered: data.SubtotalDelegatesRegistered,
+                delegatesUpdated: data.SubtotalDelegatesUpdated,
+                rowsSkipped: data.SubTotalSkipped,
+                errorCount: data.Errors.Count()
+                );
+            return View(model);
+        }
+
+        [Route("BulkUploadResults")]
+        public IActionResult BulkUploadResults()
+        {
+            var data = GetBulkUploadData();
+            FileHelper.DeleteFile(webHostEnvironment, data.DelegatesFileName);
+            var model = new BulkUploadResultsViewModel(
+                processedCount: data.ToProcessCount,
+                registeredCount: data.SubtotalDelegatesRegistered,
+                updatedCount: data.SubtotalDelegatesUpdated,
+                skippedCount: data.SubTotalSkipped,
+                errors: data.Errors,
+                day: (int)data.Day,
+                month: (int)data.Month,
+                year: (int)data.Year
+                );
+            TempData.Clear();
+            return View(model);
+        }
+
         [Route("CancelUpload")]
         public IActionResult CancelUpload()
         {
             var data = GetBulkUploadData();
             FileHelper.DeleteFile(webHostEnvironment, data.DelegatesFileName);
+            TempData.Clear();
             return RedirectToAction("Index");
         }
+
+
 
         private void setupBulkUploadData(int centreId, int adminUserID, string delegatesFileName)
         {
@@ -311,6 +407,54 @@
                TempData
            ).GetAwaiter().GetResult();
             return data;
+        }
+
+        private static string MapReasonToErrorMessage(BulkUploadResult.ErrorReason reason)
+        {
+            return reason switch
+            {
+                BulkUploadResult.ErrorReason.InvalidJobGroupId =>
+                    "JobGroupID was not valid, please ensure a valid job group is selected from the provided list",
+                BulkUploadResult.ErrorReason.MissingLastName =>
+                    "LastName was not provided. LastName is a required field and cannot be left blank",
+                BulkUploadResult.ErrorReason.MissingFirstName =>
+                    "FirstName was not provided. FirstName is a required field and cannot be left blank",
+                BulkUploadResult.ErrorReason.MissingEmail =>
+                    "EmailAddress was not provided. EmailAddress is a required field and cannot be left blank",
+                BulkUploadResult.ErrorReason.InvalidActive =>
+                    "Active field could not be read. The Active field should contain 'TRUE' or 'FALSE'",
+                BulkUploadResult.ErrorReason.NoRecordForDelegateId =>
+                    "No existing delegate record was found with the DelegateID provided",
+                BulkUploadResult.ErrorReason.UnexpectedErrorForCreate =>
+                    "Unexpected error when creating delegate",
+                BulkUploadResult.ErrorReason.UnexpectedErrorForUpdate =>
+                    "Unexpected error when updating delegate details",
+                BulkUploadResult.ErrorReason.ParameterError => "Parameter error when updating delegate details",
+                BulkUploadResult.ErrorReason.EmailAddressInUse =>
+                    "The EmailAddress is already in use by another delegate",
+                BulkUploadResult.ErrorReason.TooLongFirstName => "FirstName must be 250 characters or fewer",
+                BulkUploadResult.ErrorReason.TooLongLastName => "LastName must be 250 characters or fewer",
+                BulkUploadResult.ErrorReason.TooLongEmail => "EmailAddress must be 250 characters or fewer",
+                BulkUploadResult.ErrorReason.TooLongAnswer1 => "Answer1 must be 100 characters or fewer",
+                BulkUploadResult.ErrorReason.TooLongAnswer2 => "Answer2 must be 100 characters or fewer",
+                BulkUploadResult.ErrorReason.TooLongAnswer3 => "Answer3 must be 100 characters or fewer",
+                BulkUploadResult.ErrorReason.TooLongAnswer4 => "Answer4 must be 100 characters or fewer",
+                BulkUploadResult.ErrorReason.TooLongAnswer5 => "Answer5 must be 100 characters or fewer",
+                BulkUploadResult.ErrorReason.TooLongAnswer6 => "Answer6 must be 100 characters or fewer",
+                BulkUploadResult.ErrorReason.BadFormatEmail =>
+                    "EmailAddress must be in the correct format, like name@example.com",
+                BulkUploadResult.ErrorReason.WhitespaceInEmail =>
+                    "EmailAddress must not contain any whitespace characters",
+                BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue =>
+                    "HasPRN was set to true, but PRN was not provided. When HasPRN is set to true, PRN is a required field",
+                BulkUploadResult.ErrorReason.PrnButHasPrnIsFalse =>
+                    "HasPRN was set to false, but PRN was provided. When HasPRN is set to false, PRN is required to be empty",
+                BulkUploadResult.ErrorReason.InvalidPrnLength => "PRN must be between 5 and 20 characters",
+                BulkUploadResult.ErrorReason.InvalidPrnCharacters =>
+                    "Invalid PRN format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed",
+                BulkUploadResult.ErrorReason.InvalidHasPrnValue => "HasPRN field could not be read. The HasPRN field should contain 'TRUE' or 'FALSE' or be left blank",
+                _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null),
+            };
         }
     }
 }

@@ -4,6 +4,8 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+
     public class BulkUploadData
     {
         public BulkUploadData() { }
@@ -20,6 +22,7 @@
             Day = today.Day;
             Month = today.Month;
             Year = today.Year;
+            LastRowProcessed = 1;
         }
         public int CentreId { get; set; }
         public int AdminUserId { get; set; }
@@ -36,6 +39,11 @@
         public int ToUpdateCount { get; set; }
         public int MaxRowsToProcess { get; set; }
         public bool IncludeUpdatedDelegates { get; set; }
+        public int LastRowProcessed { get; set; }
+        public int SubtotalDelegatesRegistered { get; set; }
+        public int SubtotalDelegatesUpdated { get; set; }
+        public int SubTotalSkipped { get; set; }
+        public IEnumerable<(int RowNumber, string ErrorMessage)> Errors { get; set; } = Enumerable.Empty<(int, string)>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

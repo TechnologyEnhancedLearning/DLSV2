@@ -1,10 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload
 @model BulkUploadPreProcessViewModel
-
 @{
     ViewData["Title"] = Model.ErrorCount == 0 ? "Delegate file uploaded" : "Delegate file uploaded with errors";
 }
-
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         <div class="nhsuk-u-reading-width">
@@ -24,7 +22,6 @@
                 </div>
             }
             <h1 class="nhsuk-heading-xl">Delegate file uploaded</h1>
-
             <p class="nhsuk-body-l">@(Model.ErrorCount == 0 ? "Your file is error free and ready to be processed. Check the information below looks, correct before processing" : "Your file contains the following, including some errors:")</p>
             <ul>
                 <li>@Model.ToProcessCount @(Model.ToProcessCount == 1 ? "row" : "rows") to process</li>
@@ -46,7 +43,6 @@
             else
             {
                 <p class="nhsuk-body-l">Check the information below. You will need fix these errors before continuing:</p>
-
                 <div class="nhsuk-form-group nhsuk-form-group--error">
                     <span class="nhsuk-error-message" id="error-list">
                         <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorCount delegate @(Model.ErrorCount == 1 ? "row" : "rows") contain errors and cannot be processed
@@ -66,8 +62,6 @@
                         }
                     </dl>
                 </div>
-
-
                 <h2>Upload corrected file</h2>
                 <p class="nhsuk-body-m">
                     Once you have made corrections to the Excel delegate workbook to address the errors above, save and restart the upload process.

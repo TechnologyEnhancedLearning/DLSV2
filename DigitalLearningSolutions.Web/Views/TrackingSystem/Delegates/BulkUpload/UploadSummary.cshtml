@@ -9,7 +9,7 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         <h1>@ViewData["Title"]</h1>
-        <p class="nhsuk-body-l nhsuk-u-reading-width">Your delegate sheet is ready to be processed. Please check the details below are correct before proceeding to @process delegates</p>
+        <p class="nhsuk-body-l nhsuk-u-reading-width">Your delegate sheet is ready to be processed. Please check the details below are correct before proceeding to @process delegates.</p>
         <h2>Upload summary</h2>
         <dl class="nhsuk-summary-list">
 
@@ -88,6 +88,10 @@
                 <p>It is important that you complete all of the steps to ensure all of the delegate information you have provided is processed.</p>
             </div>
         }
+        <div class="nhsuk-inset-text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            <p>Once delegate records are processed, changes cannot be undone.</p>
+        </div>
         <a asp-controller="BulkUpload" asp-action="AddToGroup" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
 
         <a asp-controller="BulkUpload" asp-action="StartProcessing" role="button" class="nhsuk-button">@(processSteps > 1 ? "Start processing" : "Finish and process delegates")</a>

@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Web.Services
     public interface IDelegateUploadFileService
     {
         public IXLTable OpenDelegatesTable(XLWorkbook workbook);
-        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate);
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate, int lastRowProcessed, int maxRowsToProcess, bool includeUpdatedDelegatesInGroup, int adminId, int? delegateGroupId);
         public BulkUploadResult PreProcessDelegatesFile(IXLTable table);
     }
 
@@ -66,9 +66,9 @@ namespace DigitalLearningSolutions.Web.Services
             return PreProcessDelegatesTable(table);
         }
 
-        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate)
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate, int lastRowProcessed, int maxRowsToProcess, bool includeUpdatedDelegatesInGroup, int adminId, int? delegateGroupId)
         {
-            return ProcessDelegatesTable(table, centreId, welcomeEmailDate);
+            return ProcessDelegatesTable(table, centreId, welcomeEmailDate, lastRowProcessed, maxRowsToProcess, includeUpdatedDelegatesInGroup, adminId, delegateGroupId);
         }
 
         public IXLTable OpenDelegatesTable(XLWorkbook workbook)
@@ -122,14 +122,24 @@ namespace DigitalLearningSolutions.Web.Services
 
             return new BulkUploadResult(delegateRows);
         }
-        internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime welcomeEmailDate)
+        internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime welcomeEmailDate, int lastRowProcessed, int maxRowsToProcess, bool includeUpdatedDelegatesInGroup, int adminId, int? delegateGroupId)
         {
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
-            var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row)).ToList();
+            var rowCount = table.Rows().Count();
+            int lastRowToProcess;
+            if (maxRowsToProcess < rowCount - lastRowProcessed)
+            {
+                lastRowToProcess = lastRowProcessed + maxRowsToProcess;
+            }
+            else
+            {
+                lastRowToProcess = rowCount;
+            }
+            var delegateRows = table.Rows().Skip(lastRowProcessed).Take(lastRowToProcess - lastRowProcessed).Select(row => new DelegateTableRow(table, row)).ToList();
 
             foreach (var delegateRow in delegateRows)
             {
-                ProcessDelegateRow(centreId, welcomeEmailDate, delegateRow, jobGroupIds);
+                ProcessDelegateRow(centreId, welcomeEmailDate, delegateRow, includeUpdatedDelegatesInGroup, adminId, delegateGroupId);
             }
 
             return new BulkUploadResult(delegateRows);
@@ -158,14 +168,11 @@ namespace DigitalLearningSolutions.Web.Services
             int centreId,
             DateTime welcomeEmailDate,
             DelegateTableRow delegateRow,
-            IEnumerable<int> jobGroupIds
+            bool includeUpdatedDelegatesInGroup,
+            int adminId,
+            int? delegateGroupId
         )
         {
-            if (!delegateRow.Validate(jobGroupIds))
-            {
-                return;
-            }
-
             if (string.IsNullOrEmpty(delegateRow.CandidateNumber))
             {
                 if (userService.EmailIsHeldAtCentre(delegateRow.Email, centreId))
@@ -173,8 +180,7 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
                     return;
                 }
-
-                RegisterDelegate(delegateRow, welcomeEmailDate, centreId);
+                RegisterDelegate(delegateRow, welcomeEmailDate, centreId, adminId, delegateGroupId);
             }
             else
             {
@@ -202,6 +208,11 @@ namespace DigitalLearningSolutions.Web.Services
                 }
 
                 UpdateDelegate(delegateRow, delegateEntity);
+                if (delegateRow.Error == null && includeUpdatedDelegatesInGroup && delegateGroupId != null)
+                {
+                    //Add delegate to group
+                    groupsService.AddDelegateToGroup((int)delegateGroupId, delegateEntity.DelegateAccount.Id, adminId);
+                }
             }
         }
 
@@ -282,7 +293,7 @@ namespace DigitalLearningSolutions.Web.Services
             }
         }
 
-        private void RegisterDelegate(DelegateTableRow delegateTableRow, DateTime welcomeEmailDate, int centreId)
+        private void RegisterDelegate(DelegateTableRow delegateTableRow, DateTime welcomeEmailDate, int centreId, int adminId, int? delegateGroupId)
         {
             var model = RegistrationMappingHelper.MapDelegateUploadTableRowToDelegateRegistrationModel(delegateTableRow, welcomeEmailDate, centreId);
 
@@ -303,7 +314,11 @@ namespace DigitalLearningSolutions.Web.Services
                 welcomeEmailDate,
                 "DelegateBulkUpload_Refactor"
             );
-
+            if (delegateGroupId != null)
+            {
+                //Add delegate to group
+                groupsService.AddDelegateToGroup((int)delegateGroupId, delegateId, adminId);
+            }
             delegateTableRow.RowStatus = RowStatus.Registered;
         }
 
