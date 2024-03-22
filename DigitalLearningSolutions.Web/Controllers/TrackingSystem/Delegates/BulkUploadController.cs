@@ -23,6 +23,8 @@
     using System;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using System.Linq;
+    using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+    using System.Transactions;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -277,6 +279,7 @@
         }
 
         [Route("StartProcessing")]
+        [HttpPost]
         public IActionResult StartProcessing()
         {
             var centreId = User.GetCentreIdKnownNotNull();
@@ -285,19 +288,15 @@
             if (data.AddToGroupOption == 2 && data.NewGroupName != null)
             {
                 data.ExistingGroupId = groupsService.AddDelegateGroup(centreId, data.NewGroupName, data.NewGroupDescription, adminId);
+                setBulkUploadData(data);
             }
             return RedirectToAction("ProcessNextStep");
         }
-
-        [Route("ProcessNextStep")]
-        public IActionResult ProcessNextStep()
+        private BulkUploadResult ProcessRowsAndReturnResults()
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var data = GetBulkUploadData();
             var adminId = User.GetAdminIdKnownNotNull();
-
-            int processSteps = data.ToProcessCount / data.MaxRowsToProcess + 1;
-            int step = data.LastRowProcessed / data.MaxRowsToProcess + 1;
             var uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
             var filePath = Path.Combine(uploadDir, data.DelegatesFileName);
             var workbook = new XLWorkbook(filePath);
@@ -311,27 +310,40 @@
                   data.MaxRowsToProcess,
                   data.IncludeUpdatedDelegates,
                   adminId,
-            data.ExistingGroupId
+                  data.ExistingGroupId
                   );
-            bool moreSteps = data.MaxRowsToProcess < (data.ToProcessCount - data.LastRowProcessed);
-            if (moreSteps)
+            return results;
+        }
+        [Route("ProcessNextStep")]
+        public IActionResult ProcessNextStep()
+        {
+            using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             {
-                data.LastRowProcessed = data.LastRowProcessed + data.MaxRowsToProcess;
+                var centreId = User.GetCentreIdKnownNotNull();
+                var data = GetBulkUploadData();
+                var adminId = User.GetAdminIdKnownNotNull();
+                int processSteps = data.ToProcessCount / data.MaxRowsToProcess + 1;
+                int step = data.LastRowProcessed / data.MaxRowsToProcess + 1;
+                var results = ProcessRowsAndReturnResults();
+                data.SubtotalDelegatesRegistered += results.RegisteredCount;
+                data.SubtotalDelegatesUpdated += results.UpdatedCount;
+                data.SubTotalSkipped += results.SkippedCount;
+                data.Errors = data.Errors.Concat(results.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason))));
+                if (step < processSteps)
+                {
+                    data.LastRowProcessed = data.LastRowProcessed + data.MaxRowsToProcess;
+                }
+                else
+                {
+                    data.LastRowProcessed = data.ToProcessCount;
+                }
+                setBulkUploadData(data);
+                if (data.LastRowProcessed >= data.ToProcessCount)
+                {
+                    return RedirectToAction("BulkUploadResults");
+                }
+                return RedirectToAction("ProcessBulkDelegates", new { step = step, totalSteps = processSteps });
             }
-            else
-            {
-                data.LastRowProcessed = data.ToProcessCount;
-            }
-            data.SubtotalDelegatesRegistered += results.RegisteredCount;
-            data.SubtotalDelegatesUpdated += results.UpdatedCount;
-            data.SubTotalSkipped += results.SkippedCount;
-            data.Errors = data.Errors.Concat(results.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason))));
-            setBulkUploadData(data);
-            if (data.LastRowProcessed >= data.ToProcessCount)
-            {
-                return RedirectToAction("BulkUploadResults");
-            }
-            return RedirectToAction("ProcessBulkDelegates", new { step = step, totalSteps = processSteps });
         }
 
         [Route("ProcessBulkDelegates/step/{step}/{totalSteps}/")]

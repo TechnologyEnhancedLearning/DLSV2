@@ -92,9 +92,13 @@
             <span class="nhsuk-u-visually-hidden">Important: </span>
             <p>Once delegate records are processed, changes cannot be undone.</p>
         </div>
-        <a asp-controller="BulkUpload" asp-action="AddToGroup" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+        <form asp-action="StartProcessing">
+            <a asp-controller="BulkUpload" asp-action="AddToGroup" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+            <button type="submit" class="nhsuk-button">@(processSteps > 1 ? "Start processing" : "Finish and process delegates")</button>
+        </form>
+        
 
-        <a asp-controller="BulkUpload" asp-action="StartProcessing" role="button" class="nhsuk-button">@(processSteps > 1 ? "Start processing" : "Finish and process delegates")</a>
+        
 
         <vc:cancel-link asp-controller="BulkUpload" asp-action="CancelUpload" />
     </div>

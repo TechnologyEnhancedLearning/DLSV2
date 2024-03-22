@@ -429,27 +429,27 @@ namespace DigitalLearningSolutions.Web
                 app.UseBrowserLink();
             }
 
-            app.Use(
-                async (context, next) =>
+            
+
+            app.Use(async (context, next) =>
+            {
+                if (this.config.GetSection("IsTransactionScope")?.Value == "True")
                 {
-                    if (this.config.GetSection("IsTransactionScope")?.Value == "True")
+                    var transactionOptions = new TransactionOptions
                     {
-                        var transactionOptions = new TransactionOptions
-                        {
-                            Timeout = TimeSpan.FromMinutes(5) 
-                        };
-                        using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled))
-                        {
-                            await next.Invoke();
-                            scope.Complete();
-                        }
-                    }
-                    else
+                        Timeout = TimeSpan.FromMinutes(5)
+                    };
+                    using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled))
                     {
                         await next.Invoke();
+                        scope.Complete();
                     }
                 }
-            );
+                else
+                {
+                    await next.Invoke();
+                }
+            });
 
             app.UseExceptionHandler("/LearningSolutions/Error");
             app.UseStatusCodePagesWithReExecute("/LearningSolutions/StatusCode/{0}");
