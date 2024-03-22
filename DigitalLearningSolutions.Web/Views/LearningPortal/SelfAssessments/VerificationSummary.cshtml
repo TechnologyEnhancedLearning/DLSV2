@@ -31,7 +31,7 @@
             @Model.SelfAssessment.VerificationRoleName
         </dt>
         <dd class="nhsuk-summary-list__value">
-            @Model.Supervisor
+            @Model.Supervisor (@Model.SelfAssessment.CentreName)
         </dd>
         <dd class="nhsuk-summary-list__actions">
             <a asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
