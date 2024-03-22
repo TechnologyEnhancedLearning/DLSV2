@@ -10,6 +10,35 @@
 
     public partial class UserDataService
     {
+        private const string DelegateUserCardBlankRowSelectQuery =
+            @"SELECT
+                0 AS ID,
+                NULL AS CandidateNumber,
+                '' AS CentreName,
+                0 AS CentreID,
+                NULL AS DateRegistered,
+                NULL AS RegistrationConfirmationHash,
+                1 AS CentreActive,
+                '' AS EmailAddress,
+                '' AS FirstName,
+                '' AS LastName,
+                NULL AS Password,
+                NULL AS EmailVerified,
+                1 As Approved,
+                '' AS Answer1,
+                '' AS Answer2,
+                '' AS Answer3,
+                '' AS Answer4,
+                '' AS Answer5,
+                '' AS Answer6,
+                NULL as JobGroupId,
+                '' AS JobGroupName,
+                0 AS SelfReg,
+                0 AS ExternalReg,
+                1 AS Active,
+                0 AS HasBeenPromptedForPrn,
+                '' AS ProfessionalRegistrationNumber,
+                NULL AS AdminID";
         private const string DelegateUserCardSelectQuery =
             @"SELECT
                 da.ID,
@@ -172,11 +201,20 @@
 
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId)
         {
-            return connection.Query<DelegateUserCard>(
+            if (centreId >0)
+            {
+                return connection.Query<DelegateUserCard>(
                 @$"{DelegateUserCardSelectQuery}
                         WHERE da.CentreId = @centreId AND da.Approved = 1",
             new { centreId }
             ).ToList();
+            }
+            else
+            {
+                return connection.Query<DelegateUserCard>(
+                                @$"{DelegateUserCardBlankRowSelectQuery}"
+                            ).ToList();
+            }
         }
         public int GetCountDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
                                      string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,

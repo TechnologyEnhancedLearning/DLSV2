@@ -168,7 +168,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            var model = new WelcomeEmailViewModel(data);
+            var model = new WelcomeEmailViewModel(data, 1);
 
             return View(model);
         }
