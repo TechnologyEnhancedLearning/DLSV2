@@ -18,8 +18,8 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using MimeKit;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
-    using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using ConfigurationExtensions = Data.Extensions.ConfigurationExtensions;
+    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public interface IGroupsService
     {
@@ -136,6 +136,7 @@
         );
 
         bool IsDelegateGroupExist(string groupLabel, int centreId);
+        public IEnumerable<SelectListItem> GetUnlinkedGroupsSelectListForCentre(int centreId, int? selectedItemId);
     }
 
     public class GroupsService : IGroupsService
@@ -501,6 +502,16 @@
         public IEnumerable<Group> GetGroupsForCentre(int centreId)
         {
             return groupsDataService.GetGroupsForCentre(centreId);
+        }
+
+        public IEnumerable<SelectListItem> GetUnlinkedGroupsSelectListForCentre(int centreId, int? selectedItemId)
+        {
+            var groups = GetGroupsForCentre(centreId)
+                    .Where(item => item.LinkedToField == 0)
+                    .Select(item => (id: item.GroupId, value: item.GroupLabel))
+                    .OrderBy(item => item.value);
+            var groupSelect = SelectListHelper.MapOptionsToSelectListItems(groups, selectedItemId);
+            return groupSelect;
         }
 
         public (IEnumerable<Group>, int) GetGroupsForCentre(

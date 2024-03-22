@@ -92,42 +92,45 @@
             var file = new FormFile(stream, 0, stream.Length, null!, Path.GetFileName(stream.Name));
 
             // When
-            var table = delegateUploadFileService.OpenDelegatesTable(file);
+            var workbook = new XLWorkbook(TestContext.CurrentContext.TestDirectory + TestDelegateUploadRelativeFilePath);
+            var table = delegateUploadFileService.OpenDelegatesTable(workbook);
 
             // Then
             using (new AssertionScope())
             {
                 var headers = table.Fields.Select(x => x.Name).ToList();
-                headers[0].Should().Be("LastName");
-                headers[1].Should().Be("FirstName");
-                headers[2].Should().Be("DelegateID");
+                headers[0].Should().Be("DelegateID");
+                headers[1].Should().Be("LastName");
+                headers[2].Should().Be("FirstName");
                 headers[3].Should().Be("JobGroupID");
-                headers[4].Should().Be("Answer1");
-                headers[5].Should().Be("Answer2");
-                headers[6].Should().Be("Answer3");
-                headers[7].Should().Be("Answer4");
-                headers[8].Should().Be("Answer5");
-                headers[9].Should().Be("Answer6");
-                headers[10].Should().Be("Active");
-                headers[11].Should().Be("EmailAddress");
-                headers[12].Should().Be("HasPRN");
-                headers[13].Should().Be("PRN");
+                headers[4].Should().Be("JobGroup");
+                headers[5].Should().Be("Answer1");
+                headers[6].Should().Be("Answer2");
+                headers[7].Should().Be("Answer3");
+                headers[8].Should().Be("Answer4");
+                headers[9].Should().Be("Answer5");
+                headers[10].Should().Be("Answer6");
+                headers[11].Should().Be("Active");
+                headers[12].Should().Be("EmailAddress");
+                headers[13].Should().Be("HasPRN");
+                headers[14].Should().Be("PRN");
                 table.RowCount().Should().Be(4);
                 var row = table.Row(2);
-                row.Cell(1).GetString().Should().Be("Person");
-                row.Cell(2).GetString().Should().Be("Fake");
-                row.Cell(3).GetString().Should().Be("TU67");
+                row.Cell(1).GetString().Should().Be("TU67");
+                row.Cell(2).GetString().Should().Be("Person");
+                row.Cell(3).GetString().Should().Be("Fake");
                 row.Cell(4).GetString().Should().Be("1");
-                row.Cell(5).GetString().Should().BeEmpty();
+                row.Cell(5).GetString().Should().Be("Nursing");
                 row.Cell(6).GetString().Should().BeEmpty();
                 row.Cell(7).GetString().Should().BeEmpty();
                 row.Cell(8).GetString().Should().BeEmpty();
                 row.Cell(9).GetString().Should().BeEmpty();
                 row.Cell(10).GetString().Should().BeEmpty();
-                row.Cell(11).GetString().Should().Be("True");
-                row.Cell(12).GetString().Should().Be("Test@Test");
-                row.Cell(13).GetString().Should().Be("False");
-                row.Cell(14).GetString().Should().BeEmpty();
+                row.Cell(11).GetString().Should().BeEmpty();
+                row.Cell(12).GetString().Should().Be("True");
+                row.Cell(13).GetString().Should().Be("Test@Test");
+                row.Cell(14).GetString().Should().Be("False");
+                row.Cell(15).GetString().Should().BeEmpty();
             }
         }
 
@@ -135,165 +138,163 @@
         public void OpenDelegatesTable_throws_exception_if_headers_are_incorrect()
         {
             // Given
-            using var stream = CreateWorkbookStreamWithInvalidHeaders();
-            var file = new FormFile(stream, 0, stream.Length, string.Empty, string.Empty);
-
+            var workbook = new XLWorkbook(CreateWorkbookStreamWithInvalidHeaders());
             // Then
-            Assert.Throws<InvalidHeadersException>(() => delegateUploadFileService.OpenDelegatesTable(file));
+            Assert.Throws<InvalidHeadersException>(() => delegateUploadFileService.OpenDelegatesTable(workbook));
         }
 
         [Test]
-        public void ProcessDelegateTable_has_job_group_error_for_invalid_job_group()
+        public void PreProcessDelegateTable_has_job_group_error_for_invalid_job_group()
         {
             var row = GetSampleDelegateDataRow(jobGroupId: "999");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidJobGroupId);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidJobGroupId);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_missing_lastname_error_for_missing_lastname()
+        public void PreProcessDelegateTable_has_missing_lastname_error_for_missing_lastname()
         {
             var row = GetSampleDelegateDataRow(lastName: string.Empty);
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingLastName);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingLastName);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_missing_firstname_error_for_missing_firstname()
+        public void PreProcessDelegateTable_has_missing_firstname_error_for_missing_firstname()
         {
             var row = GetSampleDelegateDataRow(string.Empty);
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingFirstName);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingFirstName);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_missing_email_error_for_missing_email()
+        public void PreProcessDelegateTable_has_missing_email_error_for_missing_email()
         {
             var row = GetSampleDelegateDataRow(emailAddress: string.Empty);
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingEmail);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingEmail);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_invalid_active_error_for_invalid_active_status()
+        public void PreProcessDelegateTable_has_invalid_active_error_for_invalid_active_status()
         {
             var row = GetSampleDelegateDataRow(active: "hello");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidActive);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidActive);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_too_long_firstname_error_for_too_long_firstname()
+        public void PreProcessDelegateTable_has_too_long_firstname_error_for_too_long_firstname()
         {
             var row = GetSampleDelegateDataRow(new string('x', 251));
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongFirstName);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongFirstName);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_too_long_lastname_error_for_too_long_lastname()
+        public void PreProcessDelegateTable_has_too_long_lastname_error_for_too_long_lastname()
         {
             var row = GetSampleDelegateDataRow(lastName: new string('x', 251));
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongLastName);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongLastName);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_too_long_email_error_for_too_long_email()
+        public void PreProcessDelegateTable_has_too_long_email_error_for_too_long_email()
         {
             var row = GetSampleDelegateDataRow(emailAddress: $"test@{new string('x', 250)}");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongEmail);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongEmail);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_too_long_answer1_error_for_too_long_answer1()
+        public void PreProcessDelegateTable_has_too_long_answer1_error_for_too_long_answer1()
         {
             var row = GetSampleDelegateDataRow(answer1: new string('x', 101));
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer1);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer1);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_too_long_answer2_error_for_too_long_answer2()
+        public void PreProcessDelegateTable_has_too_long_answer2_error_for_too_long_answer2()
         {
             var row = GetSampleDelegateDataRow(answer2: new string('x', 101));
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer2);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer2);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_too_long_answer3_error_for_too_long_answer3()
+        public void PreProcessDelegateTable_has_too_long_answer3_error_for_too_long_answer3()
         {
             var row = GetSampleDelegateDataRow(answer3: new string('x', 101));
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer3);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer3);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_too_long_answer4_error_for_too_long_answer4()
+        public void PreProcessDelegateTable_has_too_long_answer4_error_for_too_long_answer4()
         {
             var row = GetSampleDelegateDataRow(answer4: new string('x', 101));
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer4);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer4);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_too_long_answer5_error_for_too_long_answer5()
+        public void PreProcessDelegateTable_has_too_long_answer5_error_for_too_long_answer5()
         {
             var row = GetSampleDelegateDataRow(answer5: new string('x', 101));
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer5);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer5);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_too_long_answer6_error_for_too_long_answer6()
+        public void PreProcessDelegateTable_has_too_long_answer6_error_for_too_long_answer6()
         {
             var row = GetSampleDelegateDataRow(answer6: new string('x', 101));
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer6);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer6);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_bad_format_email_error_for_wrong_format_email()
+        public void PreProcessDelegateTable_has_bad_format_email_error_for_wrong_format_email()
         {
             var row = GetSampleDelegateDataRow(emailAddress: "bademail");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.BadFormatEmail);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.BadFormatEmail);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_whitespace_in_email_error_for_email_with_whitespace()
+        public void PreProcessDelegateTable_has_whitespace_in_email_error_for_email_with_whitespace()
         {
             var row = GetSampleDelegateDataRow(emailAddress: "white space@test.com");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.WhitespaceInEmail);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.WhitespaceInEmail);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_missing_PRN_error_for_HasPRN_true_with_missing_PRN()
+        public void PreProcessDelegateTable_has_missing_PRN_error_for_HasPRN_true_with_missing_PRN()
         {
             var row = GetSampleDelegateDataRow(hasPrn: true.ToString());
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_false_HasPRN_error_for_PRN_with_value_and_false_HasPRN()
+        public void PreProcessDelegateTable_has_false_HasPRN_error_for_PRN_with_value_and_false_HasPRN()
         {
             var row = GetSampleDelegateDataRow(hasPrn: false.ToString(), prn: "PRN1234");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.PrnButHasPrnIsFalse);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.PrnButHasPrnIsFalse);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
+        public void PreProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
         {
             var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "^%£PRN");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_short()
+        public void PreProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_short()
         {
             var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "PRN1");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_long()
+        public void PreProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_long()
         {
             var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "PRNAboveAllowedLength");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_invalid_HasPRN_error_for_HasPRN_not_parsable_to_bool()
+        public void PreProcessDelegateTable_has_invalid_HasPRN_error_for_HasPRN_not_parsable_to_bool()
         {
             var row = GetSampleDelegateDataRow(hasPrn: "ThisDoesNotMatchTRUE");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidHasPrnValue);
+            Test_PreProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidHasPrnValue);
         }
 
         [Test]
@@ -306,7 +307,7 @@
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId)).Returns(null);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
@@ -322,7 +323,7 @@
             A.CallTo(() => userService.EmailIsHeldAtCentre("email@centre.com", CentreId)).Returns(true);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             using (var _ = new AssertionScope())
@@ -357,7 +358,7 @@
                 .Returns(true);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
@@ -385,7 +386,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -420,7 +421,7 @@
                 .Returns(candidateNumberDelegate);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             AssertCreateOrUpdateDelegateWereNotCalled();
@@ -449,7 +450,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             result.ProcessedCount.Should().Be(1);
@@ -473,7 +474,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -520,7 +521,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -556,7 +557,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -591,7 +592,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -622,7 +623,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -682,7 +683,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -717,7 +718,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -753,7 +754,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -788,7 +789,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -826,7 +827,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -892,7 +893,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -953,7 +954,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, welcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, welcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -1012,7 +1013,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -1065,7 +1066,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -1110,7 +1111,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             A.CallTo(
@@ -1143,7 +1144,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -1171,7 +1172,7 @@
                 .Returns(candidateNumberDelegate);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -1200,7 +1201,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -1254,7 +1255,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             using (new AssertionScope())
@@ -1267,6 +1268,23 @@
             }
         }
 
+        private void Test_PreProcessDelegateTable_row_has_error(
+            DelegateDataRow row,
+            BulkUploadResult.ErrorReason errorReason
+        )
+        {
+            // Given
+            var table = CreateTableFromData(new[] { row });
+
+            // When
+            var result = delegateUploadFileService.PreProcessDelegatesTable(table);
+
+            // Then
+            AssertBulkUploadResultHasOnlyOneError(result);
+            result.Errors?.First().RowNumber.Should().Be(2);
+            result.Errors?.First().Reason.Should().Be(errorReason);
+        }
+
         private void Test_ProcessDelegateTable_row_has_error(
             DelegateDataRow row,
             BulkUploadResult.ErrorReason errorReason
@@ -1276,7 +1294,7 @@
             var table = CreateTableFromData(new[] { row });
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate, 1, 250, true, 1, null);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
