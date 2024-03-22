@@ -2,7 +2,7 @@
 @model EnrolDelegateSummaryViewModel;
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Enrol on Profile Assessment";
+    ViewData["Title"] = "Enrol on Profile Assessment - Summary";
     ViewData["Application"] = "Supervisor";
     ViewData["HeaderPathName"] = "Supervisor";
 }
@@ -19,8 +19,8 @@
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
                 <li class="nhsuk-breadcrumb__item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-                   asp-action="DelegateProfileAssessments"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName</a>
+                       asp-action="DelegateProfileAssessments"
+                       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName</a>
                 </li>
                 <li class="nhsuk-breadcrumb__item">
                     Enrol
@@ -109,7 +109,7 @@
         </dd>
 
         <dd class="nhsuk-summary-list__actions">
-            @if (Model.SupervisorRoleCount > 1&&Model.AllowSupervisorRoleSelection==true)
+            @if (Model.SupervisorRoleCount > 1 && Model.AllowSupervisorRoleSelection == true)
             {
                 <a asp-action="EnrolDelegateSupervisorRole" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
                     Change<span class="nhsuk-u-visually-hidden"> supervisor role</span>

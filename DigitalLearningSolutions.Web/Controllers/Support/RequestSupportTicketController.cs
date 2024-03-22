@@ -16,7 +16,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
     using DigitalLearningSolutions.Data.Models.Support;
     using System.Collections.Generic;
     using System;
-    using Microsoft.AspNetCore.Http;
     using System.IO;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
@@ -197,7 +196,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
             foreach (var item in requestAttachmentmodel.ImageFiles)
             {
-                string fileName = UploadFile(item);
+                string fileName = FileHelper.UploadFile(webHostEnvironment, item);
                 var RequestAttachment = new RequestAttachment
                 {
                     OriginalFileName = item.FileName,
@@ -226,11 +225,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 if (attachmentToRemove != null)
                 {
                     data.RequestAttachment.Remove(attachmentToRemove);
-                    var uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads", attachmentToRemove.FullFileName);
-                    if (System.IO.File.Exists(uploadDir))
-                    {
-                        System.IO.File.Delete(uploadDir);
-                    }
+                    FileHelper.DeleteFile(webHostEnvironment, attachmentToRemove.FileName);
                 }
             }
             setRequestSupportTicketData(data);
@@ -320,16 +315,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             {
                 foreach (var attachment in RequestAttachment)
                 {
-                    var uploadDir = System.IO.Path.Combine(
-                        webHostEnvironment.WebRootPath,
-                        "Uploads",
-                        attachment.FullFileName
-                    );
-                    if (System.IO.File.Exists(uploadDir))
-                    {
-                        // If file found, delete it
-                        System.IO.File.Delete(uploadDir);
-                    }
+                    FileHelper.DeleteFile(webHostEnvironment, attachment.FileName);
                 }
             }
         }
@@ -349,23 +335,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
                 TempData
             );
-        }
-
-        private string UploadFile(IFormFile file)
-        {
-            string uploadDir = string.Empty;
-            string fileName = null;
-            if (file != null)
-            {
-                uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads");
-                fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-                string filePath = Path.Combine(uploadDir, fileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(fileStream);
-                }
-            }
-            return fileName;
         }
 
         private (bool, bool) validateUploadedImages(RequestAttachmentViewModel requestAttachmentmodel)

@@ -1,0 +1,105 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload
+@model UploadSummaryViewModel
+@{
+    ViewData["Title"] = "Summary";
+    var process = Model.ToRegisterCount > 0 && Model.ToUpdateCount > 0 ? "register and update" : Model.ToRegisterCount > 0 ? "register" : "update";
+    var groupWho = Model.IncludeUpdatedDelegates && Model.ToRegisterCount > 0 && Model.ToUpdateCount > 0 ? "registered and updated delegates" : Model.ToRegisterCount > 0 ? "registered delegates" : "updated delegates";
+    int processSteps = Model.ToProcessCount / Model.MaxRowsToProcess + 1;
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h1>@ViewData["Title"]</h1>
+        <p class="nhsuk-body-l nhsuk-u-reading-width">Your delegate sheet is ready to be processed. Please check the details below are correct before proceeding to @process delegates.</p>
+        <h2>Upload summary</h2>
+        <dl class="nhsuk-summary-list">
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Delegate rows uploaded
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.ToProcessCount
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Delegates to register
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.ToRegisterCount
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Delegates to update
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.ToRegisterCount
+                </dd>
+            </div>
+        </dl>
+        <h2>Additional processing steps</h2>
+        <dl class="nhsuk-summary-list">
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Add @groupWho to group
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @(Model.AddToGroupOption < 3 ? @Model.GroupName : "No group selected")
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="AddToGroup">
+                        Change<span class="nhsuk-u-visually-hidden"> group</span>
+                    </a>
+                </dd>
+            </div>
+            @if (Model.ToRegisterCount > 0)
+            {
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Send welcome email to registered delegates
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.Day / @Model.Month / @Model.Year
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                        <a asp-action="WelcomeEmail">
+                            Change<span class="nhsuk-u-visually-hidden"> date</span>
+                        </a>
+                    </dd>
+                </div>
+            }
+        </dl>
+        @if (processSteps > 1)
+        {
+            <div class="nhsuk-warning-callout">
+                <h3 class="nhsuk-warning-callout__label">
+                    <span role="text">
+                        <span class="nhsuk-u-visually-hidden">Important: </span>
+                        Your delegate sheet will be processed in @processSteps steps
+                    </span>
+                </h3>
+                <p>Your delegate sheet will be processed @Model.MaxRowsToProcess rows at a time. You will see a summary of progress after each of the @processSteps steps with the option to continue or cancel.</p>
+                <p>It is important that you complete all of the steps to ensure all of the delegate information you have provided is processed.</p>
+            </div>
+        }
+        <div class="nhsuk-inset-text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            <p>Once delegate records are processed, changes cannot be undone.</p>
+        </div>
+        <form asp-action="StartProcessing">
+            <a asp-controller="BulkUpload" asp-action="AddToGroup" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+            <button type="submit" class="nhsuk-button">@(processSteps > 1 ? "Start processing" : "Finish and process delegates")</button>
+        </form>
+        
+
+        
+
+        <vc:cancel-link asp-controller="BulkUpload" asp-action="CancelUpload" />
+    </div>
+</div>
