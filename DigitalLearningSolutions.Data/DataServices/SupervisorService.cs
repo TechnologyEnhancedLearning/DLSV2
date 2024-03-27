@@ -56,6 +56,7 @@
         SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId);
         void RemoveCandidateAssessmentSupervisorVerification(int id);
         bool RemoveDelegateSelfAssessmentsupervisor(int candidateAssessmentId, int supervisorDelegateId);
+        void UpdateCandidateAssessmentNonReportable(int candidateAssessmentId);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -759,9 +760,10 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                                 EnrolmentMethodId = 2,
                                 EnrolledByAdminId = @adminId,
                                 CentreID = @centreId,
-                                RemovedDate = NULL
+                                RemovedDate = NULL,
+                                NonReportable = CASE WHEN NonReportable = 1 THEN NonReportable ELSE @isLoggedInUser END
                             WHERE ID = @existingCandidateAssessmentId",
-                    new { delegateUserId, selfAssessmentId, adminId, centreId, existingCandidateAssessmentId });
+                    new { delegateUserId, selfAssessmentId, adminId, centreId, existingCandidateAssessmentId, isLoggedInUser });
 
                 if (numberOfAffectedRows < 1)
                 {
@@ -1185,6 +1187,18 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
                 @"DELETE 
 	                FROM CandidateAssessmentSupervisorVerifications WHERE
                     ID = @id ", new { id });
+        }
+
+        public void UpdateCandidateAssessmentNonReportable(int candidateAssessmentId)
+        {
+            connection.Execute(
+                @"UPDATE CandidateAssessments
+                    SET NonReportable = 1
+                    FROM CandidateAssessments AS CA
+                    INNER JOIN CandidateAssessmentSupervisors AS CAS ON CA.ID = cas.CandidateAssessmentID AND CAS.Removed IS NULL
+                    INNER JOIN SupervisorDelegates AS SD ON SD.ID = CAS.SupervisorDelegateId
+                    INNER JOIN AdminAccounts AS AA ON AA.ID = SD.SupervisorAdminID AND AA.UserID = SD.DelegateUserID
+                        WHERE CA.ID = @candidateAssessmentId AND NonReportable = 0 ", new { candidateAssessmentId });
         }
     }
 }

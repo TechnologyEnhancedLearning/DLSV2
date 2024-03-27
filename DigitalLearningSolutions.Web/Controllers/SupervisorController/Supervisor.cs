@@ -1100,11 +1100,10 @@
         [HttpGet]
         public IActionResult QuickAddSupervisorConfirm(int? selfAssessmentSupervisorRoleId, int selfAssessmentId, int supervisorDelegateId, int delegateUserId)
         {
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             if (!selfAssessmentSupervisorRoleId.HasValue)
             {
                 var roleProfile = supervisorService.GetRoleProfileById(selfAssessmentId);
-                var supervisorDelegate =
-                    supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
                 var model = new EnrolDelegateSupervisorRoleViewModel()
                 {
@@ -1117,12 +1116,16 @@
             }
             else
             {
-                supervisorService.InsertCandidateAssessmentSupervisor(
+                var candidateAssessmentId = supervisorService.InsertCandidateAssessmentSupervisor(
                     delegateUserId,
                     supervisorDelegateId,
                     selfAssessmentId,
                     selfAssessmentSupervisorRoleId.Value
                 );
+                if (candidateAssessmentId > 0 && User.GetUserId() == delegateUserId)
+                {
+                    supervisorService.UpdateCandidateAssessmentNonReportable(candidateAssessmentId);
+                }
                 return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
             }
         }
