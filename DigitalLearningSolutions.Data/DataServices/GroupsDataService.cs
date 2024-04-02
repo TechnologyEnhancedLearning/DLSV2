@@ -92,6 +92,7 @@
             int? jobGroupId
         );
         bool IsDelegateGroupExist(string groupLabel, int centreId);
+        IEnumerable<(int, string)> GetActiveGroups(int centreId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -572,6 +573,15 @@
                 ELSE CAST(0 AS BIT) END",
                 new { groupLabel, centreId }
             );
+        }
+
+        public IEnumerable<(int, string)> GetActiveGroups(int centreId)
+        {
+            var groups = connection.Query<(int, string)>(
+                @"SELECT GroupID, GroupLabel FROM Groups WHERE CentreID = @centreId AND RemovedDate IS NULL",
+                new { centreId }
+            );
+            return groups;
         }
     }
 }

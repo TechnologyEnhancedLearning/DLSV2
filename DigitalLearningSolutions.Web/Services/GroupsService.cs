@@ -137,6 +137,7 @@
 
         bool IsDelegateGroupExist(string groupLabel, int centreId);
         public IEnumerable<SelectListItem> GetUnlinkedGroupsSelectListForCentre(int centreId, int? selectedItemId);
+        IEnumerable<(int, string)> GetActiveGroups(int centreId);
     }
 
     public class GroupsService : IGroupsService
@@ -908,6 +909,10 @@
         public bool IsDelegateGroupExist(string groupLabel, int centreId)
         {
             return groupsDataService.IsDelegateGroupExist(groupLabel, centreId);
+        }
+        public IEnumerable<(int, string)> GetActiveGroups(int centreId)
+        {
+            return groupsDataService.GetActiveGroups(centreId);
         }
     }
 }
