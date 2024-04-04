@@ -51,5 +51,22 @@
                     )
                 ).ToDictionary(x => x.Key, x => x.Value);
         }
+
+        public static IEnumerable<FilterOptionModel> GetGroupOptions(
+            IEnumerable<(int id, string name)> groups
+        )
+        {
+            return groups.Select(
+                group => new FilterOptionModel(
+                    group.name,
+                    FilteringHelper.BuildFilterValueString(
+                        "DelegateGroupId",
+                        "DelegateGroupId",
+                        group.id.ToString()
+                    ),
+                    FilterStatus.Default
+                )
+            );
+        }
     }
 }
