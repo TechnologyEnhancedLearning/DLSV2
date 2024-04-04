@@ -64,7 +64,7 @@ namespace DigitalLearningSolutions.Web.Helpers
         public static string? RemoveNonExistingFilterOptions(List<FilterModel> availableFilters, string existingFilterString)
         {
             var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-            string[] filterGroups = { "LinkedToField", "AddedByAdminId", "CourseTopic", "CategoryName" };
+            string[] filterGroups = { "LinkedToField", "AddedByAdminId", "CourseTopic", "CategoryName", "DelegateGroup" };
             foreach (var filterGroup in filterGroups)
             {
                 var existingFilters = existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => filter.Contains(filterGroup)).ToList();
