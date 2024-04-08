@@ -9,8 +9,9 @@ declare global {
   }
 }
 (function (w: Window, d: Document, s: string, l: any, i: string) {
-  w[l] = w[l] || [];
-  w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+  const windowObj = w || window;
+  windowObj[l] = windowObj[l] || [];
+  windowObj[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
   var f = d.getElementsByTagName(s)[0],
     j = d.createElement(s),
     dl = l !== 'dataLayer' ? '&l=' + l : '';
