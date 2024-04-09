@@ -1649,6 +1649,50 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 09/04/2024 08:39:16 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4015_Update_GetCompletedCoursesForCandidate_proc_down {
+            get {
+                return ResourceManager.GetString("TD_4015_Update_GetCompletedCoursesForCandidate_proc_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 09/04/2024 08:39:16 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4015_Update_GetCompletedCoursesForCandidate_proc_up {
+            get {
+                return ResourceManager.GetString("TD_4015_Update_GetCompletedCoursesForCandidate_proc_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
