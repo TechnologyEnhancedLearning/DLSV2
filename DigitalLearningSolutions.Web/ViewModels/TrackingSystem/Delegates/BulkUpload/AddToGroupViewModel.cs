@@ -43,6 +43,10 @@
             {
                 yield return new ValidationResult("Please specify a name for the new group", new[] { nameof(NewGroupName) });
             }
+            else if (AddToGroupOption == 2 && NewGroupName.Length > 255)
+            {
+                yield return new ValidationResult("Group name should be 255 characters or less", new[] { nameof(NewGroupName) });
+            }
         }
     }
 }

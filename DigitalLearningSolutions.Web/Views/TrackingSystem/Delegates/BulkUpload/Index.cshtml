@@ -16,7 +16,11 @@
 
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-        <h1 class="nhsuk-heading-xl">Bulk upload/update delegates</h1>
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new []{ nameof(UploadDelegatesViewModel.DelegatesFile) })" />
+        }
+        <h1 class="nhsuk-heading-xl">Bulk upload or update delegates</h1>
 
         <p class="nhsuk-body-m">
             To bulk register and/or update delegates, download an Excel workbook using one of the options below.

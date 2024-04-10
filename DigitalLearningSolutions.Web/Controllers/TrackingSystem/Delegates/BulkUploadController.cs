@@ -94,7 +94,7 @@
             var adminUserID = User.GetAdminIdKnownNotNull();
             if (!ModelState.IsValid)
             {
-                return View("StartUpload", model);
+                return View("Index", model);
             }
             var workbook = new XLWorkbook(model.DelegatesFile.OpenReadStream());
             if (!workbook.Worksheets.Contains(DelegateDownloadFileService.DelegatesSheetName))
@@ -177,9 +177,12 @@
             var data = GetBulkUploadData();
             if (model.AddToGroupOption == 2)
             {
-                if (groupsService.IsDelegateGroupExist(model.NewGroupName.Trim(), centreId))
+                if (!string.IsNullOrEmpty(model.NewGroupName))
                 {
-                    ModelState.AddModelError(nameof(model.NewGroupName), "A group with the same name already exists (if it does not appear in the list of groups, it may be linked to a centre registration field)");
+                    if (groupsService.IsDelegateGroupExist(model.NewGroupName.Trim(), centreId))
+                    {
+                        ModelState.AddModelError(nameof(model.NewGroupName), "A group with the same name already exists (if it does not appear in the list of groups, it may be linked to a centre registration field)");
+                    }
                 }
             }
             if (!ModelState.IsValid)
