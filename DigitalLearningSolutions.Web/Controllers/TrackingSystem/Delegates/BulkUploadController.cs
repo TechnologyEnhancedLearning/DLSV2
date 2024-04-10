@@ -23,7 +23,6 @@
     using System;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using System.Linq;
-    using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
     using System.Transactions;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]

@@ -22,7 +22,8 @@
             var result =
                 AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(
                     jobGroups,
-                    new List<CentreRegistrationPrompt>()
+                    new List<CentreRegistrationPrompt>(),
+                    new List<(int, string)>()
                 );
 
             // Then
@@ -38,7 +39,8 @@
             // When
             var result = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(
                 new List<(int, string)>(),
-                centreRegistrationPrompts
+                centreRegistrationPrompts,
+                new List<(int, string)>()
             );
 
             // Then
@@ -131,8 +133,8 @@
             };
             var customPromptFilters = new List<FilterModel>
             {
-                new FilterModel("CentreRegistrationPrompt1", "First prompt", prompt1Options,"prompts"),
-                new FilterModel("CentreRegistrationPrompt4", "Fourth prompt", prompt4Options,"prompts"),
+                new FilterModel("CentreRegistrationPrompt1", "Prompt: First prompt", prompt1Options,"prompts/groups"),
+                new FilterModel("CentreRegistrationPrompt4", "Prompt: Fourth prompt", prompt4Options,"prompts/groups"),
             };
 
             return (prompts, customPromptFilters);
