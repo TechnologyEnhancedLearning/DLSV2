@@ -8,9 +8,9 @@
     public class UploadDelegatesViewModel
     {
         public UploadDelegatesViewModel() { }
-        [Required(ErrorMessage = "Delegates update file is required")]
-        [AllowedExtensions(new[] { ".xlsx" }, "Delegates update file must be in xlsx format")]
-        [MaxFileSize(5 * 1024 * 1024, "Maximum allowed file size is 5MB")]
+        [Required(ErrorMessage = "Delegate upload file is required")]
+        [AllowedExtensions(new[] { ".xlsx" }, "Delegate upload file must be in xlsx format")]
+        [MaxFileSize(5 * 1024 * 1024, "Maximum allowed file size is 5 MB")]
         public IFormFile? DelegatesFile { get; set; }
     }
 }
