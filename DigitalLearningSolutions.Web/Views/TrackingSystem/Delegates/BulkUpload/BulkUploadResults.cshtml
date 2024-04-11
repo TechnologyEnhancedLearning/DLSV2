@@ -8,15 +8,24 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         <h1 class="nhsuk-heading-xl">Delegate processing complete</h1>
+        <details class="nhsuk-details">
+            <summary class="nhsuk-details__summary">
+                <span class="nhsuk-details__summary-text">
+                    Summary of results
+                </span>
+            </summary>
+            <div class="nhsuk-details__text">
+                <p>Processing your uploaded spreadsheet resulted in the following:</p>
+                <ul>
+                    <li>@Model.ProcessedCount @(Model.ProcessedCount == 1 ? "row" : "rows") processed</li>
+                    <li>@Model.RegisteredCount new @(Model.RegisteredCount == 1 ? "delegate" : "delegates") registered</li>
+                    <li>@Model.UpdatedCount existing delegate  @(Model.UpdatedCount == 1 ? "record" : "records") updated</li>
+                    <li>@Model.SkippedCount existing delegate  @(Model.SkippedCount == 1 ? "record" : "records") skipped (no changes)</li>
+                    <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "row" : "rows") skipped due to errors</li>
+                </ul>
 
-        <h2>Summary of results:</h2>
-        <ul>
-            <li>@Model.ProcessedCount @(Model.ProcessedCount == 1 ? "row" : "rows") processed</li>
-            <li>@Model.RegisteredCount new @(Model.RegisteredCount == 1 ? "delegate" : "delegates") registered</li>
-            <li>@Model.UpdatedCount existing delegate  @(Model.UpdatedCount == 1 ? "record" : "records") updated</li>
-            <li>@Model.SkippedCount existing delegate  @(Model.SkippedCount == 1 ? "record" : "records") skipped (no changes)</li>
-            <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "row" : "rows") skipped due to errors</li>
-        </ul>
+            </div>
+        </details>
         <h2>What to do next</h2>
         <ul>
             @if (Model.ErrorCount > 0)
@@ -53,6 +62,6 @@
                 </dl>
             </div>
         }
-        <vc:action-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null" link-text="Back to delegates" />
+        <a class="nhsuk-button" role="button" asp-controller="AllDelegates" asp-action="Index">Back to delegates</a>
     </div>
 </div>
