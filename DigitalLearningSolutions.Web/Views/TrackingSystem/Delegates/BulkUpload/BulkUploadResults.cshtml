@@ -35,7 +35,7 @@
             @if (Model.RegisteredCount > 0)
             {
                 <li>Registered delegates (@Model.RegisteredCount) will be sent a welcome email on @Model.Day/@Model.Month/@Model.Year.</li>
-                <li>You can resend re-send the welcome email by using the <a asp-controller="AllDelegates" asp-action="Email" asp-all-route-data="@null">Email</a> button on the <a asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null">Delegates</a> screen.</li>
+                <li>You can resend re-send the welcome email by using the <a asp-controller="EmailDelegates" asp-action="Index" asp-all-route-data="@null">Email</a> button on the <a asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null">Delegates</a> screen.</li>
             }
             <li>If you need to promote any of the users to an administrator role, you can do this from the <a asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null">Delegates</a> screen. Search for the user and click "Manage delegate".</li>
         </ul>
@@ -56,7 +56,6 @@
                             <dd class="nhsuk-summary-list__value">
                                 @errorMessage
                             </dd>
-
                         </div>
                     }
                 </dl>
