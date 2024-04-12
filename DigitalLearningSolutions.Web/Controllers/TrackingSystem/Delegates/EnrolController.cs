@@ -237,10 +237,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(sessionEnrol.AssessmentID.Value, centreId.Value);
             var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
 
-            if (model.SelectedSupervisorRoleId.HasValue && !model.SelectedSupervisor.HasValue)
+            if (!ModelState.IsValid)
             {
-                ModelState.Clear();
-                ModelState.AddModelError(nameof(model.SelectedSupervisor), "You must choose a supervisor in order to specify a supervisor role");
                 var errormodel = new EnrolSupervisorViewModel(
                     delegateId,
                     (int)sessionEnrol.DelegateUserID,
