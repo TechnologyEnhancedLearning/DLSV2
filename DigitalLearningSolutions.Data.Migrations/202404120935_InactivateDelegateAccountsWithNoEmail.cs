@@ -9,7 +9,7 @@
         {
             Execute.Sql(
                 @$"UPDATE DelegateAccounts
-                    SET       Active = 1
+                    SET       Active = 0
                     FROM   Users AS u INNER JOIN
                                  DelegateAccounts ON u.ID = DelegateAccounts.UserID
                     WHERE (NOT (u.PrimaryEmail LIKE N'%@%')) AND (DelegateAccounts.Active = 1)"
