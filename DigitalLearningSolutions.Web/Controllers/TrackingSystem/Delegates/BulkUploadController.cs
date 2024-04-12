@@ -355,7 +355,7 @@
             var model = new ProcessBulkDelegatesViewModel(
                 stepNumber: step,
                 totalSteps: totalSteps,
-                rowsProcessed: data.LastRowProcessed,
+                rowsProcessed: data.LastRowProcessed-1,
                 totalRows: data.ToProcessCount,
                 maxRowsPerStep: data.MaxRowsToProcess,
                 delegatesRegistered: data.SubtotalDelegatesRegistered,
