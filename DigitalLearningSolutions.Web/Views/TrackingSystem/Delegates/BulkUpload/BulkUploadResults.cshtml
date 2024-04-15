@@ -8,24 +8,54 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         <h1 class="nhsuk-heading-xl">Delegate processing complete</h1>
-        <details class="nhsuk-details">
-            <summary class="nhsuk-details__summary">
-                <span class="nhsuk-details__summary-text">
-                    Summary of results
-                </span>
-            </summary>
-            <div class="nhsuk-details__text">
-                <p>Processing your uploaded spreadsheet resulted in the following:</p>
-                <ul>
-                    <li>@Model.ProcessedCount @(Model.ProcessedCount == 1 ? "row" : "rows") processed</li>
-                    <li>@Model.RegisteredCount new @(Model.RegisteredCount == 1 ? "delegate" : "delegates") registered</li>
-                    <li>@Model.UpdatedCount existing delegate  @(Model.UpdatedCount == 1 ? "record" : "records") updated</li>
-                    <li>@Model.SkippedCount existing delegate  @(Model.SkippedCount == 1 ? "record" : "records") skipped (no changes)</li>
-                    <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "row" : "rows") skipped due to errors</li>
-                </ul>
+        <h2>Results summary</h2>
+        @if (Model.TotalSteps > 1)
+        {
+            <h3>Step @Model.TotalSteps of @Model.TotalSteps </h3>
+        }
+        <dl class="nhsuk-summary-list">
 
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Delegate rows processed
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @(Model.ProcessedCount)
+                </dd>
             </div>
-        </details>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    New delegates registered
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.RegisteredCount
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Existing delegates updated
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.UpdatedCount
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Rows skipped with no changes
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.SkippedCount
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Rows skipped with errors
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.ErrorCount
+                </dd>
+            </div>
+        </dl>
         <h2>What to do next</h2>
         <ul>
             @if (Model.ErrorCount > 0)
@@ -35,7 +65,7 @@
             @if (Model.RegisteredCount > 0)
             {
                 <li>Registered delegates (@Model.RegisteredCount) will be sent a welcome email on @Model.Day/@Model.Month/@Model.Year.</li>
-                <li>You can resend re-send the welcome email by using the <a asp-controller="AllDelegates" asp-action="Email" asp-all-route-data="@null">Email</a> button on the <a asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null">Delegates</a> screen.</li>
+                <li>You can resend re-send the welcome email by using the <a asp-controller="EmailDelegates" asp-action="Index" asp-all-route-data="@null">Email</a> button on the <a asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null">Delegates</a> screen.</li>
             }
             <li>If you need to promote any of the users to an administrator role, you can do this from the <a asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null">Delegates</a> screen. Search for the user and click "Manage delegate".</li>
         </ul>
@@ -56,7 +86,6 @@
                             <dd class="nhsuk-summary-list__value">
                                 @errorMessage
                             </dd>
-
                         </div>
                     }
                 </dl>

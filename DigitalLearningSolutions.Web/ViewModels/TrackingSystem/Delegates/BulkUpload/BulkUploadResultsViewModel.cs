@@ -15,9 +15,10 @@
             SkippedCount = bulkUploadResult.SkippedCount;
             Errors = bulkUploadResult.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason)));
         }
-        public BulkUploadResultsViewModel(int processedCount, int registeredCount, int updatedCount, int skippedCount, IEnumerable<(int, string)> errors, int day, int month, int year)
+        public BulkUploadResultsViewModel(int processedCount, int registeredCount, int updatedCount, int skippedCount, IEnumerable<(int, string)> errors, int day, int month, int year, int totalSteps)
         {
             ProcessedCount = processedCount;
+            TotalSteps = totalSteps;
             RegisteredCount = registeredCount;
             UpdatedCount = updatedCount;
             SkippedCount = skippedCount;
@@ -29,6 +30,7 @@
 
         public IEnumerable<(int RowNumber, string ErrorMessage)> Errors { get; set; }
         public int ErrorCount => Errors.Count();
+        public int TotalSteps { get; set; }
         public int ProcessedCount { get; set; }
         public int RegisteredCount { get; set; }
         public int UpdatedCount { get; set; }

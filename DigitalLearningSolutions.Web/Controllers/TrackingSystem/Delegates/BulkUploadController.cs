@@ -324,7 +324,7 @@
                 var centreId = User.GetCentreIdKnownNotNull();
                 var data = GetBulkUploadData();
                 var adminId = User.GetAdminIdKnownNotNull();
-                int processSteps = data.ToProcessCount / data.MaxRowsToProcess + 1;
+                int processSteps = (int)Math.Ceiling((double)data.ToProcessCount / data.MaxRowsToProcess);
                 int step = data.LastRowProcessed / data.MaxRowsToProcess + 1;
                 var results = ProcessRowsAndReturnResults();
                 data.SubtotalDelegatesRegistered += results.RegisteredCount;
@@ -355,7 +355,7 @@
             var model = new ProcessBulkDelegatesViewModel(
                 stepNumber: step,
                 totalSteps: totalSteps,
-                rowsProcessed: data.LastRowProcessed,
+                rowsProcessed: data.LastRowProcessed-1, //Adjusted because last row processed includes header row
                 totalRows: data.ToProcessCount,
                 maxRowsPerStep: data.MaxRowsToProcess,
                 delegatesRegistered: data.SubtotalDelegatesRegistered,
@@ -371,6 +371,7 @@
         {
             var data = GetBulkUploadData();
             FileHelper.DeleteFile(webHostEnvironment, data.DelegatesFileName);
+            int processSteps = (int)Math.Ceiling((double)data.ToProcessCount / data.MaxRowsToProcess);
             var model = new BulkUploadResultsViewModel(
                 processedCount: data.ToProcessCount,
                 registeredCount: data.SubtotalDelegatesRegistered,
@@ -379,7 +380,8 @@
                 errors: data.Errors,
                 day: (int)data.Day,
                 month: (int)data.Month,
-                year: (int)data.Year
+                year: (int)data.Year,
+                totalSteps: processSteps
                 );
             TempData.Clear();
             return View(model);

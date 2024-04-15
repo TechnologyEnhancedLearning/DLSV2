@@ -167,7 +167,7 @@
                     x.Answer4,
                     x.Answer5,
                     x.Answer6,
-                    x.Active,
+                    Active = blank ? null : (bool?)x.Active,
                     EmailAddress = (Guid.TryParse(x.EmailAddress, out _) ? string.Empty : x.EmailAddress),
                     HasPRN = PrnHelper.GetHasPrnForDelegate(x.HasBeenPromptedForPrn, x.ProfessionalRegistrationNumber),
                     PRN = x.HasBeenPromptedForPrn ? x.ProfessionalRegistrationNumber : null,

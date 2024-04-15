@@ -92,7 +92,11 @@
             {
                 Error = BulkUploadResult.ErrorReason.InvalidActive;
             }
-            else if (string.IsNullOrEmpty(Email))
+            else if (string.IsNullOrEmpty(Email) && Active == true && !string.IsNullOrEmpty(CandidateNumber))
+            {
+                Error = BulkUploadResult.ErrorReason.MissingEmail;
+            }
+            else if (string.IsNullOrEmpty(Email) && string.IsNullOrEmpty(CandidateNumber))
             {
                 Error = BulkUploadResult.ErrorReason.MissingEmail;
             }
@@ -103,18 +107,6 @@
             else if (LastName.Length > 250)
             {
                 Error = BulkUploadResult.ErrorReason.TooLongLastName;
-            }
-            else if (Email.Length > 250)
-            {
-                Error = BulkUploadResult.ErrorReason.TooLongEmail;
-            }
-            else if (!new EmailAddressAttribute().IsValid(Email))
-            {
-                Error = BulkUploadResult.ErrorReason.BadFormatEmail;
-            }
-            else if (Email.Any(char.IsWhiteSpace))
-            {
-                Error = BulkUploadResult.ErrorReason.WhitespaceInEmail;
             }
             else if (Answer1 != null && Answer1.Length > 100)
             {
@@ -160,7 +152,21 @@
             {
                 Error = BulkUploadResult.ErrorReason.InvalidPrnCharacters;
             }
-
+            else if (!string.IsNullOrEmpty(Email))
+            {
+                if (!new EmailAddressAttribute().IsValid(Email))
+                {
+                    Error = BulkUploadResult.ErrorReason.BadFormatEmail;
+                }
+                else if (Email.Length > 250)
+                {
+                    Error = BulkUploadResult.ErrorReason.TooLongEmail;
+                }
+                else if (Email.Any(char.IsWhiteSpace))
+                {
+                    Error = BulkUploadResult.ErrorReason.WhitespaceInEmail;
+                }
+            }
             return !Error.HasValue;
         }
 
@@ -216,7 +222,7 @@
                 return false;
             }
 
-            if (delegateEntity.EmailForCentreNotifications != Email)
+            if (!string.IsNullOrEmpty(Email) && !new EmailAddressAttribute().IsValid(delegateEntity.EmailForCentreNotifications) | delegateEntity.EmailForCentreNotifications != Email)
             {
                 return false;
             }
