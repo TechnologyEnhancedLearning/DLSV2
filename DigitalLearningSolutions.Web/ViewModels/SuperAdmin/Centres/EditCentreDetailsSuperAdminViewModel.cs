@@ -16,7 +16,7 @@
             CentreType = centre.CentreType;
             RegionName = centre.RegionName;
             CentreEmail = centre.CentreEmail;
-            IpPrefix = centre.IpPrefix;
+            IpPrefix = centre.IpPrefix?.Trim();
             ShowOnMap = centre.ShowOnMap;
             RegionId = centre.RegionId;
         }

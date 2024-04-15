@@ -30,3 +30,13 @@
     Export to Excel
   </a>
 </feature>
+  @if (Model.SupervisorSignOffs.Where(x=> x.Verified != null && x.SignedOff ==true).Any())
+ {
+<a class="nhsuk-button "
+   asp-route-candidateAssessmentId="@Model.SelfAssessment.CandidateAssessmentId"
+   asp-route-route="2"
+   asp-action="CompetencySelfAssessmentCertificate"
+   role="button">
+    Certificate
+</a>
+ }

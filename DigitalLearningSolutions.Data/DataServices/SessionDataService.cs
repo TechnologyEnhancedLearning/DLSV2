@@ -11,7 +11,7 @@
 
         void StopDelegateSession(int candidateId);
 
-        void UpdateDelegateSessionDuration(int sessionId, DateTime currentUtcTime);
+        int UpdateDelegateSessionDuration(int sessionId, DateTime currentUtcTime);
 
         int StartAdminSession(int adminId);
 
@@ -55,9 +55,9 @@
             connection.Query(StopSessionsSql, new { candidateId });
         }
 
-        public void UpdateDelegateSessionDuration(int sessionId, DateTime currentUtcTime)
+        public int UpdateDelegateSessionDuration(int sessionId, DateTime currentUtcTime)
         {
-            connection.Query(
+            return connection.Execute(
                 @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, @currentUtcTime)
                    WHERE [SessionID] = @sessionId AND Active = 1;",
                 new { sessionId, currentUtcTime }
@@ -85,11 +85,11 @@
         public bool HasAdminGotReferences(int adminId)
         {
             return connection.ExecuteScalar<bool>(
-                @"SELECT TOP 1 AdminSessions.AdminID FROM AdminSessions WHERE AdminSessions.AdminID = @adminId
+                @"SELECT TOP 1 AdminSessions.AdminID FROM AdminSessions WITH (NOLOCK) WHERE AdminSessions.AdminID = @adminId
                   UNION ALL
-                  SELECT TOP 1 FrameworkCollaborators.AdminID FROM FrameworkCollaborators WHERE FrameworkCollaborators.AdminID = @adminId
+                  SELECT TOP 1 FrameworkCollaborators.AdminID FROM FrameworkCollaborators WITH (NOLOCK) WHERE FrameworkCollaborators.AdminID = @adminId
                   UNION ALL
-                  SELECT TOP 1 SupervisorDelegates.SupervisorAdminID FROM SupervisorDelegates WHERE SupervisorDelegates.SupervisorAdminID = @adminId",
+                  SELECT TOP 1 SupervisorDelegates.SupervisorAdminID FROM SupervisorDelegates WITH (NOLOCK) WHERE SupervisorDelegates.SupervisorAdminID = @adminId",
                 new { adminId }
             );
         }
@@ -97,7 +97,7 @@
         public bool HasDelegateGotSessions(int delegateId)
         {
             return connection.ExecuteScalar<bool>(
-                "SELECT 1 WHERE EXISTS (SELECT CandidateID FROM Sessions WHERE CandidateID = @delegateId)",
+                "SELECT 1 WHERE EXISTS (SELECT CandidateID FROM Sessions WITH (NOLOCK) WHERE CandidateID = @delegateId)",
                 new { delegateId }
             );
         }
@@ -111,7 +111,7 @@
                         LoginTime,
                         Duration,
                         Active
-                    FROM Sessions WHERE SessionID = @sessionId",
+                    FROM Sessions WITH (NOLOCK) WHERE SessionID = @sessionId",
                 new { sessionId }
             );
         }

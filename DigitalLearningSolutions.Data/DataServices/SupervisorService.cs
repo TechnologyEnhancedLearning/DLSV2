@@ -31,6 +31,7 @@
         DelegateSelfAssessment? GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId);
         DelegateSelfAssessment? GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(int candidateAssessmentId, int supervisorDelegateId);
         CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisorById(int candidateAssessmentSupervisorId);
+        CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId);
         SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
         IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
@@ -954,6 +955,18 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                ).FirstOrDefault();
         }
 
+        public CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId)
+        {
+            return connection.Query<CandidateAssessmentSupervisor>(
+               @"SELECT *
+                  FROM   CandidateAssessmentSupervisors
+                  WHERE (CandidateAssessmentID = @candidateAssessmentID 
+                        AND SupervisorDelegateId = @supervisorDelegateId 
+                        AND SelfAssessmentSupervisorRoleId = @selfAssessmentSupervisorRoleId)",
+               new { candidateAssessmentID, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+               ).FirstOrDefault();
+        }
+
         public SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId)
         {
             return connection.Query<SelfAssessmentResultSummary>(
@@ -1126,7 +1139,7 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
                 @"
                    SELECT ID
                         FROM    SupervisorDelegates sd
-                        WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0 OR DelegateEmail = @delegateEmail)
+                        WHERE (sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0) AND (sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0) AND DelegateEmail = @delegateEmail
                         ORDER BY ID DESC
                         ",
                 new

@@ -4,7 +4,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -32,17 +31,17 @@
             {
                 result.Count.Should().Be(8);
                 result.Single(f => f.DisplayText == "Prompt 1").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|1");
+                    .Be("LinkedToField|Prompt 1|1");
                 result.Single(f => f.DisplayText == "Prompt 2").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|2");
+                    .Be("LinkedToField|Prompt 2|2");
                 result.Single(f => f.DisplayText == "Prompt 3").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|3");
+                    .Be("LinkedToField|Prompt 3|3");
                 result.Single(f => f.DisplayText == "Prompt 4").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|5");
+                    .Be("LinkedToField|Prompt 4|5");
                 result.Single(f => f.DisplayText == "Prompt 5").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|6");
+                    .Be("LinkedToField|Prompt 5|6");
                 result.Single(f => f.DisplayText == "Prompt 6").FilterValue.Should()
-                    .Be("LinkedToField|LinkedToField|7");
+                    .Be("LinkedToField|Prompt 6|7");
             }
         }
 

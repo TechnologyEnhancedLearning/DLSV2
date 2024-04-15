@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Utilities;
@@ -29,6 +30,7 @@
         private readonly IEmailGenerationService emailGenerationService;
         private readonly IEmailService emailService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
+        private readonly ISelfAssessmentDataService selfAssessmentDataService;
         private readonly IClockUtility clockUtility;
 
         public SupervisorController(
@@ -50,6 +52,7 @@
            IEmailGenerationService emailGenerationService,
            IEmailService emailService,
            ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
+           ISelfAssessmentDataService selfAssessmentDataService,
            IClockUtility clockUtility
            )
         {
@@ -67,6 +70,7 @@
             this.emailGenerationService = emailGenerationService;
             this.emailService = emailService;
             this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
+            this.selfAssessmentDataService = selfAssessmentDataService;
             this.clockUtility = clockUtility;
         }
 

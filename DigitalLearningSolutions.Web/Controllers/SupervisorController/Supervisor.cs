@@ -51,7 +51,7 @@
             var loggedInUserId = User.GetUserId();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
-            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+            var loggedInAdminUser = userDataService.GetAdminUserById(adminId);
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
@@ -1003,10 +1003,16 @@
             }
             else
             {
-                if (TempData["IsAssessmentsSupervise"] != null)
+
+                var candidateAssessmentId = selfAssessmentDataService.GetCandidateAssessments(delegateUserId, selfAssessmentId).SingleOrDefault()?.Id;
+                var roleId = supervisorRoles.Where(x => x.SelfAssessmentID == selfAssessmentId).Select(x => x.ID).FirstOrDefault();
+                if (candidateAssessmentId != null)
                 {
-                    TempData.Remove("IsAssessmentsSupervise");
-                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+                    var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisor((int)candidateAssessmentId, supervisorDelegateId, roleId);
+                    if (candidateAssessmentSupervisor != null && candidateAssessmentSupervisor.Removed == null)
+                    {
+                        return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+                    }
                 }
 
                 var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile()
@@ -1096,7 +1102,6 @@
                     selfAssessmentId,
                     selfAssessmentSupervisorRoleId.Value
                 );
-                TempData["IsAssessmentsSupervise"] = true;
                 return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
             }
         }
@@ -1111,10 +1116,6 @@
         public IActionResult RemoveDelegateSelfAssessmentsupervisor(int candidateAssessmentId, int supervisorDelegateId)
         {
             supervisorService.RemoveDelegateSelfAssessmentsupervisor(candidateAssessmentId, supervisorDelegateId);
-            if (TempData["IsAssessmentsSupervise"] != null)
-            {
-                TempData.Remove("IsAssessmentsSupervise");
-            }
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
 

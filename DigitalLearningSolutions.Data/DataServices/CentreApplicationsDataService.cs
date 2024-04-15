@@ -49,14 +49,12 @@
 
             public void DeleteCentreApplicationByCentreAndApplicationID(int centreId, int applicationId)
             {
-                {
-                    connection.Execute(
-                        @"DELETE 
+                connection.Execute(
+                    @"DELETE 
                             FROM   CentreApplications
                             WHERE (CentreID = @centreId) AND (ApplicationID = @applicationId)",
-                        new { centreId, applicationId }
-                    );
-                }
+                    new { centreId, applicationId }
+                );
             }
 
             public void InsertCentreApplication(int centreId, int applicationId)

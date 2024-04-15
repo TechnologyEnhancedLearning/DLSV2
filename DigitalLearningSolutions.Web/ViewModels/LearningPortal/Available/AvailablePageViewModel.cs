@@ -15,7 +15,7 @@
         public AvailablePageViewModel(
             SearchSortFilterPaginationResult<AvailableCourse> result,
             string? bannerText
-        ) : base(result, false, searchLabel: "Search courses")
+        ) : base(result, false, searchLabel: "Search")
         {
             BannerText = bannerText;
             AvailableCourses = result.ItemsToDisplay.Select(c => new AvailableCourseViewModel(c));

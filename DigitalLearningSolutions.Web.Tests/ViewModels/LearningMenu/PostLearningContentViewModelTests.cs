@@ -151,7 +151,7 @@
             postLearningContentViewModel.ContentSource.Should().Be(
                 "https://www.dls.nhs.uk/CMS/CMSContent/Course120/PLAssess/03-PLA-Working-with-files/itspplayer.html" +
                 "?CentreID=6&CustomisationID=5&CandidateID=8&SectionID=7&Version=55&ProgressID=9" +
-                $"&type=pl&TrackURL={AppRootPathUrl}/tracking/tracker&objlist=[1,2,3]&plathresh=77"
+                $"&type=pl&TrackURL={BaseUrl}/tracking/tracker&objlist=[1,2,3]&plathresh=77"
             );
         }
 

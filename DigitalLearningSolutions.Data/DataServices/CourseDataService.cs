@@ -435,7 +435,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
             DateTime lastAccessed = startedDate;
-            dynamic completeByDateDynamic = "";
+            dynamic? completeByDateDynamic = null;
             if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
                 completeByDateDynamic = completeByDate!;
@@ -1099,13 +1099,13 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@hasCompleted IS NULL) OR (@hasCompleted = 1 AND pr.Completed IS NOT NULL) OR (@hasCompleted = 0 AND pr.Completed IS NULL))
 
                 AND ((@answer1 IS NULL) OR ((@answer1 = 'No option selected' OR @answer1 = 'FREETEXTBLANKVALUE') AND (pr.Answer1 IS NULL OR LTRIM(RTRIM(pr.Answer1)) = '')) 
-							OR (@answer1 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer1 IS NOT NULL OR pr.Answer1 = @answer1)))
+					OR ((@answer1 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer1 IS NOT NULL AND LTRIM(RTRIM(pr.Answer1)) != '') OR (pr.Answer1 IS NOT NULL AND pr.Answer1 = @answer1)))
 
 				AND ((@answer2 IS NULL) OR ((@answer2 = 'No option selected' OR @answer2 = 'FREETEXTBLANKVALUE') AND (pr.Answer2 IS NULL OR LTRIM(RTRIM(pr.Answer2)) = '')) 
-							OR (@answer2 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer2 IS NOT NULL OR pr.Answer2 = @answer2)))
+					OR ((@answer2 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer2 IS NOT NULL AND LTRIM(RTRIM(pr.Answer2)) != '') OR (pr.Answer2 IS NOT NULL AND pr.Answer2 = @answer2)))
 
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
-							OR (@answer3 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer3 IS NOT NULL OR pr.Answer3 = @answer3)))
+					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
 
@@ -1652,13 +1652,13 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@hasCompleted IS NULL) OR (@hasCompleted = 1 AND pr.Completed IS NOT NULL) OR (@hasCompleted = 0 AND pr.Completed IS NULL))
 
                 AND ((@answer1 IS NULL) OR ((@answer1 = 'No option selected' OR @answer1 = 'FREETEXTBLANKVALUE') AND (pr.Answer1 IS NULL OR LTRIM(RTRIM(pr.Answer1)) = '')) 
-							OR (@answer1 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer1 IS NOT NULL OR pr.Answer1 = @answer1)))
+					OR ((@answer1 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer1 IS NOT NULL AND LTRIM(RTRIM(pr.Answer1)) != '') OR (pr.Answer1 IS NOT NULL AND pr.Answer1 = @answer1)))
 
 				AND ((@answer2 IS NULL) OR ((@answer2 = 'No option selected' OR @answer2 = 'FREETEXTBLANKVALUE') AND (pr.Answer2 IS NULL OR LTRIM(RTRIM(pr.Answer2)) = '')) 
-							OR (@answer2 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer2 IS NOT NULL OR pr.Answer2 = @answer2)))
+					OR ((@answer2 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer2 IS NOT NULL AND LTRIM(RTRIM(pr.Answer2)) != '') OR (pr.Answer2 IS NOT NULL AND pr.Answer2 = @answer2)))
 
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
-							OR (@answer3 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer3 IS NOT NULL OR pr.Answer3 = @answer3)))
+					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
 
@@ -1753,13 +1753,13 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@hasCompleted IS NULL) OR (@hasCompleted = 1 AND pr.Completed IS NOT NULL) OR (@hasCompleted = 0 AND pr.Completed IS NULL))
 
                 AND ((@answer1 IS NULL) OR ((@answer1 = 'No option selected' OR @answer1 = 'FREETEXTBLANKVALUE') AND (pr.Answer1 IS NULL OR LTRIM(RTRIM(pr.Answer1)) = '')) 
-							OR (@answer1 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer1 IS NOT NULL OR pr.Answer1 = @answer1)))
+					OR ((@answer1 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer1 IS NOT NULL AND LTRIM(RTRIM(pr.Answer1)) != '') OR (pr.Answer1 IS NOT NULL AND pr.Answer1 = @answer1)))
 
 				AND ((@answer2 IS NULL) OR ((@answer2 = 'No option selected' OR @answer2 = 'FREETEXTBLANKVALUE') AND (pr.Answer2 IS NULL OR LTRIM(RTRIM(pr.Answer2)) = '')) 
-							OR (@answer2 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer2 IS NOT NULL OR pr.Answer2 = @answer2)))
+					OR ((@answer2 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer2 IS NOT NULL AND LTRIM(RTRIM(pr.Answer2)) != '') OR (pr.Answer2 IS NOT NULL AND pr.Answer2 = @answer2)))
 
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
-							OR (@answer3 = 'FREETEXTNOTBLANKVALUE' AND (pr.Answer3 IS NOT NULL OR pr.Answer3 = @answer3)))
+					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
 
@@ -1928,14 +1928,17 @@ namespace DigitalLearningSolutions.Data.DataServices
                         END AS Supervised,
                         (SELECT COUNT(can.ID)
                         FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
-                        WHERE can.CentreID = @centreId AND can.SelfAssessmentID = csa.SelfAssessmentID) AS DelegateCount,
-                        (SELECT COUNT(can.ID)
-                        FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
-                        LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas ON can.ID = cas.CandidateAssessmentID
-                        LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
-                        WHERE can.CentreID = @centreId AND can.SelfAssessmentID = CSA.SelfAssessmentID 
-                        AND (can.SubmittedDate IS NOT NULL OR casv.SignedOff = 1)
-                        ) AS SubmittedSignedOffCount,
+                            INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = can.DelegateUserID 
+						    LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID AND ucd.centreID = can.CentreID
+                        WHERE can.CentreID = @centreId AND can.SelfAssessmentID = csa.SelfAssessmentID
+                            AND can.RemovedDate IS NULL AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS DelegateCount,
+                        (Select COUNT(*) FROM
+                            (SELECT can.ID FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
+                                LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas ON can.ID = cas.CandidateAssessmentID
+                                LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
+                                WHERE can.CentreID = @centreId AND can.SelfAssessmentID = CSA.SelfAssessmentID AND can.RemovedDate IS NULL
+                                AND (can.SubmittedDate IS NOT NULL OR (casv.SignedOff = 1 AND casv.Verified IS NOT NULL)) GROUP BY can.ID) A
+                                ) AS SubmittedSignedOffCount,
                         CC.Active AS Active,
                         sa.ID AS SelfAssessmentId
                         from CentreSelfAssessments AS csa 
