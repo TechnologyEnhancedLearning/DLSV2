@@ -36,7 +36,7 @@
                 BulkUploadResult.ErrorReason.MissingFirstName =>
                     "FirstName is blank. First name is a required field and cannot be left blank",
                 BulkUploadResult.ErrorReason.MissingEmail =>
-                    "EmailAddress is blank. Email address is a required field and cannot be left blank",
+                    "EmailAddress is blank. Email address is a required field and cannot be left blank for new or active delegates",
                 BulkUploadResult.ErrorReason.InvalidActive =>
                     "Active field is invalid. The Active field must contain 'TRUE' or 'FALSE'",
                 BulkUploadResult.ErrorReason.TooLongFirstName => "FirstName must be 250 characters or fewer",

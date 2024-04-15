@@ -235,6 +235,23 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(MultiPageFormDataFeature.EnrolDelegateInActivity, TempData).GetAwaiter().GetResult();
             var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(sessionEnrol.AssessmentID.Value, centreId.Value);
+            var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
+
+            if (!ModelState.IsValid)
+            {
+                var errormodel = new EnrolSupervisorViewModel(
+                    delegateId,
+                    (int)sessionEnrol.DelegateUserID,
+                    sessionEnrol.DelegateName,
+                    sessionEnrol.IsSelfAssessment,
+                   supervisorList,
+                   sessionEnrol.SupervisorID.GetValueOrDefault(),
+                   roles,
+                   sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
+                errormodel.SelectedSupervisorRoleId = model.SelectedSupervisorRoleId.Value;
+                return View(errormodel);
+            }
+
             if (model.SelectedSupervisor.HasValue && model.SelectedSupervisor.Value > 0)
             {
                 sessionEnrol.SupervisorName = supervisorList.FirstOrDefault(x => x.AdminId == model.SelectedSupervisor).Name;
@@ -242,7 +259,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
             if (model.SelectedSupervisorRoleId.HasValue && model.SelectedSupervisorRoleId.Value > 0)
             {
-                var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
                 sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault(x => x.ID == model.SelectedSupervisorRoleId).RoleName;
             }
             sessionEnrol.SelfAssessmentSupervisorRoleId = model.SelectedSupervisorRoleId;

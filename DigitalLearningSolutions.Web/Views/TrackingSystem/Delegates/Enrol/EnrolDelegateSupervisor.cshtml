@@ -2,6 +2,7 @@
 @model EnrolSupervisorViewModel
 @{
     ViewData["Title"] = "Enrol on Activity - Supervisor";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
     var routeParamsForCancelLink = new Dictionary<string, string> {
     { "delegateId", Model.DelegateId.ToString() },
   };
@@ -9,6 +10,10 @@
 
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedSupervisor) })" />
+        }
         <div class="nhsuk-u-margin-bottom-4">
             <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 3</h1>
             <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
