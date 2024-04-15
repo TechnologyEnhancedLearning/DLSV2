@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Models.Enums
 {
-    enum UserCard
+    public enum UserCard
     {
         Active,
         Inactive,
