@@ -615,12 +615,19 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var inUseAsCentreEmailAtCentre = userDataService.CentreSpecificEmailIsInUseAtCentre(email!, centreId);
 
-            var primaryEmailOwnerIsAtCentre = EmailIsHeldAsPrimaryEmailByUserAtCentre(email, centreId);
+            var primaryEmailOwnerIsAtCentre = EmailIsHeldAsPrimaryEmailByUser(email);
 
             return inUseAsCentreEmailAtCentre || primaryEmailOwnerIsAtCentre;
         }
-
         private bool EmailIsHeldAsPrimaryEmailByUserAtCentre(string email, int centreId)
+        {
+            var primaryEmailOwner = userDataService.GetUserAccountByPrimaryEmail(email);
+            var primaryEmailOwnerIsAtCentre = primaryEmailOwner != null && userDataService
+                .GetDelegateAccountsByUserId(primaryEmailOwner.Id).Any(da => da.CentreId == centreId);
+            return primaryEmailOwnerIsAtCentre;
+        }
+
+        private bool EmailIsHeldAsPrimaryEmailByUser(string email)
         {
             var primaryEmailOwner = userDataService.GetUserAccountByPrimaryEmail(email);
             var primaryEmailOwnerIsAtCentre = primaryEmailOwner != null;

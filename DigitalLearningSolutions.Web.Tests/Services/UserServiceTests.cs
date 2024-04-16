@@ -1357,7 +1357,7 @@
         }
 
         [Test]
-        public void EmailIsHeldAtCentre_returns_true_if_email_used_only_at_other_centres()
+        public void EmailIsHeldAtCentre_returns_false_if_email_used_only_at_other_centres()
         {
             // Given
             GivenPrimaryEmailHolderDelegateAccountIsAtCentre("email", 2);
@@ -1367,7 +1367,7 @@
             var result = userService.EmailIsHeldAtCentre("email", 1);
 
             // Then
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
         private void GivenPrimaryEmailHolderDelegateAccountIsAtCentre(string emailAddress, int centreId)
