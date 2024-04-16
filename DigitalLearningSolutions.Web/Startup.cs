@@ -45,12 +45,8 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
-    using Serilog;
-    using GDS.MultiPageFormData;
-    using LearningHub.Nhs.Caching;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
     using Microsoft.IdentityModel.Tokens;
-    using IdentityModel;
     using Microsoft.AspNetCore.Http;
     using System.Linq;
     using Microsoft.AspNetCore.Identity;
@@ -219,11 +215,8 @@ namespace DigitalLearningSolutions.Web
             RegisterWebServiceFilters(services);
         }
 
-        private void ConfigureIpRateLimiting(IServiceCollection services)
+        private void SetUpAuthentication(IServiceCollection services)
         {
-            services.Configure<IpRateLimitOptions>(config.GetSection("IpRateLimiting"));
-            services.AddInMemoryRateLimiting();
-            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = "Identity.Application";
