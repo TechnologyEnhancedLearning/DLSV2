@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -18,6 +19,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
+    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -98,18 +100,35 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult PersonalInformation(RegisterDelegatePersonalInformationViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
-
-            ValidateEmailAddress(model);
-
-            if (!ModelState.IsValid)
+            if (data == null)
             {
-                return View(model);
+                var result = new DelegateRegistrationByCentreData(model.Centre.Value, DateTime.Now);
+                ValidateEmailAddress(model);
+
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                result.SetPersonalInformation(model);
+                TempData.Set(result);
+
+                return RedirectToAction("LearnerInformation");
             }
+            else
+            {
+                ValidateEmailAddress(model);
 
-            data.SetPersonalInformation(model);
-            TempData.Set(data);
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
 
-            return RedirectToAction("LearnerInformation");
+                data.SetPersonalInformation(model);
+                TempData.Set(data);
+
+                return RedirectToAction("LearnerInformation");
+            }
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
