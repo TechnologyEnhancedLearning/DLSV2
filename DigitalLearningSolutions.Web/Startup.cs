@@ -47,7 +47,6 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.FeatureManagement;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
     using Microsoft.IdentityModel.Tokens;
-    using IdentityModel;
     using Microsoft.AspNetCore.Http;
     using System.Linq;
     using Microsoft.AspNetCore.Identity;
