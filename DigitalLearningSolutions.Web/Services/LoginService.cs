@@ -188,7 +188,7 @@
                         loginResult.UserEntity,
                         false,
                         returnUrl,
-                        loginResult.CentreToLogInto!.Value,
+                        activeCentres[0].CentreId,
                         context,
                         sessionService,
                         userService);
