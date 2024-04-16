@@ -113,6 +113,7 @@ namespace DigitalLearningSolutions.Web.Services
         void ReactivateAdmin(int adminId);
 
         int? GetUserLearningHubAuthId(int userId);
+        bool CheckingIfPrimaryEmailExist(string email, int centreId);
     }
 
     public class UserService : IUserService
@@ -612,6 +613,14 @@ namespace DigitalLearningSolutions.Web.Services
         }
 
         public bool EmailIsHeldAtCentre(string email, int centreId)
+        {
+            var inUseAsCentreEmailAtCentre = userDataService.CentreSpecificEmailIsInUseAtCentre(email!, centreId);
+
+            var primaryEmailOwnerIsAtCentre = EmailIsHeldAsPrimaryEmailByUserAtCentre(email, centreId);
+
+            return inUseAsCentreEmailAtCentre || primaryEmailOwnerIsAtCentre;
+        }
+        public bool CheckingIfPrimaryEmailExist(string email, int centreId)
         {
             var inUseAsCentreEmailAtCentre = userDataService.CentreSpecificEmailIsInUseAtCentre(email!, centreId);
 

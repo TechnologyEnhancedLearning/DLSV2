@@ -64,7 +64,7 @@
                 return;
             }
 
-            var emailIsHeldAtCentre = userService.EmailIsHeldAtCentre(email, centreId);
+            var emailIsHeldAtCentre = userService.CheckingIfPrimaryEmailExist(email, centreId);
 
             if (emailIsHeldAtCentre)
             {
