@@ -484,7 +484,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         SupervisorEmail,
                         AddedByDelegate)
                     OUTPUT INSERTED.Id
-                    SELECT
+                    SELECT DISTINCT
                         @supervisorId,
                         COALESCE(UCD.Email, U.PrimaryEmail),
                         DA.UserID,
