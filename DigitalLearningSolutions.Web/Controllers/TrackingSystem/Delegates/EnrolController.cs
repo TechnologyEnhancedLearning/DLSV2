@@ -215,7 +215,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
             else
             {
-                var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
                 var model = new EnrolSupervisorViewModel(
                     delegateId,
                     (int)sessionEnrol.DelegateUserID,
@@ -223,7 +222,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     sessionEnrol.IsSelfAssessment,
                    supervisorList,
                    sessionEnrol.SupervisorID.GetValueOrDefault(),
-                   roles,
                    sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
                 return View(model);
             }
@@ -235,7 +233,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(MultiPageFormDataFeature.EnrolDelegateInActivity, TempData).GetAwaiter().GetResult();
             var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(sessionEnrol.AssessmentID.Value, centreId.Value);
-            var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
+            var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
 
             if (!ModelState.IsValid)
             {
@@ -246,7 +244,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     sessionEnrol.IsSelfAssessment,
                    supervisorList,
                    sessionEnrol.SupervisorID.GetValueOrDefault(),
-                   roles,
                    sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
                 errormodel.SelectedSupervisorRoleId = model.SelectedSupervisorRoleId.Value;
                 return View(errormodel);
@@ -257,11 +254,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 sessionEnrol.SupervisorName = supervisorList.FirstOrDefault(x => x.AdminId == model.SelectedSupervisor).Name;
                 sessionEnrol.SupervisorID = model.SelectedSupervisor;
             }
-            if (model.SelectedSupervisorRoleId.HasValue && model.SelectedSupervisorRoleId.Value > 0)
-            {
-                sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault(x => x.ID == model.SelectedSupervisorRoleId).RoleName;
-            }
-            sessionEnrol.SelfAssessmentSupervisorRoleId = model.SelectedSupervisorRoleId;
+            sessionEnrol.SelfAssessmentSupervisorRoleId = roles.FirstOrDefault().ID;
             multiPageFormService.SetMultiPageFormData(
                         sessionEnrol,
                         MultiPageFormDataFeature.EnrolDelegateInActivity,
@@ -285,6 +278,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 monthDiffrence = (((sessionEnrol.CompleteByDate.Value.Year - clockUtility.UtcNow.Year) * 12) + sessionEnrol.CompleteByDate.Value.Month - clockUtility.UtcNow.Month).ToString();
             }
 
+            var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor((int)sessionEnrol.AssessmentID);
+
             var model = new EnrolSummaryViewModel();
             model.SupervisorName = sessionEnrol.SupervisorName;
             model.ActivityName = sessionEnrol.AssessmentName;
@@ -294,7 +289,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             model.DelegateName = sessionEnrol.DelegateName;
             model.ValidFor = monthDiffrence;
             model.IsSelfAssessment = sessionEnrol.IsSelfAssessment;
-            model.SupervisorRoleName = sessionEnrol.SelfAssessmentSupervisorRoleName;
+            model.SupervisorRoleName = roles.FirstOrDefault().RoleName;
             return View(model);
         }
 

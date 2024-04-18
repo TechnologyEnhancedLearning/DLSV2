@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
 {
-    public class EnrolSupervisorViewModel : IValidatableObject
+    public class EnrolSupervisorViewModel
     {
         public EnrolSupervisorViewModel() { }
         public EnrolSupervisorViewModel(
@@ -33,7 +33,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
             bool isSelfAssessment,
             IEnumerable<SupervisorForEnrolDelegate> supervisorList,
             int selectedSupervisor,
-            IEnumerable<SelfAssessmentSupervisorRole>? supervisorRoleList,
             int selectedSupervisorRole
         )
         {
@@ -42,7 +41,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
             DelegateName = delegateName;
             IsSelfAssessment = isSelfAssessment;
             SupervisorList = PopulateItems(supervisorList, selectedSupervisor);
-            SupervisorRoleList = supervisorRoleList;
             SelectedSupervisorRoleId = selectedSupervisorRole;
         }
         public int DelegateId { get; set; }
@@ -50,7 +48,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
         public string? DelegateName { get; set; }
 
         public IEnumerable<SelectListItem>? SupervisorList { get; set; }
-        public IEnumerable<SelfAssessmentSupervisorRole>? SupervisorRoleList { get; set; }
         public IEnumerable<RadiosListItemViewModel>? SupervisorRoleList1 { get; set; }
 
         public int? SelectedSupervisor { get; set; }
@@ -65,16 +62,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
             return SelectListHelper.MapOptionsToSelectListItems(
                 LearningItemIdNames, selected
            );
-        }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            List<ValidationResult> errors = new List<ValidationResult>();
-            if (SelectedSupervisorRoleId.HasValue && !SelectedSupervisor.HasValue)
-            {
-                errors.Add(new ValidationResult("You must choose a supervisor in order to specify a supervisor role", new[] { nameof(SelectedSupervisor) }));
-            }
-            return errors;
         }
     }
 }
