@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -18,6 +19,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -41,6 +44,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IUserDataService userDataService;
         private readonly IClockUtility clockUtility;
         private readonly IUserService userService;
+        private readonly IMultiPageFormService multiPageFormService;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
@@ -50,7 +54,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IRegistrationService registrationService,
             IConfiguration config,
             IClockUtility clockUtility,
-            IUserService userService
+            IUserService userService,
+            IMultiPageFormService multiPageFormService
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
@@ -61,6 +66,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.config = config;
             this.clockUtility = clockUtility;
             this.userService = userService;
+            this.multiPageFormService = multiPageFormService;
         }
 
         [NoCaching]
@@ -69,17 +75,20 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var centreId = User.GetCentreIdKnownNotNull();
 
-            SetCentreDelegateRegistrationData(centreId);
+            SetupDelegateRegistrationByCentreData(centreId);
 
             return RedirectToAction("PersonalInformation");
         }
 
         [NoCaching]
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) }
+        )]
         [HttpGet]
         public IActionResult PersonalInformation()
         {
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var data = GetDelegateRegistrationByCentreData()!;
             var delegateRegistered = TempData.Peek("delegateRegistered")!;
             if (Convert.ToBoolean(delegateRegistered))
             {
@@ -87,17 +96,19 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var model = new RegisterDelegatePersonalInformationViewModel(data);
-
             ValidateEmailAddress(model);
 
             return View(model);
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) }
+        )]
         [HttpPost]
         public IActionResult PersonalInformation(RegisterDelegatePersonalInformationViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var data = GetDelegateRegistrationByCentreData()!;
 
             ValidateEmailAddress(model);
 
@@ -107,16 +118,16 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
 
             data.SetPersonalInformation(model);
-            TempData.Set(data);
+            SetDelegateRegistrationByCentreData(data);
 
             return RedirectToAction("LearnerInformation");
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpGet]
         public IActionResult LearnerInformation()
         {
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var data = GetDelegateRegistrationByCentreData()!;
 
             var model = new LearnerInformationViewModel(data, false);
 
@@ -125,11 +136,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(model);
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpPost]
         public IActionResult LearnerInformation(LearnerInformationViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var data = GetDelegateRegistrationByCentreData()!;
 
             var centreId = data.Centre!.Value;
 
@@ -157,27 +168,27 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
 
             data.SetLearnerInformation(model);
-            TempData.Set(data);
+            SetDelegateRegistrationByCentreData(data);
 
             return RedirectToAction("WelcomeEmail");
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpGet]
         public IActionResult WelcomeEmail()
         {
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var data = GetDelegateRegistrationByCentreData()!;
 
             var model = new WelcomeEmailViewModel(data, 1);
 
             return View(model);
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpPost]
         public IActionResult WelcomeEmail(WelcomeEmailViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var data = GetDelegateRegistrationByCentreData()!;
 
             if (!ModelState.IsValid)
             {
@@ -185,12 +196,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
 
             data.SetWelcomeEmail(model);
-            TempData.Set(data);
+            SetDelegateRegistrationByCentreData(data);
 
             return RedirectToAction("Password");
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpGet]
         public IActionResult Password()
         {
@@ -198,11 +209,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(model);
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpPost]
         public IActionResult Password(PasswordViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var data = GetDelegateRegistrationByCentreData()!;
             RegistrationPasswordValidator.ValidatePassword(model.Password, data.FirstName, data.LastName, ModelState);
 
             if (!ModelState.IsValid)
@@ -212,28 +223,28 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             data.PasswordHash = model.Password != null ? cryptoService.GetPasswordHash(model.Password) : null;
 
-            TempData.Set(data);
+            SetDelegateRegistrationByCentreData(data);
 
             return RedirectToAction("Summary");
         }
 
         [NoCaching]
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpGet]
         public IActionResult Summary()
         {
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var data = GetDelegateRegistrationByCentreData()!;
             var viewModel = new SummaryViewModel(data);
             PopulateSummaryExtraFields(viewModel, data);
             return View(viewModel);
         }
 
         [NoCaching]
-        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var data = GetDelegateRegistrationByCentreData()!;
             var baseUrl = config.GetAppRootPath();
 
             try
@@ -282,11 +293,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(viewModel);
         }
 
-        private void SetCentreDelegateRegistrationData(int centreId)
-        {
-            var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId, clockUtility.UtcToday);
-            TempData.Set(centreDelegateRegistrationData);
-        }
+        
 
         private void ValidateEmailAddress(RegisterDelegatePersonalInformationViewModel model)
         {
@@ -344,6 +351,31 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
             model.DelegateRegistrationPrompts = GetCustomFieldsFromData(data);
+        }
+
+        private void SetupDelegateRegistrationByCentreData(int centreId)
+        {
+            TempData.Clear();
+            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("DelegateRegistrationByCentreCWF"), TempData);
+            var delegateRegistrationByCentreData = new DelegateRegistrationByCentreData(centreId, clockUtility.UtcToday);
+            SetDelegateRegistrationByCentreData(delegateRegistrationByCentreData);
+        }
+        private void SetDelegateRegistrationByCentreData(DelegateRegistrationByCentreData delegateRegistrationByCentreData)
+        {
+            multiPageFormService.SetMultiPageFormData(
+                 delegateRegistrationByCentreData,
+                 MultiPageFormDataFeature.AddCustomWebForm("DelegateRegistrationByCentreCWF"),
+                 TempData
+             );
+        }
+
+        private DelegateRegistrationByCentreData GetDelegateRegistrationByCentreData()
+        {
+            var data = multiPageFormService.GetMultiPageFormData<DelegateRegistrationByCentreData>(
+               MultiPageFormDataFeature.AddCustomWebForm("DelegateRegistrationByCentreCWF"),
+               TempData
+           ).GetAwaiter().GetResult();
+            return data;
         }
     }
 }
