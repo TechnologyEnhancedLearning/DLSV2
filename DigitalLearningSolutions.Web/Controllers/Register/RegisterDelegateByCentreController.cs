@@ -7,10 +7,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -25,9 +23,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
-    using ConfirmationViewModel =
-        DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.ConfirmationViewModel;
-    using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.SummaryViewModel;
+    using ConfirmationViewModel = ViewModels.Register.RegisterDelegateByCentre.ConfirmationViewModel;
+    using SummaryViewModel = ViewModels.Register.RegisterDelegateByCentre.SummaryViewModel;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -81,10 +78,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         }
 
         [NoCaching]
-        [TypeFilter(
-            typeof(RedirectMissingMultiPageFormData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) }
-        )]
         [HttpGet]
         public IActionResult PersonalInformation()
         {
@@ -101,10 +94,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(model);
         }
 
-        [TypeFilter(
-            typeof(RedirectMissingMultiPageFormData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) }
-        )]
         [HttpPost]
         public IActionResult PersonalInformation(RegisterDelegatePersonalInformationViewModel model)
         {
@@ -123,7 +112,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("LearnerInformation");
         }
 
-        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpGet]
         public IActionResult LearnerInformation()
         {
@@ -136,7 +124,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(model);
         }
 
-        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpPost]
         public IActionResult LearnerInformation(LearnerInformationViewModel model)
         {
@@ -173,7 +160,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("WelcomeEmail");
         }
 
-        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpGet]
         public IActionResult WelcomeEmail()
         {
@@ -184,7 +170,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(model);
         }
 
-        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpPost]
         public IActionResult WelcomeEmail(WelcomeEmailViewModel model)
         {
@@ -201,7 +186,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("Password");
         }
 
-        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpGet]
         public IActionResult Password()
         {
@@ -209,7 +193,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(model);
         }
 
-        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpPost]
         public IActionResult Password(PasswordViewModel model)
         {
@@ -229,7 +212,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         }
 
         [NoCaching]
-        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpGet]
         public IActionResult Summary()
         {
@@ -240,7 +222,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         }
 
         [NoCaching]
-        [TypeFilter(typeof(RedirectMissingMultiPageFormData), Arguments = new object[] { nameof(MultiPageFormDataFeature.CustomWebForm) })]
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
