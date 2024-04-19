@@ -14,7 +14,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         public CompetencySelfAssessmentCertificateViewModel(CompetencySelfAssessmentCertificate competency,
             IEnumerable<CompetencyCountSelfAssessmentCertificate> competencies,
             int route, IEnumerable<Accessor> accessors,
-           ActivitySummaryCompetencySelfAssesment activitySummaryCompetencySelfAssesment
+           ActivitySummaryCompetencySelfAssesment activitySummaryCompetencySelfAssesment,
+           int questionResponses,
+           int confirmedResponses,
+           int? loggedInSupervisorDelegateId
          )
         {
             Route = route;
@@ -23,6 +26,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(competency.Vocabulary);
             Accessors = accessors;
             ActivitySummaryCompetencySelfAssesment = activitySummaryCompetencySelfAssesment;
+            QuestionResponses = questionResponses;
+            ConfirmedResponses = confirmedResponses;
+            LoggedInSupervisorDelegateId = loggedInSupervisorDelegateId;
         }
 
         public int Route { get; set; }
@@ -31,5 +37,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         public CompetencySelfAssessmentCertificate CompetencySelfAssessmentCertificates { get; set; }
         public IEnumerable<CompetencyCountSelfAssessmentCertificate> CompetencyCountSelfAssessmentCertificate { get; set; }
         public IEnumerable<Accessor> Accessors { get; set; }
+        public int QuestionResponses { get; set; }
+        public int ConfirmedResponses { get; set; }
+        public int? LoggedInSupervisorDelegateId { get; set; }
+        
     }
 }

@@ -3,8 +3,6 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Competency Self Assessment Certificate";
-    var sumVerifiedCount = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.VerifiedCount);
-    var sumQuestions = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.Questions);
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfassessmentcertificate.css")" asp-append-version="true">
 <style>
@@ -66,7 +64,7 @@
                 <li class="nhsuk-breadcrumb__item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
                        asp-action="ReviewDelegateSelfAssessment"
-                       asp-route-supervisorDelegateId="@ViewBag.LoggedInSupervisorDelegatesId"
+                       asp-route-supervisorDelegateId="@Model.LoggedInSupervisorDelegateId"
                        asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID">
                         &lt; Back
                     </a>
@@ -207,12 +205,12 @@
                     </div>
                     <div class="activity">
                         <p><b>Assessment question responses</b></p> <p>
-                            @sumQuestions
+                            @Model.QuestionResponses
                         </p>
                     </div>
                     <div class="activity">
                         <p><b>Responses confirmed by assessor</b></p> <p>
-                            @sumVerifiedCount
+                            @Model.ConfirmedResponses
                         </p>
                     </div>
                     <div class="activity">

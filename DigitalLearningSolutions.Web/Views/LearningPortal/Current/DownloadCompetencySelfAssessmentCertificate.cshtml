@@ -3,8 +3,6 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Competency Self Assessment Certificate";
-    var sumVerifiedCount = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.VerifiedCount);
-    var sumQuestions = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.Questions);
 }
 
 <!DOCTYPE html>
@@ -521,13 +519,12 @@
                 </div>
                 <div class="activity">
                     <p><b>Assessment question responses</b></p> <p>
-
-                        @sumQuestions
+                        @Model.QuestionResponses
                     </p>
                 </div>
                 <div class="activity">
                     <p><b>Responses confirmed by assessor</b></p> <p>
-                        @sumVerifiedCount
+                        @Model.ConfirmedResponses
                     </p>
                 </div>
                 <div class="activity">
