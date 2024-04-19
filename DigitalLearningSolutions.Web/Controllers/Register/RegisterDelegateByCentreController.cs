@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -281,10 +282,19 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             try
             {
+                var adminId = User.GetAdminIdKnownNotNull();
+                var centreId = User.GetCentreIdKnownNotNull();
+                if (data.AddToGroupOption == 2 && data.NewGroupName != null)
+                {
+                    data.ExistingGroupId = groupsService.AddDelegateGroup(centreId, data.NewGroupName, data.NewGroupDescription, adminId);
+                    SetDelegateRegistrationByCentreData(data);
+                }
                 var candidateNumber = registrationService.RegisterDelegateByCentre(
                     RegistrationMappingHelper.MapCentreRegistrationToDelegateRegistrationModel(data),
                     baseUrl,
-                    false
+                    false,
+                    adminId,
+                    data.ExistingGroupId
                 );
 
                 TempData.Clear();
