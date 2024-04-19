@@ -43,6 +43,11 @@
         private const string FreshdeskCreateTicketGroupId = "FreshdeskAPIConfig:GroupId";
         private const string FreshdeskCreateTicketProductId = "FreshdeskAPIConfig:ProductId";
 
+        private const string LearningHubAuthenticationAuthority = "LearningHubAuthentication:Authority";
+        private const string LearningHubAuthenticationClientId = "learningHubAuthentication:ClientId";
+        private const string LearningHubAuthenticationClientSecret = "LearningHubAuthentication:ClientSecret";
+
+        private const string LearningHubUserAPIUserAPIUrl = "LearningHubUserApi:UserApiUrl";
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -168,6 +173,21 @@
             return int.Parse(config[MaxBulkUploadRowsLimitKey]);
         }
 
+        public static string GetLearningHubAuthenticationAuthority(this IConfiguration config)
+        {
+            return config[LearningHubAuthenticationAuthority];
+        }
+
+        public static string GetLearningHubAuthenticationClientId(this IConfiguration config)
+        {
+            return config[LearningHubAuthenticationClientId];
+        }
+
+        public static string GetLearningHubAuthenticationClientSecret(this IConfiguration config)
+        {
+            return config[LearningHubAuthenticationClientSecret];
+        }
+
         public static long GetFreshdeskCreateTicketGroupId(this IConfiguration config)
         {
             return long.Parse(config[FreshdeskCreateTicketGroupId]);
@@ -175,6 +195,11 @@
         public static long GetFreshdeskCreateTicketProductId(this IConfiguration config)
         {
             return long.Parse(config[FreshdeskCreateTicketProductId]);
+        }
+
+        public static string GetLearningHubUserApiUrl(this IConfiguration config)
+        {
+            return config[LearningHubUserAPIUserAPIUrl];
         }
     }
 }

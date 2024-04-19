@@ -112,6 +112,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         void ReactivateAdmin(int adminId);
 
+        UserEntity? GetDelegateUserFromLearningHubAuthId(int learningHubAuthId);
+
         int? GetUserLearningHubAuthId(int userId);
     }
 
@@ -668,6 +670,12 @@ namespace DigitalLearningSolutions.Web.Services
             userDataService.ReactivateAdmin(adminId);
             int? userId = userDataService.GetUserIdByAdminId(adminId);
             userDataService.ActivateUser(userId.GetValueOrDefault());
+        }
+
+        public UserEntity? GetDelegateUserFromLearningHubAuthId(int learningHubAuthId)
+        {
+            var userId = userDataService.GetUserIdFromLearningHubAuthId(learningHubAuthId);
+            return userId == null ? null : GetUserById(userId.Value);
         }
     }
 }
