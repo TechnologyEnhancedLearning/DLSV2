@@ -12,11 +12,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload;
     using GDS.MultiPageFormData;
     using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Authorization;
@@ -42,6 +42,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IClockUtility clockUtility;
         private readonly IUserService userService;
         private readonly IMultiPageFormService multiPageFormService;
+        private readonly IGroupsService groupsService;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
@@ -52,7 +53,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IConfiguration config,
             IClockUtility clockUtility,
             IUserService userService,
-            IMultiPageFormService multiPageFormService
+            IMultiPageFormService multiPageFormService,
+            IGroupsService groupsService
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
@@ -64,6 +66,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.clockUtility = clockUtility;
             this.userService = userService;
             this.multiPageFormService = multiPageFormService;
+            this.groupsService = groupsService;
         }
 
         [NoCaching]
@@ -157,6 +160,54 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             data.SetLearnerInformation(model);
             SetDelegateRegistrationByCentreData(data);
 
+            return RedirectToAction("AddToGroup");
+        }
+
+        [Route("AddToGroup")]
+        public IActionResult AddToGroup()
+        {
+            var data = GetDelegateRegistrationByCentreData();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var groupSelect = groupsService.GetUnlinkedGroupsSelectListForCentre(centreId, data.ExistingGroupId);
+            var model = new AddToGroupViewModel(data.AddToGroupOption, existingGroups: groupSelect, data.ExistingGroupId, data.NewGroupName, data.NewGroupDescription, true, false);
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("SubmitAddToGroup")]
+        public IActionResult SubmitAddToGroup(AddToGroupViewModel model)
+        {
+            var centreId = User.GetCentreIdKnownNotNull();
+            var data = GetDelegateRegistrationByCentreData();
+            if (model.AddToGroupOption == 2)
+            {
+                if (!string.IsNullOrEmpty(model.NewGroupName))
+                {
+                    if (groupsService.IsDelegateGroupExist(model.NewGroupName.Trim(), centreId))
+                    {
+                        ModelState.AddModelError(nameof(model.NewGroupName), "A group with the same name already exists (if it does not appear in the list of groups, it may be linked to a centre registration field)");
+                    }
+                }
+            }
+            if (!ModelState.IsValid)
+            {
+                var groupSelect = groupsService.GetUnlinkedGroupsSelectListForCentre(centreId, data.ExistingGroupId);
+                model.ExistingGroups = groupSelect;
+                model.RegisteringDelegates = true;
+                model.UpdatingDelegates = false;
+                return View("AddToGroup", model);
+            }
+            data.AddToGroupOption = model.AddToGroupOption;
+            if (model.AddToGroupOption == 1)
+            {
+                data.ExistingGroupId = model.ExistingGroupId;
+            }
+            if (model.AddToGroupOption == 2)
+            {
+                data.NewGroupName = model.NewGroupName;
+                data.NewGroupDescription = model.NewGroupDescription;
+            }
+            SetDelegateRegistrationByCentreData(data);
             return RedirectToAction("WelcomeEmail");
         }
 
@@ -273,8 +324,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var viewModel = new ConfirmationViewModel(delegateNumber);
             return View(viewModel);
         }
-
-        
 
         private void ValidateEmailAddress(RegisterDelegatePersonalInformationViewModel model)
         {
