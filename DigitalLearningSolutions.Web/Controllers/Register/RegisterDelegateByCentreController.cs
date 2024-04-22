@@ -7,7 +7,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -36,7 +35,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     {
         private readonly IConfiguration config;
         private readonly ICryptoService cryptoService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
@@ -46,7 +45,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IGroupsService groupsService;
 
         public RegisterDelegateByCentreController(
-            IJobGroupsDataService jobGroupsDataService,
+            IJobGroupsService jobGroupsService,
             PromptsService promptsService,
             ICryptoService cryptoService,
             IUserDataService userDataService,
@@ -58,7 +57,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IGroupsService groupsService
         )
         {
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.jobGroupsService = jobGroupsService;
             this.promptsService = promptsService;
             this.userDataService = userDataService;
             this.registrationService = registrationService;
@@ -268,7 +267,29 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult Summary()
         {
             var data = GetDelegateRegistrationByCentreData()!;
+            var centreId = User.GetCentreIdKnownNotNull();
+            string? groupName = data.NewGroupName;
+            if(data.AddToGroupOption == 1)
+            {
+                groupName = groupsService.GetGroupName(
+                    (int)data.ExistingGroupId,
+                    centreId
+                    );
+            }
+            var jobGroup = jobGroupsService.GetJobGroupName((int)data.JobGroup);
+            var registrationFieldGroups = groupsService.GetGroupsForRegistrationResponse(
+                centreId,
+                data.Answer1,
+                data.Answer2,
+                data.Answer3,
+                jobGroup,
+                data.Answer4,
+                data.Answer5,
+                data.Answer6
+                );
             var viewModel = new SummaryViewModel(data);
+            viewModel.GroupName = groupName;
+            viewModel.RegistrationFieldGroups = registrationFieldGroups;
             PopulateSummaryExtraFields(viewModel, data);
             return View(viewModel);
         }
@@ -324,6 +345,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpGet]
         public IActionResult Confirmation()
         {
+            var data = GetDelegateRegistrationByCentreData()!;
             var delegateNumber = (string?)TempData.Peek("delegateNumber");
 
             if (delegateNumber == null)
@@ -331,7 +353,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return RedirectToAction("Index");
             }
 
-            var viewModel = new ConfirmationViewModel(delegateNumber);
+            var viewModel = new ConfirmationViewModel(delegateNumber, data.WelcomeEmailDate);
             return View(viewModel);
         }
 
@@ -382,14 +404,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             model.DelegateRegistrationPrompts = GetEditCustomFieldsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
-                jobGroupsDataService.GetJobGroupsAlphabetical(),
+                jobGroupsService.GetJobGroupsAlphabetical(),
                 model.JobGroup
             );
         }
 
         private void PopulateSummaryExtraFields(SummaryViewModel model, DelegateRegistrationData data)
         {
-            model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
+            model.JobGroup = jobGroupsService.GetJobGroupName((int)data.JobGroup!);
             model.DelegateRegistrationPrompts = GetCustomFieldsFromData(data);
         }
 

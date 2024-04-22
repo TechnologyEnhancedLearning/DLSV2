@@ -1,131 +1,162 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 @model SummaryViewModel
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register delegate - Summary" : "Register delegate - Summary";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Register delegate - Summary" : "Register delegate - Summary";
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+    <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-  <div class="nhsuk-grid-row">
+<div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <div class="nhsuk-u-margin-bottom-8">
-        <h1 class="nhsuk-heading-xl">Summary</h1>
-      </div>
+        <div class="nhsuk-u-margin-bottom-8">
+            <h1 class="nhsuk-heading-xl">Summary of delegate to be registered</h1>
+        </div>
+        <h2>Personal details</h2>
+        <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Name
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.FirstName @Model.LastName
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="PersonalInformation">
+                        Change<span class="nhsuk-u-visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Email
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.CentreSpecificEmail
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="PersonalInformation">
+                        Change<span class="nhsuk-u-visually-hidden"> email</span>
+                    </a>
+                </dd>
+            </div>
+        </dl>
+        <h2>Learner information</h2>
+        <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Job group
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.JobGroup
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="LearnerInformation">
+                        Change<span class="nhsuk-u-visually-hidden"> job group</span>
+                    </a>
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Professional registration number (PRN)
+                </dt>
+                <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="LearnerInformation">
+                        Change<span class="nhsuk-u-visually-hidden"> professional registration number</span>
+                    </a>
+                </dd>
+            </div>
+            @foreach (var customField in Model.DelegateRegistrationPrompts)
+            {
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        @(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @customField.Answer
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                        <a asp-action="LearnerInformation">
+                            Change<span class="nhsuk-u-visually-hidden"> @customField.Prompt.ToLower()</span>
+                        </a>
+                    </dd>
+                </div>
+            }
+        </dl>
+        <h2>Groups</h2>
+        <p class="nhsuk-body-l">The new delegate will be added to the following groups during registration. You will be able to filter by these groups in the delegates list.</p>
+        <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Group (selected during registration)
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @(Model.GroupName ?? "None")
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="AddToGroup">
+                        Change<span class="nhsuk-u-visually-hidden"> group</span>
+                    </a>
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Groups linked to registration fields
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @if (Model.RegistrationFieldGroups.Any())
+                    {
+                        foreach (var group in Model.RegistrationFieldGroups)
+                        {
+                            <text>@group.LinkedToFieldName : @group.GroupLabel</text>
+                        }
+                    }
+                    else
+                    {
+                        <text>None</text>
+                    }
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
 
-      <dl class="nhsuk-summary-list">
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            First name
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.FirstName
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-action="PersonalInformation">
-              Change<span class="nhsuk-u-visually-hidden"> first name</span>
-            </a>
-          </dd>
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Last name
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.LastName
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-action="PersonalInformation">
-              Change<span class="nhsuk-u-visually-hidden"> last name</span>
-            </a>
-          </dd>
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Email
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.CentreSpecificEmail
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-action="PersonalInformation">
-              Change<span class="nhsuk-u-visually-hidden"> email</span>
-            </a>
-          </dd>
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Job group
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.JobGroup
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-action="LearnerInformation">
-              Change<span class="nhsuk-u-visually-hidden"> job group</span>
-            </a>
-          </dd>
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Professional registration number
-          </dt>
-          <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-action="LearnerInformation">
-              Change<span class="nhsuk-u-visually-hidden"> professional registration number</span>
-            </a>
-          </dd>
-        </div>
-        @foreach (var customField in Model.DelegateRegistrationPrompts)
-      {
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            @(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @customField.Answer
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-action="LearnerInformation">
-              Change<span class="nhsuk-u-visually-hidden"> @customField.Prompt.ToLower()</span>
-            </a>
-          </dd>
-        </div>
-      }
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Welcome email date
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.WelcomeEmailDate
-        </dd>
-        <dd class="nhsuk-summary-list__actions">
-          <a asp-action="WelcomeEmail">
-            Change<span class="nhsuk-u-visually-hidden"> welcome email settings</span>
-          </a>
-        </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Password set
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.IsPasswordSet ? "Yes" : "No")
-        </dd>
-        <dd class="nhsuk-summary-list__actions">
-          <a asp-action="Password">
-            Change<span class="nhsuk-u-visually-hidden"> password settings</span>
-          </a>
-        </dd>
-      </div>
-    </dl>
+                </dd>
+            </div>
+        </dl>
+        <h2>Additional information</h2>
+        <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Welcome email date
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.WelcomeEmailDate
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="WelcomeEmail">
+                        Change<span class="nhsuk-u-visually-hidden"> welcome email settings</span>
+                    </a>
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Password set
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @(Model.IsPasswordSet ? "Yes" : "No")
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="Password">
+                        Change<span class="nhsuk-u-visually-hidden"> password settings</span>
+                    </a>
+                </dd>
+            </div>
+        </dl>
 
-    <form method="post" asp-action="Summary">
-      <button class="nhsuk-button" type="submit">Save</button>
-    </form>
-    <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
-  </div>
+        <form method="post" asp-action="Summary">
+            <button class="nhsuk-button" type="submit">Save</button>
+        </form>
+        <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+    </div>
 </div>

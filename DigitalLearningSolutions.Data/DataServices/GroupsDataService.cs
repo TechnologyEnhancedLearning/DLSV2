@@ -29,6 +29,8 @@
 
         IEnumerable<GroupCourse> GetGroupCoursesVisibleToCentre(int centreId);
 
+        IEnumerable<Group> GetGroupsForRegistrationResponse(int centreId, string? answer1, string? answer2, string? answer3, string? jobGroup, string? answer4, string? answer5, string? answer6);
+
         GroupCourse? GetGroupCourseIfVisibleToCentre(int groupCustomisationId, int centreId);
 
         string? GetGroupName(int groupId, int centreId);
@@ -211,7 +213,23 @@
                 new { centreId }
             );
         }
-
+public IEnumerable<Group> GetGroupsForRegistrationResponse(int centreId, string? answer1, string? answer2, string? answer3, string? jobGroup, string? answer4, string? answer5, string? answer6)
+        {
+            return connection.Query<Group>(
+                @$"{groupsSql}
+                        AND g.CentreID = @centreId
+                        AND (g.AddNewRegistrants = 1)
+                        AND ((g.GroupLabel LIKE N'%' + @answer1) AND (g.LinkedToField = 1) OR
+                                (g.GroupLabel LIKE N'%' + @answer2) AND (g.LinkedToField = 2) OR
+                                (g.GroupLabel LIKE N'%' + @answer3) AND (g.LinkedToField = 3) OR
+                                (g.GroupLabel LIKE N'%' + @jobGroup) AND (g.LinkedToField = 4) OR
+                                (g.GroupLabel LIKE N'%' + @answer4) AND (g.LinkedToField = 5) OR
+                                (g.GroupLabel LIKE N'%' + @answer5) AND (g.LinkedToField = 6) OR
+                                (g.GroupLabel LIKE N'%' + @answer6) AND (g.LinkedToField = 7)
+                            )",
+                new { centreId, answer1, answer2, answer3, jobGroup, answer4, answer5, answer6 }
+            );
+        }
         public (IEnumerable<Group>, int) GetGroupsForCentre(
             string? search = "",
             int? offset = 0,

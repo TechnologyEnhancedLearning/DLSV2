@@ -88,6 +88,7 @@
 
         IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId);
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
+        IEnumerable<Group> GetGroupsForRegistrationResponse(int centreId, string? answer1, string? answer2, string? answer3, string? jobGroup, string? answer4, string? answer5, string? answer6);
 
         string? GetGroupName(int groupId, int centreId);
 
@@ -913,6 +914,11 @@
         public IEnumerable<(int, string)> GetActiveGroups(int centreId)
         {
             return groupsDataService.GetActiveGroups(centreId);
+        }
+
+        public IEnumerable<Group> GetGroupsForRegistrationResponse(int centreId, string? answer1, string? answer2, string? answer3, string? jobGroup, string? answer4, string? answer5, string? answer6)
+        {
+            return groupsDataService.GetGroupsForRegistrationResponse(centreId, answer1, answer2, answer3, jobGroup, answer4, answer5, answer6);
         }
     }
 }
