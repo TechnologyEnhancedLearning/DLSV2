@@ -132,7 +132,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = GetDelegateRegistrationByCentreData()!;
 
-            var centreId = data.Centre!.Value;
+            var centreId = User.GetCentreIdKnownNotNull();
 
             promptsService.ValidateCentreRegistrationPrompts(
                 centreId,
