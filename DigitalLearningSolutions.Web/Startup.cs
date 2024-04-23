@@ -357,7 +357,8 @@ namespace DigitalLearningSolutions.Web
                 .PrimaryEmail);
 
             var config = ConfigHelper.GetAppConfig();
-            var returnUrl = config.GetCurrentSystemBaseUrl() + "/home";
+            var currentSystemBaseUrl = config.GetCurrentSystemBaseUrl();
+            var returnUrl = currentSystemBaseUrl + "/home";
 
             var redirectString = await loginService.HandleLoginResult(
                 loginResult,
@@ -365,7 +366,7 @@ namespace DigitalLearningSolutions.Web
                 returnUrl,
                 sessionService,
                 userService);
-            context.ReturnUri = redirectString;
+            context.ReturnUri = currentSystemBaseUrl + redirectString;
         }
 
         private static async Task OnAuthenticationFailed(AuthenticationFailedContext context)
