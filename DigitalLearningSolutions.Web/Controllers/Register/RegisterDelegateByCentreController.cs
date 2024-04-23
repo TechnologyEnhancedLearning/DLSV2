@@ -291,6 +291,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             viewModel.GroupName = groupName;
             viewModel.RegistrationFieldGroups = registrationFieldGroups;
             PopulateSummaryExtraFields(viewModel, data);
+            SetDelegateRegistrationByCentreData(data);
             return View(viewModel);
         }
 
@@ -318,7 +319,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                     data.ExistingGroupId
                 );
 
-                TempData.Clear();
                 TempData.Add("delegateNumber", candidateNumber);
                 TempData.Add("passwordSet", data.IsPasswordSet);
                 TempData.Add("delegateRegistered", true);
@@ -347,13 +347,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = GetDelegateRegistrationByCentreData()!;
             var delegateNumber = (string?)TempData.Peek("delegateNumber");
-
             if (delegateNumber == null)
             {
                 return RedirectToAction("Index");
             }
 
             var viewModel = new ConfirmationViewModel(delegateNumber, data.WelcomeEmailDate);
+            TempData.Clear();
             return View(viewModel);
         }
 
