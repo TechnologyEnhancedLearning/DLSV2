@@ -378,4 +378,18 @@
   .certificate .nhsuk-u-margin-bottom-2 {
     margin-bottom: 8px !important;
   }
+ }
+@media screen and (max-width: 767px) {
+  .certificate {
+    width: 95%;
+    justify-content: space-around;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-print-color-adjust: exact;
+  }
+  .certificate .pg-1 {
+    width: 95%;
+  }
+  .pg-2 {
+    width: 95%;
+  }
 }
