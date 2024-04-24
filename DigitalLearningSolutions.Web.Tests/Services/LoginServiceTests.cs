@@ -910,7 +910,8 @@
                 ticketReceivedContext,
                 "",
                 sessionService,
-                userService);
+                userService,
+                "");
 
             // Then
             result

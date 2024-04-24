@@ -32,7 +32,8 @@
             TicketReceivedContext context,
             string returnUrl,
             ISessionService sessionService,
-            IUserService userService);
+            IUserService userService,
+            string appRootPath);
     }
 
     public class LoginService : ILoginService
@@ -142,20 +143,21 @@
             TicketReceivedContext context,
             string returnUrl,
             ISessionService sessionService,
-            IUserService userService)
+            IUserService userService,
+            string appRootPath)
         {
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.AccountLocked:
-                    return "/login/AccountLocked";
+                    return appRootPath + "/login/AccountLocked";
                 case LoginAttemptResult.InactiveAccount:
-                    return "/login/AccountInactive";
+                    return appRootPath + "/login/AccountInactive";
                 case LoginAttemptResult.UnverifiedEmail:
                     await LoginHelper.CentrelessLogInAsync(
                         context,
                         loginResult.UserEntity!.UserAccount,
                         false);
-                    return "/VerifyYourEmail/" + EmailVerificationReason.EmailNotVerified;
+                    return appRootPath + "/VerifyYourEmail/" + EmailVerificationReason.EmailNotVerified;
                 case LoginAttemptResult.LogIntoSingleCentre:
                     return await LoginHelper.LogIntoCentreAsync(
                         loginResult.UserEntity,
@@ -198,7 +200,7 @@
                         context,
                         loginResult.UserEntity!.UserAccount,
                         false);
-                    return "/Login/ChooseACentre";
+                    return appRootPath + "/Login/ChooseACentre";
                 default:
                     throw new ArgumentOutOfRangeException();
             }

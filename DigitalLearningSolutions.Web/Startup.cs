@@ -298,13 +298,15 @@ namespace DigitalLearningSolutions.Web
                 .Principal
                 .Identity;
 
+            var appRootPath = ConfigHelper.GetAppConfig().GetAppRootPath();
+
             var authIdClaim = claimsIdentity
             .Claims
                 .Where(c => c.Type == claimsType)
                 .FirstOrDefault();
             if (authIdClaim == null)
             {
-                context.ReturnUri = "/Login/RemoteFailure";
+                context.ReturnUri = appRootPath + "/Login/RemoteFailure";
             }
             else
             {
@@ -319,7 +321,7 @@ namespace DigitalLearningSolutions.Web
                 }
                 else
                 {
-                    context.ReturnUri = "/login/NotLinked";
+                    context.ReturnUri = appRootPath + "/login/NotLinked";
                 }
             }
             
@@ -365,15 +367,17 @@ namespace DigitalLearningSolutions.Web
                 context,
                 returnUrl,
                 sessionService,
-                userService);
-            context.ReturnUri = appRootPath + redirectString;
+                userService,
+                appRootPath);
+            context.ReturnUri = redirectString;
         }
 
         private static async Task OnAuthenticationFailed(AuthenticationFailedContext context)
         {
+            var appRootPath = ConfigHelper.GetAppConfig().GetAppRootPath();
             context
                 .Response
-                .Redirect("/Login/RemoteFailure");
+                .Redirect(appRootPath + "/Login/RemoteFailure");
             await context
                 .HttpContext
                 .Response
