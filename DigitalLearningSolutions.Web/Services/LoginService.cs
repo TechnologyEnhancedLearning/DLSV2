@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -186,6 +187,12 @@
 
                     if (activeCentres.Count() == 1)
                     {
+                        var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(
+                            loginResult.UserEntity,
+                            activeCentres[0].CentreId);
+                        var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+                        claimsIdentity.AddClaims(claims);
+
                         return await LoginHelper.LogIntoCentreAsync(
                         loginResult.UserEntity,
                         false,

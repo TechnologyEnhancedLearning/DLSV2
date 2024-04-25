@@ -21,9 +21,10 @@
         [HttpPost]
         public async Task<IActionResult> Index()
         {
+            var appRootPath = config.GetAppRootPath();
             if (!(this.User?.Identity.IsAuthenticated ?? false))
             {
-                return this.RedirectToAction("/home");
+                return this.RedirectToAction(appRootPath + "/home");
             }
 
             string? authScheme = string.Empty;
@@ -35,7 +36,6 @@
 
             if (string.IsNullOrEmpty(authScheme))
             {
-                var appRootPath = config.GetAppRootPath();
                 return this.Redirect(appRootPath + "/home");
             }
 
