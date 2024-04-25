@@ -12,6 +12,7 @@ using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
 using GDS.MultiPageFormData.Enums;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
@@ -26,13 +27,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private IUserFeedbackDataService _userFeedbackDataService = null!;
         private IMultiPageFormService _multiPageFormService = null!;
         private ITempDataDictionary _tempData = null!;
-        private readonly IConfiguration config = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void SetUp()
         {
             _userFeedbackDataService = A.Fake<IUserFeedbackDataService>();
             _multiPageFormService = A.Fake<IMultiPageFormService>();
+            config = A.Fake<IConfiguration>();
             _userFeedbackController = new UserFeedbackController(_userFeedbackDataService, _multiPageFormService, config)
                 .WithDefaultContext()
                 .WithMockUser(true, userId: LoggedInUserId);
