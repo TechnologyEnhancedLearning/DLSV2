@@ -35,7 +35,8 @@
 
             if (string.IsNullOrEmpty(authScheme))
             {
-                return this.Redirect("/home");
+                var appRootPath = config.GetAppRootPath();
+                return this.Redirect(appRootPath + "/home");
             }
 
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
@@ -54,8 +55,8 @@
                 "id_token",
                 out idToken);
             var auth = config.GetLearningHubAuthenticationAuthority();
-            var baseUrl = config.GetCurrentSystemBaseUrl();
-            var uri = Uri.EscapeDataString($"{baseUrl}/signout-callback-oidc");
+            var appRootPath = config.GetAppRootPath();
+            var uri = Uri.EscapeDataString($"{appRootPath}/signout-callback-oidc");
             var logoutUrl = $"{auth}/connect/endsession" +
                 $"?post_logout_redirect_uri={uri}" +
                 $"&id_token_hint={idToken}";
