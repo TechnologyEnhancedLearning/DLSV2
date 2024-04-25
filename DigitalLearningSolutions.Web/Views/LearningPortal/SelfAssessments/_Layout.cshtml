@@ -3,7 +3,10 @@
 @using Microsoft.AspNetCore.Http.Extensions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @inject IClockUtility ClockUtility
-
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    var userResearchUrl = Configuration["UserResearchUrl"];
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,7 +70,7 @@
                 </div>
             </div>
             <feature name="@(FeatureFlags.UserFeedbackBar)">
-                <partial name="_UserFeedbackBarPartial" />
+                <partial name="_UserFeedbackBarPartial" model=@(userResearchUrl) />
             </feature>
         </header>
         <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">

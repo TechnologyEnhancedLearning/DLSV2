@@ -48,6 +48,8 @@
         private const string LearningHubAuthenticationClientSecret = "LearningHubAuthentication:ClientSecret";
 
         private const string LearningHubUserAPIUserAPIUrl = "LearningHubUserApi:UserApiUrl";
+        private const string UserResearchUrlName = "UserResearchUrl";
+
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -200,6 +202,10 @@
         public static string GetLearningHubUserApiUrl(this IConfiguration config)
         {
             return config[LearningHubUserAPIUserAPIUrl];
+        }
+        public static string GetUserResearchUrl(this IConfiguration config)
+        {
+            return config[UserResearchUrlName];
         }
     }
 }
