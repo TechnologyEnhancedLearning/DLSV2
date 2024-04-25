@@ -50,49 +50,49 @@
         private const string LearningHubUserAPIUserAPIUrl = "LearningHubUserApi:UserApiUrl";
         private const string UserResearchUrlName = "UserResearchUrl";
 
-        public static string? GetAppRootPath(this IConfiguration config)
+        public static string GetAppRootPath(this IConfiguration config)
         {
-            return config[AppRootPathName];
+            return config[AppRootPathName]!;
         }
 
-        public static string? GetCurrentSystemBaseUrl(this IConfiguration config)
+        public static string GetCurrentSystemBaseUrl(this IConfiguration config)
         {
-            return config[CurrentSystemBaseUrlName];
+            return config[CurrentSystemBaseUrlName]!;
         }
 
-        public static string? GetLearningHubOpenApiKey(this IConfiguration config)
+        public static string GetLearningHubOpenApiKey(this IConfiguration config)
         {
-            return config[LearningHubOpenApiKey];
+            return config[LearningHubOpenApiKey]!;
         }
 
-        public static string? GetLearningHubOpenApiBaseUrl(this IConfiguration config)
+        public static string GetLearningHubOpenApiBaseUrl(this IConfiguration config)
         {
-            return config[LearningHubOpenApiBaseUrl];
+            return config[LearningHubOpenApiBaseUrl]!;
         }
 
-        public static string? GetLearningHubAuthApiBaseUrl(this IConfiguration config)
+        public static string GetLearningHubAuthApiBaseUrl(this IConfiguration config)
         {
-            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthBaseUrl}"];
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthBaseUrl}"]!;
         }
 
-        public static string? GetLearningHubAuthApiClientCode(this IConfiguration config)
+        public static string GetLearningHubAuthApiClientCode(this IConfiguration config)
         {
-            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthClientCode}"];
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthClientCode}"]!;
         }
 
-        public static string? GetLearningHubAuthApiSsoClientCode(this IConfiguration config)
+        public static string GetLearningHubAuthApiSsoClientCode(this IConfiguration config)
         {
-            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthSsoClientCode}"];
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthSsoClientCode}"]!;
         }
 
-        public static string? GetLearningHubAuthApiLoginEndpoint(this IConfiguration config)
+        public static string GetLearningHubAuthApiLoginEndpoint(this IConfiguration config)
         {
-            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthLoginEndpoint}"];
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthLoginEndpoint}"]!;
         }
 
-        public static string? GetLearningHubAuthApiLinkingEndpoint(this IConfiguration config)
+        public static string GetLearningHubAuthApiLinkingEndpoint(this IConfiguration config)
         {
-            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthLinkingEndpoint}"];
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthLinkingEndpoint}"]!;
         }
 
         public static bool IsSignpostingUsed(this IConfiguration config)
@@ -125,14 +125,14 @@
             return ssoByteLength;
         }
 
-        public static string? GetLearningHubSsoSecretKey(this IConfiguration config)
+        public static string GetLearningHubSsoSecretKey(this IConfiguration config)
         {
-            return config[$"{LearningHubSsoSectionKey}:{LearningHubSsoSecretKey}"];
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubSsoSecretKey}"]!;
         }
 
-        public static string? GetMapsApiKey(this IConfiguration config)
+        public static string GetMapsApiKey(this IConfiguration config)
         {
-            return config[MapsApiKey];
+            return config[MapsApiKey]!;
         }
 
         public static int GetJavascriptSearchSortFilterPaginateItemLimit(this IConfiguration config)
@@ -147,25 +147,25 @@
             return userDetailsCheckKey;
         }
 
-        public static string? GetExcelPassword(this IConfiguration config)
+        public static string GetExcelPassword(this IConfiguration config)
         {
-            return config[ExcelPassword];
+            return config[ExcelPassword]!;
         }
-        public static string? GetLearningHubReportApiBaseUrl(this IConfiguration config)
+        public static string GetLearningHubReportApiBaseUrl(this IConfiguration config)
         {
-            return config[LearningHubReportAPIBaseUrl];
+            return config[LearningHubReportAPIBaseUrl]!;
         }
-        public static string? GetLearningHubReportApiClientId(this IConfiguration config)
+        public static string GetLearningHubReportApiClientId(this IConfiguration config)
         {
-            return config[LearningHubReportAPIClientId];
+            return config[LearningHubReportAPIClientId]!;
         }
-        public static string? GetLearningHubReportApiClientIdentityKey(this IConfiguration config)
+        public static string GetLearningHubReportApiClientIdentityKey(this IConfiguration config)
         {
-            return config[LearningHubReportAPIClientIdentityKey];
+            return config[LearningHubReportAPIClientIdentityKey]!;
         }
-        public static string? GetCookieBannerConsentCookieName(this IConfiguration config)
+        public static string GetCookieBannerConsentCookieName(this IConfiguration config)
         {
-            return config[CookieBannerConsentCookieName];
+            return config[CookieBannerConsentCookieName]!;
         }
 
         public static int GetCookieBannerConsentExpiryDays(this IConfiguration config)
@@ -184,19 +184,19 @@
             return limitKey;
         }
 
-        public static string? GetLearningHubAuthenticationAuthority(this IConfiguration config)
+        public static string GetLearningHubAuthenticationAuthority(this IConfiguration config)
         {
-            return config[LearningHubAuthenticationAuthority];
+            return config[LearningHubAuthenticationAuthority]!;
         }
 
-        public static string? GetLearningHubAuthenticationClientId(this IConfiguration config)
+        public static string GetLearningHubAuthenticationClientId(this IConfiguration config)
         {
-            return config[LearningHubAuthenticationClientId];
+            return config[LearningHubAuthenticationClientId]!;
         }
 
-        public static string? GetLearningHubAuthenticationClientSecret(this IConfiguration config)
+        public static string GetLearningHubAuthenticationClientSecret(this IConfiguration config)
         {
-            return config[LearningHubAuthenticationClientSecret];
+            return config[LearningHubAuthenticationClientSecret]!;
         }
 
         public static long GetFreshdeskCreateTicketGroupId(this IConfiguration config)
@@ -210,13 +210,13 @@
             return ticketProductId;
         }
 
-        public static string? GetLearningHubUserApiUrl(this IConfiguration config)
+        public static string GetLearningHubUserApiUrl(this IConfiguration config)
         {
-            return config[LearningHubUserAPIUserAPIUrl];
+            return config[LearningHubUserAPIUserAPIUrl]!;
         }
-        public static string? GetUserResearchUrl(this IConfiguration config)
+        public static string GetUserResearchUrl(this IConfiguration config)
         {
-            return config[UserResearchUrlName];
+            return config[UserResearchUrlName]!;
         }
     }
 }
