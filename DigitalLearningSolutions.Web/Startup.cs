@@ -258,7 +258,8 @@ namespace DigitalLearningSolutions.Web
 
         private static async Task OnRemoteFailure(RemoteFailureContext context)
         {
-            context.Response.Redirect("/home");
+            var appRootPath = ConfigHelper.GetAppConfig().GetAppRootPath();
+            context.Response.Redirect(appRootPath + "/home");
             context.HandleResponse();
 
             await Task.CompletedTask;
@@ -266,14 +267,15 @@ namespace DigitalLearningSolutions.Web
 
         private static async Task OnSignedoutCallbackRedirect(RemoteSignOutContext context)
         {
+            var appRootPath = ConfigHelper.GetAppConfig().GetAppRootPath();
             if (context.HttpContext.Request.Cookies.Any(c => c.Key == "not-linked"))
             {
                 context.HttpContext.Response.Cookies.Delete("not-linked");
-                context.Response.Redirect("/Login/ShowNotLinked");
+                context.Response.Redirect(appRootPath + "/Login/ShowNotLinked");
             }
             else
             {
-                context.Response.Redirect("/home");
+                context.Response.Redirect(appRootPath + "/home");
             }
             
             context.HandleResponse();
@@ -360,7 +362,7 @@ namespace DigitalLearningSolutions.Web
 
             var config = ConfigHelper.GetAppConfig();
             var appRootPath = config.GetAppRootPath();
-            var returnUrl = appRootPath + "/home";
+            var returnUrl = appRootPath;
 
             var redirectString = await loginService.HandleLoginResult(
                 loginResult,
