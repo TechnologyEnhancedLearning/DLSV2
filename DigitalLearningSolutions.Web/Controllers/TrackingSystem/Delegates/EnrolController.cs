@@ -215,7 +215,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
             else
             {
-                var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
+                var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
                 var model = new EnrolSupervisorViewModel(
                     delegateId,
                     (int)sessionEnrol.DelegateUserID,
@@ -235,7 +235,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(MultiPageFormDataFeature.EnrolDelegateInActivity, TempData).GetAwaiter().GetResult();
             var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(sessionEnrol.AssessmentID.Value, centreId.Value);
-            var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
+            var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
 
             if (!ModelState.IsValid)
             {
@@ -262,6 +262,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault(x => x.ID == model.SelectedSupervisorRoleId).RoleName;
             }
             sessionEnrol.SelfAssessmentSupervisorRoleId = model.SelectedSupervisorRoleId;
+            if (roles.Count()==1)
+            {
+                sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault().RoleName;
+                sessionEnrol.SelfAssessmentSupervisorRoleId = roles.FirstOrDefault().ID;
+            }
             multiPageFormService.SetMultiPageFormData(
                         sessionEnrol,
                         MultiPageFormDataFeature.EnrolDelegateInActivity,
@@ -277,7 +282,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         public IActionResult EnrolDelegateSummary(int delegateId)
         {
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(MultiPageFormDataFeature.EnrolDelegateInActivity, TempData).GetAwaiter().GetResult();
-
+            var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
             var clockUtility = new ClockUtility();
             var monthDiffrence = "";
             if (sessionEnrol.CompleteByDate.HasValue)
@@ -295,6 +300,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             model.ValidFor = monthDiffrence;
             model.IsSelfAssessment = sessionEnrol.IsSelfAssessment;
             model.SupervisorRoleName = sessionEnrol.SelfAssessmentSupervisorRoleName;
+            model.RoleCount = roles.Count();
             return View(model);
         }
 

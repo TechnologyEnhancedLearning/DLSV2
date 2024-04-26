@@ -101,13 +101,15 @@
                                 <text>Not Set</text>
                             }
                         </dd>
-
-                        <dd class="nhsuk-summary-list__actions">
-                            <a asp-action="EnrolDelegateSupervisor" asp-route-delegateId="@Model.DelegateId"
-                               asp-route-delegateName="@Model.DelegateName">
-                                Change<span class="nhsuk-u-visually-hidden">change supervisor</span>
-                            </a>
-                        </dd>
+                        @if (Model.RoleCount>1)
+                        {
+                            <dd class="nhsuk-summary-list__actions">
+                                <a asp-action="EnrolDelegateSupervisor" asp-route-delegateId="@Model.DelegateId"
+                                   asp-route-delegateName="@Model.DelegateName">
+                                    Change<span class="nhsuk-u-visually-hidden">change supervisor</span>
+                                </a>
+                            </dd>
+                        }
                     </div>
                 }
             </dl>
