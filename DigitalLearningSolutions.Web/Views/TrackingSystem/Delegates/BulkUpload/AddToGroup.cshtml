@@ -19,11 +19,9 @@
                         @ViewData["Title"]
                     </h1>
                 </legend>
-                @if (Model.RegisteringInactiveDelegates > 0 | Model.UpdatingInactiveDelegates > 0 | (Model.RegisteringActiveDelegates > 0 && Model.UpdatingActiveDelegates > 0))
+                @if (Model.RegisteringInactiveDelegates > 0 | Model.UpdatingInactiveDelegates > 0)
                 {
                     <div class="nhsuk-inset-text">
-                        @if (Model.RegisteringInactiveDelegates > 0 | Model.UpdatingInactiveDelegates > 0)
-                        {
                         <p>Only active delegates can be groupe. You can use this option to group:
                           <ul>
                             @if(Model.RegisteringActiveDelegates > 0)
@@ -43,12 +41,6 @@
                         @if (Model.UpdatingInactiveDelegates > 0)
                         {
                         <p>@Model.UpdatingInactiveDelegates inactive delegates to be updated will not be grouped.</p>
-                        }
-                        }
-                        @if(Model.RegisteringActiveDelegates > 0 && Model.UpdatingActiveDelegates > 0)
-                        {
-                            <p>@Model.RegisteringActiveDelegates delegates being registered during this process will be added to the group.</p>
-                             <p>You will be able to choose whether @Model.UpdatingActiveDelegates delegates being updated should also be added to the group.</p>
                         }
                     </div>
                 }
