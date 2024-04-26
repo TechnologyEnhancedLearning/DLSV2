@@ -239,7 +239,7 @@
             {
                 return RedirectToAction("UploadSummary");
             }
-            var model = new AddWhoToGroupViewModel(groupName!, data.IncludeUpdatedDelegates, data.ToProcessCount, data.ToRegisterActiveCount);
+            var model = new AddWhoToGroupViewModel(groupName!, data.IncludeUpdatedDelegates, data.ToUpdateActiveCount, data.ToRegisterActiveCount);
             return View(model);
         }
 

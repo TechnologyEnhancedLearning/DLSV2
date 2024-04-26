@@ -169,7 +169,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var data = GetDelegateRegistrationByCentreData();
             var centreId = User.GetCentreIdKnownNotNull();
             var groupSelect = groupsService.GetUnlinkedGroupsSelectListForCentre(centreId, data.ExistingGroupId);
-            var model = new AddToGroupViewModel(data.AddToGroupOption, existingGroups: groupSelect, data.ExistingGroupId, data.NewGroupName, data.NewGroupDescription, true, false);
+            var model = new AddToGroupViewModel(data.AddToGroupOption, existingGroups: groupSelect, data.ExistingGroupId, data.NewGroupName, data.NewGroupDescription, 1, 0, 0, 0);
             return View(model);
         }
 
@@ -193,8 +193,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 var groupSelect = groupsService.GetUnlinkedGroupsSelectListForCentre(centreId, data.ExistingGroupId);
                 model.ExistingGroups = groupSelect;
-                model.RegisteringDelegates = true;
-                model.UpdatingDelegates = false;
+                model.RegisteringActiveDelegates = 1;
+                model.UpdatingActiveDelegates = 0;
+                model.RegisteringInactiveDelegates = 0;
+                model.UpdatingInactiveDelegates = 0;
                 return View("AddToGroup", model);
             }
             data.AddToGroupOption = model.AddToGroupOption;

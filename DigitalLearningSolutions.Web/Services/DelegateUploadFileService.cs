@@ -195,6 +195,11 @@ namespace DigitalLearningSolutions.Web.Services
                 if (delegateRow.MatchesDelegateEntity(delegateEntity))
                 {
                     delegateRow.RowStatus = RowStatus.Skipped;
+                    if (delegateRow.Error == null && (bool)delegateRow.Active && includeUpdatedDelegatesInGroup && delegateGroupId != null)
+                    {
+                        //Add delegate to group
+                        groupsService.AddDelegateToGroup((int)delegateGroupId, delegateEntity.DelegateAccount.Id, adminId);
+                    }
                     return;
                 }
 
@@ -208,7 +213,7 @@ namespace DigitalLearningSolutions.Web.Services
                 }
 
                 UpdateDelegate(delegateRow, delegateEntity);
-                if (delegateRow.Error == null && includeUpdatedDelegatesInGroup && delegateGroupId != null)
+                if (delegateRow.Error == null && (bool)delegateRow.Active && includeUpdatedDelegatesInGroup && delegateGroupId != null)
                 {
                     //Add delegate to group
                     groupsService.AddDelegateToGroup((int)delegateGroupId, delegateEntity.DelegateAccount.Id, adminId);
@@ -314,7 +319,7 @@ namespace DigitalLearningSolutions.Web.Services
                 welcomeEmailDate,
                 "DelegateBulkUpload_Refactor"
             );
-            if (delegateGroupId != null)
+            if (delegateGroupId != null && (bool)delegateTableRow.Active)
             {
                 //Add delegate to group
                 groupsService.AddDelegateToGroup((int)delegateGroupId, delegateId, adminId);

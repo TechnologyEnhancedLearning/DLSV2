@@ -6,18 +6,18 @@
         public AddWhoToGroupViewModel(
             string groupName,
             bool includeUpdatedDelegates,
-            int toProcessCount,
-            int toRegisterCount
+            int toUpdateActiveCount,
+            int toRegisterActiveCount
             )
         {
             GroupName = groupName;
             IncludeUpdatedDelegates = includeUpdatedDelegates;
-            ToProcessCount = toProcessCount;
-            ToRegisterCount = toRegisterCount;
+            ToUpdateActiveCount = toUpdateActiveCount;
+            ToRegisterActiveCount = toRegisterActiveCount;
         }
         public string? GroupName { get; set; }
         public bool IncludeUpdatedDelegates { get; set; }
-        public int ToProcessCount { get; set; }
-        public int ToRegisterCount { get; set; }
+        public int ToUpdateActiveCount { get; set; }
+        public int ToRegisterActiveCount { get; set; }
     }
 }
