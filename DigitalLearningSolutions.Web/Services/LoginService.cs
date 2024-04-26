@@ -160,6 +160,11 @@
                         false);
                     return appRootPath + "/VerifyYourEmail/" + EmailVerificationReason.EmailNotVerified;
                 case LoginAttemptResult.LogIntoSingleCentre:
+                    var singleCentreClaims = LoginClaimsHelper.GetClaimsForSignIntoCentre(
+                           loginResult.UserEntity,
+                           loginResult.CentreToLogInto!.Value);
+                    var singleCentreClaimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+                    singleCentreClaimsIdentity.AddClaims(singleCentreClaims);
                     return await LoginHelper.LogIntoCentreAsync(
                         loginResult.UserEntity,
                         false,
@@ -187,11 +192,11 @@
 
                     if (activeCentres.Count() == 1)
                     {
-                        var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(
+                        var chooseCentreClaims = LoginClaimsHelper.GetClaimsForSignIntoCentre(
                             loginResult.UserEntity,
                             activeCentres[0].CentreId);
-                        var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
-                        claimsIdentity.AddClaims(claims);
+                        var chooseCentreClaimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+                        chooseCentreClaimsIdentity.AddClaims(chooseCentreClaims);
 
                         return await LoginHelper.LogIntoCentreAsync(
                         loginResult.UserEntity,
