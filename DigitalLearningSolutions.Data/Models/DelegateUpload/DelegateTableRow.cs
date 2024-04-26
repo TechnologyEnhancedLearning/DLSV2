@@ -13,8 +13,10 @@
     {
         NotYetProcessed,
         Skipped,
-        Registered,
-        Updated,
+        RegisteredActive,
+        RegsiteredInactive,
+        UpdatedActive,
+        UpdatedInactive
     }
 
     public class DelegateTableRow

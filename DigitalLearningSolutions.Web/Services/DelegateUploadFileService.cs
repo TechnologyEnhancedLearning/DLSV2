@@ -156,11 +156,11 @@ namespace DigitalLearningSolutions.Web.Services
             }
             if (string.IsNullOrEmpty(delegateRow.CandidateNumber))
             {
-                delegateRow.RowStatus = RowStatus.Registered;
+                delegateRow.RowStatus = (bool)delegateRow.Active ? RowStatus.RegisteredActive : RowStatus.RegsiteredInactive;
             }
             else
             {
-                delegateRow.RowStatus = RowStatus.Updated;
+                delegateRow.RowStatus = (bool)delegateRow.Active ? RowStatus.UpdatedActive : RowStatus.UpdatedInactive;
             }
         }
 
@@ -195,6 +195,11 @@ namespace DigitalLearningSolutions.Web.Services
                 if (delegateRow.MatchesDelegateEntity(delegateEntity))
                 {
                     delegateRow.RowStatus = RowStatus.Skipped;
+                    if (delegateRow.Error == null && (bool)delegateRow.Active && includeUpdatedDelegatesInGroup && delegateGroupId != null)
+                    {
+                        //Add delegate to group
+                        groupsService.AddDelegateToGroup((int)delegateGroupId, delegateEntity.DelegateAccount.Id, adminId);
+                    }
                     return;
                 }
 
@@ -208,7 +213,7 @@ namespace DigitalLearningSolutions.Web.Services
                 }
 
                 UpdateDelegate(delegateRow, delegateEntity);
-                if (delegateRow.Error == null && includeUpdatedDelegatesInGroup && delegateGroupId != null)
+                if (delegateRow.Error == null && (bool)delegateRow.Active && includeUpdatedDelegatesInGroup && delegateGroupId != null)
                 {
                     //Add delegate to group
                     groupsService.AddDelegateToGroup((int)delegateGroupId, delegateEntity.DelegateAccount.Id, adminId);
@@ -285,7 +290,7 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateRow.Email
                 );
 
-                delegateRow.RowStatus = RowStatus.Updated;
+                delegateRow.RowStatus = (bool)delegateRow.Active ? RowStatus.UpdatedActive : RowStatus.UpdatedInactive;
             }
             catch
             {
@@ -314,12 +319,12 @@ namespace DigitalLearningSolutions.Web.Services
                 welcomeEmailDate,
                 "DelegateBulkUpload_Refactor"
             );
-            if (delegateGroupId != null)
+            if (delegateGroupId != null && (bool)delegateTableRow.Active)
             {
                 //Add delegate to group
                 groupsService.AddDelegateToGroup((int)delegateGroupId, delegateId, adminId);
             }
-            delegateTableRow.RowStatus = RowStatus.Registered;
+            delegateTableRow.RowStatus = (bool)delegateTableRow.Active ? RowStatus.RegisteredActive : RowStatus.RegsiteredInactive;
         }
 
         private void UpdateUserProfessionalRegistrationNumberIfNecessary(

@@ -395,7 +395,7 @@
                 .MustNotHaveHappened();
 
             result.ProcessedCount.Should().Be(1);
-            result.UpdatedCount.Should().Be(1);
+            result.UpdatedActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -454,7 +454,7 @@
 
             // Then
             result.ProcessedCount.Should().Be(1);
-            result.RegisteredCount.Should().Be(1);
+            result.RegisteredActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -501,7 +501,7 @@
             ).MustNotHaveHappened();
 
             result.ProcessedCount.Should().Be(1);
-            result.UpdatedCount.Should().Be(1);
+            result.UpdatedActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -695,7 +695,7 @@
                     )
             ).MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
-            result.UpdatedCount.Should().Be(1);
+            result.UpdatedActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -730,7 +730,7 @@
                     )
             ).MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
-            result.UpdatedCount.Should().Be(1);
+            result.UpdatedActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -766,7 +766,7 @@
                     )
             ).MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
-            result.UpdatedCount.Should().Be(1);
+            result.UpdatedActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -801,7 +801,7 @@
                     )
             ).MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
-            result.UpdatedCount.Should().Be(1);
+            result.UpdatedActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -867,7 +867,7 @@
                 )
             ).MustHaveHappenedOnceExactly();
             result.ProcessedCount.Should().Be(1);
-            result.RegisteredCount.Should().Be(1);
+            result.RegisteredActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -920,7 +920,7 @@
                 )
                 .MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
-            result.RegisteredCount.Should().Be(1);
+            result.RegisteredActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -967,7 +967,7 @@
                 )
                 .MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
-            result.RegisteredCount.Should().Be(1);
+            result.RegisteredActiveCount.Should().Be(1);
         }
 
         [Test]
@@ -1148,7 +1148,7 @@
 
             // Then
             result.ProcessedCount.Should().Be(5);
-            result.UpdatedCount.Should().Be(5);
+            result.UpdatedActiveCount.Should().Be(5);
         }
 
         [Test]
@@ -1205,7 +1205,7 @@
 
             // Then
             result.ProcessedCount.Should().Be(5);
-            result.RegisteredCount.Should().Be(5);
+            result.RegisteredActiveCount.Should().Be(5);
         }
 
         [Test]
@@ -1261,9 +1261,9 @@
             using (new AssertionScope())
             {
                 result.ProcessedCount.Should().Be(10);
-                result.UpdatedCount.Should().Be(4);
+                result.UpdatedActiveCount.Should().Be(4);
                 result.SkippedCount.Should().Be(3);
-                result.RegisteredCount.Should().Be(2);
+                result.RegisteredActiveCount.Should().Be(2);
                 result.Errors.Should().HaveCount(1);
             }
         }
@@ -1419,8 +1419,8 @@
         private void AssertBulkUploadResultHasOnlyOneError(BulkUploadResult result)
         {
             result.ProcessedCount.Should().Be(1);
-            result.UpdatedCount.Should().Be(0);
-            result.RegisteredCount.Should().Be(0);
+            result.UpdatedActiveCount.Should().Be(0);
+            result.RegisteredActiveCount.Should().Be(0);
             result.SkippedCount.Should().Be(0);
             result.Errors.Should().HaveCount(1);
         }

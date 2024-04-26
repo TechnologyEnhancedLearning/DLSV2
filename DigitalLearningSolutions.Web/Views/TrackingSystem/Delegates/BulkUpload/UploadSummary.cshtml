@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Summary";
     var process = Model.ToRegisterCount > 0 && Model.ToUpdateCount > 0 ? "register and update" : Model.ToRegisterCount > 0 ? "register" : "update";
-    var groupWho = Model.IncludeUpdatedDelegates && Model.ToRegisterCount > 0 && Model.ToUpdateCount > 0 ? "registered and updated delegates" : Model.ToRegisterCount > 0 ? "registered delegates" : "updated delegates";
+    var groupWho = Model.IncludeUpdatedDelegates && Model.ToRegisterCount > 0 && Model.ToUpdateCount > 0 ? "registered and active updated delegates" : Model.ToRegisterCount > 0 ? "registered delegates" : "updated delegates";
     int processSteps = Model.ToProcessCount / Model.MaxRowsToProcess + 1;
 }
 <div class="nhsuk-grid-row">
@@ -47,7 +47,7 @@
 
             <div class="nhsuk-summary-list__row">
                 <dt class="nhsuk-summary-list__key">
-                    Add @groupWho to group
+                    Add active @groupWho to group
                 </dt>
                 <dd class="nhsuk-summary-list__value">
                     @(Model.AddToGroupOption < 3 ? @Model.GroupName : "No group selected")

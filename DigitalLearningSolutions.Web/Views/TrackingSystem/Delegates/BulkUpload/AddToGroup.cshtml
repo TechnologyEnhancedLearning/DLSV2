@@ -3,7 +3,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     var radioListErrorClass = !ViewData.ModelState.IsValid && Model.AddToGroupOption == null ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group";
-    ViewData["Title"] = "Add" + (!Model.RegisteringDelegates ? " updated " : !Model.UpdatingDelegates ? " registered " : " ") + "delegates to a group";
+    ViewData["Title"] = "Add delegates to a group";
 }
 
 <div class="nhsuk-grid-row">
@@ -19,21 +19,44 @@
                         @ViewData["Title"]
                     </h1>
                 </legend>
-                <div class="nhsuk-hint nhsuk-u-margin-bottom-2">
-                    Make a new group or add delegates to an existing group
-                </div>
-
+                @if (Model.RegisteringInactiveDelegates > 0 | Model.UpdatingInactiveDelegates > 0)
+                {
+                    <div class="nhsuk-inset-text">
+                        <p>Only active delegates can be groupe. You can use this option to group:
+                          <ul>
+                            @if(Model.RegisteringActiveDelegates > 0)
+                                {
+                                    <li>@Model.RegisteringActiveDelegates active delegates to be registered.</li>
+                                }
+                                @if (Model.UpdatingActiveDelegates > 0)
+                                {
+                                    <li>@Model.UpdatingActiveDelegates existing active delegates to be updated.</li>
+                                }
+                          </ul>
+                        </p>
+                        @if (Model.RegisteringInactiveDelegates > 0)
+                        {
+                        <p>@Model.RegisteringInactiveDelegates inactive delegates to be registered will not be grouped.</p>
+                        }
+                        @if (Model.UpdatingInactiveDelegates > 0)
+                        {
+                        <p>@Model.UpdatingInactiveDelegates inactive delegates to be updated will not be grouped.</p>
+                        }
+                    </div>
+                }
+                
                 <div class="nhsuk-hint">
-                    Select one option
+                    <p>Make a new group or add delegates to an existing group</p>
+                    <p>Select one option</p>
                 </div>
                 <div class="@radioListErrorClass">
                     <div class="nhsuk-radios nhsuk-radios--conditional">
-                        @if (!ViewData.ModelState.IsValid && Model.AddToGroupOption == null)
-                        {
+                @if (!ViewData.ModelState.IsValid && Model.AddToGroupOption == null)
+                {
                             <span class="nhsuk-error-message" id="radio-list-error">
                                 <span class="nhsuk-u-visually-hidden">Error:</span> Please select an option
                             </span>
-                        }
+                }
                         <div class="nhsuk-radios__item">
                             <input class="nhsuk-radios__input" id="group-option-1" asp-for="AddToGroupOption" type="radio" value="1" aria-controls="conditional-option-1" aria-expanded="false">
                             <label class="nhsuk-label nhsuk-radios__label" for="group-option-1">
@@ -46,7 +69,7 @@
                             <vc:select-list asp-for="@nameof(Model.ExistingGroupId)"
                                             label="Select a group"
                                             value="@Model.ExistingGroupId.ToString()"
-                                            hint-text="Groups that are linked to centre registration prompts are not included in this list. Delegates will automatically be added to groups linked to prompts based on their regiatration details."
+                                            hint-text="Groups that are linked to centre registration prompts are not included in this list. Delegates will automatically be added to groups linked to prompts based on their registration details."
                                             required="true"
                                             css-class="nhsuk-u-width-one-half"
                                             default-option="Select a group"
@@ -90,12 +113,12 @@
                     </div>
                 </div>
             </fieldset>
-            <input type="hidden" asp-for="RegisteringDelegates" />
-            <input type="hidden" asp-for="UpdatingDelegates" />
-            @if (Model.RegisteringDelegates)
-            {
+            <input type="hidden" asp-for="RegisteringActiveDelegates" />
+            <input type="hidden" asp-for="UpdatingActiveDelegates" />
+                @if (Model.RegisteringActiveDelegates > 0)
+                {
                 <a asp-controller="BulkUpload" asp-action="WelcomeEmail" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
-            }
+                }
             <button class="nhsuk-button" type="submit">Next</button>
         </form>
 

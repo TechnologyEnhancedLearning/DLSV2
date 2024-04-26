@@ -10,12 +10,12 @@
         public BulkUploadResultsViewModel(BulkUploadResult bulkUploadResult)
         {
             ProcessedCount = bulkUploadResult.ProcessedCount;
-            RegisteredCount = bulkUploadResult.RegisteredCount;
-            UpdatedCount = bulkUploadResult.UpdatedCount;
+            RegisteredCount = bulkUploadResult.RegisteredActiveCount + bulkUploadResult.RegisteredInactiveCount;
+            UpdatedCount = bulkUploadResult.UpdatedActiveCount + bulkUploadResult.UpdatedInactiveCount;
             SkippedCount = bulkUploadResult.SkippedCount;
             Errors = bulkUploadResult.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason)));
         }
-        public BulkUploadResultsViewModel(int processedCount, int registeredCount, int updatedCount, int skippedCount, IEnumerable<(int, string)> errors, int day, int month, int year, int totalSteps)
+        public BulkUploadResultsViewModel(int processedCount, int registeredCount,int updatedCount, int skippedCount, IEnumerable<(int, string)> errors, int day, int month, int year, int totalSteps)
         {
             ProcessedCount = processedCount;
             TotalSteps = totalSteps;

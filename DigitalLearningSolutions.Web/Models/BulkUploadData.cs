@@ -16,8 +16,10 @@
             DelegatesFileName = delegatesFileName;
             MaxRowsToProcess = maxRowsToProcess;
             ToProcessCount = 0;
-            ToRegisterCount = 0;
-            ToUpdateCount = 0;
+            ToRegisterActiveCount = 0;
+            ToRegisterInactiveCount = 0;
+            ToUpdateActiveCount = 0;
+            ToUpdateInactiveCount = 0;
             IncludeUpdatedDelegates = false;
             Day = today.Day;
             Month = today.Month;
@@ -35,8 +37,10 @@
         public string? NewGroupDescription { get; set; }
         public int? ExistingGroupId { get; set; }
         public int ToProcessCount { get; set; }
-        public int ToRegisterCount { get; set; }
-        public int ToUpdateCount { get; set; }
+        public int ToRegisterActiveCount { get; set; }
+        public int ToRegisterInactiveCount { get; set; }
+        public int ToUpdateActiveCount { get; set; }
+        public int ToUpdateInactiveCount { get; set; }
         public int MaxRowsToProcess { get; set; }
         public bool IncludeUpdatedDelegates { get; set; }
         public int LastRowProcessed { get; set; }
