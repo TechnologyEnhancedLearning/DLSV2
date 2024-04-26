@@ -13,8 +13,10 @@
             int? existingGroupId,
             string? newGroupName,
             string? newGroupDescription,
-            bool registeringDelegates,
-            bool updatingDelegates
+            int registeringActiveDelegates,
+            int updatingActiveDelegates,
+            int registeringInactiveDelegates,
+            int updatingInactiveDelegates
             )
         {
             AddToGroupOption = addToGroupOption;
@@ -22,8 +24,10 @@
             ExistingGroupId = existingGroupId;
             NewGroupName = newGroupName;
             NewGroupDescription = newGroupDescription;
-            RegisteringDelegates = registeringDelegates;
-            UpdatingDelegates = updatingDelegates;
+            RegisteringActiveDelegates = registeringActiveDelegates;
+            UpdatingActiveDelegates = updatingActiveDelegates;
+            RegisteringInactiveDelegates = registeringInactiveDelegates;
+            UpdatingInactiveDelegates = updatingInactiveDelegates;
         }
         [Required(ErrorMessage = "Please select an option.")]
         public int? AddToGroupOption { get; set; }
@@ -31,8 +35,10 @@
         public int? ExistingGroupId { get; set; }
         public string? NewGroupName { get; set; }
         public string? NewGroupDescription { get; set; }
-        public bool RegisteringDelegates { get; set; }
-        public bool UpdatingDelegates { get; set; }
+        public int RegisteringActiveDelegates { get; set; }
+        public int UpdatingActiveDelegates { get; set; }
+        public int RegisteringInactiveDelegates { get; set; }
+        public int UpdatingInactiveDelegates { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (AddToGroupOption == 1 && (ExistingGroupId == null || ExistingGroupId <= 0))

@@ -3,19 +3,19 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using ClosedXML.Excel;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
-    using DigitalLearningSolutions.Web.Services;
-    using Microsoft.AspNetCore.Http;
 
     public class BulkUploadPreProcessViewModel : UploadDelegatesViewModel
     {
         public BulkUploadPreProcessViewModel(BulkUploadResult bulkUploadResult)
         {
             ToProcessCount = bulkUploadResult.ProcessedCount;
-            ToRegisterCount = bulkUploadResult.RegisteredCount;
-            ToUpdateOrSkipCount = bulkUploadResult.UpdatedCount;
+            ToRegisterCount = bulkUploadResult.RegisteredActiveCount + bulkUploadResult.RegisteredInactiveCount;
+            ToUpdateOrSkipCount = bulkUploadResult.UpdatedActiveCount + bulkUploadResult.UpdatedInactiveCount;
+            ToRegisterActiveCount = bulkUploadResult.RegisteredActiveCount;
+            ToUpdateOrSkipActiveCount = bulkUploadResult.UpdatedActiveCount;
+            ToRegisterInactiveCount = bulkUploadResult.RegisteredInactiveCount;
+            ToUpdateOrSkipInactiveCount = bulkUploadResult.UpdatedInactiveCount;
             Errors = bulkUploadResult.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason)));
         }
 
@@ -24,6 +24,10 @@
         public int ToProcessCount { get; set; }
         public int ToRegisterCount { get; set; }
         public int ToUpdateOrSkipCount { get; set; }
+        public int ToRegisterActiveCount { get; set; }
+        public int ToUpdateOrSkipActiveCount { get; set; }
+        public int ToRegisterInactiveCount { get; set; }
+        public int ToUpdateOrSkipInactiveCount { get; set; }
 
         private static string MapReasonToErrorMessage(BulkUploadResult.ErrorReason reason)
         {

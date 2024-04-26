@@ -122,8 +122,10 @@
               );
                 var resultsModel = new BulkUploadPreProcessViewModel(results);
                 data.ToProcessCount = resultsModel.ToProcessCount;
-                data.ToRegisterCount = resultsModel.ToRegisterCount;
-                data.ToUpdateCount = resultsModel.ToUpdateOrSkipCount;
+                data.ToRegisterActiveCount = resultsModel.ToRegisterActiveCount;
+                data.ToRegisterInactiveCount = resultsModel.ToRegisterInactiveCount;
+                data.ToUpdateActiveCount = resultsModel.ToUpdateOrSkipActiveCount;
+                data.ToUpdateInactiveCount = resultsModel.ToUpdateOrSkipInactiveCount;
                 setBulkUploadData(data);
                 return View("UploadCompleted", resultsModel);
             }
@@ -138,7 +140,7 @@
         public IActionResult WelcomeEmail()
         {
             var data = GetBulkUploadData();
-            var model = new WelcomeEmailViewModel() { Day = data.Day, Month = data.Month, Year = data.Year, DelegatesToRegister = data.ToRegisterCount };
+            var model = new WelcomeEmailViewModel() { Day = data.Day, Month = data.Month, Year = data.Year, DelegatesToRegister = data.ToRegisterActiveCount + data.ToRegisterInactiveCount };
             return View(model);
         }
 
@@ -146,7 +148,7 @@
         public IActionResult SubmitWelcomeEmail(WelcomeEmailViewModel model)
         {
             var data = GetBulkUploadData();
-            model.DelegatesToRegister = data.ToRegisterCount;
+            model.DelegatesToRegister = data.ToRegisterActiveCount + data.ToRegisterInactiveCount;
             if (!ModelState.IsValid)
             {
                 return View("WelcomeEmail", model);
@@ -164,7 +166,7 @@
             var data = GetBulkUploadData();
             var centreId = User.GetCentreIdKnownNotNull();
             var groupSelect = groupsService.GetUnlinkedGroupsSelectListForCentre(centreId, data.ExistingGroupId);
-            var model = new AddToGroupViewModel(data.AddToGroupOption, existingGroups: groupSelect, data.ExistingGroupId, data.NewGroupName, data.NewGroupDescription, registeringDelegates: data.ToRegisterCount > 0, updatingDelegates: data.ToUpdateCount > 0);
+            var model = new AddToGroupViewModel(data.AddToGroupOption, existingGroups: groupSelect, data.ExistingGroupId, data.NewGroupName, data.NewGroupDescription, registeringActiveDelegates: data.ToRegisterActiveCount, updatingActiveDelegates: data.ToUpdateActiveCount, registeringInactiveDelegates: data.ToRegisterInactiveCount, updatingInactiveDelegates: data.ToUpdateInactiveCount);
             return View(model);
         }
 
@@ -188,8 +190,8 @@
             {
                 var groupSelect = groupsService.GetUnlinkedGroupsSelectListForCentre(centreId, data.ExistingGroupId);
                 model.ExistingGroups = groupSelect;
-                model.RegisteringDelegates = data.ToRegisterCount > 0;
-                model.UpdatingDelegates = data.ToUpdateCount > 0;
+                model.RegisteringActiveDelegates = data.ToRegisterActiveCount;
+                model.UpdatingActiveDelegates = data.ToUpdateActiveCount;
                 return View("AddToGroup", model);
             }
             data.AddToGroupOption = model.AddToGroupOption;
@@ -203,14 +205,14 @@
                 data.NewGroupDescription = model.NewGroupDescription;
             }
 
-            if (data.ToRegisterCount > 0 && data.ToUpdateCount > 0)
+            if (data.ToRegisterActiveCount > 0 && data.ToUpdateActiveCount > 0)
             {
                 setBulkUploadData(data);
                 return RedirectToAction("AddWhoToGroup");
             }
             else
             {
-                if (data.ToUpdateCount > 0)
+                if (data.ToUpdateActiveCount > 0)
                 {
                     data.IncludeUpdatedDelegates = true;
                 }
@@ -237,7 +239,7 @@
             {
                 return RedirectToAction("UploadSummary");
             }
-            var model = new AddWhoToGroupViewModel(groupName!, data.IncludeUpdatedDelegates, data.ToProcessCount, data.ToRegisterCount);
+            var model = new AddWhoToGroupViewModel(groupName!, data.IncludeUpdatedDelegates, data.ToProcessCount, data.ToRegisterActiveCount);
             return View(model);
         }
 
@@ -267,8 +269,8 @@
             }
             var model = new UploadSummaryViewModel(
                 data.ToProcessCount,
-                data.ToRegisterCount,
-                data.ToUpdateCount,
+                data.ToRegisterActiveCount + data.ToRegisterInactiveCount,
+                data.ToUpdateActiveCount + data.ToRegisterInactiveCount,
                 data.MaxRowsToProcess,
                 (int)data.AddToGroupOption,
                 groupName,
@@ -327,8 +329,8 @@
                 int processSteps = (int)Math.Ceiling((double)data.ToProcessCount / data.MaxRowsToProcess);
                 int step = data.LastRowProcessed / data.MaxRowsToProcess + 1;
                 var results = ProcessRowsAndReturnResults();
-                data.SubtotalDelegatesRegistered += results.RegisteredCount;
-                data.SubtotalDelegatesUpdated += results.UpdatedCount;
+                data.SubtotalDelegatesRegistered += results.RegisteredActiveCount + results.RegisteredInactiveCount;
+                data.SubtotalDelegatesUpdated += results.UpdatedActiveCount + results.UpdatedInactiveCount;
                 data.SubTotalSkipped += results.SkippedCount;
                 data.Errors = data.Errors.Concat(results.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason))));
                 if (step < processSteps)
