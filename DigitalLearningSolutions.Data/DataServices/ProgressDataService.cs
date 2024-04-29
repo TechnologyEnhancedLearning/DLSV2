@@ -101,6 +101,12 @@
             bool status,
             int progressId
         );
+        void UpdateProgressSupervisorSubmittedTimeAndCompleteByDate(
+            int progressId,
+            int supervisorAdminId,
+            DateTime? completeByDate,
+            DateTime? submittedTime
+        );
     }
 
     public class ProgressDataService : IProgressDataService
@@ -152,6 +158,23 @@
                         CompleteByDate = @completeByDate
                     WHERE ProgressID = @progressId",
                 new { progressId, supervisorAdminId, completeByDate }
+            );
+        }
+
+        public void UpdateProgressSupervisorSubmittedTimeAndCompleteByDate(
+            int progressId,
+            int supervisorAdminId,
+            DateTime? completeByDate,
+            DateTime? submittedTime
+        )
+        {
+            connection.Execute(
+                @"UPDATE Progress SET
+                        SupervisorAdminID = @supervisorAdminId,
+                        CompleteByDate = @completeByDate,
+                        SubmittedTime = @submittedTime
+                    WHERE ProgressID = @progressId",
+                new { progressId, supervisorAdminId, completeByDate, submittedTime }
             );
         }
 

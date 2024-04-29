@@ -99,10 +99,11 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 foreach (var progressRecord in existingRecordsToUpdate)
                 {
-                    progressDataService.UpdateProgressSupervisorAndCompleteByDate(
+                    progressDataService.UpdateProgressSupervisorSubmittedTimeAndCompleteByDate(
                         progressRecord.ProgressId,
                         supervisorAdminId ?? 0,
-                        completeByDate
+                        completeByDate,
+                         clockUtility.UtcNow
                     );
                 }
             }
