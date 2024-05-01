@@ -79,6 +79,7 @@
         public void PersonalInformationPost_with_duplicate_email_for_centre_fails_validation()
         {
             // Given
+            controller.TempData.Set(new DelegateRegistrationByCentreData());
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
             var model = new RegisterDelegatePersonalInformationViewModel
             {
@@ -137,7 +138,7 @@
             const string firstName = "Test";
             const string lastName = "User";
             const string email = "test@email.com";
-
+            controller.TempData.Set(new DelegateRegistrationByCentreData());
             var model = new RegisterDelegatePersonalInformationViewModel
             {
                 FirstName = firstName,
