@@ -2,11 +2,6 @@
 {
     public class UserFeedbackViewModel
     {
-        public UserFeedbackViewModel()
-        {
-
-        }
-
         public UserFeedbackViewModel(string userResearchUrl)
         {
             UserId = null;
