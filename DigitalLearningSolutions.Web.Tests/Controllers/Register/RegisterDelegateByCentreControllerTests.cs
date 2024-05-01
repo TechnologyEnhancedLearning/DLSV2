@@ -1,12 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
     using System;
-    using DigitalLearningSolutions.Data.DataServices;
+    using System.Reflection;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Register;
-    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
@@ -21,6 +22,9 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
+    using GDS.MultiPageFormData;
+    using GDS.MultiPageFormData.Enums;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
     using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.SummaryViewModel;
@@ -30,17 +34,19 @@
         private IConfiguration config = null!;
         private RegisterDelegateByCentreController controller = null!;
         private ICryptoService cryptoService = null!;
-        private IJobGroupsDataService jobGroupsDataService = null!;
+        private IJobGroupsService jobGroupsService = null!;
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IClockUtility clockUtility = null!;
+        private IMultiPageFormService multiPageFormService = null!;
+        private IGroupsService groupsService = null!;
 
         [SetUp]
         public void Setup()
         {
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            jobGroupsService = A.Fake<IJobGroupsService>();
             userDataService = A.Fake<IUserDataService>();
             userService = A.Fake<IUserService>();
             promptsService = A.Fake<PromptsService>();
@@ -48,19 +54,25 @@
             registrationService = A.Fake<IRegistrationService>();
             config = A.Fake<IConfiguration>();
             clockUtility = A.Fake<IClockUtility>();
+            multiPageFormService = A.Fake<IMultiPageFormService>();
+            groupsService = A.Fake<IGroupsService>();
+
 
             controller = new RegisterDelegateByCentreController(
-                    jobGroupsDataService,
+                    jobGroupsService,
                     promptsService,
                     cryptoService,
                     userDataService,
                     registrationService,
                     config,
                     clockUtility,
-                    userService
+                    userService,
+                    multiPageFormService,
+                    groupsService
                 )
                 .WithDefaultContext()
-                .WithMockTempData();
+                .WithMockTempData()
+                .WithMockUser(true, 101, 1, 1, 1);
         }
 
         [Test]
@@ -126,7 +138,6 @@
             const string lastName = "User";
             const string email = "test@email.com";
 
-            controller.TempData.Set(new DelegateRegistrationByCentreData());
             var model = new RegisterDelegatePersonalInformationViewModel
             {
                 FirstName = firstName,
@@ -143,13 +154,20 @@
                 .Returns(false);
 
             // When
-            controller.PersonalInformation(model);
+            var result = controller.PersonalInformation(model);
 
             // Then
-            var data = controller.TempData.Peek<DelegateRegistrationByCentreData>()!;
-            data.FirstName.Should().Be(firstName);
-            data.LastName.Should().Be(lastName);
-            data.CentreSpecificEmail.Should().Be(email);
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => multiPageFormService.SetMultiPageFormData(
+                        A<DelegateRegistrationByCentreData>.That.Matches(d => d.FirstName == firstName && d.LastName == lastName && d.CentreSpecificEmail == email && d.Centre == 1),
+                        MultiPageFormDataFeature.CustomWebForm,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
+                result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
+            }
         }
 
         [Test]
@@ -164,8 +182,6 @@
             const string answer5 = "answer5";
             const string answer6 = "answer6";
             const string professionalRegistrationNumber = "PRN1234";
-
-            controller.TempData.Set(new DelegateRegistrationByCentreData { Centre = 1 });
             var model = new LearnerInformationViewModel
             {
                 JobGroup = jobGroupId,
@@ -180,26 +196,26 @@
             };
 
             // When
-            controller.LearnerInformation(model);
+            var result = controller.LearnerInformation(model);
 
             // Then
-            var data = controller.TempData.Peek<DelegateRegistrationByCentreData>()!;
-            data.JobGroup.Should().Be(jobGroupId);
-            data.Answer1.Should().Be(answer1);
-            data.Answer2.Should().Be(answer2);
-            data.Answer3.Should().Be(answer3);
-            data.Answer4.Should().Be(answer4);
-            data.Answer5.Should().Be(answer5);
-            data.Answer6.Should().Be(answer6);
-            data.HasProfessionalRegistrationNumber.Should().BeTrue();
-            data.ProfessionalRegistrationNumber.Should().Be(professionalRegistrationNumber);
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => multiPageFormService.SetMultiPageFormData(
+                        A<DelegateRegistrationByCentreData>._,
+                        MultiPageFormDataFeature.CustomWebForm,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
+                result.Should().BeRedirectToActionResult().WithActionName("AddToGroup");
+            }
         }
 
         [Test]
         public void WelcomeEmailPost_updates_tempdata_correctly()
         {
             // Given
-            controller.TempData.Set(new DelegateRegistrationByCentreData { PasswordHash = "hash" });
             var date = new DateTime(2200, 7, 7);
             var model = new WelcomeEmailViewModel
             {
@@ -209,83 +225,72 @@
             };
 
             // When
-            controller.WelcomeEmail(model);
+            var result = controller.WelcomeEmail(model);
 
             // Then
-            var data = controller.TempData.Peek<DelegateRegistrationByCentreData>()!;
-            data.WelcomeEmailDate.Should().Be(date);
-            data.IsPasswordSet.Should().BeFalse();
-            data.PasswordHash.Should().BeNull();
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => multiPageFormService.SetMultiPageFormData(
+                        A<DelegateRegistrationByCentreData>.That.Matches(d => d.WelcomeEmailDate == date),
+                        MultiPageFormDataFeature.CustomWebForm,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
+                result.Should().BeRedirectToActionResult().WithActionName("Password");
+            }
         }
 
         [Test]
         public void PasswordPost_with_no_password_updates_tempdata_correctly()
         {
             // Given
-            controller.TempData.Set(new DelegateRegistrationByCentreData());
             var model = new PasswordViewModel { Password = null };
             A.CallTo(() => cryptoService.GetPasswordHash(A<string>._)).Returns("hash");
 
             // When
-            controller.Password(model);
+            var result = controller.Password(model);
 
             // Then
             A.CallTo(() => cryptoService.GetPasswordHash(A<string>._)).MustNotHaveHappened();
-            var data = controller.TempData.Peek<DelegateRegistrationByCentreData>()!;
-            data.PasswordHash.Should().BeNull();
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                   () => multiPageFormService.SetMultiPageFormData(
+                       A<DelegateRegistrationByCentreData>._,
+                       MultiPageFormDataFeature.CustomWebForm,
+                       controller.TempData
+                   )
+               ).MustHaveHappenedOnceExactly();
+
+                result.Should().BeRedirectToActionResult().WithActionName("Summary");
+            }
         }
 
         [Test]
         public void PasswordPost_with_password_updates_tempdata_correctly()
         {
             // Given
-            controller.TempData.Set(new DelegateRegistrationByCentreData());
             var model = new PasswordViewModel { Password = "pwd" };
             const string passwordHash = "hash";
             A.CallTo(() => cryptoService.GetPasswordHash(A<string>._)).Returns(passwordHash);
 
             // When
-            controller.Password(model);
+            var result = controller.Password(model);
 
             // Then
             A.CallTo(() => cryptoService.GetPasswordHash(A<string>._)).MustHaveHappened(1, Times.Exactly);
-            var data = controller.TempData.Peek<DelegateRegistrationByCentreData>()!;
-            data.PasswordHash.Should().Be(passwordHash);
-        }
-
-        [Test]
-        public void SummaryPost_updates_tempdata_correctly()
-        {
-            // Given
-            const string sampleDelegateNumber = "CR7";
-            var data = new DelegateRegistrationByCentreData
+            using (new AssertionScope())
             {
-                FirstName = "Test",
-                LastName = "User",
-                PrimaryEmail = "test@mail.com",
-                Centre = 5,
-                JobGroup = 0,
-                WelcomeEmailDate = new DateTime(2200, 7, 7),
-            };
-            controller.TempData.Set(data);
-            var model = new SummaryViewModel();
-            A.CallTo(
-                    () => registrationService.RegisterDelegateByCentre(
-                        A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        A<bool>._
+                A.CallTo(
+                    () => multiPageFormService.SetMultiPageFormData(
+                        A<DelegateRegistrationByCentreData>.That.Matches(d => d.PasswordHash == passwordHash),
+                        MultiPageFormDataFeature.CustomWebForm,
+                        controller.TempData
                     )
-                )
-                .Returns(sampleDelegateNumber);
-
-            // When
-            controller.Summary(model);
-
-            // Then
-            var delegateNumber = (string?)controller.TempData.Peek("delegateNumber");
-            var passwordSet = (bool?)controller.TempData.Peek("passwordSet");
-            delegateNumber.Should().Be(sampleDelegateNumber);
-            passwordSet.Should().Be(data.IsPasswordSet);
+                ).MustHaveHappenedOnceExactly();
+                result.Should().BeRedirectToActionResult().WithActionName("Summary");
+            }
         }
 
         [Test]
@@ -296,18 +301,23 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData(
                 welcomeEmailDate: DateTime.Now
             );
-            controller.TempData.Set(data);
+            A.CallTo(() => multiPageFormService.GetMultiPageFormData<DelegateRegistrationByCentreData>(
+               MultiPageFormDataFeature.AddCustomWebForm("DelegateRegistrationByCentreCWF"),
+               controller.TempData
+           )).Returns(data);
             A.CallTo(
                     () => registrationService.RegisterDelegateByCentre(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
-                        A<bool>._
+                        A<bool>._,
+                        A<int>._,
+                        A<int>._
                     )
                 )
                 .Returns(candidateNumber);
 
             // When
-            var result = controller.Summary(new SummaryViewModel());
+            var result = controller.Summary(new SummaryViewModel(data));
 
             // Then
             A.CallTo(
@@ -335,7 +345,9 @@
                                     d.ProfessionalRegistrationNumber == data.ProfessionalRegistrationNumber
                             ),
                             A<string>._,
-                            false
+                            false,
+                            1,
+                            null
                         )
                 )
                 .MustHaveHappened();
@@ -343,47 +355,61 @@
         }
 
         [Test]
-        public void Summary_post_returns_500_error_with_unexpected_register_error()
+        public void Summary_post_creates_new_delegate_group_if_required()
         {
             // Given
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData();
-            controller.TempData.Set(data);
-            A.CallTo(
-                    () => registrationService.RegisterDelegateByCentre(
-                        A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        A<bool>._
-                    )
-                )
-                .Throws(new DelegateCreationFailedException(DelegateCreationError.UnexpectedError));
-
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData(
+                welcomeEmailDate: DateTime.Now
+            );
+            var model = RegistrationMappingHelper.MapCentreRegistrationToDelegateRegistrationModel(data);
+            data.AddToGroupOption = 2;
+            data.NewGroupName = "Test delegate group";
+            data.NewGroupDescription = "Test description";
+            A.CallTo(() => multiPageFormService.GetMultiPageFormData<DelegateRegistrationByCentreData>(
+               MultiPageFormDataFeature.AddCustomWebForm("DelegateRegistrationByCentreCWF"),
+               controller.TempData
+           )).Returns(data);
             // When
-            var result = controller.Summary(new SummaryViewModel());
+            var result = controller.Summary(new SummaryViewModel(data));
 
             // Then
-            result.Should().BeStatusCodeResult().WithStatusCode(500);
+            A.CallTo(() => groupsService.AddDelegateGroup(
+                A<int>._,
+                data.NewGroupName,
+                data.NewGroupDescription,
+                A<int>._,
+                0,
+                false,
+                false,
+                false
+            )).MustHaveHappened();
         }
 
         [Test]
-        public void Summary_post_returns_redirect_to_index_with_email_in_use_register_error()
+        public void Summary_post_adds_delegate_to_existing_group_if_chosen()
         {
             // Given
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData();
-            controller.TempData.Set(data);
-            A.CallTo(
-                    () => registrationService.RegisterDelegateByCentre(
-                        A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        A<bool>._
-                    )
-                )
-                .Throws(new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse));
-
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData(
+                welcomeEmailDate: DateTime.Now
+            );
+            var model = RegistrationMappingHelper.MapCentreRegistrationToDelegateRegistrationModel(data);
+            data.AddToGroupOption = 1;
+            data.ExistingGroupId = 2;
+            A.CallTo(() => multiPageFormService.GetMultiPageFormData<DelegateRegistrationByCentreData>(
+               MultiPageFormDataFeature.AddCustomWebForm("DelegateRegistrationByCentreCWF"),
+               controller.TempData
+           )).Returns(data);
             // When
-            var result = controller.Summary(new SummaryViewModel());
+            var result = controller.Summary(new SummaryViewModel(data));
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            A.CallTo(() => registrationService.RegisterDelegateByCentre(
+                A<DelegateRegistrationModel>._,
+                A<string>._,
+                false,
+                A<int>._,
+                2
+            )).MustHaveHappened();
         }
     }
 }

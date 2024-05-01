@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public class SummaryViewModel
     {
@@ -18,6 +19,7 @@
             WelcomeEmailDate = data.WelcomeEmailDate!.Value.ToString(DateHelper.StandardDateFormat);
             ProfessionalRegistrationNumber = data.ProfessionalRegistrationNumber ?? "Not professionally registered";
             HasProfessionalRegistrationNumber = data.HasProfessionalRegistrationNumber;
+            
         }
 
         public string? FirstName { get; set; }
@@ -28,6 +30,8 @@
         public string? JobGroup { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool? HasProfessionalRegistrationNumber { get; set; }
+        public string? GroupName { get; set; }
+        public IEnumerable<Group> RegistrationFieldGroups { get; set; }
 
         public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; } =
             new List<DelegateRegistrationPrompt>();

@@ -1513,5 +1513,42 @@
                 () => userDataService.DeleteUserCentreDetail(userId, 2)
             ).MustNotHaveHappened();
         }
+
+        [Test]
+        public void GetDelegateUserFromLearningHubAuthId_null()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetUserIdFromLearningHubAuthId(A<int>._))
+                .Returns(null);
+
+            // When
+            UserEntity? userEntity = userService.GetDelegateUserFromLearningHubAuthId(12345);
+
+            // Then
+            userEntity
+                .Should()
+                .BeNull();
+        }
+
+        [Test]
+        public void GetDelegateUserFromLearningHubAuthId_NotNull()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetUserIdFromLearningHubAuthId(A<int>._))
+               .Returns(123);
+            UserEntity? userEntity = new UserEntity(
+                A.Fake<UserAccount>(),
+                A.Fake<List<AdminAccount>>(),
+                A.Fake<List<DelegateAccount>>());
+            var mockUserService = A.Fake<IUserService>();
+            A.CallTo(() => mockUserService.GetUserById(A<int>._))
+                .Returns(userEntity);
+
+            // When
+            UserEntity? result = mockUserService.GetDelegateUserFromLearningHubAuthId(12345);
+
+            // Then
+            result.IsLocked.Should().BeFalse();
+        }
     }
 }

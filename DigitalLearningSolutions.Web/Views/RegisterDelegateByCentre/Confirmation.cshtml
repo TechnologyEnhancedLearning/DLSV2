@@ -2,25 +2,39 @@
 @model ConfirmationViewModel
 
 @{
-  ViewData["Title"] = "Register delegate - Confirmation";
+    ViewData["Title"] = "Register delegate - Confirmation";
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+    <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-  <div class="nhsuk-grid-row">
+<div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <h1 id="page-heading" class="nhsuk-heading-xl">
-        Delegate registration complete
-      </h1>
-      <p class="nhsuk-body-l">
-        A welcome message will be sent to the email provided, on the date specified, inviting the delegate to confirm their registration.
-      </p>
-      <div class="nhsuk-inset-text">
-        <span class="nhsuk-u-visually-hidden">Information: </span>
-        <p>Delegate number <span class="nhsuk-u-font-weight-bold">@Model.DelegateNumber</span></p>
-      </div>
-      <vc:action-link asp-controller="AllDelegates" asp-action="Index" link-text="Manage all delegates" />
+        <h1 id="page-heading" class="nhsuk-heading-xl">
+            Delegate registration complete
+        </h1>
+        <p class="nhsuk-body-l">
+            A welcome message will be sent to the email provided, on the date specified, inviting the delegate to confirm their registration.
+        </p>
+        <div class="nhsuk-inset-text">
+            <span class="nhsuk-u-visually-hidden">Information: </span>
+            <p>Delegate number <span class="nhsuk-u-font-weight-bold">@Model.DelegateNumber</span></p>
+        </div>
+        <h2>What's next?</h2>
+        <ul>
+            <li>You don't have to do anything</li>
+            @if (Model.Day != null)
+            {
+                <li>A welcome email will be sent on @Model.Day/@Model.Month/@Model.Year</li>
+                <li>You can resend re-send a welcome email by using the <a asp-controller="EmailDelegates" asp-action="Index" asp-all-route-data="@null">Email</a> button on the <a asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null">Delegates</a> screen.</li>
+            }
+            else
+            {
+                <li>You can send a welcome email by using the <a asp-controller="EmailDelegates" asp-action="Index" asp-all-route-data="@null">Email</a> button on the <a asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null">Delegates</a> screen.</li>
+            }
+            <li>If you need to promote the user to an administrator role, you can do this from the <a asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null">Delegates</a> screen. Search for the user and click "Manage delegate".</li>
+        </ul>
+        <vc:action-link asp-controller="AllDelegates" asp-action="Index" link-text="Manage all delegates" />
     </div>
-  </div>
+</div>

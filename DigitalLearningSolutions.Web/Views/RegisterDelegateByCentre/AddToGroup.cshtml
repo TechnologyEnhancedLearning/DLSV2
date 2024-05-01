@@ -1,0 +1,101 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload
+@model AddToGroupViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var radioListErrorClass = !ViewData.ModelState.IsValid && Model.AddToGroupOption == null ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group";
+    ViewData["Title"] = "Add delegate to a group";
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full nhsuk-u-reading-width">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new []{ nameof(AddToGroupViewModel.ExistingGroupId), nameof(AddToGroupViewModel.NewGroupName) })" />
+        }
+        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SubmitAddToGroup" enctype="multipart/form-data">
+            <fieldset class="nhsuk-fieldset" aria-describedby="@(!ViewData.ModelState.IsValid && Model.AddToGroupOption == null ? "radio-list-error" : "")">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">
+                        @ViewData["Title"]
+                    </h1>
+                </legend>
+                <div class="nhsuk-hint nhsuk-u-margin-bottom-2">
+                    Make a new group or add the delegate to an existing group
+                </div>
+
+                <div class="nhsuk-hint">
+                    Select one option
+                </div>
+                <div class="@radioListErrorClass">
+                    <div class="nhsuk-radios nhsuk-radios--conditional">
+                        @if (!ViewData.ModelState.IsValid && Model.AddToGroupOption == null)
+                        {
+                            <span class="nhsuk-error-message" id="radio-list-error">
+                                <span class="nhsuk-u-visually-hidden">Error:</span> Please select an option
+                            </span>
+                        }
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="group-option-1" asp-for="AddToGroupOption" type="radio" value="1" aria-controls="conditional-option-1" aria-expanded="false">
+                            <label class="nhsuk-label nhsuk-radios__label" for="group-option-1">
+                                Add delegate to an existing group
+                            </label>
+                        </div>
+                        <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-option-1">
+
+
+                            <vc:select-list asp-for="@nameof(Model.ExistingGroupId)"
+                                            label="Select a group"
+                                            value="@Model.ExistingGroupId.ToString()"
+                                            hint-text="Groups that are linked to centre registration prompts are not included in this list. Delegates will automatically be added to groups linked to prompts based on their regiatration details."
+                                            required="true"
+                                            css-class="nhsuk-u-width-one-half"
+                                            default-option="Select a group"
+                                            select-list-options="@Model.ExistingGroups" />
+
+                        </div>
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="group-option-2" asp-for="AddToGroupOption" type="radio" value="2" aria-controls="conditional-option-2" aria-expanded="false">
+                            <label class="nhsuk-label nhsuk-radios__label" for="group-option-2">
+                                Create a new group to add delegate to
+                            </label>
+                        </div>
+                        <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-option-2">
+
+                            <vc:text-input asp-for="@nameof(Model.NewGroupName)"
+                                           label="Group name"
+                                           populate-with-current-value="true"
+                                           type="text"
+                                           spell-check="true"
+                                           autocomplete=""
+                                           hint-text="The group name should be unique and specific"
+                                           css-class=""
+                                           required="true" />
+                            <vc:text-area asp-for="@nameof(Model.NewGroupDescription)"
+                                          label="Group description (optional)"
+                                          hint-text="A description can help inform others how to use this group"
+                                          css-class="" character-count="1000"
+                                          populate-with-current-value="true"
+                                          spell-check="true"
+                                          rows="5" />
+
+                        </div>
+                        <div class="nhsuk-radios__divider">or</div>
+
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="group-option-3" asp-for="AddToGroupOption" type="radio" value="3">
+                            <label class="nhsuk-label nhsuk-radios__label" for="group-option-3">
+                                Skip this step
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <input type="hidden" asp-for="RegisteringActiveDelegates" />
+            <input type="hidden" asp-for="UpdatingActiveDelegates" />
+            <a asp-controller="RegisterDelegateByCentre" asp-action="LearnerInformation" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+            <button class="nhsuk-button" type="submit">Next</button>
+        </form>
+
+        <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+    </div>
+</div>

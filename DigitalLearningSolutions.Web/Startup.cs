@@ -1,12 +1,14 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Collections.Generic;
-    using System.Configuration;
     using System.Data;
     using System.IO;
+    using System.Linq;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using System.Transactions;
     using System.Web;
+    using AspNetCoreRateLimit;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
@@ -29,8 +31,11 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentMigrator.Runner;
+    using GDS.MultiPageFormData;
+    using LearningHub.Nhs.Caching;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Authentication.OpenIdConnect;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.HttpOverrides;
@@ -40,10 +45,19 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
-    using Serilog;
-    using GDS.MultiPageFormData;
-    using LearningHub.Nhs.Caching;
+    using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+    using Microsoft.IdentityModel.Tokens;
+    using Microsoft.AspNetCore.Http;
+    using System.Linq;
+    using Microsoft.AspNetCore.Identity;
     using AspNetCoreRateLimit;
+    using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
+    using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
+    using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
+    using System;
+    using IsolationLevel = System.Transactions.IsolationLevel;
+    using System.Collections.Concurrent;
+    using Serilog;
     using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
     using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
     using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
@@ -53,6 +67,7 @@ namespace DigitalLearningSolutions.Web
         private readonly IConfiguration config;
         private readonly IHostEnvironment env;
         private const int sessionTimeoutHours = 24;
+        private const string claimsType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
 
         public Startup(IConfiguration config, IHostEnvironment env)
         {
@@ -70,17 +85,7 @@ namespace DigitalLearningSolutions.Web
                 .PersistKeysToFileSystem(new DirectoryInfo($"C:\\keys\\{env.EnvironmentName}"))
                 .SetApplicationName("DLSSharedCookieApp");
 
-            services.AddAuthentication("Identity.Application")
-                .AddCookie(
-                    "Identity.Application",
-                    options =>
-                    {
-                        options.Cookie.Name = ".AspNet.SharedCookie";
-                        options.Cookie.Path = "/";
-                        options.Events.OnRedirectToLogin = RedirectToLogin;
-                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
-                    }
-                );
+            this.SetUpAuthentication(services);
 
             services.AddAuthorization(
                 options =>
@@ -210,11 +215,184 @@ namespace DigitalLearningSolutions.Web
             RegisterWebServiceFilters(services);
         }
 
+        private void SetUpAuthentication(IServiceCollection services)
+        {
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = "Identity.Application";
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                }
+            )
+            .AddCookie(
+                "Identity.Application",
+                options =>
+                {
+                    options.Cookie.Name = ".AspNet.SharedCookie";
+                    options.Cookie.Path = "/";
+                    options.Events.OnRedirectToLogin = RedirectToLogin;
+                    options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
+                }
+            )
+            .AddOpenIdConnect(
+                OpenIdConnectDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.Authority = config.GetLearningHubAuthenticationAuthority();
+                    options.ClientId = config.GetLearningHubAuthenticationClientId();
+                    options.ClientSecret = config.GetLearningHubAuthenticationClientSecret();
+                    options.ResponseType = OpenIdConnectResponseType.Code;
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
+
+                    options.SaveTokens = true;
+                    options.GetClaimsFromUserInfoEndpoint = true;
+
+                    options.Events.OnRemoteFailure = OnRemoteFailure;
+                    options.Events.OnAuthenticationFailed = OnAuthenticationFailed;
+                    options.Events.OnTicketReceived = OnTicketReceived;
+                    options.Events.OnSignedOutCallbackRedirect = OnSignedoutCallbackRedirect;
+       
+                }
+            );
+        }
+
+        private static async Task OnRemoteFailure(RemoteFailureContext context)
+        {
+            var appRootPath = ConfigHelper.GetAppConfig().GetAppRootPath();
+            context.Response.Redirect(appRootPath + "/home");
+            context.HandleResponse();
+
+            await Task.CompletedTask;
+        }
+
+        private static async Task OnSignedoutCallbackRedirect(RemoteSignOutContext context)
+        {
+            var appRootPath = ConfigHelper.GetAppConfig().GetAppRootPath();
+            if (context.HttpContext.Request.Cookies.Any(c => c.Key == "not-linked"))
+            {
+                context.HttpContext.Response.Cookies.Delete("not-linked");
+                context.Response.Redirect(appRootPath + "/Login/ShowNotLinked");
+            }
+            else
+            {
+                context.Response.Redirect(appRootPath + "/home");
+            }
+            
+            context.HandleResponse();
+
+            await Task.CompletedTask;
+        }
+
+        private static async Task OnTicketReceived(TicketReceivedContext context)
+        {
+            context.Response.Cookies.Append(
+                "id_token",
+                context.Properties.GetTokenValue("id_token"));
+            context.Response.Cookies.Append(
+                "auth_method",
+                "OpenIdConnect");
+
+            var userDataService = context
+                .HttpContext
+                .RequestServices
+                .GetRequiredService<IUserDataService>();
+            var claimsIdentity = (ClaimsIdentity)context
+                .Principal
+                .Identity;
+
+            var appRootPath = ConfigHelper.GetAppConfig().GetAppRootPath();
+
+            var authIdClaim = claimsIdentity
+            .Claims
+                .Where(c => c.Type == claimsType)
+                .FirstOrDefault();
+            if (authIdClaim == null)
+            {
+                context.ReturnUri = appRootPath + "/Login/RemoteFailure";
+            }
+            else
+            {
+                var learningHubAuthId = int.Parse(authIdClaim.Value);
+                int? userId = userDataService.GetUserIdFromLearningHubAuthId(learningHubAuthId);
+                if (userId.HasValue)
+                {
+                    await LoginDLSUser(
+                        userId.Value,
+                        context,
+                        claimsIdentity);
+                }
+                else
+                {
+                    context.ReturnUri = appRootPath + "/login/NotLinked";
+                }
+            }
+            
+            await Task.CompletedTask;
+        }
+
+        private static async Task LoginDLSUser(
+            int LHUserId,
+            TicketReceivedContext context,
+            ClaimsIdentity claimsIdentity)
+        {
+            var userService = context
+                .HttpContext
+                .RequestServices
+                .GetService<IUserService>();
+            var loginService = context
+               .HttpContext
+               .RequestServices
+               .GetService<ILoginService>();
+            var sessionService = context
+                .HttpContext
+                .RequestServices
+                .GetRequiredService<ISessionService>();
+
+            claimsIdentity.AddClaim(new Claim(
+                "UserID",
+                LHUserId.ToString()));
+
+            var userEntity = userService.GetUserById(LHUserId);
+
+            var loginResult = loginService.AttemptLoginUserEntity(
+                userEntity,
+                userEntity
+                .UserAccount
+                .PrimaryEmail);
+
+            var config = ConfigHelper.GetAppConfig();
+            var appRootPath = config.GetAppRootPath();
+            var returnUrl = appRootPath;
+
+            var redirectString = await loginService.HandleLoginResult(
+                loginResult,
+                context,
+                returnUrl,
+                sessionService,
+                userService,
+                appRootPath);
+            context.ReturnUri = redirectString;
+        }
+
+        private static async Task OnAuthenticationFailed(AuthenticationFailedContext context)
+        {
+            var appRootPath = ConfigHelper.GetAppConfig().GetAppRootPath();
+            context
+                .Response
+                .Redirect(appRootPath + "/Login/RemoteFailure");
+            await context
+                .HttpContext
+                .Response
+                .CompleteAsync();
+            await Task.CompletedTask;
+        }
+
         private void ConfigureIpRateLimiting(IServiceCollection services)
         {
             services.Configure<IpRateLimitOptions>(config.GetSection("IpRateLimiting"));
             services.AddInMemoryRateLimiting();
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
         }
 
         private static void RegisterServices(IServiceCollection services)
@@ -364,6 +542,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
             services.AddScoped<IFreshdeskApiClient, FreshdeskApiClient>();
+            services.AddScoped<ILearningHubUserApiClient, LearningHubUserApiClient>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
@@ -400,7 +579,7 @@ namespace DigitalLearningSolutions.Web
             {
                 context.Response.Headers.Add("content-security-policy",
                     "default-src 'self'; " +
-                    "script-src 'self' 'unsafe-hashes' 'sha256-kbHtQyYDQKz4SWMQ8OHVol3EC0t3tHEJFPCSwNG9NxQ' 'sha256-YoDy5WvNzQHMq2kYTFhDYiGnEgPrvAY5Il6eUu/P4xY=' 'sha256-/n13APBYdqlQW71ZpWflMB/QoXNSUKDxZk1rgZc+Jz8=' https://script.hotjar.com https://www.google-analytics.com https://static.hotjar.com https://www.googletagmanager.com https://cdnjs.cloudflare.com 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=' 'sha256-VQKp2qxuvQmMpqE/U/ASQ0ZQ0pIDvC3dgQPPCqDlvBo=';" +
+                    "script-src 'self' 'unsafe-hashes' 'sha256-oywvD6W6okwID679n4cvPJtWLowSS70Pz87v1ryS0DU=' 'sha256-kbHtQyYDQKz4SWMQ8OHVol3EC0t3tHEJFPCSwNG9NxQ' 'sha256-YoDy5WvNzQHMq2kYTFhDYiGnEgPrvAY5Il6eUu/P4xY=' 'sha256-/n13APBYdqlQW71ZpWflMB/QoXNSUKDxZk1rgZc+Jz8=' https://script.hotjar.com https://www.google-analytics.com https://static.hotjar.com https://www.googletagmanager.com https://cdnjs.cloudflare.com 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=' 'sha256-VQKp2qxuvQmMpqE/U/ASQ0ZQ0pIDvC3dgQPPCqDlvBo=';" +
                     "style-src 'self' 'unsafe-inline' https://use.fontawesome.com; " +
                     "font-src https://script.hotjar.com https://assets.nhs.uk/; " +
                     "connect-src 'self' http: ws:; " +
@@ -427,23 +606,27 @@ namespace DigitalLearningSolutions.Web
                 app.UseBrowserLink();
             }
 
-            app.Use(
-                async (context, next) =>
+
+
+            app.Use(async (context, next) =>
+            {
+                if (this.config.GetSection("IsTransactionScope")?.Value == "True")
                 {
-                    if (this.config.GetSection("IsTransactionScope")?.Value == "True")
+                    var transactionOptions = new TransactionOptions
                     {
-                        using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-                        {
-                            await next.Invoke();
-                            scope.Complete();
-                        }
-                    }
-                    else
+                        Timeout = TimeSpan.FromMinutes(5)
+                    };
+                    using (var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled))
                     {
                         await next.Invoke();
+                        scope.Complete();
                     }
                 }
-            );
+                else
+                {
+                    await next.Invoke();
+                }
+            });
 
             app.UseExceptionHandler("/LearningSolutions/Error");
             app.UseStatusCodePagesWithReExecute("/LearningSolutions/StatusCode/{0}");

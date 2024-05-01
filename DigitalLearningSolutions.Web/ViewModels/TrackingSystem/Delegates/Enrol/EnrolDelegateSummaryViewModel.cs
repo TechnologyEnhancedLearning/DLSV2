@@ -14,5 +14,6 @@
         public string? ValidFor { get; set; }
         public bool? IsAutoRefresh { get; set; }
         public bool IsSelfAssessment { get; set; }
+        public int RoleCount { get; set; }
     }
 }

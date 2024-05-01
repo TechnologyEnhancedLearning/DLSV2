@@ -36,14 +36,14 @@
                 <div class="nhsuk-radios__item">
                     <input class="nhsuk-radios__input" id="option-1" asp-for="AddCourseOption" checked="checked" type="radio" value="Core">
                     <label class="nhsuk-label nhsuk-radios__label" for="option-1">
-                        Make a core (national, centrally provided) course or courses available to @ViewBag.CentreName
+                        Make a core (national, centrally provided) course or courses available to this centre
                     </label>
                 </div>
 
                 <div class="nhsuk-radios__item">
                     <input class="nhsuk-radios__input" id="option-2" asp-for="AddCourseOption" type="radio" value="Other" aria-controls="search-term" aria-expanded="false">
                     <label class="nhsuk-label nhsuk-radios__label" for="option-2">
-                        Make a course created at another centre available to @ViewBag.CentreName
+                        Make a course created at another centre available to this centre
                     </label>
                 </div>
                 <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="search-term">
@@ -61,7 +61,7 @@
                 <div class="nhsuk-radios__item">
                     <input class="nhsuk-radios__input" id="option-3" asp-for="AddCourseOption" type="radio" value="Pathways">
                     <label class="nhsuk-label nhsuk-radios__label" for="option-3">
-                        Add NHS Pathways Central courses to @ViewBag.CentreName
+                        Add NHS Pathways Central courses to this centre
                     </label>
                 </div>
             </div>

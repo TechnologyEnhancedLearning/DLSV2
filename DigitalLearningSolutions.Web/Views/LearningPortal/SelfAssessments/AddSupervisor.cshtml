@@ -3,7 +3,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment";
+    ViewData["Title"] = "Self Assessment - Add New Supervisor - Choose Supervisor";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -22,7 +22,7 @@
     <vc:loading-spinner page-has-side-nav-menu="false" />
 }
 @section mobilebacklink
-    {
+{
     <p class="nhsuk-breadcrumb__back">
         @if (TempData["CentreID"] == null)
         {
@@ -68,7 +68,7 @@
                         {
                             <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
                                 <span class="error-message--margin-bottom-1 nhsuk-error-message">
-                                    <span>@Html.ValidationMessageFor(x=>x.SupervisorAdminID)</span>
+                                    <span>@Html.ValidationMessageFor(x => x.SupervisorAdminID)</span>
                                 </span>
                             </div>
                         }
@@ -121,5 +121,5 @@
 {
     @section scripts {
     <script src="@Url.Content("~/js/LearningPortal/supervisorList.js")" asp-append-version="true"></script>
-}
+    }
 }

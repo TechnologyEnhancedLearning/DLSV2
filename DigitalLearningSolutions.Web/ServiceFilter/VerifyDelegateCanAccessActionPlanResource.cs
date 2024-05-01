@@ -27,11 +27,11 @@
 
             // Candidate Id will be non-null as Authorize(User.Only) attribute will always be executed first
             // because https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/filters?view=aspnetcore-3.1#filter-types-1
-            var delegateId = controller.User.GetCandidateIdKnownNotNull();
+            var delegateUserId = controller.User.GetUserIdKnownNotNull();
             var learningLogItemId = int.Parse(context.RouteData.Values["learningLogItemId"].ToString()!);
 
             var validationResult =
-                actionPlanService.VerifyDelegateCanAccessActionPlanResource(learningLogItemId, delegateId);
+                actionPlanService.VerifyDelegateCanAccessActionPlanResource(learningLogItemId, delegateUserId);
 
             if (!validationResult.HasValue)
             {

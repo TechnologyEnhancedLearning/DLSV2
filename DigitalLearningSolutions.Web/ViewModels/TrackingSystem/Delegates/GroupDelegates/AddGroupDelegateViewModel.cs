@@ -20,7 +20,8 @@
         ) : base(
             result,
             true,
-            availableFilters
+            availableFilters,
+            searchLabel: "Search"
         )
         {
             GroupId = groupId;

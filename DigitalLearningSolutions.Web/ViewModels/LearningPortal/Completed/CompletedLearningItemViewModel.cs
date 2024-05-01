@@ -10,10 +10,12 @@
             CompletedDate = item.Completed;
             EvaluatedDate = item.Evaluated;
             ArchivedDate = item.ArchivedDate;
+            RemovedDate = item.RemovedDate;
         }
 
         public DateTime CompletedDate { get; }
         public DateTime? EvaluatedDate { get; }
         public DateTime? ArchivedDate { get; }
+        public DateTime? RemovedDate { get; }
     }
 }

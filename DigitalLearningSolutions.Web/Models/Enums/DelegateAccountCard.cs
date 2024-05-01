@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Models.Enums
 {
-    enum DelegateAccountCard
+    public enum DelegateAccountCard
     {
         Active,
         Inactive,

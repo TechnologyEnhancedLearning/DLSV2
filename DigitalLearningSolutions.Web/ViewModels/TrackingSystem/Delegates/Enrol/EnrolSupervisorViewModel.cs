@@ -3,11 +3,12 @@ using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
 {
-    public class EnrolSupervisorViewModel
+    public class EnrolSupervisorViewModel : IValidatableObject
     {
         public EnrolSupervisorViewModel() { }
         public EnrolSupervisorViewModel(
@@ -48,7 +49,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
         public int DelegateUserId { get; set; }
         public string? DelegateName { get; set; }
 
-        public IEnumerable<SelectListItem> SupervisorList { get; set; }
+        public IEnumerable<SelectListItem>? SupervisorList { get; set; }
         public IEnumerable<SelfAssessmentSupervisorRole>? SupervisorRoleList { get; set; }
         public IEnumerable<RadiosListItemViewModel>? SupervisorRoleList1 { get; set; }
 
@@ -64,6 +65,16 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
             return SelectListHelper.MapOptionsToSelectListItems(
                 LearningItemIdNames, selected
            );
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            List<ValidationResult> errors = new List<ValidationResult>();
+            if (SelectedSupervisorRoleId.HasValue && !SelectedSupervisor.HasValue)
+            {
+                errors.Add(new ValidationResult("You must choose a supervisor in order to specify a supervisor role", new[] { nameof(SelectedSupervisor) }));
+            }
+            return errors;
         }
     }
 }

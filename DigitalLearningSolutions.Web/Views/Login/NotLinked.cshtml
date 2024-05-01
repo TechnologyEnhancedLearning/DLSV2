@@ -1,0 +1,21 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Login
+@model AccountInactiveViewModel
+@{
+  ViewData["Title"] = "Account not linked";
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+        <p class="nhsuk-body-l">
+            It looks like you still need to link your accounts. You might be seeing this because:
+            <ul>
+              <li>You've got a DLS and a Learning Hub account but you've not linked them. You'll need to login to DLS and link your accounts.</li>
+              <li>Or, you might not have a DLS account. You will need to <a asp-controller="Register" asp-action="Start">create a DLS account</a> and link your Learning Hub accout.</li>
+            </ul>
+         </p>
+        <a class="nhsuk-button" role="button" asp-controller="Home" asp-action="Welcome">
+          Return to home page
+        </a>
+    </div>
+</div>

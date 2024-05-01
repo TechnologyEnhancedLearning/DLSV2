@@ -10,6 +10,7 @@ using DigitalLearningSolutions.Data.Extensions;
 using DigitalLearningSolutions.Data.Models;
 using DigitalLearningSolutions.Data.Models.Email;
 using DigitalLearningSolutions.Data.Models.Register;
+using DigitalLearningSolutions.Data.Models.User;
 using DigitalLearningSolutions.Data.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -38,7 +39,9 @@ namespace DigitalLearningSolutions.Web.Services
         string RegisterDelegateByCentre(
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
-            bool registerJourneyContainsTermsAndConditions
+            bool registerJourneyContainsTermsAndConditions,
+            int adminId,
+            int? delegateGroupId
         );
 
         void RegisterCentreManager(
@@ -294,7 +297,9 @@ namespace DigitalLearningSolutions.Web.Services
         public string RegisterDelegateByCentre(
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
-            bool registerJourneyContainsTermsAndConditions
+            bool registerJourneyContainsTermsAndConditions,
+            int adminId,
+            int? delegateGroupId
         )
         {
             using var transaction = new TransactionScope();
@@ -312,6 +317,12 @@ namespace DigitalLearningSolutions.Web.Services
                 registerJourneyContainsTermsAndConditions,
                 true
             );
+
+            if (delegateGroupId != null)
+            {
+                //Add delegate to group
+                groupsService.AddDelegateToGroup((int)delegateGroupId, delegateId, adminId);
+            }
 
             notificationDataService.SubscribeDefaultNotifications(delegateId);
 

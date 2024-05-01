@@ -2,48 +2,134 @@
 @using NHSUKViewComponents.Web.ViewModels
 
 @model RadiosViewModel
+@{
+    int counter = 0;
 
-<div class="nhsuk-form-group">
+}
 
-  <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Label.RemoveWhitespace()-hint">
-    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-      <label class="nhsuk-fieldset__heading">
-        @Model.Label
-      </label>
-    </legend>
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
 
-    @if (Model.HintText != null)
-    {
-      <div class="nhsuk-hint" id="@Model.Label.RemoveWhitespace()-hint">
-        @Html.Raw(Model.HintText)
-      </div>
-    }
+    <fieldset class="nhsuk-fieldset" aria-describedby="@(!string.IsNullOrEmpty(Model.HintText) ? $"{Model.Label.RemoveWhitespace()}-hint" : string.Empty)">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+            @if (Model.IsPageHeading.GetValueOrDefault() == true)
+            {
+                <h1>
+                    @Model.Label
+                </h1>
+            }
+            else
+            {
+                @Model.Label
+            }
+        </legend>
 
-    <div class="nhsuk-radios" aria-required="@(Model.Required ? "true" : "false" )">
-      @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i)))
-      {
-        var radioId = $"{radio.Value}-{index}";
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input"
-               id="@radioId"
-               name="@Model.AspFor"
-               type="radio"
-               value="@radio.Value"
-               aria-describedby="@radio.Value-item-hint"
-               @(radio.Selected ? "checked" : string.Empty) />
-          <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
-            @radio.Label
-          </label>
-          @if (radio.HintText != null)
-          {
-            <div class="nhsuk-hint nhsuk-radios__hint" id="@radio.Value-item-hint">
-              @radio.HintText
+        @if (Model.HintText != null)
+        {
+            <div class="nhsuk-hint" id="@Model.Label.RemoveWhitespace()-hint">
+                @Html.Raw(Model.HintText)
             </div>
-          }
-        </div>
-      }
+        }
 
-    </div>
-  </fieldset>
+        @if (Model.HasError)
+        {
+            <div id="@Model.AspFor-error" class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+                @foreach (var errorMessage in Model.ErrorMessages)
+                {
+                    <span class="error-message--margin-bottom-1 nhsuk-error-message">
+                        <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+                    </span>
+                }
+            </div>
+        }
+
+        @if (Model.Required && !Model.HasError)
+        {
+            <div data-valmsg-for="@Model.AspFor" data-valmsg-replace="true" class="error-message--margin-bottom-1 nhsuk-error-message field-validation-valid nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+            </div>
+        }
+
+        <div class="nhsuk-radios">
+            @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i)))
+            {
+                counter = index;
+                var radioId = $"{radio.Value}-{index}";
+                if (!string.IsNullOrWhiteSpace(Model.Class))
+                {
+                    <div class="@Model.Class">
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input"
+                                   id="@radioId"
+                                   name="@Model.AspFor"
+                                   type="radio"
+                                   value="@radio.Value"
+                                   aria-describedby="@(!string.IsNullOrEmpty(radio.HintText) ? $"{radio.Value}-item-hint" : string.Empty)"
+                                   data-val-required="@(Model.Required ? Model.RequiredClientSideErrorMessage : "")"
+                                   data-val="@(Model.Required ? "true" : "false")"
+                            @(radio.Selected ? "checked" : string.Empty) />
+                            <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
+                                @radio.Label
+                            </label>
+                            @if (radio.HintText != null)
+                            {
+                                <div class="nhsuk-hint nhsuk-radios__hint" id="@radio.Value-item-hint">
+                                    @radio.HintText
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input"
+                               id="@radioId"
+                               name="@Model.AspFor"
+                               type="radio"
+                               value="@radio.Value"
+                               aria-describedby="@(!string.IsNullOrEmpty(radio.HintText) ? $"{radio.Value}-item-hint" : string.Empty)"
+                               data-val-required="@(Model.Required ? Model.RequiredClientSideErrorMessage : "")"
+                               data-val="@(Model.Required ? "true" : "false")"
+                        @(radio.Selected ? "checked" : string.Empty) />
+                        <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
+                            @radio.Label
+                        </label>
+                        @if (radio.HintText != null)
+                        {
+                            <div class="nhsuk-hint nhsuk-radios__hint" id="@radio.Value-item-hint">
+                                @radio.HintText
+                            </div>
+                        }
+                    </div>
+                }
+
+            }
+            @if (Model.OptionalRadio != null)
+            {
+                <div class="nhsuk-radios__divider nhsuk-u-padding-left-2">or</div>
+                var radioId = $"{Model.OptionalRadio.Value}-{++counter}";
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input"
+                           id="@radioId"
+                           name="@Model.AspFor"
+                           type="radio"
+                           value="@Model.OptionalRadio.Value"
+                           aria-describedby="@(!string.IsNullOrEmpty(Model.OptionalRadio.HintText) ? $"{Model.OptionalRadio.Value}-item-hint" : string.Empty)"
+                           data-val-required="@(Model.Required ? Model.RequiredClientSideErrorMessage : "")"
+                           data-val="@(Model.Required ? "true" : "false")"
+                    @(Model.OptionalRadio.Selected ? "checked" : string.Empty) />
+                    <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
+                        @Model.OptionalRadio.Label
+                    </label>
+                    @if (Model.OptionalRadio.HintText != null)
+                    {
+                        <div class="nhsuk-hint nhsuk-radios__hint" id="@Model.OptionalRadio.Value-item-hint">
+                            @Model.OptionalRadio.HintText
+                        </div>
+                    }
+                </div>
+            }
+
+        </div>
+    </fieldset>
 
 </div>

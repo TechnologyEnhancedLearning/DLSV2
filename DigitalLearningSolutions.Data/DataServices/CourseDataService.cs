@@ -317,7 +317,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             FROM Customisations cu
             INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
             INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
-            INNER JOIN aspProgress AS apr ON pr.ProgressID = apr.ProgressID
+            LEFT OUTER JOIN aspProgress AS apr ON pr.ProgressID = apr.ProgressID
             LEFT OUTER JOIN AdminAccounts AS aaSupervisor ON aaSupervisor.ID = pr.SupervisorAdminId
             LEFT OUTER JOIN Users AS uSupervisor ON uSupervisor.ID = aaSupervisor.UserID
             LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = pr.EnrolledByAdminID
@@ -484,7 +484,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         SupervisorEmail,
                         AddedByDelegate)
                     OUTPUT INSERTED.Id
-                    SELECT
+                    SELECT DISTINCT
                         @supervisorId,
                         COALESCE(UCD.Email, U.PrimaryEmail),
                         DA.UserID,
@@ -1923,8 +1923,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         sa.Name AS Name,
                         cc.CategoryName AS Category,
                         CASE 
-                          WHEN sa.SupervisorSelfAssessmentReview = 1 OR sa.SupervisorResultsReview = 1 THEN 1
-                          ELSE 0
+                          WHEN sa.SupervisorSelfAssessmentReview = 0 AND sa.SupervisorResultsReview = 0 THEN 0
+                          ELSE 1
                         END AS Supervised,
                         (SELECT COUNT(can.ID)
                         FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
