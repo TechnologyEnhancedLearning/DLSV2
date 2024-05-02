@@ -15,7 +15,7 @@
     {
         IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
 
-        void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate);
+        void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate, DateTime? submittedTime);
 
         int CreateNewDelegateProgress(
             int delegateId,
@@ -101,12 +101,7 @@
             bool status,
             int progressId
         );
-        void UpdateProgressSupervisorSubmittedTimeAndCompleteByDate(
-            int progressId,
-            int supervisorAdminId,
-            DateTime? completeByDate,
-            DateTime? submittedTime
-        );
+       
     }
 
     public class ProgressDataService : IProgressDataService
@@ -147,21 +142,6 @@
         }
 
         public void UpdateProgressSupervisorAndCompleteByDate(
-            int progressId,
-            int supervisorAdminId,
-            DateTime? completeByDate
-        )
-        {
-            connection.Execute(
-                @"UPDATE Progress SET
-                        SupervisorAdminID = @supervisorAdminId,
-                        CompleteByDate = @completeByDate
-                    WHERE ProgressID = @progressId",
-                new { progressId, supervisorAdminId, completeByDate }
-            );
-        }
-
-        public void UpdateProgressSupervisorSubmittedTimeAndCompleteByDate(
             int progressId,
             int supervisorAdminId,
             DateTime? completeByDate,
