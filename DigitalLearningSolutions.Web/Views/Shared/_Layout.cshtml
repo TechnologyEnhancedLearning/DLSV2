@@ -21,6 +21,7 @@
     }
     var headerExtension = (string)ViewData[LayoutViewDataKeys.Application];
     var shouldDisplayHelpMenuItem = dlsSubApplication?.DisplayHelpMenuItem ?? headerExtension != DlsSubApplication.TrackingSystem.HeaderExtension;
+    var userResearchUrl = Configuration["UserResearchUrl"];
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -155,7 +156,7 @@
                 <div class="visual-separator @visualSeparatorNoNavBar"></div>
 
                 <feature name="@(FeatureFlags.UserFeedbackBar)">
-                    <partial name="_UserFeedbackBarPartial" />
+                    <partial name="_UserFeedbackBarPartial" model=@(userResearchUrl) />
                 </feature>
             </div>
 

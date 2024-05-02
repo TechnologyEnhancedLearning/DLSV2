@@ -11,21 +11,26 @@
     using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using Microsoft.Extensions.Configuration;
+    using DigitalLearningSolutions.Data.Extensions;
 
     public class UserFeedbackController : Controller
     {
         private readonly IUserFeedbackDataService _userFeedbackDataService;
         private readonly IMultiPageFormService _multiPageFormService;
         private UserFeedbackViewModel _userFeedbackViewModel;
+        private readonly IConfiguration config;
 
         public UserFeedbackController(
             IUserFeedbackDataService userFeedbackDataService,
             IMultiPageFormService multiPageFormService
+            , IConfiguration config
         )
         {
             this._userFeedbackDataService = userFeedbackDataService;
             this._multiPageFormService = multiPageFormService;
-            this._userFeedbackViewModel = new UserFeedbackViewModel();
+            this._userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            this.config = config; 
         }
 
         [Route("/Index")]
@@ -35,7 +40,7 @@
 
             _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
             
-            _userFeedbackViewModel = new()
+            _userFeedbackViewModel = new(config.GetUserResearchUrl())
             {
                 UserId = User.GetUserId(),
                 UserRoles = DeriveUserRoles(),
@@ -277,7 +282,8 @@
         public IActionResult UserFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
-
+            var userResearchUrl = config.GetUserResearchUrl();
+            userFeedbackViewModel.UserResearchUrl = userResearchUrl;
             return View("UserFeedbackComplete", userFeedbackViewModel);
         }
 
@@ -302,7 +308,8 @@
         [ResponseCache(CacheProfileName = "Never")]
         public IActionResult GuestFeedbackComplete()
         {
-            var userFeedbackModel = new UserFeedbackViewModel();
+            var userResearchUrl = config.GetUserResearchUrl();
+            var userFeedbackModel = new UserFeedbackViewModel(userResearchUrl);
 
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
