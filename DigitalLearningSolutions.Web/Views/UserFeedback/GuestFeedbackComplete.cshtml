@@ -9,10 +9,25 @@
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 
-<p><a href="@Model.UserResearchUrl" target="_blank">Join our user research panel</a></p>
 
-<h1>Thank you for your feedback</h1>
 
-<a class="nhsuk-button" role="button" asp-controller="Home" asp-action="Index">
-  Back to Welcome page
-</a>
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h2 class="nhsuk-caption-l">Join our user research panel</h2>
+        <h1 id="page-heading" class="nhsuk-heading-xl">Thank you for your feedback</h1>
+    </div>
+    <div class="nhsuk-grid-column-two-thirds">
+
+
+        <h3>Help us improve our website</h3>
+
+        <p>Would you like to <a href="@Model.UserResearchUrl" target="_blank">join our research panel</a> and help us improve the experience of our website?</p>
+
+        <p>We will not use your details for any purpose other than to get feedback about our services to help us make improvements in the future. You can opt out at any time.</p>
+
+        <a class="nhsuk-button" role="button" asp-controller="Home" asp-action="Index">
+            Back to Welcome page
+        </a>
+
+    </div>
+</div>
