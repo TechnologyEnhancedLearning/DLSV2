@@ -29,7 +29,7 @@
         {
             this._userFeedbackDataService = userFeedbackDataService;
             this._multiPageFormService = multiPageFormService;
-            this._userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            this._userFeedbackViewModel = new UserFeedbackViewModel();
             this.config = config; 
         }
 
@@ -40,7 +40,7 @@
 
             _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
             
-            _userFeedbackViewModel = new(config.GetUserResearchUrl())
+            _userFeedbackViewModel = new()
             {
                 UserId = User.GetUserId(),
                 UserRoles = DeriveUserRoles(),

@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackTaskAchieved_ShouldReturnCorrectView()
         {
              // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackTaskAchieved(userFeedbackViewModel) as ViewResult;
@@ -61,7 +61,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackTaskAttempted_ShouldReturnCorrectView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackTaskAttempted(userFeedbackViewModel) as ViewResult;
@@ -76,7 +76,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackTaskDifficulty_ShouldReturnCorrectView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackTaskDifficulty(userFeedbackViewModel) as ViewResult;
@@ -91,7 +91,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackComplete_ShouldReturnCorrectView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackComplete(userFeedbackViewModel) as ViewResult;
@@ -106,7 +106,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void GuestFeedbackStart_ShouldReturnCorrectView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.GuestFeedbackStart(userFeedbackViewModel) as ViewResult;
@@ -161,7 +161,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackTaskAchievedSet_ShouldRedirectToUserFeedbackTaskAttempted()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackTaskAchievedSet(userFeedbackViewModel) as RedirectToActionResult;
@@ -175,7 +175,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackTaskAttemptedSet_ShouldRedirectToUserFeedbackTaskDifficulty()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackTaskAttemptedSet(userFeedbackViewModel) as RedirectToActionResult;
@@ -189,7 +189,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackTaskDifficultySet_ShouldRedirectToUserFeedbackSave()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackTaskDifficultySet(userFeedbackViewModel) as RedirectToActionResult;
@@ -203,7 +203,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackSave_ShouldCallSaveUserFeedbackAndRedirectToUserFeedbackComplete()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
             A.CallTo(() => _multiPageFormService.GetMultiPageFormData<UserFeedbackTempData>(
                     MultiPageFormDataFeature.AddUserFeedback, _tempData))
                 .Returns(new UserFeedbackTempData());
@@ -222,7 +222,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void GuestFeedbackComplete_ShouldCallSaveUserFeedbackAndRenderGuestFeedbackCompleteView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
             userFeedbackViewModel.FeedbackText = FeedbackText;
 
             // When
@@ -239,7 +239,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void GuestFeedbackComplete_ShouldNotCallSaveUserFeedbackIfNoFeedbackProvided()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as RedirectToActionResult;
@@ -269,7 +269,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void StartUserFeedbackSession_ShouldSetTempDataAndRedirectToUserFeedbackTaskAchieved()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
             
             // When
             var result = _userFeedbackController.StartUserFeedbackSession(userFeedbackViewModel) as RedirectToActionResult;
@@ -285,7 +285,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackTaskAchieved_ShouldRenderUserFeedbackTaskAchievedView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackTaskAchieved(userFeedbackViewModel) as ViewResult;
@@ -299,7 +299,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackTaskAttempted_ShouldRenderUserFeedbackTaskAttemptedView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackTaskAttempted(userFeedbackViewModel) as ViewResult;
@@ -313,7 +313,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackTaskDifficulty_ShouldRenderUserFeedbackTaskDifficultyView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackTaskDifficulty(userFeedbackViewModel) as ViewResult;
@@ -327,7 +327,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void GuestFeedbackStart_ShouldRenderGuestFeedbackStartView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.GuestFeedbackStart(userFeedbackViewModel) as ViewResult;
@@ -341,7 +341,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void UserFeedbackComplete_ShouldRenderUserFeedbackCompleteView()
         {
             // Given
-            var userFeedbackViewModel = new UserFeedbackViewModel(config.GetUserResearchUrl());
+            var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When
             var result = _userFeedbackController.UserFeedbackComplete(userFeedbackViewModel) as ViewResult;
