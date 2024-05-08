@@ -6,17 +6,18 @@
         public AddWhoToGroupViewModel(
             string groupName,
             bool includeUpdatedDelegates,
+            bool includeSkippedDelegates,
             int toUpdateActiveCount,
             int toRegisterActiveCount
             )
         {
             GroupName = groupName;
-            IncludeUpdatedDelegates = includeUpdatedDelegates;
+            AddWhoToGroupOption = (includeUpdatedDelegates&&includeSkippedDelegates? 3 : (includeUpdatedDelegates ? 2 : 1));
             ToUpdateActiveCount = toUpdateActiveCount;
             ToRegisterActiveCount = toRegisterActiveCount;
         }
         public string? GroupName { get; set; }
-        public bool IncludeUpdatedDelegates { get; set; }
+        public int AddWhoToGroupOption { get; set; }
         public int ToUpdateActiveCount { get; set; }
         public int ToRegisterActiveCount { get; set; }
     }

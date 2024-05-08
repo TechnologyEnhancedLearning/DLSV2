@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Web.Services
     public interface IDelegateUploadFileService
     {
         public IXLTable OpenDelegatesTable(XLWorkbook workbook);
-        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate, int lastRowProcessed, int maxRowsToProcess, bool includeUpdatedDelegatesInGroup, int adminId, int? delegateGroupId);
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate, int lastRowProcessed, int maxRowsToProcess, bool includeUpdatedDelegatesInGroup, bool includeSkippedDelegatesInGroup, int adminId, int? delegateGroupId);
         public BulkUploadResult PreProcessDelegatesFile(IXLTable table);
     }
 
@@ -66,9 +66,9 @@ namespace DigitalLearningSolutions.Web.Services
             return PreProcessDelegatesTable(table);
         }
 
-        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate, int lastRowProcessed, int maxRowsToProcess, bool includeUpdatedDelegatesInGroup, int adminId, int? delegateGroupId)
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime welcomeEmailDate, int lastRowProcessed, int maxRowsToProcess, bool includeUpdatedDelegatesInGroup, bool includeSkippedDelegatesInGroup, int adminId, int? delegateGroupId)
         {
-            return ProcessDelegatesTable(table, centreId, welcomeEmailDate, lastRowProcessed, maxRowsToProcess, includeUpdatedDelegatesInGroup, adminId, delegateGroupId);
+            return ProcessDelegatesTable(table, centreId, welcomeEmailDate, lastRowProcessed, maxRowsToProcess, includeUpdatedDelegatesInGroup, includeSkippedDelegatesInGroup, adminId, delegateGroupId);
         }
 
         public IXLTable OpenDelegatesTable(XLWorkbook workbook)
@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             return new BulkUploadResult(delegateRows);
         }
-        internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime welcomeEmailDate, int lastRowProcessed, int maxRowsToProcess, bool includeUpdatedDelegatesInGroup, int adminId, int? delegateGroupId)
+        internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime welcomeEmailDate, int lastRowProcessed, int maxRowsToProcess, bool includeUpdatedDelegatesInGroup, bool includeSkippedDelegatesInGroup, int adminId, int? delegateGroupId)
         {
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
             var rowCount = table.Rows().Count();
@@ -139,7 +139,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             foreach (var delegateRow in delegateRows)
             {
-                ProcessDelegateRow(centreId, welcomeEmailDate, delegateRow, includeUpdatedDelegatesInGroup, adminId, delegateGroupId);
+                ProcessDelegateRow(centreId, welcomeEmailDate, delegateRow, includeUpdatedDelegatesInGroup, includeSkippedDelegatesInGroup, adminId, delegateGroupId);
             }
 
             return new BulkUploadResult(delegateRows);
@@ -169,6 +169,7 @@ namespace DigitalLearningSolutions.Web.Services
             DateTime welcomeEmailDate,
             DelegateTableRow delegateRow,
             bool includeUpdatedDelegatesInGroup,
+            bool includeSkippedDelegatesInGroup,
             int adminId,
             int? delegateGroupId
         )
@@ -195,7 +196,7 @@ namespace DigitalLearningSolutions.Web.Services
                 if (delegateRow.MatchesDelegateEntity(delegateEntity))
                 {
                     delegateRow.RowStatus = RowStatus.Skipped;
-                    if (delegateRow.Error == null && (bool)delegateRow.Active && includeUpdatedDelegatesInGroup && delegateGroupId != null)
+                    if (delegateRow.Error == null && (bool)delegateRow.Active && includeSkippedDelegatesInGroup && delegateGroupId != null)
                     {
                         //Add delegate to group
                         groupsService.AddDelegateToGroup((int)delegateGroupId, delegateEntity.DelegateAccount.Id, adminId);
