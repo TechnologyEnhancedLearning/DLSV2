@@ -258,7 +258,8 @@
                     "Index",
                     "Home");
             }
-            return new ChallengeResult(new AuthenticationProperties() { RedirectUri = "/" });
+            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme,
+              new AuthenticationProperties() { RedirectUri = "/" });
         }
 
         public IActionResult AccountLocked()

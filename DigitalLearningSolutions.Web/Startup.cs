@@ -220,7 +220,7 @@ namespace DigitalLearningSolutions.Web
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = "Identity.Application";
-                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
                 }
             )
             .AddCookie(
