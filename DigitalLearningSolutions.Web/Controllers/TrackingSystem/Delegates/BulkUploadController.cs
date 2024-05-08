@@ -95,16 +95,24 @@
             {
                 return View("Index", model);
             }
-            var workbook = new XLWorkbook(model.DelegatesFile.OpenReadStream());
-            if (!workbook.Worksheets.Contains(DelegateDownloadFileService.DelegatesSheetName))
+            try
             {
-                ModelState.AddModelError("MaxBulkUploadRows", CommonValidationErrorMessages.InvalidBulkUploadExcelFile);
-                return View("StartUpload", model);
-            }
-            var delegateFileName = FileHelper.UploadFile(webHostEnvironment, model.DelegatesFile);
-            setupBulkUploadData(centreId, adminUserID, delegateFileName);
+                var workbook = new XLWorkbook(model.DelegatesFile.OpenReadStream());
+                if (!workbook.Worksheets.Contains(DelegateDownloadFileService.DelegatesSheetName))
+                {
+                    ModelState.AddModelError("MaxBulkUploadRows", CommonValidationErrorMessages.InvalidBulkUploadExcelFile);
+                    return View("StartUpload", model);
+                }
+                var delegateFileName = FileHelper.UploadFile(webHostEnvironment, model.DelegatesFile);
+                setupBulkUploadData(centreId, adminUserID, delegateFileName);
 
-            return RedirectToAction("UploadComplete");
+                return RedirectToAction("UploadComplete");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("DelegatesFile", "The Excel file has at least one cell containing an invalid hyperlink or email address.");
+                return View("Index", model);
+            }
         }
 
         [Route("UploadComplete")]
@@ -357,7 +365,7 @@
             var model = new ProcessBulkDelegatesViewModel(
                 stepNumber: step,
                 totalSteps: totalSteps,
-                rowsProcessed: data.LastRowProcessed-1, //Adjusted because last row processed includes header row
+                rowsProcessed: data.LastRowProcessed - 1, //Adjusted because last row processed includes header row
                 totalRows: data.ToProcessCount,
                 maxRowsPerStep: data.MaxRowsToProcess,
                 delegatesRegistered: data.SubtotalDelegatesRegistered,
