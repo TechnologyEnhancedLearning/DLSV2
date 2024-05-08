@@ -16,6 +16,7 @@
         DashboardData? GetDashboardDataForAdminId(int adminId);
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId);
+        SupervisorDelegate GetSupervisorDelegate(int adminId, int delegateUserId);
         int? ValidateDelegate(int centreId, string delegateEmail);
         IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
         DelegateSelfAssessment? GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId);
@@ -55,6 +56,7 @@
         SupervisorDelegate GetSupervisorDelegateById(int supervisorDelegateId);
         void RemoveCandidateAssessmentSupervisorVerification(int id);
         bool RemoveDelegateSelfAssessmentsupervisor(int candidateAssessmentId, int supervisorDelegateId);
+        void UpdateCandidateAssessmentNonReportable(int candidateAssessmentId);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -233,7 +235,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 	                        ON ucd.UserID = u.ID
                             AND ucd.CentreID = da.CentreID
                             WHERE (ucd.Email = @delegateEmail OR u.PrimaryEmail = @delegateEmail)
-                            AND u.Active = 1 
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
 
@@ -256,7 +257,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 
             if (existingId > 0)
             {
-                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId WHERE ID = @existingId", new { delegateUserId, existingId });
+                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId, 
+                                                                DelegateEmail = @delegateEmail WHERE ID = @existingId", new { delegateUserId, delegateEmail, existingId });
                 return existingId;
             }
             else
@@ -343,6 +345,18 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 supervisorDelegateDetail.CandidateEmail = delegateDetails.CandidateEmail;
                 supervisorDelegateDetail.CandidateNumber = delegateDetails.CandidateNumber;
             }
+
+            return supervisorDelegateDetail!;
+        }
+
+        public SupervisorDelegate GetSupervisorDelegate(int adminId, int delegateUserId)
+        {
+            var supervisorDelegateDetail = connection.Query<SupervisorDelegate>(
+                $@"SELECT ID,SupervisorAdminID,DelegateEmail,Added,NotificationSent,Removed,
+                    SupervisorEmail,AddedByDelegate,InviteHash,DelegateUserID
+                    FROM SupervisorDelegates
+                    WHERE DelegateUserID = @delegateUserId AND SupervisorAdminID = @adminId ", new { adminId, delegateUserId }
+            ).FirstOrDefault();
 
             return supervisorDelegateDetail!;
         }
@@ -746,9 +760,10 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                                 EnrolmentMethodId = 2,
                                 EnrolledByAdminId = @adminId,
                                 CentreID = @centreId,
-                                RemovedDate = NULL
+                                RemovedDate = NULL,
+                                NonReportable = CASE WHEN NonReportable = 1 THEN NonReportable ELSE @isLoggedInUser END
                             WHERE ID = @existingCandidateAssessmentId",
-                    new { delegateUserId, selfAssessmentId, adminId, centreId, existingCandidateAssessmentId });
+                    new { delegateUserId, selfAssessmentId, adminId, centreId, existingCandidateAssessmentId, isLoggedInUser });
 
                 if (numberOfAffectedRows < 1)
                 {
@@ -1172,6 +1187,18 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
                 @"DELETE 
 	                FROM CandidateAssessmentSupervisorVerifications WHERE
                     ID = @id ", new { id });
+        }
+
+        public void UpdateCandidateAssessmentNonReportable(int candidateAssessmentId)
+        {
+            connection.Execute(
+                @"UPDATE CandidateAssessments
+                    SET NonReportable = 1
+                    FROM CandidateAssessments AS CA
+                    INNER JOIN CandidateAssessmentSupervisors AS CAS ON CA.ID = cas.CandidateAssessmentID AND CAS.Removed IS NULL
+                    INNER JOIN SupervisorDelegates AS SD ON SD.ID = CAS.SupervisorDelegateId
+                    INNER JOIN AdminAccounts AS AA ON AA.ID = SD.SupervisorAdminID AND AA.UserID = SD.DelegateUserID
+                        WHERE CA.ID = @candidateAssessmentId AND NonReportable = 0 ", new { candidateAssessmentId });
         }
     }
 }

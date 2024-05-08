@@ -20,23 +20,25 @@
                 <partial name="_CentreCourseCardAdminFields" model="@Model" />
             }
 
-            <p class="nhsuk-u-margin-bottom-0">Want to share the course?</p>
-            <a href="@Model.EmailHref">Generate email</a>
-            <button class="copy-course-button js-only-block button-as-link nhsuk-u-padding-0 nhsuk-link--no-visited-state"
-                    name="copy-course-link"
-                    id="copy-course-@Model.CustomisationId"
-                    role="link">
-                Copy course link
-            </button>
-            <p class="non-js-only">To share this course with others, click Launch Course and copy the URL to the clipboard.</p>
-
+            @if (Model.Active)
+            {
+                <p class="nhsuk-u-margin-bottom-0">Want to share the course?</p>
+                <a href="@Model.EmailHref">Generate email</a>
+                <button class="copy-course-button js-only-block button-as-link nhsuk-u-padding-0 nhsuk-link--no-visited-state"
+                        name="copy-course-link"
+                        id="copy-course-@Model.CustomisationId"
+                        role="link">
+                    Copy course link
+                </button>
+                <p class="non-js-only">To share this course with others, click Launch Course and copy the URL to the clipboard.</p>
+            }
         </div>
     </details>
 
-    @if (Model.Active && !Model.Archived)
-    {
-        <div class="nhsuk-grid-row">
-            <div class="nhsuk-grid-column-full nhsuk-u-margin-left-4">
+    <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full nhsuk-u-margin-left-4">
+            @if (Model.Active && !Model.Archived)
+            {
                 <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
                    role="button"
                    id="launch-course-@Model.CustomisationId"
@@ -45,6 +47,9 @@
                    asp-route-customisationId="@Model.CustomisationId">
                     Launch course
                 </a>
+            }
+            @if (!Model.Archived)
+            {
                 <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
                    role="button"
                    asp-controller="ManageCourse"
@@ -52,7 +57,7 @@
                    asp-route-customisationId="@Model.CustomisationId">
                     Manage course
                 </a>
-            </div>
+            }
         </div>
-    }
+    </div>
 </div>

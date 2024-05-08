@@ -134,20 +134,20 @@
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
         public SelfAssessmentDelegatesData GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff);
-        public int GetSelfAssessmentActivityDelegatesExportCount(string searchString,  string sortBy, string sortDirection,
+        public int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
         public string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId);
         RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
-       void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
-       public int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
-       public bool CheckForSameCentre(int centreId, int candidateAssessmentsId);        
-       public int? GetDelegateAccountId(int centreId, int delegateUserId);
+        void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
+        public int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
+        public bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
+        public int? GetDelegateAccountId(int centreId, int delegateUserId);
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
         IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID);
         CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
         ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
-        int? GetRoleCount(int CandidateId);
+        bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -526,21 +526,20 @@
         }
         public CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
         {
-          return selfAssessmentDataService.GetCompetencySelfAssessmentCertificate(candidateAssessmentID);
+            return selfAssessmentDataService.GetCompetencySelfAssessmentCertificate(candidateAssessmentID);
         }
         public IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID)
         {
-             return selfAssessmentDataService.GetAccessor(selfAssessmentId, delegateUserID);
+            return selfAssessmentDataService.GetAccessor(selfAssessmentId, delegateUserID);
         }
         public ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
         {
-           return selfAssessmentDataService.GetActivitySummaryCompetencySelfAssesment(CandidateAssessmentSupervisorVerificationsId);
+            return selfAssessmentDataService.GetActivitySummaryCompetencySelfAssesment(CandidateAssessmentSupervisorVerificationsId);
 
         }
-        public int? GetRoleCount(int CandidateId)
+        public bool IsUnsupervisedSelfAssessment(int selfAssessmentId)
         {
-            return selfAssessmentDataService.GetRoleCount(CandidateId);
-
+            return selfAssessmentDataService.IsUnsupervisedSelfAssessment(selfAssessmentId);
         }
     }
 }

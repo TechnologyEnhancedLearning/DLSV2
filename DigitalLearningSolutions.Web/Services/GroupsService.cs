@@ -18,8 +18,8 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using MimeKit;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
-    using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using ConfigurationExtensions = Data.Extensions.ConfigurationExtensions;
+    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public interface IGroupsService
     {
@@ -88,6 +88,7 @@
 
         IEnumerable<GroupDelegateAdmin> GetAdminsForCentreGroups(int? centreId);
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
+        IEnumerable<Group> GetGroupsForRegistrationResponse(int centreId, string? answer1, string? answer2, string? answer3, string? jobGroup, string? answer4, string? answer5, string? answer6);
 
         string? GetGroupName(int groupId, int centreId);
 
@@ -136,6 +137,8 @@
         );
 
         bool IsDelegateGroupExist(string groupLabel, int centreId);
+        public IEnumerable<SelectListItem> GetUnlinkedGroupsSelectListForCentre(int centreId, int? selectedItemId);
+        IEnumerable<(int, string)> GetActiveGroups(int centreId);
     }
 
     public class GroupsService : IGroupsService
@@ -501,6 +504,16 @@
         public IEnumerable<Group> GetGroupsForCentre(int centreId)
         {
             return groupsDataService.GetGroupsForCentre(centreId);
+        }
+
+        public IEnumerable<SelectListItem> GetUnlinkedGroupsSelectListForCentre(int centreId, int? selectedItemId)
+        {
+            var groups = GetGroupsForCentre(centreId)
+                    .Where(item => item.LinkedToField == 0)
+                    .Select(item => (id: item.GroupId, value: item.GroupLabel))
+                    .OrderBy(item => item.value);
+            var groupSelect = SelectListHelper.MapOptionsToSelectListItems(groups, selectedItemId);
+            return groupSelect;
         }
 
         public (IEnumerable<Group>, int) GetGroupsForCentre(
@@ -899,6 +912,15 @@
         public bool IsDelegateGroupExist(string groupLabel, int centreId)
         {
             return groupsDataService.IsDelegateGroupExist(groupLabel, centreId);
+        }
+        public IEnumerable<(int, string)> GetActiveGroups(int centreId)
+        {
+            return groupsDataService.GetActiveGroups(centreId);
+        }
+
+        public IEnumerable<Group> GetGroupsForRegistrationResponse(int centreId, string? answer1, string? answer2, string? answer3, string? jobGroup, string? answer4, string? answer5, string? answer6)
+        {
+            return groupsDataService.GetGroupsForRegistrationResponse(centreId, answer1, answer2, answer3, jobGroup, answer4, answer5, answer6);
         }
     }
 }

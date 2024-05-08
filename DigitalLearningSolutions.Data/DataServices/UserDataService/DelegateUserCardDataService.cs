@@ -10,6 +10,35 @@
 
     public partial class UserDataService
     {
+        private const string DelegateUserCardBlankRowSelectQuery =
+            @"SELECT
+                0 AS ID,
+                NULL AS CandidateNumber,
+                '' AS CentreName,
+                0 AS CentreID,
+                NULL AS DateRegistered,
+                NULL AS RegistrationConfirmationHash,
+                1 AS CentreActive,
+                '' AS EmailAddress,
+                '' AS FirstName,
+                '' AS LastName,
+                NULL AS Password,
+                NULL AS EmailVerified,
+                1 As Approved,
+                '' AS Answer1,
+                '' AS Answer2,
+                '' AS Answer3,
+                '' AS Answer4,
+                '' AS Answer5,
+                '' AS Answer6,
+                NULL as JobGroupId,
+                '' AS JobGroupName,
+                0 AS SelfReg,
+                0 AS ExternalReg,
+                1 AS Active,
+                0 AS HasBeenPromptedForPrn,
+                '' AS ProfessionalRegistrationNumber,
+                NULL AS AdminID";
         private const string DelegateUserCardSelectQuery =
             @"SELECT
                 da.ID,
@@ -172,11 +201,20 @@
 
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId)
         {
-            return connection.Query<DelegateUserCard>(
+            if (centreId > 0)
+            {
+                return connection.Query<DelegateUserCard>(
                 @$"{DelegateUserCardSelectQuery}
                         WHERE da.CentreId = @centreId AND da.Approved = 1",
             new { centreId }
             ).ToList();
+            }
+            else
+            {
+                return connection.Query<DelegateUserCard>(
+                                @$"{DelegateUserCardBlankRowSelectQuery}"
+                            ).ToList();
+            }
         }
         public int GetCountDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
                                      string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
@@ -187,7 +225,7 @@
                 searchString = searchString.Trim();
             }
 
-            
+
             var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches FROM ( " + DelegateUserExportSelectQuery + " ) D " + DelegatewhereConditon;
 
             int ResultCount = connection.ExecuteScalar<int>(
@@ -271,7 +309,7 @@
         }
         public (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
-                                    string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
+                                    int groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
         {
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -298,23 +336,28 @@
                             AND ((@answer4 = 'Any') OR (@answer4 = 'No option selected' AND (Answer4 IS NULL)) OR (Answer4 = @answer4))
                             AND ((@answer5 = 'Any') OR (@answer5 = 'No option selected' AND (Answer5 IS NULL)) OR (Answer5 = @answer5))
                             AND ((@answer6 = 'Any') OR (@answer6 = 'No option selected' AND (Answer6 IS NULL)) OR (Answer6 = @answer6))
-
                             AND Approved = 1
-
                             AND EmailAddress LIKE '%_@_%.__%'";
 
+            var groupDelegatesForCentre = $@"SELECT DelegateID FROM GroupDelegates WHERE GroupID in (
+											SELECT GroupID FROM Groups WHERE CentreID = @centreId AND RemovedDate IS NULL
+											)";
+            if (groupId == 0)
+                whereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " )";
+            else
+                whereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " AND GroupID = @groupId )";
+
             string orderBy;
-            string sortOrder;
 
             if (sortDirection == "Ascending")
-                sortOrder = " ASC ";
+                sortDirection = " ASC ";
             else
-                sortOrder = " DESC ";
+                sortDirection = " DESC ";
 
             if (sortBy == "SearchableName")
-                orderBy = " ORDER BY LTRIM(LastName) " + sortOrder +", LTRIM(FirstName) ";
+                orderBy = " ORDER BY LTRIM(LastName) " + sortDirection + ", LTRIM(FirstName) ";
             else
-                orderBy = " ORDER BY DateRegistered " + sortOrder;            
+                orderBy = " ORDER BY DateRegistered " + sortDirection;
 
             orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 
@@ -322,8 +365,29 @@
 
             IEnumerable<DelegateUserCard> delegateUserCard = connection.Query<DelegateUserCard>(
                 mainSql,
-                new  {searchString, offSet, itemsPerPage, sortBy, sortDirection, centreId, isActive, isPasswordSet, isAdmin, isUnclaimed,
-                    isEmailVerified, registrationType, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6 },
+                new
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    centreId,
+                    isActive,
+                    isPasswordSet,
+                    isAdmin,
+                    isUnclaimed,
+                    isEmailVerified,
+                    registrationType,
+                    jobGroupId,
+                    groupId,
+                    answer1,
+                    answer2,
+                    answer3,
+                    answer4,
+                    answer5,
+                    answer6
+                },
                 commandTimeout: 3000
             );
 
@@ -332,8 +396,27 @@
             int ResultCount = connection.ExecuteScalar<int>(
                 delegateCountQuery,
                 new
-                { searchString, offSet, itemsPerPage, sortBy, sortDirection, centreId, isActive, isPasswordSet, isAdmin, isUnclaimed,
-                    isEmailVerified, registrationType, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6,
+                {
+                    searchString,
+                    offSet,
+                    itemsPerPage,
+                    sortBy,
+                    sortDirection,
+                    centreId,
+                    isActive,
+                    isPasswordSet,
+                    isAdmin,
+                    isUnclaimed,
+                    isEmailVerified,
+                    registrationType,
+                    jobGroupId,
+                    groupId,
+                    answer1,
+                    answer2,
+                    answer3,
+                    answer4,
+                    answer5,
+                    answer6,
                 },
                 commandTimeout: 3000
             );

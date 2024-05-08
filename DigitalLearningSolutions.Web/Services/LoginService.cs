@@ -3,15 +3,23 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.ViewModels;
+    using DigitalLearningSolutions.Web.Helpers;
+    using Microsoft.AspNetCore.Authentication;
 
     public interface ILoginService
     {
         LoginResult AttemptLogin(string username, string password);
+
+        LoginResult AttemptLoginUserEntity(
+            UserEntity userEntity,
+            string username);
 
         IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(
             UserEntity? userEntity,
@@ -19,6 +27,14 @@
         );
 
         bool CentreEmailIsVerified(int userId, int centreIdIfLoggingIntoSingleCentre);
+
+        Task<string> HandleLoginResult(
+            LoginResult loginResult,
+            TicketReceivedContext context,
+            string returnUrl,
+            ISessionService sessionService,
+            IUserService userService,
+            string appRootPath);
     }
 
     public class LoginService : ILoginService
@@ -64,6 +80,15 @@
                     : new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
+            return this.AttemptLoginUserEntity(
+                userEntity,
+                username);
+        }
+
+        public LoginResult AttemptLoginUserEntity(
+            UserEntity userEntity,
+            string username)
+        {
             if (userEntity.IsLocked)
             {
                 return new LoginResult(LoginAttemptResult.AccountLocked);
@@ -84,11 +109,15 @@
                 );
             }
 
-            var centreIdIfLoggingIntoSingleCentre = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
+            var centreIdIfLoggingIntoSingleCentre = GetCentreIdIfLoggingUserIntoSingleCentre(
+                userEntity,
+                username);
 
             if (centreIdIfLoggingIntoSingleCentre == null)
             {
-                return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
+                return new LoginResult(
+                    LoginAttemptResult.ChooseACentre,
+                    userEntity);
             }
 
             if (!CentreEmailIsVerified(
@@ -108,7 +137,85 @@
                 userEntity,
                 centreIdIfLoggingIntoSingleCentre
             );
+        }
 
+        public async Task<string> HandleLoginResult(
+            LoginResult loginResult,
+            TicketReceivedContext context,
+            string returnUrl,
+            ISessionService sessionService,
+            IUserService userService,
+            string appRootPath)
+        {
+            switch (loginResult.LoginAttemptResult)
+            {
+                case LoginAttemptResult.AccountLocked:
+                    return appRootPath + "/login/AccountLocked";
+                case LoginAttemptResult.InactiveAccount:
+                    return appRootPath + "/login/AccountInactive";
+                case LoginAttemptResult.UnverifiedEmail:
+                    await LoginHelper.CentrelessLogInAsync(
+                        context,
+                        loginResult.UserEntity!.UserAccount,
+                        false);
+                    return appRootPath + "/VerifyYourEmail/" + EmailVerificationReason.EmailNotVerified;
+                case LoginAttemptResult.LogIntoSingleCentre:
+                    var singleCentreClaims = LoginClaimsHelper.GetClaimsForSignIntoCentre(
+                           loginResult.UserEntity,
+                           loginResult.CentreToLogInto!.Value);
+                    var singleCentreClaimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+                    singleCentreClaimsIdentity.AddClaims(singleCentreClaims);
+                    return await LoginHelper.LogIntoCentreAsync(
+                        loginResult.UserEntity,
+                        false,
+                        returnUrl,
+                        loginResult.CentreToLogInto!.Value,
+                        context,
+                        sessionService,
+                        userService);
+                case LoginAttemptResult.ChooseACentre:
+                    var idsOfCentresWithUnverifiedEmails = userService.GetUnverifiedEmailsForUser(
+                            loginResult
+                            .UserEntity!
+                            .UserAccount
+                            .Id)
+                        .centreEmails
+                        .Select(uce => uce.centreId)
+                        .ToList();
+                    var activeCentres = loginResult.UserEntity!.CentreAccountSetsByCentreId.Values.Where(
+                                            centreAccountSet => (centreAccountSet.AdminAccount?.Active == true ||
+                                            centreAccountSet.DelegateAccount != null) &&
+                                            centreAccountSet.IsCentreActive == true &&
+                                            centreAccountSet.DelegateAccount?.Active == true &&
+                                            centreAccountSet.DelegateAccount?.Approved == true &&
+                                            !idsOfCentresWithUnverifiedEmails.Contains(centreAccountSet.CentreId)).ToList();
+
+                    if (activeCentres.Count() == 1)
+                    {
+                        var chooseCentreClaims = LoginClaimsHelper.GetClaimsForSignIntoCentre(
+                            loginResult.UserEntity,
+                            activeCentres[0].CentreId);
+                        var chooseCentreClaimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+                        chooseCentreClaimsIdentity.AddClaims(chooseCentreClaims);
+
+                        return await LoginHelper.LogIntoCentreAsync(
+                        loginResult.UserEntity,
+                        false,
+                        returnUrl,
+                        activeCentres[0].CentreId,
+                        context,
+                        sessionService,
+                        userService);
+                    }
+
+                    await LoginHelper.CentrelessLogInAsync(
+                        context,
+                        loginResult.UserEntity!.UserAccount,
+                        false);
+                    return appRootPath + "/Login/ChooseACentre";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(

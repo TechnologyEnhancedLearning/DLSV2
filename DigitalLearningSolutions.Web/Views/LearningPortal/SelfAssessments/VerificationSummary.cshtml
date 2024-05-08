@@ -3,7 +3,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment";
+    ViewData["Title"] = "Self Assessment - New Confirmation Request - Summary";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
@@ -13,7 +13,7 @@
     <li class="nhsuk-breadcrumb__item">New</li>
 }
 @section mobilebacklink
-    {
+{
     <p class="nhsuk-breadcrumb__back">
         <a class="nhsuk-breadcrumb__backlink"
            asp-action="VerificationPickResults"
@@ -31,7 +31,7 @@
             @Model.SelfAssessment.VerificationRoleName
         </dt>
         <dd class="nhsuk-summary-list__value">
-            @Model.Supervisor
+            @Model.Supervisor (@Model.SelfAssessment.CentreName)
         </dd>
         <dd class="nhsuk-summary-list__actions">
             <a asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">

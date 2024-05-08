@@ -4,7 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
@@ -29,6 +29,7 @@
         private PromptsService promptsHelper = null!;
         private IPaginateService paginateService = null!;
         private IUserDataService userDataService = null!;
+        private IGroupsService groupsService = null!;
 
         [SetUp]
         public void Setup()
@@ -39,6 +40,7 @@
             userDataService = A.Fake<IUserDataService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             paginateService = A.Fake<IPaginateService>();
+            groupsService = A.Fake<IGroupsService>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
@@ -50,7 +52,8 @@
                     userDataService,
                     promptsHelper,
                     jobGroupsDataService,
-                    paginateService
+                    paginateService,
+                    groupsService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -73,7 +76,7 @@
             {
                 A.CallTo(() => userDataService.GetDelegateUserCards(A<string>._, A<int>._, A<int>._, A<string>._,
                     A<string>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._,
-                    A<string>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._)
+                    A<string>._, A<int>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._)
                 ).MustHaveHappened();
                 A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
                     .MustHaveHappened();

@@ -390,3 +390,11 @@ nav, .nhsuk-header__navigation, #header-navigation {
   background-color: $color_nhsuk-grey-5;
   border-bottom: 1px solid $color_nhsuk-grey-4;
 }
+
+.validation-summary-valid {
+  display: none;
+}
+
+.field-validation-valid {
+  display: none !important;
+}

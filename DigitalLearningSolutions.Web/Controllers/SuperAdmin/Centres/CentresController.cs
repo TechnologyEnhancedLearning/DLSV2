@@ -9,7 +9,6 @@ using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.Services;
-using DigitalLearningSolutions.Web.ViewModels.CentreCourses;
 using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -261,6 +260,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                     centreTypes, model.CentreTypeId
                 );
                 model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
+                model.IpPrefix = model.IpPrefix == null ? string.Empty : model.IpPrefix.Trim();
                 return View(model);
             }
 
@@ -302,6 +302,9 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult ManageCentreManager(EditCentreManagerDetailsViewModel editCentreManagerDetailsViewModel)
         {
+            editCentreManagerDetailsViewModel.FirstName = editCentreManagerDetailsViewModel.FirstName == null ? string.Empty : editCentreManagerDetailsViewModel.FirstName.Trim();
+            editCentreManagerDetailsViewModel.LastName = editCentreManagerDetailsViewModel.LastName == null ? string.Empty : editCentreManagerDetailsViewModel.LastName.Trim();
+            editCentreManagerDetailsViewModel.Telephone = editCentreManagerDetailsViewModel.Telephone?.Trim() ?? string.Empty;
             if (!ModelState.IsValid)
             {
                 return View(editCentreManagerDetailsViewModel);
@@ -502,7 +505,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 var regions = regionDataService.GetRegionsAlphabetical().ToList();
                 model.RegionNameOptions = SelectListHelper.MapOptionsToSelectListItems(regions, model.RegionId);
                 model.CentreTypeOptions = SelectListHelper.MapOptionsToSelectListItems(centreTypes, model.CentreTypeId);
-                model.CentreName = model.CentreName == null ? string.Empty : model.CentreName.Trim();
+                model.CentreName = model.CentreName?.Trim() ?? string.Empty;
+                model.ContactFirstName = model.ContactFirstName?.Trim() ?? string.Empty;
+                model.ContactLastName = model.ContactLastName?.Trim() ?? string.Empty;
+                model.ContactEmail = model.ContactEmail?.Trim() ?? string.Empty;
+                model.ContactPhone = model.ContactPhone?.Trim() ?? string.Empty;
+                model.IpPrefix = model.IpPrefix?.Trim() ?? string.Empty;
                 return View(model);
             }
 
@@ -628,6 +636,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 fileName
             );
         }
+        [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/{applicationId}/ConfirmRemove")]
         public IActionResult ConfirmRemoveCourse(int centreId = 0, int applicationId = 0)
         {
@@ -660,19 +669,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [HttpPost]
         public IActionResult CourseAddChooseFlow(CourseAddChooseFlowViewModel model)
         {
-            switch (model.AddCourseOption)
-            {
-                case "Core":
-                    return RedirectToAction(nameof(CourseAddCore), new { centreId = model.CentreId });
-
-                case "Other":
-                    return RedirectToAction(nameof(CourseAddOther), new { centreId = model.CentreId, searchTerm = (model.SearchTerm != null ? model.SearchTerm.Replace(" ", "%") : "") });
-
-                case "Pathways":
-                    return RedirectToAction(nameof(CourseAddPathways), new { centreId = model.CentreId });
-            }
-
-            return RedirectToAction(nameof(Courses), new { centreId = model.CentreId });
+            return RedirectToAction(nameof(CourseAdd), new { centreId = model.CentreId, courseType = model.AddCourseOption, searchTerm = (model.SearchTerm != null ? model.SearchTerm.Replace(" ", "%") : "") });
         }
 
         private CourseAddViewModel SetupCommonModel(int centreId, string courseType, IEnumerable<CourseForPublish> courses)
@@ -686,30 +683,48 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             };
         }
 
-        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Core")]
-        public IActionResult CourseAddCore(int centreId = 0)
+        [NoCaching]
+        [Route("SuperAdmin/Centres/{centreId}/Courses/Add/{courseType}")]
+        public IActionResult CourseAdd(int centreId, string courseType, string? searchTerm)
         {
-            var model = SetupCommonModel(centreId, "Core", centreApplicationsService.GetCentralCoursesForPublish(centreId));
-            return View("CourseAdd", model);
-        }
-
-        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Other")]
-        public IActionResult CourseAddOther(int centreId, string searchTerm)
-        {
-            var model = SetupCommonModel(centreId, "Other", centreApplicationsService.GetOtherCoursesForPublish(centreId, searchTerm));
+            CourseAddViewModel model;
+            switch (courseType)
+            {
+                case "Core":
+                    model = SetupCommonModel(centreId, "Core", centreApplicationsService.GetCentralCoursesForPublish(centreId));
+                    break;
+                case "Other":
+                    model = SetupCommonModel(centreId, "Other", centreApplicationsService.GetOtherCoursesForPublish(centreId, searchTerm));
+                    break;
+                default:
+                    model = SetupCommonModel(centreId, "Pathways", centreApplicationsService.GetPathwaysCoursesForPublish(centreId));
+                    break;
+            }
             model.SearchTerm = searchTerm;
             return View("CourseAdd", model);
         }
 
-        [Route("SuperAdmin/Centres/{centreId=0:int}/Courses/Add/Pathways")]
-        public IActionResult CourseAddPathways(int centreId = 0)
-        {
-            var model = SetupCommonModel(centreId, "Pathways", centreApplicationsService.GetPathwaysCoursesForPublish(centreId));
-            return View("CourseAdd", model);
-        }
         [HttpPost]
-        public IActionResult CourseAddCommit(CourseAddViewModel model)
+        [Route("SuperAdmin/Centres/{centreId}/Courses/Add/{courseType}")]
+        public IActionResult CourseAddCommit(CourseAddViewModel model, int centreId, string courseType)
         {
+            if (!ModelState.IsValid)
+            {
+                switch (courseType)
+                {
+                    case "Core":
+                        model.Courses = centreApplicationsService.GetCentralCoursesForPublish(centreId);
+                        break;
+                    case "Other":
+                        model.Courses = centreApplicationsService.GetOtherCoursesForPublish(centreId, model.SearchTerm);
+                        break;
+                    default:
+                        model.Courses = centreApplicationsService.GetPathwaysCoursesForPublish(centreId);
+                        break;
+                }
+                model.CentreName = centresDataService.GetCentreName(centreId);
+                return View("CourseAdd", model);
+            }
             foreach (var id in model.ApplicationIds)
             {
                 centreApplicationsService.InsertCentreApplication(model.CentreId, id);
@@ -725,6 +740,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             ViewBag.CentreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
             return View(model);
         }
+        [NoCaching]
         [Route("SuperAdmin/Centres/{centreId=0:int}/SelfAssessments/{selfAssessmentId}/ConfirmRemove")]
         public IActionResult ConfirmRemoveSelfAssessment(int centreId = 0, int selfAssessmentId = 0)
         {
@@ -747,5 +763,39 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             return RedirectToAction("SelfAssessments", new { centreId });
         }
 
+        [HttpGet]
+        [Route("SuperAdmin/Centres/{centreId}/SelfAssessments/Add")]
+        public IActionResult SelfAssessmentAdd(int centreId = 0)
+        {
+            var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
+            var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+            var model = new SelfAssessmentAddViewModel() { SelfAssessments = selfAssessmentsForPublish, CentreId = centreId, CentreName = centreName, SelfAssessmentIds = new List<int>() };
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("SuperAdmin/Centres/{centreId}/SelfAssessments/Add")]
+        public IActionResult SelfAssessmentAddSubmit(int centreId, SelfAssessmentAddViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var selfAssessmentsForPublish = centreSelfAssessmentsService.GetCentreSelfAssessmentsForPublish(centreId);
+                var centreName = centresDataService.GetCentreName(centreId) + "  (" + centreId + ")";
+                model.SelfAssessmentIds = model.SelfAssessmentIds ?? new List<int>();
+                model.CentreName = centreName;
+                model.SelfAssessments = selfAssessmentsForPublish;
+                return View("SelfAssessmentAdd", model);
+            }
+            var selfEnrol = model.EnableSelfEnrolment;
+            if (selfEnrol != null)
+            {
+                foreach (var id in model.SelfAssessmentIds)
+                {
+                    centreSelfAssessmentsService.InsertCentreSelfAssessment(model.CentreId, id, (bool)selfEnrol);
+                }
+            }
+
+            return RedirectToAction("SelfAssessments", new { centreId = model.CentreId });
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates;
 @model ConfirmationViewModel;
 @{
-    ViewData["Title"] = "Delegates";
+    ViewData["Title"] = "Inactivate Delegate";
 }
 @if (Model.Error)
 {
@@ -24,11 +24,11 @@
             <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
                 Inactivate Delegate
             </h1>
-            @Html.HiddenFor(x=>x.DisplayName)
-            @Html.HiddenFor(x=>x.DelegateId)
-            @Html.HiddenFor(x=>x.SearchString)
-            @Html.HiddenFor(x=>x.ExistingFilterString)
-            @Html.HiddenFor(x=>x.Page)
+            @Html.HiddenFor(x => x.DisplayName)
+            @Html.HiddenFor(x => x.DelegateId)
+            @Html.HiddenFor(x => x.SearchString)
+            @Html.HiddenFor(x => x.ExistingFilterString)
+            @Html.HiddenFor(x => x.Page)
             <h2>User: @Model.DisplayName</h2>
             <p id="IsChecked-hint">
                 <vc:single-checkbox asp-for="@nameof(Model.IsChecked)"

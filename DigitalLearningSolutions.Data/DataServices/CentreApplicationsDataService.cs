@@ -36,7 +36,7 @@
                                      Centres AS ct ON cta.CentreID = ct.CentreID INNER JOIN
                                      Applications AS a ON cta.ApplicationID = a.ApplicationID LEFT OUTER JOIN
                                      Customisations AS cu ON cta.CentreID = cu.CentreID AND cta.ApplicationID = cu.ApplicationID
-                        WHERE (cta.CentreID = @centreId) AND (cta.ApplicationID = @applicationId)
+                        WHERE (cta.CentreID = @centreId) AND (cta.ApplicationID = @applicationId) AND (cu.Active = 1)
                         GROUP BY cta.CentreApplicationID, cta.CentreID, ct.CentreName, cta.ApplicationID, a.ApplicationName",
                      new { centreId, applicationId }
                     );
@@ -55,6 +55,11 @@
                             WHERE (CentreID = @centreId) AND (ApplicationID = @applicationId)",
                     new { centreId, applicationId }
                 );
+                connection.Execute(
+                    @"UPDATE Customisations
+                        SET Active = 0
+                        WHERE (CentreID = @centreId) AND (ApplicationID = @applicationId)",
+                    new { centreId, applicationId });
             }
 
             public void InsertCentreApplication(int centreId, int applicationId)
@@ -96,8 +101,7 @@
                     WHERE (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (a.CoreContent = 0) AND (a.Debug = 0) AND (a.DefaultContentTypeID = 1) AND (a.ApplicationID NOT IN
                                      (SELECT ApplicationID
                                      FROM    CentreApplications
-                                     WHERE (CentreID = @centreId))) AND (c.CentreName LIKE '%' + @searchTerm + '%') OR
-                                 (a.ASPMenu = 1) AND (a.ArchivedDate IS NULL) AND (a.CoreContent = 0) AND (a.Debug = 0) AND (a.DefaultContentTypeID = 1) AND (a.ApplicationName LIKE '%' + @searchTerm + '%')
+                                     WHERE (CentreID = @centreId))) AND ((c.CentreName LIKE '%' + @searchTerm + '%') OR (a.ApplicationName LIKE '%' + @searchTerm + '%'))
                     ORDER BY Course",
                 new { centreId, searchTerm }
                 );

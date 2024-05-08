@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Add" + Model.CourseType + " courses";
     var cancelLinkData = Html.GetRouteValues();
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 @section NavBreadcrumbs {
@@ -22,7 +23,7 @@
 }
 @if (Model.CourseType == "Other")
 {
-    <form method="post" asp-action="CourseAddChooseFlow">
+    <form method="post" asp-action="CourseAddChooseFlow" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-route-courseType="@ViewContext.RouteData.Values["courseType"]">
         <input type="hidden" asp-for="CentreId" />
         <input type="hidden" name="AddCourseOption" value="@Model.CourseType" />
         <div class="search-container">
@@ -43,7 +44,12 @@
 }
 @if (Model.Courses.Any())
 {
-    <form method="post" asp-action="CourseAddCommit">
+    <form method="post" asp-action="CourseAddCommit" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-route-courseType="@ViewContext.RouteData.Values["courseType"]">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new []{ nameof(CourseAddViewModel.ApplicationIds) })" />
+        }
+        <div class="@(errorHasOccurred ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
         <fieldset class="nhsuk-fieldset">
             <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                 <h1 class="nhsuk-fieldset__heading">
@@ -53,7 +59,12 @@
             <div class="nhsuk-hint">
                 Which courses would you like to add?
             </div>
-
+                @if (errorHasOccurred)
+                {
+                    <span class="nhsuk-error-message" id="dob-day-error-error">
+                        <span class="nhsuk-u-visually-hidden">Error:</span> Required
+                    </span>
+                }
             @if (Model.Courses.Count() > 1)
             {
                 <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
@@ -80,7 +91,6 @@
                         {
                             <tr role="row" class="nhsuk-table__row">
                                 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
-                                    <span class="nhsuk-table-responsive__heading">Course </span>
                                     <div class="nhsuk-checkboxes__item">
                                         <input data-group="course-list" class="nhsuk-checkboxes__input select-all-checkbox" id="course-check-@course.Id" name="ApplicationIds" type="checkbox" value="@course.Id">
                                         <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="course-check-@course.Id">
@@ -98,7 +108,9 @@
                 </table>
             </div>
         </fieldset>
+        </div>
         <input type="hidden" asp-for="CentreId" />
+        <input type="hidden" asp-for="SearchTerm" />
         <button class="nhsuk-button" type="submit">
             Add selected courses to centre
         </button>
@@ -106,8 +118,25 @@
 }
 else
 {
-    <h1>No courses available</h1>
-    <p>There are no core courses available to add to the centre @ViewBag.CentreName.</p>
+    @if (Model.CourseType == "Other")
+    {
+        Model.SearchTerm = Model.SearchTerm ?? "";
+        if(Model.SearchTerm.Length == 0)
+        {
+            <h1>No search term</h1>
+            <p>Please enter a search term to locate a course.</p>
+        }
+        else
+        {
+            <h1>No courses match your search term</h1>
+            <p>There are no courses available that match your search term. Please adjust it and try again.</p>
+        }
+    }
+    else
+    {
+        <h1>No courses available</h1>
+        <p>There are no @Model.CourseType courses available to add to the centre @ViewBag.CentreName.</p>
+    }
 }
 
 <vc:cancel-link asp-controller="Centres" asp-action="Courses" asp-all-route-data="@cancelLinkData" />

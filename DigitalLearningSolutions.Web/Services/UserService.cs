@@ -112,7 +112,10 @@ namespace DigitalLearningSolutions.Web.Services
 
         void ReactivateAdmin(int adminId);
 
+        UserEntity? GetDelegateUserFromLearningHubAuthId(int learningHubAuthId);
+
         int? GetUserLearningHubAuthId(int userId);
+        bool CheckingIfPrimaryEmailExist(string email, int centreId);
     }
 
     public class UserService : IUserService
@@ -627,7 +630,20 @@ namespace DigitalLearningSolutions.Web.Services
                 .GetDelegateAccountsByUserId(primaryEmailOwner.Id).Any(da => da.CentreId == centreId);
             return primaryEmailOwnerIsAtCentre;
         }
+        public bool CheckingIfPrimaryEmailExist(string email, int centreId)
+        {
+            var inUseAsCentreEmailAtCentre = userDataService.CentreSpecificEmailIsInUseAtCentre(email!, centreId);
 
+            var primaryEmailOwnerIsAtCentre = EmailIsHeldAsPrimaryEmailByUser(email);
+
+            return inUseAsCentreEmailAtCentre || primaryEmailOwnerIsAtCentre;
+        }
+        private bool EmailIsHeldAsPrimaryEmailByUser(string email)
+        {
+            var primaryEmailOwner = userDataService.GetUserAccountByPrimaryEmail(email);
+            var primaryEmailOwnerIsAtCentre = primaryEmailOwner != null;
+            return primaryEmailOwnerIsAtCentre;
+        }
         private bool NewUserRolesExceedAvailableSpots(
             int adminId,
             AdminRoles adminRoles
@@ -668,6 +684,12 @@ namespace DigitalLearningSolutions.Web.Services
             userDataService.ReactivateAdmin(adminId);
             int? userId = userDataService.GetUserIdByAdminId(adminId);
             userDataService.ActivateUser(userId.GetValueOrDefault());
+        }
+
+        public UserEntity? GetDelegateUserFromLearningHubAuthId(int learningHubAuthId)
+        {
+            var userId = userDataService.GetUserIdFromLearningHubAuthId(learningHubAuthId);
+            return userId == null ? null : GetUserById(userId.Value);
         }
     }
 }

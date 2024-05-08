@@ -495,7 +495,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             registrationService.RegisterDelegateByCentre(
                 model,
                 string.Empty,
-                false
+                false,
+                1,
+                0
             );
 
             // Then
@@ -863,7 +865,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             registrationService.RegisterDelegateByCentre(
                 model,
                 "",
-                false
+                false,
+                1,
+                null
             );
 
             // Then
@@ -903,7 +907,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             registrationService.RegisterDelegateByCentre(
                 model,
                 "",
-                false
+                false,
+                1,
+                null
             );
 
             // Then
@@ -941,7 +947,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             registrationService.RegisterDelegateByCentre(
                 model,
                 baseUrl,
-                false
+                false,
+                1,
+                null
             );
 
             // Then
@@ -974,7 +982,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             registrationService.RegisterDelegateByCentre(
                 model,
                 baseUrl,
-                false
+                false,
+                1,
+                null
             );
 
             // Then
@@ -1013,7 +1023,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             registrationService.RegisterDelegateByCentre(
                 model,
                 baseUrl,
-                false
+                false,
+                1,
+                null
             );
 
             // Then
@@ -1043,7 +1055,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             registrationService.RegisterDelegateByCentre(
                 model,
                 "",
-                false
+                false,
+                1,
+                null
             );
 
             // Then
@@ -1078,7 +1092,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             Action action = () => registrationService.RegisterDelegateByCentre(
                 model,
                 "",
-                false
+                false,
+                1,
+                null
             );
 
             // Then

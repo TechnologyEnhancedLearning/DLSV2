@@ -3,7 +3,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment";
+    ViewData["Title"] = "Self Assessment - New Confirmation Request - Choose Proficiency";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 
@@ -21,11 +21,11 @@
 }
 
 @section mobilebacklink
-    {
+{
     <p class="nhsuk-breadcrumb__back">
         <a class="nhsuk-breadcrumb__backlink"
-       asp-action="VerificationPickSupervisor"
-       asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+           asp-action="VerificationPickSupervisor"
+           asp-route-selfAssessmentId="@Model.SelfAssessmentId">
             Back to Choose a supervisor
         </a>
     </p>
@@ -122,8 +122,8 @@
     </form>
     <div class="nhsuk-back-link">
         <a class="nhsuk-back-link__link"
-       asp-action="SelfAssessmentOverview"
-       asp-route-selfAssessmentId="@Model.SelfAssessmentId" asp-route-vocabulary="@Model.VocabPlural()">
+           asp-action="SelfAssessmentOverview"
+           asp-route-selfAssessmentId="@Model.SelfAssessmentId" asp-route-vocabulary="@Model.VocabPlural()">
             <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
             </svg>

@@ -30,13 +30,15 @@
         private readonly PromptsService promptsService;
         private readonly IPaginateService paginateService;
         private readonly IUserDataService userDataService;
+        private readonly IGroupsService groupsService;
 
         public AllDelegatesController(
             IDelegateDownloadFileService delegateDownloadFileService,
             IUserDataService userDataService,
             PromptsService promptsService,
             IJobGroupsDataService jobGroupsDataService,
-            IPaginateService paginateService
+            IPaginateService paginateService,
+            IGroupsService groupsService
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
@@ -44,6 +46,7 @@
             this.promptsService = promptsService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.paginateService = paginateService;
+            this.groupsService = groupsService;
         }
 
         [NoCaching]
@@ -82,19 +85,24 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
+            var groups = groupsService.GetActiveGroups(centreId);
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
-            var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions);
+            var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions, groups);
 
             if (TempData["allDelegatesCentreId"] != null && TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString()
-                    && existingFilterString != null && existingFilterString.Contains("Answer"))
+                    && existingFilterString != null)
             {
-                existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
+                if (existingFilterString.Contains("Answer"))
+                    existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
+                if (existingFilterString.Contains("DelegateGroup"))
+                    existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
             }
 
             string isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, answer1, answer2, answer3, answer4, answer5, answer6;
             isActive = isPasswordSet = isAdmin = isUnclaimed = isEmailVerified = registrationType = answer1 = answer2 = answer3 = answer4 = answer5 = answer6 = "Any";
             int jobGroupId = 0;
+            int groupId = 0;
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
@@ -147,6 +155,9 @@
                         if (filter.Contains("JobGroupId"))
                             jobGroupId = Convert.ToInt32(filterValue);
 
+                        if (filter.Contains("DelegateGroupId"))
+                            groupId = Convert.ToInt32(filterValue);
+
                         if (filter.Contains("Answer1"))
                             answer1 = filterValue;
 
@@ -169,14 +180,14 @@
             }
 
             (var delegates, var resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
-                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
+                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId, groupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6);
 
             if (delegates.Count() == 0 && resultCount > 0)
             {
                 page = 1; offSet = 0;
                 (delegates, resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
-                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
+                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId, groupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6);
             }
 

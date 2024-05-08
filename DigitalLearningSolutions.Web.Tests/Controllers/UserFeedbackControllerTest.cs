@@ -11,6 +11,8 @@ using DigitalLearningSolutions.Data.Models.UserFeedback;
 using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
 using GDS.MultiPageFormData.Enums;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Configuration;
+using DigitalLearningSolutions.Data.Extensions;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
@@ -25,13 +27,15 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private IUserFeedbackDataService _userFeedbackDataService = null!;
         private IMultiPageFormService _multiPageFormService = null!;
         private ITempDataDictionary _tempData = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void SetUp()
         {
             _userFeedbackDataService = A.Fake<IUserFeedbackDataService>();
             _multiPageFormService = A.Fake<IMultiPageFormService>();
-            _userFeedbackController = new UserFeedbackController(_userFeedbackDataService, _multiPageFormService)
+            config = A.Fake<IConfiguration>();
+            _userFeedbackController = new UserFeedbackController(_userFeedbackDataService, _multiPageFormService, config)
                 .WithDefaultContext()
                 .WithMockUser(true, userId: LoggedInUserId);
             _tempData = A.Fake<ITempDataDictionary>();
@@ -41,7 +45,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         [Test]
         public void UserFeedbackTaskAchieved_ShouldReturnCorrectView()
         {
-            // Given
+             // Given
             var userFeedbackViewModel = new UserFeedbackViewModel();
 
             // When

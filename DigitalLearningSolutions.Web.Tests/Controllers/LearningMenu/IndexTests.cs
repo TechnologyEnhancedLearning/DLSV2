@@ -241,49 +241,50 @@
             // Then
             A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
         }
+        //Deprecated in response to TD-3838 - a bug caused by this id manipulation detection functionality
 
-        [Test]
-        public void Index_detects_id_manipulation_no_progress_id()
-        {
-            // Given
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
-            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
-             .Returns(expectedCourseContent);
-            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
-            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(null);
+        //[Test]
+        //public void Index_detects_id_manipulation_no_progress_id()
+        //{
+        //    // Given
+        //    var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+        //    A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
+        //     .Returns(expectedCourseContent);
+        //    A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
+        //    A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(null);
 
-            // When
-            var result = controller.Index(CustomisationId);
+        //    // When
+        //    var result = controller.Index(CustomisationId);
 
-            // Then
-            result.Should()
-                .BeRedirectToActionResult()
-                .WithControllerName("LearningSolutions")
-                .WithActionName("StatusCode")
-                .WithRouteValue("code", 404);
-        }
+        //    // Then
+        //    result.Should()
+        //        .BeRedirectToActionResult()
+        //        .WithControllerName("LearningSolutions")
+        //        .WithActionName("StatusCode")
+        //        .WithRouteValue("code", 404);
+        //}
 
-        [Test]
-        public void Index_detects_id_manipulation_self_register_false()
-        {
-            // Given
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
-            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
-             .Returns(expectedCourseContent);
-            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
-            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(null);
-            A.CallTo(() => courseDataService.GetSelfRegister(CustomisationId)).Returns(false);
+        //[Test]
+        //public void Index_detects_id_manipulation_self_register_false()
+        //{
+        //    // Given
+        //    var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+        //    A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
+        //     .Returns(expectedCourseContent);
+        //    A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
+        //    A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(null);
+        //    A.CallTo(() => courseDataService.GetSelfRegister(CustomisationId)).Returns(false);
 
-            // When
-            var result = controller.Index(CustomisationId);
+        //    // When
+        //    var result = controller.Index(CustomisationId);
 
-            // Then
-            result.Should()
-                .BeRedirectToActionResult()
-                .WithControllerName("LearningSolutions")
-                .WithActionName("StatusCode")
-                .WithRouteValue("code", 404);
-        }
+        //    // Then
+        //    result.Should()
+        //        .BeRedirectToActionResult()
+        //        .WithControllerName("LearningSolutions")
+        //        .WithActionName("StatusCode")
+        //        .WithRouteValue("code", 404);
+        //}
 
         [Test]
         public void Index_not_detects_id_manipulation_self_register_true()

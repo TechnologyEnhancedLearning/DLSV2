@@ -478,6 +478,8 @@
             {
                 searchModel.IsSupervisorResultsReviewed = assessment.IsSupervisorResultsReviewed;
             }
+
+            ViewBag.CanViewCertificate = CertificateHelper.CanViewCertificate(recentResults, model.SupervisorSignOffs);
             ViewBag.SupervisorSelfAssessmentReview = assessment.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
@@ -637,7 +639,7 @@
                User.GetCentreIdKnownNotNull(),
                selfAssessmentId,
                User.GetUserIdKnownNotNull()
-           ).Select(c => new { c.CentreID, c.CentreName }).Distinct().ToList();
+           ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
 
             if (distinctSupervisorCentres.Count() > 1)
             {
@@ -670,7 +672,7 @@
                 User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetUserIdKnownNotNull()
-            ).OrderBy(s => s.Forename).ToList();
+            ).ToList();
 
             if (sessionAddSupervisor?.CentreID != null)
             {
@@ -1265,7 +1267,7 @@
                 var competencies = PopulateCompetencyLevelDescriptors(
                     selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
                         selfAssessmentId,
-                        User.GetUserIdKnownNotNull()
+                        User.GetCandidateIdKnownNotNull()
                     ).ToList()
                 );
                 model.CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
@@ -1316,6 +1318,7 @@
                 User.GetUserIdKnownNotNull(),
                 sessionRequestVerification.SelfAssessmentID
             );
+            selfAssessment.CentreName = supervisor.CentreName;
             if (sessionRequestVerification.ResultIds == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1536,15 +1539,15 @@
             };
             return View("SelfAssessments/SignOffHistory", model);
         }
-        public IActionResult ExportCandidateAssessment(int candidateAssessmentId,string candidateAssessmentName, string delegateName)
+        public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string candidateAssessmentName, string delegateName)
         {
             var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, User.GetUserIdKnownNotNull(), true);
             var fileName = $"{((candidateAssessmentName.Length > 30) ? candidateAssessmentName.Substring(0, 30) : candidateAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
-             return File(
-                content,
-                FileHelper.GetContentTypeFromFileName(fileName),
-                fileName
-            );
+            return File(
+               content,
+               FileHelper.GetContentTypeFromFileName(fileName),
+               fileName
+           );
         }
 
         public IActionResult RemoveEnrolment(int selfAssessmentId)

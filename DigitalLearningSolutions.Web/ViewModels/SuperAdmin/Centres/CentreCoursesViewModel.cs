@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.ViewModels.CentreCourses
+namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
 {
     using System.Collections.Generic;
 

@@ -24,3 +24,11 @@
     margin-right: 8px;
   }
 }
+
+.auth-button--blue {
+    background-color: $color_nhsuk-blue;
+}
+
+.auth-button--blue:hover {
+    background-color: darken($color_nhsuk-blue, 5%);
+}

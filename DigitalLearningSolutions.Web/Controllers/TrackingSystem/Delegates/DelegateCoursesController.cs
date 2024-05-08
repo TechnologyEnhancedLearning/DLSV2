@@ -87,6 +87,15 @@
             string isActive, categoryName, courseTopic, hasAdminFields, isCourse, isSelfAssessment;
             isActive = categoryName = courseTopic = hasAdminFields = isCourse = isSelfAssessment = "Any";
 
+            var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
+               .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+
+            if (TempData["DelegateActivitiesCentreId"] != null && TempData["DelegateActivitiesCentreId"].ToString() != User.GetCentreId().ToString()
+                    && existingFilterString != null)
+            {
+                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
+            }
+
             if (!string.IsNullOrEmpty(existingFilterString))
             {
                 var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
@@ -163,9 +172,6 @@
 
             allItems = OrderActivities(allItems, sortBy, sortDirection);
 
-            var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
-                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
-
             var resultCount = allItems.Count();
 
             var result = paginateService.Paginate(
@@ -187,9 +193,19 @@
                 courseCategoryName
             );
 
+
+            for (int optionIndex = 0; model.SortOptions.Count() > optionIndex; optionIndex++)
+            {
+                if ((((string, string)[])model.SortOptions)[optionIndex].Item1 == "Completed")
+                {
+                    (((string, string)[])model.SortOptions)[optionIndex].Item1 = "Completed/Signed off/Submitted";
+                }
+            }
+
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
             Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);
+            TempData["DelegateActivitiesCentreId"] = centreId;
 
             return View(model);
         }

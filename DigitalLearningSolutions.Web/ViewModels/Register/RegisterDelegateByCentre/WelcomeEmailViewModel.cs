@@ -9,13 +9,15 @@
     {
         public WelcomeEmailViewModel() { }
 
-        public WelcomeEmailViewModel(DelegateRegistrationByCentreData data)
+        public WelcomeEmailViewModel(DelegateRegistrationByCentreData data, int delegatesToRegister)
         {
             Day = data.WelcomeEmailDate!.Value.Day;
             Month = data.WelcomeEmailDate!.Value.Month;
             Year = data.WelcomeEmailDate!.Value.Year;
+            DelegatesToRegister = delegatesToRegister;
         }
 
+        public int DelegatesToRegister { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }

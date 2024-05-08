@@ -15,7 +15,8 @@
         public AllDelegateItemsViewModel(
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts,
+            IEnumerable<(int id, string name)> groups = null
         )
         {
             var promptsWithOptions = centreRegistrationPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
@@ -33,7 +34,7 @@
                 }
             );
 
-            Filters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions)
+            Filters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions, groups)
                 .SelectAppliedFilterViewModels();
         }
     }

@@ -1,0 +1,58 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload
+@model ProcessBulkDelegatesViewModel
+@{
+    ViewData["Title"] = "Processing delegates";
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h1>@ViewData["Title"]</h1>
+        <p class="nhsuk-body-l nhsuk-u-reading-width">Please review the summary information before continuing.</p>
+        <h2>Progress summary</h2>
+        <h3>Step @Model.StepNumber of @Model.TotalSteps </h3>
+        <dl class="nhsuk-summary-list">
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Delegate rows processed
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @(Model.RowsProcessed)
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    New delegates registered
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.DelegatesRegistered
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Existing delegates updated
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.DelegatesUpdated
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Rows skipped with no changes
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.RowsSkipped
+                </dd>
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Rows skipped with errors
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.ErrorCount
+                </dd>
+            </div>
+        </dl>
+        <a asp-controller="BulkUpload" asp-action="ProcessNextStep" role="button" class="nhsuk-button">Continue</a>
+        <vc:cancel-link asp-controller="BulkUpload" asp-action="CancelUpload" />
+    </div>
+</div>

@@ -3,9 +3,6 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Competency Self Assessment Certificate";
-    var sumVerifiedCount = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.VerifiedCount);
-    var sumQuestions = ((IEnumerable<dynamic>)ViewBag.CompetencySummaries).Sum(item => item.Questions);
-    var result = "0";
 }
 
 <!DOCTYPE html>
@@ -14,21 +11,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NHS Certificate</title>
- 
-   <style>
+
+    <style>
         .certificate {
             width: 100%;
-            justify-content: space-around;
+            justify-content: start;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-print-color-adjust: exact;
         }
 
             .certificate .pg-1 {
                 background-color: white;
-                width: 60rem;
                 display: block;
-                margin: 5rem auto;
-                border: 1px solid black;
+                background-color: white;
+                width: 100%;
+                display: block;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                max-width: 210mm;
+                min-height: 293mm;
+                margin: 0;
+                position: relative;
+                background: white;
+                height: 100%;
             }
 
                 .certificate .pg-1 .head {
@@ -48,9 +54,10 @@
                         }
 
         .fancy-box {
-            width: 30px;
-            height: 30px;
+            width: 50px;
+            height: 50px;
             position: absolute;
+            left: 65px;
             bottom: -15px;
             background-color: #0063B7;
             transform: rotate(45deg);
@@ -58,31 +65,38 @@
 
         .certificate .pg-1 .body {
             padding: 50px;
+            flex: 0;
         }
 
         .certificate .pg-1 .footer {
             padding: 50px;
             align-items: center;
             display: flex;
-            justify-content: space-between;
+            flex: 1;
+            justify-content: flex-start;
+            align-items: end;
         }
 
         .footer p.blue, .pg-1 h3 {
             color: #0063B7;
         }
 
+
         .footer-logo {
             display: flex;
             align-items: baseline;
+            max-height: 190px;
+            margin-left: 2rem;
         }
 
             .footer-logo img {
-                width: 10rem;
+                max-width: 18rem;
+                height: auto;
             }
 
         .strips {
             display: flex;
-            padding: .5rem 0;
+            padding: 0.5rem 0;
         }
 
         .strip-green {
@@ -101,10 +115,13 @@
 
         .pg-2 {
             background-color: white;
-            width: 60rem;
-            margin: 5rem auto;
-            border: 1px solid black;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin: 0;
+            position: relative;
+            background: white;
         }
 
             .pg-2 .body {
@@ -139,6 +156,246 @@
         .pg-2 .foot-note {
             padding: 0 50px;
         }
+
+        .certificate h1 {
+            font-size: 2rem;
+            line-height: 1.25;
+            display: block;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 40px;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate h1 {
+                font-size: 3rem;
+                line-height: 1.16667;
+            }
+
+            .certificate h1 {
+                margin-bottom: 48px;
+            }
+        }
+
+        .certificate h2 {
+            font-size: 1.5rem;
+            line-height: 1.33333;
+            display: block;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate h2 {
+                font-size: 2rem;
+                line-height: 1.25;
+            }
+
+            .certificate h2 {
+                margin-bottom: 24px;
+            }
+        }
+
+        .certificate p {
+            display: block;
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: inherit;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate p {
+                margin-bottom: 24px;
+                font-size: 1.1875rem;
+                line-height: 1.47368;
+            }
+        }
+
+        .certificate ul {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            list-style-type: none;
+            margin-top: 0;
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+            .certificate ul > li {
+                margin-bottom: 8px;
+            }
+
+                .certificate ul > li:last-child {
+                    margin-bottom: 0;
+                }
+
+        @@media (min-width: 40.0625em) {
+            .certificate ul {
+                font-size: 1.1875rem;
+                line-height: 1.47368;
+            }
+
+            .certificate ul {
+                margin-bottom: 24px;
+            }
+
+                .certificate ul > li {
+                    margin-bottom: 8px;
+                }
+        }
+
+        .certificate .nhsuk-u-font-size-16 {
+            font-size: 0.875rem !important;
+            line-height: 1.71429 !important;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-u-font-size-16 {
+                font-size: 1rem !important;
+                line-height: 1.5 !important;
+            }
+        }
+
+        .certificate .nhsuk-body-s {
+            font-size: 0.875rem;
+            line-height: 1.71429;
+            display: block;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-body-s {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+
+            .certificate .nhsuk-body-s {
+                margin-bottom: 24px;
+            }
+        }
+
+        .certificate .nhsuk-body-m {
+            font-size: 1rem;
+            line-height: 1.5;
+            display: block;
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: inherit;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-body-m {
+                font-size: 1.1875rem;
+                line-height: 1.47368;
+            }
+
+            .certificate .nhsuk-body-m {
+                margin-bottom: 24px;
+            }
+        }
+
+        .certificate .nhsuk-u-font-weight-normal {
+            font-weight: 400 !important;
+        }
+
+        .certificate .nhsuk-u-margin-bottom-0 {
+            margin-bottom: 0 !important;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-u-margin-bottom-0 {
+                margin-bottom: 0 !important;
+            }
+        }
+
+        .certificate .nhsuk-u-margin-top-1 {
+            margin-top: 4px !important;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-u-margin-top-1 {
+                margin-top: 4px !important;
+            }
+        }
+
+        .certificate .nhsuk-u-margin-bottom-1 {
+            margin-bottom: 4px !important;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-u-margin-bottom-1 {
+                margin-bottom: 4px !important;
+            }
+        }
+
+        .certificate .nhsuk-u-margin-bottom-3 {
+            margin-bottom: 8px !important;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-u-margin-bottom-3 {
+                margin-bottom: 16px !important;
+            }
+        }
+
+        .certificate .nhsuk-u-margin-bottom-4 {
+            margin-bottom: 16px !important;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-u-margin-bottom-4 {
+                margin-bottom: 24px !important;
+            }
+        }
+
+        .certificate .nhsuk-u-margin-bottom-7 {
+            margin-bottom: 40px !important;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-u-margin-bottom-7 {
+                margin-bottom: 48px !important;
+            }
+        }
+
+        .certificate .nhsuk-u-margin-bottom-2 {
+            margin-bottom: 8px !important;
+        }
+
+        @@media (min-width: 40.0625em) {
+            .certificate .nhsuk-u-margin-bottom-2 {
+                margin-bottom: 8px !important;
+            }
+        }
+
+        .pag
+        .pagebreak {
+            page-break-before: always;
+        }
+
+        @@page {
+            size: A4;
+            margin: 0;
+            padding: 0;
+            margin-top: 0in;
+            margin-left: 0in;
+            border: 0px;
+        }
+
+        @@media print {
+            html, body {
+                width: 210mm;
+                height: 297mm;
+            }
+
+            * {
+                box-sizing: border-box
+            }
+        }
     </style>
 
 </head>
@@ -147,66 +404,93 @@
         <div class="pg-1">
             <div class="head">
                 <div class="logo">
-                    <img src="https://1000logos.net/wp-content/uploads/2017/09/Symbol-NHS.jpg" />
+                    <svg class="certificate__logo" width="150" height="60" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="100" height="40" fill="#005EB8">
+                        </rect>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0V40H100V0H0ZM22.4 36L15.7 13.9H15.6L11.1 36H3L9.9 4H20.7L27.3 26.2H27.4L31.9 4H40L33.2 36H22.4ZM55.7 36L58.5 22.3H48.4L45.6 36H37L43.7 4H52.3L49.8 16.2H60L62.4 4H71L64.3 36H55.7ZM93.9 10.8C92.2 10 89.9 9.3 86.7 9.3C83.2 9.3 80.4 9.8 80.4 12.4C80.4 16.9 93.1 15.2 93.1 24.9C93.1 33.7 84.7 36 77.1 36C73.7 36 69.8 35.2 67 34.3L69.1 27.8C70.8 28.9 74.3 29.6 77.2 29.6C79.9 29.6 84.2 29.1 84.2 25.8C84.2 20.7 71.5 22.6 71.5 13.6C71.4 5.5 78.8 3 86 3C90 3 93.8 3.4 96 4.4L93.9 10.8Z" fill="white">
+                        </path>
+                    </svg>
                 </div>
 
+
                 <div class="text">
-                    <p>This is to certify that</p>
-                    <h1>@Model.CompetencySelfAssessmentCertificates.LearnerName</h1>
-                    <p>@Model.CompetencySelfAssessmentCertificates.LearnerPRN</p>
+                    <h1 class="certificate__heading">
+                        <div class="nhsuk-u-margin-bottom-7">
+                            <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
+                                This is to certify that
+                            </span>
+                            @Model.CompetencySelfAssessmentCertificates.LearnerName
+                            <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-top-1">
+                                @Model.CompetencySelfAssessmentCertificates.LearnerPRN
+                            </span>
+                        </div>
+                        <div>
+                            <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
+                                has successfully completed the
+                            </span>
+                            @Model.CompetencySelfAssessmentCertificates.SelfAssessment
+                        </div>
+                    </h1>
+                    <p>
+                        Signed off at @Model.CompetencySelfAssessmentCertificates.SupervisorCentreName <span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">by @Model.CompetencySelfAssessmentCertificates.SupervisorName </span><span class="nhsuk-body-m nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">@Model.CompetencySelfAssessmentCertificates.SupervisorPRN</span>
+                    </p>
 
-
-                    <p>has successfully completed the</p>
-                    <h1>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</h1>
-
-                    <br />
-                    <p>Signed off at @Model.CompetencySelfAssessmentCertificates.SupervisorCentreName </p>
-                    <p>by @Model.CompetencySelfAssessmentCertificates.SupervisorName</p>
-                    <p> @Model.CompetencySelfAssessmentCertificates.SupervisorPRN</p>
-
-                    <p>On @Model.CompetencySelfAssessmentCertificates.FormattedDate </p>
-
+                    <p>
+                        on @Model.CompetencySelfAssessmentCertificates.FormattedDate
+                    </p>
                 </div>
 
                 <div class="fancy-box"></div>
             </div>
 
             <div class="body">
-                <h3>Including the following optional proficiencies:</h3>
-                @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
+                @if (Model.CompetencyCountSelfAssessmentCertificate.Any())
                 {
-                    <p>
-                        @entry.CompetencyGroup - @entry.OptionalCompetencyCount
-                        @if (@entry.OptionalCompetencyCount == 1)
-                        {
-                            @Model.CompetencySelfAssessmentCertificates.Vocabulary
-                        }
-                        else
-                        {
-                            @Model.VocabPlural
-                        }
-
-                    </p>
-
+                    <h3 class=" nhsuk-u-margin-bottom-3">
+                        Including the following optional proficiencies:
+                    </h3>
+                    @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
+                    {
+                        <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
+                            @entry.CompetencyGroup - @entry.OptionalCompetencyCount
+                            @if (@entry.OptionalCompetencyCount == 1)
+                            {
+                                @Model.CompetencySelfAssessmentCertificates.Vocabulary
+                            }
+                            else
+                            {
+                                @Model.VocabPlural
+                            }
+                        </p>
+                    }
                 }
-
             </div>
+
+            @if (Model.CompetencySelfAssessmentCertificates.NonReportable)
+            {
+                <div class="footer">
+                    <p class="nhsuk-body-l nhsuk-u-font-weight-bold">
+                        <b>THIS IS AN EXAMPLE ONLY, GENERATED FROM A TEST SELF ASSESSMENT</b>                        
+                    </p>
+                </div>
+            }
 
             <div class="footer">
                 <div class="text">
-                    <p class="blue">Certificate generated on @DateTime.Today.ToString("dd/MM/yyyy")</p>
-                    <p>By NHS England Digital Learning Solutions <br /> on behalf of @Model.CompetencySelfAssessmentCertificates.CentreName</p>
+                    <p class="blue">Certificate generated on @DateTime.Now.ToString("dd/MM/yyyy")</p>
+                    <p>By NHS England Digital Learning Solutions <br /> on behalf of @Model.CompetencySelfAssessmentCertificates.SupervisorCentreName</p>
                 </div>
                 <div class="footer-logo">
-                    @if(Model.CompetencySelfAssessmentCertificates.BrandImage != null)
+                    @if (Model.CompetencySelfAssessmentCertificates.BrandImage != null)
                     {
                         <img id="Logo" src="data:image;base64,@Convert.ToBase64String(Model.CompetencySelfAssessmentCertificates.BrandImage)" alt="Brand Logo Image" />
                     }
                     else
                     {
-                        <img src="https://www.hee.nhs.uk/sites/default/files/styles/image_658_witdh/public/Capital-Nurse-Logo.jpg?itok=8hlRIj8r" />
+                        <img src="https://www.hee.nhs.uk/sites/default/files/styles/image_658_witdh/public/Capital-Nurse-Logo.jpg?itok=8hlRIj8r" alt="Brand Logo Image" />
                     }
                 </div>
+
             </div>
 
             <div class="strips">
@@ -214,12 +498,16 @@
                 <div class="strip-blue"></div>
             </div>
         </div>
-        <br />  <br />  <br />  <br /><br />  <br /><br />  <br /><br />  <br /><br />  <br />
+        <div class="pagebreak"></div>
 
         <div class="pg-2">
             <div class="body">
-                <h3>Activity summary report</h3>
+                <h2>Activity summary report</h2>
                 <br />
+                @if (Model.CompetencySelfAssessmentCertificates.NonReportable)
+                {
+                    <h3>THIS IS AN EXAMPLE ONLY, GENERATED FROM A TEST SELF ASSESSMENT</h3>
+                }
                 <div class="activity">
                     <p><b>Activity: </b>@Model.CompetencySelfAssessmentCertificates.SelfAssessment</p>
                 </div>
@@ -231,18 +519,12 @@
                 </div>
                 <div class="activity">
                     <p><b>Assessment question responses</b></p> <p>
-                          
-                            @sumQuestions 
-                    </p>
-                </div>
-                <div class="activity">
-                    <p><b>Response meeting role requirements</b></p> <p>
-                        @Model.RoleCount
+                        @Model.QuestionResponses
                     </p>
                 </div>
                 <div class="activity">
                     <p><b>Responses confirmed by assessor</b></p> <p>
-                        @sumVerifiedCount
+                        @Model.ConfirmedResponses
                     </p>
                 </div>
                 <div class="activity">
@@ -257,11 +539,22 @@
                     </ul>
                 </div>
                 <div class="activityline">
-                    <p><b>Signed Off By</b></p><p>@Model.CompetencySelfAssessmentCertificates.SupervisorName, @Model.CompetencySelfAssessmentCertificates.SupervisorPRN</p>
+                    <p><b>Signed Off By</b></p>
+                    @if (string.IsNullOrEmpty(@Model.CompetencySelfAssessmentCertificates.SupervisorPRN))
+                    {
+                        <p>
+                            @Model.CompetencySelfAssessmentCertificates.SupervisorName
+                        </p>
+                    }
+                    else
+                    {
+                        <p>
+                            @Model.CompetencySelfAssessmentCertificates.SupervisorName, @Model.CompetencySelfAssessmentCertificates.SupervisorPRN
+                        </p>
+                    }
                 </div>
-
             </div>
-            <p class="foot-note">Certificate generated on @DateTime.Today.ToString("dd/MM/yyyy")</p>
+            <p class="foot-note">Certificate generated on @DateTime.Now.ToString("dd/MM/yyyy")</p>
         </div>
     </div>
 </body>
