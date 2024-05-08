@@ -108,7 +108,7 @@
 
                 return RedirectToAction("UploadComplete");
             }
-            catch (Exception)
+            catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)
             {
                 ModelState.AddModelError("DelegatesFile", "The Excel file has at least one cell containing an invalid hyperlink or email address.");
                 return View("Index", model);
