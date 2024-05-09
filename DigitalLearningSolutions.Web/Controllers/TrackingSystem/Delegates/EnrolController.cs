@@ -262,7 +262,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault(x => x.ID == model.SelectedSupervisorRoleId).RoleName;
             }
             sessionEnrol.SelfAssessmentSupervisorRoleId = model.SelectedSupervisorRoleId;
-            if (roles.Count()==1)
+            if (roles.Count()==1 && !string.IsNullOrEmpty(sessionEnrol.SupervisorName))
             {
                 sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault().RoleName;
                 sessionEnrol.SelfAssessmentSupervisorRoleId = roles.FirstOrDefault().ID;
