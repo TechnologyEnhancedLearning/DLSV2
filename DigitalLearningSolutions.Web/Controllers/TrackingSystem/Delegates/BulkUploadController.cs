@@ -213,7 +213,7 @@
                 data.NewGroupDescription = model.NewGroupDescription;
             }
 
-            if (data.ToRegisterActiveCount > 0 && data.ToUpdateActiveCount > 0)
+            if (data.ToUpdateActiveCount > 0)
             {
                 setBulkUploadData(data);
                 return RedirectToAction("AddWhoToGroup");
@@ -247,7 +247,7 @@
             {
                 return RedirectToAction("UploadSummary");
             }
-            var model = new AddWhoToGroupViewModel(groupName!, data.IncludeUpdatedDelegates, data.ToUpdateActiveCount, data.ToRegisterActiveCount);
+            var model = new AddWhoToGroupViewModel(groupName!, data.IncludeUpdatedDelegates, data.IncludeSkippedDelegates, data.ToUpdateActiveCount, data.ToRegisterActiveCount);
             return View(model);
         }
 
@@ -256,7 +256,8 @@
         public IActionResult SubmitAddWhoToGroup(AddWhoToGroupViewModel model)
         {
             var data = GetBulkUploadData();
-            data.IncludeUpdatedDelegates = model.IncludeUpdatedDelegates;
+            data.IncludeUpdatedDelegates = model.AddWhoToGroupOption>=2;
+            data.IncludeSkippedDelegates = model.AddWhoToGroupOption == 3;
             setBulkUploadData(data);
             return RedirectToAction("UploadSummary");
         }
@@ -321,6 +322,7 @@
                   data.LastRowProcessed,
                   data.MaxRowsToProcess,
                   data.IncludeUpdatedDelegates,
+                  data.IncludeSkippedDelegates,
                   adminId,
                   data.ExistingGroupId
                   );
@@ -354,7 +356,7 @@
                 {
                     return RedirectToAction("BulkUploadResults");
                 }
-                return RedirectToAction("ProcessBulkDelegates", new { step = step, totalSteps = processSteps });
+                return RedirectToAction("ProcessBulkDelegates", new { step, totalSteps = processSteps });
             }
         }
 

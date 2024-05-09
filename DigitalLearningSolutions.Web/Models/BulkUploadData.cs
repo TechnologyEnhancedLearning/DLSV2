@@ -20,6 +20,7 @@
             ToRegisterInactiveCount = 0;
             ToUpdateActiveCount = 0;
             ToUpdateInactiveCount = 0;
+            IncludeSkippedDelegates = false;
             IncludeUpdatedDelegates = false;
             Day = today.Day;
             Month = today.Month;
@@ -42,6 +43,7 @@
         public int ToUpdateActiveCount { get; set; }
         public int ToUpdateInactiveCount { get; set; }
         public int MaxRowsToProcess { get; set; }
+        public bool IncludeSkippedDelegates { get; set; }
         public bool IncludeUpdatedDelegates { get; set; }
         public int LastRowProcessed { get; set; }
         public int SubtotalDelegatesRegistered { get; set; }
