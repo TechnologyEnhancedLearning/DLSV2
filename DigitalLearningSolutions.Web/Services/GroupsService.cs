@@ -744,8 +744,7 @@
                         progressRecord.ProgressId,
                         updatedSupervisorAdminId,
                         completeByDate,
-                    clockUtility.UtcNow
-
+                        3
                     );
                 }
             }

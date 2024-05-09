@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DigitalLearningSolutions.Data.Migrations.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -79,7 +79,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@Active as bit,
         ///	@CustomisationName as nvarcha [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string ApplyLPDefaultsSPChanges {
+        public static string ApplyLPDefaultsSPChanges {
             get {
                 return ResourceManager.GetString("ApplyLPDefaultsSPChanges", resourceCulture);
             }
@@ -88,7 +88,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string CookiePolicy {
+        public static string CookiePolicy {
             get {
                 return ResourceManager.GetString("CookiePolicy", resourceCulture);
             }
@@ -109,7 +109,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///BEGIN
         ///	-- SET NOCOUNT ON added  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs {
+        public static string CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs {
             get {
                 return ResourceManager.GetString("CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs", resourceCulture);
             }
@@ -134,7 +134,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@CentreID as int,
         ///	@CustomisationName as nvarch [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_106_CreateOrAlterInsertCustomisation_V3 {
+        public static string DLSV2_106_CreateOrAlterInsertCustomisation_V3 {
             get {
                 return ResourceManager.GetString("DLSV2_106_CreateOrAlterInsertCustomisation_V3", resourceCulture);
             }
@@ -148,7 +148,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///.
         /// </summary>
-        internal static string DLSV2_106_DropInsertCustomisation_V3 {
+        public static string DLSV2_106_DropInsertCustomisation_V3 {
             get {
                 return ResourceManager.GetString("DLSV2_106_DropInsertCustomisation_V3", resourceCulture);
             }
@@ -168,7 +168,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
         ///	-- Add t [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_133_AdjustScoresForFilteredSP {
+        public static string DLSV2_133_AdjustScoresForFilteredSP {
             get {
                 return ResourceManager.GetString("DLSV2_133_AdjustScoresForFilteredSP", resourceCulture);
             }
@@ -188,7 +188,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
         ///	-- Add t [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_133_UnAdjustScoresForFilteredSP {
+        public static string DLSV2_133_UnAdjustScoresForFilteredSP {
             get {
                 return ResourceManager.GetString("DLSV2_133_UnAdjustScoresForFilteredSP", resourceCulture);
             }
@@ -221,7 +221,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	SELECT CompetencyGroupID, [1] AS Confidence, [2] AS Relevance
         ///FROM    [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_153_DropFilteredFunctionTweak {
+        public static string DLSV2_153_DropFilteredFunctionTweak {
             get {
                 return ResourceManager.GetString("DLSV2_153_DropFilteredFunctionTweak", resourceCulture);
             }
@@ -245,7 +245,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
         ///	 [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_153_DropFilteredSPFixes {
+        public static string DLSV2_153_DropFilteredSPFixes {
             get {
                 return ResourceManager.GetString("DLSV2_153_DropFilteredSPFixes", resourceCulture);
             }
@@ -275,7 +275,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	SELECT CompetencyGroupID, [1] AS Confidence, [2] AS Relevance
         ///FROM   (SELEC [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_153_FilteredFunctionTweak {
+        public static string DLSV2_153_FilteredFunctionTweak {
             get {
                 return ResourceManager.GetString("DLSV2_153_FilteredFunctionTweak", resourceCulture);
             }
@@ -295,7 +295,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///CREATE OR ALTER   PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
         ///	-- Add [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_153_FilteredSPFixes {
+        public static string DLSV2_153_FilteredSPFixes {
             get {
                 return ResourceManager.GetString("DLSV2_153_FilteredSPFixes", resourceCulture);
             }
@@ -315,7 +315,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER PROCEDURE [dbo].[InsertUpdateCustomisationTutorials]
         ///	-- Add the parameters for the store [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string dlsv2_172_fixcustomisationtutorialprogressissue_down {
+        public static string dlsv2_172_fixcustomisationtutorialprogressissue_down {
             get {
                 return ResourceManager.GetString("dlsv2_172_fixcustomisationtutorialprogressissue_down", resourceCulture);
             }
@@ -335,7 +335,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER PROCEDURE [dbo].[InsertUpdateCustomisationTutorials]
         ///	-- Add the parameters for the store [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string dlsv2_172_fixcustomisationtutorialprogressissue_up {
+        public static string dlsv2_172_fixcustomisationtutorialprogressissue_up {
             get {
                 return ResourceManager.GetString("dlsv2_172_fixcustomisationtutorialprogressissue_up", resourceCulture);
             }
@@ -356,7 +356,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	-- Add the parameters for the stored procedure here
         ///	 [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_236_GetCompletedCoursesTweak_DOWN {
+        public static string DLSV2_236_GetCompletedCoursesTweak_DOWN {
             get {
                 return ResourceManager.GetString("DLSV2_236_GetCompletedCoursesTweak_DOWN", resourceCulture);
             }
@@ -376,7 +376,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetCompletedCoursesForCan [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_236_GetCompletedCoursesTweak_UP {
+        public static string DLSV2_236_GetCompletedCoursesTweak_UP {
             get {
                 return ResourceManager.GetString("DLSV2_236_GetCompletedCoursesTweak_UP", resourceCulture);
             }
@@ -395,7 +395,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_237_GetActiveAvailableTweak_DOWN {
+        public static string DLSV2_237_GetActiveAvailableTweak_DOWN {
             get {
                 return ResourceManager.GetString("DLSV2_237_GetActiveAvailableTweak_DOWN", resourceCulture);
             }
@@ -414,7 +414,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_237_GetActiveAvailableTweak_UP {
+        public static string DLSV2_237_GetActiveAvailableTweak_UP {
             get {
                 return ResourceManager.GetString("DLSV2_237_GetActiveAvailableTweak_UP", resourceCulture);
             }
@@ -436,7 +436,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	-- Add the parameters for the function here
         ///	@ [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_272_AlterGetLinkedFieldNameFunction_DOWN {
+        public static string DLSV2_272_AlterGetLinkedFieldNameFunction_DOWN {
             get {
                 return ResourceManager.GetString("DLSV2_272_AlterGetLinkedFieldNameFunction_DOWN", resourceCulture);
             }
@@ -458,7 +458,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	-- Add the parameters for the function here
         ///	@ [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_272_AlterGetLinkedFieldNameFunction_UP {
+        public static string DLSV2_272_AlterGetLinkedFieldNameFunction_UP {
             get {
                 return ResourceManager.GetString("DLSV2_272_AlterGetLinkedFieldNameFunction_UP", resourceCulture);
             }
@@ -480,7 +480,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]        /// [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_379_ReorderCompetencyAssessmentQuestionsSP {
+        public static string DLSV2_379_ReorderCompetencyAssessmentQuestionsSP {
             get {
                 return ResourceManager.GetString("DLSV2_379_ReorderCompetencyAssessmentQuestionsSP", resourceCulture);
             }
@@ -501,7 +501,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsFo [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6 {
+        public static string DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6 {
             get {
                 return ResourceManager.GetString("DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6", resourceCulture);
             }
@@ -522,7 +522,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///ALTER TABLE Framework [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_95_AddSystemVersioning {
+        public static string DLSV2_95_AddSystemVersioning {
             get {
                 return ResourceManager.GetString("DLSV2_95_AddSystemVersioning", resourceCulture);
             }
@@ -546,7 +546,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///--  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DLSV2_95_RemoveSystemVersioning {
+        public static string DLSV2_95_RemoveSystemVersioning {
             get {
                 return ResourceManager.GetString("DLSV2_95_RemoveSystemVersioning", resourceCulture);
             }
@@ -559,7 +559,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///.
         /// </summary>
-        internal static string DropActiveAvailableV6 {
+        public static string DropActiveAvailableV6 {
             get {
                 return ResourceManager.GetString("DropActiveAvailableV6", resourceCulture);
             }
@@ -568,7 +568,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 䕓⁔乁䥓也䱕卌传ൎ䜊൏匊呅儠何䕔彄䑉久䥔䥆剅传ൎ䜊൏ഊⴊ‭㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽ഽⴊ‭畁桴牯ऺ䬉癥湩圠楨瑴歡牥਍ⴭ䌠敲瑡⁥慤整›㔱䘠扥畲牡⁹〲㈱਍ⴭ䐠獥牣灩楴湯ऺ牃慥整⁳桴⁥牐杯敲獳愠摮愠灳牐杯敲獳爠捥牯⁤潦⁲⁡敮⁷獵牥਍ⴭ删瑥牵獮ऺ〉㨠猠捵散獳‬牰杯敲獳挠敲瑡摥਍ⴭ†††ठㄉ㨠䘠楡敬⁤‭牰杯敲獳愠牬慥祤攠楸瑳൳ⴊ‭†††उ〱‰›慆汩摥ⴠ䌠湥牴䥥⁄湡⁤畃瑳浯獩瑡潩䥮⁄潤❮⁴慭捴൨ⴊ‭†††उ〱‱›慆汩摥ⴠ䌠湥牴䥥⁄湡⁤慃摮摩瑡䥥⁄潤❮⁴慭捴൨ഊⴊ‭㍖挠慨杮獥椠据畬敤ഺഊⴊ‭桃捥獫琠慨⁴硥獩楴杮瀠潲牧獥⁳慨湳琧戠敥⁮敒潭敶⁤牯删晥敲桳摥戠晥牯⁥敲畴楲楮杮攠牲牯മⴊ‭摁獤瀠牡浡瑥牥⁳潦⁲湅潲汬敭瑮洠瑥潨⁤湡⁤摡業⁮䑉਍ⴭ㴠㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽਍䱁䕔⁒剐䍏䑅剕⁅摛潢⹝畛灳牃慥整牐杯敲獳敒潣摲噟崳਍䀉慃摮摩瑡䥥⁄湩ⱴ਍䀉畃瑳浯獩瑡潩䥮⁄湩ⱴ਍䀉敃瑮敲䑉椠瑮ബऊ䕀牮汯浬湥䵴瑥潨䥤⁄湩ⱴ਍䀉湅潲汬摥祂摁業䥮⁄湩൴䄊൓䈊䝅义਍ⴉ‭䕓⁔低佃乕⁔乏愠摤摥琠⁯牰癥湥⁴硥牴⁡敲畳瑬猠瑥⁳牦浯਍ⴉ‭湩整晲牥湩⁧楷桴匠䱅䍅⁔瑳瑡浥湥獴മऊ䕓⁔低佃乕⁔乏഻ऊⴭ਍ⴉ‭桔牥⁥牡⁥慶楲畯⁳桴湩獧琠 [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DropApplyLPDefaultsSPChanges {
+        public static string DropApplyLPDefaultsSPChanges {
             get {
                 return ResourceManager.GetString("DropApplyLPDefaultsSPChanges", resourceCulture);
             }
@@ -591,7 +591,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///.
         /// </summary>
-        internal static string DropFilteredSPs {
+        public static string DropFilteredSPs {
             get {
                 return ResourceManager.GetString("DropFilteredSPs", resourceCulture);
             }
@@ -601,7 +601,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///   Looks up a localized string similar to DROP PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]
         ///GO.
         /// </summary>
-        internal static string DropGetActiveAvailableV5 {
+        public static string DropGetActiveAvailableV5 {
             get {
                 return ResourceManager.GetString("DropGetActiveAvailableV5", resourceCulture);
             }
@@ -616,7 +616,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///.
         /// </summary>
-        internal static string DropReorderFrameworkCompetenciesAndGroupsSPs {
+        public static string DropReorderFrameworkCompetenciesAndGroupsSPs {
             get {
                 return ResourceManager.GetString("DropReorderFrameworkCompetenciesAndGroupsSPs", resourceCulture);
             }
@@ -644,7 +644,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///             FROM    Competencies AS comp INNER JOIN
         ///                           SelfAssessmentResults AS sar [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string FilteredSPs {
+        public static string FilteredSPs {
             get {
                 return ResourceManager.GetString("FilteredSPs", resourceCulture);
             }
@@ -665,7 +665,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreF [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string GetActiveAvailableV5 {
+        public static string GetActiveAvailableV5 {
             get {
                 return ResourceManager.GetString("GetActiveAvailableV5", resourceCulture);
             }
@@ -684,7 +684,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_DOWN {
+        public static string HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_DOWN {
             get {
                 return ResourceManager.GetString("HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_DOWN", resourceCulture);
             }
@@ -703,7 +703,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP {
+        public static string HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP {
             get {
                 return ResourceManager.GetString("HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP", resourceCulture);
             }
@@ -722,7 +722,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 24/01/2023
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for cate [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string td_1043_getactivitiesforenrolment {
+        public static string td_1043_getactivitiesforenrolment {
             get {
                 return ResourceManager.GetString("td_1043_getactivitiesforenrolment", resourceCulture);
             }
@@ -736,7 +736,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///.
         /// </summary>
-        internal static string td_1043_getactivitiesforenrolment_down {
+        public static string td_1043_getactivitiesforenrolment_down {
             get {
                 return ResourceManager.GetString("td_1043_getactivitiesforenrolment_down", resourceCulture);
             }
@@ -762,7 +762,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///       dbo.Users.LastName,
         ///    [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string td_1131_alterviewcandidatesadduserid_down {
+        public static string td_1131_alterviewcandidatesadduserid_down {
             get {
                 return ResourceManager.GetString("td_1131_alterviewcandidatesadduserid_down", resourceCulture);
             }
@@ -788,7 +788,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///       dbo.Users.LastName,
         ///    [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string td_1131_alterviewcandidatesadduserid_up {
+        public static string td_1131_alterviewcandidatesadduserid_up {
             get {
                 return ResourceManager.GetString("td_1131_alterviewcandidatesadduserid_up", resourceCulture);
             }
@@ -804,7 +804,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///      , SysEndTime DATETIME2 GENERATED ALWAYS AS ROW END HIDDEN
         ///            CONSTRAINT DF_SelfAssessmentResultSupervisorVerif [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications {
+        public static string TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications {
             get {
                 return ResourceManager.GetString("TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications", resourceCulture);
             }
@@ -818,7 +818,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER TABLE [dbo].SelfAssessmentResultSupervisorVerifications DROP CONSTRAINT [DF_SelfAssessmentResultSupervisorVerifications_SysEnd];
         ///ALTER TABLE [dbo].SelfAssessmentResultSupervisorVe [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications {
+        public static string TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications {
             get {
                 return ResourceManager.GetString("TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications", resourceCulture);
             }
@@ -836,7 +836,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ============= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string td_1610_update_getactivitiesfordelegateenrolment_proc_down {
+        public static string td_1610_update_getactivitiesfordelegateenrolment_proc_down {
             get {
                 return ResourceManager.GetString("td_1610_update_getactivitiesfordelegateenrolment_proc_down", resourceCulture);
             }
@@ -854,7 +854,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ============= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string td_1610_update_getactivitiesfordelegateenrolment_proc_up {
+        public static string td_1610_update_getactivitiesfordelegateenrolment_proc_up {
             get {
                 return ResourceManager.GetString("td_1610_update_getactivitiesfordelegateenrolment_proc_up", resourceCulture);
             }
@@ -874,7 +874,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ========= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1766_GetActivitiesForDelegateEnrolmentTweak {
+        public static string TD_1766_GetActivitiesForDelegateEnrolmentTweak {
             get {
                 return ResourceManager.GetString("TD_1766_GetActivitiesForDelegateEnrolmentTweak", resourceCulture);
             }
@@ -894,7 +894,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ========= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1766_GetActivitiesForDelegateEnrolmentTweak_down {
+        public static string TD_1766_GetActivitiesForDelegateEnrolmentTweak_down {
             get {
                 return ResourceManager.GetString("TD_1766_GetActivitiesForDelegateEnrolmentTweak_down", resourceCulture);
             }
@@ -916,7 +916,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1766_GetCompletedCoursesForCandidateTweak {
+        public static string TD_1766_GetCompletedCoursesForCandidateTweak {
             get {
                 return ResourceManager.GetString("TD_1766_GetCompletedCoursesForCandidateTweak", resourceCulture);
             }
@@ -938,7 +938,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1766_GetCompletedCoursesForCandidateTweak_down {
+        public static string TD_1766_GetCompletedCoursesForCandidateTweak_down {
             get {
                 return ResourceManager.GetString("TD_1766_GetCompletedCoursesForCandidateTweak_down", resourceCulture);
             }
@@ -962,7 +962,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDU [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1766_GetCurrentCoursesForCandidateTweak {
+        public static string TD_1766_GetCurrentCoursesForCandidateTweak {
             get {
                 return ResourceManager.GetString("TD_1766_GetCurrentCoursesForCandidateTweak", resourceCulture);
             }
@@ -984,7 +984,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [ [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1766_GetCurrentCoursesForCandidateTweak_down {
+        public static string TD_1766_GetCurrentCoursesForCandidateTweak_down {
             get {
                 return ResourceManager.GetString("TD_1766_GetCurrentCoursesForCandidateTweak_down", resourceCulture);
             }
@@ -1005,7 +1005,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
         ///	-- Add the parameter [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1913_AlterGroupCustomisation_Add_V2_DOWN {
+        public static string TD_1913_AlterGroupCustomisation_Add_V2_DOWN {
             get {
                 return ResourceManager.GetString("TD_1913_AlterGroupCustomisation_Add_V2_DOWN", resourceCulture);
             }
@@ -1026,7 +1026,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
         ///	-- Add the parameter [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1913_AlterGroupCustomisation_Add_V2_UP {
+        public static string TD_1913_AlterGroupCustomisation_Add_V2_UP {
             get {
                 return ResourceManager.GetString("TD_1913_AlterGroupCustomisation_Add_V2_UP", resourceCulture);
             }
@@ -1035,7 +1035,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;div class=nhsuk-u-reading-width&gt;&lt;h2&gt;What are cookies?&lt;/h2&gt;&lt;p&gt;Cookies are files saved on your phone, tablet or computer when you visit a website.&lt;p&gt;They store information about how you use the website, such as the pages you visit.&lt;p&gt;Cookies are not viruses or computer programs. They are very small so do not take up much space.&lt;h2&gt;How we use cookies&lt;/h2&gt;&lt;p&gt;We only use cookies to:&lt;ul&gt;&lt;li&gt;make our website work&lt;li&gt;measure how you use our website, such as which links you click on (analytics cookies), if you give [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1943_CookiePolicyContentHtmlOldRecord {
+        public static string TD_1943_CookiePolicyContentHtmlOldRecord {
             get {
                 return ResourceManager.GetString("TD_1943_CookiePolicyContentHtmlOldRecord", resourceCulture);
             }
@@ -1052,7 +1052,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///&lt;li&gt;make our website work&lt;/li&gt;
         ///&lt;li&gt;measure how you use our website, such as which links you clic [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_1943_CookiesPolicy {
+        public static string TD_1943_CookiesPolicy {
             get {
                 return ResourceManager.GetString("TD_1943_CookiesPolicy", resourceCulture);
             }
@@ -1074,7 +1074,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Remove period field from Competencies table
         ///ALTER TABL [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2036_SwitchOffPeriodFields_DOWN {
+        public static string TD_2036_SwitchOffPeriodFields_DOWN {
             get {
                 return ResourceManager.GetString("TD_2036_SwitchOffPeriodFields_DOWN", resourceCulture);
             }
@@ -1099,7 +1099,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///-- Remove period field from Comp [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2036_SwitchOffPeriodFields_UP {
+        public static string TD_2036_SwitchOffPeriodFields_UP {
             get {
                 return ResourceManager.GetString("TD_2036_SwitchOffPeriodFields_UP", resourceCulture);
             }
@@ -1117,7 +1117,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Switch on versioning from Frameworks table
         ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].FrameworksHisto [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2036_SwitchSystemVersioningOffAllTables_DOWN {
+        public static string TD_2036_SwitchSystemVersioningOffAllTables_DOWN {
             get {
                 return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_DOWN", resourceCulture);
             }
@@ -1142,7 +1142,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///-- Remove versioning from Competency [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2036_SwitchSystemVersioningOffAllTables_UP {
+        public static string TD_2036_SwitchSystemVersioningOffAllTables_UP {
             get {
                 return ResourceManager.GetString("TD_2036_SwitchSystemVersioningOffAllTables_UP", resourceCulture);
             }
@@ -1160,7 +1160,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ============= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak {
+        public static string TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak {
             get {
                 return ResourceManager.GetString("TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak", resourceCulture);
             }
@@ -1178,7 +1178,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ============= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down {
+        public static string TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down {
             get {
                 return ResourceManager.GetString("TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down", resourceCulture);
             }
@@ -1204,7 +1204,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///   DECLARE @ [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP {
+        public static string TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP {
             get {
                 return ResourceManager.GetString("TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP", resourceCulture);
             }
@@ -1228,7 +1228,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	-- Add the parameters for the stored procedure here
         ///	@ProgressID  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2481_Update_uspReturnSectionsForCandCust_V2_down {
+        public static string TD_2481_Update_uspReturnSectionsForCandCust_V2_down {
             get {
                 return ResourceManager.GetString("TD_2481_Update_uspReturnSectionsForCandCust_V2_down", resourceCulture);
             }
@@ -1252,7 +1252,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	-- Add the parameters for the stored procedure here
         ///	@ProgressID  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2481_Update_uspReturnSectionsForCandCust_V2_up {
+        public static string TD_2481_Update_uspReturnSectionsForCandCust_V2_up {
             get {
                 return ResourceManager.GetString("TD_2481_Update_uspReturnSectionsForCandCust_V2_up", resourceCulture);
             }
@@ -1270,7 +1270,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ============= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak {
+        public static string TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak {
             get {
                 return ResourceManager.GetString("TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak", resourceCulture);
             }
@@ -1288,7 +1288,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
         ///-- ============= [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down {
+        public static string TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down {
             get {
                 return ResourceManager.GetString("TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down", resourceCulture);
             }
@@ -1312,7 +1312,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///       null                                    AS Login,
         ///       dbo.Users.PasswordHas [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string td_264_alterviewadminusersaddcentrename_down {
+        public static string td_264_alterviewadminusersaddcentrename_down {
             get {
                 return ResourceManager.GetString("td_264_alterviewadminusersaddcentrename_down", resourceCulture);
             }
@@ -1336,7 +1336,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///       null                                    AS Login,
         ///       dbo.Users.PasswordHas [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string td_264_alterviewadminusersaddcentrename_up {
+        public static string td_264_alterviewadminusersaddcentrename_up {
             get {
                 return ResourceManager.GetString("td_264_alterviewadminusersaddcentrename_up", resourceCulture);
             }
@@ -1360,7 +1360,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///-- 18/09/2018 Adds return v [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3000_CheckDelegateStatusForCustomisationFix_down {
+        public static string TD_3000_CheckDelegateStatusForCustomisationFix_down {
             get {
                 return ResourceManager.GetString("TD_3000_CheckDelegateStatusForCustomisationFix_down", resourceCulture);
             }
@@ -1384,7 +1384,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///-- 18/09/2018 Adds return v [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3000_CheckDelegateStatusForCustomisationFix_up {
+        public static string TD_3000_CheckDelegateStatusForCustomisationFix_up {
             get {
                 return ResourceManager.GetString("TD_3000_CheckDelegateStatusForCustomisationFix_up", resourceCulture);
             }
@@ -1413,7 +1413,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///                SELECT
         ///                 [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3187_CreateGetAssessmentResultsByDelegate_SP {
+        public static string TD_3187_CreateGetAssessmentResultsByDelegate_SP {
             get {
                 return ResourceManager.GetString("TD_3187_CreateGetAssessmentResultsByDelegate_SP", resourceCulture);
             }
@@ -1440,7 +1440,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///	WITH LatestAssessmentR [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3187_CreateGetCandidateAssessmentResultsById_SP {
+        public static string TD_3187_CreateGetCandidateAssessmentResultsById_SP {
             get {
                 return ResourceManager.GetString("TD_3187_CreateGetCandidateAssessmentResultsById_SP", resourceCulture);
             }
@@ -1459,7 +1459,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER   PROCEDURE [dbo].[SendOneMonthSelfAssessmentTBCReminders] [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3190_FixSelfAssessmentReminderQueriesSP_UP {
+        public static string TD_3190_FixSelfAssessmentReminderQueriesSP_UP {
             get {
                 return ResourceManager.GetString("TD_3190_FixSelfAssessmentReminderQueriesSP_UP", resourceCulture);
             }
@@ -1483,7 +1483,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///BEGIN
         ///	-- [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP {
+        public static string TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP {
             get {
                 return ResourceManager.GetString("TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP", resourceCulture);
             }
@@ -1506,7 +1506,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///AS
         ///BEGIN        /// [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
+        public static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
             get {
                 return ResourceManager.GetString("TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP", resourceCulture);
             }
@@ -1526,7 +1526,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
         ///	-- Add the parameters for the stored p [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3197_FixLinksInCourseReminderEmails_DOWN {
+        public static string TD_3197_FixLinksInCourseReminderEmails_DOWN {
             get {
                 return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_DOWN", resourceCulture);
             }
@@ -1546,7 +1546,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
         ///	-- Add the parameters for the stored p [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3197_FixLinksInCourseReminderEmails_UP {
+        public static string TD_3197_FixLinksInCourseReminderEmails_UP {
             get {
                 return ResourceManager.GetString("TD_3197_FixLinksInCourseReminderEmails_UP", resourceCulture);
             }
@@ -1569,7 +1569,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///--       		1 : Failed - progress already exists
         ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Down {
+        public static string TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Down {
             get {
                 return ResourceManager.GetString("TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Down", resourceCulture);
             }
@@ -1592,7 +1592,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///--       		1 : Failed - progress already exists
         ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Up {
+        public static string TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Up {
             get {
                 return ResourceManager.GetString("TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Up", resourceCulture);
             }
@@ -1618,7 +1618,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///GO
         ///CREATE TABLE [dbo].[deprec [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3629_DeleteDeprecatedTables_DOWN {
+        public static string TD_3629_DeleteDeprecatedTables_DOWN {
             get {
                 return ResourceManager.GetString("TD_3629_DeleteDeprecatedTables_DOWN", resourceCulture);
             }
@@ -1642,9 +1642,100 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///            SELECT N&apos;aspnet_Membership&apos;
         ///            RETU [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3664_RestoreDroppedSPs {
+        public static string TD_3664_RestoreDroppedSPs {
             get {
                 return ResourceManager.GetString("TD_3664_RestoreDroppedSPs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 08/05/2024 11:27:59 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/12/2016
+        ///-- Description:	Checks if learner has progress record against customisation.
+        ///-- Returns:
+        ///-- 0: None
+        ///-- 1: Expired
+        ///-- 2: Complete
+        ///-- 3: Current
+        ///-- =============================================
+        ///-- 18/09/2018 Adds return v [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string TD_3671_Alter_CheckDelegateStatusForCustomisation_func_down {
+            get {
+                return ResourceManager.GetString("TD_3671_Alter_CheckDelegateStatusForCustomisation_func_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 09/05/2024 11:41:58 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/12/2016
+        ///-- Description:	Checks if learner has progress record against customisation.
+        ///-- Returns:
+        ///-- 0: None
+        ///-- 1: Expired
+        ///-- 2: Complete
+        ///-- 3: Current
+        ///-- =============================================
+        ///-- 18/09/2018 Adds return [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string TD_3671_Alter_CheckDelegateStatusForCustomisation_func_up {
+            get {
+                return ResourceManager.GetString("TD_3671_Alter_CheckDelegateStatusForCustomisation_func_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 08/05/2024 10:34:29 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDURE [db [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_down {
+            get {
+                return ResourceManager.GetString("TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 08/05/2024 10:34:29 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDURE [db [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_up {
+            get {
+                return ResourceManager.GetString("TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_up", resourceCulture);
             }
         }
         
@@ -1664,7 +1755,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_4015_Update_GetCompletedCoursesForCandidate_proc_down {
+        public static string TD_4015_Update_GetCompletedCoursesForCandidate_proc_down {
             get {
                 return ResourceManager.GetString("TD_4015_Update_GetCompletedCoursesForCandidate_proc_down", resourceCulture);
             }
@@ -1686,7 +1777,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_4015_Update_GetCompletedCoursesForCandidate_proc_up {
+        public static string TD_4015_Update_GetCompletedCoursesForCandidate_proc_up {
             get {
                 return ResourceManager.GetString("TD_4015_Update_GetCompletedCoursesForCandidate_proc_up", resourceCulture);
             }
@@ -1707,7 +1798,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFil [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_786_GetSelfRegisteredFlag_DOWN {
+        public static string TD_786_GetSelfRegisteredFlag_DOWN {
             get {
                 return ResourceManager.GetString("TD-786-GetSelfRegisteredFlag_DOWN", resourceCulture);
             }
@@ -1726,7 +1817,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_786_GetSelfRegisteredFlag_UP {
+        public static string TD_786_GetSelfRegisteredFlag_UP {
             get {
                 return ResourceManager.GetString("TD-786-GetSelfRegisteredFlag_UP", resourceCulture);
             }
@@ -1735,7 +1826,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;ol type=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;&lt;strong&gt;About these terms and conditions&lt;/strong&gt;&lt;ul data-list-level=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;It is your responsibility to ensure that you understand and comply with these terms and conditions. It ensures that:&lt;ul data-list-level=&quot;&quot;2&quot;&quot;&gt;&lt;li&gt;You understand your responsibilities and what constitutes an abuse of the service&lt;/li&gt;&lt;li&gt;Computers and personal data are not put at risk&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;If you have any questions about these terms and conditions, you should contact your Digital Learning Solutions c [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TermsAndConditionsOldrecord {
+        public static string TermsAndConditionsOldrecord {
             get {
                 return ResourceManager.GetString("TermsAndConditionsOldrecord", resourceCulture);
             }
@@ -1750,7 +1841,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///&lt;li class=&quot;h2 nhsuk-heading-l nhsuk-u-font-weight-bold nhsuk-u-margin-0&quot;&gt;THE PLATFORM
         ///&lt;ol class [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TermsConditions {
+        public static string TermsConditions {
             get {
                 return ResourceManager.GetString("TermsConditions", resourceCulture);
             }
@@ -1763,7 +1854,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///    GO
         ///.
         /// </summary>
-        internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_DOWN {
+        public static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_DOWN {
             get {
                 return ResourceManager.GetString("UAR-831-CreateViewsForAdminUsersAndCandidatesTables-DOWN", resourceCulture);
             }
@@ -1781,7 +1872,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///       dbo.AdminAccounts.IsSuperAdmin          AS UserAdmin,
         ///       dbo.Us [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_UP {
+        public static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_UP {
             get {
                 return ResourceManager.GetString("UAR-831-CreateViewsForAdminUsersAndCandidatesTables-UP", resourceCulture);
             }
@@ -1797,7 +1888,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///( NAME = mbdbx101files, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_filestream1_&apos; + @snapshotTime + &apos;&apos;&apos;)
         ///A [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string UAR_858_SnapshotData_UP {
+        public static string UAR_858_SnapshotData_UP {
             get {
                 return ResourceManager.GetString("UAR_858_SnapshotData_UP", resourceCulture);
             }
@@ -1816,7 +1907,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///    ConfigAdmin_deprecated = snapAA.ConfigAdmin_deprecated,
         ///   [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string UAR_859_PopulateUsersTableFromAccountsTables_DOWN {
+        public static string UAR_859_PopulateUsersTableFromAccountsTables_DOWN {
             get {
                 return ResourceManager.GetString("UAR_859_PopulateUsersTableFromAccountsTables_DOWN", resourceCulture);
             }

@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Services
                         progressRecord.ProgressId,
                         supervisorAdminId ?? 0,
                         completeByDate,
-                        clockUtility.UtcNow
+                        3
                     );
                 }
             }
