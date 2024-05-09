@@ -621,7 +621,7 @@
                 da.UserID,
                 da.RegistrationConfirmationHash,
                 u.ID as UserId,
-                COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
+                COALESCE( u.PrimaryEmail,ucd.Email) AS EmailAddress,
                 u.FirstName,
                 u.LastName,
                 u.Active as UserActive,
