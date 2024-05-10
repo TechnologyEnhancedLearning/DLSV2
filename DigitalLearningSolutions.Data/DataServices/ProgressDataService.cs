@@ -15,7 +15,7 @@
     {
         IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
 
-        void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate, int enrollmentMethodID);
+        void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate);
 
         int CreateNewDelegateProgress(
             int delegateId,
@@ -143,8 +143,7 @@
         public void UpdateProgressSupervisorAndCompleteByDate(
             int progressId,
             int supervisorAdminId,
-            DateTime? completeByDate,
-            int enrollmentMethodID
+            DateTime? completeByDate
         )
         {
             connection.Execute(
@@ -153,7 +152,7 @@
                         CompleteByDate = @completeByDate,
                         EnrollmentMethodID = @enrollmentMethodID
                     WHERE ProgressID = @progressId",
-                new { progressId, supervisorAdminId, completeByDate, enrollmentMethodID }
+                new { progressId, supervisorAdminId, completeByDate }
             );
         }
 

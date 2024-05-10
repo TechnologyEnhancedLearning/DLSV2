@@ -743,8 +743,7 @@
                     progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         progressRecord.ProgressId,
                         updatedSupervisorAdminId,
-                        completeByDate,
-                        3
+                        completeByDate
                     );
                 }
             }

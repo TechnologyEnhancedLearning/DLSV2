@@ -102,8 +102,7 @@ namespace DigitalLearningSolutions.Web.Services
                     progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         progressRecord.ProgressId,
                         supervisorAdminId ?? 0,
-                        completeByDate,
-                        3
+                        completeByDate
                     );
                 }
             }

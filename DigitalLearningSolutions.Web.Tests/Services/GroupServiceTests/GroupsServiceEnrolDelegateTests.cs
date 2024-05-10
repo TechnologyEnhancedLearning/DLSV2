@@ -348,8 +348,7 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         A<int>._,
-                        A<DateTime?>._,
-                         A<int>._
+                        A<DateTime?>._
                     )
                 ).MustHaveHappened();
             }
@@ -385,8 +384,7 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         reusableProgressRecord.SupervisorAdminId,
-                        A<DateTime?>._,
-                          A<int>._
+                        A<DateTime?>._
                     )
                 ).MustHaveHappened();
             }
@@ -422,8 +420,7 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         supervisorId,
-                        A<DateTime?>._,
-                          A<int>._
+                        A<DateTime?>._
                     )
                 ).MustHaveHappened();
             }
@@ -459,8 +456,7 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         A<int>._,
-                        null,
-                          A<int>._
+                        null
                     )
                 ).MustHaveHappened();
             }
@@ -498,8 +494,7 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         A<int>._,
-                        expectedFutureDate,
-                          A<int>._
+                        expectedFutureDate
                     )
                 ).MustHaveHappened();
             }
