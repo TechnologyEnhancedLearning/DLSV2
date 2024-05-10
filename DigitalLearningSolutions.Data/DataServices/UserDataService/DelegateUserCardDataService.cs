@@ -309,7 +309,7 @@
         }
         public (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
-                                    int groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
+                                    int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
         {
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -342,10 +342,9 @@
             var groupDelegatesForCentre = $@"SELECT DelegateID FROM GroupDelegates WHERE GroupID in (
 											SELECT GroupID FROM Groups WHERE CentreID = @centreId AND RemovedDate IS NULL
 											)";
-            if (groupId == 0)
-                whereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " )";
-            else
+            if (groupId.HasValue)
                 whereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " AND GroupID = @groupId )";
+                
 
             string orderBy;
 

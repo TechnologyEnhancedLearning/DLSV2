@@ -102,7 +102,7 @@
             string isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, answer1, answer2, answer3, answer4, answer5, answer6;
             isActive = isPasswordSet = isAdmin = isUnclaimed = isEmailVerified = registrationType = answer1 = answer2 = answer3 = answer4 = answer5 = answer6 = "Any";
             int jobGroupId = 0;
-            int groupId = 0;
+            int? groupId = null;
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
