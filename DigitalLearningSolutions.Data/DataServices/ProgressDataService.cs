@@ -149,8 +149,7 @@
             connection.Execute(
                 @"UPDATE Progress SET
                         SupervisorAdminID = @supervisorAdminId,
-                        CompleteByDate = @completeByDate,
-                        EnrollmentMethodID = @enrollmentMethodID
+                        CompleteByDate = @completeByDate
                     WHERE ProgressID = @progressId",
                 new { progressId, supervisorAdminId, completeByDate }
             );
