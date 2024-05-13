@@ -100,7 +100,7 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
+            result.Should().BeViewResult().WithDefaultViewName();
         }
 
         [Test]
