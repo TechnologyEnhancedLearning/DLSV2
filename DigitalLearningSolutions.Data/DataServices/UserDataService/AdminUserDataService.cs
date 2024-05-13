@@ -227,10 +227,11 @@
 
         public int GetNumberOfAdminsAtCentre(int centreId)
         {
-            return (int)connection.ExecuteScalar(
+         var count =    connection.ExecuteScalar(
                 @"SELECT COUNT(*) FROM AdminUsers WHERE CentreID = @centreId",
                 new { centreId }
             );
+            return Convert.ToInt32(count); ;
         }
 
         public void UpdateAdminUserPermissions(
