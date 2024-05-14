@@ -2,7 +2,7 @@
 {
     using FluentMigrator;
 
-    [Migration(202405091044)]
+    [Migration(202405141044)]
     public class AlterGetCurrentCoursesForCandidate_V2 : Migration
     {
         public override void Up()

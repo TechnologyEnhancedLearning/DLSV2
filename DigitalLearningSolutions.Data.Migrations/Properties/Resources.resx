@@ -376,9 +376,6 @@
   <data name="TD_4015_Update_GetCompletedCoursesForCandidate_proc_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-4015-GetCompletedCoursesForCandidateFix_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
-  <data name="TD_3671_Alter_CheckDelegateStatusForCustomisation_func_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TD-3671-Alter_CheckDelegateStatusForCustomisation_func_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="TD_3671_Alter_CheckDelegateStatusForCustomisation_func_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TD_3671_Alter_CheckDelegateStatusForCustomisation_func_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -387,5 +384,8 @@
   </data>
   <data name="TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TD-3671-Alter_GetCurrentCoursesForCandidate_V2_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="TD_3671_Alter_CheckDelegateStatusForCustomisation_func_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-3671-Alter_CheckDelegateStatusForCustomisation_func_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

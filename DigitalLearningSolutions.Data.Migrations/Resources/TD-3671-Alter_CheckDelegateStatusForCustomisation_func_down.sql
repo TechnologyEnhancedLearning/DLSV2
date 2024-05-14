@@ -33,7 +33,7 @@ BEGIN
 	-- Check of current:
 	if @CustomisationID IN (SELECT CustomisationID
 FROM  Progress AS p
-WHERE (Completed IS NULL) AND (RemovedDate IS NULL) AND (CandidateID = @CandidateID) AND ((SubmittedTime > DATEADD(M, - 6, GETDATE()) OR (EnrollmentMethodID <> 1))  OR NOT p.CompleteByDate IS NULL))
+WHERE (Completed IS NULL) AND (RemovedDate IS NULL) AND (CandidateID = @CandidateID) AND ((SubmittedTime > DATEADD(M, - 6, GETDATE()))  OR NOT p.CompleteByDate IS NULL))
 begin
 Set @ResultVar = 3
 goto onExit
@@ -49,7 +49,7 @@ end
 --Check if Expired:
 if @CustomisationID IN (SELECT CustomisationID
 FROM  Progress AS p
-WHERE (Completed IS NULL) AND (RemovedDate IS NULL) AND (CandidateID = @CandidateID) AND ((SubmittedTime <= DATEADD(M, - 6, GETDATE())) AND (EnrollmentMethodID = 1)) AND (p.CompleteByDate IS NULL))
+WHERE (Completed IS NULL) AND (RemovedDate IS NULL) AND (CandidateID = @CandidateID) AND ((SubmittedTime <= DATEADD(M, - 6, GETDATE()))) AND (p.CompleteByDate IS NULL))
 begin
 Set @ResultVar = 1
 goto onExit
