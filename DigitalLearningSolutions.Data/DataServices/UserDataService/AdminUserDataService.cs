@@ -231,7 +231,7 @@
                 @"SELECT COUNT(*) FROM AdminUsers WHERE CentreID = @centreId",
                 new { centreId }
             );
-            return Convert.ToInt32(count); ;
+            return Convert.ToInt32(count);
         }
 
         public void UpdateAdminUserPermissions(
