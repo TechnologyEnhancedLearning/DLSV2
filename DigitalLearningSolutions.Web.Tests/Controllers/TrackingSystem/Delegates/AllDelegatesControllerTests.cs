@@ -76,7 +76,7 @@
             {
                 A.CallTo(() => userDataService.GetDelegateUserCards(A<string>._, A<int>._, A<int>._, A<string>._,
                     A<string>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._,
-                    A<string>._, A<int>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._)
+                    A<string>._, A<int>._, A<int?>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._)
                 ).MustHaveHappened();
                 A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
                     .MustHaveHappened();
