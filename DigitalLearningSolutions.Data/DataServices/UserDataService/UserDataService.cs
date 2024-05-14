@@ -294,7 +294,6 @@
 
     public partial class UserDataService : IUserDataService
     {
-        private readonly ILogger<UserDataService> logger;
         private const string BaseSelectUserQuery =
             @"SELECT
                 u.ID,
@@ -337,10 +336,12 @@
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
 
         private readonly IDbConnection connection;
+        private readonly ILogger<UserDataService> logger;
 
-        public UserDataService(IDbConnection connection)
+        public UserDataService(IDbConnection connection, ILogger<UserDataService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public int? GetUserIdFromUsername(string username)
@@ -621,7 +622,7 @@
                 da.UserID,
                 da.RegistrationConfirmationHash,
                 u.ID as UserId,
-                COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
+                 u.PrimaryEmail AS EmailAddress,
                 u.FirstName,
                 u.LastName,
                 u.Active as UserActive,
