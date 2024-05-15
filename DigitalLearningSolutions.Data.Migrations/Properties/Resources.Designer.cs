@@ -1712,9 +1712,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [db [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_down {
+        internal static string TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc1_down {
             get {
-                return ResourceManager.GetString("TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_down", resourceCulture);
+                return ResourceManager.GetString("TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc1_down", resourceCulture);
             }
         }
         
