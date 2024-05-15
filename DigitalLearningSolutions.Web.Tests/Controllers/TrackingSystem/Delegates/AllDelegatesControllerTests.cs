@@ -16,6 +16,7 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
+    using Microsoft.Extensions.Configuration;
 
     public class AllDelegatesControllerTests
     {
@@ -30,6 +31,7 @@
         private IPaginateService paginateService = null!;
         private IUserDataService userDataService = null!;
         private IGroupsService groupsService = null!;
+        private IConfiguration? configuration;
 
         [SetUp]
         public void Setup()
@@ -41,7 +43,7 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             paginateService = A.Fake<IPaginateService>();
             groupsService = A.Fake<IGroupsService>();
-
+            configuration = A.Fake<IConfiguration>();
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
 
@@ -53,7 +55,8 @@
                     promptsHelper,
                     jobGroupsDataService,
                     paginateService,
-                    groupsService
+                    groupsService,
+                    configuration
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
