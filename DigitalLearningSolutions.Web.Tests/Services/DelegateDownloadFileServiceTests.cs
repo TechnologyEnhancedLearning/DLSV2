@@ -146,8 +146,8 @@
                 .Returns(new CentreRegistrationPrompts(centreId, centreRegistrationPrompts));
 
             A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
-            A.CallTo(() => userDataService.GetCountDelegateUserCardsForExportByCentreId("", "", "", 2, "", "", "", "", "", "", 0, "", "", "", "", "", "")).Returns(17);
-            A.CallTo(() => userDataService.GetDelegateUserCardsForExportByCentreId("Test", "SearchableName", "Ascending",2,"Any", "Any", "Any", "Any", "Any", "Any",2, "Any", "Any", "Any", "Any", "Any", "Any", 10, 1)).Returns(delegateUserCards);
+            A.CallTo(() => userDataService.GetCountDelegateUserCardsForExportByCentreId("", "", "", 2, "", "", "", "", "", "", 0, null,"", "", "", "", "", "")).Returns(17);
+            A.CallTo(() => userDataService.GetDelegateUserCardsForExportByCentreId("Test", "SearchableName", "Ascending",2,"Any", "Any", "Any", "Any", "Any", "Any",2, null,"Any", "Any", "Any", "Any", "Any", "Any", 10, 1)).Returns(delegateUserCards);
             // When
             var resultBytes = delegateDownloadFileService.GetAllDelegatesFileForCentre(2, null, "", GenericSortingHelper.Ascending, null);
             using var resultsStream = new MemoryStream(resultBytes);
