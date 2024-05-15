@@ -164,7 +164,7 @@
 			INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
 			LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
 			INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID ";
-        private const string DelegatewhereConditon = $@" Where ((CentreID = @centreId) OR (@centreId= 0))
+        private string DelegatewhereConditon = $@" Where ((CentreID = @centreId) OR (@centreId= 0))
                             AND ( FirstName + ' ' + LastName + ' ' + PrimaryEmail + ' ' + COALESCE(Email, '') + ' ' + COALESCE(CandidateNumber, '') LIKE N'%' + @searchString + N'%')
 					        AND ((@isActive = 'Any') OR (@isActive = 'true' AND DelegateActive = 1) OR (@isActive = 'false' AND DelegateActive = 0))
 					        AND ((@isPasswordSet = 'Any') OR (@isPasswordSet = 'true' AND (Password <>'')) OR (@isPasswordSet = 'false' AND (Password ='')))
@@ -218,13 +218,21 @@
         }
         public int GetCountDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
                                      string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
-                                     string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
+                                     int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
         {
             if (!string.IsNullOrEmpty(searchString))
             {
                 searchString = searchString.Trim();
             }
-
+            
+            if (groupId.HasValue)
+            {
+                var groupDelegatesForCentre = $@"SELECT DelegateID FROM GroupDelegates WHERE GroupID in (
+											SELECT GroupID FROM Groups WHERE CentreID = @centreId AND RemovedDate IS NULL
+											)";
+                DelegatewhereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " AND GroupID = @groupId )";
+            }
+                
 
             var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches FROM ( " + DelegateUserExportSelectQuery + " ) D " + DelegatewhereConditon;
 
@@ -243,6 +251,7 @@
                     isEmailVerified,
                     registrationType,
                     jobGroupId,
+                    groupId,
                     answer1,
                     answer2,
                     answer3,
@@ -257,11 +266,18 @@
 
         public List<DelegateUserCard> GetDelegateUserCardsForExportByCentreId(String searchString, string sortBy, string sortDirection, int centreId,
                                      string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
-                                     string answer1, string answer2, string answer3, string answer4, string answer5, string answer6, int exportQueryRowLimit, int currentRun)
+                                     int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6, int exportQueryRowLimit, int currentRun)
         {
             if (!string.IsNullOrEmpty(searchString))
             {
                 searchString = searchString.Trim();
+            }
+            if (groupId.HasValue)
+            {
+                var groupDelegatesForCentre = $@"SELECT DelegateID FROM GroupDelegates WHERE GroupID in (
+											SELECT GroupID FROM Groups WHERE CentreID = @centreId AND RemovedDate IS NULL
+											)";
+                DelegatewhereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " AND GroupID = @groupId )";
             }
 
             string orderBy;
@@ -294,6 +310,7 @@
                     isEmailVerified,
                     registrationType,
                     jobGroupId,
+                    groupId,
                     answer1,
                     answer2,
                     answer3,
@@ -316,34 +333,12 @@
                 searchString = searchString.Trim();
             }
 
-            string whereConditon = $@" Where ((CentreID = @centreId) OR (@centreId= 0))
-                            AND ( FirstName + ' ' + LastName + ' ' + PrimaryEmail + ' ' + COALESCE(Email, '') + ' ' + COALESCE(CandidateNumber, '') LIKE N'%' + @searchString + N'%')
-					        AND ((@isActive = 'Any') OR (@isActive = 'true' AND DelegateActive = 1) OR (@isActive = 'false' AND DelegateActive = 0))
-					        AND ((@isPasswordSet = 'Any') OR (@isPasswordSet = 'true' AND (Password <>'')) OR (@isPasswordSet = 'false' AND (Password ='')))
-					        AND ((@isAdmin = 'Any') OR (@isAdmin = 'true' AND (AdminID is not null)) OR (@isAdmin = 'false' AND (AdminID is null)))
-					        AND ((@isUnclaimed = 'Any') OR (@isUnclaimed = 'true' AND (RegistrationConfirmationHash is not null)) OR (@isUnclaimed = 'false' AND (RegistrationConfirmationHash is null)))
-					        AND ((@isEmailVerified = 'Any') OR (@isEmailVerified = 'true' AND EmailVerified IS NOT NULL) OR (@isEmailVerified = 'false' AND EmailVerified IS NULL))
-
-					        AND ((@registrationType = 'Any') OR (@registrationType = 'SelfRegistered' AND SelfReg = 1 AND ExternalReg = 0) OR 
-					        (@registrationType = 'SelfRegisteredExternal' AND SelfReg = 1 AND ExternalReg = 1) OR 
-					        (@registrationType = 'RegisteredByCentre' AND SelfReg = 0 AND (ExternalReg = 0 OR ExternalReg = 1)))
-
-                            AND ((@jobGroupId = 0) OR (JobGroupID = @jobGroupId ))
-
-                            AND ((@answer1 = 'Any') OR (@answer1 = 'No option selected' AND (Answer1 IS NULL)) OR(Answer1 = @answer1))
-                            AND ((@answer2 = 'Any') OR (@answer2 = 'No option selected' AND (Answer2 IS NULL)) OR (Answer2 = @answer2))
-                            AND ((@answer3 = 'Any') OR (@answer3 = 'No option selected' AND (Answer3 IS NULL)) OR (Answer3 = @answer3))
-                            AND ((@answer4 = 'Any') OR (@answer4 = 'No option selected' AND (Answer4 IS NULL)) OR (Answer4 = @answer4))
-                            AND ((@answer5 = 'Any') OR (@answer5 = 'No option selected' AND (Answer5 IS NULL)) OR (Answer5 = @answer5))
-                            AND ((@answer6 = 'Any') OR (@answer6 = 'No option selected' AND (Answer6 IS NULL)) OR (Answer6 = @answer6))
-                            AND Approved = 1
-                            AND EmailAddress LIKE '%_@_%.__%'";
 
             var groupDelegatesForCentre = $@"SELECT DelegateID FROM GroupDelegates WHERE GroupID in (
 											SELECT GroupID FROM Groups WHERE CentreID = @centreId AND RemovedDate IS NULL
 											)";
             if (groupId.HasValue)
-                whereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " AND GroupID = @groupId )";
+                DelegatewhereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " AND GroupID = @groupId )";
                 
 
             string orderBy;
@@ -360,7 +355,7 @@
 
             orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 
-            var mainSql = "SELECT * FROM ( " + DelegateUserSelectQuery + DelegateUserFromTable + " ) D " + whereConditon + orderBy;
+            var mainSql = "SELECT * FROM ( " + DelegateUserSelectQuery + DelegateUserFromTable + " ) D " + DelegatewhereConditon + orderBy;
 
             IEnumerable<DelegateUserCard> delegateUserCard = connection.Query<DelegateUserCard>(
                 mainSql,
@@ -390,7 +385,7 @@
                 commandTimeout: 3000
             );
 
-            var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches FROM ( " + DelegateUserSelectQuery + DelegateUserFromTable + " ) D " + whereConditon;
+            var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches FROM ( " + DelegateUserSelectQuery + DelegateUserFromTable + " ) D " + DelegatewhereConditon;
 
             int ResultCount = connection.ExecuteScalar<int>(
                 delegateCountQuery,
