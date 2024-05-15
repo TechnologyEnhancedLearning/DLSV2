@@ -174,12 +174,12 @@
 
         public bool MatchesDelegateEntity(DelegateEntity delegateEntity)
         {
-            if (delegateEntity.UserAccount.FirstName != FirstName)
+            if (delegateEntity.UserAccount.FirstName.Trim() != (FirstName ?? string.Empty).Trim())
             {
                 return false;
             }
 
-            if (delegateEntity.UserAccount.LastName != LastName)
+            if (delegateEntity.UserAccount.LastName.Trim() != (LastName ?? string.Empty).Trim())
             {
                 return false;
             }
@@ -194,32 +194,32 @@
                 return false;
             }
 
-            if ((delegateEntity.DelegateAccount.Answer1 ?? string.Empty) != Answer1)
+            if ((delegateEntity.DelegateAccount.Answer1 ?? string.Empty).Trim() != (Answer1 ?? string.Empty).Trim())
             {
                 return false;
             }
 
-            if ((delegateEntity.DelegateAccount.Answer2 ?? string.Empty) != Answer2)
+            if ((delegateEntity.DelegateAccount.Answer2 ?? string.Empty).Trim() != (Answer2 ?? string.Empty).Trim())
             {
                 return false;
             }
 
-            if ((delegateEntity.DelegateAccount.Answer3 ?? string.Empty) != Answer3)
+            if ((delegateEntity.DelegateAccount.Answer3 ?? string.Empty).Trim() != (Answer3 ?? string.Empty).Trim())
             {
                 return false;
             }
 
-            if ((delegateEntity.DelegateAccount.Answer4 ?? string.Empty) != Answer4)
+            if ((delegateEntity.DelegateAccount.Answer4 ?? string.Empty).Trim() != (Answer4 ?? string.Empty).Trim())
             {
                 return false;
             }
 
-            if ((delegateEntity.DelegateAccount.Answer5 ?? string.Empty) != Answer5)
+            if ((delegateEntity.DelegateAccount.Answer5 ?? string.Empty).Trim() != (Answer5 ?? string.Empty).Trim())
             {
                 return false;
             }
 
-            if ((delegateEntity.DelegateAccount.Answer6 ?? string.Empty) != Answer6)
+            if ((delegateEntity.DelegateAccount.Answer6 ?? string.Empty).Trim() != (Answer6 ?? string.Empty).Trim())
             {
                 return false;
             }
@@ -229,7 +229,7 @@
                 return false;
             }
 
-            if (delegateEntity.UserAccount.ProfessionalRegistrationNumber != Prn)
+            if ((delegateEntity.UserAccount.ProfessionalRegistrationNumber ?? string.Empty).Trim() != (Prn ?? string.Empty).Trim())
             {
                 return false;
             }
