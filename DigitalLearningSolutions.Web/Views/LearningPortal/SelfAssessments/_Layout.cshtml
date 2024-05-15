@@ -6,10 +6,15 @@
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     var userResearchUrl = Configuration["UserResearchUrl"];
+    Context.Request.Cookies.TryGetValue("Dls-cookie-consent", out string cookieConsent);
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @if (cookieConsent == "true")
+    {
+        @await Html.PartialAsync("~/Views/Shared/_GoogleTagManager.cshtml")
+    }
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -39,16 +44,13 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="@(ViewData["twitter:title"] ?? ViewData["Title"] ?? "Digital Learning Solutions")">
     <meta name="twitter:description" content="@(ViewData["twitter:description"] ?? "")">
-    @{
-        Context.Request.Cookies.TryGetValue("Dls-cookie-consent", out string cookieConsent);
-    }
-    @if (cookieConsent == "true")
-    {
-        @await Html.PartialAsync("~/Views/Shared/_GoogleTagManager.cshtml")
-    }
 </head>
 
 <body>
+    @if (cookieConsent == "true")
+    {
+        @await Html.PartialAsync("~/Views/Shared/_GoogleTagManagerBodyTagJs.cshtml")
+    }
     <div id="pagewrapper">
         <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 
