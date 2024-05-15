@@ -16,6 +16,8 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using Microsoft.Extensions.Configuration;
+    using DigitalLearningSolutions.Data.Extensions;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -31,6 +33,7 @@
         private readonly IPaginateService paginateService;
         private readonly IUserDataService userDataService;
         private readonly IGroupsService groupsService;
+        private readonly IConfiguration configuration;
 
         public AllDelegatesController(
             IDelegateDownloadFileService delegateDownloadFileService,
@@ -38,7 +41,8 @@
             PromptsService promptsService,
             IJobGroupsDataService jobGroupsDataService,
             IPaginateService paginateService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            IConfiguration configuration
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
@@ -47,6 +51,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.paginateService = paginateService;
             this.groupsService = groupsService;
+            this.configuration = configuration;
         }
 
         [NoCaching]
@@ -90,8 +95,10 @@
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions, groups);
 
+            var CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl();
+
             if (TempData["allDelegatesCentreId"] != null && TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString()
-                    && existingFilterString != null)
+                    && existingFilterString != null &&(TempData["LastBaseUrl"].ToString() != CurrentSiteBaseUrl))
             {
                 if (existingFilterString.Contains("Answer"))
                     existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
@@ -102,7 +109,7 @@
             string isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, answer1, answer2, answer3, answer4, answer5, answer6;
             isActive = isPasswordSet = isAdmin = isUnclaimed = isEmailVerified = registrationType = answer1 = answer2 = answer3 = answer4 = answer5 = answer6 = "Any";
             int jobGroupId = 0;
-            int groupId = 0;
+            int? groupId = null;
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
@@ -203,6 +210,7 @@
 
             result.Page = page;
             TempData["Page"] = result.Page;
+            TempData["LastBaseUrl"] = configuration.GetCurrentSystemBaseUrl();
 
             var model = new AllDelegatesViewModel(
                 result,

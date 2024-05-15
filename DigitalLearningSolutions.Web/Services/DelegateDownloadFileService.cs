@@ -205,6 +205,7 @@
             string isEmailVerified = "Any";
             string registrationType = "Any";
             int jobGroupId = 0;
+            int? groupId = null;
             string answer1 = "Any";
             string answer2 = "Any";
             string answer3 = "Any";
@@ -244,6 +245,9 @@
                         if (filter.Contains("JobGroupId"))
                             jobGroupId = Convert.ToInt32(filterValue);
 
+                        if (filter.Contains("DelegateGroupId"))
+                            groupId = Convert.ToInt32(filterValue);
+
                         if (filter.Contains("Answer1"))
                             answer1 = filterValue;
 
@@ -266,7 +270,7 @@
             }
             var delegatesToExport = Task.Run(() => GetDelegatesToExport(searchString ?? string.Empty, sortBy, sortDirection, centreId,
                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
-                                               answer1, answer2, answer3, answer4, answer5, answer6)).Result;
+                                               groupId, answer1, answer2, answer3, answer4, answer5, answer6)).Result;
             var dataTable = new DataTable();
             SetUpDataTableColumnsForAllDelegates(registrationPrompts, dataTable);
 
@@ -293,12 +297,12 @@
 
         private async Task<IEnumerable<DelegateUserCard>> GetDelegatesToExport(String searchString, string sortBy, string sortDirection, int centreId,
                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
-                                    string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
+                                    int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
         {
             var exportQueryRowLimit = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
             int resultCount = userDataService.GetCountDelegateUserCardsForExportByCentreId(searchString ?? string.Empty, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
-                                                answer1, answer2, answer3, answer4, answer5, answer6);
+                                                groupId, answer1, answer2, answer3, answer4, answer5, answer6);
 
             int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
             int currentRun = 1;
@@ -307,7 +311,7 @@
             {
                 delegates.AddRange(userDataService.GetDelegateUserCardsForExportByCentreId(searchString ?? string.Empty, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
-                                                answer1, answer2, answer3, answer4, answer5, answer6, exportQueryRowLimit, currentRun));
+                                                groupId, answer1, answer2, answer3, answer4, answer5, answer6, exportQueryRowLimit, currentRun));
                 currentRun++;
             }
 

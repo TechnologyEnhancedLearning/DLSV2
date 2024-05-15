@@ -130,7 +130,7 @@
             .Returns(adminUser);
 
             A.CallTo(() => userDataService.GetDelegateUserCards("", 0, 10, "SearchableName", "Ascending", CentreId,
-            "Any", "Any", "Any", "Any", "Any", "Any", 0, 0, "Any", "Any", "Any", "Any", "Any", "Any"))
+            "Any", "Any", "Any", "Any", "Any", "Any", 0, null, "Any", "Any", "Any", "Any", "Any", "Any"))
                 .Returns((new List<DelegateUserCard>(), delegateCount)
                 );
 
