@@ -12,7 +12,7 @@
         }
         public override void Down()
         {
-            Execute.Sql(Properties.Resources.TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc1_down);
+            Execute.Sql(Properties.Resources.TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_down);
             Execute.Sql(Properties.Resources.TD_3671_Alter_CheckDelegateStatusForCustomisation_func_down);
         }
     }

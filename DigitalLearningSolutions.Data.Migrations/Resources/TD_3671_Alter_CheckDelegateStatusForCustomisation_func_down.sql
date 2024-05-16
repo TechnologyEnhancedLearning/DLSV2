@@ -1,8 +1,10 @@
-/****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 08/05/2024 11:27:59 ******/
+/****** Object:  UserDefinedFunction [dbo].[CheckDelegateStatusForCustomisation]    Script Date: 16/05/2024 09:29:31 ******/
 SET ANSI_NULLS ON
 GO
+ 
 SET QUOTED_IDENTIFIER ON
 GO
+ 
 -- =============================================
 -- Author:		Kevin Whittaker
 -- Create date: 22/12/2016
@@ -27,13 +29,12 @@ BEGIN
 	-- Declare the return variable here
 	DECLARE @ResultVar int
 	Set @ResultVar = 0
-
+ 
 	-- Add the T-SQL statements to compute the return value here
-	
 	-- Check of current:
 	if @CustomisationID IN (SELECT CustomisationID
 FROM  Progress AS p
-WHERE (Completed IS NULL) AND (RemovedDate IS NULL) AND (CandidateID = @CandidateID) AND ((SubmittedTime > DATEADD(M, - 6, GETDATE()))  OR NOT p.CompleteByDate IS NULL))
+WHERE (Completed IS NULL) AND (RemovedDate IS NULL) AND (CandidateID = @CandidateID) AND (SubmittedTime > DATEADD(M, - 6, GETDATE())  OR NOT p.CompleteByDate IS NULL))
 begin
 Set @ResultVar = 3
 goto onExit
@@ -49,7 +50,7 @@ end
 --Check if Expired:
 if @CustomisationID IN (SELECT CustomisationID
 FROM  Progress AS p
-WHERE (Completed IS NULL) AND (RemovedDate IS NULL) AND (CandidateID = @CandidateID) AND ((SubmittedTime <= DATEADD(M, - 6, GETDATE()))) AND (p.CompleteByDate IS NULL))
+WHERE (Completed IS NULL) AND (RemovedDate IS NULL) AND (CandidateID = @CandidateID) AND (SubmittedTime <= DATEADD(M, - 6, GETDATE())) AND (p.CompleteByDate IS NULL))
 begin
 Set @ResultVar = 1
 goto onExit
@@ -65,6 +66,8 @@ end
 	-- Return the result of the function
 	onExit:
 	RETURN @ResultVar
-
+ 
 END
-
+ 
+GO
+ 
