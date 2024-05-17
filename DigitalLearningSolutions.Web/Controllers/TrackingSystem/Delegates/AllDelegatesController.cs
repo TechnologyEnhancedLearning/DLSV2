@@ -163,7 +163,14 @@
                             jobGroupId = Convert.ToInt32(filterValue);
 
                         if (filter.Contains("DelegateGroupId"))
+                        {
                             groupId = Convert.ToInt32(filterValue);
+                            if (!(groups.Any(g => g.Item1 == groupId)))
+                            {
+                                groupId = null;
+                                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
+                            }                            
+                        }                            
 
                         if (filter.Contains("Answer1"))
                             answer1 = filterValue;
@@ -217,7 +224,7 @@
                 customPrompts,
                 availableFilters
             );
-
+            
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
 
