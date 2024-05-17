@@ -13,5 +13,6 @@
         public const string RefactoredFindYourCentrePage = "RefactoredFindYourCentrePage";
         public const string UserFeedbackBar = "UserFeedbackBar";
         public const string ShowSelfAssessmentProgressButtons = "ShowSelfAssessmentProgressButtons";
+        public const string LoginWithLearningHub = "LoginWithLearningHub";
     }
 }
