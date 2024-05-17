@@ -22,7 +22,7 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DocumentFormat.OpenXml.EMMA;
     using Microsoft.AspNetCore.Mvc;
-      using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement.Mvc;
 
     public partial class LearningPortalController
