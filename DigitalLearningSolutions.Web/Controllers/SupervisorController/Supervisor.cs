@@ -1368,9 +1368,13 @@
             var adminId = User.GetAdminId();
             User.GetUserIdKnownNotNull();
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
+            if ((competencymaindata == null) || (candidateAssessmentId == 0))
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value);
             var checkSupervisorDelegate = supervisorDelegateDetails.Where(x => x.DelegateUserID == competencymaindata.LearnerId).FirstOrDefault();
-            if ((competencymaindata == null) || (checkSupervisorDelegate == null) || (candidateAssessmentId == 0))
+            if ( (checkSupervisorDelegate == null) )
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
