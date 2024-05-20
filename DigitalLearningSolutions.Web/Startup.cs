@@ -251,7 +251,7 @@ namespace DigitalLearningSolutions.Web
                     options.Events.OnAuthenticationFailed = OnAuthenticationFailed;
                     options.Events.OnTicketReceived = OnTicketReceived;
                     options.Events.OnSignedOutCallbackRedirect = OnSignedoutCallbackRedirect;
-       
+
                 }
             );
         }
@@ -277,7 +277,7 @@ namespace DigitalLearningSolutions.Web
             {
                 context.Response.Redirect(appRootPath + "/home");
             }
-            
+
             context.HandleResponse();
 
             await Task.CompletedTask;
@@ -326,7 +326,7 @@ namespace DigitalLearningSolutions.Web
                     context.ReturnUri = appRootPath + "/login/NotLinked";
                 }
             }
-            
+
             await Task.CompletedTask;
         }
 
@@ -404,6 +404,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IClockUtility, ClockUtility>();
             services.AddScoped<ICommonService, CommonService>();
+            services.AddScoped<ICompetencyLearningResourcesService, CompetencyLearningResourcesService>();
             services.AddScoped<IConfigDataService, ConfigDataService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
@@ -477,6 +478,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreRegistrationPromptsDataService, CentreRegistrationPromptsDataService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<ICertificateDataService, CertificateDataService>();
+            services.AddScoped<ICommonDataService, CommonDataService>();
             services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
@@ -487,6 +489,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IEmailSchedulerService, EmailSchedulerService>();
             services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
             services.AddScoped<IFaqsDataService, FaqsDataService>();
+            services.AddScoped<IFrameworkDataService, FrameworkDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
