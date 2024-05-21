@@ -97,12 +97,12 @@
 
             var CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl();
 
-            if (TempData["allDelegatesCentreId"] != null && TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString()
-                    && existingFilterString != null &&(TempData["LastBaseUrl"].ToString() != CurrentSiteBaseUrl))
+            if (((TempData["allDelegatesCentreId"] != null && TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString())
+                     || (TempData["LastBaseUrl"] != null && (TempData["LastBaseUrl"].ToString() != CurrentSiteBaseUrl))) && existingFilterString != null)
             {
                 if (existingFilterString.Contains("Answer"))
                     existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
-                if (existingFilterString.Contains("DelegateGroup"))
+                if (existingFilterString != null && existingFilterString.Contains("DelegateGroup"))
                     existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
             }
 
