@@ -98,7 +98,7 @@
             var CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl();
 
             if (((TempData["allDelegatesCentreId"] != null && TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString())
-                     || (TempData["LastBaseUrl"].ToString() != CurrentSiteBaseUrl)) && existingFilterString != null)
+                     || (TempData["LastBaseUrl"] != null && (TempData["LastBaseUrl"].ToString() != CurrentSiteBaseUrl))) && existingFilterString != null)
             {
                 if (existingFilterString.Contains("Answer"))
                     existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
