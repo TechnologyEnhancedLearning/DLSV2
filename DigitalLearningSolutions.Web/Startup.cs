@@ -443,6 +443,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddScoped<ISearchSortFilterPaginateService, SearchSortFilterPaginateService>();
             services.AddScoped<IPaginateService, PaginateService>();
+            services.AddScoped<ISectionContentService, SectionContentService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<ISessionService, SessionService>();
@@ -452,6 +453,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDashboardInformationService, DashboardInformationService>();
             services.AddScoped<ITrackerService, TrackerService>();
             services.AddScoped<ITrackerActionService, TrackerActionService>();
+            services.AddScoped<ITutorialContentService, TutorialContentService>();
             services.AddScoped<ITutorialService, TutorialService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
@@ -480,6 +482,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
+            services.AddScoped<ICourseCompletionDataService, CourseCompletionDataService>();
+            services.AddScoped<ICourseContentDataService, CourseContentDataService>();
             services.AddScoped<ICourseDataService, CourseDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
@@ -496,6 +500,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
+            services.AddScoped<IPostLearningAssessmentDataService, PostLearningAssessmentDataService>();
             services.AddScoped<IRegistrationConfirmationDataService, RegistrationConfirmationDataService>();
             services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();

@@ -295,7 +295,7 @@
              .Returns(expectedCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
             A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(null);
-            A.CallTo(() => courseDataService.GetSelfRegister(CustomisationId)).Returns(true);
+            A.CallTo(() => courseService.GetSelfRegister(CustomisationId)).Returns(true);
 
             // When
             var result = controller.Index(CustomisationId);
