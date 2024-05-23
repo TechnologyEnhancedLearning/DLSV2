@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Transactions;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.UserFeedback;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ServiceFilter;

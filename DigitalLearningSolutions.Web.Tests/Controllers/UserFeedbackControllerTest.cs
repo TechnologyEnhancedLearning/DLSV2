@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using DigitalLearningSolutions.Data.DataServices;
-using DigitalLearningSolutions.Web.Controllers;
+﻿using DigitalLearningSolutions.Web.Controllers;
 using DigitalLearningSolutions.Web.ViewModels.UserFeedback;
 using GDS.MultiPageFormData;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +10,6 @@ using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
 using GDS.MultiPageFormData.Enums;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
-using DigitalLearningSolutions.Data.Extensions;
 using DigitalLearningSolutions.Web.Services;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers
