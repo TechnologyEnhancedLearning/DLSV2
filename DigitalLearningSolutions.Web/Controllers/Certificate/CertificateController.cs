@@ -1,5 +1,4 @@
-﻿using DigitalLearningSolutions.Data.DataServices;
-using DigitalLearningSolutions.Data.Models.Centres;
+﻿using DigitalLearningSolutions.Data.Models.Centres;
 using DigitalLearningSolutions.Data.Models.Certificates;
 using DigitalLearningSolutions.Data.Models.Common;
 using DigitalLearningSolutions.Data.Utilities;
@@ -23,21 +22,18 @@ namespace DigitalLearningSolutions.Web.Controllers.Certificate
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     public class CertificateController : Controller
     {
-        private readonly ICentresDataService centresDataService;
         private readonly ILogger<ConfigurationController> logger;
         private readonly IMapsApiHelper mapsApiHelper;
         private readonly IImageResizeService imageResizeService;
         private ICertificateService certificateService;
 
         public CertificateController(
-           ICentresDataService centresDataService,
            IMapsApiHelper mapsApiHelper,
            ILogger<ConfigurationController> logger,
            IImageResizeService imageResizeService,
            ICertificateService certificateService
        )
         {
-            this.centresDataService = centresDataService;
             this.mapsApiHelper = mapsApiHelper;
             this.logger = logger;
             this.imageResizeService = imageResizeService;
