@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
@@ -21,44 +20,41 @@
         private const int MinimumTutorialAverageTimeToIncreaseAuthExpiry = 45;
         private readonly ILogger<LearningMenuController> logger;
         private readonly IConfiguration config;
-        private readonly IConfigDataService configDataService;
         private readonly ICourseContentService courseContentService;
         private readonly ISessionService sessionService;
-        private readonly ISectionContentDataService sectionContentDataService;
-        private readonly ITutorialContentDataService tutorialContentDataService;
+        private readonly ISectionContentService sectionContentService;
+        private readonly ITutorialContentService tutorialContentService;
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
-        private readonly ICourseDataService courseDataService;
+        private readonly ICourseService courseService;
         private readonly IClockUtility clockUtility;
 
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
             IConfiguration config,
-            IConfigDataService configDataService,
             ICourseContentService courseContentService,
-            ISectionContentDataService sectionContentDataService,
-            ITutorialContentDataService tutorialContentDataService,
+            ISectionContentService sectionContentService,
+            ITutorialContentService tutorialContentService,
             IDiagnosticAssessmentService diagnosticAssessmentService,
             IPostLearningAssessmentService postLearningAssessmentService,
             ISessionService sessionService,
             ICourseCompletionService courseCompletionService,
-            ICourseDataService courseDataService,
+            ICourseService courseService,
             IClockUtility clockUtility
         )
         {
             this.logger = logger;
             this.config = config;
-            this.configDataService = configDataService;
             this.courseContentService = courseContentService;
-            this.tutorialContentDataService = tutorialContentDataService;
+            this.tutorialContentService = tutorialContentService;
             this.sessionService = sessionService;
-            this.sectionContentDataService = sectionContentDataService;
+            this.sectionContentService = sectionContentService;
             this.diagnosticAssessmentService = diagnosticAssessmentService;
             this.postLearningAssessmentService = postLearningAssessmentService;
             this.courseCompletionService = courseCompletionService;
             this.clockUtility = clockUtility;
-            this.courseDataService = courseDataService;
+            this.courseService = courseService;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
@@ -123,7 +119,7 @@
                     $"centre id: {centreId.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-            var isCompleted = courseDataService.IsCourseCompleted(candidateId, customisationId);
+            var isCompleted = courseService.IsCourseCompleted(candidateId, customisationId);
             if (isCompleted)
                 TempData["LearningActivity"] = "Completed";
             else
@@ -179,7 +175,7 @@
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreIdKnownNotNull();
-            var sectionContent = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
+            var sectionContent = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
             if (sectionContent == null)
             {
@@ -418,7 +414,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
 
             var tutorialInformation =
-                tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+                tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             if (tutorialInformation == null)
             {
@@ -470,7 +466,7 @@
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreIdKnownNotNull();
 
-            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             if (tutorialContent?.TutorialPath == null)
             {
@@ -516,7 +512,7 @@
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreIdKnownNotNull();
 
-            var tutorialVideo = tutorialContentDataService.GetTutorialVideo(customisationId, sectionId, tutorialId);
+            var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
 
             if (tutorialVideo == null)
             {
@@ -603,7 +599,7 @@
 
         private void SetTempData(int candidateId, int customisationId)
         {
-            var isCompleted = courseDataService.IsCourseCompleted(candidateId, customisationId);
+            var isCompleted = courseService.IsCourseCompleted(candidateId, customisationId);
             if (isCompleted)
                 TempData["LearningActivity"] = "Completed";
             else
@@ -618,7 +614,7 @@
                 return false;
             }
 
-            bool isSelfRegister = courseDataService.GetSelfRegister(customisationId);
+            bool isSelfRegister = courseService.GetSelfRegister(customisationId);
             if (isSelfRegister)
             {
                 return false;
