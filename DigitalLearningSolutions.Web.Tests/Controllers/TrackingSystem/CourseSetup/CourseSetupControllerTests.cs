@@ -104,8 +104,8 @@
         private ITutorialService tutorialService = null!;
         private IActivityService activityService = null!;
         private IPaginateService paginateService = null!;
-        private ICourseCategoriesDataService courseCategoriesDataService = null!;
-        private ICourseTopicsDataService courseTopicsDataService = null!;
+        private ICourseCategoriesService courseCategoriesService = null!;
+        private ICourseTopicsService courseTopicsService = null!;
 
         [SetUp]
         public void Setup()
@@ -116,8 +116,8 @@
             activityService = A.Fake<IActivityService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             paginateService = A.Fake<IPaginateService>();
-            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
-            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
+            courseCategoriesService = A.Fake<ICourseCategoriesService>();
+            courseTopicsService = A.Fake<ICourseTopicsService>();
             config = A.Fake<IConfiguration>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
             A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
@@ -146,8 +146,8 @@
                     config,
                     multiPageFormService,
                     activityService,
-                    courseCategoriesDataService,
-                    courseTopicsDataService
+                    courseCategoriesService,
+                    courseTopicsService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -163,8 +163,8 @@
                     config,
                     multiPageFormService,
                     activityService,
-                    courseCategoriesDataService,
-                    courseTopicsDataService
+                    courseCategoriesService,
+                    courseTopicsService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)

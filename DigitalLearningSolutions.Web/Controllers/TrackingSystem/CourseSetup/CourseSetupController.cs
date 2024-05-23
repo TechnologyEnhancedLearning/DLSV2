@@ -27,7 +27,6 @@
     using System.Linq;
     using System.Transactions;
     using GDS.MultiPageFormData.Enums;
-    using DigitalLearningSolutions.Data.DataServices;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -46,8 +45,8 @@
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
         private readonly IActivityService activityService;
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly ICourseTopicsDataService courseTopicsDataService;
+        private readonly ICourseCategoriesService courseCategoriesService;
+        private readonly ICourseTopicsService courseTopicsService;
 
         public CourseSetupController(
             ICourseService courseService,
@@ -58,8 +57,8 @@
             IConfiguration config,
             IMultiPageFormService multiPageFormService,
             IActivityService activityService,
-            ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseTopicsDataService courseTopicsDataService
+            ICourseCategoriesService courseCategoriesService,
+            ICourseTopicsService courseTopicsService
 
         )
         {
@@ -71,8 +70,8 @@
             this.config = config;
             this.multiPageFormService = multiPageFormService;
             this.activityService = activityService;
-            this.courseCategoriesDataService = courseCategoriesDataService;
-            this.courseTopicsDataService = courseTopicsDataService;
+            this.courseCategoriesService = courseCategoriesService;
+            this.courseTopicsService = courseTopicsService;
 
         }
 
@@ -105,8 +104,8 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
-            var Categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
-            var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+            var Categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
+            var Topics = courseTopicsService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             string isActive, categoryName, courseTopic, hasAdminFields;
