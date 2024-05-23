@@ -18,6 +18,7 @@
     using Microsoft.FeatureManagement.Mvc;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
+    using Microsoft.AspNetCore.Http.Extensions;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -26,7 +27,7 @@
     [Route("TrackingSystem/Delegates/All")]
     public class AllDelegatesController : Controller
     {
-        private const string DelegateFilterCookieName = "DelegateFilter";
+        private string DelegateFilterCookieName = "DelegateFilter";
         private readonly IDelegateDownloadFileService delegateDownloadFileService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly PromptsService promptsService;
@@ -76,6 +77,10 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
+            if (HttpContext.Request.GetDisplayUrl().ToString().Contains("uat"))
+            {
+                DelegateFilterCookieName = "DelegateFilterUat";
+            }
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
@@ -95,10 +100,8 @@
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions, groups);
 
-            var CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl();
-
-            if (((TempData["allDelegatesCentreId"] != null && TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString())
-                     || (TempData["LastBaseUrl"] != null && (TempData["LastBaseUrl"].ToString() != CurrentSiteBaseUrl))) && existingFilterString != null)
+            if (existingFilterString != null && TempData["allDelegatesCentreId"] != null &&
+                TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString())
             {
                 if (existingFilterString.Contains("Answer"))
                     existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
@@ -169,8 +172,8 @@
                             {
                                 groupId = null;
                                 existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
-                            }                            
-                        }                            
+                            }
+                        }
 
                         if (filter.Contains("Answer1"))
                             answer1 = filterValue;
@@ -217,14 +220,13 @@
 
             result.Page = page;
             TempData["Page"] = result.Page;
-            TempData["LastBaseUrl"] = configuration.GetCurrentSystemBaseUrl();
 
             var model = new AllDelegatesViewModel(
                 result,
                 customPrompts,
                 availableFilters
             );
-            
+
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
 
