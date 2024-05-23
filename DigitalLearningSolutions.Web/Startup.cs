@@ -405,7 +405,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IClockUtility, ClockUtility>();
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<ICompetencyLearningResourcesService, CompetencyLearningResourcesService>();
-            services.AddScoped<IConfigDataService, ConfigDataService>();
+            services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
             services.AddScoped<ICourseContentService, CourseContentService>();
@@ -482,6 +482,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICertificateDataService, CertificateDataService>();
             services.AddScoped<ICommonDataService, CommonDataService>();
             services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
+            services.AddScoped<IConfigDataService, ConfigDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
             services.AddScoped<ICourseCompletionDataService, CourseCompletionDataService>();

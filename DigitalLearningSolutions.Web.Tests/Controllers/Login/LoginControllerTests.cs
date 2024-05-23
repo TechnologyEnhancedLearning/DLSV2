@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
     using System.Security.Claims;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -57,7 +58,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             clockUtility = A.Fake<IClockUtility>();
             config = A.Fake<IConfiguration>();
             apiClient = A.Fake<ILearningHubUserApiClient>();
-            
+
 
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
@@ -760,7 +761,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             // Arrange
             var supportEmail = "support@example.com";
             A.CallTo(() => configDataService
-                .GetConfigValue(ConfigDataService.SupportEmail))
+                .GetConfigValue(ConfigConstants.SupportEmail))
                 .Returns(supportEmail);
 
             // Act
@@ -791,7 +792,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             // Arrange
             var supportEmail = "support@example.com";
             A.CallTo(() => configDataService
-                .GetConfigValue(ConfigDataService.SupportEmail))
+                .GetConfigValue(ConfigConstants.SupportEmail))
                 .Returns(supportEmail);
 
             // Act

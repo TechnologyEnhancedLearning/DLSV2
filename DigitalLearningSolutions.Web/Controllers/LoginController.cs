@@ -23,6 +23,7 @@
     using DigitalLearningSolutions.Data.Extensions;
     using Microsoft.AspNetCore.Authentication.OpenIdConnect;
     using DigitalLearningSolutions.Data.ApiClients;
+    using DigitalLearningSolutions.Data.Constants;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
@@ -91,7 +92,7 @@
                 case LoginAttemptResult.AccountLocked:
                     return View("AccountLocked");
                 case LoginAttemptResult.InactiveAccount:
-                    var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+                    var supportEmail = configDataService.GetConfigValue(ConfigConstants.SupportEmail);
                     var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
                     return View("AccountInactive", inactiveAccountModel);
                 case LoginAttemptResult.UnverifiedEmail:
@@ -269,7 +270,7 @@
 
         public IActionResult AccountInactive()
         {
-            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var supportEmail = configDataService.GetConfigValue(ConfigConstants.SupportEmail);
             var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
             return View(
                 "AccountInactive",
@@ -278,7 +279,7 @@
 
         public IActionResult RemoteFailure()
         {
-            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var supportEmail = configDataService.GetConfigValue(ConfigConstants.SupportEmail);
             var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
             return View(
                 "RemoteAuthenticationFailure",
@@ -316,7 +317,7 @@
                 return this.View("ForgottenPassword", model);
             }
 
-            ViewData["SupportEmail"] = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            ViewData["SupportEmail"] = configDataService.GetConfigValue(ConfigConstants.SupportEmail);
             var hasMultipleUsers = await this.learningHubUserApiClient.hasMultipleUsersForEmailAsync(model.EmailAddress);
             var requestSuccess = await this.learningHubUserApiClient.forgotPasswordAsync(model.EmailAddress);
             if (hasMultipleUsers || !requestSuccess)
