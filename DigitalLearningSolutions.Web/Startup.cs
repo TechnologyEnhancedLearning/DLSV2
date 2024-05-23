@@ -499,6 +499,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationConfirmationDataService, RegistrationConfirmationDataService>();
             services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
+            services.AddScoped<IRegionService, RegionService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IResourceDataService, ResourceDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
