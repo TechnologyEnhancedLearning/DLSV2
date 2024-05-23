@@ -77,7 +77,7 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-            if (HttpContext.Request.GetDisplayUrl().ToString().Contains("uat"))
+            if (HttpContext.Request.GetDisplayUrl().ToString().ToLower().Contains("uat"))
             {
                 DelegateFilterCookieName = "DelegateFilterUat";
             }
