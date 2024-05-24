@@ -81,10 +81,7 @@
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
 
-            if (string.Equals(env.EnvironmentName, "UAT", StringComparison.OrdinalIgnoreCase))
-            {
-                DelegateFilterCookieName = "DelegateFilterUat";
-            }
+            DelegateFilterCookieName += env.EnvironmentName;
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
