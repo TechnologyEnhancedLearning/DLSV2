@@ -1051,7 +1051,7 @@
             ).GetAwaiter().GetResult();
             var candidateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
-            var delegateEntity = userDataService.GetDelegateById(candidateId);
+            var delegateEntity = userService.GetDelegateById(candidateId);
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(
                 sessionAddSupervisor.SupervisorAdminId,
                 delegateUserId,

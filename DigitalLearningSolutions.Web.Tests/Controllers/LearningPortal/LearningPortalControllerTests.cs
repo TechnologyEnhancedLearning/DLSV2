@@ -1,7 +1,7 @@
 namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System.Security.Claims;
-    using DigitalLearningSolutions.Data.DataServices;
+    //using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Utilities;
@@ -25,10 +25,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private const string Vocabulary = "Capabilities";
         private const int CentreId = 2;
         private IActionPlanService actionPlanService = null!;
-        private ICentresDataService centresDataService = null!;
+        private ICentresService centresService = null!;
         private IConfiguration config = null!;
         private LearningPortalController controller = null!;
-        private ICourseDataService courseDataService = null!;
+        private ICourseService courseService = null!;
         private IFrameworkNotificationService frameworkNotificationService = null!;
         private INotificationService notificationService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
@@ -37,16 +37,16 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IMultiPageFormService multiPageFormService = null!;
-        private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
         private IClockUtility clockUtility = null!;
         private IPdfService pdfService = null!;
         [SetUp]
         public void SetUp()
         {
             actionPlanService = A.Fake<IActionPlanService>();
-            centresDataService = A.Fake<ICentresDataService>();
-            courseDataService = A.Fake<ICourseDataService>();
-            userDataService = A.Fake<IUserDataService>();
+            centresService = A.Fake<ICentresService>();
+            courseService = A.Fake<ICourseService>();
+            userService = A.Fake<IUserService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
             supervisorService = A.Fake<ISupervisorService>();
             frameworkService = A.Fake<IFrameworkService>();
@@ -72,9 +72,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 )
             );
             controller = new LearningPortalController(
-                centresDataService,
-                courseDataService,
-                userDataService,
+                centresService,
+                courseService,
+                userService,
                 selfAssessmentService,
                 supervisorService,
                 frameworkService,
