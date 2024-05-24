@@ -18,7 +18,7 @@
     using Microsoft.FeatureManagement.Mvc;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
-    using Microsoft.AspNetCore.Http.Extensions;
+    using Microsoft.AspNetCore.Hosting;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -35,6 +35,7 @@
         private readonly IUserDataService userDataService;
         private readonly IGroupsService groupsService;
         private readonly IConfiguration configuration;
+        private readonly IWebHostEnvironment env;
 
         public AllDelegatesController(
             IDelegateDownloadFileService delegateDownloadFileService,
@@ -43,7 +44,8 @@
             IJobGroupsDataService jobGroupsDataService,
             IPaginateService paginateService,
             IGroupsService groupsService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IWebHostEnvironment env
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
@@ -53,6 +55,7 @@
             this.paginateService = paginateService;
             this.groupsService = groupsService;
             this.configuration = configuration;
+            this.env = env;
         }
 
         [NoCaching]
@@ -77,7 +80,8 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-            if (HttpContext.Request.GetDisplayUrl().ToString().ToLower().Contains("uat"))
+
+            if (string.Equals(env.EnvironmentName, "UAT", StringComparison.OrdinalIgnoreCase))
             {
                 DelegateFilterCookieName = "DelegateFilterUat";
             }

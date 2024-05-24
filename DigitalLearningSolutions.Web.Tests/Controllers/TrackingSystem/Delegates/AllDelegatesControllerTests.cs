@@ -17,6 +17,7 @@
     using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Hosting;
 
     public class AllDelegatesControllerTests
     {
@@ -32,6 +33,7 @@
         private IUserDataService userDataService = null!;
         private IGroupsService groupsService = null!;
         private IConfiguration? configuration;
+        private IWebHostEnvironment? env;
 
         [SetUp]
         public void Setup()
@@ -46,6 +48,7 @@
             configuration = A.Fake<IConfiguration>();
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
+            env = A.Fake<IWebHostEnvironment>();
 
             const string cookieValue = "ActiveStatus|Active|false";
 
@@ -56,7 +59,8 @@
                     jobGroupsDataService,
                     paginateService,
                     groupsService,
-                    configuration
+                    configuration,
+                    env
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
