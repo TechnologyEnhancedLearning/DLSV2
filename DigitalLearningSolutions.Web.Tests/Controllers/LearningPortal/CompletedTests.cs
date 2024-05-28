@@ -35,10 +35,10 @@
             var mappedActionPlanResources =
                 completedActionPlanResources.Select(r => new CompletedActionPlanResource(r));
             var bannerText = "bannerText";
-            A.CallTo(() => courseDataService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
+            A.CallTo(() => courseService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
             A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(DelegateUserId))
                 .Returns((completedActionPlanResources, apiIsAccessible));
-            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
             var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
             allItems.AddRange(mappedActionPlanResources);
             SearchSortFilterAndPaginateTestHelper
@@ -72,7 +72,7 @@
             // Given
             A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("true");
             const string bannerText = "Banner text";
-            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var completedViewModel = await CompletedCourseHelper.CompletedViewModelFromController(controller);
@@ -141,10 +141,10 @@
 
         private void GivenCompletedActivitiesAreEmptyLists()
         {
-            A.CallTo(() => courseDataService.GetCompletedCourses(A<int>._)).Returns(new List<CompletedCourse>());
+            A.CallTo(() => courseService.GetCompletedCourses(A<int>._)).Returns(new List<CompletedCourse>());
             A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(A<int>._))
                 .Returns((new List<ActionPlanResource>(), false));
-            A.CallTo(() => centresDataService.GetBannerText(A<int>._)).Returns("bannerText");
+            A.CallTo(() => centresService.GetBannerText(A<int>._)).Returns("bannerText");
         }
     }
 }

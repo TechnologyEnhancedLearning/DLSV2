@@ -21,7 +21,7 @@
             TempData["LearningActivity"] = "Available";
             sortBy ??= CourseSortByOptions.Name.PropertyName;
 
-            var availableCourses = courseDataService.GetAvailableCourses(
+            var availableCourses = courseService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
                 User.GetCentreIdKnownNotNull()
             ).Where(course => !course.HideInLearnerPortal).ToList();
@@ -48,7 +48,7 @@
         [NoCaching]
         public IActionResult AllAvailableItems()
         {
-            var availableCourses = courseDataService.GetAvailableCourses(
+            var availableCourses = courseService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
                 User.GetCentreIdKnownNotNull()
             ).Where(course => !course.HideInLearnerPortal).ToList();
@@ -58,7 +58,7 @@
 
         public IActionResult EnrolOnSelfAssessment(int selfAssessmentId)
         {
-            courseDataService.EnrolOnSelfAssessment(selfAssessmentId, User.GetUserIdKnownNotNull(), User.GetCentreIdKnownNotNull());
+            courseService.EnrolOnSelfAssessment(selfAssessmentId, User.GetUserIdKnownNotNull(), User.GetCentreIdKnownNotNull());
             return RedirectToAction("SelfAssessment", new { selfAssessmentId });
         }
     }

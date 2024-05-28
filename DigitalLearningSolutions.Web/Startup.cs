@@ -516,6 +516,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<ISelfAssessmentDataService, SelfAssessmentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
+            services.AddScoped<ISupervisorDataService, SupervisorDataService>();
             services.AddScoped<ISupervisorDelegateDataService, SupervisorDelegateDataService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();

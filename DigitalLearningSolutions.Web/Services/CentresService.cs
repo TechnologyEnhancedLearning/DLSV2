@@ -40,6 +40,7 @@
             string email,
             string? telephone
         );
+        string? GetBannerText(int centreId);
     }
 
     public class CentresService : ICentresService
@@ -126,6 +127,11 @@
         )
         {
             centresDataService.UpdateCentreManagerDetails(centreId,firstName,lastName,email,telephone);
+        }
+
+        public string? GetBannerText(int centreId)
+        {
+            return centresDataService.GetBannerText(centreId);
         }
     }
 }
