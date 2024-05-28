@@ -1,9 +1,7 @@
 namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System.Security.Claims;
-    //using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Services;
