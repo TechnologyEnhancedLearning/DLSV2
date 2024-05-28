@@ -473,6 +473,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPlatformUsageSummaryDownloadFileService, PlatformUsageSummaryDownloadFileService>();
             services.AddScoped<ICentreApplicationsService, CentreApplicationsService>();
             services.AddScoped<ICentreSelfAssessmentsService, CentreSelfAssessmentsService>();
+            services.AddScoped<IUserFeedbackService, UserFeedbackService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
