@@ -5,8 +5,6 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;    
@@ -37,11 +35,10 @@
         private IConfiguration config = null!;
         private IEmailVerificationService emailVerificationService = null!;
         private IImageResizeService imageResizeService = null!;
-        private IJobGroupsDataService jobGroupsDataService = null!;
+        private IJobGroupsService jobGroupsService = null!;
         private ILogger<MyAccountController> logger = null!;
         private PromptsService promptsService = null!;
         private IUrlHelper urlHelper = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
 
         [SetUp]
@@ -50,9 +47,8 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             config = A.Fake<IConfiguration>();
             userService = A.Fake<IUserService>();
-            userDataService = A.Fake<IUserDataService>();
             imageResizeService = A.Fake<ImageResizeService>();
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            jobGroupsService = A.Fake<IJobGroupsService>();
             emailVerificationService = A.Fake<IEmailVerificationService>();
             promptsService = new PromptsService(centreRegistrationPromptsService);
             logger = A.Fake<ILogger<MyAccountController>>();
@@ -165,11 +161,11 @@
             var result = await myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._))
+            A.CallTo(() => userService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._))
                 .MustNotHaveHappened();
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     A<string>._,
                     A<int>._,
                     A<int>._
@@ -217,13 +213,13 @@
                 )
             );
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId))
+            A.CallTo(() => userService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId))
                 .Returns(primaryEmailIsDuplicate);
 
             if (centreSpecificEmail != null)
             {
                 A.CallTo(
-                        () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                             centreSpecificEmail,
                             centreId,
                             userId
@@ -288,10 +284,10 @@
                 { "4", "reused_email@centre4.com" },
             };
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId)).Returns(false);
+            A.CallTo(() => userService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId)).Returns(false);
 
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         "email@centre3.com",
                         3,
                         userId
@@ -300,7 +296,7 @@
                 .Returns(false);
 
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         "reused_email@centre4.com",
                         4,
                         userId
@@ -324,7 +320,7 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         A<string>._,
                         2,
                         A<int>._
@@ -333,7 +329,7 @@
                 .MustNotHaveHappened();
 
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         "email@centre3.com",
                         3,
                         userId
@@ -342,7 +338,7 @@
                 .MustHaveHappenedOnceExactly();
 
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         "reused_email@centre4.com",
                         4,
                         userId
@@ -392,8 +388,8 @@
             );
 
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId)).Returns(false);
-            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(Email, centreId, userId))
+            A.CallTo(() => userService.PrimaryEmailIsInUseByOtherUser(Email, userId)).Returns(false);
+            A.CallTo(() => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(Email, centreId, userId))
                 .Returns(false);
 
             // When
@@ -447,11 +443,11 @@
                 HasProfessionalRegistrationNumber = false,
             };
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+            A.CallTo(() => userService.PrimaryEmailIsInUseByOtherUser(Email, userId))
                 .Returns(false);
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     Email,
                     centreId,
                     userId
@@ -521,11 +517,11 @@
 
             var model = GetBasicMyAccountEditDetailsFormData();
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+            A.CallTo(() => userService.PrimaryEmailIsInUseByOtherUser(Email, userId))
                 .Returns(false);
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     Email,
                     centreId,
                     userId
@@ -598,11 +594,11 @@
 
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+            A.CallTo(() => userService.PrimaryEmailIsInUseByOtherUser(Email, userId))
                 .Returns(false);
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     Email,
                     centreId,
                     userId
@@ -663,11 +659,11 @@
             var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()
                 .SingleOrDefault(p => p.ParameterType == typeof(DlsSubApplication))?.Name;
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+            A.CallTo(() => userService.PrimaryEmailIsInUseByOtherUser(Email, userId))
                 .Returns(false);
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     Email,
                     centreId,
                     userId
@@ -779,7 +775,7 @@
                 new[] { UserTestHelper.GetDefaultDelegateAccount() }
             );
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId)).Returns(false);
+            A.CallTo(() => userService.PrimaryEmailIsInUseByOtherUser(Email, userId)).Returns(false);
 
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -909,9 +905,8 @@
             return new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
-                userDataService,
                 imageResizeService,
-                jobGroupsDataService,
+                jobGroupsService,
                 emailVerificationService,
                 promptsService,
                 logger,

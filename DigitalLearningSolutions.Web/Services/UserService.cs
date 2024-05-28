@@ -115,6 +115,14 @@ namespace DigitalLearningSolutions.Web.Services
         UserEntity? GetDelegateUserFromLearningHubAuthId(int learningHubAuthId);
 
         int? GetUserLearningHubAuthId(int userId);
+        bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
+           string email,
+           int centreId,
+           int userId
+       );
+        bool PrimaryEmailIsInUseByOtherUser(string email, int userId);
+        IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId);
+
     }
 
     public class UserService : IUserService
@@ -675,6 +683,20 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var userId = userDataService.GetUserIdFromLearningHubAuthId(learningHubAuthId);
             return userId == null ? null : GetUserById(userId.Value);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentreByOtherUser(string email, int centreId, int userId)
+        {
+          return   userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId ); 
+        }
+        public bool PrimaryEmailIsInUseByOtherUser(string email, int userId)
+        {
+            return userDataService.PrimaryEmailIsInUseByOtherUser(email, userId);
+        }
+
+        public IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId)
+        {
+            return userDataService.GetCentreDetailsForUser(userId);
         }
     }
 }
