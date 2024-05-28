@@ -122,6 +122,12 @@ namespace DigitalLearningSolutions.Web.Services
        );
         bool PrimaryEmailIsInUseByOtherUser(string email, int userId);
         IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId);
+        bool PrimaryEmailIsInUse(string email);
+        void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime);
+        (int? userId, int? centreId, string? centreName) GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                string centreSpecificEmail,
+                string registrationConfirmationHash
+            );
 
     }
 
@@ -687,7 +693,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public bool CentreSpecificEmailIsInUseAtCentreByOtherUser(string email, int centreId, int userId)
         {
-          return   userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId ); 
+            return userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId);
         }
         public bool PrimaryEmailIsInUseByOtherUser(string email, int userId)
         {
@@ -697,6 +703,21 @@ namespace DigitalLearningSolutions.Web.Services
         public IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId)
         {
             return userDataService.GetCentreDetailsForUser(userId);
+        }
+
+        public bool PrimaryEmailIsInUse(string email)
+        {
+            return userDataService.PrimaryEmailIsInUse(email);
+        }
+
+        public void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime)
+        {
+            userDataService.SetPrimaryEmailVerified(userId, email, verifiedDateTime);
+        }
+
+        public (int? userId, int? centreId, string? centreName) GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(string centreSpecificEmail, string registrationConfirmationHash)
+        {
+            return userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(centreSpecificEmail, registrationConfirmationHash);
         }
     }
 }
