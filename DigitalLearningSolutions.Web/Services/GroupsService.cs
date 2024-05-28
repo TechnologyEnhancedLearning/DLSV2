@@ -744,7 +744,7 @@
                         progressRecord.ProgressId,
                         updatedSupervisorAdminId,
                         completeByDate,
-                        3
+                        2
                     );
                 }
             }
