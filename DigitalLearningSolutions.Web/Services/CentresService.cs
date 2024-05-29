@@ -40,6 +40,8 @@
             string? telephone
         );
         string? GetBannerText(int centreId);
+        string? GetCentreName(int centreId);
+        (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
     }
 
     public class CentresService : ICentresService
@@ -131,6 +133,16 @@
         public string? GetBannerText(int centreId)
         {
             return centresDataService.GetBannerText(centreId);
+        }
+
+        public string? GetCentreName(int centreId)
+        {
+            return centresDataService.GetCentreName(centreId);
+        }
+
+        public (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId)
+        {
+            return centresDataService.GetCentreAutoRegisterValues(centreId);
         }
     }
 }

@@ -4,10 +4,13 @@ namespace DigitalLearningSolutions.Web.Services
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using System.Net.Mail;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Configuration;
@@ -128,6 +131,10 @@ namespace DigitalLearningSolutions.Web.Services
                 string centreSpecificEmail,
                 string registrationConfirmationHash
             );
+        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
+        bool PrimaryEmailInUseAtCentres(string email);
+        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
+        int? GetUserIdByAdminId(int adminId);
     }
 
     public class UserService : IUserService
@@ -717,6 +724,26 @@ namespace DigitalLearningSolutions.Web.Services
         public (int? userId, int? centreId, string? centreName) GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(string centreSpecificEmail, string registrationConfirmationHash)
         {
             return userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(centreSpecificEmail, registrationConfirmationHash);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
+        {
+            return userDataService.CentreSpecificEmailIsInUseAtCentre(email,centreId);
+        }
+
+        public bool PrimaryEmailInUseAtCentres(string email)
+        {
+            return userDataService.PrimaryEmailInUseAtCentres(email);
+        }
+
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        {
+            return userDataService.GetAdminUserByEmailAddress(emailAddress);
+        }
+
+        public int? GetUserIdByAdminId(int adminId)
+        {
+            return userDataService.GetUserIdByAdminId(adminId);
         }
     }
 }
