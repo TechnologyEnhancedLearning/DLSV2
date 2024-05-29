@@ -37,6 +37,8 @@ BEGIN
 FROM  Progress AS p INNER JOIN
                Customisations AS cu ON p.CustomisationID = cu.CustomisationID INNER JOIN
                Applications AS a ON cu.ApplicationID = a.ApplicationID
-WHERE (p.Completed IS NULL) AND (p.RemovedDate IS NULL) AND (p.CandidateID = @CandidateID)AND (cu.CustomisationName <> 'ESR') AND (a.ArchivedDate IS NULL) AND (cu.Active = 1) AND ((p.SubmittedTime > DATEADD(M, -6, getDate()) OR (EnrollmentMethodID <> 1)) OR NOT p.CompleteByDate IS NULL)
+WHERE (p.Completed IS NULL) AND (p.RemovedDate IS NULL) AND (p.CandidateID = @CandidateID)AND (cu.CustomisationName <> 'ESR') AND (a.ArchivedDate IS NULL) AND(cu.Active = 1) AND 
+((p.SubmittedTime > DATEADD(M, -6, getDate()) OR (EnrollmentMethodID <> 1)) OR NOT (p.CompleteByDate IS NULL) AND NOT
+(p.SubmittedTime < DATEADD(MONTH, -6, GETDATE()) AND (p.EnrollmentMethodID = 1) AND (p.CompleteByDate < GETDATE())))
 ORDER BY p.SubmittedTime Desc
 END
