@@ -76,13 +76,13 @@
             int userId,
             string nameOfFieldToValidate,
             ModelStateDictionary modelState,
-            IUserDataService userDataService
+            IUserService userService
         )
         {
             if (
                 centreId.HasValue &&
                 IsValidationNecessary(centreEmail, nameOfFieldToValidate, modelState) &&
-                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(centreEmail!, centreId.Value, userId)
+                userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(centreEmail!, centreId.Value, userId)
             )
             {
                 modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);

@@ -224,7 +224,7 @@
         {
             // Given
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     DefaultCentreSpecificEmail,
                     DefaultCentreId,
                     DefaultUserId
@@ -238,7 +238,7 @@
                 DefaultUserId,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
@@ -265,7 +265,7 @@
                 DefaultUserId,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
@@ -282,7 +282,7 @@
                 DefaultUserId,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
@@ -311,7 +311,7 @@
                 DefaultUserId,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
@@ -332,7 +332,7 @@
                 DefaultUserId,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
