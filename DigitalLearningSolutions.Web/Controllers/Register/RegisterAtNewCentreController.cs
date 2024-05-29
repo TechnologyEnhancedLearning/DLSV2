@@ -361,7 +361,7 @@
                     User.GetUserIdKnownNotNull(),
                     nameof(PersonalInformationViewModel.CentreSpecificEmail),
                     ModelState,
-                    userDataService
+                    userService
                 );
             }
         }

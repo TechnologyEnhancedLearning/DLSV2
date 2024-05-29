@@ -156,14 +156,14 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         centreId,
                         userAccount.Id
                     )
                 )
                 .MustHaveHappened();
-            result.Should().BeViewResult().WithDefaultViewName();
+            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
         [Test]
@@ -220,7 +220,7 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         model.Centre!.Value,
                         UserId

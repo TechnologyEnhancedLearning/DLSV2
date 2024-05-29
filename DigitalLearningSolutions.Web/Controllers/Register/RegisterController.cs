@@ -31,6 +31,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
         private readonly ISupervisorService supervisorService;
 
         public RegisterController(
@@ -42,6 +43,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IFeatureManager featureManager,
             ISupervisorDelegateService supervisorDelegateService,
             IUserDataService userDataService,
+            IUserService userService,
             ISupervisorService supervisorService
         )
         {
@@ -54,6 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.supervisorDelegateService = supervisorDelegateService;
             this.userDataService = userDataService;
             this.supervisorService = supervisorService;
+            this.userService = userService;
         }
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
@@ -421,7 +424,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 model.PrimaryEmail,
                 nameof(PersonalInformationViewModel.PrimaryEmail),
                 ModelState,
-                userDataService,
+                userService,
                 CommonValidationErrorMessages.EmailInUseDuringDelegateRegistration
             );
 
@@ -430,7 +433,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 model.Centre,
                 nameof(PersonalInformationViewModel.CentreSpecificEmail),
                 ModelState,
-                userDataService
+                userService
             );
         }
     }

@@ -115,6 +115,13 @@ namespace DigitalLearningSolutions.Web.Services
         UserEntity? GetDelegateUserFromLearningHubAuthId(int learningHubAuthId);
 
         int? GetUserLearningHubAuthId(int userId);
+        bool PrimaryEmailIsInUse(string email);
+        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
+        public bool PrimaryEmailInUseAtCentres(string email);
+        bool CentreSpecificEmailIsInUseAtCentreByOtherUser( string email, int centreId,  int userId );
+        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
+        int? GetUserIdByAdminId(int adminId);
+
     }
 
     public class UserService : IUserService
@@ -675,6 +682,36 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var userId = userDataService.GetUserIdFromLearningHubAuthId(learningHubAuthId);
             return userId == null ? null : GetUserById(userId.Value);
+        }
+
+        public bool PrimaryEmailIsInUse(string email)
+        {
+          return   userDataService.PrimaryEmailIsInUse(email);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
+        {
+            return userDataService.CentreSpecificEmailIsInUseAtCentre(email, centreId);
+        }
+
+        public bool PrimaryEmailInUseAtCentres(string email)
+        {
+            return userDataService.PrimaryEmailInUseAtCentres(email);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentreByOtherUser(string email, int centreId, int userId)
+        {
+            return userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId);
+        }
+
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        {
+            return userDataService.GetAdminUserByEmailAddress(emailAddress);
+        }
+
+        public int? GetUserIdByAdminId(int adminId)
+        {
+            return userDataService.GetUserIdByAdminId(adminId);
         }
     }
 }
