@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using DigitalLearningSolutions.Data.DataServices;
-using DigitalLearningSolutions.Web.Controllers;
+﻿using DigitalLearningSolutions.Web.Controllers;
 using DigitalLearningSolutions.Web.ViewModels.UserFeedback;
 using GDS.MultiPageFormData;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +10,7 @@ using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
 using GDS.MultiPageFormData.Enums;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
-using DigitalLearningSolutions.Data.Extensions;
+using DigitalLearningSolutions.Web.Services;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
@@ -24,7 +22,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private const string FeedbackText = "Example feedback text";
 
         private UserFeedbackController _userFeedbackController = null!;
-        private IUserFeedbackDataService _userFeedbackDataService = null!;
+        private IUserFeedbackService _userFeedbackService = null!;
         private IMultiPageFormService _multiPageFormService = null!;
         private ITempDataDictionary _tempData = null!;
         private IConfiguration config = null!;
@@ -32,10 +30,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         [SetUp]
         public void SetUp()
         {
-            _userFeedbackDataService = A.Fake<IUserFeedbackDataService>();
+            _userFeedbackService = A.Fake<IUserFeedbackService>();
             _multiPageFormService = A.Fake<IMultiPageFormService>();
             config = A.Fake<IConfiguration>();
-            _userFeedbackController = new UserFeedbackController(_userFeedbackDataService, _multiPageFormService, config)
+            _userFeedbackController = new UserFeedbackController(_userFeedbackService, _multiPageFormService, config)
                 .WithDefaultContext()
                 .WithMockUser(true, userId: LoggedInUserId);
             _tempData = A.Fake<ITempDataDictionary>();
@@ -212,7 +210,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var result = _userFeedbackController.UserFeedbackSave(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
-            A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(A<int?>._, A<string>._, A<string>._, A<bool?>._, A<string>._, A<string>._, A<int?>._))
+            A.CallTo(() => _userFeedbackService.SaveUserFeedback(A<int?>._, A<string>._, A<string>._, A<bool?>._, A<string>._, A<string>._, A<int?>._))
                 .MustHaveHappenedOnceExactly();
             result.Should().NotBeNull();
             result?.ActionName.Should().Be("UserFeedbackComplete");
@@ -229,7 +227,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
-            A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
+            A.CallTo(() => _userFeedbackService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
                 .MustHaveHappenedOnceExactly();
             result.Should().NotBeNull();
             result?.ActionName.Should().Be("GuestFeedbackComplete");
@@ -245,7 +243,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var result = _userFeedbackController.GuestFeedbackComplete(userFeedbackViewModel) as RedirectToActionResult;
 
             // Then
-            A.CallTo(() => _userFeedbackDataService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
+            A.CallTo(() => _userFeedbackService.SaveUserFeedback(null, A<string>._, A<string>._, null, A<string>._, A<string>._, null))
                 .MustNotHaveHappened();
             result.Should().NotBeNull();
             result?.ActionName.Should().Be("GuestFeedbackComplete");

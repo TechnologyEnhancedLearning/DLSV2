@@ -115,13 +115,19 @@ namespace DigitalLearningSolutions.Web.Services
         UserEntity? GetDelegateUserFromLearningHubAuthId(int learningHubAuthId);
 
         int? GetUserLearningHubAuthId(int userId);
+        bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
+           string email,
+           int centreId,
+           int userId
+       );
+        bool PrimaryEmailIsInUseByOtherUser(string email, int userId);
+        IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId);
         bool PrimaryEmailIsInUse(string email);
-        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
-        public bool PrimaryEmailInUseAtCentres(string email);
-        bool CentreSpecificEmailIsInUseAtCentreByOtherUser( string email, int centreId,  int userId );
-        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
-        int? GetUserIdByAdminId(int adminId);
-
+        void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime);
+        (int? userId, int? centreId, string? centreName) GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                string centreSpecificEmail,
+                string registrationConfirmationHash
+            );
     }
 
     public class UserService : IUserService
@@ -684,34 +690,33 @@ namespace DigitalLearningSolutions.Web.Services
             return userId == null ? null : GetUserById(userId.Value);
         }
 
-        public bool PrimaryEmailIsInUse(string email)
-        {
-          return   userDataService.PrimaryEmailIsInUse(email);
-        }
-
-        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
-        {
-            return userDataService.CentreSpecificEmailIsInUseAtCentre(email, centreId);
-        }
-
-        public bool PrimaryEmailInUseAtCentres(string email)
-        {
-            return userDataService.PrimaryEmailInUseAtCentres(email);
-        }
-
         public bool CentreSpecificEmailIsInUseAtCentreByOtherUser(string email, int centreId, int userId)
         {
             return userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId);
         }
-
-        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        public bool PrimaryEmailIsInUseByOtherUser(string email, int userId)
         {
-            return userDataService.GetAdminUserByEmailAddress(emailAddress);
+            return userDataService.PrimaryEmailIsInUseByOtherUser(email, userId);
         }
 
-        public int? GetUserIdByAdminId(int adminId)
+        public IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId)
         {
-            return userDataService.GetUserIdByAdminId(adminId);
+            return userDataService.GetCentreDetailsForUser(userId);
+        }
+
+        public bool PrimaryEmailIsInUse(string email)
+        {
+            return userDataService.PrimaryEmailIsInUse(email);
+        }
+
+        public void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime)
+        {
+            userDataService.SetPrimaryEmailVerified(userId, email, verifiedDateTime);
+        }
+
+        public (int? userId, int? centreId, string? centreName) GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(string centreSpecificEmail, string registrationConfirmationHash)
+        {
+            return userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(centreSpecificEmail, registrationConfirmationHash);
         }
     }
 }

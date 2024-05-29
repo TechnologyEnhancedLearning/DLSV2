@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -21,21 +20,18 @@
     public class ClaimAccountController : Controller
     {
         private readonly IUserService userService;
-        private readonly IUserDataService userDataService;
         private readonly IClaimAccountService claimAccountService;
         private readonly IConfiguration config;
         private readonly IEmailVerificationService emailVerificationService;
 
         public ClaimAccountController(
             IUserService userService,
-            IUserDataService userDataService,
             IClaimAccountService claimAccountService,
             IConfiguration config,
             IEmailVerificationService emailVerificationService
         )
         {
             this.userService = userService;
-            this.userDataService = userDataService;
             this.claimAccountService = claimAccountService;
             this.config = config;
             this.emailVerificationService = emailVerificationService;
@@ -135,7 +131,7 @@
             string? password = null
         )
         {
-            if (userDataService.PrimaryEmailIsInUse(model.Email))
+            if (userService.PrimaryEmailIsInUse(model.Email))
             {
                 return NotFound();
             }
@@ -164,7 +160,7 @@
 
             var userEntity = userService.GetUserById(model.UserId);
             IClockUtility clockUtility = new ClockUtility();
-            userDataService.SetPrimaryEmailVerified(userEntity!.UserAccount.Id, model.Email, clockUtility.UtcNow);
+            userService.SetPrimaryEmailVerified(userEntity!.UserAccount.Id, model.Email, clockUtility.UtcNow);
 
             return RedirectToAction("Confirmation");
         }
@@ -259,7 +255,7 @@
             }
 
             var (userId, centreId, centreName) =
-                userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(email, code);
+                userService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(email, code);
 
             if (userId == null)
             {

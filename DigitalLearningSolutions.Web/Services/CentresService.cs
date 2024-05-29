@@ -32,11 +32,14 @@
         void ReactivateCentre(int centreId);
 
         Centre? GetCentreManagerDetailsByCentreId(int centreId);
-
-        void UpdateCentreManagerDetails(int centreId, string firstName, string lastName,string email, string? telephone );
-        string? GetCentreName(int centreId);
-        (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
-
+        void UpdateCentreManagerDetails(
+            int centreId,
+            string firstName,
+            string lastName,
+            string email,
+            string? telephone
+        );
+        string? GetBannerText(int centreId);
     }
 
     public class CentresService : ICentresService
@@ -125,14 +128,9 @@
             centresDataService.UpdateCentreManagerDetails(centreId,firstName,lastName,email,telephone);
         }
 
-        public string? GetCentreName(int centreId)
+        public string? GetBannerText(int centreId)
         {
-          return   centresDataService.GetCentreName(centreId);
-        }
-
-        public (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId)
-        {
-            return centresDataService.GetCentreAutoRegisterValues(centreId);
+            return centresDataService.GetBannerText(centreId);
         }
     }
 }

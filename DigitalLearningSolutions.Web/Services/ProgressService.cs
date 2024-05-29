@@ -105,7 +105,8 @@
             progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                 progressId,
                 supervisorId,
-                courseInfo.CompleteBy
+                courseInfo.CompleteBy,
+                2
             );
 
             progressDataService.ClearAspProgressVerificationRequest(progressId);

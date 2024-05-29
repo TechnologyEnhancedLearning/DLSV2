@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Transactions;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.UserFeedback;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -13,21 +12,22 @@
     using Microsoft.FeatureManagement.Mvc;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Web.Services;
 
     public class UserFeedbackController : Controller
     {
-        private readonly IUserFeedbackDataService _userFeedbackDataService;
+        private readonly IUserFeedbackService _userFeedbackService;
         private readonly IMultiPageFormService _multiPageFormService;
         private UserFeedbackViewModel _userFeedbackViewModel;
         private readonly IConfiguration config;
 
         public UserFeedbackController(
-            IUserFeedbackDataService userFeedbackDataService,
+            IUserFeedbackService userFeedbackService,
             IMultiPageFormService multiPageFormService
             , IConfiguration config
         )
         {
-            this._userFeedbackDataService = userFeedbackDataService;
+            this._userFeedbackService = userFeedbackService;
             this._multiPageFormService = multiPageFormService;
             this._userFeedbackViewModel = new UserFeedbackViewModel();
             this.config = config; 
@@ -257,7 +257,7 @@
 
             using var transaction = new TransactionScope();
 
-            _userFeedbackDataService.SaveUserFeedback(
+            _userFeedbackService.SaveUserFeedback(
                 data.UserId,
                 data.UserRoles,
                 data.SourceUrl,
@@ -327,7 +327,7 @@
             {
                 using var transaction = new TransactionScope();
 
-                _userFeedbackDataService.SaveUserFeedback(
+                _userFeedbackService.SaveUserFeedback(
                     null,
                     null,
                     userFeedbackViewModel.SourceUrl,
