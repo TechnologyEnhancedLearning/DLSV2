@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -20,14 +19,14 @@
 
         private IPasswordService passwordService = null!;
         private SetDelegatePasswordController setDelegatePasswordController = null!;
-        private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
-            userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             passwordService = A.Fake<IPasswordService>();
-            setDelegatePasswordController = new SetDelegatePasswordController(passwordService, userDataService)
+            setDelegatePasswordController = new SetDelegatePasswordController(passwordService, userService)
                 .WithDefaultContext()
                 .WithMockUser(true);
         }
@@ -36,7 +35,7 @@
         public void Index_should_return_view_result_with_IsFromViewDelegatePage_false_when_not_from_view_page()
         {
             // Given
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
+            A.CallTo(() => userService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser());
 
             // When
@@ -51,7 +50,7 @@
         public void Index_should_return_view_result_with_IsFromViewDelegatePage_true_when_from_view_page()
         {
             // Given
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
+            A.CallTo(() => userService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser());
 
             // When
@@ -85,7 +84,7 @@
             // Given
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var model = new SetDelegatePasswordViewModel { Password = Password };
-            A.CallTo(() => userDataService.GetDelegateAccountById(DelegateId))
+            A.CallTo(() => userService.GetDelegateAccountById(DelegateId))
                 .Returns(delegateAccount);
             A.CallTo(() => passwordService.ChangePasswordAsync(A<int>._, A<string>._)).Returns(Task.CompletedTask);
 

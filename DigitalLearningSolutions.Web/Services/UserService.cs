@@ -128,7 +128,7 @@ namespace DigitalLearningSolutions.Web.Services
                 string centreSpecificEmail,
                 string registrationConfirmationHash
             );
-
+        DelegateAccount? GetDelegateAccountById(int id);
     }
 
     public class UserService : IUserService
@@ -718,6 +718,11 @@ namespace DigitalLearningSolutions.Web.Services
         public (int? userId, int? centreId, string? centreName) GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(string centreSpecificEmail, string registrationConfirmationHash)
         {
             return userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(centreSpecificEmail, registrationConfirmationHash);
+        }
+
+        public DelegateAccount? GetDelegateAccountById(int id)
+        {
+            return userDataService.GetDelegateAccountById(id);
         }
     }
 }

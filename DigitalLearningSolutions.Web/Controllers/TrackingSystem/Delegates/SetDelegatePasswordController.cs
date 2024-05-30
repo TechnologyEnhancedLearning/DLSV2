@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
@@ -23,12 +22,12 @@
     public class SetDelegatePasswordController : Controller
     {
         private readonly IPasswordService passwordService;
-        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
-        public SetDelegatePasswordController(IPasswordService passwordService, IUserDataService userDataService)
+        public SetDelegatePasswordController(IPasswordService passwordService, IUserService userService)
         {
             this.passwordService = passwordService;
-            this.userDataService = userDataService;
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -38,7 +37,7 @@
             ReturnPageQuery? returnPageQuery = null
         )
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var delegateUser = userService.GetDelegateUserById(delegateId)!;
 
             var model = new SetDelegatePasswordViewModel(
                 DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName),
@@ -57,14 +56,14 @@
             int delegateId,
             bool isFromViewDelegatePage
         )
-        {            
+        {
             if (!ModelState.IsValid)
             {
                 model.IsFromViewDelegatePage = isFromViewDelegatePage;
                 return View(model);
             }
 
-            var delegateAccount = userDataService.GetDelegateAccountById(delegateId)!;
+            var delegateAccount = userService.GetDelegateAccountById(delegateId)!;
 
             await passwordService.ChangePasswordAsync(delegateAccount.UserId, model.Password!);
 
