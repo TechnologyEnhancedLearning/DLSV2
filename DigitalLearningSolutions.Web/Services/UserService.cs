@@ -128,6 +128,9 @@ namespace DigitalLearningSolutions.Web.Services
                 string centreSpecificEmail,
                 string registrationConfirmationHash
             );
+        (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
+                                    string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
+                                    int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6);
 
     }
 
@@ -718,6 +721,15 @@ namespace DigitalLearningSolutions.Web.Services
         public (int? userId, int? centreId, string? centreName) GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(string centreSpecificEmail, string registrationConfirmationHash)
         {
             return userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(centreSpecificEmail, registrationConfirmationHash);
+        }
+
+        public (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
+                                    string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
+                                    int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
+        {
+            return userDataService.GetDelegateUserCards(searchString, offSet, itemsPerPage, sortBy, sortDirection, centreId,
+                                    isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
+                                    groupId, answer1, answer2, answer3, answer4, answer5, answer6);
         }
     }
 }
