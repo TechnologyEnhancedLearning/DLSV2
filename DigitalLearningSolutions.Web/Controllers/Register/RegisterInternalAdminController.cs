@@ -103,7 +103,7 @@
                 userId,
                 nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
                 ModelState,
-                userDataService
+                userService
             );
 
             RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(
