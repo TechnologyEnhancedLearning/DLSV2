@@ -721,7 +721,7 @@
         private void DelegateProgressRecordMustNotHaveBeenUpdated()
         {
             A.CallTo(
-                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._, A<int>._)
+                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._, A<int>._, A<DateTime?>._)
             ).MustNotHaveHappened();
         }
 
@@ -764,7 +764,7 @@
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();
             A.CallTo(
-                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._, A<int>._)
+                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._, A<int>._, A<DateTime?>._)
             ).DoesNothing();
             A.CallTo(
                 () => progressDataService.CreateNewDelegateProgress(
