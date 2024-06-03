@@ -1,6 +1,5 @@
 ﻿using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
-using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
 using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
 using FakeItEasy;
