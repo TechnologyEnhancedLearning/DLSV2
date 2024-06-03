@@ -10,7 +10,7 @@ namespace DigitalLearningSolutions.Data.Utilities
 
     public class ClockUtility : IClockUtility
     {
-        public DateTime UtcNow => DateTime.UtcNow;
+        public DateTime UtcNow => DateTime.Now;
         public DateTime UtcToday => UtcNow.Date;
     }
 }
