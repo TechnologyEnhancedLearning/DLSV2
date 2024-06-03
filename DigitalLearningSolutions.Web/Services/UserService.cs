@@ -128,7 +128,6 @@ namespace DigitalLearningSolutions.Web.Services
                 string centreSpecificEmail,
                 string registrationConfirmationHash
             );
-
         DelegateUserCard? GetDelegateUserCardById(int id);
         void DeactivateDelegateUser(int delegateId);
         void ActivateDelegateUser(int delegateId);
@@ -138,7 +137,6 @@ namespace DigitalLearningSolutions.Web.Services
         bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
         int? GetUserIdByAdminId(int adminId);
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
-
     }
 
     public class UserService : IUserService
@@ -729,7 +727,6 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(centreSpecificEmail, registrationConfirmationHash);
         }
-
         public DelegateUserCard? GetDelegateUserCardById(int id)
         {
             return userDataService.GetDelegateUserCardById(id);
@@ -749,9 +746,7 @@ namespace DigitalLearningSolutions.Web.Services
         public void DeleteUserAndAccounts(int userId)
         {
             userDataService.DeleteUserAndAccounts(userId);
-
         }
-
         public bool PrimaryEmailInUseAtCentres(string email)
         {
            return  userDataService.PrimaryEmailInUseAtCentres(email);

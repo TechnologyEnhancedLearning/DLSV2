@@ -41,10 +41,8 @@
         );
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
-
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
-
     }
 
     public class CentresService : ICentresService
@@ -142,13 +140,10 @@
         {
             return centresDataService.GetCentreName(centreId);
         }
-
-
         public IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical()
         {
             return centresDataService.GetCentresForDelegateSelfRegistrationAlphabetical();
         }
-
         public (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId)
         {
             return centresDataService.GetCentreAutoRegisterValues(centreId);
