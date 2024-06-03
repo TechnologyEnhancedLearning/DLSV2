@@ -158,7 +158,7 @@
                     )
                 )
                 .MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
+            result.Should().BeViewResult().WithDefaultViewName();
         }
 
         [Test]
