@@ -103,8 +103,9 @@ namespace DigitalLearningSolutions.Web.Services
                         progressRecord.ProgressId,
                         supervisorAdminId ?? 0,
                         completeByDate,
-                        2
-                    );
+                        2,
+                       clockUtility.UtcNow
+                        );
                 }
             }
             else
@@ -114,7 +115,7 @@ namespace DigitalLearningSolutions.Web.Services
                     customisationId,
                     customisationVersion,
                     clockUtility.UtcNow,
-                    3,
+                    2,
                     enrolledByAdminId,
                 completeByDate,
                 supervisorAdminId ?? 0
