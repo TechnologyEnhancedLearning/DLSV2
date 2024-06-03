@@ -128,10 +128,12 @@ namespace DigitalLearningSolutions.Web.Services
                 string centreSpecificEmail,
                 string registrationConfirmationHash
             );
-        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
-        bool PrimaryEmailInUseAtCentres(string email);
-        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
-        int? GetUserIdByAdminId(int adminId);
+
+        DelegateUserCard? GetDelegateUserCardById(int id);
+        void DeactivateDelegateUser(int delegateId);
+        void ActivateDelegateUser(int delegateId);
+        int GetUserIdFromDelegateId(int delegateId);
+        void DeleteUserAndAccounts(int userId);
     }
 
     public class UserService : IUserService
@@ -723,24 +725,26 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(centreSpecificEmail, registrationConfirmationHash);
         }
 
-        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
+        public DelegateUserCard? GetDelegateUserCardById(int id)
         {
-            return userDataService.CentreSpecificEmailIsInUseAtCentre(email,centreId);
+            return userDataService.GetDelegateUserCardById(id);
         }
-
-        public bool PrimaryEmailInUseAtCentres(string email)
+        public void DeactivateDelegateUser(int delegateId)
         {
-            return userDataService.PrimaryEmailInUseAtCentres(email);
+            userDataService.DeactivateDelegateUser(delegateId);
         }
-
-        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        public void ActivateDelegateUser(int delegateId)
         {
-            return userDataService.GetAdminUserByEmailAddress(emailAddress);
+            userDataService.ActivateDelegateUser(delegateId);
         }
-
-        public int? GetUserIdByAdminId(int adminId)
+        public int GetUserIdFromDelegateId(int delegateId)
         {
-            return userDataService.GetUserIdByAdminId(adminId);
+            return userDataService.GetUserIdFromDelegateId(delegateId);
+        }
+        public void DeleteUserAndAccounts(int userId)
+        {
+            userDataService.DeleteUserAndAccounts(userId);
+
         }
     }
 }

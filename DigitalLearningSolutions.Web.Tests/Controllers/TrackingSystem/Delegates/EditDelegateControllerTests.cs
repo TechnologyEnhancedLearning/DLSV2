@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
@@ -21,20 +19,18 @@
     {
         private const int DelegateId = 1;
         private EditDelegateController controller = null!;
-        private IJobGroupsDataService jobGroupsDataService = null!;
+        private IJobGroupsService jobGroupsService = null!;
         private PromptsService promptsService = null!;
         private IUserService userService = null!;
-        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void SetUp()
         {
             promptsService = A.Fake<PromptsService>();
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            jobGroupsService = A.Fake<IJobGroupsService>();
             userService = A.Fake<IUserService>();
-            userDataService = A.Fake<IUserDataService>();
 
-            controller = new EditDelegateController(userService, userDataService, jobGroupsDataService, promptsService)
+            controller = new EditDelegateController(userService, jobGroupsService, promptsService)
                 .WithDefaultContext()
                 .WithMockUser(true);
         }
@@ -120,7 +116,7 @@
 
             A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     email,
                     delegateEntity.DelegateAccount.CentreId,
                     delegateEntity.UserAccount.Id
@@ -134,7 +130,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         email,
                         delegateEntity.DelegateAccount.CentreId,
                         delegateEntity.UserAccount.Id
@@ -168,7 +164,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                        () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                             A<string>._,
                             A<int>._,
                             A<int>._
@@ -204,7 +200,7 @@
 
             A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     centreSpecificEmail,
                     delegateEntity.DelegateAccount.CentreId,
                     delegateEntity.UserAccount.Id
@@ -219,7 +215,7 @@
             {
                 A.CallTo(() => userService.GetDelegateById(DelegateId)).MustHaveHappenedOnceExactly();
                 A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         centreSpecificEmail,
                         delegateEntity.DelegateAccount.CentreId,
                         delegateEntity.UserAccount.Id
@@ -267,7 +263,7 @@
             {
                 A.CallTo(() => userService.GetDelegateById(DelegateId)).MustHaveHappenedOnceExactly();
                 A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         A<string>._,
                         A<int>._,
                         A<int>._
@@ -315,7 +311,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         A<string>._,
                         A<int>._,
                         A<int>._
@@ -365,7 +361,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         A<string>._,
                         A<int>._,
                         A<int>._
@@ -410,7 +406,7 @@
             A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     newCentreSpecificEmail,
                     delegateEntity.DelegateAccount.CentreId,
                     delegateEntity.UserAccount.Id

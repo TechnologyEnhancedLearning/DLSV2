@@ -4,8 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
@@ -28,19 +26,18 @@
     [ServiceFilter(typeof(VerifyUserHasVerifiedPrimaryEmail))]
     public class RegisterAtNewCentreController : Controller
     {
-        private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
         private readonly IConfiguration config;
         private readonly IEmailVerificationService emailVerificationService;
         private readonly IFeatureManager featureManager;
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
-        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
         private readonly ISupervisorService supervisorService;
 
         public RegisterAtNewCentreController(
-            ICentresDataService centresDataService,
+            ICentresService centresService,
             IConfiguration config,
             IEmailVerificationService emailVerificationService,
             IFeatureManager featureManager,
@@ -48,11 +45,10 @@
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
             IUserService userService,
-            IUserDataService userDataService,
             ISupervisorService supervisorService
         )
         {
-            this.centresDataService = centresDataService;
+            this.centresService = centresService;
             this.config = config;
             this.emailVerificationService = emailVerificationService;
             this.featureManager = featureManager;
@@ -60,7 +56,6 @@
             this.registrationService = registrationService;
             this.supervisorDelegateService = supervisorDelegateService;
             this.userService = userService;
-            this.userDataService = userDataService;
             this.supervisorService = supervisorService;
         }
 
@@ -220,7 +215,7 @@
             var viewModel = new InternalSummaryViewModel
             {
                 CentreSpecificEmail = data.CentreSpecificEmail,
-                Centre = centresDataService.GetCentreName((int)data.Centre!),
+                Centre = centresService.GetCentreName((int)data.Centre!),
                 DelegateRegistrationPrompts = promptsService.GetDelegateRegistrationPromptsForCentre(
                     data.Centre!.Value,
                     data.Answer1,
@@ -348,7 +343,7 @@
 
         private bool CheckCentreIdValid(int? centreId)
         {
-            return centreId == null || centresDataService.GetCentreName(centreId.Value) != null;
+            return centreId == null || centresService.GetCentreName(centreId.Value) != null;
         }
 
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
@@ -368,9 +363,9 @@
 
         private void PopulatePersonalInformationExtraFields(InternalPersonalInformationViewModel model)
         {
-            model.CentreName = model.Centre.HasValue ? centresDataService.GetCentreName(model.Centre.Value) : null;
+            model.CentreName = model.Centre.HasValue ? centresService.GetCentreName(model.Centre.Value) : null;
             model.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
-                centresDataService.GetCentresForDelegateSelfRegistrationAlphabetical(),
+                centresService.GetCentresForDelegateSelfRegistrationAlphabetical(),
                 model.Centre
             );
         }
