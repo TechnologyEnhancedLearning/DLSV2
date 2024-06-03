@@ -43,6 +43,7 @@
         string? GetCentreName(int centreId);
 
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
+        (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
 
     }
 
@@ -146,6 +147,11 @@
         public IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical()
         {
             return centresDataService.GetCentresForDelegateSelfRegistrationAlphabetical();
+        }
+
+        public (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId)
+        {
+            return centresDataService.GetCentreAutoRegisterValues(centreId);
         }
     }
 }
