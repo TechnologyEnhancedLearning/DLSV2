@@ -1,5 +1,4 @@
-﻿using DigitalLearningSolutions.Data.DataServices;
-using DigitalLearningSolutions.Data.Models.Courses;
+﻿using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Helpers;
@@ -262,7 +261,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault(x => x.ID == model.SelectedSupervisorRoleId).RoleName;
             }
             sessionEnrol.SelfAssessmentSupervisorRoleId = model.SelectedSupervisorRoleId;
-            if (roles.Count()==1 && !string.IsNullOrEmpty(sessionEnrol.SupervisorName))
+            if (roles.Count() == 1 && !string.IsNullOrEmpty(sessionEnrol.SupervisorName))
             {
                 sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault().RoleName;
                 sessionEnrol.SelfAssessmentSupervisorRoleId = roles.FirstOrDefault().ID;

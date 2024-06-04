@@ -32,7 +32,6 @@
         void ReactivateCentre(int centreId);
 
         Centre? GetCentreManagerDetailsByCentreId(int centreId);
-
         void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
@@ -41,6 +40,9 @@
             string? telephone
         );
         string? GetBannerText(int centreId);
+        string? GetCentreName(int centreId);
+        IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
+        (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
     }
 
     public class CentresService : ICentresService
@@ -71,12 +73,12 @@
             return centreRanking?.Ranking;
         }
 
-        public (IEnumerable<CentreEntity>, int) GetAllCentreSummariesForSuperAdmin(string search, int offset, int rows,int region,
+        public (IEnumerable<CentreEntity>, int) GetAllCentreSummariesForSuperAdmin(string search, int offset, int rows, int region,
           int centreType,
           int contractType,
           string centreStatus)
         {
-            return centresDataService.GetAllCentreSummariesForSuperAdmin(search,offset,rows,region,centreType,contractType,centreStatus);
+            return centresDataService.GetAllCentreSummariesForSuperAdmin(search, offset, rows, region, centreType, contractType, centreStatus);
         }
 
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
@@ -123,15 +125,28 @@
             return centresDataService.GetCentreManagerDetailsByCentreId(centreId);
         }
 
-        public void UpdateCentreManagerDetails(int centreId,string firstName,string lastName,string email,string? telephone
+        public void UpdateCentreManagerDetails(int centreId, string firstName, string lastName, string email, string? telephone
         )
         {
-            centresDataService.UpdateCentreManagerDetails(centreId,firstName,lastName,email,telephone);
+            centresDataService.UpdateCentreManagerDetails(centreId, firstName, lastName, email, telephone);
         }
 
         public string? GetBannerText(int centreId)
         {
             return centresDataService.GetBannerText(centreId);
+        }
+
+        public string? GetCentreName(int centreId)
+        {
+            return centresDataService.GetCentreName(centreId);
+        }
+        public IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical()
+        {
+            return centresDataService.GetCentresForDelegateSelfRegistrationAlphabetical();
+        }
+        public (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId)
+        {
+            return centresDataService.GetCentreAutoRegisterValues(centreId);
         }
     }
 }

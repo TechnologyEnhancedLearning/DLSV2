@@ -132,6 +132,15 @@ namespace DigitalLearningSolutions.Web.Services
                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
                                     int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6);
 
+        DelegateUserCard? GetDelegateUserCardById(int id);
+        void DeactivateDelegateUser(int delegateId);
+        void ActivateDelegateUser(int delegateId);
+        int GetUserIdFromDelegateId(int delegateId);
+        void DeleteUserAndAccounts(int userId);
+        public bool PrimaryEmailInUseAtCentres(string email);
+        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
+        int? GetUserIdByAdminId(int adminId);
+        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
     }
 
     public class UserService : IUserService
@@ -730,6 +739,45 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetDelegateUserCards(searchString, offSet, itemsPerPage, sortBy, sortDirection, centreId,
                                     isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
                                     groupId, answer1, answer2, answer3, answer4, answer5, answer6);
+        }
+        public DelegateUserCard? GetDelegateUserCardById(int id)
+        {
+            return userDataService.GetDelegateUserCardById(id);
+        }
+        public void DeactivateDelegateUser(int delegateId)
+        {
+            userDataService.DeactivateDelegateUser(delegateId);
+        }
+        public void ActivateDelegateUser(int delegateId)
+        {
+            userDataService.ActivateDelegateUser(delegateId);
+        }
+        public int GetUserIdFromDelegateId(int delegateId)
+        {
+            return userDataService.GetUserIdFromDelegateId(delegateId);
+        }
+        public void DeleteUserAndAccounts(int userId)
+        {
+            userDataService.DeleteUserAndAccounts(userId);
+        }
+        public bool PrimaryEmailInUseAtCentres(string email)
+        {
+           return  userDataService.PrimaryEmailInUseAtCentres(email);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
+        {
+            return userDataService.CentreSpecificEmailIsInUseAtCentre(email, centreId);
+        }
+
+        public int? GetUserIdByAdminId(int adminId)
+        {
+            return userDataService.GetUserIdByAdminId(adminId);
+        }
+
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        {
+            return userDataService.GetAdminUserByEmailAddress(emailAddress);
         }
     }
 }
