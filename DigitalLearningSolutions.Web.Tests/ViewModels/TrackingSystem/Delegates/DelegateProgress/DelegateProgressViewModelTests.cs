@@ -107,7 +107,7 @@
 
         [Test]
         [TestCase(1, "Self enrolled")]
-        [TestCase(2, "Enrolled by Ronnie Dio")]
+        [TestCase(2, "Enrolled by Admin - Ronnie Dio")]
         [TestCase(3, "Group")]
         [TestCase(4, "System")]
         public void ViewModel_sets_Enrolment_method_text_correctly(int enrolmentMethodId, string expectedText)
