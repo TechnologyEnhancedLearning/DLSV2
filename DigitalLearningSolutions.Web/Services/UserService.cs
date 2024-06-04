@@ -141,6 +141,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
         int? GetUserIdByAdminId(int adminId);
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
+        DelegateAccount? GetDelegateAccountById(int id);
     }
 
     public class UserService : IUserService
@@ -762,7 +763,7 @@ namespace DigitalLearningSolutions.Web.Services
         }
         public bool PrimaryEmailInUseAtCentres(string email)
         {
-           return  userDataService.PrimaryEmailInUseAtCentres(email);
+            return userDataService.PrimaryEmailInUseAtCentres(email);
         }
 
         public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
@@ -778,6 +779,11 @@ namespace DigitalLearningSolutions.Web.Services
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
         {
             return userDataService.GetAdminUserByEmailAddress(emailAddress);
+        }
+
+        public DelegateAccount? GetDelegateAccountById(int id)
+        {
+            return userDataService.GetDelegateAccountById(id);
         }
     }
 }
