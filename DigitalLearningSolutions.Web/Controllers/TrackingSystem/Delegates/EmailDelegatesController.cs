@@ -3,7 +3,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
@@ -29,7 +28,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     {
         private const string EmailDelegateFilterCookieName = "EmailDelegateFilter";
         private readonly PromptsService promptsService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserService userService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
@@ -38,7 +37,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
         public EmailDelegatesController(
             PromptsService promptsService,
-            IJobGroupsDataService jobGroupsDataService,
+            IJobGroupsService jobGroupsService,
             IPasswordResetService passwordResetService,
             IUserService userService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
@@ -47,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         )
         {
             this.promptsService = promptsService;
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.jobGroupsService = jobGroupsService;
             this.passwordResetService = passwordResetService;
             this.userService = userService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
@@ -70,7 +69,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 Request,
                 EmailDelegateFilterCookieName
             );
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
             var delegateUsers = GetDelegateUserCards();
 
@@ -123,7 +122,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     Request,
                     EmailDelegateFilterCookieName
                 );
-                var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+                var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
                 var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
 
                 var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
@@ -167,7 +166,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         [Route("AllEmailDelegateItems")]
         public IActionResult AllEmailDelegateItems(IEnumerable<int> selectedIds)
         {
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
             var delegateUsers = GetDelegateUserCards();
 
