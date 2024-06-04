@@ -133,6 +133,10 @@ namespace DigitalLearningSolutions.Web.Services
         void ActivateDelegateUser(int delegateId);
         int GetUserIdFromDelegateId(int delegateId);
         void DeleteUserAndAccounts(int userId);
+        public bool PrimaryEmailInUseAtCentres(string email);
+        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
+        int? GetUserIdByAdminId(int adminId);
+        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
     }
 
     public class UserService : IUserService
@@ -742,6 +746,25 @@ namespace DigitalLearningSolutions.Web.Services
         public void DeleteUserAndAccounts(int userId)
         {
             userDataService.DeleteUserAndAccounts(userId);
+        }
+        public bool PrimaryEmailInUseAtCentres(string email)
+        {
+           return  userDataService.PrimaryEmailInUseAtCentres(email);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
+        {
+            return userDataService.CentreSpecificEmailIsInUseAtCentre(email, centreId);
+        }
+
+        public int? GetUserIdByAdminId(int adminId)
+        {
+            return userDataService.GetUserIdByAdminId(adminId);
+        }
+
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        {
+            return userDataService.GetAdminUserByEmailAddress(emailAddress);
         }
     }
 }

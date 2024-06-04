@@ -38,6 +38,7 @@
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
         private ISupervisorService supervisorService = null!;
 
         [SetUp]
@@ -48,6 +49,7 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
@@ -63,6 +65,7 @@
                     featureManager,
                     supervisorDelegateService,
                     userDataService,
+                    userService,
                     supervisorService
                 )
                 .WithDefaultContext()
@@ -161,6 +164,7 @@
                 featureManager,
                 supervisorDelegateService,
                 userDataService,
+                userService,
                 supervisorService
             ).WithDefaultContext().WithMockUser(true);
 
@@ -235,6 +239,7 @@
                 featureManager,
                 supervisorDelegateService,
                 userDataService,
+                userService,
                 supervisorService
             ).WithDefaultContext().WithMockUser(true);
 

@@ -1,8 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
@@ -21,14 +19,12 @@
         private const string DefaultFieldName = "FieldName";
 
         private static ModelStateDictionary modelState = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private ICentresService centresService = null!;
 
         [SetUp]
         public void Setup()
         {
-            userDataService = A.Fake<IUserDataService>();
             userService = A.Fake<IUserService>();
             centresService = A.Fake<ICentresService>();
             modelState = new ModelStateDictionary();
@@ -38,14 +34,14 @@
         public void ValidatePrimaryEmailIfNecessary_adds_error_message_when_primary_email_is_in_use()
         {
             // Given
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(true);
+            A.CallTo(() => userService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(true);
 
             // When
             RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
                 DefaultPrimaryEmail,
                 DefaultFieldName,
                 modelState,
-                userDataService,
+                userService,
                 DefaultErrorMessage
             );
 
@@ -57,14 +53,14 @@
         public void ValidatePrimaryEmailIfNecessary_does_not_add_error_message_when_primary_email_is_not_in_use()
         {
             // Given
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(false);
+            A.CallTo(() => userService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(false);
 
             // When
             RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
                 DefaultPrimaryEmail,
                 DefaultFieldName,
                 modelState,
-                userDataService,
+                userService,
                 DefaultErrorMessage
             );
 
@@ -80,7 +76,7 @@
                 null,
                 DefaultFieldName,
                 modelState,
-                userDataService,
+                userService,
                 DefaultErrorMessage
             );
 
@@ -94,14 +90,14 @@
             // Given
             modelState.AddModelError(DefaultFieldName, DefaultErrorMessage);
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(true);
+            A.CallTo(() => userService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(true);
 
             // When
             RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
                 DefaultPrimaryEmail,
                 DefaultFieldName,
                 modelState,
-                userDataService,
+                userService,
                 "different error"
             );
 
@@ -115,7 +111,7 @@
         {
             // Given
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, DefaultCentreId)
+                () => userService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, DefaultCentreId)
             ).Returns(true);
 
             // When
@@ -124,7 +120,7 @@
                 DefaultCentreId,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
@@ -137,7 +133,7 @@
         {
             // Given
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, DefaultCentreId)
+                () => userService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, DefaultCentreId)
             ).Returns(false);
 
             // When
@@ -146,7 +142,7 @@
                 DefaultCentreId,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
@@ -162,7 +158,7 @@
                 DefaultCentreId,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
@@ -176,7 +172,7 @@
             modelState.AddModelError(DefaultFieldName, DefaultErrorMessage);
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, DefaultCentreId)
+                () => userService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, DefaultCentreId)
             ).Returns(true);
 
             // When
@@ -185,7 +181,7 @@
                 DefaultCentreId,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
@@ -205,12 +201,12 @@
                 null,
                 DefaultFieldName,
                 modelState,
-                userDataService
+                userService
             );
 
             // Then
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                () => userService.CentreSpecificEmailIsInUseAtCentre(
                     A<string>._,
                     A<int>._
                 )
@@ -251,7 +247,7 @@
         {
             // Given
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     DefaultCentreSpecificEmail,
                     DefaultCentreId,
                     DefaultUserId
@@ -297,7 +293,7 @@
             modelState.AddModelError(DefaultFieldName, DefaultErrorMessage);
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     DefaultCentreSpecificEmail,
                     DefaultCentreId,
                     DefaultUserId
@@ -337,7 +333,7 @@
 
             // Then
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     A<string>._,
                     A<int>._,
                     A<int>._
