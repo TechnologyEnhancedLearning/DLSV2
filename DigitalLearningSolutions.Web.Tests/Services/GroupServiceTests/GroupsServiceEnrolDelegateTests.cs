@@ -58,7 +58,8 @@
                         3,
                         null,
                         A<DateTime?>._,
-                        A<int>._
+                        A<int>._,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -100,7 +101,8 @@
                         3,
                         null,
                         A<DateTime?>._,
-                        A<int>._
+                        A<int>._,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -142,7 +144,8 @@
                         3,
                         null,
                         A<DateTime?>._,
-                        A<int>._
+                        A<int>._,
+                        testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -184,7 +187,8 @@
                         3,
                         null,
                         A<DateTime?>._,
-                        0
+                        0 ,
+                        testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -227,7 +231,8 @@
                         3,
                         null,
                         testDate.AddMonths(12),
-                        supervisorId
+                        supervisorId,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -269,7 +274,8 @@
                         3,
                         null,
                         null,
-                        A<int>._
+                        A<int>._,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -313,7 +319,8 @@
                         3,
                         null,
                         expectedFutureDate,
-                        A<int>._
+                        A<int>._,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
