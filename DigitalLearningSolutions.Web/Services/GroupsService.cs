@@ -759,7 +759,8 @@
                     3,
                     addedByAdminId,
                     completeByDate,
-                    groupCourse.SupervisorAdminId ?? 0
+                    groupCourse.SupervisorAdminId ?? 0,
+                    clockUtility.UtcNow
                 );
 
                 var tutorialsForCourse =

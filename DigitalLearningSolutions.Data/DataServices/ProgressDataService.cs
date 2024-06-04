@@ -24,7 +24,8 @@
             int enrollmentMethodId,
             int? enrolledByAdminId,
             DateTime? completeByDate,
-            int supervisorAdminId
+            int supervisorAdminId,
+            DateTime firstSubmittedTime
         );
 
         void CreateNewAspProgress(int tutorialId, int progressId);
@@ -166,7 +167,8 @@
             int enrollmentMethodId,
             int? enrolledByAdminId,
             DateTime? completeByDate,
-            int supervisorAdminId
+            int supervisorAdminId,
+            DateTime firstSubmittedTime
         )
         {
             var progressId = connection.QuerySingle<int>(
@@ -178,7 +180,8 @@
                         EnrollmentMethodID,
                         EnrolledByAdminID,
                         CompleteByDate,
-                        SupervisorAdminID)
+                        SupervisorAdminID,
+                        FirstSubmittedTime)
                     OUTPUT Inserted.ProgressID
                     VALUES (
                         @delegateId,
@@ -188,7 +191,8 @@
                         @enrollmentMethodId,
                         @enrolledByAdminId,
                         @completeByDate,
-                        @supervisorAdminId)",
+                        @supervisorAdminId,
+                        @firstSubmittedTime)",
                 new
                 {
                     delegateId,
@@ -199,6 +203,7 @@
                     enrolledByAdminId,
                     completeByDate,
                     supervisorAdminId,
+                    firstSubmittedTime
                 }
             );
 

@@ -736,7 +736,8 @@
                     A<int>._,
                     A<int?>._,
                     A<DateTime?>._,
-                    A<int>._
+                    A<int>._,
+                      A<DateTime>._
                 )
             ).MustNotHaveHappened();
             A.CallTo(
@@ -775,7 +776,8 @@
                     A<int>._,
                     A<int?>._,
                     A<DateTime?>._,
-                    A<int>._
+                    A<int>._,
+                      A<DateTime>._
                 )
             ).Returns(0);
             A.CallTo(() => progressDataService.CreateNewAspProgress(A<int>._, A<int>._)).DoesNothing();
@@ -804,7 +806,8 @@
                     A<int>._,
                     A<int?>._,
                     A<DateTime?>._,
-                    A<int>._
+                    A<int>._,
+                    A<DateTime>._
                 )
             ).Returns(newProgressId);
             A.CallTo(() => tutorialContentDataService.GetTutorialIdsForCourse(A<int>._))
