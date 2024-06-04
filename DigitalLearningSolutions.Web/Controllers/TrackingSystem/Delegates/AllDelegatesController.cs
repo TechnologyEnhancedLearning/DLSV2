@@ -2,8 +2,6 @@
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
@@ -29,19 +27,19 @@
     {
         private string DelegateFilterCookieName = "DelegateFilter";
         private readonly IDelegateDownloadFileService delegateDownloadFileService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private readonly PromptsService promptsService;
         private readonly IPaginateService paginateService;
-        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
         private readonly IGroupsService groupsService;
         private readonly IConfiguration configuration;
         private readonly IWebHostEnvironment env;
 
         public AllDelegatesController(
             IDelegateDownloadFileService delegateDownloadFileService,
-            IUserDataService userDataService,
+            IUserService userDataService,
             PromptsService promptsService,
-            IJobGroupsDataService jobGroupsDataService,
+            IJobGroupsService jobGroupsDataService,
             IPaginateService paginateService,
             IGroupsService groupsService,
             IConfiguration configuration,
@@ -49,9 +47,9 @@
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
-            this.userDataService = userDataService;
+            this.userService = userDataService;
             this.promptsService = promptsService;
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.jobGroupsService = jobGroupsDataService;
             this.paginateService = paginateService;
             this.groupsService = groupsService;
             this.configuration = configuration;
@@ -72,7 +70,7 @@
         )
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
-            var loggedInSuperAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
+            var loggedInSuperAdmin = userService.GetAdminById(User.GetAdminId()!.Value);
             if (loggedInSuperAdmin.AdminAccount.Active == false)
             {
                 return NotFound();
@@ -94,7 +92,7 @@
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
             var centreId = User.GetCentreIdKnownNotNull();
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
             var groups = groupsService.GetActiveGroups(centreId);
 
@@ -197,14 +195,14 @@
                 }
             }
 
-            (var delegates, var resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
+            (var delegates, var resultCount) = this.userService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId, groupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6);
 
             if (delegates.Count() == 0 && resultCount > 0)
             {
                 page = 1; offSet = 0;
-                (delegates, resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
+                (delegates, resultCount) = this.userService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId, groupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6);
             }
