@@ -118,7 +118,8 @@ namespace DigitalLearningSolutions.Web.Services
                     2,
                     enrolledByAdminId,
                 completeByDate,
-                supervisorAdminId ?? 0
+                supervisorAdminId ?? 0,
+                clockUtility.UtcNow
                 );
                 var tutorialsForCourse =
                     tutorialContentDataService.GetTutorialIdsForCourse(customisationId);
