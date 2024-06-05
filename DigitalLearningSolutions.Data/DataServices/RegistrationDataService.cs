@@ -335,6 +335,7 @@
             IDbTransaction transaction
         )
         {
+            string cheese;
             var initials = (delegateRegistrationModel.FirstName.Substring(0, 1) +
                             delegateRegistrationModel.LastName.Substring(0, 1)).ToUpper();
 
