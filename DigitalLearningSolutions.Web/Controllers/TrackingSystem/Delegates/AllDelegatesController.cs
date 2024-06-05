@@ -16,6 +16,9 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using Microsoft.Extensions.Configuration;
+    using DigitalLearningSolutions.Data.Extensions;
+    using Microsoft.AspNetCore.Hosting;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -24,19 +27,25 @@
     [Route("TrackingSystem/Delegates/All")]
     public class AllDelegatesController : Controller
     {
-        private const string DelegateFilterCookieName = "DelegateFilter";
+        private string DelegateFilterCookieName = "DelegateFilter";
         private readonly IDelegateDownloadFileService delegateDownloadFileService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly PromptsService promptsService;
         private readonly IPaginateService paginateService;
         private readonly IUserDataService userDataService;
+        private readonly IGroupsService groupsService;
+        private readonly IConfiguration configuration;
+        private readonly IWebHostEnvironment env;
 
         public AllDelegatesController(
             IDelegateDownloadFileService delegateDownloadFileService,
             IUserDataService userDataService,
             PromptsService promptsService,
             IJobGroupsDataService jobGroupsDataService,
-            IPaginateService paginateService
+            IPaginateService paginateService,
+            IGroupsService groupsService,
+            IConfiguration configuration,
+            IWebHostEnvironment env
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
@@ -44,6 +53,9 @@
             this.promptsService = promptsService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.paginateService = paginateService;
+            this.groupsService = groupsService;
+            this.configuration = configuration;
+            this.env = env;
         }
 
         [NoCaching]
@@ -68,6 +80,8 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
+
+            DelegateFilterCookieName += env.EnvironmentName;
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
@@ -82,19 +96,24 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
+            var groups = groupsService.GetActiveGroups(centreId);
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
-            var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions);
+            var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions, groups);
 
-            if (TempData["allDelegatesCentreId"] != null && TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString()
-                    && existingFilterString != null && existingFilterString.Contains("Answer"))
+            if (existingFilterString != null && TempData["allDelegatesCentreId"] != null &&
+                TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString())
             {
-                existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
+                if (existingFilterString.Contains("Answer"))
+                    existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
+                if (existingFilterString != null && existingFilterString.Contains("DelegateGroup"))
+                    existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
             }
 
             string isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, answer1, answer2, answer3, answer4, answer5, answer6;
             isActive = isPasswordSet = isAdmin = isUnclaimed = isEmailVerified = registrationType = answer1 = answer2 = answer3 = answer4 = answer5 = answer6 = "Any";
             int jobGroupId = 0;
+            int? groupId = null;
 
             if (!string.IsNullOrEmpty(existingFilterString))
             {
@@ -147,6 +166,16 @@
                         if (filter.Contains("JobGroupId"))
                             jobGroupId = Convert.ToInt32(filterValue);
 
+                        if (filter.Contains("DelegateGroupId"))
+                        {
+                            groupId = Convert.ToInt32(filterValue);
+                            if (!(groups.Any(g => g.Item1 == groupId)))
+                            {
+                                groupId = null;
+                                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
+                            }
+                        }
+
                         if (filter.Contains("Answer1"))
                             answer1 = filterValue;
 
@@ -169,14 +198,14 @@
             }
 
             (var delegates, var resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
-                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
+                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId, groupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6);
 
             if (delegates.Count() == 0 && resultCount > 0)
             {
                 page = 1; offSet = 0;
                 (delegates, resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
-                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
+                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId, groupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6);
             }
 

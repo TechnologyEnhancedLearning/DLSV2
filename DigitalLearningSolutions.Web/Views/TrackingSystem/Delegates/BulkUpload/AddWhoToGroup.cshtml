@@ -1,0 +1,67 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.BulkUpload
+@model AddWhoToGroupViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Add which delegates to a group";
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new []{ nameof(AddToGroupViewModel.ExistingGroupId), nameof(AddToGroupViewModel.NewGroupName) })" />
+        }
+        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SubmitAddWhoToGroup" enctype="multipart/form-data">
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">
+                        Who should be added to this group?
+                    </h1>
+                </legend>
+                <div class="nhsuk-hint nhsuk-u-margin-bottom-2">
+                    Choose who you want to be added to the group @Model.GroupName
+                </div>
+                <div class="nhsuk-hint">
+                    Select one option
+                </div>
+                <div class="nhsuk-form-group">
+                    <div class="nhsuk-radios">
+                        @if (Model.ToRegisterActiveCount > 0)
+                        {
+                            <div class="nhsuk-radios__item">
+                                <input class="nhsuk-radios__input" id="option-1" asp-for="AddWhoToGroupOption" type="radio" value="1" aria-describedby="option-1-hint">
+                                <label class="nhsuk-label nhsuk-radios__label" for="option-1">
+                                    Only add active newly registered delegates to this group
+                                </label>
+                                <div class="nhsuk-hint nhsuk-radios__hint" id="option-1-hint">
+                                    @Model.ToRegisterActiveCount active new delegates will be added to the group @Model.GroupName
+                                </div>
+                            </div>
+                        }
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="option-2" asp-for="AddWhoToGroupOption" type="radio" value="2" aria-describedby="option-2-hint">
+                            <label class="nhsuk-label nhsuk-radios__label" for="option-2">
+                                Only add @(Model.ToRegisterActiveCount > 0 ? Model.ToRegisterActiveCount + " active, newly registered and " : "") active, modified delegates to this group
+                            </label>
+                            <div class="nhsuk-hint nhsuk-radios__hint" id="option-2-hint">
+                                @(Model.ToRegisterActiveCount > 0 ? Model.ToRegisterActiveCount + " active new delegates and only those of the " : "Only those of the ") @Model.ToUpdateActiveCount existing delegates that have been modified in the sheet will be added to the group @Model.GroupName
+                            </div>
+                        </div>
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="option-3" asp-for="AddWhoToGroupOption" type="radio" value="3" aria-describedby="option-3-hint">
+                            <label class="nhsuk-label nhsuk-radios__label" for="option-3">
+                                Add all active delegates in my uploaded sheet to this group
+                            </label>
+                            <div class="nhsuk-hint nhsuk-radios__hint" id="option-3-hint">
+                                All @(Model.ToRegisterActiveCount + Model.ToUpdateActiveCount) delegates in the sheet that are active and valid will be added to the group @Model.GroupName
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+            <a asp-controller="BulkUpload" asp-action="AddToGroup" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+            <button class="nhsuk-button" type="submit">Next</button>
+        </form>
+        <vc:cancel-link asp-controller="BulkUpload" asp-action="CancelUpload" />
+    </div>
+</div>

@@ -16,7 +16,7 @@
 
     public interface IDelegateDownloadFileService
     {
-        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId);
+        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId, bool blank);
 
         public byte[] GetAllDelegatesFileForCentre(
             int centreId,
@@ -61,16 +61,67 @@
             this.configuration = configuration;
         }
 
-        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId)
+        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId, bool blank)
         {
             using var workbook = new XLWorkbook();
-
-            PopulateDelegatesSheet(workbook, centreId);
-            PopulateJobGroupsSheet(workbook);
-
+            PopulateDelegatesSheet(workbook, centreId, blank);
+            AddCustomPromptsAndDataValidationToWorkbook(workbook, centreId);
+            if (blank)
+            {
+                ClosedXmlHelper.HideWorkSheetColumn(workbook, "DelegateID");
+            }
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();
+        }
+
+        public void AddCustomPromptsAndDataValidationToWorkbook(XLWorkbook workbook, int centreId)
+        {
+            //Add Active TRUE/FALSE validation
+            var options = new List<string> { "TRUE", "FALSE" };
+            ClosedXmlHelper.AddValidationListToWorksheetColumn(workbook, 12, options);
+            //Add HasPRN TRUE/FALSE validation
+            ClosedXmlHelper.AddValidationListToWorksheetColumn(workbook, 14, options);
+            //Add job groups data validation drop down list for all centres
+            var jobGroupCount = PopulateJobGroupsSheet(workbook);
+            ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, 5, 1, jobGroupCount, 2, "B");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "JobGroupID");
+            workbook.Worksheet(2).Hide();
+            //Add custom prompts and associated drop downs to worksheet according to centre config:
+            var registrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+            foreach (var prompt in registrationPrompts.CustomPrompts)
+            {
+                var promptNumber = prompt.RegistrationField.Id;
+                var promptLabel = prompt.PromptText;
+                ClosedXmlHelper.RenameWorksheetColumn(workbook, "Answer" + promptNumber.ToString(), promptLabel);
+                if (prompt.Options.Count() > 0)
+                {
+                    ClosedXmlHelper.AddSheetToWorkbook(workbook, promptLabel, prompt.Options, TableTheme);
+                    var worksheetNumber = workbook.Worksheets.Count;
+                    var optionsCount = prompt.Options.Count();
+                    //Ensure a blank value exists in the drop down list if the prompt is not mandatory
+                    if (!prompt.Mandatory)
+                    {
+                        optionsCount++;
+                    }
+                    var columnNumber = promptNumber + 5; // 5 offset is the number of columns to the left of the first Answer column - no programmatic way to find this that I could find.
+                    ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, columnNumber, 1, optionsCount, worksheetNumber);
+                    workbook.Worksheet(worksheetNumber).Hide();
+                }
+            }
+            //Hide all of the answer columns that still have their original names (because the centre doesn't use them):
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer1");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer2");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer3");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer4");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer5");
+            ClosedXmlHelper.HideWorkSheetColumn(workbook, "Answer6");
+            // Add delegateID validation to deter editing
+            var rowCount = workbook.Worksheet(1).RangeUsed().RowCount();
+            ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, 1, 1, rowCount, 1);
+            // Calculate the workbook
+            workbook.CalculateMode = XLCalculateMode.Auto;
+            workbook.RecalculateAllFormulas();
         }
 
         public byte[] GetAllDelegatesFileForCentre(
@@ -97,23 +148,26 @@
             return stream.ToArray();
         }
 
-        private void PopulateDelegatesSheet(IXLWorkbook workbook, int centreId)
+        private void PopulateDelegatesSheet(IXLWorkbook workbook, int centreId, bool blank)
         {
-            var delegateRecords = userDataService.GetDelegateUserCardsByCentreId(centreId);
+
+
+            var delegateRecords = userDataService.GetDelegateUserCardsByCentreId(blank ? 0 : centreId);
             var delegates = delegateRecords.OrderBy(x => x.LastName).Select(
                 x => new
                 {
+                    DelegateID = x.CandidateNumber,
                     x.LastName,
                     x.FirstName,
-                    DelegateID = x.CandidateNumber,
                     JobGroupID = x.JobGroupId,
+                    JobGroup = x.JobGroupName,
                     x.Answer1,
                     x.Answer2,
                     x.Answer3,
                     x.Answer4,
                     x.Answer5,
                     x.Answer6,
-                    x.Active,
+                    Active = blank ? null : (bool?)x.Active,
                     EmailAddress = (Guid.TryParse(x.EmailAddress, out _) ? string.Empty : x.EmailAddress),
                     HasPRN = PrnHelper.GetHasPrnForDelegate(x.HasBeenPromptedForPrn, x.ProfessionalRegistrationNumber),
                     PRN = x.HasBeenPromptedForPrn ? x.ProfessionalRegistrationNumber : null,
@@ -122,15 +176,16 @@
 
             ClosedXmlHelper.AddSheetToWorkbook(workbook, DelegatesSheetName, delegates, TableTheme);
         }
-        private void PopulateJobGroupsSheet(IXLWorkbook workbook)
+
+        private int PopulateJobGroupsSheet(IXLWorkbook workbook)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical()
-                .OrderBy(x => x.id)
                 .Select(
                     item => new { JobGroupID = item.id, JobGroupName = item.name }
                 );
 
             ClosedXmlHelper.AddSheetToWorkbook(workbook, JobGroupsSheetName, jobGroups, TableTheme);
+            return jobGroups.Count();
         }
 
         private void PopulateAllDelegatesSheet(
@@ -150,6 +205,7 @@
             string isEmailVerified = "Any";
             string registrationType = "Any";
             int jobGroupId = 0;
+            int? groupId = null;
             string answer1 = "Any";
             string answer2 = "Any";
             string answer3 = "Any";
@@ -189,6 +245,9 @@
                         if (filter.Contains("JobGroupId"))
                             jobGroupId = Convert.ToInt32(filterValue);
 
+                        if (filter.Contains("DelegateGroupId"))
+                            groupId = Convert.ToInt32(filterValue);
+
                         if (filter.Contains("Answer1"))
                             answer1 = filterValue;
 
@@ -211,7 +270,7 @@
             }
             var delegatesToExport = Task.Run(() => GetDelegatesToExport(searchString ?? string.Empty, sortBy, sortDirection, centreId,
                                                isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
-                                               answer1, answer2, answer3, answer4, answer5, answer6)).Result;
+                                               groupId, answer1, answer2, answer3, answer4, answer5, answer6)).Result;
             var dataTable = new DataTable();
             SetUpDataTableColumnsForAllDelegates(registrationPrompts, dataTable);
 
@@ -238,12 +297,12 @@
 
         private async Task<IEnumerable<DelegateUserCard>> GetDelegatesToExport(String searchString, string sortBy, string sortDirection, int centreId,
                                     string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
-                                    string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
+                                    int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
         {
             var exportQueryRowLimit = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
             int resultCount = userDataService.GetCountDelegateUserCardsForExportByCentreId(searchString ?? string.Empty, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
-                                                answer1, answer2, answer3, answer4, answer5, answer6);
+                                                groupId, answer1, answer2, answer3, answer4, answer5, answer6);
 
             int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
             int currentRun = 1;
@@ -252,7 +311,7 @@
             {
                 delegates.AddRange(userDataService.GetDelegateUserCardsForExportByCentreId(searchString ?? string.Empty, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
-                                                answer1, answer2, answer3, answer4, answer5, answer6, exportQueryRowLimit, currentRun));
+                                                groupId, answer1, answer2, answer3, answer4, answer5, answer6, exportQueryRowLimit, currentRun));
                 currentRun++;
             }
 

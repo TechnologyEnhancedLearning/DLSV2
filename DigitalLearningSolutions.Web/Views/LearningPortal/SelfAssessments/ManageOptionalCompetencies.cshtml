@@ -3,7 +3,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment";
+    ViewData["Title"] = "Self Assessment - Optional Proficiencies";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 
@@ -18,11 +18,11 @@
 }
 
 @section mobilebacklink
-    {
+{
     <p class="nhsuk-breadcrumb__back">
         <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
-       asp-route-vocabulary="@Model.VocabPlural()"
-       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+           asp-route-vocabulary="@Model.VocabPlural()"
+           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
             Back to @Model.VocabPlural()
         </a>
     </p>

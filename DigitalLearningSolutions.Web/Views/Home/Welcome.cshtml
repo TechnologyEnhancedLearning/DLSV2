@@ -1,41 +1,46 @@
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.Home
 @model LandingPageViewModel
 
 @{
-  ViewData["Title"] = "Welcome";
+    ViewData["Title"] = "Welcome";
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/home/welcome.css")" asp-append-version="true" />
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />
+    <div class="nhsuk-grid-column-full">
+        <partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />
 
-    <div class="welcome-page-button-container">
-      @if (Model.UserIsLoggedIn)
-      {
-        @if (Model.UserIsLoggedInCentre)
-        {
-          <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="ApplicationSelector" asp-action="Index">
-            Switch application
-          </a>
-        }
-      }
-      else
-      {
-        <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="Index">
-          Log in
-        </a>
-        <a class="nhsuk-button nhsuk-button--secondary auth-button" role="button" asp-controller="Register" asp-action="Start">
-          Register
-        </a>
-      }
+        <div class="welcome-page-button-container">
+            @if (Model.UserIsLoggedIn)
+            {
+                @if (Model.UserIsLoggedInCentre)
+                {
+                    <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="ApplicationSelector" asp-action="Index">
+                        Switch application
+                    </a>
+                }
+            }
+            else
+            {
+                <feature name="@(FeatureFlags.LoginWithLearningHub)">
+                    <p class="nhsuk-body-m">If you have linked your account you can login through the Learning hub.</p>
+                    <a class="nhsuk-button auth-button--blue" role="button" asp-controller="Login" asp-action="SharedAuth">
+                        Log in with Learning hub
+                    </a>
+                    <p class="nhsuk-u-font-weight-bold">Or</p>
+                </feature>
+                <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="Index">
+                    Log in
+                </a>
+                <a class="nhsuk-button nhsuk-button--secondary auth-button" role="button" asp-controller="Register" asp-action="Start">
+                    Register
+                </a>
+            }
+        </div>
+        <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
+        <p class="nhsuk-body-m">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
+        <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />
     </div>
-
-    <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
-
-    <p class="nhsuk-body-m">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
-
-    <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />
-  </div>
 </div>

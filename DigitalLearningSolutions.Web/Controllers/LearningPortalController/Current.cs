@@ -410,10 +410,10 @@
                                           Questions = questions.Count()
                                       };
 
-            ViewBag.CompetencySummaries = competencySummaries;
+            int sumVerifiedCount = competencySummaries.Sum(item => item.VerifiedCount);
+            int sumQuestions = competencySummaries.Sum(item => item.Questions);
             var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
-            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, route, accessors, activitySummaryCompetencySelfAssesment);
-            ViewBag.LoggedInSupervisorDelegatesId = supervisorDelegateId;
+            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, route, accessors, activitySummaryCompetencySelfAssesment, sumQuestions, sumVerifiedCount, supervisorDelegateId);
             return View("Current/CompetencySelfAssessmentCertificate", model);
         }
         [Route("DownloadCertificate")]
@@ -471,8 +471,9 @@
                                           Questions = questions.Count()
                                       };
 
-            ViewBag.CompetencySummaries = competencySummaries;
-            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, 1, accessors, activitySummaryCompetencySelfAssesment);
+            int sumVerifiedCount = competencySummaries.Sum(item => item.VerifiedCount);
+            int sumQuestions = competencySummaries.Sum(item => item.Questions);
+            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, 1, accessors, activitySummaryCompetencySelfAssesment, sumQuestions, sumVerifiedCount, null);
             var renderedViewHTML = RenderRazorViewToString(this, "Current/DownloadCompetencySelfAssessmentCertificate", model);
 
             var pdfReportResponse = await pdfService.PdfReport(candidateAssessmentId.ToString(), renderedViewHTML, delegateId);

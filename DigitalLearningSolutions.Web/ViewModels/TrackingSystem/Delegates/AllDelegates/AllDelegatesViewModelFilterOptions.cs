@@ -49,7 +49,8 @@
 
         public static List<FilterModel> GetAllDelegatesFilterViewModels(
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CentreRegistrationPrompt> promptsWithOptions
+            IEnumerable<CentreRegistrationPrompt> promptsWithOptions,
+            IEnumerable<(int id, string name)> groups
         )
         {
             var filters = new List<FilterModel>
@@ -57,11 +58,7 @@
                 new FilterModel("PasswordStatus", "Password status", PasswordStatusOptions,"status"),
                 new FilterModel("AdminStatus", "Admin status", AdminStatusOptions,"status"),
                 new FilterModel("ActiveStatus", "Active status", ActiveStatusOptions,"status"),
-                new FilterModel(
-                    "JobGroupId",
-                    "Job Group",
-                    DelegatesViewModelFilters.GetJobGroupOptions(jobGroups)
-                ),
+                new FilterModel("JobGroupId","Job Group",DelegatesViewModelFilters.GetJobGroupOptions(jobGroups)),
                 new FilterModel("RegistrationType", "Registration type", RegistrationTypeOptions,"status"),
                 new FilterModel("AccountStatus", "Account status", AccountStatusOptions,"status"),
                 new FilterModel("EmailStatus", "Email status", EmailStatusOptions,"status"),
@@ -70,11 +67,12 @@
                 promptsWithOptions.Select(
                     customPrompt => new FilterModel(
                         $"CentreRegistrationPrompt{customPrompt.RegistrationField.Id}",
-                        customPrompt.PromptText,
-                        FilteringHelper.GetPromptFilterOptions(customPrompt),"prompts"
+                        "Prompt: " + customPrompt.PromptText,
+                        FilteringHelper.GetPromptFilterOptions(customPrompt), "prompts/groups"
                     )
                 )
             );
+            filters.Add(new FilterModel("GroupId", "Groups", DelegatesViewModelFilters.GetGroupOptions(groups), "prompts/groups"));
             return filters;
         }
     }

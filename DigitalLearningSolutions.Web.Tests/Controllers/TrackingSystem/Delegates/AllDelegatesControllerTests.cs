@@ -4,7 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
@@ -16,6 +16,8 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Hosting;
 
     public class AllDelegatesControllerTests
     {
@@ -29,6 +31,9 @@
         private PromptsService promptsHelper = null!;
         private IPaginateService paginateService = null!;
         private IUserDataService userDataService = null!;
+        private IGroupsService groupsService = null!;
+        private IConfiguration? configuration;
+        private IWebHostEnvironment? env;
 
         [SetUp]
         public void Setup()
@@ -39,9 +44,11 @@
             userDataService = A.Fake<IUserDataService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             paginateService = A.Fake<IPaginateService>();
-
+            groupsService = A.Fake<IGroupsService>();
+            configuration = A.Fake<IConfiguration>();
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
+            env = A.Fake<IWebHostEnvironment>();
 
             const string cookieValue = "ActiveStatus|Active|false";
 
@@ -50,7 +57,10 @@
                     userDataService,
                     promptsHelper,
                     jobGroupsDataService,
-                    paginateService
+                    paginateService,
+                    groupsService,
+                    configuration,
+                    env
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -73,7 +83,7 @@
             {
                 A.CallTo(() => userDataService.GetDelegateUserCards(A<string>._, A<int>._, A<int>._, A<string>._,
                     A<string>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._,
-                    A<string>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._)
+                    A<string>._, A<int>._, A<int?>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._)
                 ).MustHaveHappened();
                 A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
                     .MustHaveHappened();

@@ -63,9 +63,7 @@
             {
                 return;
             }
-
             var emailIsHeldAtCentre = userService.EmailIsHeldAtCentre(email, centreId);
-
             if (emailIsHeldAtCentre)
             {
                 modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);

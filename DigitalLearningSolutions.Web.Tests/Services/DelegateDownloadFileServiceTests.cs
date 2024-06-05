@@ -35,7 +35,7 @@
                 Answer6 = null,
                 Active = true,
                 JobGroupId = 1,
-                JobGroupName = "Job group 1",
+                JobGroupName = "Nursing",
                 Approved = true,
                 Password = null,
                 DateRegistered = new DateTime(2022, 3, 31),
@@ -57,7 +57,7 @@
                 Answer6 = null,
                 Active = true,
                 JobGroupId = 1,
-                JobGroupName = "Job group 1",
+                JobGroupName = "Nursing",
                 Approved = true,
                 Password = "testpassword",
                 DateRegistered = new DateTime(2022, 2, 28),
@@ -79,7 +79,7 @@
                 Answer6 = null,
                 Active = true,
                 JobGroupId = 2,
-                JobGroupName = "Job group 2",
+                JobGroupName = "Doctor",
                 Approved = true,
                 Password = "testpassword",
                 DateRegistered = new DateTime(2000, 1, 1),
@@ -116,7 +116,7 @@
             A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
 
             // When
-            var resultBytes = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(2);
+            var resultBytes = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(2, false);
             using var resultsStream = new MemoryStream(resultBytes);
             using var resultWorkbook = new XLWorkbook(resultsStream);
 
@@ -146,8 +146,8 @@
                 .Returns(new CentreRegistrationPrompts(centreId, centreRegistrationPrompts));
 
             A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
-            A.CallTo(() => userDataService.GetCountDelegateUserCardsForExportByCentreId("", "", "", 2, "", "", "", "", "", "", 0, "", "", "", "", "", "")).Returns(17);
-            A.CallTo(() => userDataService.GetDelegateUserCardsForExportByCentreId("Test", "SearchableName", "Ascending",2,"Any", "Any", "Any", "Any", "Any", "Any",2, "Any", "Any", "Any", "Any", "Any", "Any", 10, 1)).Returns(delegateUserCards);
+            A.CallTo(() => userDataService.GetCountDelegateUserCardsForExportByCentreId("", "", "", 2, "", "", "", "", "", "", 0, null,"", "", "", "", "", "")).Returns(17);
+            A.CallTo(() => userDataService.GetDelegateUserCardsForExportByCentreId("Test", "SearchableName", "Ascending",2,"Any", "Any", "Any", "Any", "Any", "Any",2, null,"Any", "Any", "Any", "Any", "Any", "Any", 10, 1)).Returns(delegateUserCards);
             // When
             var resultBytes = delegateDownloadFileService.GetAllDelegatesFileForCentre(2, null, "", GenericSortingHelper.Ascending, null);
             using var resultsStream = new MemoryStream(resultBytes);

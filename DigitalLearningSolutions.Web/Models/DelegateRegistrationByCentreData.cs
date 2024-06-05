@@ -13,6 +13,10 @@
         }
 
         public DateTime? WelcomeEmailDate { get; set; }
+        public int? AddToGroupOption { get; set; }
+        public string? NewGroupName { get; set; }
+        public string? NewGroupDescription { get; set; }
+        public int? ExistingGroupId { get; set; }
 
         public bool IsPasswordSet => PasswordHash != null;
 

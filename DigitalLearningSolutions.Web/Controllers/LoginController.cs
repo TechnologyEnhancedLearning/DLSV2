@@ -18,7 +18,11 @@
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using DigitalLearningSolutions.Data.Extensions;
+    using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+    using DigitalLearningSolutions.Data.ApiClients;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
@@ -30,6 +34,8 @@
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
+        private readonly IConfiguration config;
+        private readonly ILearningHubUserApiClient learningHubUserApiClient;
 
         public LoginController(
             ILoginService loginService,
@@ -37,7 +43,9 @@
             ILogger<LoginController> logger,
             IUserService userService,
             IClockUtility clockUtility,
-            IConfigDataService configDataService
+            IConfigDataService configDataService,
+            IConfiguration config,
+            ILearningHubUserApiClient learningHubUserApiClient
         )
         {
             this.loginService = loginService;
@@ -46,6 +54,8 @@
             this.userService = userService;
             this.clockUtility = clockUtility;
             this.configDataService = configDataService;
+            this.config = config;
+            this.learningHubUserApiClient = learningHubUserApiClient;
         }
 
         public IActionResult Index(string? returnUrl = null)
@@ -238,6 +248,84 @@
                 "MyAccount",
                 new { returnUrl, dlsSubApplication, isCheckDetailsRedirect }
             );
+        }
+
+        public IActionResult SharedAuth()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(
+                    "Index",
+                    "Home");
+            }
+            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme,
+              new AuthenticationProperties() { RedirectUri = "/" });
+        }
+
+        public IActionResult AccountLocked()
+        {
+            return View("AccountLocked");
+        }
+
+        public IActionResult AccountInactive()
+        {
+            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
+            return View(
+                "AccountInactive",
+                inactiveAccountModel);
+        }
+
+        public IActionResult RemoteFailure()
+        {
+            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
+            return View(
+                "RemoteAuthenticationFailure",
+                inactiveAccountModel);
+        }
+
+        public IActionResult NotLinked()
+        {
+            HttpContext.SignOutAsync("Identity.Application");
+            HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            HttpContext.Response.Cookies.Append("not-linked", "true");
+
+            return RedirectToAction("LogoutSharedAuth", "Logout");
+        }
+
+        public IActionResult ShowNotLinked()
+        {
+            return View("NotLinked");
+        }
+
+        [Route("forgotten-password")]
+        public IActionResult ForgottenPassword()
+        {
+            return View(
+                "ForgottenPassword",
+                new ViewModels.Login.ForgotPasswordViewModel());
+        }
+
+        [Route("/Login/ForgotPassword")]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ViewModels.Login.ForgotPasswordViewModel model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.View("ForgottenPassword", model);
+            }
+
+            ViewData["SupportEmail"] = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var hasMultipleUsers = await this.learningHubUserApiClient.hasMultipleUsersForEmailAsync(model.EmailAddress);
+            var requestSuccess = await this.learningHubUserApiClient.forgotPasswordAsync(model.EmailAddress);
+            if (hasMultipleUsers || !requestSuccess)
+            {
+                return this.View("ForgotPasswordFailure");
+            }
+
+            ViewData["EmailAddress"] = model.EmailAddress;
+            return this.View("ForgotPasswordAcknowledgement");
         }
     }
 }

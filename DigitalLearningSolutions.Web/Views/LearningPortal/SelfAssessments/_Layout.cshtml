@@ -3,10 +3,18 @@
 @using Microsoft.AspNetCore.Http.Extensions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @inject IClockUtility ClockUtility
-
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    var userResearchUrl = Configuration["UserResearchUrl"];
+    Context.Request.Cookies.TryGetValue("Dls-cookie-consent", out string cookieConsent);
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @if (cookieConsent == "true")
+    {
+        @await Html.PartialAsync("~/Views/Shared/_GoogleTagManager.cshtml")
+    }
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -36,52 +44,35 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="@(ViewData["twitter:title"] ?? ViewData["Title"] ?? "Digital Learning Solutions")">
     <meta name="twitter:description" content="@(ViewData["twitter:description"] ?? "")">
-    @{
-        Context.Request.Cookies.TryGetValue("Dls-cookie-consent", out string cookieConsent);
-    }
-    @if (cookieConsent == "true")
-    {
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-YVQ5NMPX7P"></script>
-        <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-YVQ5NMPX7P');</script>
-        <!-- End Google Tag -->
-        <!-- Google Tag Manager -->
-        <script>
-            (function (w, d, s, l, i) {
-                w[l] = w[l] || []; w[l].push({
-                    'gtm.start':
-                        new Date().getTime(), event: 'gtm.js'
-                }); var f = d.getElementsByTagName(s)[0],
-                    j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-                        'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-            })(window, document, 'script', 'dataLayer', 'GTM-5SKPRFQ');</script>
-        <!-- End Google Tag Manager -->
-    }
 </head>
 
 <body>
+    @if (cookieConsent == "true")
+    {
+        @await Html.PartialAsync("~/Views/Shared/_GoogleTagManagerBodyTagJs.cshtml")
+    }
     <div id="pagewrapper">
         <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 
         <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
 
         <header class="nhsuk-header nhsuk-header--transactional">
-          <div class="nhsuk-width-container nhsuk-header__container">
-            <div class="nhsuk-header__logo nhsuk-u-margin-right-3">
-              <svg class="nhsuk-logo" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NHS Logo" focusable="false" viewBox="0 0 40 16">
-                <title>NHS</title>
-                <path class="nhsuk-logo__background" d="M0 0h40v16H0z"></path>
-                <path class="nhsuk-logo__text" d="M3.9 1.5h4.4l2.6 9h.1l1.8-9h3.3l-2.8 13H9l-2.7-9h-.1l-1.8 9H1.1M17.3 1.5h3.6l-1 4.9h4L25 1.5h3.5l-2.7 13h-3.5l1.1-5.6h-4.1l-1.2 5.6h-3.4M37.7 4.4c-.7-.3-1.6-.6-2.9-.6-1.4 0-2.5.2-2.5 1.3 0 1.8 5.1 1.2 5.1 5.1 0 3.6-3.3 4.5-6.4 4.5-1.3 0-2.9-.3-4-.7l.8-2.7c.7.4 2.1.7 3.2.7s2.8-.2 2.8-1.5c0-2.1-5.1-1.3-5.1-5 0-3.4 2.9-4.4 5.8-4.4 1.6 0 3.1.2 4 .6"></path>
-                <image src="https://assets.nhs.uk/images/nhs-logo.png" width="40" height="16" xlink:href=""></image>
-              </svg>
+            <div class="nhsuk-width-container nhsuk-header__container">
+                <div class="nhsuk-header__logo nhsuk-u-margin-right-3">
+                    <svg class="nhsuk-logo" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NHS Logo" focusable="false" viewBox="0 0 40 16">
+                        <title>NHS</title>
+                        <path class="nhsuk-logo__background" d="M0 0h40v16H0z"></path>
+                        <path class="nhsuk-logo__text" d="M3.9 1.5h4.4l2.6 9h.1l1.8-9h3.3l-2.8 13H9l-2.7-9h-.1l-1.8 9H1.1M17.3 1.5h3.6l-1 4.9h4L25 1.5h3.5l-2.7 13h-3.5l1.1-5.6h-4.1l-1.2 5.6h-3.4M37.7 4.4c-.7-.3-1.6-.6-2.9-.6-1.4 0-2.5.2-2.5 1.3 0 1.8 5.1 1.2 5.1 5.1 0 3.6-3.3 4.5-6.4 4.5-1.3 0-2.9-.3-4-.7l.8-2.7c.7.4 2.1.7 3.2.7s2.8-.2 2.8-1.5c0-2.1-5.1-1.3-5.1-5 0-3.4 2.9-4.4 5.8-4.4 1.6 0 3.1.2 4 .6"></path>
+                        <image src="https://assets.nhs.uk/images/nhs-logo.png" width="40" height="16" xlink:href=""></image>
+                    </svg>
+                </div>
+                <div class="nhsuk-header__service-name">
+                    <span class="nhsuk-header__transactional-service-name--link">@ViewData["SelfAssessmentTitle"]</span>
+                    <sup class="header-beta">Beta</sup>
+                </div>
             </div>
-            <div class="nhsuk-header__service-name">
-              <span class="nhsuk-header__transactional-service-name--link">@ViewData["SelfAssessmentTitle"]</span>
-              <sup class="header-beta">Beta</sup>
-            </div>
-          </div>
             <feature name="@(FeatureFlags.UserFeedbackBar)">
-                <partial name="_UserFeedbackBarPartial" />
+                <partial name="_UserFeedbackBarPartial" model=@(userResearchUrl) />
             </feature>
         </header>
         <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">

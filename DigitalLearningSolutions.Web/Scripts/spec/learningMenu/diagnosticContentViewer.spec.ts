@@ -19,7 +19,7 @@ describe('closeMpe', () => {
     'should redirect to diagnostic assessment with no checked tutorials',
     () => {
       // Given
-      window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content';
+      window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content?';
 
       // When
       window.closeMpe();
@@ -33,7 +33,7 @@ describe('closeMpe', () => {
     'should redirect to diagnostic assessment with no checked tutorials after entering fullscreen',
     () => {
       // Given
-      window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content#';
+      window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content?#';
 
       // When
       window.closeMpe();

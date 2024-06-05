@@ -102,8 +102,10 @@ namespace DigitalLearningSolutions.Web.Services
                     progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         progressRecord.ProgressId,
                         supervisorAdminId ?? 0,
-                        completeByDate
-                    );
+                        completeByDate,
+                        2,
+                       clockUtility.UtcNow
+                        );
                 }
             }
             else
@@ -113,10 +115,11 @@ namespace DigitalLearningSolutions.Web.Services
                     customisationId,
                     customisationVersion,
                     clockUtility.UtcNow,
-                    3,
+                    2,
                     enrolledByAdminId,
                 completeByDate,
-                supervisorAdminId ?? 0
+                supervisorAdminId ?? 0,
+                clockUtility.UtcNow
                 );
                 var tutorialsForCourse =
                     tutorialContentDataService.GetTutorialIdsForCourse(customisationId);

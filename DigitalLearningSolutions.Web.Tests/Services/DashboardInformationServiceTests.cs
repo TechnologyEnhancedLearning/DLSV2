@@ -3,7 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
@@ -130,7 +130,7 @@
             .Returns(adminUser);
 
             A.CallTo(() => userDataService.GetDelegateUserCards("", 0, 10, "SearchableName", "Ascending", CentreId,
-            "Any", "Any", "Any", "Any", "Any", "Any", 0, "Any", "Any", "Any", "Any", "Any", "Any"))
+            "Any", "Any", "Any", "Any", "Any", "Any", 0, null, "Any", "Any", "Any", "Any", "Any", "Any"))
                 .Returns((new List<DelegateUserCard>(), delegateCount)
                 );
 

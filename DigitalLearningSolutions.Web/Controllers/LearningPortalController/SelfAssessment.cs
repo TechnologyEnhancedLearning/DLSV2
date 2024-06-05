@@ -1267,7 +1267,7 @@
                 var competencies = PopulateCompetencyLevelDescriptors(
                     selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
                         selfAssessmentId,
-                        User.GetUserIdKnownNotNull()
+                        User.GetCandidateIdKnownNotNull()
                     ).ToList()
                 );
                 model.CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
@@ -1318,6 +1318,7 @@
                 User.GetUserIdKnownNotNull(),
                 sessionRequestVerification.SelfAssessmentID
             );
+            selfAssessment.CentreName = supervisor.CentreName;
             if (sessionRequestVerification.ResultIds == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
