@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
@@ -31,18 +30,15 @@
         public const string AddPromptAction = "addPrompt";
         public const string SaveAction = "save";
         public const string BulkAction = "bulk";
-        private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly IMultiPageFormService multiPageFormService;
 
         public AdminFieldsController(
             ICourseAdminFieldsService courseAdminFieldsService,
-            ICourseAdminFieldsDataService courseAdminFieldsDataService,
             IMultiPageFormService multiPageFormService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
-            this.courseAdminFieldsDataService = courseAdminFieldsDataService;
             this.multiPageFormService = multiPageFormService;
         }
 
@@ -288,7 +284,7 @@
         public IActionResult RemoveAdminField(int customisationId, int promptNumber)
         {
             var answerCount =
-                courseAdminFieldsDataService.GetAnswerCountForCourseAdminField(customisationId, promptNumber);
+                courseAdminFieldsService.GetAnswerCountForCourseAdminField(customisationId, promptNumber);
 
             if (answerCount == 0)
             {
@@ -574,7 +570,7 @@
                 return;
             }
 
-            var existingIds = courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(customisationId);
+            var existingIds = courseAdminFieldsService.GetCourseFieldPromptIdsForCustomisation(customisationId);
 
             if (existingIds.Any(id => id == adminFieldId))
             {
