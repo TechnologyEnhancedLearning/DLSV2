@@ -2,7 +2,6 @@
 {
     using System;
     using System.Reflection;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Centres;
@@ -37,7 +36,6 @@
         private IJobGroupsService jobGroupsService = null!;
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IClockUtility clockUtility = null!;
         private IMultiPageFormService multiPageFormService = null!;
@@ -47,7 +45,6 @@
         public void Setup()
         {
             jobGroupsService = A.Fake<IJobGroupsService>();
-            userDataService = A.Fake<IUserDataService>();
             userService = A.Fake<IUserService>();
             promptsService = A.Fake<PromptsService>();
             cryptoService = A.Fake<ICryptoService>();
@@ -62,7 +59,6 @@
                     jobGroupsService,
                     promptsService,
                     cryptoService,
-                    userDataService,
                     registrationService,
                     config,
                     clockUtility,
@@ -145,7 +141,7 @@
                 Centre = 1,
             };
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    () => userService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
                         model.Centre.Value
                     )
