@@ -2,8 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
@@ -28,27 +26,25 @@
     {
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
-        private ICentresDataService centresDataService = null!;
+        private ICentresService centresService = null!;
         private RegisterController controller = null!;
         private ICryptoService cryptoService = null!;
         private IFeatureManager featureManager = null!;
-        private IJobGroupsDataService jobGroupsDataService = null!;
+        private IJobGroupsService jobGroupsService = null!;
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private ISupervisorService supervisorService = null!;
 
         [SetUp]
         public void Setup()
         {
-            centresDataService = A.Fake<ICentresDataService>();
+            centresService = A.Fake<ICentresService>();
             cryptoService = A.Fake<ICryptoService>();
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            jobGroupsService = A.Fake<IJobGroupsService>();
             registrationService = A.Fake<IRegistrationService>();
-            userDataService = A.Fake<IUserDataService>();
             userService = A.Fake<IUserService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
@@ -57,14 +53,13 @@
             request = A.Fake<HttpRequest>();
 
             controller = new RegisterController(
-                    centresDataService,
-                    jobGroupsDataService,
+                    centresService,
+                    jobGroupsService,
                     registrationService,
                     cryptoService,
                     promptsService,
                     featureManager,
                     supervisorDelegateService,
-                    userDataService,
                     userService,
                     supervisorService
                 )
@@ -104,7 +99,7 @@
             var result = controller.Index();
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => centresService.GetCentreName(A<int>._)).MustNotHaveHappened();
 
             using (new AssertionScope())
             {
@@ -120,7 +115,7 @@
             const int centreId = 1;
             const string centreName = "centre";
             const string inviteId = "invite";
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(centreName);
+            A.CallTo(() => centresService.GetCentreName(centreId)).Returns(centreName);
 
             // When
             var result = controller.Index(centreId, inviteId);
@@ -139,13 +134,13 @@
         {
             // Given
             const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(null);
+            A.CallTo(() => centresService.GetCentreName(centreId)).Returns(null);
 
             // When
             var result = controller.Index(centreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeNotFoundResult();
         }
 
@@ -156,14 +151,13 @@
             const int centreId = 1;
             const string inviteId = "invite";
             var authenticatedController = new RegisterController(
-                centresDataService,
-                jobGroupsDataService,
+                centresService,
+                jobGroupsService,
                 registrationService,
                 cryptoService,
                 promptsService,
                 featureManager,
                 supervisorDelegateService,
-                userDataService,
                 userService,
                 supervisorService
             ).WithDefaultContext().WithMockUser(true);
@@ -181,13 +175,13 @@
         {
             // Given
             const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(null);
+            A.CallTo(() => centresService.GetCentreName(centreId)).Returns(null);
 
             // When
             var result = controller.Start(centreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeNotFoundResult();
         }
 
@@ -196,13 +190,13 @@
         {
             // Given
             const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
+            A.CallTo(() => centresService.GetCentreName(centreId)).Returns("Some centre");
 
             // When
             var result = controller.Start(centreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             var data = controller.TempData.Peek<DelegateRegistrationData>()!;
             data.Centre.Should().Be(centreId);
             data.IsCentreSpecificRegistration.Should().BeTrue();
@@ -216,7 +210,7 @@
             var result = controller.Start();
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => centresService.GetCentreName(A<int>._)).MustNotHaveHappened();
             var data = controller.TempData.Peek<DelegateRegistrationData>()!;
             data.Centre.Should().BeNull();
             data.IsCentreSpecificRegistration.Should().BeFalse();
@@ -231,19 +225,18 @@
             const string centreName = "centre";
             const string inviteId = "invite";
             var authenticatedController = new RegisterController(
-                centresDataService,
-                jobGroupsDataService,
+                centresService,
+                jobGroupsService,
                 registrationService,
                 cryptoService,
                 promptsService,
                 featureManager,
                 supervisorDelegateService,
-                userDataService,
                 userService,
                 supervisorService
             ).WithDefaultContext().WithMockUser(true);
 
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(centreName);
+            A.CallTo(() => centresService.GetCentreName(centreId)).Returns(centreName);
 
             // When
             var result = authenticatedController.Start(centreId, inviteId);
@@ -502,7 +495,7 @@
             );
 
             A.CallTo(
-                    () => userDataService.GetUserIdFromUsername(candidateNumber)
+                    () => userService.GetUserIdFromUsername(candidateNumber)
                 )
                 .Returns(userId);
         }
