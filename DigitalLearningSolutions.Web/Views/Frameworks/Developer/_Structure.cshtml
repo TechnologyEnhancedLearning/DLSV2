@@ -13,9 +13,9 @@
       }"
          view-data='new ViewDataDictionary(ViewData)
       {
-        { "VocabSingular", @Model.VocabSingular() },
-        { "VocabPlural", @Model.VocabPlural() },
-        { "GroupCount", @Model.FrameworkCompetencyGroups.Count() }
+        { "VocabSingular", Model.VocabSingular() },
+        { "VocabPlural", Model.VocabPlural() },
+        { "GroupCount", Model.FrameworkCompetencyGroups.Count() }
       }' />
     }
 }
@@ -68,8 +68,8 @@ else
             }"
              view-data='new ViewDataDictionary(ViewData)
               {
-                { "VocabSingular", @Model.VocabSingular() },
-                {"VocabPlural", @Model.VocabPlural()  }
+                { "VocabSingular", Model.VocabSingular() },
+                {"VocabPlural", Model.VocabPlural()  }
               }' />
         }
 
