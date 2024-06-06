@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web.Services
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Data;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -143,6 +144,14 @@ namespace DigitalLearningSolutions.Web.Services
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         DelegateAccount? GetDelegateAccountById(int id);
         int? GetUserIdFromUsername(string username);
+        IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
+        void SetCentreEmail(
+            int userId,
+            int centreId,
+            string? email,
+            DateTime? emailVerified,
+            IDbTransaction? transaction = null
+        );
     }
 
     public class UserService : IUserService
@@ -791,5 +800,20 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.GetUserIdFromUsername(username);
         }
+
+        public IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId)
+        {
+            return userDataService.GetDelegateAccountsByUserId(userId);
+        }
+        public void SetCentreEmail(
+            int userId,
+            int centreId,
+            string? email,
+            DateTime? emailVerified,
+            IDbTransaction? transaction = null)
+        {
+            userDataService.SetCentreEmail(userId, centreId, email, emailVerified, transaction);
+        }
+
     }
 }
