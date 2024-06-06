@@ -560,7 +560,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         AND sasv.CandidateAssessmentSupervisorID = cas.ID AND sar.DateTime = (
 						    SELECT TOP 1 sar2.DateTime
 						    FROM SelfAssessmentResults AS sar2
-						    WHERE sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID AND sar2.Result != 0 ORDER BY sar2.ID DESC
+						    WHERE sar2.ID = sar.ID AND sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID AND sar2.Result != 0 ORDER BY sar2.ID DESC
 					)
                 WHERE (sd.SupervisorAdminID = @adminId) AND (cas.Removed IS NULL) AND (sasv.Verified IS NULL) AND (sd.Removed IS NULL)
 				GROUP BY sa.ID, ca.ID, sd.ID, u.FirstName, u.LastName, sa.Name,cast(sasv.Requested as date)", new { adminId }
