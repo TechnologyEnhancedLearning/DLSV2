@@ -452,6 +452,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IStoreAspService, StoreAspService>();
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
+            services.AddScoped<ISystemNotificationsService, SystemNotificationsService>();
             services.AddScoped<IDashboardInformationService, DashboardInformationService>();
             services.AddScoped<ITrackerService, TrackerService>();
             services.AddScoped<ITrackerActionService, TrackerActionService>();
