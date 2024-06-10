@@ -130,6 +130,7 @@
         IEnumerable<CompletedCourse> GetCompletedCourses(int candidateId);
         IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId);
         void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId);
+        int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
     }
 
     public class CourseService : ICourseService
@@ -606,6 +607,11 @@
         public void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId)
         {
             courseDataService.EnrolSelfAssessment(selfAssessmentId, delegateUserId, centreId);
+        }
+
+        public int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId)
+        {
+            return courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(centreId, categoryId);
         }
     }
 }
