@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;    
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
@@ -19,7 +18,7 @@
 
     internal class VerifyAdminUserCanAccessAdminUserTests
     {
-        private readonly IUserDataService userDataService = A.Fake<IUserDataService>();
+        private readonly IUserService userService = A.Fake<IUserService>();
         private ActionExecutingContext context = null!;
         private const int AdminId = 2;
 
@@ -45,11 +44,11 @@
         {
             // Given
             context.RouteData.Values["adminId"] = AdminId;
-            A.CallTo(() => userDataService.GetAdminUserById(AdminId))
+            A.CallTo(() => userService.GetAdminUserById(AdminId))
                 .Returns(null);
 
             // When
-            new VerifyAdminUserCanAccessAdminUser(userDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessAdminUser(userService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeStatusCodeResult().WithStatusCode(410);
@@ -60,11 +59,11 @@
         {
             // Given
             context.RouteData.Values["adminId"] = AdminId;
-            A.CallTo(() => userDataService.GetAdminUserById(AdminId))
+            A.CallTo(() => userService.GetAdminUserById(AdminId))
                 .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 100));
 
             // When
-            new VerifyAdminUserCanAccessAdminUser(userDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessAdminUser(userService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
@@ -76,11 +75,11 @@
         {
             // Given
             context.RouteData.Values["adminId"] = AdminId;
-            A.CallTo(() => userDataService.GetAdminUserById(AdminId))
+            A.CallTo(() => userService.GetAdminUserById(AdminId))
                 .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 101));
 
             // When
-            new VerifyAdminUserCanAccessAdminUser(userDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessAdminUser(userService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();
