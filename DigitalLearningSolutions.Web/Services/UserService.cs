@@ -143,7 +143,7 @@ namespace DigitalLearningSolutions.Web.Services
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         DelegateAccount? GetDelegateAccountById(int id);
         int? GetUserIdFromUsername(string username);
-        AdminUser? GetAdminUserById(int id);
+        List<AdminUser> GetAdminUsersByCentreId(int centreId);
     }
 
     public class UserService : IUserService
@@ -792,10 +792,9 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.GetUserIdFromUsername(username);
         }
-
-        public AdminUser? GetAdminUserById(int id)
+        public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
-            return userDataService.GetAdminUserById(id);
+            return userDataService.GetAdminUsersByCentreId(centreId);
         }
     }
 }
