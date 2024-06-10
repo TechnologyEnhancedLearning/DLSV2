@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -19,15 +18,15 @@
     public class RankingController : Controller
     {
         private readonly ICentresService centresService;
-        private readonly IRegionDataService regionDataService;
+        private readonly IRegionService regionService;
 
         public RankingController(
             ICentresService centresService,
-            IRegionDataService regionDataService
+            IRegionService regionService
         )
         {
             this.centresService = centresService;
-            this.regionDataService = regionDataService;
+            this.regionService = regionService;
         }
 
         public IActionResult Index(int? regionId = null, Period? period = null)
@@ -36,7 +35,7 @@
 
             var centreId = User.GetCentreIdKnownNotNull();
 
-            var regions = regionDataService.GetRegionsAlphabetical();
+            var regions = regionService.GetRegionsAlphabetical();
 
             var centreRankings = centresService.GetCentresForCentreRankingPage(centreId, period.Days, regionId);
 
