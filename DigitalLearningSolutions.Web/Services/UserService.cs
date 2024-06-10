@@ -8,6 +8,7 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Configuration;
@@ -144,6 +145,7 @@ namespace DigitalLearningSolutions.Web.Services
         DelegateAccount? GetDelegateAccountById(int id);
         int? GetUserIdFromUsername(string username);
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
+        AdminUser? GetAdminUserById(int id);
     }
 
     public class UserService : IUserService
@@ -795,6 +797,11 @@ namespace DigitalLearningSolutions.Web.Services
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId);
+        }
+
+        public AdminUser? GetAdminUserById(int id)
+        {
+            return userDataService.GetAdminUserById(id);
         }
     }
 }
