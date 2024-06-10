@@ -1,6 +1,5 @@
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -21,21 +20,21 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
     [Route("/TrackingSystem/Centre/Configuration")]
     public class ConfigurationController : Controller
     {
-        private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
         private readonly ILogger<ConfigurationController> logger;
         private readonly IMapsApiHelper mapsApiHelper;
         private readonly IImageResizeService imageResizeService;
         private ICertificateService certificateService;
 
         public ConfigurationController(
-            ICentresDataService centresDataService,
+            ICentresService centresService,
             IMapsApiHelper mapsApiHelper,
             ILogger<ConfigurationController> logger,
             IImageResizeService imageResizeService,
             ICertificateService certificateService
         )
         {
-            this.centresDataService = centresDataService;
+            this.centresService = centresService;
             this.mapsApiHelper = mapsApiHelper;
             this.logger = logger;
             this.imageResizeService = imageResizeService;
@@ -46,7 +45,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         {
             var centreId = User.GetCentreIdKnownNotNull();
 
-            var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
+            var centreDetails = centresService.GetCentreDetailsById(centreId)!;
 
             var model = new CentreConfigurationViewModel(centreDetails);
 
@@ -59,7 +58,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         {
             var centreId = User.GetCentreIdKnownNotNull();
 
-            var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
+            var centreDetails = centresService.GetCentreDetailsById(centreId)!;
 
             var model = new EditCentreManagerDetailsViewModel(centreDetails);
 
@@ -77,7 +76,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
 
             var centreId = User.GetCentreIdKnownNotNull();
 
-            centresDataService
+            centresService
                 .UpdateCentreManagerDetails(centreId, model.FirstName!, model.LastName!, model.Email!, model.Telephone);
 
             return RedirectToAction("Index");
@@ -89,7 +88,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         {
             var centreId = User.GetCentreIdKnownNotNull();
 
-            var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
+            var centreDetails = centresService.GetCentreDetailsById(centreId)!;
 
             var model = new EditCentreWebsiteDetailsViewModel(centreDetails);
 
@@ -129,7 +128,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
 
             var centreId = User.GetCentreIdKnownNotNull();
 
-            centresDataService.UpdateCentreWebsiteDetails(
+            centresService.UpdateCentreWebsiteDetails(
                 centreId,
                 model.CentrePostcode,
                 latitude,
@@ -152,7 +151,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         {
             var centreId = User.GetCentreIdKnownNotNull();
 
-            var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
+            var centreDetails = centresService.GetCentreDetailsById(centreId)!;
 
             var model = new EditCentreDetailsViewModel(centreDetails);
 
@@ -209,7 +208,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
 
             var centreId = User.GetCentreIdKnownNotNull();
 
-            centresDataService.UpdateCentreDetails(
+            centresService.UpdateCentreDetails(
                 centreId,
                 model.NotifyEmail,
                 model.BannerText!,
