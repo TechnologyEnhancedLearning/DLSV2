@@ -144,6 +144,7 @@ namespace DigitalLearningSolutions.Web.Services
         DelegateAccount? GetDelegateAccountById(int id);
         int? GetUserIdFromUsername(string username);
         int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
+        List<AdminUser> GetAdminUsersByCentreId(int centreId);
     }
 
     public class UserService : IUserService
@@ -796,6 +797,10 @@ namespace DigitalLearningSolutions.Web.Services
         public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber)
         {
             return userDataService.GetDelegateCountWithAnswerForPrompt(centreId, promptNumber);
+        }
+        public List<AdminUser> GetAdminUsersByCentreId(int centreId)
+        {
+            return userDataService.GetAdminUsersByCentreId(centreId);
         }
     }
 }
