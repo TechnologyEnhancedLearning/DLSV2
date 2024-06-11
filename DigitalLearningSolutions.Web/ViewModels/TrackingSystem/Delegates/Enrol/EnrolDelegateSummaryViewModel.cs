@@ -9,6 +9,7 @@
         public string? ActivityName { get; set; }
         public DateTime? CompleteByDate { get; set; }
         public string? SupervisorName { get; set; }
+        public string? SupervisorEmail { get; set; }
         public string? SupervisorRoleName { get; set; }
         public bool? IsMandatory { get; set; }
         public string? ValidFor { get; set; }
