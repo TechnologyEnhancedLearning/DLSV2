@@ -152,6 +152,7 @@ namespace DigitalLearningSolutions.Web.Services
             DateTime? emailVerified,
             IDbTransaction? transaction = null
         );
+        List<AdminUser> GetAdminUsersByCentreId(int centreId);
     }
 
     public class UserService : IUserService
@@ -815,5 +816,9 @@ namespace DigitalLearningSolutions.Web.Services
             userDataService.SetCentreEmail(userId, centreId, email, emailVerified, transaction);
         }
 
+        public List<AdminUser> GetAdminUsersByCentreId(int centreId)
+        {
+            return userDataService.GetAdminUsersByCentreId(centreId);
+        }
     }
 }
