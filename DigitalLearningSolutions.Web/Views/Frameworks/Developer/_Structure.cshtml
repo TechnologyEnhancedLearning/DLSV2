@@ -11,11 +11,11 @@
         FrameworkCompetencyGroup =frameworkCompetencyGroup,
         CompetencyFlags = Model.CompetencyFlags
       }"
-         view-data='@new ViewDataDictionary(ViewData)
+         view-data='new ViewDataDictionary(ViewData)
       {
-        { "VocabSingular", @Model.VocabSingular() },
-        { "VocabPlural", @Model.VocabPlural() },
-        { "GroupCount", @Model.FrameworkCompetencyGroups.Count() }
+        { "VocabSingular", Model.VocabSingular() },
+        { "VocabPlural", Model.VocabPlural() },
+        { "GroupCount", Model.FrameworkCompetencyGroups.Count() }
       }' />
   }
 }
@@ -66,10 +66,10 @@ else
               FrameworkCompetency = frameworkCompetency,
               CompetencyFlags = Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)
             }"
-           view-data='@new ViewDataDictionary(ViewData)
+           view-data='new ViewDataDictionary(ViewData)
               {
-                { "VocabSingular", @Model.VocabSingular() },
-                {"VocabPlural", @Model.VocabPlural()  }
+                { "VocabSingular", Model.VocabSingular() },
+                {"VocabPlural", Model.VocabPlural()  }
               }' />
     }
 
