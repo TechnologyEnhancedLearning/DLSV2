@@ -444,8 +444,8 @@
             );
             A.CallTo(() => groupsDataService.GetGroupsForCentre(registrationModel.Centre))
                 .Returns(new List<Group> { synchronisedGroup, unsynchronisedGroup });
-            A.CallTo(() => jobGroupsDataService.GetJobGroupName(0)).Returns(null);
-            A.CallTo(() => jobGroupsDataService.GetJobGroupName(1)).Returns(null);
+            A.CallTo(() => jobGroupsService.GetJobGroupName(0)).Returns(null);
+            A.CallTo(() => jobGroupsService.GetJobGroupName(1)).Returns(null);
 
             // When
             groupsService.AddNewDelegateToAppropriateGroups(
@@ -489,9 +489,9 @@
             A.CallTo(() => groupsDataService.GetGroupsForCentre(delegateAccount.CentreId))
                 .Returns(groups);
 
-            A.CallTo(() => jobGroupsDataService.GetJobGroupName(oldJobGroupId))
+            A.CallTo(() => jobGroupsService.GetJobGroupName(oldJobGroupId))
                 .Returns(oldJobGroupGroup.GroupLabel);
-            A.CallTo(() => jobGroupsDataService.GetJobGroupName(newJobGroupId))
+            A.CallTo(() => jobGroupsService.GetJobGroupName(newJobGroupId))
                 .Returns(newJobGroupGroup.GroupLabel);
 
             // When
