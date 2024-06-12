@@ -44,6 +44,26 @@
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
         Centre? GetCentreDetailsById(int centreId);
+        void UpdateCentreWebsiteDetails(
+            int centreId,
+            string postcode,
+            double latitude,
+            double longitude,
+            string? telephone,
+            string email,
+            string? openingHours,
+            string? webAddress,
+            string? organisationsCovered,
+            string? trainingVenues,
+            string? otherInformation
+        );
+        void UpdateCentreDetails(
+            int centreId,
+            string? notifyEmail,
+            string bannerText,
+            byte[]? centreSignature,
+            byte[]? centreLogo
+        );
     }
 
     public class CentresService : ICentresService
@@ -153,6 +173,16 @@
         public Centre? GetCentreDetailsById(int centreId)
         {
             return centresDataService.GetCentreDetailsById(centreId);
+        }
+
+        public void UpdateCentreWebsiteDetails(int centreId, string postcode, double latitude, double longitude, string? telephone, string email, string? openingHours, string? webAddress, string? organisationsCovered, string? trainingVenues, string? otherInformation)
+        {
+            centresDataService.UpdateCentreWebsiteDetails(centreId, postcode, latitude, longitude, telephone, email, openingHours, webAddress, organisationsCovered, trainingVenues, otherInformation);
+        }
+
+        public void UpdateCentreDetails(int centreId, string? notifyEmail, string bannerText, byte[]? centreSignature, byte[]? centreLogo)
+        {
+            centresDataService.UpdateCentreDetails(centreId, notifyEmail, bannerText, centreSignature, centreLogo);
         }
     }
 }
