@@ -1,6 +1,4 @@
-﻿using DigitalLearningSolutions.Data.DataServices;
-using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
-using DigitalLearningSolutions.Data.Models;
+﻿using DigitalLearningSolutions.Data.Models;
 using DigitalLearningSolutions.Data.Models.Centres;
 using DigitalLearningSolutions.Data.Models.SuperAdmin;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres;
@@ -22,13 +20,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
     public class CentresControllerTests
     {
         private const int CenterId = 374;
-        private readonly ICentresDataService centresDataService = A.Fake<ICentresDataService>();
         private readonly ICentreApplicationsService centreApplicationsService = A.Fake<ICentreApplicationsService>();
         private readonly ICentresService centresService = A.Fake<ICentresService>();
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
-        private readonly IRegionDataService regionDataService = A.Fake<IRegionDataService>();
-        private readonly IContractTypesDataService contractTypesDataService = A.Fake<IContractTypesDataService>();
-        private readonly ICourseDataService courseDataService = A.Fake<ICourseDataService>();
+        private readonly IRegionService regionService = A.Fake<IRegionService>();
+        private readonly IContractTypesService contractTypesService = A.Fake<IContractTypesService>();
+        private readonly ICourseService courseService = A.Fake<ICourseService>();
         private readonly ICentresDownloadFileService centresDownloadFileService = A.Fake<ICentresDownloadFileService>();
         private readonly ICentreSelfAssessmentsService centreSelfAssessmentsService = A.Fake<ICentreSelfAssessmentsService>();
         private CentresController controller = null!;
@@ -40,17 +37,16 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             centresService,
             centreApplicationsService,
             searchSortFilterPaginateService,
-            regionDataService,
-            centresDataService,
-            contractTypesDataService,
-            courseDataService,
+            regionService,
+            contractTypesService,
+            courseService,
             centresDownloadFileService,
             centreSelfAssessmentsService
             )
             .WithDefaultContext()
             .WithMockUser(true);
 
-            A.CallTo(() => centresDataService.UpdateCentreDetailsForSuperAdmin(
+            A.CallTo(() => centresService.UpdateCentreDetailsForSuperAdmin(
                     A<int>._,
                     A<string>._,
                     A<int>._,
@@ -64,7 +60,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         [TearDown]
         public void Cleanup()
         {
-            Fake.ClearRecordedCalls(centresDataService);
+            Fake.ClearRecordedCalls(centresService);
         }
 
         [Test]
@@ -72,7 +68,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         {
             // Given
             IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre1##") };
-            A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
+            A.CallTo(() => centresService.GetAllCentres(false)).Returns(centresList);
             var model = new EditCentreDetailsSuperAdminViewModel
             {
                 CentreId = 374,
@@ -91,7 +87,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
-            A.CallTo(() => centresDataService.UpdateCentreDetailsForSuperAdmin(
+            A.CallTo(() => centresService.UpdateCentreDetailsForSuperAdmin(
                                                 model.CentreId,
                                                 model.CentreName,
                                                 model.CentreTypeId,
@@ -107,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         {
             // Given
             IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##"), (610, "Alternative Futures Group") };
-            A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
+            A.CallTo(() => centresService.GetAllCentres(false)).Returns(centresList);
             var model = new EditCentreDetailsSuperAdminViewModel
             {
                 CentreId = 374,
@@ -131,7 +127,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             centreNameErrors.Should().Contain(error => error.ErrorMessage ==
             "The centre name you have entered already exists, please enter a different centre name");
 
-            A.CallTo(() => centresDataService.UpdateCentreDetailsForSuperAdmin(
+            A.CallTo(() => centresService.UpdateCentreDetailsForSuperAdmin(
                                                 model.CentreId,
                                                 model.CentreName,
                                                 model.CentreTypeId,
@@ -166,7 +162,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("ManageCentre");
-            A.CallTo(() => centresDataService.AddCentreForSuperAdmin(
+            A.CallTo(() => centresService.AddCentreForSuperAdmin(
                                                 model.CentreName,
                                                 model.ContactFirstName,
                                                 model.ContactLastName,
@@ -186,7 +182,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         {
             // Given
             IEnumerable<(int, string)> centresList = new List<(int, string)> { (374, "##HEE Demo Centre##") };
-            A.CallTo(() => centresDataService.GetAllCentres(false)).Returns(centresList);
+            A.CallTo(() => centresService.GetAllCentres(false)).Returns(centresList);
             var model = new AddCentreSuperAdminViewModel
             {
                 CentreName = "##HEE Demo Centre##",
@@ -214,7 +210,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             centreNameErrors.Should().Contain(error => error.ErrorMessage ==
             "The centre name you have entered already exists, please enter a different centre name");
 
-            A.CallTo(() => centresDataService.AddCentreForSuperAdmin(
+            A.CallTo(() => centresService.AddCentreForSuperAdmin(
                                                 model.CentreName,
                                                 model.ContactFirstName,
                                                 model.ContactLastName,
@@ -242,7 +238,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 RoleLimitTrainers = 30,             // set
             };
 
-            A.CallTo(() => centresDataService.GetRoleLimitsForCentre(
+            A.CallTo(() => centresService.GetRoleLimitsForCentre(
                 A<int>._
             )).Returns(roleLimits);
 
@@ -266,7 +262,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 
             // Then
 
-            A.CallTo(() => centresDataService.GetRoleLimitsForCentre(374)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => centresService.GetRoleLimitsForCentre(374)).MustHaveHappenedOnceExactly();
             result.Should().BeViewResult("CentreRoleLimits").ModelAs<CentreRoleLimitsViewModel>().Should().BeEquivalentTo(expectedVm);
         }
 
@@ -294,7 +290,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 
             // Then
             A.CallTo(
-                    () => centresDataService.UpdateCentreRoleLimits(
+                    () => centresService.UpdateCentreRoleLimits(
                         model.CentreId,
                         model.RoleLimitCmsAdministrators,
                         model.RoleLimitCmsManagers,
@@ -331,7 +327,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 
             // Then
             A.CallTo(
-                    () => centresDataService.UpdateCentreRoleLimits(
+                    () => centresService.UpdateCentreRoleLimits(
                         model.CentreId,
                         model.RoleLimitCmsAdministrators,
                         -1,
@@ -357,7 +353,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             const int contractReviewDay = 28;
             const int contractReviewMonth = 8;
             const int contractReviewYear = 2023;
-            A.CallTo(() => centresDataService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
+            A.CallTo(() => centresService.GetContractInfo(CenterId)).Returns(CentreContractAdminUsageTestHelper.GetDefaultEditContractInfo(CenterId));
 
             // When
             var result = controller.EditContractInfo(centreId, 28, 8, 2023, 10024, 10024, 100024);
@@ -399,7 +395,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 
             // When
             var result = controller.EditContractInfo(model, DateTime.UtcNow.Day, DateTime.UtcNow.Month, DateTime.UtcNow.Year);
-            A.CallTo(() => centresDataService.UpdateContractTypeandCenter(model.CentreId,
+            A.CallTo(() => centresService.UpdateContractTypeandCenter(model.CentreId,
                model.ContractTypeID,
                model.DelegateUploadSpace,
                model.ServerSpaceBytesInc,

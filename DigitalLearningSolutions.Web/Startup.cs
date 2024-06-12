@@ -406,6 +406,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<ICompetencyLearningResourcesService, CompetencyLearningResourcesService>();
             services.AddScoped<IConfigService, ConfigService>();
+            services.AddScoped<IContractTypesService, ContractTypesService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
             services.AddScoped<ICourseCategoriesService, CourseCategoriesService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
