@@ -143,6 +143,7 @@ namespace DigitalLearningSolutions.Web.Services
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         DelegateAccount? GetDelegateAccountById(int id);
         int? GetUserIdFromUsername(string username);
+        int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
     }
 
@@ -793,6 +794,10 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetUserIdFromUsername(username);
         }
 
+        public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber)
+        {
+            return userDataService.GetDelegateCountWithAnswerForPrompt(centreId, promptNumber);
+        }
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId);
