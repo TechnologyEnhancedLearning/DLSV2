@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Dashboard
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;    
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard;
     using DigitalLearningSolutions.Web.Helpers;
@@ -21,16 +20,16 @@
 
         private DashboardController dashboardController = null!;
         private IDashboardInformationService dashboardInformationService = null!;
-        private ISystemNotificationsDataService systemNotificationsDataService = null!;
+        private ISystemNotificationsService systemNotificationsService = null!;
 
         [SetUp]
         public void Setup()
         {
             dashboardInformationService = A.Fake<IDashboardInformationService>();
-            systemNotificationsDataService = A.Fake<ISystemNotificationsDataService>();
+            systemNotificationsService = A.Fake<ISystemNotificationsService>();
             dashboardController = new DashboardController(
                     dashboardInformationService,
-                    systemNotificationsDataService
+                    systemNotificationsService
                 ).WithMockHttpContext(httpRequest, response: httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
@@ -41,7 +40,7 @@
         public void Index_redirects_to_Notifications_page_when_unacknowledged_notifications_have_not_been_skipped()
         {
             // Given
-            A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
+            A.CallTo(() => systemNotificationsService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification> { SystemNotificationTestHelper.GetDefaultSystemNotification() });
 
             // When
@@ -61,7 +60,7 @@
         public void Index_goes_to_Index_page_when_unacknowledged_notifications_have_been_skipped()
         {
             // Given
-            A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
+            A.CallTo(() => systemNotificationsService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification> { SystemNotificationTestHelper.GetDefaultSystemNotification() });
             A.CallTo(() => httpRequest.Cookies).Returns(
                 ControllerContextHelper.SetUpFakeRequestCookieCollection(SystemNotificationCookieHelper.CookieName, "7")
@@ -89,7 +88,7 @@
         public void Index_returns_not_found_when_dashboard_information_is_null()
         {
             // Given
-            A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
+            A.CallTo(() => systemNotificationsService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification>());
             A.CallTo(() => dashboardInformationService.GetDashboardInformationForCentre(A<int>._, A<int>._)).Returns(
                 null
@@ -106,7 +105,7 @@
         public void Index_goes_to_Index_page_when_no_unacknowledged_notifications_exist()
         {
             // Given
-            A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
+            A.CallTo(() => systemNotificationsService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification>());
             A.CallTo(() => dashboardInformationService.GetDashboardInformationForCentre(A<int>._, A<int>._)).Returns(
                 new CentreDashboardInformation(
