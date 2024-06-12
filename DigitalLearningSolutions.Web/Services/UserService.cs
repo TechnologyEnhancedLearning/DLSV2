@@ -152,6 +152,7 @@ namespace DigitalLearningSolutions.Web.Services
             DateTime? emailVerified,
             IDbTransaction? transaction = null
         );
+        int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
     }
 
@@ -816,6 +817,11 @@ namespace DigitalLearningSolutions.Web.Services
             userDataService.SetCentreEmail(userId, centreId, email, emailVerified, transaction);
         }
 
+        public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber)
+        {
+            return userDataService.GetDelegateCountWithAnswerForPrompt(centreId, promptNumber);
+        }
+        
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId);
