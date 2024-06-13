@@ -44,6 +44,42 @@
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
         Centre? GetCentreDetailsById(int centreId);
+        IEnumerable<(int, string)> GetCentreTypes();
+        Centre? GetFullCentreDetailsById(int centreId);
+        IEnumerable<(int, string)> GetAllCentres(bool? activeOnly = false);
+        public void UpdateCentreDetailsForSuperAdmin(
+            int centreId,
+            string centreName,
+            int centreTypeId,
+            int regionId,
+            string? centreEmail,
+            string? ipPrefix,
+            bool showOnMap
+        );
+        CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId);
+        void UpdateCentreRoleLimits(
+            int centreId,
+            int? roleLimitCmsAdministrators,
+            int? roleLimitCmsManagers,
+            int? roleLimitCcLicences,
+            int? roleLimitCustomCourses,
+            int? roleLimitTrainers
+        );
+        public int AddCentreForSuperAdmin(
+            string centreName,
+            string? contactFirstName,
+            string? contactLastName,
+            string? contactEmail,
+            string? contactPhone,
+            int? centreTypeId,
+            int? regionId,
+            string? registrationEmail,
+            string? ipPrefix,
+            bool showOnMap,
+            bool AddITSPcourses
+        );
+        ContractInfo? GetContractInfo(int centreId);
+        bool UpdateContractTypeandCenter(int centreId, int contractTypeID, long delegateUploadSpace, long serverSpaceBytesInc, DateTime? contractReviewDate);
         void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
@@ -175,6 +211,50 @@
             return centresDataService.GetCentreDetailsById(centreId);
         }
 
+        public IEnumerable<(int, string)> GetCentreTypes()
+        {
+            return centresDataService.GetCentreTypes();
+        }
+
+        public Centre? GetFullCentreDetailsById(int centreId)
+        {
+            return centresDataService.GetFullCentreDetailsById(centreId);
+        }
+
+        public IEnumerable<(int, string)> GetAllCentres(bool? activeOnly = false)
+        {
+            return centresDataService.GetAllCentres(activeOnly);
+        }
+
+        public void UpdateCentreDetailsForSuperAdmin(int centreId, string centreName, int centreTypeId, int regionId, string? centreEmail, string? ipPrefix, bool showOnMap)
+        {
+            centresDataService.UpdateCentreDetailsForSuperAdmin(centreId, centreName, centreTypeId, regionId, centreEmail, ipPrefix, showOnMap);
+        }
+
+        public CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId)
+        {
+            return centresDataService.GetRoleLimitsForCentre(centreId);
+        }
+
+        public void UpdateCentreRoleLimits(int centreId, int? roleLimitCmsAdministrators, int? roleLimitCmsManagers, int? roleLimitCcLicences, int? roleLimitCustomCourses, int? roleLimitTrainers)
+        {
+            centresDataService.UpdateCentreRoleLimits(centreId, roleLimitCmsAdministrators, roleLimitCmsManagers, roleLimitCcLicences, roleLimitCustomCourses, roleLimitTrainers);
+        }
+
+        public int AddCentreForSuperAdmin(string centreName, string? contactFirstName, string? contactLastName, string? contactEmail, string? contactPhone, int? centreTypeId, int? regionId, string? registrationEmail, string? ipPrefix, bool showOnMap, bool AddITSPcourses)
+        {
+            return centresDataService.AddCentreForSuperAdmin(centreName, contactFirstName, contactLastName, contactEmail, contactPhone, centreTypeId, regionId, registrationEmail, ipPrefix, showOnMap, AddITSPcourses);
+        }
+
+        public ContractInfo? GetContractInfo(int centreId)
+        {
+            return centresDataService.GetContractInfo(centreId);
+        }
+
+        public bool UpdateContractTypeandCenter(int centreId, int contractTypeID, long delegateUploadSpace, long serverSpaceBytesInc, DateTime? contractReviewDate)
+        {
+            return centresDataService.UpdateContractTypeandCenter(centreId, contractTypeID, delegateUploadSpace, serverSpaceBytesInc, contractReviewDate);
+        }
         public void UpdateCentreWebsiteDetails(int centreId, string postcode, double latitude, double longitude, string? telephone, string email, string? openingHours, string? webAddress, string? organisationsCovered, string? trainingVenues, string? otherInformation)
         {
             centresDataService.UpdateCentreWebsiteDetails(centreId, postcode, latitude, longitude, telephone, email, openingHours, webAddress, organisationsCovered, trainingVenues, otherInformation);
