@@ -154,7 +154,7 @@
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
         private readonly IGroupsDataService groupsDataService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private readonly ILogger<IGroupsService> logger;
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
@@ -166,7 +166,7 @@
             IClockUtility clockUtility,
             ITutorialContentDataService tutorialContentDataService,
             IEmailService emailService,
-            IJobGroupsDataService jobGroupsDataService,
+            IJobGroupsService jobGroupsService,
             IProgressDataService progressDataService,
             IConfiguration configuration,
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
@@ -179,7 +179,7 @@
             this.clockUtility = clockUtility;
             this.tutorialContentDataService = tutorialContentDataService;
             this.emailService = emailService;
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.jobGroupsService = jobGroupsService;
             this.progressDataService = progressDataService;
             this.configuration = configuration;
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
@@ -294,7 +294,7 @@
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
                 oldRegistrationFieldAnswers,
                 registrationFieldAnswers,
-                jobGroupsDataService,
+                jobGroupsService,
                 centreRegistrationPromptsService
             );
 
@@ -344,8 +344,8 @@
             {
                 var groupsLinkedToJobGroup = GetGroupsWhichShouldUpdateWhenUserDetailsChangeForCentre(account.CentreId)
                     .Where(g => g.LinkedToField == JobGroupLinkedFieldNumber).ToList();
-                var oldJobGroupName = jobGroupsDataService.GetJobGroupName(oldJobGroupId);
-                var newJobGroupName = jobGroupsDataService.GetJobGroupName(newJobGroupId);
+                var oldJobGroupName = jobGroupsService.GetJobGroupName(oldJobGroupId);
+                var newJobGroupName = jobGroupsService.GetJobGroupName(newJobGroupId);
 
                 var groupsToRemoveDelegateFrom = groupsLinkedToJobGroup.Where(
                     g =>
@@ -885,7 +885,7 @@
 
         private (List<(int id, string name)>, string groupNamePrefix) GetJobGroupsAndPrefix()
         {
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
             const string groupNamePrefix = "Job group";
             return (jobGroups, groupNamePrefix);
         }
