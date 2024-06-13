@@ -4,10 +4,8 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -31,7 +29,6 @@
         private const string DefaultCentreSpecificEmail = "centre@email.com";
         private const int DefaultUserId = 2;
         private const int DefaultDelegateId = 5;
-        private ICentresDataService centresDataService = null!;
         private ICentresService centresService = null!;
         private IConfiguration config = null!;
         private RegisterInternalAdminController controller = null!;
@@ -41,15 +38,12 @@
         private IRegisterAdminService registerAdminService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
-            centresDataService = A.Fake<ICentresDataService>();
             centresService = A.Fake<ICentresService>();
-            userDataService = A.Fake<IUserDataService>();
             userService = A.Fake<IUserService>();
             registrationService = A.Fake<IRegistrationService>();
             delegateApprovalsService = A.Fake<IDelegateApprovalsService>();
@@ -59,9 +53,7 @@
             config = A.Fake<IConfiguration>();
             request = A.Fake<HttpRequest>();
             controller = new RegisterInternalAdminController(
-                    centresDataService,
                     centresService,
-                    userDataService,
                     userService,
                     registrationService,
                     delegateApprovalsService,
@@ -91,13 +83,13 @@
         public void IndexGet_with_invalid_centreId_param_shows_notfound_error()
         {
             // Given
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns(null);
+            A.CallTo(() => centresService.GetCentreName(DefaultCentreId)).Returns(null);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => centresService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
 
             result.Should().BeNotFoundResult();
         }
@@ -106,7 +98,7 @@
         public void IndexGet_with_not_allowed_admin_registration_returns_access_denied()
         {
             // Given
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
+            A.CallTo(() => centresService.GetCentreName(DefaultCentreId)).Returns("Some centre");
             A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId)).Returns(false);
 
             // When
@@ -124,7 +116,7 @@
         public void IndexGet_with_allowed_admin_registration_returns_view_model()
         {
             // Given
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
+            A.CallTo(() => centresService.GetCentreName(DefaultCentreId)).Returns("Some centre");
             A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId)).Returns(true);
 
             // When
@@ -206,7 +198,7 @@
                     centreSpecificEmail
                 )
             ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetDelegateAccountsByUserId(DefaultUserId)).MustHaveHappenedOnceExactly();
 
             if (hasDelegateAccount)
             {
@@ -243,7 +235,7 @@
                 ).MustHaveHappenedOnceExactly();
                 A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._)).MustNotHaveHappened();
                 A.CallTo(
-                        () => userDataService.SetCentreEmail(
+                        () => userService.SetCentreEmail(
                             A<int>._,
                             A<int>._,
                             A<string?>._,
@@ -353,9 +345,9 @@
             if (centreSpecificEmail != null)
             {
                 A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(centreSpecificEmail, DefaultCentreId)
+                    () => userService.CentreSpecificEmailIsInUseAtCentre(centreSpecificEmail, DefaultCentreId)
                 ).Returns(false);
-                A.CallTo(() => userDataService.GetCentreEmail(DefaultUserId, DefaultCentreId)).Returns(null);
+                A.CallTo(() => userService.GetCentreEmail(DefaultUserId, DefaultCentreId)).Returns(null);
             }
 
             A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId)).Returns(true);
@@ -383,7 +375,7 @@
                 centreId: DefaultCentreId,
                 approved: isDelegateApproved
             );
-            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId)).Returns(
+            A.CallTo(() => userService.GetDelegateAccountsByUserId(DefaultUserId)).Returns(
                 hasDelegateAccount ? new List<DelegateAccount> { delegateAccount } : new List<DelegateAccount>()
             );
 
@@ -398,7 +390,7 @@
             ).Returns(("candidate", true, true));
 
             A.CallTo(
-                    () => userDataService.SetCentreEmail(
+                    () => userService.SetCentreEmail(
                         DefaultUserId,
                         DefaultCentreId,
                         centreSpecificEmail,
