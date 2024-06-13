@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
+    using DocumentFormat.OpenXml.Office2010.Excel;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
@@ -156,6 +157,8 @@ namespace DigitalLearningSolutions.Web.Services
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
 
         AdminUser? GetAdminUserById(int id);
+        string GetUserDisplayName(int userId);
+
     }
 
     public class UserService : IUserService
@@ -834,6 +837,11 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.GetAdminUserById(id);
 
+        }
+
+        public string GetUserDisplayName(int userId)
+        {
+            return userDataService.GetUserDisplayName(userId);
         }
     }
 }
