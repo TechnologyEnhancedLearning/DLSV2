@@ -255,6 +255,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             {
                 sessionEnrol.SupervisorName = supervisorList.FirstOrDefault(x => x.AdminId == model.SelectedSupervisor).Name;
                 sessionEnrol.SupervisorID = model.SelectedSupervisor;
+                sessionEnrol.SupervisorEmail = supervisorList.FirstOrDefault(x => x.AdminId == model.SelectedSupervisor).Email;
             }
             if (model.SelectedSupervisorRoleId.HasValue && model.SelectedSupervisorRoleId.Value > 0)
             {
@@ -291,6 +292,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             var model = new EnrolSummaryViewModel();
             model.SupervisorName = sessionEnrol.SupervisorName;
+            model.SupervisorEmail = sessionEnrol.SupervisorEmail;
             model.ActivityName = sessionEnrol.AssessmentName;
             model.CompleteByDate = sessionEnrol.CompleteByDate;
             model.DelegateId = delegateId;
@@ -315,12 +317,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
             else
             {
-                var adminEmail = User.GetUserPrimaryEmailKnownNotNull();
                 var selfAssessmentId = enrolService.EnrolOnActivitySelfAssessment(
                     sessionEnrol.AssessmentID.GetValueOrDefault(),
                     delegateId,
                     sessionEnrol.SupervisorID.GetValueOrDefault(),
-                    adminEmail,
+                    sessionEnrol.SupervisorEmail,
                     sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault(),
                     sessionEnrol.CompleteByDate,
                     (int)sessionEnrol.DelegateUserID,
