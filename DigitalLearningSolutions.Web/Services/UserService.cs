@@ -158,6 +158,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         AdminUser? GetAdminUserById(int id);
         string GetUserDisplayName(int userId);
+        IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId);
+        void DeactivateAdmin(int adminId);
 
     }
 
@@ -826,7 +828,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.GetDelegateCountWithAnswerForPrompt(centreId, promptNumber);
         }
-        
+
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId);
@@ -842,6 +844,15 @@ namespace DigitalLearningSolutions.Web.Services
         public string GetUserDisplayName(int userId)
         {
             return userDataService.GetUserDisplayName(userId);
+        }
+        public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
+        {
+            return userDataService.GetAdminsByCentreId(centreId);
+        }
+
+        public void DeactivateAdmin(int adminId)
+        {
+            userDataService.DeactivateAdmin(adminId);
         }
     }
 }
