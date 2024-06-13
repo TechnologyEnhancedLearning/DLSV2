@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SuperAdmin;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using DocumentFormat.OpenXml.Office2010.Excel;
@@ -158,6 +159,11 @@ namespace DigitalLearningSolutions.Web.Services
 
         AdminUser? GetAdminUserById(int id);
         string GetUserDisplayName(int userId);
+        (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(
+      string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
+      );
+        void DeleteUserCentreDetail(int userId, int centreId);
+        void ApproveDelegateUsers(params int[] ids);
 
     }
 
@@ -826,7 +832,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.GetDelegateCountWithAnswerForPrompt(centreId, promptNumber);
         }
-        
+
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId);
@@ -842,6 +848,21 @@ namespace DigitalLearningSolutions.Web.Services
         public string GetUserDisplayName(int userId)
         {
             return userDataService.GetUserDisplayName(userId);
+        }
+
+        public (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold)
+        {
+            return userDataService.GetAllDelegates(search, offset, rows, delegateId, accountStatus, lhlinkStatus, centreId, failedLoginThreshold);
+        }
+
+        public void DeleteUserCentreDetail(int userId, int centreId)
+        {
+            userDataService.DeleteUserCentreDetail(userId, centreId);
+        }
+
+        public void ApproveDelegateUsers(params int[] ids)
+        {
+            userDataService.ApproveDelegateUsers(ids);
         }
     }
 }
