@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SuperAdmin;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using DocumentFormat.OpenXml.Office2010.Excel;
@@ -158,11 +159,35 @@ namespace DigitalLearningSolutions.Web.Services
 
         AdminUser? GetAdminUserById(int id);
         string GetUserDisplayName(int userId);
-        void InactivateUser(int userId);
-        (IEnumerable<UserAccountEntity>, int recordCount) GetUserAccounts(
-            string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
-            );
-        void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
+
+        (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(
+      string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
+      );
+        void DeleteUserCentreDetail(int userId, int centreId);
+        void ApproveDelegateUsers(params int[] ids);
+        (IEnumerable<AdminEntity>, int) GetAllAdmins(
+       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
+       );
+        void UpdateAdminUserAndSpecialPermissions(
+                    int adminId, bool isCentreAdmin, bool isSupervisor, bool isNominatedSupervisor, bool isTrainer,
+                    bool isContentCreator,
+                    bool isContentManager,
+                    bool importOnly,
+                    int? categoryId,
+                    bool isCentreManager,
+                    bool isSuperAdmin,
+                    bool isReportsViewer,
+                    bool isLocalWorkforceManager,
+                    bool isFrameworkDeveloper,
+                    bool isWorkforceManager
+                );
+        int GetUserIdFromAdminId(int adminId);
+        void DeleteAdminAccount(int adminId);
+        void UpdateAdminStatus(int adminId, bool active);
+        void UpdateAdminCentre(int adminId, int centreId);
+        bool IsUserAlreadyAdminAtCentre(int? userId, int centreId);
+        IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId);
+        void DeactivateAdmin(int adminId);
 
         void ActivateUser(int userId);
     }
@@ -832,7 +857,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.GetDelegateCountWithAnswerForPrompt(centreId, promptNumber);
         }
-        
+
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId);
@@ -850,24 +875,66 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetUserDisplayName(userId);
         }
 
-        public void InactivateUser(int userId)
+
+        public (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold)
         {
-             userDataService.InactivateUser(userId);
+            return userDataService.GetAllDelegates(search, offset, rows, delegateId, accountStatus, lhlinkStatus, centreId, failedLoginThreshold);
         }
 
-        public (IEnumerable<UserAccountEntity>, int recordCount) GetUserAccounts(string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold)
+        public void DeleteUserCentreDetail(int userId, int centreId)
         {
-            return userDataService.GetUserAccounts(search, offset, rows, jobGroupId, userStatus, emailStatus, userId, failedLoginThreshold);
+            userDataService.DeleteUserCentreDetail(userId, centreId);
         }
 
-        public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
+        public void ApproveDelegateUsers(params int[] ids)
         {
-            userDataService.UpdateUserDetailsAccount(firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId);
+            userDataService.ApproveDelegateUsers(ids);
+        }
+        
+        public (IEnumerable<AdminEntity>, int) GetAllAdmins(string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold)
+        {
+            return userDataService.GetAllAdmins(search, offset, rows, adminId, userStatus, role, centreId, failedLoginThreshold);
         }
 
-        public void ActivateUser(int userId)
+        public void UpdateAdminUserAndSpecialPermissions(int adminId, bool isCentreAdmin, bool isSupervisor, bool isNominatedSupervisor, bool isTrainer, bool isContentCreator, bool isContentManager, bool importOnly, int? categoryId, bool isCentreManager, bool isSuperAdmin, bool isReportsViewer, bool isLocalWorkforceManager, bool isFrameworkDeveloper, bool isWorkforceManager)
         {
-            userDataService.ActivateUser(userId);
+            userDataService.UpdateAdminUserAndSpecialPermissions(adminId, isCentreAdmin, isSupervisor, isNominatedSupervisor, isTrainer, isContentCreator, isContentManager,importOnly, categoryId, isCentreManager, isSuperAdmin, isReportsViewer, isLocalWorkforceManager, isFrameworkDeveloper, isWorkforceManager);
+        }
+
+        public int GetUserIdFromAdminId(int adminId)
+        {
+            return userDataService.GetUserIdFromAdminId(adminId);
+        }
+
+        public void DeleteAdminAccount(int adminId)
+        {
+            userDataService.DeleteAdminAccount(adminId);
+        }
+
+        public void UpdateAdminStatus(int adminId, bool active)
+        {
+            userDataService.UpdateAdminStatus(adminId, active);
+        }
+
+        public void UpdateAdminCentre(int adminId, int centreId)
+        {
+            userDataService.UpdateAdminCentre(adminId, centreId);
+        }
+
+        public bool IsUserAlreadyAdminAtCentre(int? userId, int centreId)
+        {
+            return userDataService.IsUserAlreadyAdminAtCentre(userId, centreId);
+        }
+        
+        public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
+        {
+            return userDataService.GetAdminsByCentreId(centreId);
+        }
+
+        public void DeactivateAdmin(int adminId)
+        {
+            userDataService.DeactivateAdmin(adminId);
+
         }
     }
 }
