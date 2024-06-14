@@ -114,7 +114,7 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateId,
                     customisationId,
                     customisationVersion,
-                    clockUtility.UtcNow,
+                    null,
                     2,
                     enrolledByAdminId,
                 completeByDate,

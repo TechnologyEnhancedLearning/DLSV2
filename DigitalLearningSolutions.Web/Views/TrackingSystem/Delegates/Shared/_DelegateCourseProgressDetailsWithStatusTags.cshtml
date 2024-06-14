@@ -79,7 +79,7 @@
             Last access
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-accessed">
-            @Model.LastAccessed
+            @(Model.LastAccessed ?? "-")
         </dd>
         <dd class="nhsuk-summary-list__actions"></dd>
     </div>
