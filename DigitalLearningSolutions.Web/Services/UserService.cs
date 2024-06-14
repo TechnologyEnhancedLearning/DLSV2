@@ -158,7 +158,13 @@ namespace DigitalLearningSolutions.Web.Services
 
         AdminUser? GetAdminUserById(int id);
         string GetUserDisplayName(int userId);
+        void InactivateUser(int userId);
+        (IEnumerable<UserAccountEntity>, int recordCount) GetUserAccounts(
+            string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
+            );
+        void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
 
+        void ActivateUser(int userId);
     }
 
     public class UserService : IUserService
@@ -842,6 +848,26 @@ namespace DigitalLearningSolutions.Web.Services
         public string GetUserDisplayName(int userId)
         {
             return userDataService.GetUserDisplayName(userId);
+        }
+
+        public void InactivateUser(int userId)
+        {
+             userDataService.InactivateUser(userId);
+        }
+
+        public (IEnumerable<UserAccountEntity>, int recordCount) GetUserAccounts(string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold)
+        {
+            return userDataService.GetUserAccounts(search, offset, rows, jobGroupId, userStatus, emailStatus, userId, failedLoginThreshold);
+        }
+
+        public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
+        {
+            userDataService.UpdateUserDetailsAccount(firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId);
+        }
+
+        public void ActivateUser(int userId)
+        {
+            userDataService.ActivateUser(userId);
         }
     }
 }
