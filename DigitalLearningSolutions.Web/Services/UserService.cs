@@ -179,6 +179,8 @@ namespace DigitalLearningSolutions.Web.Services
         void UpdateAdminStatus(int adminId, bool active);
         void UpdateAdminCentre(int adminId, int centreId);
         bool IsUserAlreadyAdminAtCentre(int? userId, int centreId);
+        IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId);
+        void DeactivateAdmin(int adminId);
 
     }
 
@@ -898,6 +900,16 @@ namespace DigitalLearningSolutions.Web.Services
         public bool IsUserAlreadyAdminAtCentre(int? userId, int centreId)
         {
             return userDataService.IsUserAlreadyAdminAtCentre(userId, centreId);
+        }
+        
+        public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
+        {
+            return userDataService.GetAdminsByCentreId(centreId);
+        }
+
+        public void DeactivateAdmin(int adminId)
+        {
+            userDataService.DeactivateAdmin(adminId);
         }
     }
 }
