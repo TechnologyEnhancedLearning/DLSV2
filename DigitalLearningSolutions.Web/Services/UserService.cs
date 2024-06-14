@@ -158,6 +158,27 @@ namespace DigitalLearningSolutions.Web.Services
 
         AdminUser? GetAdminUserById(int id);
         string GetUserDisplayName(int userId);
+        (IEnumerable<AdminEntity>, int) GetAllAdmins(
+       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
+       );
+        void UpdateAdminUserAndSpecialPermissions(
+                    int adminId, bool isCentreAdmin, bool isSupervisor, bool isNominatedSupervisor, bool isTrainer,
+                    bool isContentCreator,
+                    bool isContentManager,
+                    bool importOnly,
+                    int? categoryId,
+                    bool isCentreManager,
+                    bool isSuperAdmin,
+                    bool isReportsViewer,
+                    bool isLocalWorkforceManager,
+                    bool isFrameworkDeveloper,
+                    bool isWorkforceManager
+                );
+        int GetUserIdFromAdminId(int adminId);
+        void DeleteAdminAccount(int adminId);
+        void UpdateAdminStatus(int adminId, bool active);
+        void UpdateAdminCentre(int adminId, int centreId);
+        bool IsUserAlreadyAdminAtCentre(int? userId, int centreId);
         IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId);
         void DeactivateAdmin(int adminId);
 
@@ -845,6 +866,42 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.GetUserDisplayName(userId);
         }
+
+        public (IEnumerable<AdminEntity>, int) GetAllAdmins(string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold)
+        {
+            return userDataService.GetAllAdmins(search, offset, rows, adminId, userStatus, role, centreId, failedLoginThreshold);
+        }
+
+        public void UpdateAdminUserAndSpecialPermissions(int adminId, bool isCentreAdmin, bool isSupervisor, bool isNominatedSupervisor, bool isTrainer, bool isContentCreator, bool isContentManager, bool importOnly, int? categoryId, bool isCentreManager, bool isSuperAdmin, bool isReportsViewer, bool isLocalWorkforceManager, bool isFrameworkDeveloper, bool isWorkforceManager)
+        {
+            userDataService.UpdateAdminUserAndSpecialPermissions(adminId, isCentreAdmin, isSupervisor, isNominatedSupervisor, isTrainer, isContentCreator, isContentManager,importOnly, categoryId, isCentreManager, isSuperAdmin, isReportsViewer, isLocalWorkforceManager, isFrameworkDeveloper, isWorkforceManager);
+        }
+
+        public int GetUserIdFromAdminId(int adminId)
+        {
+            return userDataService.GetUserIdFromAdminId(adminId);
+        }
+
+        public void DeleteAdminAccount(int adminId)
+        {
+            userDataService.DeleteAdminAccount(adminId);
+        }
+
+        public void UpdateAdminStatus(int adminId, bool active)
+        {
+            userDataService.UpdateAdminStatus(adminId, active);
+        }
+
+        public void UpdateAdminCentre(int adminId, int centreId)
+        {
+            userDataService.UpdateAdminCentre(adminId, centreId);
+        }
+
+        public bool IsUserAlreadyAdminAtCentre(int? userId, int centreId)
+        {
+            return userDataService.IsUserAlreadyAdminAtCentre(userId, centreId);
+        }
+        
         public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
         {
             return userDataService.GetAdminsByCentreId(centreId);
