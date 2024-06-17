@@ -607,7 +607,7 @@
 
         public void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId)
         {
-            courseDataService.EnrolSelfAssessment(selfAssessmentId, delegateUserId, centreId);
+            courseDataService.EnrolOnSelfAssessment(selfAssessmentId, delegateUserId, centreId);
         }
 
         public int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId)
