@@ -137,6 +137,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields);
 
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive);
+        bool IsCourseCurrent(int candidateId, int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -1815,6 +1816,22 @@ namespace DigitalLearningSolutions.Data.DataServices
                                                 Applications AS a ON cu.ApplicationID = a.ApplicationID
                                 WHERE  (p.CandidateID = @candidateId) AND p.CustomisationID = @customisationId
                                 AND (NOT (p.Completed IS NULL)))
+                            THEN CAST(1 AS BIT)
+                            ELSE CAST(0 AS BIT) END",
+                new { candidateId, customisationId }
+            );
+        }
+
+        public bool IsCourseCurrent(int candidateId, int customisationId)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                            SELECT p.Completed
+                                FROM  Progress AS p INNER JOIN
+                                                Customisations AS cu ON p.CustomisationID = cu.CustomisationID INNER JOIN
+                                                Applications AS a ON cu.ApplicationID = a.ApplicationID
+                                WHERE  (p.CandidateID = @candidateId) AND (p.CustomisationID = @customisationId)
+                                AND ((p.Completed IS NULL)))
                             THEN CAST(1 AS BIT)
                             ELSE CAST(0 AS BIT) END",
                 new { candidateId, customisationId }

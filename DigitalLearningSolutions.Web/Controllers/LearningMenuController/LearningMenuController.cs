@@ -599,11 +599,11 @@
 
         private void SetTempData(int candidateId, int customisationId)
         {
-            var isCompleted = courseService.IsCourseCompleted(candidateId, customisationId);
-            if (isCompleted)
-                TempData["LearningActivity"] = "Completed";
+            var isCurrent = courseService.IsCourseCurrent(candidateId, customisationId);
+            if (isCurrent)
+                TempData["LearningActivity"] =  "Current";
             else
-                TempData["LearningActivity"] = "Current";
+                TempData["LearningActivity"] = "Completed";
         }
 
         private bool UniqueIdManipulationDetected(int candidateId, int customisationId)
