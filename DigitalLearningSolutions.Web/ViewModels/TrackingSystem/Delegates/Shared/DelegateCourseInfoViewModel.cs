@@ -64,7 +64,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
                 : "None";
 
             CompleteBy = info.CompleteBy?.ToString(DateHelper.StandardDateAndTimeFormat);
-            LastAccessed = info.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat);
+            LastAccessed = info.LastUpdated?.ToString(DateHelper.StandardDateAndTimeFormat);
             Completed = info.Completed?.ToString(DateHelper.StandardDateAndTimeFormat);
             Evaluated = info.Evaluated?.ToString(DateHelper.StandardDateAndTimeFormat);
             RemovedDate = info.RemovedDate?.ToString(DateHelper.StandardDateAndTimeFormat);
