@@ -32,7 +32,9 @@
                        SelfAssessment. CentreName,
                         SelfAssessment.EnrolmentMethodId,
 						Signoff.SignedOff,
-						Signoff.Verified FROM	(SELECT
+						Signoff.Verified,
+						EnrolledByForename +' '+EnrolledBySurname AS EnrolledByFullName
+                        FROM	(SELECT
                         CA.SelfAssessmentID AS Id,
                         SA.Name,
                         SA.Description,
@@ -52,7 +54,9 @@
                         1 AS IsSelfAssessment,
                         CA.SubmittedDate,
                         CR.CentreName AS CentreName,
-                        CA.EnrolmentMethodId
+                        CA.EnrolmentMethodId,
+						uEnrolledBy.FirstName AS EnrolledByForename,
+                        uEnrolledBy.LastName AS EnrolledBySurname
                     FROM Centres AS CR INNER JOIN
                         CandidateAssessments AS CA INNER JOIN
                         SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID ON CR.CentreID = CA.CentreID INNER JOIN
@@ -60,14 +64,17 @@
                         Competencies AS C RIGHT OUTER JOIN
                         SelfAssessmentStructure AS SAS ON C.ID = SAS.CompetencyID ON CA.SelfAssessmentID = SAS.SelfAssessmentID LEFT OUTER JOIN
 						CandidateAssessmentSupervisors AS cas ON  ca.ID =cas.CandidateAssessmentID  LEFT OUTER JOIN
-                        CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID 
+                        CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID
+                        LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = CA.EnrolledByAdminID
+						LEFT OUTER JOIN Users AS uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
                     WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL)
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
-                        CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId)SelfAssessment LEFT OUTER JOIN
+                        CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId,
+						 uEnrolledBy.FirstName,uEnrolledBy.LastName)SelfAssessment LEFT OUTER JOIN
                     (SELECT SelfAssessmentID,casv.SignedOff,MAX(casv.Verified) Verified FROM 
                        CandidateAssessments AS CA LEFT OUTER JOIN
 						CandidateAssessmentSupervisors AS cas ON  ca.ID =cas.CandidateAssessmentID  LEFT OUTER JOIN
