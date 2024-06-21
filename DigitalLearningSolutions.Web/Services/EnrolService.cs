@@ -42,7 +42,8 @@ namespace DigitalLearningSolutions.Web.Services
             int selfAssessmentSupervisorRoleId,
             DateTime? completeByDate,
             int delegateUserId,
-            int centreId
+            int centreId,
+            int? enrolledByAdminId
             );
     }
     public class EnrolService : IEnrolService
@@ -185,9 +186,9 @@ namespace DigitalLearningSolutions.Web.Services
             return new Email(EnrolEmailSubject, body, emailAddress);
         }
 
-        public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail, int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId)
+        public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail, int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId)
         {
-           return courseDataService.EnrolOnActivitySelfAssessment(selfAssessmentId, candidateId, supervisorId, adminEmail, selfAssessmentSupervisorRoleId, completeByDate, delegateUserId, centreId);
+           return courseDataService.EnrolOnActivitySelfAssessment(selfAssessmentId, candidateId, supervisorId, adminEmail, selfAssessmentSupervisorRoleId, completeByDate, delegateUserId, centreId, enrolledByAdminId);
         }
     }
 }
