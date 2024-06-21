@@ -323,6 +323,11 @@
         [Route("/GuestFeedbackComplete")]
         public IActionResult GuestFeedbackComplete(UserFeedbackViewModel userFeedbackViewModel)
         {
+            if (userFeedbackViewModel.FeedbackText == null)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
+
             if (!(userFeedbackViewModel.TaskAchieved == null && userFeedbackViewModel.TaskAttempted == null && userFeedbackViewModel.FeedbackText == null && userFeedbackViewModel.TaskRating == null))
             {
                 using var transaction = new TransactionScope();
