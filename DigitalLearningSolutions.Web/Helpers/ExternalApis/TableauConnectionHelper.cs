@@ -40,7 +40,8 @@
                 new Claim(JwtRegisteredClaimNames.Sub, user),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("scp", "tableau:views:embed"),
-                new Claim("scp", "tableau:metrics:embed")
+                new Claim("scp", "tableau:metrics:embed"),
+                new Claim("users.primaryemail", email)
             }),
                 Expires = DateTime.UtcNow.AddMinutes(5),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
