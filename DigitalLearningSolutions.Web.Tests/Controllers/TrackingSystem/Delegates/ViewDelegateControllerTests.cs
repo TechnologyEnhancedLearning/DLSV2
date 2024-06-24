@@ -1,9 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
-    
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
@@ -22,11 +19,9 @@
     {
         private IConfiguration config = null!;
         private ICourseService courseService = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private ViewDelegateController viewDelegateController = null!;
         private IEmailVerificationService emailVerificationService = null!;
-        private IEmailVerificationDataService emailVerificationDataService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
 
         [SetUp]
@@ -37,21 +32,18 @@
             var passwordResetService = A.Fake<IPasswordResetService>();
 
             userService = A.Fake<IUserService>();
-            userDataService = A.Fake<IUserDataService>();
             courseService = A.Fake<ICourseService>();
             config = A.Fake<IConfiguration>();
-            emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
+            emailVerificationService = A.Fake<IEmailVerificationService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
 
             viewDelegateController = new ViewDelegateController(
-                    userDataService,
                     userService,
                     centreCustomPromptsHelper,
                     courseService,
                     passwordResetService,
                     config,
                     emailVerificationService,
-                    emailVerificationDataService,
                     selfAssessmentService
                 )
                 .WithDefaultContext()
@@ -112,7 +104,7 @@
         public void Deactivating_delegate_returns_redirect()
         {
             // Given
-            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
+            A.CallTo(() => userService.GetDelegateUserCardById(1))
                 .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
 
             // When
@@ -126,16 +118,16 @@
         public void Reactivating_delegate_redirects_to_index_page()
         {
             // Given
-            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
+            A.CallTo(() => userService.GetDelegateUserCardById(1))
                 .Returns(new DelegateUserCard { CentreId = 2, Id = 1, Active = false });
 
-            A.CallTo(() => userDataService.ActivateDelegateUser(1)).DoesNothing();
+            A.CallTo(() => userService.ActivateDelegateUser(1)).DoesNothing();
 
             // When
             var result = viewDelegateController.ReactivateDelegate(1);
 
             // Then
-            A.CallTo(() => userDataService.ActivateDelegateUser(1)).MustHaveHappened();
+            A.CallTo(() => userService.ActivateDelegateUser(1)).MustHaveHappened();
             result.Should().BeRedirectToActionResult();
         }
 
@@ -143,7 +135,7 @@
         public void ReactivateDelegate_nonexistent_delegate_returns_not_found_result()
         {
             // Given
-            A.CallTo(() => userDataService.GetDelegateUserCardById(10)).Returns(null);
+            A.CallTo(() => userService.GetDelegateUserCardById(10)).Returns(null);
 
             // When
             var result = viewDelegateController.ReactivateDelegate(10);
@@ -156,7 +148,7 @@
         public void ReactivateDelegate_delegate_on_wrong_centre_returns_not_found_result()
         {
             //Given
-            A.CallTo(() => userDataService.GetDelegateUserCardById(10))
+            A.CallTo(() => userService.GetDelegateUserCardById(10))
                 .Returns(new DelegateUserCard { CentreId = 1 });
 
             // When

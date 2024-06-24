@@ -16,7 +16,7 @@
             // Given
             const int progressId = 299;
             var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
-            A.CallTo(() => sectionContentDataService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
@@ -36,7 +36,7 @@
         public void Section_should_not_StartOrUpdate_course_sessions_if_session_not_found()
         {
             // Given
-            A.CallTo(() => sectionContentDataService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
                 .Returns(null);
 
             // When
@@ -51,7 +51,7 @@
         {
             // Given
             var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
-            A.CallTo(() => sectionContentDataService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(null);
@@ -69,7 +69,7 @@
             // Given
             const int progressId = 299;
             var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
-            A.CallTo(() => sectionContentDataService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
@@ -85,7 +85,7 @@
         public void Section_should_not_UpdateProgress_if_invalid_section()
         {
             // Given
-            A.CallTo(() => sectionContentDataService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
                 .Returns(null);
 
             // When
@@ -100,7 +100,7 @@
         {
             // Given
             var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
-            A.CallTo(() => sectionContentDataService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(null);
@@ -118,7 +118,7 @@
             // Given
             const int progressId = 299;
             var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
-            A.CallTo(() => sectionContentDataService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).
                 Returns(progressId);
@@ -148,7 +148,7 @@
             );
             expectedSectionContent.Tutorials.Add(tutorial);
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -182,7 +182,7 @@
             );
             expectedSectionContent.Tutorials.Add(tutorial);
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -216,7 +216,7 @@
             );
             expectedSectionContent.Tutorials.Add(tutorial);
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -248,7 +248,7 @@
             );
             // expectedSectionContent.Tutorials is empty
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -280,7 +280,7 @@
             );
             // expectedSectionContent.Tutorials is empty
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -312,7 +312,7 @@
             );
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -343,7 +343,7 @@
             );
             // expectedSectionContent.Tutorials is empty
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -375,7 +375,7 @@
             );
             // expectedSectionContent.Tutorials is empty
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -407,7 +407,7 @@
             );
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -440,7 +440,7 @@
             );
             expectedSectionContent.Tutorials.Add(tutorial);
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -470,7 +470,7 @@
             );
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -501,7 +501,7 @@
             );
             expectedSectionContent.Tutorials.Add(tutorial);
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -532,7 +532,7 @@
             );
             expectedSectionContent.Tutorials.Add(tutorial);
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -566,7 +566,7 @@
             );
             expectedSectionContent.Tutorials.Add(tutorial);
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -599,7 +599,7 @@
             );
             expectedSectionContent.Tutorials.Add(tutorial);
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -628,7 +628,7 @@
             );
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -657,7 +657,7 @@
             );
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -690,7 +690,7 @@
             );
             expectedSectionContent.Tutorials.AddRange(new[] { tutorial1, tutorial2, tutorial3 });
 
-            A.CallTo(() => sectionContentDataService.GetSectionContent(customisationId, CandidateId, sectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
@@ -708,7 +708,7 @@
         public void Section_should_404_if_section_not_found()
         {
             // Given
-            A.CallTo(() => sectionContentDataService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
                 .Returns(null);
 
             // When
@@ -728,7 +728,7 @@
         {
             // Given
             var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
-            A.CallTo(() => sectionContentDataService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultSectionContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
 

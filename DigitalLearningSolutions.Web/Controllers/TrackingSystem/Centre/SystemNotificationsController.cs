@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Utilities;
@@ -23,15 +22,15 @@
     {
         private readonly IClockUtility clockUtility;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
-        private readonly ISystemNotificationsDataService systemNotificationsDataService;
+        private readonly ISystemNotificationsService systemNotificationsService;
 
         public SystemNotificationsController(
-            ISystemNotificationsDataService systemNotificationsDataService,
+            ISystemNotificationsService systemNotificationsService,
             IClockUtility clockUtility,
             ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
-            this.systemNotificationsDataService = systemNotificationsDataService;
+            this.systemNotificationsService = systemNotificationsService;
             this.clockUtility = clockUtility;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
@@ -42,7 +41,7 @@
         {
             var adminId = User.GetAdminId()!.Value;
             var unacknowledgedNotifications =
-                systemNotificationsDataService.GetUnacknowledgedSystemNotifications(adminId).ToList();
+                systemNotificationsService.GetUnacknowledgedSystemNotifications(adminId).ToList();
 
             if (unacknowledgedNotifications.Count > 0)
             {
@@ -74,7 +73,7 @@
         public IActionResult AcknowledgeNotification(int systemNotificationId, int page)
         {
             var adminId = User.GetAdminId()!.Value;
-            systemNotificationsDataService.AcknowledgeNotification(systemNotificationId, adminId);
+            systemNotificationsService.AcknowledgeNotification(systemNotificationId, adminId);
 
             return RedirectToAction("Index", "SystemNotifications", new { page });
         }

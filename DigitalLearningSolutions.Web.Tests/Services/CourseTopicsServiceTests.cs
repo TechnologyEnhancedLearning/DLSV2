@@ -35,7 +35,7 @@
             A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(1)).Returns(topics);
 
             // When
-            var result = courseTopicsService.GetActiveTopicsAvailableAtCentre(centreId);
+            var result = courseTopicsService.GetCourseTopicsAvailableAtCentre(centreId).Where(c => c.Active).ToList();
 
             // Then
             using (new AssertionScope())
@@ -58,7 +58,7 @@
             A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(1)).Returns(topics);
 
             // When
-            var result = courseTopicsService.GetActiveTopicsAvailableAtCentre(centreId)
+            var result = courseTopicsService.GetCourseTopicsAvailableAtCentre(centreId).Where(c => c.Active)
                 .ToList();
 
             // Then

@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     using DigitalLearningSolutions.Data.ApiClients;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -11,7 +10,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using GDS.MultiPageFormData;
- 
+
     [Authorize(Policy = CustomPolicies.UserFrameworksAdminOnly)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Frameworks))]
     [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
@@ -22,7 +21,7 @@
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ILogger<FrameworksController> logger;
         private readonly IImportCompetenciesFromFileService importCompetenciesFromFileService;
-        private readonly ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
+        private readonly ICompetencyLearningResourcesService competencyLearningResourcesService;
         private readonly ILearningHubApiClient learningHubApiClient;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IMultiPageFormService multiPageFormService;
@@ -33,7 +32,7 @@
             IFrameworkNotificationService frameworkNotificationService,
             ILogger<FrameworksController> logger,
             IImportCompetenciesFromFileService importCompetenciesFromFileService,
-            ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,
+            ICompetencyLearningResourcesService competencyLearningResourcesService,
             ILearningHubApiClient learningHubApiClient,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IMultiPageFormService multiPageFormService
@@ -44,7 +43,7 @@
             this.frameworkNotificationService = frameworkNotificationService;
             this.logger = logger;
             this.importCompetenciesFromFileService = importCompetenciesFromFileService;
-            this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
+            this.competencyLearningResourcesService = competencyLearningResourcesService;
             this.learningHubApiClient = learningHubApiClient;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.multiPageFormService = multiPageFormService;

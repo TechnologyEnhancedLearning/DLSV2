@@ -1,10 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    
+
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
@@ -24,7 +23,7 @@
         private EmailDelegatesController emailDelegatesController = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
-        private IJobGroupsDataService jobGroupsDataService = null!;
+        private IJobGroupsService jobGroupsService = null!;
         private IPasswordResetService passwordResetService = null!;
         private PromptsService promptsHelper = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
@@ -38,7 +37,7 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             promptsHelper = new PromptsService(centreRegistrationPromptsService);
             userService = A.Fake<IUserService>();
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            jobGroupsService = A.Fake<IJobGroupsService>();
             passwordResetService = A.Fake<IPasswordResetService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             config = A.Fake<IConfiguration>();
@@ -51,7 +50,7 @@
 
             emailDelegatesController = new EmailDelegatesController(
                     promptsHelper,
-                    jobGroupsDataService,
+                    jobGroupsService,
                     passwordResetService,
                     userService,
                     searchSortFilterPaginateService,

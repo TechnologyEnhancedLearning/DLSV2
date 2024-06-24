@@ -1,8 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -23,21 +21,18 @@
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     public class EditDelegateController : Controller
     {
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private readonly PromptsService promptsService;
         private readonly IUserService userService;
-        private readonly IUserDataService userDataService;
 
         public EditDelegateController(
             IUserService userService,
-            IUserDataService userDataService,
-            IJobGroupsDataService jobGroupsDataService,
+            IJobGroupsService jobGroupsService,
             PromptsService registrationPromptsService
         )
         {
             this.userService = userService;
-            this.userDataService = userDataService;
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.jobGroupsService = jobGroupsService;
             promptsService = registrationPromptsService;
         }
 
@@ -52,7 +47,7 @@
                 return NotFound();
             }
 
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
 
             var customPrompts =
                 promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateEntity, centreId);
@@ -101,7 +96,7 @@
             if (
                 formData.CentreSpecificEmail != null &&
                 formData.CentreSpecificEmail != delegateEntity.UserCentreDetails?.Email &&
-                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     formData.CentreSpecificEmail,
                     delegateEntity.DelegateAccount.CentreId,
                     delegateEntity.UserAccount.Id
@@ -141,7 +136,7 @@
             int centreId
         )
         {
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
                 promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(formData, centreId);
             var model = new EditDelegateViewModel(formData, jobGroups, customPrompts, delegateId);

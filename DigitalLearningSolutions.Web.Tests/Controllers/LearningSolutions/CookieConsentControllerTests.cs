@@ -1,6 +1,6 @@
-﻿using DigitalLearningSolutions.Data.DataServices;
-using DigitalLearningSolutions.Data.Utilities;
+﻿using DigitalLearningSolutions.Data.Utilities;
 using DigitalLearningSolutions.Web.Controllers.LearningSolutions;
+using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.ViewModels.Common;
 using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
 using FakeItEasy;
@@ -17,19 +17,19 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningSolutions
 {
     public class CookieConsentControllerTests
     {
-        private IConfigDataService configDataService = null!;
+        private IConfigService configService = null!;
         private IConfiguration configuration = null!;
         private IClockUtility clockUtility = null!;
         private CookieConsentController controller = null!;
-     
+
         [SetUp]
         public void Setup()
         {
             var logger = A.Fake<ILogger<CookieConsentController>>();
-            configDataService = A.Fake<IConfigDataService>();            
+            configService = A.Fake<IConfigService>();
             clockUtility = A.Fake<IClockUtility>();
             configuration = A.Fake<IConfiguration>();
-            controller = new CookieConsentController(configDataService, configuration, clockUtility, logger);          
+            controller = new CookieConsentController(configService, configuration, clockUtility, logger);
         }
 
         [Test]

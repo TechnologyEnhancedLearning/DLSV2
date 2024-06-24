@@ -1,9 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;    
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Services;
@@ -24,7 +23,6 @@
     public class AdminFieldsControllerTests
     {
         private AdminFieldsController controller = null!;
-        private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseService courseService = null!;
         private IMultiPageFormService multiPageFormService = null!;
@@ -56,13 +54,11 @@
         [SetUp]
         public void Setup()
         {
-            courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
             courseService = A.Fake<ICourseService>();
             controller = new AdminFieldsController(
                     courseAdminFieldsService,
-                    courseAdminFieldsDataService,
                     multiPageFormService
                 )
                 .WithDefaultContext()
@@ -683,7 +679,7 @@
             ).Returns(initialTempData);
             const string action = "save";
 
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCourseFieldPromptIdsForCustomisation(A<int>._))
                 .Returns(new[] { 1, 0, 0 });
 
             // When

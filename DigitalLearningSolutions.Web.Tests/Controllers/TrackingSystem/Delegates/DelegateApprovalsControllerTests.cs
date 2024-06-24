@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -12,14 +11,14 @@
     {
         private DelegateApprovalsController delegateApprovalsController = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
-        private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
-            userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             delegateApprovalsService = A.Fake<IDelegateApprovalsService>();
-            delegateApprovalsController = new DelegateApprovalsController(delegateApprovalsService, userDataService)
+            delegateApprovalsController = new DelegateApprovalsController(delegateApprovalsService, userService)
                 .WithDefaultContext()
                 .WithMockUser(true);
         }

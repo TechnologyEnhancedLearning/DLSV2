@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Attributes;
@@ -23,17 +22,17 @@
     public class CourseContentController : Controller
     {
         public const string SaveAction = "save";
-        private readonly ICourseDataService courseDataService;
+        private readonly ICourseService courseService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
 
         public CourseContentController(
-            ICourseDataService courseDataService,
+            ICourseService courseDataService,
             ISectionService sectionService,
             ITutorialService tutorialService
         )
         {
-            this.courseDataService = courseDataService;
+            this.courseService = courseDataService;
             this.sectionService = sectionService;
             this.tutorialService = tutorialService;
         }
@@ -43,7 +42,7 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
-            var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
+            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
                 categoryId
@@ -69,7 +68,7 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
-            var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
+            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
                 categoryId

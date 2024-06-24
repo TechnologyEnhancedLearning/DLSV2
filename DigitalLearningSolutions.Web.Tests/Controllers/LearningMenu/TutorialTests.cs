@@ -19,7 +19,7 @@
         {
             // Given
             var defaultTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId);
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(defaultTutorialInformation);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
 
@@ -42,7 +42,7 @@
             // Given
             var utcNow = new DateTime(2022, 1, 1, 10, 0, 0);
             var defaultTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId, averageTutorialDuration: averageTutorialDuration);
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(defaultTutorialInformation);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
             A.CallTo(() => clockUtility.UtcNow).Returns(utcNow);
@@ -69,7 +69,7 @@
         {
             // Given
             var defaultTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId, averageTutorialDuration: averageTutorialDuration);
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(defaultTutorialInformation);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
 
@@ -91,7 +91,7 @@
         public async Task Tutorial_should_not_StartOrUpdate_course_sessions_if_invalid_tutorial()
         {
             // Given
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(null);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
 
@@ -107,7 +107,7 @@
         {
             // Given
             var defaultTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId);
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(defaultTutorialInformation);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
 
@@ -124,7 +124,7 @@
             // Given
             const int progressId = 3;
             var defaultTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId);
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(defaultTutorialInformation);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(progressId);
 
@@ -140,7 +140,7 @@
         {
             // Given
             const int progressId = 3;
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(null);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(progressId);
 
@@ -156,7 +156,7 @@
         {
             // Given
             var defaultTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId);
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(defaultTutorialInformation);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
 
@@ -172,7 +172,7 @@
         {
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId);
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(expectedTutorialInformation);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(3);
 
@@ -189,7 +189,7 @@
         public async Task Tutorial_should_return_404_if_invalid_tutorial()
         {
             // Given
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(
                 CandidateId,
                 CustomisationId,
                 SectionId,
@@ -214,7 +214,7 @@
         {
             // Given
             var defaultTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId);
-            A.CallTo(() => tutorialContentDataService.GetTutorialInformation(
+            A.CallTo(() => tutorialContentService.GetTutorialInformation(
                 CandidateId,
                 CustomisationId,
                 SectionId,

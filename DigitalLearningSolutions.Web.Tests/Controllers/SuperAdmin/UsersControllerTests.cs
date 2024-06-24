@@ -1,6 +1,4 @@
-﻿using DigitalLearningSolutions.Data.DataServices;
-using DigitalLearningSolutions.Data.DataServices.UserDataService;
-using DigitalLearningSolutions.Data.Models.Support;
+﻿using DigitalLearningSolutions.Data.Models.Support;
 using DigitalLearningSolutions.Data.Utilities;
 using DigitalLearningSolutions.Data.ViewModels.UserCentreAccount;
 using DigitalLearningSolutions.Web.Controllers.SuperAdmin;
@@ -26,13 +24,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
     public class UsersControllerTests
     {
         private UsersController controller = null!;
-
         private IUserService userService = null!;
         private IUserCentreAccountsService userCentreAccountsService = null!;
-        private IUserDataService userDataService=null!;
-        private ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService=null!;
+        private ICentreRegistrationPromptsService centreRegistrationPromptsService=null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService=null!;
-        private IJobGroupsDataService jobGroupsDataService=null!;
+        private IJobGroupsService jobGroupsService=null!;
         private IClockUtility clockUtility=null!;
         private static readonly List<int> EmptyListOfCentreIds = new List<int>();
         [SetUp]
@@ -41,8 +37,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             userService = A.Fake<IUserService>();
             userCentreAccountsService = A.Fake<IUserCentreAccountsService>();
 
-            controller = new UsersController(userDataService, centreRegistrationPromptsDataService,
-                                            searchSortFilterPaginateService, jobGroupsDataService,userCentreAccountsService, userService, clockUtility)
+            controller = new UsersController(centreRegistrationPromptsService,
+                                            searchSortFilterPaginateService, jobGroupsService,userCentreAccountsService, userService, clockUtility)
                 .WithDefaultContext()
                 .WithMockHttpContextSession()
                 .WithMockTempData();

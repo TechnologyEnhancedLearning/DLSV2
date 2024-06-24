@@ -68,7 +68,7 @@
             string? supervisorSurname,
             bool? supervisorAdminActive,
             DateTime enrolled,
-            DateTime lastUpdated,
+            DateTime? lastUpdated,
             DateTime? completeBy,
             DateTime? completed,
             DateTime? evaluated,
@@ -145,7 +145,7 @@
         public bool AllCentresCourse { get; set; }
         public int ProgressId { get; set; }
         public bool IsProgressLocked { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public DateTime? LastUpdated { get; set; }
         public DateTime? CompleteBy { get; set; }
         public DateTime? RemovedDate { get; set; }
         public DateTime? Completed { get; set; }

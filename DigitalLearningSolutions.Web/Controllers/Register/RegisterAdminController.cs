@@ -2,8 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
@@ -22,37 +20,31 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class RegisterAdminController : Controller
     {
-        private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
         private readonly IConfiguration config;
         private readonly ICryptoService cryptoService;
         private readonly IEmailVerificationService emailVerificationService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private readonly IRegisterAdminService registerAdminService;
         private readonly IRegistrationService registrationService;
-        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
         public RegisterAdminController(
-            ICentresDataService centresDataService,
             ICentresService centresService,
             ICryptoService cryptoService,
-            IJobGroupsDataService jobGroupsDataService,
+            IJobGroupsService jobGroupsService,
             IRegistrationService registrationService,
-            IUserDataService userDataService,
             IRegisterAdminService registerAdminService,
             IEmailVerificationService emailVerificationService,
             IUserService userService,
             IConfiguration config
         )
         {
-            this.centresDataService = centresDataService;
             this.centresService = centresService;
             this.cryptoService = cryptoService;
             this.emailVerificationService = emailVerificationService;
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.jobGroupsService = jobGroupsService;
             this.registrationService = registrationService;
-            this.userDataService = userDataService;
             this.registerAdminService = registerAdminService;
             this.userService = userService;
             this.config = config;
@@ -65,7 +57,7 @@
                 return RedirectToAction("Index", "RegisterInternalAdmin", new { centreId });
             }
 
-            if (!centreId.HasValue || centresDataService.GetCentreName(centreId.Value) == null)
+            if (!centreId.HasValue || centresService.GetCentreName(centreId.Value) == null)
             {
                 return NotFound();
             }
@@ -249,7 +241,7 @@
         {
             TempData.Clear();
 
-            var centreName = centresDataService.GetCentreName(centreId);
+            var centreName = centresService.GetCentreName(centreId);
 
             var model = new AdminConfirmationViewModel(primaryEmail, centreSpecificEmail, centreName!);
 
@@ -272,8 +264,8 @@
                        data.CentreSpecificEmail,
                        data.Centre.Value
                    ) &&
-                   !userDataService.PrimaryEmailIsInUse(data.PrimaryEmail) &&
-                   (data.CentreSpecificEmail == null || !userDataService.CentreSpecificEmailIsInUseAtCentre(
+                   !userService.PrimaryEmailIsInUse(data.PrimaryEmail) &&
+                   (data.CentreSpecificEmail == null || !userService.CentreSpecificEmailIsInUseAtCentre(
                        data.CentreSpecificEmail,
                        data.Centre.Value
                    ));
@@ -281,21 +273,21 @@
 
         private void SetCentreName(PersonalInformationViewModel model)
         {
-            model.CentreName = centresDataService.GetCentreName(model.Centre!.Value);
+            model.CentreName = centresService.GetCentreName(model.Centre!.Value);
         }
 
         private void SetJobGroupOptions(LearnerInformationViewModel model)
         {
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
-                jobGroupsDataService.GetJobGroupsAlphabetical(),
+                jobGroupsService.GetJobGroupsAlphabetical(),
                 model.JobGroup
             );
         }
 
         private void PopulateSummaryExtraFields(SummaryViewModel model, RegistrationData data)
         {
-            model.Centre = centresDataService.GetCentreName((int)data.Centre!);
-            model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
+            model.Centre = centresService.GetCentreName((int)data.Centre!);
+            model.JobGroup = jobGroupsService.GetJobGroupName((int)data.JobGroup!);
         }
 
         private void ValidateEmailAddresses(PersonalInformationViewModel model)
@@ -304,7 +296,7 @@
                 model.PrimaryEmail,
                 nameof(RegistrationData.PrimaryEmail),
                 ModelState,
-                userDataService,
+                userService,
                 CommonValidationErrorMessages.EmailInUseDuringAdminRegistration
             );
 
@@ -313,7 +305,7 @@
                 model.Centre,
                 nameof(RegistrationData.CentreSpecificEmail),
                 ModelState,
-                userDataService
+                userService
             );
 
             RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(

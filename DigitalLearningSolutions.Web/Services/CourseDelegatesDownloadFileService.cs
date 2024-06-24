@@ -547,7 +547,7 @@
             }
             row[DelegateId] = courseDelegate.CandidateNumber;
             row[Enrolled] = courseDelegate.Enrolled.Date;
-            row[LastAccessed] = courseDelegate.LastUpdated.Date;
+            row[LastAccessed] = courseDelegate.LastUpdated?.Date;
             row[CompleteBy] = courseDelegate.CompleteBy?.Date;
             row[CompletedDate] = courseDelegate.Completed?.Date;
             row[Logins] = courseDelegate.LoginCount;

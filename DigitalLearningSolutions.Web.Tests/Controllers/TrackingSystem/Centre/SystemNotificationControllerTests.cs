@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;    
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre;
@@ -23,18 +22,18 @@
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
-        private ISystemNotificationsDataService systemNotificationsDataService = null!;
+        private ISystemNotificationsService systemNotificationsService = null!;
 
         [SetUp]
         public void Setup()
         {
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
-            systemNotificationsDataService = A.Fake<ISystemNotificationsDataService>();
+            systemNotificationsService = A.Fake<ISystemNotificationsService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             controller =
                 new SystemNotificationsController(
-                        systemNotificationsDataService,
+                        systemNotificationsService,
                         clockUtility,
                         searchSortFilterPaginateService
                     )
@@ -51,7 +50,7 @@
             var testDate = new DateTime(2021, 8, 23);
             A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
             var expectedExpiry = testDate.AddHours(24);
-            A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
+            A.CallTo(() => systemNotificationsService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification> { SystemNotificationTestHelper.GetDefaultSystemNotification() });
 
             // When
@@ -80,7 +79,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => systemNotificationsDataService.AcknowledgeNotification(1, 7)).MustHaveHappened();
+                A.CallTo(() => systemNotificationsService.AcknowledgeNotification(1, 7)).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithControllerName("SystemNotifications")
                     .WithActionName("Index");
             }
@@ -93,7 +92,7 @@
             A.CallTo(() => httpRequest.Cookies).Returns(
                 ControllerContextHelper.SetUpFakeRequestCookieCollection(SystemNotificationCookieHelper.CookieName, "7")
             );
-            A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
+            A.CallTo(() => systemNotificationsService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification>());
 
             // When
@@ -110,7 +109,7 @@
             A.CallTo(() => httpRequest.Cookies).Returns(
                 ControllerContextHelper.SetUpFakeRequestCookieCollection(SystemNotificationCookieHelper.CookieName, "8")
             );
-            A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
+            A.CallTo(() => systemNotificationsService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification>());
 
             // When
@@ -128,7 +127,7 @@
             A.CallTo(() => httpRequest.Cookies).Returns(
                 A.Fake<IRequestCookieCollection>()
             );
-            A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
+            A.CallTo(() => systemNotificationsService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification>());
 
             // When

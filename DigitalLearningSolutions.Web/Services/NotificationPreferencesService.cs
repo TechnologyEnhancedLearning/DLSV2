@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Web.Services
     {
         IEnumerable<NotificationPreference> GetNotificationPreferencesForUser(UserType userType, int? userId);
         void SetNotificationPreferencesForUser(UserType userType, int? userId, IEnumerable<int> notificationIds);
+        void SetNotificationPreferencesForAdmin(int? adminId, IEnumerable<int> notificationIds);
     }
 
     public class NotificationPreferencesService : INotificationPreferencesService
@@ -34,6 +35,11 @@ namespace DigitalLearningSolutions.Web.Services
             }
 
             throw new Exception($"No code path for getting notification preferences for user type {userType}");
+        }
+
+        public void SetNotificationPreferencesForAdmin(int? adminId, IEnumerable<int> notificationIds)
+        {
+            notificationPreferencesDataService.SetNotificationPreferencesForAdmin(adminId, notificationIds);
         }
 
         public void SetNotificationPreferencesForUser(UserType userType, int? userId, IEnumerable<int> notificationIds)

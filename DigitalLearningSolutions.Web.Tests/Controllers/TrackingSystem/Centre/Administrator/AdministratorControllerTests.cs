@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Administrator
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -22,12 +20,11 @@
     {
         private AdministratorController administratorController = null!;
         private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
-        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private ICourseCategoriesService courseCategoriesService = null!;
         const string CookieName = "AdminFilter";
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IEmailService emailService = null!;
         private IEmailGenerationService emailGenerationService = null!;
@@ -35,8 +32,7 @@
         [SetUp]
         public void Setup()
         {
-            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
-            userDataService = A.Fake<IUserDataService>();
+            courseCategoriesService = A.Fake<ICourseCategoriesService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             userService = A.Fake<IUserService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
@@ -48,8 +44,7 @@
             const string cookieValue = "Role|IsCentreAdmin|true";
 
             administratorController = new AdministratorController(
-                    userDataService,
-                    courseCategoriesDataService,
+                    courseCategoriesService,
                     centreContractAdminUsageService,
                     userService,
                     searchSortFilterPaginateService,
@@ -71,8 +66,8 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.GetAdminsByCentreId(A<int>._)).MustHaveHappened();
-                A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
+                A.CallTo(() => userService.GetAdminsByCentreId(A<int>._)).MustHaveHappened();
+                A.CallTo(() => courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                     .MustHaveHappened();
                 A.CallTo(
                     () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
@@ -98,7 +93,7 @@
             // Given
             var adminAccount = UserTestHelper.GetDefaultAdminAccount();
             A.CallTo(() => userService.ResetFailedLoginCountByUserId(A<int>._)).DoesNothing();
-            A.CallTo(() => userDataService.GetUserIdByAdminId(adminAccount.Id)).Returns(adminAccount.UserId);
+            A.CallTo(() => userService.GetUserIdByAdminId(adminAccount.Id)).Returns(adminAccount.UserId);
 
             // When
             var result = administratorController.UnlockAccount(adminAccount.Id);
@@ -116,7 +111,7 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
 
             // When
             var result = administratorController.DeactivateOrDeleteAdmin(
@@ -136,8 +131,8 @@
             var admin = UserTestHelper.GetDefaultAdminEntity(8);
             var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
 
-            A.CallTo(() => userDataService.GetAdminById(admin.AdminAccount.Id)).Returns(admin);
-            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
+            A.CallTo(() => userService.GetAdminById(admin.AdminAccount.Id)).Returns(admin);
+            A.CallTo(() => userService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
 
             var deactivateViewModel =
                 Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = false).Build();
@@ -156,7 +151,7 @@
                 administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)]?.Errors[0].ErrorMessage
                     .Should()
                     .BeEquivalentTo(expectedErrorMessage);
-                A.CallTo(() => userDataService.DeactivateAdmin(admin.AdminAccount.Id)).MustNotHaveHappened();
+                A.CallTo(() => userService.DeactivateAdmin(admin.AdminAccount.Id)).MustNotHaveHappened();
             }
         }
 
@@ -167,8 +162,8 @@
             var admin = UserTestHelper.GetDefaultAdminEntity(8);
             var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
 
-            A.CallTo(() => userDataService.GetAdminById(admin.AdminAccount.Id)).Returns(admin);
-            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
+            A.CallTo(() => userService.GetAdminById(admin.AdminAccount.Id)).Returns(admin);
+            A.CallTo(() => userService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
 
             A.CallTo(() => userService.DeactivateOrDeleteAdmin(admin.AdminAccount.Id)).DoesNothing();
             var deactivateViewModel =
@@ -190,8 +185,8 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).DoesNothing();
+            A.CallTo(() => userService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userService.DeactivateAdmin(adminUser.Id)).DoesNothing();
             var deactivateViewModel =
                 Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = true).Build();
 
@@ -201,7 +196,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).MustNotHaveHappened();
+                A.CallTo(() => userService.DeactivateAdmin(adminUser.Id)).MustNotHaveHappened();
                 result.Should().BeStatusCodeResult().WithStatusCode(410);
             }
         }

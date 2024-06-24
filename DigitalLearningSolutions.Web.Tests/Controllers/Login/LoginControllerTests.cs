@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
     using System.Security.Claims;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -40,7 +41,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
         private ILoginService loginService = null!;
         private ISessionService sessionService = null!;
         private IUrlHelper urlHelper = null!;
-        private IConfigDataService configDataService = null!;
+        private IConfigService configService = null!;
         private IUserService userService = null!;
         private IConfiguration config = null!;
         private ILearningHubUserApiClient apiClient = null!;
@@ -53,11 +54,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             logger = A.Fake<ILogger<LoginController>>();
             userService = A.Fake<IUserService>();
             urlHelper = A.Fake<IUrlHelper>();
-            configDataService = A.Fake<IConfigDataService>();
+            configService = A.Fake<IConfigService>();
             clockUtility = A.Fake<IClockUtility>();
             config = A.Fake<IConfiguration>();
             apiClient = A.Fake<ILearningHubUserApiClient>();
-            
+
 
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
@@ -67,7 +68,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                     logger,
                     userService,
                     clockUtility,
-                    configDataService,
+                    configService,
                     config,
                     apiClient
                 )
@@ -88,7 +89,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                     logger,
                     userService,
                     clockUtility,
-                    configDataService,
+                    configService,
                     config,
                     apiClient
                 )
@@ -759,8 +760,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
         {
             // Arrange
             var supportEmail = "support@example.com";
-            A.CallTo(() => configDataService
-                .GetConfigValue(ConfigDataService.SupportEmail))
+            A.CallTo(() => configService
+                .GetConfigValue(ConfigConstants.SupportEmail))
                 .Returns(supportEmail);
 
             // Act
@@ -790,8 +791,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
         {
             // Arrange
             var supportEmail = "support@example.com";
-            A.CallTo(() => configDataService
-                .GetConfigValue(ConfigDataService.SupportEmail))
+            A.CallTo(() => configService
+                .GetConfigValue(ConfigConstants.SupportEmail))
                 .Returns(supportEmail);
 
             // Act
@@ -865,7 +866,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                    logger,
                    userService,
                    clockUtility,
-                   configDataService,
+                   configService,
                    config,
                    apiClient
                )
@@ -903,7 +904,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                    logger,
                    userService,
                    clockUtility,
-                   configDataService,
+                   configService,
                    config,
                    apiClient
                )
@@ -941,7 +942,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
                    logger,
                    userService,
                    clockUtility,
-                   configDataService,
+                   configService,
                    config,
                    apiClient
                )

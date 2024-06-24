@@ -38,7 +38,7 @@
                         A.Fake<IFrameworkNotificationService>(),
                         A.Fake<ILogger<FrameworksController>>(),
                         A.Fake<IImportCompetenciesFromFileService>(),
-                        A.Fake<ICompetencyLearningResourcesDataService>(),
+                        A.Fake<ICompetencyLearningResourcesService>(),
                         A.Fake<ILearningHubApiClient>(),
                         A.Fake<ISearchSortFilterPaginateService>(),
                         A.Fake<IMultiPageFormService>()

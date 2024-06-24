@@ -3,12 +3,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -33,7 +31,7 @@
     {
         private const string IpAddress = "1.1.1.1";
         private const int UserId = 2;
-        private ICentresDataService centresDataService = null!;
+        private ICentresService centresService = null!;
         private IConfiguration config = null!;
         private RegisterAtNewCentreController controller = null!;
         private IEmailVerificationService emailVerificationService = null!;
@@ -42,17 +40,15 @@
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private ISupervisorService supervisorService = null!;
 
         [SetUp]
         public void Setup()
         {
-            centresDataService = A.Fake<ICentresDataService>();
+            centresService = A.Fake<ICentresService>();
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
-            userDataService = A.Fake<IUserDataService>();
             supervisorService = A.Fake<ISupervisorService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
@@ -62,7 +58,7 @@
             request = A.Fake<HttpRequest>();
 
             controller = new RegisterAtNewCentreController(
-                    centresDataService,
+                    centresService,
                     config,
                     emailVerificationService,
                     featureManager,
@@ -70,7 +66,6 @@
                     registrationService,
                     supervisorDelegateService,
                     userService,
-                    userDataService,
                     supervisorService
                 )
                 .WithDefaultContext()
@@ -85,13 +80,13 @@
         {
             // Given
             const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(null);
+            A.CallTo(() => centresService.GetCentreName(centreId)).Returns(null);
 
             // When
             var result = controller.Index(centreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeNotFoundResult();
         }
 
@@ -100,13 +95,13 @@
         {
             // Given
             const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
+            A.CallTo(() => centresService.GetCentreName(centreId)).Returns("Some centre");
 
             // When
             var result = controller.Index(centreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             var data = controller.TempData.Peek<InternalDelegateRegistrationData>()!;
             data.Centre.Should().Be(centreId);
             data.IsCentreSpecificRegistration.Should().BeTrue();
@@ -120,7 +115,7 @@
             var result = controller.Index();
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => centresService.GetCentreName(A<int>._)).MustNotHaveHappened();
             var data = controller.TempData.Peek<InternalDelegateRegistrationData>()!;
             data.Centre.Should().BeNull();
             data.IsCentreSpecificRegistration.Should().BeFalse();
@@ -140,7 +135,7 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         centreId,
                         userAccount.Id
@@ -156,7 +151,7 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         centreId,
                         userAccount.Id
@@ -187,7 +182,7 @@
 
             // Then
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     A<string>._,
                     A<int>._,
                     A<int>._
@@ -207,7 +202,7 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         model.Centre!.Value,
                         UserId
@@ -220,7 +215,7 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    () => userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         model.Centre!.Value,
                         UserId

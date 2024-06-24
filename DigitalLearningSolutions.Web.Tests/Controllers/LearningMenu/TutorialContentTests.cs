@@ -17,7 +17,7 @@
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
             const int progressId = 3;
 
-            A.CallTo(() => tutorialContentDataService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
                 .Returns(expectedTutorialContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
@@ -40,7 +40,7 @@
             // Given
             const int progressId = 3;
 
-            A.CallTo(() => tutorialContentDataService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
                 .Returns(null);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
@@ -59,7 +59,7 @@
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
 
-            A.CallTo(() => tutorialContentDataService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
                 .Returns(expectedTutorialContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(null);
@@ -79,7 +79,7 @@
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
             const int progressId = 3;
 
-            A.CallTo(() => tutorialContentDataService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
                 .Returns(expectedTutorialContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
@@ -100,7 +100,7 @@
             // Given
             const int progressId = 3;
 
-            A.CallTo(() => tutorialContentDataService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
                 .Returns(null);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
@@ -118,7 +118,7 @@
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
 
-            A.CallTo(() => tutorialContentDataService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
                 .Returns(expectedTutorialContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(null);
@@ -137,7 +137,7 @@
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
             const int progressId = 101;
 
-            A.CallTo(() => tutorialContentDataService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
                 .Returns(expectedTutorialContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
@@ -167,7 +167,7 @@
             // Given
             const int progressId = 101;
 
-            A.CallTo(() => tutorialContentDataService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
                 .Returns(null);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
@@ -189,7 +189,7 @@
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
 
-            A.CallTo(() => tutorialContentDataService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CustomisationId, SectionId, TutorialId))
                 .Returns(expectedTutorialContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(null);

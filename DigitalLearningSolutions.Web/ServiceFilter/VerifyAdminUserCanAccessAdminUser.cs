@@ -3,16 +3,16 @@
     using System.Net;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
 
     public class VerifyAdminUserCanAccessAdminUser : IActionFilter
     {
-        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
-        public VerifyAdminUserCanAccessAdminUser(IUserDataService userDataService)
+        public VerifyAdminUserCanAccessAdminUser(IUserService userService)
         {
-            this.userDataService = userDataService;
+            this.userService = userService;
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
@@ -26,7 +26,7 @@
 
             var centreId = controller.User.GetCentreIdKnownNotNull();
             var adminUserId = int.Parse(context.RouteData.Values["adminId"].ToString()!);
-            var adminAccount = userDataService.GetAdminUserById(adminUserId);
+            var adminAccount = userService.GetAdminUserById(adminUserId);
 
             if (adminAccount == null)
             {

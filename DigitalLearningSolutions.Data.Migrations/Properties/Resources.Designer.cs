@@ -1666,7 +1666,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- 2: Complete
         ///-- 3: Current
         ///-- =============================================
-        ///-- 18/09/2018 Adds return val of 4 for [rest of string was truncated]&quot;;.
+        ///-- 18/09/2018 Adds re [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_3671_Alter_CheckDelegateStatusForCustomisation_func_down {
             get {
@@ -1713,7 +1713,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns a list of active progress records for the candidate.
         ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
         ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[GetCu [rest of string was truncated]&quot;;.
+        ///ALTER PROCEDURE [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_down {
             get {
@@ -1736,9 +1736,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- =============================================
         ///ALTER PROCEDURE [db [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc1_up {
+        internal static string TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_up {
             get {
-                return ResourceManager.GetString("TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc1_up", resourceCulture);
+                return ResourceManager.GetString("TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_up", resourceCulture);
             }
         }
         

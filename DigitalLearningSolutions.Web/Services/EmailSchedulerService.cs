@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DigitalLearningSolutions.Data.Constants;
 using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Factories;
 using DigitalLearningSolutions.Data.Models.Email;
@@ -108,27 +109,27 @@ namespace DigitalLearningSolutions.Web.Services
         private (string MailServerUsername, string MailServerPassword, string MailServerAddress, int MailServerPort,
             string MailSenderAddress) GetMailConfig()
         {
-            var mailServerUsername = configDataService.GetConfigValue(ConfigDataService.MailUsername)
+            var mailServerUsername = configDataService.GetConfigValue(ConfigConstants.MailUsername)
                                      ?? throw new ConfigValueMissingException
                                      (
                                          configDataService.GetConfigValueMissingExceptionMessage("MailServerUsername")
                                      );
-            var mailServerPassword = configDataService.GetConfigValue(ConfigDataService.MailPassword)
+            var mailServerPassword = configDataService.GetConfigValue(ConfigConstants.MailPassword)
                                      ?? throw new ConfigValueMissingException
                                      (
                                          configDataService.GetConfigValueMissingExceptionMessage("MailServerPassword")
                                      );
-            var mailServerAddress = configDataService.GetConfigValue(ConfigDataService.MailServer)
+            var mailServerAddress = configDataService.GetConfigValue(ConfigConstants.MailServer)
                                     ?? throw new ConfigValueMissingException
                                     (
                                         configDataService.GetConfigValueMissingExceptionMessage("MailServerAddress")
                                     );
-            var mailServerPortString = configDataService.GetConfigValue(ConfigDataService.MailPort)
+            var mailServerPortString = configDataService.GetConfigValue(ConfigConstants.MailPort)
                                        ?? throw new ConfigValueMissingException
                                        (
                                            configDataService.GetConfigValueMissingExceptionMessage("MailServerPortString")
                                        );
-            var mailSenderAddress = configDataService.GetConfigValue(ConfigDataService.MailFromAddress)
+            var mailSenderAddress = configDataService.GetConfigValue(ConfigConstants.MailFromAddress)
                                     ?? throw new ConfigValueMissingException
                                     (
                                         configDataService.GetConfigValueMissingExceptionMessage("MailFromAddress")

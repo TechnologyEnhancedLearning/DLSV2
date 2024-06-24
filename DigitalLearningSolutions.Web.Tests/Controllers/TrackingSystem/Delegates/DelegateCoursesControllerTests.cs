@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -51,8 +50,8 @@
         private HttpResponse httpResponse = null!;
         private IPaginateService paginateService = null!;
         private IActivityService activityService = null!;
-        private ICourseCategoriesDataService courseCategoriesDataService = null!;
-        private ICourseTopicsDataService courseTopicsDataService = null!;
+        private ICourseCategoriesService courseCategoriesService = null!;
+        private ICourseTopicsService courseTopicsService = null!;
 
         [SetUp]
         public void Setup()
@@ -61,8 +60,8 @@
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
             activityService = A.Fake<IActivityService>();
             paginateService = A.Fake<IPaginateService>();
-            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
-            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
+            courseCategoriesService = A.Fake<ICourseCategoriesService>();
+            courseTopicsService = A.Fake<ICourseTopicsService>();
             A.CallTo(() => activityService.GetCourseCategoryNameForActivityFilter(A<int>._))
               .Returns("All");
             A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._, A<string?>._, A<string?>._, A<string?>._, A<string>._))
@@ -80,8 +79,8 @@
                     courseDelegatesDownloadFileService,
                     paginateService,
                     activityService,
-                    courseCategoriesDataService,
-                    courseTopicsDataService
+                    courseCategoriesService,
+                    courseTopicsService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)

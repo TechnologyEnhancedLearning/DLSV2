@@ -1,8 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Common;
@@ -28,17 +26,15 @@
     public class PromoteToAdminController : Controller
     {
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly ICourseCategoriesService courseCategoriesService;
         private readonly ILogger<PromoteToAdminController> logger;
         private readonly IRegistrationService registrationService;
-        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
         private readonly IEmailGenerationService emailGenerationService;
         private readonly IEmailService emailService;
 
         public PromoteToAdminController(
-            IUserDataService userDataService,
-            ICourseCategoriesDataService courseCategoriesDataService,
+            ICourseCategoriesService courseCategoriesService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
             IRegistrationService registrationService,
             ILogger<PromoteToAdminController> logger,
@@ -47,8 +43,7 @@
             IEmailService emailService
         )
         {
-            this.userDataService = userDataService;
-            this.courseCategoriesDataService = courseCategoriesDataService;
+            this.courseCategoriesService = courseCategoriesService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.registrationService = registrationService;
             this.logger = logger;
@@ -61,10 +56,10 @@
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+            var userId = userService.GetUserIdFromDelegateId(delegateId);
             var userEntity = userService.GetUserById(userId);
 
-            if(TempData["IsDelegatePromoted"] != null)
+            if (TempData["IsDelegatePromoted"] != null)
             {
                 TempData.Remove("IsDelegatePromoted");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
@@ -74,7 +69,7 @@
                 return NotFound();
             }
 
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            var categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
@@ -104,10 +99,10 @@
                 adminRoles.IsContentManager))
             {
                 var centreId = User.GetCentreIdKnownNotNull();
-                var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+                var userId = userService.GetUserIdFromDelegateId(delegateId);
                 var userEntity = userService.GetUserById(userId);
 
-                var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+                var categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
                 categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
                 var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
@@ -142,7 +137,7 @@
                     false
                 );
 
-                var delegateUserEmailDetails = userDataService.GetDelegateById(delegateId);
+                var delegateUserEmailDetails = userService.GetDelegateById(delegateId);
 
                 if (delegateUserEmailDetails != null)
                 {

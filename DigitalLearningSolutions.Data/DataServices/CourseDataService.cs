@@ -864,7 +864,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
-            return connection.Query<DelegateCourseInfo>(
+                return connection.Query<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND pr.RemovedDate IS NULL
@@ -910,7 +910,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         da.CentreID,
                         ap.ArchivedDate",
                 new { delegateId }
-            );
+            );            
         }
 
         public DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId)

@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
@@ -80,9 +78,8 @@
             var controller = new MyAccountController(
                 A.Fake<ICentreRegistrationPromptsService>(),
                 A.Fake<IUserService>(),
-                A.Fake<IUserDataService>(),
                 A.Fake<IImageResizeService>(),
-                A.Fake<IJobGroupsDataService>(),
+                A.Fake<IJobGroupsService>(),
                 A.Fake<IEmailVerificationService>(),
                 A.Fake<PromptsService>(),
                 A.Fake<ILogger<MyAccountController>>(),
@@ -143,9 +140,8 @@
             var controller = new MyAccountController(
                 A.Fake<ICentreRegistrationPromptsService>(),
                 A.Fake<IUserService>(),
-                A.Fake<IUserDataService>(),
                 A.Fake<IImageResizeService>(),
-                A.Fake<IJobGroupsDataService>(),
+                A.Fake<IJobGroupsService>(),
                 A.Fake<IEmailVerificationService>(),
                 A.Fake<PromptsService>(),
                 A.Fake<ILogger<MyAccountController>>(),

@@ -13,6 +13,7 @@
         public string? SelfAssessmentSupervisorRoleName { get; set; }
         public int? SupervisorID { get; set; }
         public string? SupervisorName { get; set; }
+        public string? SupervisorEmail { get; set; }
         public bool IsSelfAssessment { get; set; }
         public int AssessmentVersion { get; set; }
     }

@@ -1,4 +1,5 @@
-﻿using DigitalLearningSolutions.Data.DataServices;
+﻿using DigitalLearningSolutions.Data.Constants;
+using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.Common;
 using FreshdeskApi.Client;
 using FreshdeskApi.Client.CommonModels;
@@ -33,8 +34,8 @@ namespace DigitalLearningSolutions.Data.ApiClients
         {
 
             this.configDataService = configDataService;
-            string freshdeskApiKey = configDataService.GetConfigValue(ConfigDataService.FreshdeskApiKey);
-            string freshdeskApiBaseUri = configDataService.GetConfigValue(ConfigDataService.FreshdeskApiBaseUri);
+            string freshdeskApiKey = configDataService.GetConfigValue(ConfigConstants.FreshdeskApiKey);
+            string freshdeskApiBaseUri = configDataService.GetConfigValue(ConfigConstants.FreshdeskApiBaseUri);
 
             freshdeskHttpClient = FreshdeskHttpClient.Create(freshdeskApiBaseUri, freshdeskApiKey);
 
@@ -44,7 +45,7 @@ namespace DigitalLearningSolutions.Data.ApiClients
         {
 
             FreshDeskApiResponse createRequestApiResponse = new FreshDeskApiResponse();
-            string freshdeskAPICreateTicketUri = configDataService.GetConfigValue(ConfigDataService.FreshdeskAPICreateTicketUri);
+            string freshdeskAPICreateTicketUri = configDataService.GetConfigValue(ConfigConstants.FreshdeskAPICreateTicketUri);
 
             try
             {
@@ -112,10 +113,10 @@ namespace DigitalLearningSolutions.Data.ApiClients
             if (result.ListExportErrors is { Count: > 0 })
             {
                 statusMeaning = result.Description;
-               
+
                 foreach (var resultListExportError in result.ListExportErrors)
                 {
-                    fullErrorMessage += resultListExportError.Field + ": " + resultListExportError.Message + ";\n"; 
+                    fullErrorMessage += resultListExportError.Field + ": " + resultListExportError.Message + ";\n";
                 }
             }
             else

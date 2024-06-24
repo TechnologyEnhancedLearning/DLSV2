@@ -1,8 +1,6 @@
 ﻿
 namespace DigitalLearningSolutions.Web.Controllers.Support
 {
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc;
@@ -32,26 +30,26 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
     public class RequestSupportTicketController : Controller
     {
         private readonly IConfiguration configuration;
-        private readonly IUserDataService userDataService;
-        private readonly ICentresDataService centresDataService;
+        private readonly IUserService userService;
+        private readonly ICentresService centresService;
         private readonly IWebHostEnvironment webHostEnvironment;
-        private readonly IRequestSupportTicketDataService requestSupportTicketDataService;
+        private readonly IRequestSupportTicketService requestSupportTicketService;
         private readonly IFreshdeskService freshdeskService;
         private readonly IMultiPageFormService multiPageFormService;
         string uploadDir = string.Empty;
         public RequestSupportTicketController(IConfiguration configuration
-                                        , IUserDataService userDataService
-                                        , ICentresDataService centresDataService
+                                        , IUserService userService
+                                        , ICentresService centresService
                                         , IWebHostEnvironment webHostEnvironment
-                                        , IRequestSupportTicketDataService requestSupportTicketDataService
+                                        , IRequestSupportTicketService requestSupportTicketService
                                         , IFreshdeskService freshdeskService
                                         , IMultiPageFormService multiPageFormService)
         {
             this.configuration = configuration;
-            this.userDataService = userDataService;
-            this.centresDataService = centresDataService;
+            this.userService = userService;
+            this.centresService = centresService;
             this.webHostEnvironment = webHostEnvironment;
-            this.requestSupportTicketDataService = requestSupportTicketDataService;
+            this.requestSupportTicketService = requestSupportTicketService;
             this.freshdeskService = freshdeskService;
             this.multiPageFormService = multiPageFormService;
             uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
@@ -65,10 +63,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
                 configuration.GetCurrentSystemBaseUrl()
             );
             var centreId = User.GetCentreIdKnownNotNull();
-            var userName = userDataService.GetUserDisplayName(User.GetUserId() ?? 0);
-            var userCentreEmail = requestSupportTicketDataService.GetUserCentreEmail(User.GetUserId() ?? 0, centreId);
+            var userName = userService.GetUserDisplayName(User.GetUserId() ?? 0);
+            var userCentreEmail = requestSupportTicketService.GetUserCentreEmail(User.GetUserId() ?? 0, centreId);
             var adminUserID = User.GetAdminId();
-            var centreName = centresDataService.GetCentreName(centreId);
+            var centreName = centresService.GetCentreName(centreId);
             setupRequestSupportData(userName, userCentreEmail, adminUserID ?? 0, centreName);
             return View("Request", model);
         }
@@ -76,7 +74,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         [Route("/{dlsSubApplication}/RequestSupport/TypeofRequest")]
         public IActionResult TypeofRequest(DlsSubApplication dlsSubApplication)
         {
-            var requestTypes = requestSupportTicketDataService.GetRequestTypes();
+            var requestTypes = requestSupportTicketService.GetRequestTypes();
             var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
                 MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
                 TempData
@@ -89,7 +87,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         [Route("/{dlsSubApplication}/RequestSupport/setRequestType")]
         public IActionResult setRequestType(DlsSubApplication dlsSubApplication, RequestTypeViewModel RequestTypemodel, int requestType)
         {
-            var requestTypes = requestSupportTicketDataService.GetRequestTypes();
+            var requestTypes = requestSupportTicketService.GetRequestTypes();
             var reqType = requestTypes.ToList().Where(x => x.ID == requestType)
                 .Select(ticketRequestTypes => new { ticketRequestTypes.RequestTypes, ticketRequestTypes.FreshdeskRequestTypes }).FirstOrDefault();
 

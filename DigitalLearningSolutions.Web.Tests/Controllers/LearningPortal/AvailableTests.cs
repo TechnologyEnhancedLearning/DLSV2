@@ -21,7 +21,7 @@
                 AvailableCourseHelper.CreateDefaultAvailableCourse(),
                 AvailableCourseHelper.CreateDefaultAvailableCourse(),
             };
-            A.CallTo(() => courseDataService.GetAvailableCourses(CandidateId, CentreId)).Returns(availableCourses);
+            A.CallTo(() => courseService.GetAvailableCourses(CandidateId, CentreId)).Returns(availableCourses);
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AvailableCourse>(
                     searchSortFilterPaginateService
@@ -50,7 +50,7 @@
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var availableViewModel = AvailableCourseHelper.AvailableViewModelFromController(controller);

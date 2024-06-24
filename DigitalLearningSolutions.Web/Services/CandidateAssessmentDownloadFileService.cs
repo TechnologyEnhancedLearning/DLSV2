@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Web.Services
 {
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;

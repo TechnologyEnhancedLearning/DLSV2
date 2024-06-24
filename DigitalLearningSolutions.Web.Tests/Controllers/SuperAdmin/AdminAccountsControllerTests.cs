@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Controllers.SuperAdmin.Administrators;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -19,15 +17,14 @@
     public class AdminAccountsControllerTests
     {
         private AdminAccountsController administratorsController = null!;
-        private IUserDataService userDataService = null!;
         private IAdminDownloadFileService adminDownloadFileService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
-        private ICentresDataService centresDataService = null!;
-        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private ICentresService centresService = null!;
+        private ICourseCategoriesService courseCategoriesService = null!;
         private IUserService userService = null!;
         private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
-        private INotificationPreferencesDataService notificationPreferencesDataService = null!;
-        private INotificationDataService notificationDataService = null!;
+        private INotificationPreferencesService notificationPreferencesService = null!;
+        private INotificationService notificationService = null!;
         const string CookieName = "AdminFilter";
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -35,30 +32,28 @@
         [SetUp]
         public void Setup()
         {
-            userDataService = A.Fake <IUserDataService>();
-            centresDataService = A.Fake <ICentresDataService>();
-            searchSortFilterPaginateService = A.Fake <ISearchSortFilterPaginateService>();
-            adminDownloadFileService = A.Fake <IAdminDownloadFileService>();
-            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
+            centresService = A.Fake<ICentresService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            adminDownloadFileService = A.Fake<IAdminDownloadFileService>();
+            courseCategoriesService = A.Fake<ICourseCategoriesService>();
             userService = A.Fake<IUserService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
-            notificationPreferencesDataService = A.Fake<INotificationPreferencesDataService>();
-            notificationDataService = A.Fake<INotificationDataService>();
+            notificationPreferencesService = A.Fake<INotificationPreferencesService>();
+            notificationService = A.Fake<INotificationService>();
 
-        httpRequest = A.Fake<HttpRequest>();
+            httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieValue = "Role|IsCentreAdmin|true";
 
             administratorsController = new AdminAccountsController(
-                    userDataService,
-                    centresDataService,
+                    centresService,
                     searchSortFilterPaginateService,
                     adminDownloadFileService,
-                    courseCategoriesDataService,
+                    courseCategoriesService,
                     userService,
                     centreContractAdminUsageService,
-                    notificationPreferencesDataService,
-                    notificationDataService
+                    notificationPreferencesService,
+                    notificationService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -71,7 +66,7 @@
         {
             // Given
             var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
-            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
+            A.CallTo(() => userService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
 
             // When
             var result = administratorsController.Index();
@@ -79,15 +74,15 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.GetAllAdmins(A<string>._, A<int>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int>._)).MustHaveHappened();
-                A.CallTo(() => centresDataService.GetAllCentres(false)).MustHaveHappened();
+                A.CallTo(() => userService.GetAllAdmins(A<string>._, A<int>._, A<int>._, A<int>._, A<string>._, A<string>._, A<int>._, A<int>._)).MustHaveHappened();
+                A.CallTo(() => centresService.GetAllCentres(false)).MustHaveHappened();
                 A.CallTo(
                     () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                         A<IEnumerable<AdminEntity>>._,
                         A<SearchSortFilterAndPaginateOptions>._
                     )
                 ).MustHaveHappened();
-                
+
                 result.Should().BeViewResult().WithDefaultViewName();
             }
         }
@@ -98,7 +93,7 @@
             int adminId = 1;
             var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
 
-            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
+            A.CallTo(() => userService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
 
             // When
             var result = administratorsController.EditCentre(adminId);
@@ -106,8 +101,8 @@
             //Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.GetAdminUserById(adminId)).MustHaveHappened();
-                A.CallTo(() => centresDataService.GetAllCentres(true)).MustHaveHappened();
+                A.CallTo(() => userService.GetAdminUserById(adminId)).MustHaveHappened();
+                A.CallTo(() => centresService.GetAllCentres(true)).MustHaveHappened();
                 result.Should().BeViewResult().WithDefaultViewName();
             }
         }

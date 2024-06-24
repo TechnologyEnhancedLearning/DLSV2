@@ -4,9 +4,10 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
@@ -51,7 +52,7 @@
                 .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(DefaultUserId))
                 .Returns(new List<AdminAccount>());
-            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.SupportEmail))
+            A.CallTo(() => configDataService.GetConfigValue(ConfigConstants.SupportEmail))
                 .Returns(DefaultSupportEmail);
 
             // When

@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 {
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
@@ -35,16 +34,16 @@
         public const string BulkAction = "bulk";
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IMultiPageFormService multiPageFormService;
-        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public RegistrationPromptsController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
-            IUserDataService userDataService,
+            IUserService userService,
             IMultiPageFormService multiPageFormService
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
-            this.userDataService = userDataService;
+            this.userService = userService;
             this.multiPageFormService = multiPageFormService;
         }
 
@@ -366,7 +365,7 @@
         public IActionResult RemoveRegistrationPrompt(int promptNumber)
         {
             var delegateWithAnswerCount =
-                userDataService.GetDelegateCountWithAnswerForPrompt(User.GetCentreIdKnownNotNull(), promptNumber);
+                userService.GetDelegateCountWithAnswerForPrompt(User.GetCentreIdKnownNotNull(), promptNumber);
 
             if (delegateWithAnswerCount == 0)
             {

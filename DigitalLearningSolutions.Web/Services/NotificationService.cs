@@ -22,6 +22,7 @@
             int completionStatus,
             int numLearningLogItemsAffected
         );
+        IEnumerable<int> GetRoleBasedNotifications(int isCentreManager, int isContentManager, int isContentCreator);
     }
 
     public class NotificationService : INotificationService
@@ -202,6 +203,11 @@
             }
 
             return emailsToCc.Any() ? emailsToCc.ToArray() : null;
+        }
+
+        public IEnumerable<int> GetRoleBasedNotifications(int isCentreManager, int isContentManager, int isContentCreator)
+        {
+            return notificationDataService.GetRoleBasedNotifications(isCentreManager, isContentManager, isContentCreator);
         }
     }
 }

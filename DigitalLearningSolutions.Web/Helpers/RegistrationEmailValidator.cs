@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -13,13 +11,13 @@
             string? primaryEmail,
             string nameOfFieldToValidate,
             ModelStateDictionary modelState,
-            IUserDataService userDataService,
+            IUserService userService,
             string errorMessage
         )
         {
             if (
                 IsValidationNecessary(primaryEmail, nameOfFieldToValidate, modelState) &&
-                (userDataService.PrimaryEmailIsInUse(primaryEmail!) || userDataService.PrimaryEmailInUseAtCentres(primaryEmail!))
+                (userService.PrimaryEmailIsInUse(primaryEmail!) || userService.PrimaryEmailInUseAtCentres(primaryEmail!))
             )
             {
                 modelState.AddModelError(nameOfFieldToValidate, errorMessage);
@@ -31,7 +29,7 @@
             int? centreId,
             string nameOfFieldToValidate,
             ModelStateDictionary modelState,
-            IUserDataService userDataService
+            IUserService userService
         )
         {
             if (
@@ -39,11 +37,11 @@
                 IsValidationNecessary(centreEmail, nameOfFieldToValidate, modelState)
                 )
                 {
-                    if (userDataService.CentreSpecificEmailIsInUseAtCentre(centreEmail!, centreId.Value))
+                    if (userService.CentreSpecificEmailIsInUseAtCentre(centreEmail!, centreId.Value))
                     {
                         modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);
                     }
-                    else if (userDataService.PrimaryEmailIsInUse(centreEmail!))
+                    else if (userService.PrimaryEmailIsInUse(centreEmail!))
                     {
                         modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.PrimaryEmailInUseDuringDelegateRegistration);
                     }
@@ -76,13 +74,13 @@
             int userId,
             string nameOfFieldToValidate,
             ModelStateDictionary modelState,
-            IUserDataService userDataService
+            IUserService userService
         )
         {
             if (
                 centreId.HasValue &&
                 IsValidationNecessary(centreEmail, nameOfFieldToValidate, modelState) &&
-                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(centreEmail!, centreId.Value, userId)
+                userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(centreEmail!, centreId.Value, userId)
             )
             {
                 modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);

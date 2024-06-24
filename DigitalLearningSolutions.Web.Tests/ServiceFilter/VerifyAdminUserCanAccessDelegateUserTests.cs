@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
-    using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;    
+    using System.Collections.Generic;  
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
@@ -19,7 +18,7 @@
 
     internal class VerifyAdminUserCanAccessDelegateUserTests
     {
-        private readonly IUserDataService userDataService = A.Fake<IUserDataService>();
+        private readonly IUserService userService = A.Fake<IUserService>();
         private ActionExecutingContext context = null!;
         private const int DelegateId = 2;
 
@@ -45,11 +44,11 @@
         {
             // Given
             context.RouteData.Values["delegateId"] = DelegateId;
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
+            A.CallTo(() => userService.GetDelegateUserById(DelegateId))
                 .Returns(null);
 
             // When
-            new VerifyAdminUserCanAccessDelegateUser(userDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessDelegateUser(userService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -60,11 +59,11 @@
         {
             // Given
             context.RouteData.Values["delegateId"] = DelegateId;
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
+            A.CallTo(() => userService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(centreId: 100));
 
             // When
-            new VerifyAdminUserCanAccessDelegateUser(userDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessDelegateUser(userService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
@@ -76,11 +75,11 @@
         {
             // Given
             context.RouteData.Values["delegateId"] = DelegateId;
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
+            A.CallTo(() => userService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(centreId: 101));
 
             // When
-            new VerifyAdminUserCanAccessDelegateUser(userDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessDelegateUser(userService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();

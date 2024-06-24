@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models;
@@ -164,7 +165,7 @@
         }
         public UriBuilder GetDLSUriBuilder()
         {
-            var trackingSystemBaseUrl = configDataService.GetConfigValue(ConfigDataService.AppBaseUrl) ??
+            var trackingSystemBaseUrl = configDataService.GetConfigValue(ConfigConstants.AppBaseUrl) ??
                                        throw new ConfigValueMissingException(configDataService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
             ;
             return new UriBuilder(trackingSystemBaseUrl);

@@ -1,9 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
@@ -23,14 +19,12 @@
         private readonly IMultiPageFormService multiPageFormService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ISupervisorService supervisorService;
-        private readonly IUserDataService userDataService;
-        private readonly IRegistrationService registrationService;
-        private readonly ICentresDataService centresDataService;
         private readonly IUserService userService;
+        private readonly IRegistrationService registrationService;
+        private readonly ICentresService centresService;
         private readonly IEmailGenerationService emailGenerationService;
         private readonly IEmailService emailService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
-        private readonly ISelfAssessmentDataService selfAssessmentDataService;
         private readonly IClockUtility clockUtility;
 
         public SupervisorController(
@@ -39,20 +33,18 @@
            IFrameworkNotificationService frameworkNotificationService,
            ISelfAssessmentService selfAssessmentService,
            IFrameworkService frameworkService,
-           IConfigDataService configDataService,
+           IConfigService configService,
            ICentreRegistrationPromptsService centreRegistrationPromptsService,
-           IUserDataService userDataService,
+           IUserService userService,
            ILogger<SupervisorController> logger,
            IConfiguration config,
            ISearchSortFilterPaginateService searchSortFilterPaginateService,
            IMultiPageFormService multiPageFormService,
            IRegistrationService registrationService,
-           ICentresDataService centresDataService,
-           IUserService userService,
+           ICentresService centresService,
            IEmailGenerationService emailGenerationService,
            IEmailService emailService,
            ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
-           ISelfAssessmentDataService selfAssessmentDataService,
            IClockUtility clockUtility
            )
         {
@@ -61,16 +53,14 @@
             this.frameworkService = frameworkService;
             this.selfAssessmentService = selfAssessmentService;
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
-            this.userDataService = userDataService;
+            this.userService = userService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.multiPageFormService = multiPageFormService;
             this.registrationService = registrationService;
-            this.centresDataService = centresDataService;
-            this.userService = userService;
+            this.centresService = centresService;
             this.emailGenerationService = emailGenerationService;
             this.emailService = emailService;
             this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
-            this.selfAssessmentDataService = selfAssessmentDataService;
             this.clockUtility = clockUtility;
         }
 
@@ -87,14 +77,14 @@
         private string GetUserEmail()
         {
             var adminId = GetAdminId();
-            var adminEntity = userDataService.GetAdminById(adminId);
+            var adminEntity = userService.GetAdminById(adminId);
             return adminEntity!.EmailForCentreNotifications;
         }
 
         private string? GetBannerText()
         {
             var centreId = (int)User.GetCentreId();
-            var bannerText = centresDataService.GetBannerText(centreId);
+            var bannerText = centresService.GetBannerText(centreId);
             return bannerText;
         }
     }

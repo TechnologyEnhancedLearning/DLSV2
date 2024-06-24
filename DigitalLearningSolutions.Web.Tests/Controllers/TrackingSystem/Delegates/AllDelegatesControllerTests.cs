@@ -1,8 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
@@ -17,6 +15,7 @@
     using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Hosting;
 
     public class AllDelegatesControllerTests
     {
@@ -26,12 +25,13 @@
         private IDelegateDownloadFileService delegateDownloadFileService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
-        private IJobGroupsDataService jobGroupsDataService = null!;
+        private IJobGroupsService jobGroupsService = null!;
         private PromptsService promptsHelper = null!;
         private IPaginateService paginateService = null!;
-        private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
         private IGroupsService groupsService = null!;
         private IConfiguration? configuration;
+        private IWebHostEnvironment? env;
 
         [SetUp]
         public void Setup()
@@ -39,24 +39,26 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             delegateDownloadFileService = A.Fake<IDelegateDownloadFileService>();
             promptsHelper = new PromptsService(centreRegistrationPromptsService);
-            userDataService = A.Fake<IUserDataService>();
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            userService = A.Fake<IUserService>();
+            jobGroupsService = A.Fake<IJobGroupsService>();
             paginateService = A.Fake<IPaginateService>();
             groupsService = A.Fake<IGroupsService>();
             configuration = A.Fake<IConfiguration>();
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
+            env = A.Fake<IWebHostEnvironment>();
 
             const string cookieValue = "ActiveStatus|Active|false";
 
             allDelegatesController = new AllDelegatesController(
                     delegateDownloadFileService,
-                    userDataService,
+                    userService,
                     promptsHelper,
-                    jobGroupsDataService,
+                    jobGroupsService,
                     paginateService,
                     groupsService,
-                    configuration
+                    configuration,
+                    env
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -70,18 +72,18 @@
             // When
 
             var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
-            A.CallTo(() => userDataService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
+            A.CallTo(() => userService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
 
             var result = allDelegatesController.Index();
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.GetDelegateUserCards(A<string>._, A<int>._, A<int>._, A<string>._,
+                A.CallTo(() => userService.GetDelegateUserCards(A<string>._, A<int>._, A<int>._, A<string>._,
                     A<string>._, A<int>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._,
                     A<string>._, A<int>._, A<int?>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._, A<string>._)
                 ).MustHaveHappened();
-                A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
+                A.CallTo(() => jobGroupsService.GetJobGroupsAlphabetical())
                     .MustHaveHappened();
                 A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(A<int>._))
                     .MustHaveHappened();

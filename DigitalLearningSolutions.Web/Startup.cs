@@ -243,7 +243,7 @@ namespace DigitalLearningSolutions.Web
                     options.Events.OnAuthenticationFailed = OnAuthenticationFailed;
                     options.Events.OnTicketReceived = OnTicketReceived;
                     options.Events.OnSignedOutCallbackRedirect = OnSignedoutCallbackRedirect;
-       
+
                 }
             );
         }
@@ -269,7 +269,7 @@ namespace DigitalLearningSolutions.Web
             {
                 context.Response.Redirect(appRootPath + "/home");
             }
-            
+
             context.HandleResponse();
 
             await Task.CompletedTask;
@@ -318,7 +318,7 @@ namespace DigitalLearningSolutions.Web
                     context.ReturnUri = appRootPath + "/login/NotLinked";
                 }
             }
-            
+
             await Task.CompletedTask;
         }
 
@@ -396,8 +396,11 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IClockUtility, ClockUtility>();
             services.AddScoped<ICommonService, CommonService>();
-            services.AddScoped<IConfigDataService, ConfigDataService>();
+            services.AddScoped<ICompetencyLearningResourcesService, CompetencyLearningResourcesService>();
+            services.AddScoped<IConfigService, ConfigService>();
+            services.AddScoped<IContractTypesService, ContractTypesService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
+            services.AddScoped<ICourseCategoriesService, CourseCategoriesService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
             services.AddScoped<ICourseContentService, CourseContentService>();
             services.AddScoped<ICourseDelegatesDownloadFileService, CourseDelegatesDownloadFileService>();
@@ -435,15 +438,18 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddScoped<ISearchSortFilterPaginateService, SearchSortFilterPaginateService>();
             services.AddScoped<IPaginateService, PaginateService>();
+            services.AddScoped<ISectionContentService, SectionContentService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<IStoreAspService, StoreAspService>();
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
+            services.AddScoped<ISystemNotificationsService, SystemNotificationsService>();
             services.AddScoped<IDashboardInformationService, DashboardInformationService>();
             services.AddScoped<ITrackerService, TrackerService>();
             services.AddScoped<ITrackerActionService, TrackerActionService>();
+            services.AddScoped<ITutorialContentService, TutorialContentService>();
             services.AddScoped<ITutorialService, TutorialService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
@@ -461,6 +467,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPlatformUsageSummaryDownloadFileService, PlatformUsageSummaryDownloadFileService>();
             services.AddScoped<ICentreApplicationsService, CentreApplicationsService>();
             services.AddScoped<ICentreSelfAssessmentsService, CentreSelfAssessmentsService>();
+            services.AddScoped<IUserFeedbackService, UserFeedbackService>();
+            services.AddScoped<IRequestSupportTicketService, RequestSupportTicketService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -469,9 +477,13 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreRegistrationPromptsDataService, CentreRegistrationPromptsDataService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<ICertificateDataService, CertificateDataService>();
+            services.AddScoped<ICommonDataService, CommonDataService>();
             services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
+            services.AddScoped<IConfigDataService, ConfigDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
+            services.AddScoped<ICourseCompletionDataService, CourseCompletionDataService>();
+            services.AddScoped<ICourseContentDataService, CourseContentDataService>();
             services.AddScoped<ICourseDataService, CourseDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
@@ -479,6 +491,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IEmailSchedulerService, EmailSchedulerService>();
             services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
             services.AddScoped<IFaqsDataService, FaqsDataService>();
+            services.AddScoped<IFrameworkDataService, FrameworkDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
@@ -488,14 +501,18 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
+            services.AddScoped<IPostLearningAssessmentDataService, PostLearningAssessmentDataService>();
             services.AddScoped<IRegistrationConfirmationDataService, RegistrationConfirmationDataService>();
             services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
+            services.AddScoped<IRegionService, RegionService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IResourceDataService, ResourceDataService>();
+            services.AddScoped<IRoleProfileDataService, RoleProfileDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<ISelfAssessmentDataService, SelfAssessmentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
+            services.AddScoped<ISupervisorDataService, SupervisorDataService>();
             services.AddScoped<ISupervisorDelegateDataService, SupervisorDelegateDataService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();

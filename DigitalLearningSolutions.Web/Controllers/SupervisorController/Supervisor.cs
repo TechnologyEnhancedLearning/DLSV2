@@ -51,7 +51,7 @@
             var loggedInUserId = User.GetUserId();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
-            var loggedInAdminUser = userDataService.GetAdminUserById(adminId);
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
@@ -314,7 +314,7 @@
             var adminId = GetAdminId();
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
             var loggedInUserId = User.GetAdminId();
-            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+            var loggedInAdminUser = userService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
             var model = new DelegateSelfAssessmentsViewModel()
             {
@@ -1025,7 +1025,7 @@
             else
             {
 
-                var candidateAssessmentId = selfAssessmentDataService.GetCandidateAssessments(delegateUserId, selfAssessmentId).SingleOrDefault()?.Id;
+                var candidateAssessmentId = selfAssessmentService.GetCandidateAssessments(delegateUserId, selfAssessmentId).SingleOrDefault()?.Id;
                 var roleId = supervisorRoles.Where(x => x.SelfAssessmentID == selfAssessmentId).Select(x => x.ID).FirstOrDefault();
                 if (candidateAssessmentId != null)
                 {

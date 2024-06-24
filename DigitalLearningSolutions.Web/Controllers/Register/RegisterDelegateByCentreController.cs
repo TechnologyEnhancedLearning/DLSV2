@@ -2,8 +2,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
@@ -38,7 +36,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IJobGroupsService jobGroupsService;
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
-        private readonly IUserDataService userDataService;
         private readonly IClockUtility clockUtility;
         private readonly IUserService userService;
         private readonly IMultiPageFormService multiPageFormService;
@@ -48,7 +45,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IJobGroupsService jobGroupsService,
             PromptsService promptsService,
             ICryptoService cryptoService,
-            IUserDataService userDataService,
             IRegistrationService registrationService,
             IConfiguration config,
             IClockUtility clockUtility,
@@ -59,7 +55,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             this.jobGroupsService = jobGroupsService;
             this.promptsService = promptsService;
-            this.userDataService = userDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
             this.config = config;
