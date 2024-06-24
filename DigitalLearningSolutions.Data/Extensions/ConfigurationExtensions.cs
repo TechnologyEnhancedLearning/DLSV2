@@ -49,6 +49,11 @@
 
         private const string LearningHubUserAPIUserAPIUrl = "LearningHubUserApi:UserApiUrl";
         private const string UserResearchUrlName = "UserResearchUrl";
+        private const string TableauSectionKey = "TableauDashboards";
+        private const string TableauClientId = "ClientId";
+        private const string TableauClientSecret = "ClientSecret";
+        private const string TableauUsername = "Username";
+        private const string TableauClientName = "ClientName";
 
         public static string GetAppRootPath(this IConfiguration config)
         {
@@ -217,6 +222,22 @@
         public static string GetUserResearchUrl(this IConfiguration config)
         {
             return config[UserResearchUrlName]!;
+        }
+        public static string GetTableauClientName(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauClientName}"]!;
+        }
+        public static string GetTableauClientId(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauClientId}"]!;
+        }
+        public static string GetTableauClientSecret(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauClientSecret}"]!;
+        }
+        public static string GetTableauUser(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauUsername}"]!;
         }
     }
 }
