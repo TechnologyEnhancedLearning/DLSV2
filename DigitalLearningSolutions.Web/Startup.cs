@@ -560,6 +560,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
             services.AddScoped<IFreshdeskApiClient, FreshdeskApiClient>();
             services.AddScoped<ILearningHubUserApiClient, LearningHubUserApiClient>();
+            services.AddScoped<ITableauConnectionHelperService, TableauConnectionHelper>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
