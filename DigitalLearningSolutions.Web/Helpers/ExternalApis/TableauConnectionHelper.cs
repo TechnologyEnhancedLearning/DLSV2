@@ -11,7 +11,7 @@
 
     public interface ITableauConnectionHelperService
         {
-         string GetToken(string email);
+         string GetTableauJwt(string email);
         }
     public class TableauConnectionHelper : ITableauConnectionHelperService
     {
@@ -26,7 +26,7 @@
             connectedAppSecretKey = config.GetTableauClientSecret();
             user = config.GetTableauUser();
         }
-        public string GetToken(string email)
+        public string GetTableauJwt(string email)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(connectedAppSecretKey);
