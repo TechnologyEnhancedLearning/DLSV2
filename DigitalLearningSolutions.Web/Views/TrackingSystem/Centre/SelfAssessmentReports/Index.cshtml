@@ -41,5 +41,10 @@
                 }
             }
         </ul>
+        @if (Model.SelfAssessmentSelects.Any())
+            {
+            <a asp-controller="SelfAssessmentReports" asp-action="LaunchTableau">@($"View Tableau Competency Dashboards")</a>
+            }
+
     </div>
 </div>
