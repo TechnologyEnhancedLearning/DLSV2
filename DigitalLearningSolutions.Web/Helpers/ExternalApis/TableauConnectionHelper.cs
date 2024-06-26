@@ -8,55 +8,83 @@
     using System;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
+    using DocumentFormat.OpenXml.Bibliography;
+    using Microsoft.FeatureManagement.FeatureFilters;
+    using System.Net.Http.Headers;
+    using System.Net.Http;
+    using System.Threading.Tasks;
 
     public interface ITableauConnectionHelperService
-        {
-         string GetTableauJwt(string email);
-        }
+    {
+        string GetTableauJwt(string email);
+        Task<string> AuthenticateUserAsync(string jwtToken);
+    }
     public class TableauConnectionHelper : ITableauConnectionHelperService
     {
-        private readonly string connectedAppClient;
+        private readonly string connectedAppClientName;
         private readonly string connectedAppSecretKey;
         private readonly string connectedAppClientId;
+        private readonly string tableauUrl;
+        private readonly string dashboardUrl;
         private readonly string user;
         public TableauConnectionHelper(IConfiguration config)
         {
-            connectedAppClient = config.GetTableauClientName();
+            connectedAppClientName = config.GetTableauClientName();
             connectedAppClientId = config.GetTableauClientId();
             connectedAppSecretKey = config.GetTableauClientSecret();
+            tableauUrl = config.GetTableauSiteUrl();
+            dashboardUrl = config.GetTableauDashboardUrl();
             user = config.GetTableauUser();
         }
         public string GetTableauJwt(string email)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(connectedAppSecretKey);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(connectedAppSecretKey));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var claims = new[]
             {
-                Issuer = connectedAppClientId,
-                Audience = "tableau",
-                Subject = new ClaimsIdentity(new[]
-                {
                 new Claim(JwtRegisteredClaimNames.Sub, user),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iss, connectedAppClientId),
                 new Claim("scp", "tableau:views:embed"),
-                new Claim("scp", "tableau:metrics:embed"),
-                new Claim("users.primaryemail", email)
-            }),
-                Expires = DateTime.UtcNow.AddMinutes(5),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Claims = new Dictionary<string, object>
-            {
-                { "kid", connectedAppClientId },
-                { "iss", connectedAppClient }
-            }
+                new Claim("users.primaryemail", email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Exp,
+                new DateTimeOffset(DateTime.UtcNow.AddMinutes(20)).ToUnixTimeSeconds().ToString())
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
+            var token = new JwtSecurityToken(
+                issuer: connectedAppClientId,
+                audience: "tableau",
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(20),
+                signingCredentials: credentials);
 
-            return tokenString;
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public async Task<string> AuthenticateUserAsync(string jwtToken)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(tableauUrl);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var requestContent = new StringContent($"{{ \"token\": \"{jwtToken}\" }}", Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.PostAsync("/api/3.8/auth/signin", requestContent); // Adjust API version as needed
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    // Process the response body if needed
+                    return dashboardUrl; // Return the response for further processing
+                }
+                else
+                {
+                    throw new Exception("Failed to authenticate with Tableau Server: " + response.ReasonPhrase);
+                }
+            }
+        }
     }
 }
