@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using System.Threading.Tasks;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -69,11 +70,12 @@
         }
         [HttpGet]
         [Route("LaunchTableauDashboards")]
-        public IActionResult LaunchTableauDashboards()
+        public async Task<IActionResult> LaunchTableauDashboards()
         {
             var userEmail = User.GetUserPrimaryEmail();
             var jwt = tableauConnectionHelper.GetTableauJwt(userEmail);
-            return RedirectToAction("Index");
+            var url = await tableauConnectionHelper.AuthenticateUserAsync(jwt);
+            return RedirectToPage(url);
         }
     }
 }

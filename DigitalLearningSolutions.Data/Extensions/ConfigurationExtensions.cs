@@ -54,7 +54,8 @@
         private const string TableauClientSecret = "ClientSecret";
         private const string TableauUsername = "Username";
         private const string TableauClientName = "ClientName";
-
+        private const string TableauSiteUrl = "SiteUrl";
+        private const string TableauDashboardUrl = "CompetencyDashboardUrl";
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName]!;
@@ -185,7 +186,7 @@
         }
         public static int GetMaxBulkUploadRowsLimit(this IConfiguration config)
         {
-             int.TryParse(config[MaxBulkUploadRowsLimitKey],out int limitKey);
+            int.TryParse(config[MaxBulkUploadRowsLimitKey], out int limitKey);
             return limitKey;
         }
 
@@ -206,7 +207,7 @@
 
         public static long GetFreshdeskCreateTicketGroupId(this IConfiguration config)
         {
-           long.TryParse(config[FreshdeskCreateTicketGroupId], out long ticketGroupId);
+            long.TryParse(config[FreshdeskCreateTicketGroupId], out long ticketGroupId);
             return ticketGroupId;
         }
         public static long GetFreshdeskCreateTicketProductId(this IConfiguration config)
@@ -238,6 +239,14 @@
         public static string GetTableauUser(this IConfiguration config)
         {
             return config[$"{TableauSectionKey}:{TableauUsername}"]!;
+        }
+        public static string GetTableauSiteUrl(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauSiteUrl}"]!;
+        }
+        public static string GetTableauDashboardUrl(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauDashboardUrl}"]!;
         }
     }
 }
