@@ -26,7 +26,11 @@
             var groupId = int.Parse(context.RouteData.Values["groupId"].ToString()!);
             var groupCentreId = groupsService.GetGroupCentreId(groupId);
 
-            if (controller.User.GetCentreIdKnownNotNull() != groupCentreId)
+            if (groupCentreId == 0)
+            {
+                context.Result = new RedirectToActionResult("StatusCode", "LearningSolutions", new { code = 410 });
+            }
+            else if (controller.User.GetCentreIdKnownNotNull() != groupCentreId)
             {
                 context.Result = new NotFoundResult();
             }
