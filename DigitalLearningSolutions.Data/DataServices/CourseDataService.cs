@@ -652,7 +652,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                             AND cu.Active = 1
                             AND cu.CentreID = @centreId
                             AND ca.CentreID = @centreId
-                            AND ap.DefaultContentTypeID <> 4",
+                            AND ap.DefaultContentTypeID <> 4
+                            AND (ap.ArchivedDate IS NULL)",
                 new { centreId, adminCategoryId }
             ));
         }
