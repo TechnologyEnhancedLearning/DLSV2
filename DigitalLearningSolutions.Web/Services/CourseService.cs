@@ -132,6 +132,8 @@
         void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId);
         int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
+        int GetNumberOfAllCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
+        int GetNumberOfInactiveandArchivedCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
     }
 
     public class CourseService : ICourseService
@@ -618,6 +620,14 @@
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId)
         {
             return courseDataService.GetApplicationsAvailableToCentre(centreId);
+        }
+        public int GetNumberOfAllCoursesAtCentreFilteredByCategory(int centreId, int? categoryId)
+        {
+            return courseDataService.GetNumberOfAllCoursesAtCentreFilteredByCategory(centreId, categoryId);
+        }
+        public int GetNumberOfInactiveandArchivedCoursesAtCentreFilteredByCategory(int centreId, int? categoryId)
+        {
+            return courseDataService.GetNumberOfInactiveandArchivedCoursesAtCentreFilteredByCategory(centreId, categoryId);
         }
     }
 }

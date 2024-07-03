@@ -9,7 +9,9 @@
             Centre centre,
             AdminUser adminUser,
             int delegateCount,
-            int courseCount,
+            int allCourseCount,
+            int activeCourseCount,
+            int inactiveArchivedCourseCount,
             int adminCount,
             int supportTicketCount,
             int? centreRank
@@ -19,7 +21,9 @@
             FirstName = adminUser.FirstName;
             CategoryName = adminUser.CategoryName;
             DelegateCount = delegateCount;
-            CourseCount = courseCount;
+            AllCourseCount = allCourseCount;
+            ActiveCourseCount = activeCourseCount;
+            InactiveArchivedCourseCount = inactiveArchivedCourseCount;
             AdminCount = adminCount;
             SupportTicketCount = supportTicketCount;
             CentreRank = centreRank;
@@ -29,7 +33,9 @@
         public string? FirstName { get; }
         public string? CategoryName { get; }
         public int DelegateCount { get; }
-        public int CourseCount { get; }
+        public int AllCourseCount { get; }
+        public int ActiveCourseCount { get; }
+        public int InactiveArchivedCourseCount { get; }
         public int AdminCount { get; }
         public int SupportTicketCount { get; }
         public int? CentreRank { get; }

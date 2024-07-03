@@ -73,6 +73,8 @@
                     1,
                     1,
                     1,
+                    1,
+                    1,
                     1
                 )
             );
@@ -111,6 +113,8 @@
                 new CentreDashboardInformation(
                     CentreTestHelper.GetDefaultCentre(),
                     UserTestHelper.GetDefaultAdminUser(),
+                    1,
+                    1,
                     1,
                     1,
                     1,

@@ -83,6 +83,9 @@
             const int delegateCount = 100;
             const int adminCount = 10;
             const int courseCount = 50;
+            const int allCourseCount = 0;
+            const int activeCourseCount = 50;
+            const int inactiveArchivedCourseCount = 0;
             const int ticketCountForAdmin = 5;
             const int ticketCountForCentre = 10;
             const int centreRank = 3;
@@ -105,7 +108,9 @@
                 CentreTestHelper.GetDefaultCentre(CentreId),
                 adminUser,
                 delegateCount,
-                courseCount,
+                allCourseCount,
+                activeCourseCount,
+                inactiveArchivedCourseCount,
                 adminCount,
                 expectedTicketCount,
                 centreRank
