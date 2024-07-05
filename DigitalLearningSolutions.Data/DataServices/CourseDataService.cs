@@ -337,7 +337,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cc.CategoryName,
                         ct.CourseTopic,
                         CASE WHEN ({TutorialWithLearningCountQuery}) > 0 THEN 1 ELSE 0 END  AS HasLearning,
-                        CASE WHEN ({TutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic
+                        CASE WHEN ({TutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic,
+                        CASE WHEN ap.ArchivedDate IS NULL THEN 0 ELSE 1 END AS Archived
                     FROM Customisations AS c
                     INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
@@ -869,8 +870,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
-                return connection.Query<DelegateCourseInfo>(
-                $@"{selectDelegateCourseInfoQuery}
+            return connection.Query<DelegateCourseInfo>(
+            $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND pr.RemovedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4
@@ -914,8 +915,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.ProfessionalRegistrationNumber,
                         da.CentreID,
                         ap.ArchivedDate",
-                new { delegateId }
-            );            
+            new { delegateId }
+        );
         }
 
         public DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId)

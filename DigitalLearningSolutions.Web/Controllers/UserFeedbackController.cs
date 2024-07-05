@@ -52,6 +52,13 @@
                 TaskRating = null,
             };
 
+            if(sourcePageTitle == "Digital Learning Solutions - Page no longer available")
+            {
+                var url = ContentUrlHelper.ReplaceUrlSegment(sourceUrl);
+                _userFeedbackViewModel.SourceUrl  = url;
+                _userFeedbackViewModel.SourcePageTitle = "Welcome";
+            }
+            
             if (_userFeedbackViewModel.UserId == null || _userFeedbackViewModel.UserId == 0)
             {
                 return GuestFeedbackStart(_userFeedbackViewModel);
