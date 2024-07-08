@@ -138,15 +138,16 @@
 
                                 @if (User.IsAdminAccount())
                                 {
-                                    if ((bool?)ViewBag.HideSwitchApplication == false)
+                                   if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] != true)
                                     {
-                                        <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
+                                         <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
                                             <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
                                                 Switch application
                                                 <partial name="_NhsChevronRight" />
                                             </a>
                                         </li>
                                     }
+                                    
                                 }
                             </ul>
                         </div>

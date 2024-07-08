@@ -37,7 +37,6 @@
         public IActionResult Index(string sourceUrl, string sourcePageTitle)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
-            ViewBag.HideSwitchApplication = true;
             _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
             
             _userFeedbackViewModel = new()
@@ -129,7 +128,6 @@
         public IActionResult StartUserFeedbackSession(UserFeedbackViewModel userFeedbackViewModel)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
-            ViewBag.HideSwitchApplication = true;
 
             var userFeedbackSessionData = new UserFeedbackTempData()
             {
