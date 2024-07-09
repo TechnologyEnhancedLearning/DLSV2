@@ -23,6 +23,7 @@
     {
         private readonly string connectedAppClientName;
         private readonly string connectedAppSecretKey;
+        private readonly string connectedAppSecretId;
         private readonly string connectedAppClientId;
         private readonly string tableauUrl;
         private readonly string dashboardUrl;
@@ -31,6 +32,7 @@
         {
             connectedAppClientName = config.GetTableauClientName();
             connectedAppClientId = config.GetTableauClientId();
+            connectedAppSecretId = config.GetTableauClientSecretId();
             connectedAppSecretKey = config.GetTableauClientSecret();
             tableauUrl = config.GetTableauSiteUrl();
             dashboardUrl = config.GetTableauDashboardUrl();
@@ -39,27 +41,32 @@
         public string GetTableauJwt(string email)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(connectedAppSecretKey));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var key = Encoding.ASCII.GetBytes(connectedAppSecretKey);
+
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user),
-                new Claim(JwtRegisteredClaimNames.Iss, connectedAppClientId),
-                new Claim("scp", "tableau:views:embed"),
-                new Claim("users.primaryemail", email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Exp,
-                new DateTimeOffset(DateTime.UtcNow.AddMinutes(20)).ToUnixTimeSeconds().ToString())
+                new Claim("users.primaryemail", email),
+                new Claim("scp", "tableau:views:embed")
             };
+            var securityKey = new SymmetricSecurityKey(key);
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+            var header = new JwtHeader(credentials);
+            header["kid"] = connectedAppSecretId; // Secret ID
+            header["iss"] = connectedAppClientId; // Issuer (iss)
+            var payload = new JwtPayload(
+                connectedAppClientId, // Issuer (iss)
+                "tableau", // Audience (aud)
+                claims,
+                notBefore: DateTime.UtcNow,
+                expires: DateTime.UtcNow.AddMinutes(5)
+            );
 
-            var token = new JwtSecurityToken(
-                issuer: connectedAppClientId,
-                audience: "tableau",
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(20),
-                signingCredentials: credentials);
+            var token = new JwtSecurityToken(header, payload);
+            var tokenString = tokenHandler.WriteToken(token);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return tokenString;
         }
 
         public async Task<string> AuthenticateUserAsync(string jwtToken)
