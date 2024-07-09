@@ -447,7 +447,8 @@
         {
             return connection.Query<Competency>(
                 @"SELECT
-                        SAS.ID AS Id,
+                        C.ID AS Id,
+                        SAS.ID AS SelfAssessmentStructureId,
                         ROW_NUMBER() OVER (ORDER BY SAS.Ordering) as RowNo,
                         C.Name AS Name,
                         C.Description AS Description,
