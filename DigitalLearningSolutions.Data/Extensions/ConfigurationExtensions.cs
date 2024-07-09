@@ -51,6 +51,7 @@
         private const string UserResearchUrlName = "UserResearchUrl";
         private const string TableauSectionKey = "TableauDashboards";
         private const string TableauClientId = "ClientId";
+        private const string TableauClientSecretId = "ClientSecretId";
         private const string TableauClientSecret = "ClientSecret";
         private const string TableauUsername = "Username";
         private const string TableauClientName = "ClientName";
@@ -235,6 +236,10 @@
         public static string GetTableauClientSecret(this IConfiguration config)
         {
             return config[$"{TableauSectionKey}:{TableauClientSecret}"]!;
+        }
+        public static string GetTableauClientSecretId(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauClientSecretId}"]!;
         }
         public static string GetTableauUser(this IConfiguration config)
         {
