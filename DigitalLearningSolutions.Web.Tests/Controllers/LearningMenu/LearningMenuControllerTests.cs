@@ -17,6 +17,7 @@
         private const int CandidateId = 11;
         private const int CentreId = 2;
         private const int CustomisationId = 12;
+        const int progressID = 34;
         private const int SectionId = 199;
         private const int TutorialId = 842;
         private ISession httpContextSession = null!;

@@ -58,7 +58,7 @@
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
-        public IActionResult Index(int customisationId)
+        public IActionResult Index(int customisationId, int progressID)
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var candidateId = User.GetCandidateIdKnownNotNull();
@@ -100,7 +100,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressID);
 
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
@@ -599,11 +599,19 @@
 
         private void SetTempData(int candidateId, int customisationId)
         {
-            var isCurrent = courseService.IsCourseCurrent(candidateId, customisationId);
-            if (isCurrent)
-                TempData["LearningActivity"] =  "Current";
-            else
+            var isCompleted = courseService.IsCourseCompleted(candidateId, customisationId);
+            if (isCompleted)
                 TempData["LearningActivity"] = "Completed";
+            else
+                TempData["LearningActivity"] = "Current";
+        }
+        private void SetTempData(int candidateId, int customisationId,int progressID)
+        {
+            var isCompleted = courseService.IsCourseCompleted(candidateId, customisationId, progressID);
+            if (isCompleted)
+                TempData["LearningActivity"] = "Completed";
+            else
+                TempData["LearningActivity"] = "Current";
         }
 
         private bool UniqueIdManipulationDetected(int candidateId, int customisationId)

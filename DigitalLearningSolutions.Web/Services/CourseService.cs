@@ -123,6 +123,7 @@
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(string searchString, int centreId, string categoryName, string isActive);
         IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId);
         bool IsCourseCompleted(int candidateId, int customisationId);
+        bool IsCourseCompleted(int candidateId, int customisationId, int progressID);
         bool GetSelfRegister(int customisationId);
         IEnumerable<CurrentCourse> GetCurrentCourses(int candidateId);
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
@@ -132,7 +133,6 @@
         void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId);
         int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
-        bool IsCourseCurrent(int candidateId, int customisationId);
     }
 
     public class CourseService : ICourseService
@@ -571,9 +571,13 @@
             return courseDataService.GetAvailableCourses(delegateId, centreId, categoryId);
         }
 
-        public bool IsCourseCompleted(int candidateId, int customisationId)
+        public bool IsCourseCompleted(int candidateId, int customisationId )
         {
             return courseDataService.IsCourseCompleted(candidateId, customisationId);
+        }
+        public bool IsCourseCompleted(int candidateId, int customisationId, int progressID)
+        {
+            return courseDataService.IsCourseCompleted(candidateId, customisationId, progressID);
         }
 
         public bool GetSelfRegister(int customisationId)
@@ -619,11 +623,6 @@
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId)
         {
             return courseDataService.GetApplicationsAvailableToCentre(centreId);
-        }
-
-        public bool IsCourseCurrent(int candidateId, int customisationId)
-        {
-            return courseDataService.IsCourseCurrent(candidateId,customisationId);
         }
     }
 }
