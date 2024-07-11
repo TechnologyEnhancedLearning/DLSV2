@@ -527,7 +527,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
-                UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId
+                UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic
                   WHERE ID = @candidateAssessmentId
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
@@ -537,7 +537,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 COMMIT TRANSACTION";
 
                 connection.Execute(sqlQuery
-                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId });
+                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic });
             }
 
             if (candidateAssessmentId < 1)
