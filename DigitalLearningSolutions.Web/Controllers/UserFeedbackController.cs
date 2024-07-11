@@ -37,7 +37,6 @@
         public IActionResult Index(string sourceUrl, string sourcePageTitle)
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
-
             _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
             
             _userFeedbackViewModel = new()
