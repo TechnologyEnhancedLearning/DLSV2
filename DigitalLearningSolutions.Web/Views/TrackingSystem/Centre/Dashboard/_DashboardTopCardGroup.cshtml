@@ -3,9 +3,9 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
 @model CentreDashboardViewModel
 
-<ul class="nhsuk-grid-row nhsuk-card-group dashboard-3-1-card-group">
+<ul class="nhsuk-grid-row nhsuk-card-group dashboard-4-1-card-group">
 
-  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item dashboard-3-1-card">
+    <li class="nhsuk-grid-column-one-quarter  nhsuk-card-group__item dashboard-4-1-card">
     <div class="nhsuk-card nhsuk-card--clickable">
       <div class="nhsuk-card__content">
         <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
@@ -20,9 +20,22 @@
     </div>
   </li>
 
- 
+    <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
+        <div class="nhsuk-card nhsuk-card--clickable">
+            <div class="nhsuk-card__content">
+                <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
+                    @Model.NumberOfCourses <span class="nhsuk-u-visually-hidden">Courses</span>
+                </p>
+                <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
+                   asp-controller="CourseSetup"
+                   asp-action="Index">
+                    Courses
+                </a>
+            </div>
+        </div>
+    </li>
 
-  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item dashboard-3-1-card">
+    <li class="nhsuk-grid-column-one-quarter  nhsuk-card-group__item dashboard-4-1-card">
     <div class="nhsuk-card @(User.HasCentreManagerPermissions() ? "nhsuk-card--clickable" : "nhsuk-card--not-clickable")">
       <div class="nhsuk-card__content">
         <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
@@ -44,7 +57,7 @@
     </div>
   </li>
 
-  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item dashboard-3-1-card">
+    <li class="nhsuk-grid-column-one-quarter  nhsuk-card-group__item dashboard-4-1-card">
     <div class="nhsuk-card nhsuk-card--clickable">
       <div class="nhsuk-card__content">
         <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
@@ -62,54 +75,3 @@
 
 </ul>
 
-<ul class="nhsuk-grid-row nhsuk-card-group dashboard-3-1-card-group">
-
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item dashboard-3-1-card">
-        <div class="nhsuk-card nhsuk-card--clickable">
-            <div class="nhsuk-card__content">
-                <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
-                    @Model.NumberOfAllCourses <span class="nhsuk-u-visually-hidden">All Courses</span>
-                </p>
-                <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
-                   asp-controller="CourseSetup"
-                   asp-action="Index">
-                  All  courses
-                </a>
-            </div>
-        </div>
-    </li>
-
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item dashboard-3-1-card">
-        <div class="nhsuk-card nhsuk-card--clickable">
-            <div class="nhsuk-card__content">
-                <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
-                    @Model.NumberOfActiveCourses <span class="nhsuk-u-visually-hidden">Active courses</span>
-                </p>
-                <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
-                   asp-controller="CourseSetup"
-                   asp-action="Index"
-                   asp-route-newFilterToAdd="Status|Active|true">
-                    Active courses
-                </a>
-            </div>
-        </div>
-    </li>
-
-
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item dashboard-3-1-card">
-        <div class="nhsuk-card nhsuk-card--clickable">
-            <div class="nhsuk-card__content">
-                <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
-                    @Model.NumberOfInactiveArchivedCourses <span class="nhsuk-u-visually-hidden">Inactive/archived Courses</span>
-                </p>
-                <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
-                   asp-controller="CourseSetup"
-                   asp-action="Index"
-                   asp-route-newFilterToAdd="Status|NotActive|true">
-                    Inactive/archived Courses
-                </a>
-            </div>
-        </div>
-    </li>
-
-</ul>

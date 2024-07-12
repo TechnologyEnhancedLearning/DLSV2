@@ -21,9 +21,7 @@
                 : dashboardInformation.FirstName;
             CourseCategory = dashboardInformation.CategoryName ?? "all";
             NumberOfDelegates = dashboardInformation.DelegateCount;
-            NumberOfAllCourses = dashboardInformation.AllCourseCount;
-            NumberOfActiveCourses = dashboardInformation.ActiveCourseCount;
-            NumberOfInactiveArchivedCourses = dashboardInformation.InactiveArchivedCourseCount;
+            NumberOfCourses = dashboardInformation.CourseCount;
             NumberOfAdmins = dashboardInformation.AdminCount;
             NumberOfSupportTickets = dashboardInformation.SupportTicketCount;
             ViewNotificationsButtonText = "View " + unacknowledgedNotificationsCount + " notification" +
@@ -36,10 +34,8 @@
 
         public int NumberOfDelegates { get; set; }
 
-        public int NumberOfAllCourses { get; set; }
-        public int NumberOfActiveCourses { get; set; }
-        public int NumberOfInactiveArchivedCourses { get; set; }
-
+        public int NumberOfCourses { get; set; }
+      
         public int NumberOfAdmins { get; set; }
 
         public int NumberOfSupportTickets { get; set; }

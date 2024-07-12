@@ -137,8 +137,6 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields);
 
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive);
-        int GetNumberOfAllCoursesAtCentreFilteredByCategory(int centreId, int? adminCategoryId);
-        int GetNumberOfInactiveandArchivedCoursesAtCentreFilteredByCategory(int centreId, int? adminCategoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -652,41 +650,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                         INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                         INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
                         WHERE (ap.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)
-                            AND cu.Active = 1
-                            AND cu.CentreID = @centreId
-                            AND ca.CentreID = @centreId
-                            AND ap.DefaultContentTypeID <> 4
-                            AND (ap.ArchivedDate IS NULL)",
-                new { centreId, adminCategoryId }
-            ));
-        }
-
-        public int GetNumberOfAllCoursesAtCentreFilteredByCategory(int centreId, int? adminCategoryId)
-        {
-            return Convert.ToInt32(connection.ExecuteScalar(
-                @"SELECT COUNT(*)
-                        FROM dbo.Customisations AS cu
-                        INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
-                        INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                        WHERE (ap.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)
                             AND cu.CentreID = @centreId
                             AND ca.CentreID = @centreId
                             AND ap.DefaultContentTypeID <> 4",
-                new { centreId, adminCategoryId }
-            ));
-        }
-        public int GetNumberOfInactiveandArchivedCoursesAtCentreFilteredByCategory(int centreId, int? adminCategoryId)
-        {
-            return Convert.ToInt32(connection.ExecuteScalar(
-                @"SELECT COUNT(*)
-                        FROM dbo.Customisations AS cu
-                        INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
-                        INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                        WHERE (ap.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)
-                            AND cu.CentreID = @centreId
-                            AND ca.CentreID = @centreId
-                            AND ap.DefaultContentTypeID <> 4
-                            AND (cu.Active = 0 OR ap.ArchivedDate IS NOT NULL)",
                 new { centreId, adminCategoryId }
             ));
         }
