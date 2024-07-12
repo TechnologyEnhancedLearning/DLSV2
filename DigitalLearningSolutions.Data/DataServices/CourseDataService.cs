@@ -339,7 +339,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cc.CategoryName,
                         ct.CourseTopic,
                         CASE WHEN ({TutorialWithLearningCountQuery}) > 0 THEN 1 ELSE 0 END  AS HasLearning,
-                        CASE WHEN ({TutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic
+                        CASE WHEN ({TutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic,
+                        CASE WHEN ap.ArchivedDate IS NULL THEN 0 ELSE 1 END AS Archived
                     FROM Customisations AS c
                     INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
@@ -438,7 +439,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             DateTime startedDate = clockUtility.UtcNow;
             DateTime? lastAccessed = null;
             dynamic? completeByDateDynamic = null;
-            int enrolmentMethodId = 2;
+            int enrolmentMethodId = (int)EnrolmentMethod.AdminOrSupervisor;
             if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
                 completeByDateDynamic = completeByDate!;
@@ -528,7 +529,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
-                UPDATE CandidateAssessments SET RemovedDate = NULL
+                UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic
                   WHERE ID = @candidateAssessmentId
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
@@ -538,7 +539,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 COMMIT TRANSACTION";
 
                 connection.Execute(sqlQuery
-                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId });
+                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic });
             }
 
             if (candidateAssessmentId < 1)
@@ -554,6 +555,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId)
         {
+            int enrolmentMethodId = (int)EnrolmentMethod.Self;
             var enrolmentExists = Convert.ToInt32(connection.ExecuteScalar(
                 @"SELECT COALESCE
                  ((SELECT ID
@@ -575,9 +577,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 {
                     connection.Execute(
                         @"UPDATE CandidateAssessments
-                        SET RemovedDate = NULL
+                        SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId
                         WHERE ID = @enrolmentExists",
-                        new { enrolmentExists }
+                        new { enrolmentExists, enrolmentMethodId }
                 );
                 }
             }
@@ -901,8 +903,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
-                return connection.Query<DelegateCourseInfo>(
-                $@"{selectDelegateCourseInfoQuery}
+            return connection.Query<DelegateCourseInfo>(
+            $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND pr.RemovedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4
@@ -946,8 +948,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.ProfessionalRegistrationNumber,
                         da.CentreID,
                         ap.ArchivedDate",
-                new { delegateId }
-            );            
+            new { delegateId }
+        );
         }
 
         public DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId)

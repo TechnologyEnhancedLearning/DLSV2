@@ -1787,6 +1787,98 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 23/10/2018
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4223_Alter_uspCreateProgressRecord_V3_Down {
+            get {
+                return ResourceManager.GetString("TD_4223_Alter_uspCreateProgressRecord_V3_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 23/10/2018
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4223_Alter_uspCreateProgressRecord_V3_Up {
+            get {
+                return ResourceManager.GetString("TD_4223_Alter_uspCreateProgressRecord_V3_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 23/10/2018
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4223_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down {
+            get {
+                return ResourceManager.GetString("TD_4223_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 23/10/2018
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4223_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up {
+            get {
+                return ResourceManager.GetString("TD_4223_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO

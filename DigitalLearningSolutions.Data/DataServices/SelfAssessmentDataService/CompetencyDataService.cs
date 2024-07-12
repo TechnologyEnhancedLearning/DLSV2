@@ -269,7 +269,7 @@
             const string supervisorFields = @"
                 LAR.EmailSent,
                 LAR.Requested AS SupervisorVerificationRequested,
-                COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS SupervisorName,
+                au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END) + ' (' + sd.SupervisorEmail + ')' AS SupervisorName,
                 au.CentreName,
                 SelfAssessmentResultSupervisorVerificationId AS SupervisorVerificationId,
                 CandidateAssessmentSupervisorID";
@@ -447,7 +447,8 @@
         {
             return connection.Query<Competency>(
                 @"SELECT
-                        SAS.ID AS Id,
+                        C.ID AS Id,
+                        SAS.ID AS SelfAssessmentStructureId,
                         ROW_NUMBER() OVER (ORDER BY SAS.Ordering) as RowNo,
                         C.Name AS Name,
                         C.Description AS Description,
