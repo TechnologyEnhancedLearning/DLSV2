@@ -1787,7 +1787,51 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 12/07/2024 17:37:50 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the paramet [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4223_Alter_GroupCustomisation_Add_V2_Down {
+            get {
+                return ResourceManager.GetString("TD_4223_Alter_GroupCustomisation_Add_V2_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 12/07/2024 17:37:50 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the paramet [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4223_Alter_GroupCustomisation_Add_V2_Up {
+            get {
+                return ResourceManager.GetString("TD_4223_Alter_GroupCustomisation_Add_V2_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecord_V3]    Script Date: 27/06/2024 09:35:55 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///
@@ -1797,11 +1841,11 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///-- =============================================
         ///-- Author:		Kevin Whittaker
-        ///-- Create date: 23/10/2018
+        ///-- Create date: 15 February 2012
         ///-- Description:	Creates the Progress and aspProgress record for a new user
         ///-- Returns:		0 : success, progress created
         ///--       		1 : Failed - progress already exists
-        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        ///--       		100 : Failed - CentreID and CustomisationID don [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_4223_Alter_uspCreateProgressRecord_V3_Down {
             get {
@@ -1810,7 +1854,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecord_V3]    Script Date: 27/06/2024 09:35:33 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///
@@ -1818,13 +1862,14 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///GO
         ///
         ///
+        ///
         ///-- =============================================
         ///-- Author:		Kevin Whittaker
-        ///-- Create date: 23/10/2018
+        ///-- Create date: 15 February 2012
         ///-- Description:	Creates the Progress and aspProgress record for a new user
         ///-- Returns:		0 : success, progress created
         ///--       		1 : Failed - progress already exists
-        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        ///--       		100 : Failed - CentreID and CustomisationID d [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_4223_Alter_uspCreateProgressRecord_V3_Up {
             get {
@@ -1833,21 +1878,21 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2]    Script Date: 27/06/2024 09:37:38 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///
         ///SET QUOTED_IDENTIFIER ON
         ///GO
         ///
-        ///
         ///-- =============================================
         ///-- Author:		Kevin Whittaker
-        ///-- Create date: 23/10/2018
-        ///-- Description:	Creates the Progress and aspProgress record for a new user
-        ///-- Returns:		0 : success, progress created
-        ///--       		1 : Failed - progress already exists
-        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        ///-- Create date: 11/04/2019
+        ///-- Description:	Creates the Progress and aspProgress record for a new user with no return value
+        ///-- Returns:		Nothing
+        ///
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspCreatePr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_4223_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down {
             get {
@@ -1856,7 +1901,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths]    Script Date: 27/02/2024 10:27:26 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2]    Script Date: 27/06/2024 09:38:12 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///
@@ -1866,11 +1911,12 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///-- =============================================
         ///-- Author:		Kevin Whittaker
-        ///-- Create date: 23/10/2018
-        ///-- Description:	Creates the Progress and aspProgress record for a new user
-        ///-- Returns:		0 : success, progress created
-        ///--       		1 : Failed - progress already exists
-        ///--       		100 : Failed - CentreID and Cust [rest of string was truncated]&quot;;.
+        ///-- Create date: 11/04/2019
+        ///-- Description:	Creates the Progress and aspProgress record for a new user with no return value
+        ///-- Returns:		Nothing
+        ///
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspCreate [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_4223_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up {
             get {
