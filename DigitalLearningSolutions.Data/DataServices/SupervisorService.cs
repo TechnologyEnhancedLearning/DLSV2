@@ -238,7 +238,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
 
-            int existingId = (int)connection.ExecuteScalar(
+            int existingId = Convert.ToInt32(connection.ExecuteScalar(
                 @"
                     SELECT COALESCE
                     ((SELECT Top 1 ID
@@ -253,7 +253,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     supervisorAdminId = supervisorAdminId ?? 0,
                     delegateUserId = delegateUserId ?? 0
                 }
-            );
+            ));
 
             if (existingId > 0)
             {
@@ -285,7 +285,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     return -1;
                 }
 
-                existingId = (int)connection.ExecuteScalar(
+                existingId = Convert.ToInt32(connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
                     ((SELECT ID
@@ -302,7 +302,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         supervisorAdminId = supervisorAdminId ?? 0,
                         delegateUserId = delegateUserId ?? 0
                     }
-                ); return existingId;
+                )); return existingId;
             }
         }
 
@@ -756,14 +756,14 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     @"UPDATE CandidateAssessments
                             SET DelegateUserID = @delegateUserId,
                                 SelfAssessmentID = @selfAssessmentId,
-                                CompleteByDate = NULL,
+                                CompleteByDate = @completeByDate,
                                 EnrolmentMethodId = 2,
                                 EnrolledByAdminId = @adminId,
                                 CentreID = @centreId,
                                 RemovedDate = NULL,
                                 NonReportable = CASE WHEN NonReportable = 1 THEN NonReportable ELSE @isLoggedInUser END
                             WHERE ID = @existingCandidateAssessmentId",
-                    new { delegateUserId, selfAssessmentId, adminId, centreId, existingCandidateAssessmentId, isLoggedInUser });
+                    new { delegateUserId, selfAssessmentId, adminId, centreId, existingCandidateAssessmentId, isLoggedInUser, completeByDate });
 
                 if (numberOfAffectedRows < 1)
                 {
@@ -794,15 +794,15 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         }
         public int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
         {
-            int candidateAssessmentId = (int)connection.ExecuteScalar(
+            int candidateAssessmentId = Convert.ToInt32(connection.ExecuteScalar(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                    WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
-              new { selfAssessmentId, delegateUserId });
+              new { selfAssessmentId, delegateUserId }));
             if (candidateAssessmentId > 0)
             {
-                var candidateAssessmentSupervisorsId = (int)connection.ExecuteScalar(
+                var candidateAssessmentSupervisorsId = Convert.ToInt32(connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
                     ((SELECT ID
@@ -810,7 +810,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         WHERE (CandidateAssessmentID = @candidateAssessmentId)
                             AND (SupervisorDelegateId = @supervisorDelegateId)                        
 							AND ((SelfAssessmentSupervisorRoleID IS NULL) OR (SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleId))), 0) AS CandidateAssessmentSupervisorID", new
-                    { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId });
+                    { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }));
 
                 if (candidateAssessmentSupervisorsId == 0)
                 {
