@@ -88,7 +88,6 @@
             int? itemsPerPage = 10
         )
         {
-            TempData.Clear();
             searchString = searchString == null ? string.Empty : searchString.Trim();
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;

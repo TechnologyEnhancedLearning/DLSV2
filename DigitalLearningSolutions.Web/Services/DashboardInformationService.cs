@@ -44,7 +44,7 @@
             (var delegates, var delegateCount) = userDataService.GetDelegateUserCards("", 0, 10, "SearchableName", "Ascending", centreId,
             "Any", "Any", "Any", "Any", "Any", "Any", 0, null, "Any", "Any", "Any", "Any", "Any", "Any");
           
-            var CourseCount =
+            var courseCount =
                 courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(
                     centreId,
                     adminUser.CategoryId
@@ -56,7 +56,7 @@
                 : ticketDataService.GetNumberOfUnarchivedTicketsForAdminId(adminId);
             var centreRank = centresService.GetCentreRankForCentre(centreId);
 
-            return new CentreDashboardInformation(centre, adminUser, delegateCount, CourseCount,  adminCount, supportTicketCount, centreRank);
+            return new CentreDashboardInformation(centre, adminUser, delegateCount, courseCount,  adminCount, supportTicketCount, centreRank);
         }
     }
 }
