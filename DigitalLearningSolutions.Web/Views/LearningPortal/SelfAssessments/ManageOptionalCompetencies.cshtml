@@ -73,8 +73,17 @@
                     @foreach (var competency in competencyGroup)
                     {
                         <div class="nhsuk-checkboxes__item">
-                            <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.Key" id="competency-check-@competency.Id" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.Id) : false)" type="checkbox" value="@competency.Id">
-                            <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.Id">
+                            <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.Key" id="competency-check-@competency.SelfAssessmentStructureId" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.SelfAssessmentStructureId) : false)" type="checkbox" value="@competency.SelfAssessmentStructureId">
+                            <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.SelfAssessmentStructureId">
+                                @foreach (var flag in competency.CompetencyFlags)
+                                {
+                                    <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                        <strong class="nhsuk-tag @flag.FlagTagClass">
+                                            @flag.FlagName
+                                        </strong>
+                                    </span>
+                                }
+
                                 @competency.Name
                             </label>
                         </div>

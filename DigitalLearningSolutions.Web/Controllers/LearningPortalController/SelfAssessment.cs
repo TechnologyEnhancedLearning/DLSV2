@@ -1420,6 +1420,12 @@
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
             var optionalCompetencies =
                 selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
+            var competencyIds = optionalCompetencies.Select(c => c.Id).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+
+            foreach (var competency in optionalCompetencies)
+                competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.Id);
+
             var includedSelfAssessmentStructureIds =
                 selfAssessmentService.GetCandidateAssessmentIncludedSelfAssessmentStructureIds(
                     selfAssessmentId,

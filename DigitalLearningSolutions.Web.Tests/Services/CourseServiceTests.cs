@@ -784,7 +784,7 @@
             var result = courseService.GetEligibleCoursesToAddToGroup(centreId, categoryId, groupId).ToList();
 
             // Then
-            result.Should().HaveCount(4);
+            result.Should().HaveCount(3);
             result.Should().NotContain(c => c.CustomisationId == 2);
         }
 

@@ -77,8 +77,10 @@
                         </td>
                         <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
                             <span class="nhsuk-table-responsive__heading">Request </span>
-                            @competency.SupervisorName (@competency.CentreName)<br />
-                            @competency.SupervisorVerificationRequested?.ToString("dd/MM/yyyy")<br />
+                            <span class="text-wrap word-break">
+                                @competency.SupervisorName @competency.CentreName<br />
+                                @competency.SupervisorVerificationRequested?.ToString("dd/MM/yyyy")<br />
+                            </span>
                             <div class="nhsuk-u-one-half-tablet" style="white-space: nowrap;">
                                 <div class="nhsuk-grid-row nhsuk-u-padding-0">
                                     @if (competency.EmailSent.HasValue && clockUtility.UtcNow.Subtract(competency.EmailSent.Value) > TimeSpan.FromHours(1))

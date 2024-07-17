@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId);
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId);
 
         bool IsCourseCompleted(int candidateId, int customisationId);
 
@@ -337,7 +337,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cc.CategoryName,
                         ct.CourseTopic,
                         CASE WHEN ({TutorialWithLearningCountQuery}) > 0 THEN 1 ELSE 0 END  AS HasLearning,
-                        CASE WHEN ({TutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic
+                        CASE WHEN ({TutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic,
+                        CASE WHEN ap.ArchivedDate IS NULL THEN 0 ELSE 1 END AS Archived
                     FROM Customisations AS c
                     INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
@@ -430,23 +431,24 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
         public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId)
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId)
         {
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
-            DateTime lastAccessed = startedDate;
+            DateTime? lastAccessed = null;
             dynamic? completeByDateDynamic = null;
+            int enrolmentMethodId = (int)EnrolmentMethod.AdminOrSupervisor;
             if (completeByDate == null || completeByDate.GetValueOrDefault().Year > 1753)
             {
                 completeByDateDynamic = completeByDate!;
             }
-            var candidateAssessmentId = (int)connection.ExecuteScalar(
+            var candidateAssessmentId = Convert.ToInt32(connection.ExecuteScalar(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID  = @delegateUserId) AND (CompletedDate IS NULL)), 0) AS ID",
                 new { selfAssessmentId, delegateUserId }
-            );
+            ));
 
             if (candidateAssessmentId == 0)
             {
@@ -457,7 +459,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                            ,[StartedDate]
                            ,[LastAccessed]
                            ,[CompleteByDate]
-                           ,[CentreID])
+                           ,[CentreID]
+                            ,[EnrolmentMethodId]
+                           ,[EnrolledByAdminId])
                     OUTPUT INSERTED.Id
                      VALUES
                            (@DelegateUserID,
@@ -465,16 +469,18 @@ namespace DigitalLearningSolutions.Data.DataServices
                            @startedDate,
                            @lastAccessed,
                            @completeByDateDynamic,
-                           @centreId);",
-                    new { delegateUserId, selfAssessmentId, startedDate, lastAccessed, completeByDateDynamic, centreId }
+                           @centreId,
+                           @enrolmentMethodId,
+                           @enrolledByAdminId);",
+                    new { delegateUserId, selfAssessmentId, startedDate, lastAccessed, completeByDateDynamic, centreId, enrolmentMethodId, enrolledByAdminId }
                 );
             }
 
-            int supervisorDelegateId = (int)connection.ExecuteScalar(
+            int supervisorDelegateId = Convert.ToInt32(connection.ExecuteScalar(
                     @"SELECT COALESCE
                  ((SELECT TOP 1 ID FROM SupervisorDelegates WHERE SupervisorAdminID = @supervisorId AND DelegateUserId = @delegateUserId), 0) AS ID",
                     new { supervisorId, delegateUserId }
-                );
+                ));
             if (supervisorDelegateId == 0 && supervisorId > 0)
             {
                 supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates
@@ -501,11 +507,11 @@ namespace DigitalLearningSolutions.Data.DataServices
 
             if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)
             {
-                int candidateAssessmentSupervisorsId = (int)connection.ExecuteScalar(
+                int candidateAssessmentSupervisorsId = Convert.ToInt32(connection.ExecuteScalar(
                     @"SELECT COALESCE
                              ((SELECT TOP 1 ID FROM CandidateAssessmentSupervisors WHERE CandidateAssessmentID = @candidateAssessmentID AND SupervisorDelegateId = @supervisorDelegateId), 0) AS ID",
                     new { candidateAssessmentId, supervisorDelegateId }
-                );
+                ));
 
                 if (candidateAssessmentSupervisorsId == 0)
                 {
@@ -521,7 +527,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
-                UPDATE CandidateAssessments SET RemovedDate = NULL
+                UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic
                   WHERE ID = @candidateAssessmentId
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
@@ -531,7 +537,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 COMMIT TRANSACTION";
 
                 connection.Execute(sqlQuery
-                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId });
+                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic });
             }
 
             if (candidateAssessmentId < 1)
@@ -547,13 +553,14 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId)
         {
-            var enrolmentExists = (int)connection.ExecuteScalar(
+            int enrolmentMethodId = (int)EnrolmentMethod.Self;
+            var enrolmentExists = Convert.ToInt32(connection.ExecuteScalar(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (CompletedDate IS NULL)), 0) AS ID",
                 new { selfAssessmentId, delegateUserId }
-            );
+            ));
 
             if (enrolmentExists > 0)
             {
@@ -568,9 +575,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 {
                     connection.Execute(
                         @"UPDATE CandidateAssessments
-                        SET RemovedDate = NULL
+                        SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId
                         WHERE ID = @enrolmentExists",
-                        new { enrolmentExists }
+                        new { enrolmentExists, enrolmentMethodId }
                 );
                 }
             }
@@ -638,7 +645,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? adminCategoryId)
         {
-            return (int)connection.ExecuteScalar(
+            return Convert.ToInt32(connection.ExecuteScalar(
                 @"SELECT COUNT(*)
                         FROM dbo.Customisations AS cu
                         INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
@@ -649,7 +656,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                             AND ca.CentreID = @centreId
                             AND ap.DefaultContentTypeID <> 4",
                 new { centreId, adminCategoryId }
-            );
+            ));
         }
 
         public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(
@@ -864,8 +871,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
-                return connection.Query<DelegateCourseInfo>(
-                $@"{selectDelegateCourseInfoQuery}
+            return connection.Query<DelegateCourseInfo>(
+            $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND pr.RemovedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4
@@ -909,8 +916,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.ProfessionalRegistrationNumber,
                         da.CentreID,
                         ap.ArchivedDate",
-                new { delegateId }
-            );            
+            new { delegateId }
+        );
         }
 
         public DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId)

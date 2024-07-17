@@ -384,7 +384,7 @@
         )
         {
             var allPossibleCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
-                .Where(c => c.Active);
+                .Where(c => c.Active && !c.Archived);
 
             var groupCourseIds = groupsDataService.GetGroupCoursesVisibleToCentre(centreId)
                 .Where(gc => gc.IsUsable && gc.GroupId == groupId)

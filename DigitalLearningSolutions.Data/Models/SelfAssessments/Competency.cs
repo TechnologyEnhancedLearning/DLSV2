@@ -27,6 +27,7 @@
         public int? CandidateAssessmentSupervisorId { get; set; }
         public string? SupervisorName { get; set; }
         public string? CentreName { get; set; }
+        public int? SelfAssessmentStructureId { get; set; }
         public List<AssessmentQuestion> AssessmentQuestions { get; set; } = new List<AssessmentQuestion>();
         public IEnumerable<CompetencyFlag> CompetencyFlags { get; set; } = new List<CompetencyFlag>();
     }

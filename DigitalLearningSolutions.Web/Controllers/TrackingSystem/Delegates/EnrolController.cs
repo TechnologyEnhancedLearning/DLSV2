@@ -325,7 +325,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault(),
                     sessionEnrol.CompleteByDate,
                     (int)sessionEnrol.DelegateUserID,
-                    centreId
+                    centreId,
+                    GetAdminID()
                     );
 
             }

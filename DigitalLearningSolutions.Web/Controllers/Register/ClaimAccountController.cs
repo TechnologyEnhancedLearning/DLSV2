@@ -176,6 +176,21 @@
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult VerifyLinkDlsAccount(string email, string code)
+        {
+            var userId = userService.GetUserAccountByEmailAddress(email).Id;
+            var model = GetViewModelIfValidParameters(email, code, userId);
+            var actionResult = ValidateClaimAccountViewModelForLinkingAccounts(userId, model);
+
+            if (actionResult != null)
+            {
+                return actionResult;
+            }
+
+            return RedirectToAction("LinkDlsAccount", new { email, code });
+        }
+
         [Authorize(Policy = CustomPolicies.BasicUser)]
         [HttpGet]
         public IActionResult LinkDlsAccount(string email, string code)
@@ -219,7 +234,6 @@
             return View(model);
         }
 
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         [HttpGet]
         public IActionResult WrongUser(string email, string centreName)
         {
@@ -227,7 +241,6 @@
             return View(model);
         }
 
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         [HttpGet]
         public IActionResult AccountAlreadyExists(string email, string centreName)
         {
@@ -235,7 +248,6 @@
             return View(model);
         }
 
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         [HttpGet]
         public IActionResult AdminAccountAlreadyExists(string email, string centreName)
         {
