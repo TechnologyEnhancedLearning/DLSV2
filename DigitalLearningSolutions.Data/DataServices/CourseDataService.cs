@@ -144,17 +144,27 @@ namespace DigitalLearningSolutions.Data.DataServices
         private const string DelegateCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
                 FROM dbo.Progress AS pr WITH (NOLOCK)
-                INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+                    INNER JOIN dbo.DelegateAccounts AS da WITH (NOLOCK) ON da.ID = pr.CandidateID
+				    INNER JOIN dbo.Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+                    LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.centreID
                 WHERE pr.CustomisationID = cu.CustomisationID
-                AND can.CentreID = @centreId
-                AND RemovedDate IS NULL) AS DelegateCount";
+                    AND can.CentreID = @centreId
+                    AND RemovedDate IS NULL
+                    AND ((ucd.Email IS NOT NULL AND ucd.Email like '%_@_%.__%')
+                            OR u.PrimaryEmail like '%_@_%.__%')) AS DelegateCount";
 
         private const string CompletedCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
                 FROM dbo.Progress AS pr WITH (NOLOCK) 
-                INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+                    INNER JOIN dbo.Candidates AS can WITH (NOLOCK) ON can.CandidateID = pr.CandidateID
+                    INNER JOIN dbo.DelegateAccounts AS da WITH (NOLOCK) ON da.ID = pr.CandidateID
+				    INNER JOIN dbo.Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+                    LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.centreID
                 WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
-                AND can.CentreID = @centreId) AS CompletedCount";
+                    AND can.CentreID = @centreId
+                    AND ((ucd.Email IS NOT NULL AND ucd.Email like '%_@_%.__%')
+                            OR u.PrimaryEmail like '%_@_%.__%')) AS CompletedCount";
 
         private const string AllAttemptsQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
@@ -1621,7 +1631,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
                     WHERE da.CentreID = @centreId
                         AND p.CustomisationID = @customisationId
-                        AND ap.DefaultContentTypeID <> 4",
+                        AND ap.DefaultContentTypeID <> 4
+                        AND ((ucd.Email IS NOT NULL AND ucd.Email like '%_@_%.__%')
+                            OR u.PrimaryEmail like '%_@_%.__%')",
                 new { customisationId, centreId }
             );
         }
