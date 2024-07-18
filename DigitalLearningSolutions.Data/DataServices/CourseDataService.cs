@@ -151,8 +151,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 WHERE pr.CustomisationID = cu.CustomisationID
                     AND can.CentreID = @centreId
                     AND RemovedDate IS NULL
-                    AND ((ucd.Email IS NOT NULL AND ucd.Email like '%_@_%.__%')
-                            OR u.PrimaryEmail like '%_@_%.__%')) AS DelegateCount";
+                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS DelegateCount";
 
         private const string CompletedCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
@@ -163,8 +162,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.centreID
                 WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
                     AND can.CentreID = @centreId
-                    AND ((ucd.Email IS NOT NULL AND ucd.Email like '%_@_%.__%')
-                            OR u.PrimaryEmail like '%_@_%.__%')) AS CompletedCount";
+                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS CompletedCount";
 
         private const string AllAttemptsQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
@@ -1632,8 +1630,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE da.CentreID = @centreId
                         AND p.CustomisationID = @customisationId
                         AND ap.DefaultContentTypeID <> 4
-                        AND ((ucd.Email IS NOT NULL AND ucd.Email like '%_@_%.__%')
-                            OR u.PrimaryEmail like '%_@_%.__%')",
+                        AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'",
                 new { customisationId, centreId }
             );
         }
