@@ -55,7 +55,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
             EnrolmentMethod = delegateInfo.EnrolmentMethodId switch
             {
                 1 => "Self enrolled",
-                2 => enrolledByFullName == null ? "Admin/supervisor enrolled" : "Enrolled by " + enrolledByFullName,
+                2 => enrolledByFullName == null ? "Admin/supervisor enrolled" : "Enrolled by Admin/Supervisor - " + enrolledByFullName,
                 3 => "Group",
                 _ => "System",
             };
