@@ -651,7 +651,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                         INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                         INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
                         WHERE (ap.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)
-                            AND cu.Active = 1
                             AND cu.CentreID = @centreId
                             AND ca.CentreID = @centreId
                             AND ap.DefaultContentTypeID <> 4",
