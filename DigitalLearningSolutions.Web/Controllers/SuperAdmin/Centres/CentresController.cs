@@ -182,6 +182,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         public IActionResult ManageCentre(int centreId = 0)
         {
             Centre centre = centresService.GetFullCentreDetailsById(centreId);
+            centre.CandidateByteLimit = centre.CandidateByteLimit / 1048576;
+            centre.ServerSpaceBytes = centre.ServerSpaceBytes / 1073741824;
             return View(centre);
         }
 
