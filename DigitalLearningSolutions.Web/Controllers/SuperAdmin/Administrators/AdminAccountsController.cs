@@ -71,6 +71,7 @@
           string? ExistingFilterString = ""
         )
         {
+            Search = Search == null ? string.Empty : Search.Trim();
             var loggedInSuperAdmin = userService.GetAdminById(User.GetAdminId()!.Value);
             if (loggedInSuperAdmin.AdminAccount.Active == false)
             {

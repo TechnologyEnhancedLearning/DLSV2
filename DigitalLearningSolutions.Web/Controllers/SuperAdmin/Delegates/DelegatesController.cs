@@ -52,6 +52,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
           string? SearchString = "",
           string? ExistingFilterString = "")
         {
+            Search = Search == null ? string.Empty : Search.Trim();
 
             if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
