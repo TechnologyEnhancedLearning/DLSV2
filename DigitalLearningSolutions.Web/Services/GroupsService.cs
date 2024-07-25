@@ -755,7 +755,7 @@
                     delegateUserId,
                     groupCourse.CustomisationId,
                     groupCourse.CurrentVersion,
-                    clockUtility.UtcNow,
+                    null,
                     3,
                     addedByAdminId,
                     completeByDate,

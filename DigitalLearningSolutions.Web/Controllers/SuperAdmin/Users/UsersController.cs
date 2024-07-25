@@ -99,6 +99,8 @@
           string? ExistingFilterString = ""
         )
         {
+            Search = Search == null ? string.Empty : Search.Trim();
+
             if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
                 page = 1;

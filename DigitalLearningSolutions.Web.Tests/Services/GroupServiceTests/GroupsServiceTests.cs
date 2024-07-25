@@ -13,7 +13,7 @@
     using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    
+
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
@@ -802,7 +802,7 @@
                     A<int>._,
                     A<int>._,
                     A<int>._,
-                    A<DateTime>._,
+                    A<DateTime?>._,
                     A<int>._,
                     A<int?>._,
                     A<DateTime?>._,

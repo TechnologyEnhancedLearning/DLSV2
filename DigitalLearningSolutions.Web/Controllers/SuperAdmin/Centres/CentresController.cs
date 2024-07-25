@@ -182,6 +182,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         public IActionResult ManageCentre(int centreId = 0)
         {
             Centre centre = centresService.GetFullCentreDetailsById(centreId);
+            centre.CandidateByteLimit = centre.CandidateByteLimit / 1048576;
+            centre.ServerSpaceBytes = centre.ServerSpaceBytes / 1073741824;
             return View(centre);
         }
 
@@ -233,18 +235,20 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         [Route("SuperAdmin/Centres/{centreId=0:int}/EditCentreDetails")]
         public IActionResult EditCentreDetails(EditCentreDetailsSuperAdminViewModel model)
         {
-            var centres = centresService.GetAllCentres().ToList();
-            bool isExistingCentreName = centres.Where(center => center.Item1 == model.CentreId)
-                .Select(center => center.Item2)
-                .FirstOrDefault()
-                .Equals(model.CentreName.Trim());
-            bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
-
-            if (isCentreNamePresent && !isExistingCentreName)
+            if (!string.IsNullOrEmpty(model.CentreName))
             {
-                ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
-            }
+                var centres = centresService.GetAllCentres().ToList();
+                bool isExistingCentreName = centres.Where(center => center.Item1 == model.CentreId)
+                    .Select(center => center.Item2)
+                    .FirstOrDefault()
+                    .Equals(model.CentreName.Trim());
+                bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
 
+                if (isCentreNamePresent && !isExistingCentreName)
+                {
+                    ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
+                }
+            }
             if (!ModelState.IsValid)
             {
                 var regions = regionService.GetRegionsAlphabetical().ToList();

@@ -170,7 +170,7 @@
         public void UpdateLastAccessed(int selfAssessmentId, int delegateUserId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE CandidateAssessments SET LastAccessed = GETUTCDATE()
+                @"UPDATE CandidateAssessments SET LastAccessed = GETDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId",
                 new { selfAssessmentId, delegateUserId }
             );
@@ -297,7 +297,7 @@
         public void SetSubmittedDateNow(int selfAssessmentId, int delegateUserId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE CandidateAssessments SET SubmittedDate = GETUTCDATE()
+                @"UPDATE CandidateAssessments SET SubmittedDate = GETDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId AND SubmittedDate IS NULL",
                 new { selfAssessmentId, delegateUserId }
             );
@@ -314,7 +314,7 @@
         public void RemoveEnrolment(int selfAssessmentId, int delegateUserId)
         {
             connection.Execute(
-                @"UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE()
+                @"UPDATE CandidateAssessments SET RemovedDate = GETDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId",
                 new { selfAssessmentId, delegateUserId }
             );
