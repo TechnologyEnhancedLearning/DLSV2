@@ -61,7 +61,7 @@
                 string enrolmentMethod = Model.EnrolmentMethodId switch
                 {
                     1 => "Self enrolled",
-                    2 => "Admin/supervisor enrolled",
+                    2 => Model.EnrolledByFullName != null ? "Enrolled by Admin/Supervisor - " + Model.EnrolledByFullName : "Admin/Supervisor enrolled",
                     3 => "Group",
                     _ => "System",
                 };

@@ -11,9 +11,10 @@
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
             IEnumerable<CentreRegistrationPrompt> customPrompts,
-            int groupId
+            int groupId,
+            IEnumerable<(int id, string name)> groups
         )
-            : base(delegateUserCards, jobGroups, customPrompts)
+            : base(delegateUserCards, jobGroups, customPrompts, groups)
         {
             GroupId = groupId;
         }

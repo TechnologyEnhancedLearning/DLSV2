@@ -158,12 +158,13 @@
             var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
-
+            var groups = groupsService.GetActiveGroups(centreId);
             var model = new SelectDelegateAllItemsViewModel(
                 delegateUsers,
                 jobGroups,
                 customPrompts,
-                groupId
+                groupId,
+                groups
             );
 
             return View(model);
