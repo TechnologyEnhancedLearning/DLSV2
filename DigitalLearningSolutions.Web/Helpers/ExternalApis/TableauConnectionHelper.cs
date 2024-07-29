@@ -13,6 +13,7 @@
     using System.Net.Http.Headers;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.DataProtection;
 
     public interface ITableauConnectionHelperService
     {
@@ -40,32 +41,34 @@
         }
         public string GetTableauJwt(string email)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(connectedAppSecretKey);
+            var key = Encoding.UTF8.GetBytes(connectedAppSecretKey);
+            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("users.primaryemail", email),
-                new Claim("scp", "tableau:views:embed")
-            };
-            var securityKey = new SymmetricSecurityKey(key);
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
-            var header = new JwtHeader(credentials);
-            header["kid"] = connectedAppSecretId; // Secret ID
-            header["iss"] = connectedAppClientId; // Issuer (iss)
-            var payload = new JwtPayload(
-                connectedAppClientId, // Issuer (iss)
-                "tableau", // Audience (aud)
-                claims,
-                notBefore: DateTime.UtcNow,
-                expires: DateTime.UtcNow.AddMinutes(5)
-            );
+            var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("users.primaryemail", email),
+        };
+
+            var header = new JwtHeader(signingCredentials)
+        {
+            { "kid", connectedAppSecretId },
+            { "iss", connectedAppClientId }
+        };
+
+            var payload = new JwtPayload
+        {
+            { "iss", connectedAppClientId },
+            { "aud", "tableau" },
+            { "exp", new DateTimeOffset(DateTime.UtcNow.AddMinutes(5)).ToUnixTimeSeconds() },
+            { "sub", user },
+            { "scp", new[] { "tableau:content:read" } }
+        };
 
             var token = new JwtSecurityToken(header, payload);
+            var tokenHandler = new JwtSecurityTokenHandler();
             var tokenString = tokenHandler.WriteToken(token);
-
             return tokenString;
         }
 
