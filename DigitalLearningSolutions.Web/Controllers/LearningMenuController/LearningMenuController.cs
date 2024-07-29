@@ -62,6 +62,17 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var candidateId = User.GetCandidateIdKnownNotNull();
+
+            if (courseService.GetAvailableCourses(candidateId, centreId)
+            .Where(c => c.Id == customisationId && (!c.SelfRegister || c.HideInLearnerPortal)).Any())
+            {
+                logger.LogError(
+                    "Redirecting to 410 as course/centre id was not available for self enrolled. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId.ToString() ?? "null"}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
+
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
             if (courseContent == null)
             {
