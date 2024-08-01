@@ -3,34 +3,38 @@
 @model AddBulkAdminFieldAnswersViewModel
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Configure responses in bulk" : "Configure responses in bulk";
-  var cancelLinkData = Html.GetRouteValues();
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Configure responses in bulk" : "Configure responses in bulk";
+    var cancelLinkData = Html.GetRouteValues();
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new []{ nameof(Model.OptionsString) })" />
-    }
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new []{ nameof(Model.OptionsString) })" />
+        }
 
-    <h1 class="nhsuk-heading-xl">Configure responses in bulk</h1>
+        <h1 class="nhsuk-heading-xl">Configure responses in bulk</h1>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddAdminFieldAnswersBulk">
+        <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddAdminFieldAnswersBulk">
 
-      <vc:text-area asp-for="@nameof(Model.OptionsString)"
-                    label="Enter each response option on a separate line (max 1000 characters in total). The order of responses will be the order they appear on the dropdown for users."
-                    populate-with-current-value="true"
-                    rows="5"
-                    spell-check="false"
-                    hint-text=""
-                    css-class=""
-                    character-count="1000" />
+            <vc:text-area asp-for="@nameof(Model.OptionsString)"
+                          label="Enter each response option on a separate line (max 1000 characters in total). The order of responses will be the order they appear on the dropdown for users."
+                          populate-with-current-value="true"
+                          rows="5"
+                          spell-check="false"
+                          hint-text=""
+                          css-class=""
+                          character-count="null" />
+            <span class="nhsuk-hint" id="bulk-response-hint">
+                The complete list of responses must be 1000 characters or fewer and each response must be 100 characters or fewer
+            </span>
 
-      <button class="nhsuk-button" type="submit">Submit</button>
-    </form>
+            <button class="nhsuk-button" type="submit">Submit</button>
+        </form>
 
-    <vc:cancel-link asp-controller="AdminFields" asp-action="AddAdminField" asp-all-route-data="@cancelLinkData" />
+        <vc:cancel-link asp-controller="AdminFields" asp-action="AddAdminField" asp-all-route-data="@cancelLinkData" />
 
-  </div>
+    </div>
 </div>
