@@ -1,7 +1,4 @@
 ﻿
-using FluentMigrator;
-using System.Diagnostics.Metrics;
-
 namespace DigitalLearningSolutions.Data.Migrations
 {
     using FluentMigrator;
