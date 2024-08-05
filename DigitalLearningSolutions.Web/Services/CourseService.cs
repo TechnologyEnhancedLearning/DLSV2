@@ -132,6 +132,8 @@
         void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId);
         int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
+        bool IsSelfEnrollmentAllowed(int customisationId);
+        Customisation? GetCourse(int customisationId);
     }
 
     public class CourseService : ICourseService
@@ -618,6 +620,16 @@
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId)
         {
             return courseDataService.GetApplicationsAvailableToCentre(centreId);
+        }
+
+        public bool IsSelfEnrollmentAllowed(int customisationId)
+        {
+            return courseDataService.IsSelfEnrollmentAllowed(customisationId);
+        }
+
+        public Customisation? GetCourse(int customisationId)
+        {
+            return courseDataService.GetCourse(customisationId);
         }
     }
 }
