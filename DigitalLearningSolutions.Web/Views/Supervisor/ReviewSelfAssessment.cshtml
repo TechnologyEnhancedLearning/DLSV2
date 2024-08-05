@@ -30,8 +30,8 @@
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
                 <li class="nhsuk-breadcrumb__item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-                       asp-action="DelegateProfileAssessments"
-                       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+                   asp-action="DelegateProfileAssessments"
+                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
                         @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
                     </a>
                 </li>
@@ -44,15 +44,15 @@
             @if (ViewBag.navigatedFrom)
             {
                 <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-                   asp-action="Index">
+           asp-action="Index">
                     Back to Supervisor Dashboard
                 </a>
             }
             else
             {
                 <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-                   asp-action="DelegateProfileAssessments"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+           asp-action="DelegateProfileAssessments"
+           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
                     Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
                 </a>
             }
@@ -86,12 +86,12 @@
         @if (!Model.ExportToExcelHide)
         {
             <a class="nhsuk-button nhsuk-button--secondary"
-               asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
-               asp-route-selfAssessmentName="@Model.DelegateSelfAssessment.RoleName"
-               asp-route-delegateUserID="@Model.DelegateSelfAssessment.DelegateUserID"
-               asp-route-delegateName="@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName"
-               asp-action="ExportCandidateAssessment"
-               role="button">
+           asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
+           asp-route-selfAssessmentName="@Model.DelegateSelfAssessment.RoleName"
+           asp-route-delegateUserID="@Model.DelegateSelfAssessment.DelegateUserID"
+           asp-route-delegateName="@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName"
+           asp-action="ExportCandidateAssessment"
+           role="button">
                 Export to Excel
             </a>
         }
@@ -99,11 +99,11 @@
         @if (ViewBag.CanViewCertificate)
         {
             <a class="nhsuk-button"
-               asp-controller="LearningPortal"
-               asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
-               asp-action="CompetencySelfAssessmentCertificate"
-               asp-route-route="3"
-               role="button">
+           asp-controller="LearningPortal"
+           asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
+           asp-action="CompetencySelfAssessmentCertificate"
+           asp-route-route="3"
+           role="button">
                 Certificate
             </a>
         }
@@ -164,7 +164,10 @@
                 {
                     <tr role="row" class="nhsuk-table__row first-row">
                         <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
-                            <partial name="Shared/_TagRow" model="@competency.Optional" />
+                            @if(competency.Optional)
+                            {
+                            <partial name="Shared/_TagRow"  />
+                            }
                             <b> <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span></b>
                             <partial name="_CompetencyFlags" model="competency.CompetencyFlags" />
                             @if (competency.Description != null && !competency.AlwaysShowDescription)
@@ -196,15 +199,15 @@
                             }
                         </td>
                         <partial name="Shared/_AssessmentQuestionReviewCells"
-                                 model="competency.AssessmentQuestions.First()"
-                                 view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
+                     model="competency.AssessmentQuestions.First()"
+                     view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
                     </tr>
                     @foreach (var question in competency.AssessmentQuestions.Skip(1))
                     {
                         <tr role="row" class="nhsuk-table__row">
                             <partial name="Shared/_AssessmentQuestionReviewCells"
-                                     model="question"
-                                     view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
+                     model="question"
+                     view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
                         </tr>
                     }
                 }
