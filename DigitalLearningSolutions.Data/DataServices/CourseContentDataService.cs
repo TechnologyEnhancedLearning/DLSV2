@@ -251,7 +251,7 @@
                             WHERE S1.CandidateID = Progress.CandidateID
                               AND S1.CustomisationID = Progress.CustomisationID
                               AND S1.LoginTime >= Progress.FirstSubmittedTime),
-                            SubmittedTime = GETUTCDATE()
+                            SubmittedTime = GETDATE()
                         WHERE Progress.ProgressID = @progressId",
                 new { progressId }
             );

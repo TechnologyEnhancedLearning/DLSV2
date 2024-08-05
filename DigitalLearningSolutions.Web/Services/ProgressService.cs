@@ -102,13 +102,7 @@
 
             using var transaction = new TransactionScope();
 
-            progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                progressId,
-                supervisorId,
-                courseInfo.CompleteBy,
-                2,
-               clockUtility.UtcNow
-            );
+            progressDataService.UpdateProgressSupervisor(progressId, supervisorId);
 
             progressDataService.ClearAspProgressVerificationRequest(progressId);
 
