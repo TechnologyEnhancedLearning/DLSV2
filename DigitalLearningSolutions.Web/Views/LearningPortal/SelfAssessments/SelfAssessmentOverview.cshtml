@@ -159,7 +159,7 @@
                 <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
                 <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs"
                          view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", competencySummaries.Sum(c => (int)c["questionsCount"]) == competencySummaries.Sum(c => (int)c["verifiedCount"]) }})" />
-                @if (Model.AllQuestionsVerifiedOrNotRequired)
+                @if ((Model.AllQuestionsVerifiedOrNotRequired)  && (Model.NumberOfAssignOptionalCompetencies >= Model.SelfAssessment.MinimumOptionalCompetencies)  )
                 {
                     @if (!Model.SupervisorSignOffs.Any())
                     {
@@ -198,6 +198,10 @@
                     <p class="nhsuk-body-l">
                         All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and confirmed,
                         before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.
+                    </p>
+                    <p class="nhsuk-body-l">
+                        Your self assessment does not contain enough optional proficiencies to request sign off.
+                        Go to Manage Optional Competencies to choose the optional competencies that you wish to include..
                     </p>
                 }
             </div>

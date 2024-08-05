@@ -137,7 +137,8 @@
                         SA.SignOffRequestorStatement,
                         SA.ManageSupervisorsDescription,
                         CA.NonReportable,
-					 U.FirstName +' '+ U.LastName AS DelegateName
+					 U.FirstName +' '+ U.LastName AS DelegateName,
+                    SA.MinimumOptionalCompetencies
                     FROM CandidateAssessments CA
                     JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
@@ -162,7 +163,7 @@
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable,
-                        U.FirstName , U.LastName",
+                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies",
                 new { delegateUserId, selfAssessmentId }
             );
         }
@@ -335,7 +336,7 @@
                 new { selfAssessmentId, delegateUserId }
             );
         }
-        public CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
+        public CompetencySelfAssessmentCertificate? GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
         {
             return connection.QueryFirstOrDefault<CompetencySelfAssessmentCertificate>(
                 @"SELECT
@@ -423,7 +424,7 @@
                 new { selfAssessmentId, delegateUserID }
             );
         }
-        public ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
+        public ActivitySummaryCompetencySelfAssesment? GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
         {
             return connection.QueryFirstOrDefault<ActivitySummaryCompetencySelfAssesment>(
                 @"SELECT ca.ID AS CandidateAssessmentID, ca.SelfAssessmentID, sa.Name AS RoleName, casv.ID AS CandidateAssessmentSupervisorVerificationId,
