@@ -8,9 +8,9 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Utilities;
+    using Microsoft.Extensions.Configuration;
 
     public interface IActivityService
     {
@@ -27,20 +27,24 @@
 
     public class ActivityService : IActivityService
     {
-        private const string SheetName = "Usage Statistics";
+        private const string SheetName = "Usage summary";
         private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
         private readonly IActivityDataService activityDataService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IClockUtility clockUtility;
+        private readonly IConfiguration configuration;
+        private readonly ICentreRegistrationPromptsService registrationPromptsService;
 
         public ActivityService(
             IActivityDataService activityDataService,
             IJobGroupsDataService jobGroupsDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
             ICourseDataService courseDataService,
-            IClockUtility clockUtility
+            IClockUtility clockUtility,
+            IConfiguration configuration,
+            ICentreRegistrationPromptsService registrationPromptsService
         )
         {
             this.activityDataService = activityDataService;
@@ -48,7 +52,19 @@
             this.courseCategoriesDataService = courseCategoriesDataService;
             this.courseDataService = courseDataService;
             this.clockUtility = clockUtility;
+            this.configuration = configuration;
+            this.registrationPromptsService = registrationPromptsService;
         }
+        public int GetActivityDetailRowCount(int centreId, ActivityFilterData filterData)
+        {
+            return activityDataService.GetActivityDetailRowCount(centreId,
+                                filterData.StartDate,
+                                filterData.EndDate,
+                                filterData.JobGroupId,
+                                filterData.CourseCategoryId,
+                                filterData.CustomisationId);
+        }
+
         public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData)
         {
             var activityData = activityDataService
@@ -146,7 +162,7 @@
             var table = sheet.Cell(1, 1).InsertTable(workbookData);
             table.Theme = TableTheme;
             sheet.Columns().AdjustToContents();
-
+            AddActivityDetailSheet(workbook, centreId, filterData);
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();
@@ -206,6 +222,49 @@
                     groupingOfLogs.Sum(activityLog => activityLog.Evaluated)
                 )
             );
+        }
+        private void AddActivityDetailSheet(XLWorkbook workbook, int centreId, ActivityFilterData filterData)
+        {
+            var itemsPerPage = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
+            var resultCount = GetActivityDetailRowCount(centreId, filterData);
+            int totalRun = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
+            int currentRun = 1;
+            List<ActivityLogDetail> activityLogDetails = new List<ActivityLogDetail>();
+            while (totalRun >= currentRun)
+            {
+                activityLogDetails.AddRange(activityDataService.GetFilteredActivityDetail(
+                    centreId,
+                    filterData.StartDate,
+                    filterData.EndDate,
+                    filterData.JobGroupId,
+                    filterData.CourseCategoryId,
+                    filterData.CustomisationId,
+                    itemsPerPage,
+                    currentRun));
+                currentRun++;
+            }
+            var customRegistrationPrompts = registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+            var sheet = workbook.Worksheets.Add("Usage detail");
+            var table = sheet.Cell(1, 1).InsertTable(activityLogDetails);
+            table.Theme = TableTheme;
+            table.Field(0).Name = "Date";
+            foreach (var prompt in customRegistrationPrompts.CustomPrompts)
+            {
+                var promptName = prompt.PromptText;
+                var fieldNum = prompt.RegistrationField.ToString().Last();
+                var promptLabel = "Answer" + fieldNum;
+                table.Field(promptLabel).Name = promptName;
+            }
+            for (int i = 1; i < 7; i++)
+            {
+                var answerLabel = "Answer" + i.ToString();
+
+                if (table.Fields.Any(f => f.Name == answerLabel))
+                {
+                    table.Field(answerLabel).Delete();
+                }
+            }
+            sheet.Columns().AdjustToContents();
         }
         private static int GetFirstMonthOfQuarter(int quarter)
         {
