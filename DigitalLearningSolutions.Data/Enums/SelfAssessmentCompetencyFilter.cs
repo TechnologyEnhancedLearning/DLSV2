@@ -2,6 +2,7 @@
 {
     public enum SelfAssessmentCompetencyFilter
     {
+        Optional = -11,
         AwaitingConfirmation = -10,
         PendingConfirmation = -9,
         RequiresSelfAssessment = -8,
