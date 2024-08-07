@@ -468,6 +468,7 @@
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = Math.Max(competencies.Count(), 1),
                 NumberOfOptionalCompetencies = optionalCompetencies.Count(),
+                NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment ) ,
                 SupervisorSignOffs = supervisorSignOffs,
                 SearchViewModel = searchViewModel
             };
