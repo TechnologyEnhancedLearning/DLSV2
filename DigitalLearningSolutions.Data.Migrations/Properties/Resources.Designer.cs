@@ -1925,6 +1925,53 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 22/07/2024 10:11:35 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        /// 
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        /// 
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetC [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_down {
+            get {
+                return ResourceManager.GetString("TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        /// 
+        ////****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 22/07/2024 10:11:35 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        /// 
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        /// 
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[Ge [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_up {
+            get {
+                return ResourceManager.GetString("TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
