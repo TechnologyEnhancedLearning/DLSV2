@@ -1495,10 +1495,12 @@
                 var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
                 var supervisors =
                     selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, delegateUserId);
+                var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
                 var newModel = new RequestSignOffViewModel
                 {
                     SelfAssessment = assessment,
                     Supervisors = supervisors,
+                    NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment)
                 };
                 return View("SelfAssessments/RequestSignOff", newModel);
             }
