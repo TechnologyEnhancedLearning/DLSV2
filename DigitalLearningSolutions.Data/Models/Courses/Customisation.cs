@@ -2,6 +2,7 @@
 {
     public class Customisation
     {
+        public Customisation() { }
         public Customisation(
             int centreId,
             int applicationId,
@@ -40,5 +41,8 @@
         public bool DiagObjSelect { get; set; }
         public bool HideInLearnerPortal { get; set; }
         public string? NotificationEmails { get; set; }
+        public int CustomisationId { get; set; }
+        public bool Active { get; set; }
+
     }
 }
