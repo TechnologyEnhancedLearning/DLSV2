@@ -13,7 +13,7 @@
         public IEnumerable<SupervisorSignOff>? SupervisorSignOffs { get; set; }
         public int PreviousCompetencyNumber { get; set; }
         public int NumberOfOptionalCompetencies { get; set; }
-        public int NumberOfAssignOptionalCompetencies { get; set; }
+        public int NumberOfSelfAssessedOptionalCompetencies { get; set; }
 
         public bool AllQuestionsVerifiedOrNotRequired { get; set; }
         public SearchSelfAssessmentOverviewViewModel SearchViewModel { get; set; }
