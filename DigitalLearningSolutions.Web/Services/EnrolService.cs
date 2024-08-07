@@ -104,9 +104,7 @@ namespace DigitalLearningSolutions.Web.Services
                         progressRecord.ProgressId,
                         supervisorAdminId ?? 0,
                         completeByDate,
-                        2,
-                       clockUtility.UtcNow
-                        );
+                        2);
                 }
             }
             else
@@ -188,7 +186,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail, int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId)
         {
-           return courseDataService.EnrolOnActivitySelfAssessment(selfAssessmentId, candidateId, supervisorId, adminEmail, selfAssessmentSupervisorRoleId, completeByDate, delegateUserId, centreId, enrolledByAdminId);
+            return courseDataService.EnrolOnActivitySelfAssessment(selfAssessmentId, candidateId, supervisorId, adminEmail, selfAssessmentSupervisorRoleId, completeByDate, delegateUserId, centreId, enrolledByAdminId);
         }
     }
 }

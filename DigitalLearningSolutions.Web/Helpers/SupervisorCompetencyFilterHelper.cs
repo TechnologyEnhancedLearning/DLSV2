@@ -48,6 +48,7 @@ namespace DigitalLearningSolutions.Web.Helpers
                                        || (filters.Contains((int)SelfAssessmentCompetencyFilter.ConfirmationRejected) && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff != true))
                                        || (filters.Contains((int)SelfAssessmentCompetencyFilter.AwaitingConfirmation) && c.AssessmentQuestions.Any(q => q.Verified == null && q.Requested != null && q.UserIsVerifier == true))
                                        || (filters.Contains((int)SelfAssessmentCompetencyFilter.Verified) && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff == true))
+                                       ||  (filters.Contains((int)SelfAssessmentCompetencyFilter.Optional) && c.Optional )
                                        where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
                                            && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
                                        select c;
@@ -111,6 +112,7 @@ namespace DigitalLearningSolutions.Web.Helpers
         {
             var responseStatusFilters = new int[]
             {
+                (int)SelfAssessmentCompetencyFilter.Optional,
                 (int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment,
                 (int)SelfAssessmentCompetencyFilter.SelfAssessed,
                 (int)SelfAssessmentCompetencyFilter.Verified,

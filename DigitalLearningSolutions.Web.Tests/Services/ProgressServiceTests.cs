@@ -58,7 +58,7 @@
 
             // Then
             A.CallTo(
-                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._, A<int>._, A<DateTime?>._)
+                () => progressDataService.UpdateProgressSupervisor(A<int>._, A<int>._)
             ).MustNotHaveHappened();
             A.CallTo(
                 () => progressDataService.ClearAspProgressVerificationRequest(A<int>._)
@@ -80,12 +80,9 @@
 
             // Then
             A.CallTo(
-                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
+                () => progressDataService.UpdateProgressSupervisor(
                     progressId,
-                    newSupervisorId,
-                    A<DateTime?>._,
-                    A<int>._,
-                     A<DateTime?>._
+                    newSupervisorId
                 )
             ).MustHaveHappened();
             A.CallTo(
@@ -107,7 +104,7 @@
 
             // Then
             A.CallTo(
-                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(progressId, 0, A<DateTime?>._, A<int>._, A<DateTime?>._)
+                () => progressDataService.UpdateProgressSupervisor(progressId, 0)
             ).MustHaveHappened();
             A.CallTo(
                 () => progressDataService.ClearAspProgressVerificationRequest(progressId)
@@ -124,7 +121,7 @@
             // Then
             Assert.Throws<ProgressNotFoundException>(() => progressService.UpdateSupervisor(progressId, null));
             A.CallTo(
-                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._, A<int>._, A<DateTime?>._)
+                () => progressDataService.UpdateProgressSupervisor(A<int>._, A<int>._)
             ).MustNotHaveHappened();
             A.CallTo(
                 () => progressDataService.ClearAspProgressVerificationRequest(A<int>._)
