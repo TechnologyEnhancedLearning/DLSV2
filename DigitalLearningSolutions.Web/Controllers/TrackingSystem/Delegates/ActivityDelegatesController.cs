@@ -13,18 +13,15 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.Supervisor;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
-    using Pipelines.Sockets.Unofficial;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
