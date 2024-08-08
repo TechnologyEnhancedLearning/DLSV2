@@ -88,7 +88,7 @@
             return stream.ToArray();
         }
 
-        private   void PopulateAllAdminsSheet(
+        private void PopulateAllAdminsSheet(
             IXLWorkbook workbook,
             string? searchString,
             string? filterString
@@ -119,7 +119,7 @@
             FormatAllDelegateWorksheetColumns(workbook, dataTable);
         }
 
-        private  IEnumerable<AdminEntity> GetAdminsToExport(
+        private IEnumerable<AdminEntity> GetAdminsToExport(
             string? searchString,
             string? filterString
         )
@@ -173,7 +173,7 @@
                     }
                 }
             }
-            var exportQueryRowLimit =ConfigurationExtensions.GetExportQueryRowLimit(configuration);
+            var exportQueryRowLimit = ConfigurationExtensions.GetExportQueryRowLimit(configuration);
             int resultCount = userDataService.RessultCount(AdminId, Search ?? string.Empty, CentreId, UserStatus, AuthHelper.FailedLoginThreshold, Role);
 
             int totalRun = (int)(resultCount / exportQueryRowLimit) + ((resultCount % exportQueryRowLimit) > 0 ? 1 : 0);
@@ -181,7 +181,7 @@
             List<AdminEntity> admins = new List<AdminEntity>();
             while (totalRun >= currentRun)
             {
-                admins.AddRange( this.userDataService.GetAllAdminsExport(Search ?? string.Empty, 0, 999999, AdminId, UserStatus, Role, CentreId, AuthHelper.FailedLoginThreshold, exportQueryRowLimit, currentRun));
+                admins.AddRange(this.userDataService.GetAllAdminsExport(Search ?? string.Empty, 0, 999999, AdminId, UserStatus, Role, CentreId, AuthHelper.FailedLoginThreshold, exportQueryRowLimit, currentRun));
                 currentRun++;
             }
             return admins;
@@ -257,7 +257,7 @@
 
             row[IsCMSAdministrator] = adminRecord.AdminAccount.IsContentManager && adminRecord.AdminAccount.ImportOnly;
             row[IsCMSManager] = adminRecord.AdminAccount.IsContentManager && !adminRecord.AdminAccount.ImportOnly;
-            
+
             row[IsSuperAdmin] = adminRecord.AdminAccount?.IsSuperAdmin;
             row[IsReportsViewer] = adminRecord.AdminAccount?.IsReportsViewer;
 
@@ -276,7 +276,7 @@
 
         private static void FormatAllDelegateWorksheetColumns(IXLWorkbook workbook, DataTable dataTable)
         {
-            var integerColumns = new[] { AdminID, UserID, CentreID, CategoryID};
+            var integerColumns = new[] { AdminID, UserID, CentreID, CategoryID };
             foreach (var columnName in integerColumns)
             {
                 ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Number);
