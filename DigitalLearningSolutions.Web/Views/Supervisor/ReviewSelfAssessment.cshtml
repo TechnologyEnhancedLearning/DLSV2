@@ -99,11 +99,10 @@
         @if (ViewBag.CanViewCertificate)
         {
             <a class="nhsuk-button"
-               asp-controller="LearningPortal"
-               asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
-               asp-action="CompetencySelfAssessmentCertificate"
-               asp-route-route="3"
-               role="button">
+           asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
+           asp-action="CompetencySelfAssessmentCertificatesupervisor"
+           asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
+           role="button">
                 Certificate
             </a>
         }

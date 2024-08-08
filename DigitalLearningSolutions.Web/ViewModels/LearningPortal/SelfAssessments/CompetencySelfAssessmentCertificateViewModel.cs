@@ -3,7 +3,7 @@ using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using DigitalLearningSolutions.Web.Helpers;
 using System.Collections.Generic;
 
-namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
     public class CompetencySelfAssessmentCertificateViewModel
     {
@@ -13,14 +13,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         }
         public CompetencySelfAssessmentCertificateViewModel(CompetencySelfAssessmentCertificate competency,
             IEnumerable<CompetencyCountSelfAssessmentCertificate> competencies,
-            int route, IEnumerable<Accessor> accessors,
+            string vocabulary, IEnumerable<Accessor> accessors,
            ActivitySummaryCompetencySelfAssesment activitySummaryCompetencySelfAssesment,
            int questionResponses,
            int confirmedResponses,
            int? loggedInSupervisorDelegateId
          )
         {
-            Route = route;
+            Vocabulary = vocabulary;
             CompetencySelfAssessmentCertificates = competency;
             CompetencyCountSelfAssessmentCertificate = competencies;
             VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(competency.Vocabulary);
@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             LoggedInSupervisorDelegateId = loggedInSupervisorDelegateId;
         }
 
-        public int Route { get; set; }
+        public string Vocabulary { get; set; }
         public string? VocabPlural { get; set; }
         public ActivitySummaryCompetencySelfAssesment ActivitySummaryCompetencySelfAssesment { get; set; }
         public CompetencySelfAssessmentCertificate CompetencySelfAssessmentCertificates { get; set; }
@@ -40,6 +40,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         public int QuestionResponses { get; set; }
         public int ConfirmedResponses { get; set; }
         public int? LoggedInSupervisorDelegateId { get; set; }
-        
+
     }
 }
