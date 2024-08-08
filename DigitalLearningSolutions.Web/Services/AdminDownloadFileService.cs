@@ -3,18 +3,14 @@
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.User;
-    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.Extensions.Configuration;
-    using StackExchange.Redis;
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
+    using ConfigurationExtensions = Data.Extensions.ConfigurationExtensions;
     public interface IAdminDownloadFileService
     {
         public byte[] GetAllAdminsFile(
