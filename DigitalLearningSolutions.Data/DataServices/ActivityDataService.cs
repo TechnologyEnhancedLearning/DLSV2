@@ -64,10 +64,10 @@ namespace DigitalLearningSolutions.Data.DataServices
                         SUM(CAST(Registered AS Int)) AS Registered,
 						SUM(CAST(Completed AS Int)) AS Completed,
 						SUM(CAST(Evaluated AS Int)) AS Evaluated
-                    FROM tActivityLog AS al
+                    FROM tActivityLog AS al INNER JOIN DelegateAccounts AS da ON al.CandidateID = da.ID AND al.CentreID = da.CentreID
                     WHERE (LogDate >= @startDate
                         AND (@endDate IS NULL OR LogDate <= @endDate)
-                        AND CentreID = @centreId
+                        AND (al.CentreID = @centreId)
                         AND (@jobGroupId IS NULL OR JobGroupID = @jobGroupId)
                         AND (@customisationId IS NULL OR al.CustomisationID = @customisationId)
                         AND (@courseCategoryId IS NULL OR al.CourseCategoryId = @courseCategoryId)
@@ -102,9 +102,9 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.QuerySingleOrDefault<int>(
                 @"SELECT COUNT(1) FROM
-                                 tActivityLog AS al INNER JOIN DelegateAccounts AS da ON al.CandidateID = da.ID
+                                 tActivityLog AS al INNER JOIN DelegateAccounts AS da ON al.CandidateID = da.ID AND al.CentreID = da.CentreID
                         WHERE(al.LogDate >= @startDate) AND(@endDate IS NULL OR
-                                 al.LogDate <= @endDate) AND(al.CentreID = @centreId) AND (da.CentreID = @centreId) AND (@jobGroupId IS NULL OR
+                                 al.LogDate <= @endDate) AND(al.CentreID = @centreId) AND (@jobGroupId IS NULL OR
                                  al.JobGroupID = @jobGroupId) AND(@customisationId IS NULL OR
                                  al.CustomisationID = @customisationId) AND(@courseCategoryId IS NULL OR
                                  al.CourseCategoryID = @courseCategoryId) AND(al.Registered = 1 OR
@@ -157,10 +157,10 @@ namespace DigitalLearningSolutions.Data.DataServices
                     FROM   Applications AS a INNER JOIN
                                  tActivityLog AS al ON a.ApplicationID = al.ApplicationID INNER JOIN
                                  Users AS u INNER JOIN
-                                 DelegateAccounts AS da ON u.ID = da.UserID ON al.CandidateID = da.ID INNER JOIN
+                                 DelegateAccounts AS da ON u.ID = da.UserID ON al.CandidateID = da.ID AND al.CentreID = da.CentreID INNER JOIN
                                  Customisations AS c ON al.CustomisationID = c.CustomisationID
                     WHERE (al.LogDate >= @startDate) AND (@endDate IS NULL OR
-                                 al.LogDate <= @endDate) AND (al.CentreID = @centreId) AND (da.CentreID = @centreId) AND (@jobGroupId IS NULL OR
+                                 al.LogDate <= @endDate) AND (al.CentreID = @centreId) AND (@jobGroupId IS NULL OR
                                  al.JobGroupID = @jobGroupId) AND (@customisationId IS NULL OR
                                  al.CustomisationID = @customisationId) AND (@courseCategoryId IS NULL OR
                                  al.CourseCategoryID = @courseCategoryId) AND (al.Registered = 1 OR
