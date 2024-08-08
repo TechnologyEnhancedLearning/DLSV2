@@ -55,7 +55,10 @@
     </p>
   </nav>
 }
-
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new[] {nameof(Model.OptionalCompetenciesChecked) })" />
+}
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
@@ -201,7 +204,18 @@
             <span asp-validation-for="SignedOff" class="text-danger"></span>
           </div>
         </nhs-form-group>
-      </fieldset>
+                @if (Model.NumberOfSelfAssessedOptionalCompetencies >= Model.SelfAssessmentResultSummary.MinimumOptionalCompetencies)
+                {
+                    <nhs-form-group nhs-validation-for="OptionalCompetenciesChecked">
+                        <div class="nhsuk-checkboxes__item">
+                            <input class="nhsuk-checkboxes__input" id="optional-competencies" name="OptionalCompetenciesChecked" asp-for="OptionalCompetenciesChecked" type="checkbox">
+                            <label class="nhsuk-label nhsuk-checkboxes__label" for="optional-competencies">
+                                I have reviewed the optional competencies included in this self assessment and confirm them to be appropriate to the learner’s role.
+                            </label>
+                        </div>
+                    </nhs-form-group>
+                }
+            </fieldset>
       <button class="nhsuk-button nhsuk-u-margin-bottom-0" type="submit">
         Submit
       </button>
