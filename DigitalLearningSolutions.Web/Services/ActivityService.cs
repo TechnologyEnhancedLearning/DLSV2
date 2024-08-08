@@ -227,6 +227,10 @@
         {
             var itemsPerPage = Data.Extensions.ConfigurationExtensions.GetExportQueryRowLimit(configuration);
             var resultCount = GetActivityDetailRowCount(centreId, filterData);
+            if (resultCount == 0)
+            {
+                return;
+            }
             int totalRun = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             int currentRun = 1;
             List<ActivityLogDetail> activityLogDetails = new List<ActivityLogDetail>();

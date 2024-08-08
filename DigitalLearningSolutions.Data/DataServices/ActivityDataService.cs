@@ -102,9 +102,9 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.QuerySingleOrDefault<int>(
                 @"SELECT COUNT(1) FROM
-                                 tActivityLog AS al
+                                 tActivityLog AS al INNER JOIN DelegateAccounts AS da ON al.CandidateID = da.ID
                         WHERE(al.LogDate >= @startDate) AND(@endDate IS NULL OR
-                                 al.LogDate <= @endDate) AND(al.CentreID = @centreId) AND(@jobGroupId IS NULL OR
+                                 al.LogDate <= @endDate) AND(al.CentreID = @centreId) AND (da.CentreID = @centreId) AND (@jobGroupId IS NULL OR
                                  al.JobGroupID = @jobGroupId) AND(@customisationId IS NULL OR
                                  al.CustomisationID = @customisationId) AND(@courseCategoryId IS NULL OR
                                  al.CourseCategoryID = @courseCategoryId) AND(al.Registered = 1 OR
@@ -160,7 +160,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                                  DelegateAccounts AS da ON u.ID = da.UserID ON al.CandidateID = da.ID INNER JOIN
                                  Customisations AS c ON al.CustomisationID = c.CustomisationID
                     WHERE (al.LogDate >= @startDate) AND (@endDate IS NULL OR
-                                 al.LogDate <= @endDate) AND (al.CentreID = @centreId) AND (@jobGroupId IS NULL OR
+                                 al.LogDate <= @endDate) AND (al.CentreID = @centreId) AND (da.CentreID = @centreId) AND (@jobGroupId IS NULL OR
                                  al.JobGroupID = @jobGroupId) AND (@customisationId IS NULL OR
                                  al.CustomisationID = @customisationId) AND (@courseCategoryId IS NULL OR
                                  al.CourseCategoryID = @courseCategoryId) AND (al.Registered = 1 OR
