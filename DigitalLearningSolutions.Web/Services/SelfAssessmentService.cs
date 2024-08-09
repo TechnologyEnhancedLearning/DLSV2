@@ -33,7 +33,7 @@
 
         void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
 
-        bool CanDelegateAccessSelfAssessment(int delegateUserId, int selfAssessmentId);
+        bool CanDelegateAccessSelfAssessment(int delegateUserId, int selfAssessmentId, int centreId);
 
         // Competencies
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null);
@@ -149,6 +149,7 @@
         ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
         IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId);
+        bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
 
     }
 
@@ -339,11 +340,12 @@
             return selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId, delegateUserId);
         }
 
-        public bool CanDelegateAccessSelfAssessment(int delegateUserId, int selfAssessmentId)
+        public bool CanDelegateAccessSelfAssessment(int delegateUserId, int selfAssessmentId, int centreId)
         {
             var candidateAssessments = selfAssessmentDataService.GetCandidateAssessments(delegateUserId, selfAssessmentId);
 
-            return candidateAssessments.Any(ca => ca.CompletedDate == null && ca.RemovedDate == null);
+            return candidateAssessments.Any(ca => ca.CompletedDate == null && ca.RemovedDate == null &&
+                                        selfAssessmentDataService.IsCentreSelfAssessment(selfAssessmentId, centreId));
         }
 
         public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(
@@ -545,7 +547,12 @@
         }
         public IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId)
         {
-            return selfAssessmentDataService.GetCandidateAssessments(delegateUserId,selfAssessmentId);
+            return selfAssessmentDataService.GetCandidateAssessments(delegateUserId, selfAssessmentId);
+        }
+
+        public bool IsCentreSelfAssessment(int selfAssessmentId, int centreId)
+        {
+            return selfAssessmentDataService.IsCentreSelfAssessment(selfAssessmentId, centreId);
         }
     }
 }

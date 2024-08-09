@@ -51,6 +51,7 @@
         }
 
         [NoCaching]
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}")]
         public IActionResult SelfAssessment(int selfAssessmentId)
         {
@@ -76,6 +77,7 @@
             return View("SelfAssessments/SelfAssessmentDescription", model);
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
         public IActionResult SelfAssessmentCompetency(int selfAssessmentId, int competencyNumber)
         {
@@ -145,6 +147,7 @@
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
         public IActionResult SelfAssessmentCompetency(
             int selfAssessmentId,
@@ -187,9 +190,8 @@
             return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, updatedAssessmentQuestions, delegateUserId, delegateId);
         }
 
-        [Route(
-            "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}/confirm"
-        )]
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}/confirm")]
         [HttpGet]
         public IActionResult ConfirmOverwriteSelfAssessment(
            int selfAssessmentId, int competencyNumber
@@ -224,6 +226,7 @@
            "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}/confirm"
        )]
         [HttpPost]
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         public IActionResult ConfirmOverwriteSelfAssessment(int selfAssessmentId,
             int competencyNumber,
             int competencyId,
@@ -309,6 +312,7 @@
                 );
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route(
         "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/{resultId:int}/ViewNotes"
     )]
@@ -416,6 +420,8 @@
             );
             return RedirectToAction("FilteredSelfAssessmentGroups", model);
         }
+
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}")]
         public IActionResult SelfAssessmentOverview(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, SearchSelfAssessmentOverviewViewModel searchModel = null)
@@ -485,6 +491,7 @@
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
         [HttpPost]
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, EditCompleteByDateFormData formData)
@@ -521,6 +528,7 @@
             return RedirectToAction("Current");
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, ReturnPageQuery returnPageQuery)
@@ -549,6 +557,7 @@
             return View("Current/SetCompleteByDate", model);
         }
         [NoCaching]
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors")]
         public IActionResult ManageSupervisors(int selfAssessmentId)
         {
@@ -612,6 +621,7 @@
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         public IActionResult StartAddNewSupervisor(int selfAssessmentId)
         {
             TempData.Clear();
@@ -650,6 +660,7 @@
             return RedirectToAction("AddNewSupervisor", new { selfAssessmentId });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/{page=1:int}")]
         public IActionResult AddNewSupervisor(int selfAssessmentId,
             string? searchString = null,
@@ -799,6 +810,7 @@
             return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Centre")]
         public IActionResult SelectSupervisorCentre(int selfAssessmentId)
         {
@@ -882,6 +894,7 @@
             return RedirectToAction("AddNewSupervisor", new { model.SelfAssessmentID });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route(
             "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/QuickAdd/{supervisorDelegateId}/Role"
         )]
@@ -989,6 +1002,7 @@
             return RedirectToAction("ManageSupervisors", new { model.SelfAssessmentID });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
         [ResponseCache(CacheProfileName = "Never")]
         public IActionResult AddSupervisorSummary(int selfAssessmentId)
@@ -1093,6 +1107,7 @@
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         public IActionResult StartRequestVerification(int selfAssessmentId)
         {
             TempData.Clear();
@@ -1120,6 +1135,7 @@
             return RedirectToAction("VerificationPickSupervisor", new { selfAssessmentId });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests")]
         public IActionResult ReviewConfirmationRequests(int selfAssessmentId)
         {
@@ -1144,6 +1160,7 @@
             return View("SelfAssessments/ReviewConfirmationRequests", model);
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/ChooseSupervisor")]
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
@@ -1216,10 +1233,11 @@
             );
             return RedirectToAction("VerificationPickResults", new { sessionRequestVerification.SelfAssessmentID });
         }
+
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/PickResults")]
         [ResponseCache(CacheProfileName = "Never")]
-        [TypeFilter(
-            typeof(RedirectToErrorEmptySessionData),
+        [TypeFilter(typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification) }
         )]
         public IActionResult VerificationPickResults(int selfAssessmentId)
@@ -1286,6 +1304,7 @@
             return RedirectToAction("VerificationSummary", new { sessionRequestVerification.SelfAssessmentID });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/Summary")]
         [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
@@ -1414,6 +1433,7 @@
             );
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Optional")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId)
         {
@@ -1468,6 +1488,7 @@
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
         public IActionResult RequestSignOff(int selfAssessmentId)
         {
@@ -1484,6 +1505,7 @@
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
         public IActionResult RequestSignOff(int selfAssessmentId, string vocabulary, RequestSignOffViewModel model)
         {
@@ -1532,6 +1554,7 @@
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
         }
 
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/SignOffHistory")]
         public IActionResult SignOffHistory(int selfAssessmentId, string vocabulary)
         {
