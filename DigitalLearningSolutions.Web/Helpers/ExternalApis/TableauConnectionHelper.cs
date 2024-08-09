@@ -8,12 +8,9 @@
     using System;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
-    using DocumentFormat.OpenXml.Bibliography;
-    using Microsoft.FeatureManagement.FeatureFilters;
     using System.Net.Http.Headers;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.DataProtection;
 
     public interface ITableauConnectionHelperService
     {
