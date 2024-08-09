@@ -329,7 +329,8 @@
                         DelegateUserID,
                         SelfAssessmentID,
                         CompletedDate,
-                        RemovedDate
+                        RemovedDate,
+                        CentreId
                     FROM CandidateAssessments
                     WHERE SelfAssessmentID = @selfAssessmentId
                         AND DelegateUserID = @delegateUserId",

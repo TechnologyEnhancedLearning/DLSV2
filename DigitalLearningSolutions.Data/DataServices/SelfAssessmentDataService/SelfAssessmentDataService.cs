@@ -170,6 +170,7 @@
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
         ActivitySummaryCompetencySelfAssesment? GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
+        bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -716,6 +717,15 @@
             var ResultCount = connection.ExecuteScalar<int>(
                 @"SELECT COUNT(*) FROM SelfAssessments WHERE ID = @selfAssessmentId AND SupervisorSelfAssessmentReview = 0 AND SupervisorResultsReview = 0",
                 new { selfAssessmentId }
+            );
+            return ResultCount > 0;
+        }
+
+        public bool IsCentreSelfAssessment(int selfAssessmentId, int centreId)
+        {
+            var ResultCount = connection.ExecuteScalar<int>(
+                @"SELECT count(*) FROM CentreSelfAssessments WHERE SelfAssessmentID = @selfAssessmentId and CentreID = @centreId",
+                new { selfAssessmentId, centreId }
             );
             return ResultCount > 0;
         }

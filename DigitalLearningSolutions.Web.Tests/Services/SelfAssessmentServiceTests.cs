@@ -31,11 +31,12 @@
                 .With(ca => ca.CompletedDate = null)
                 .With(ca => ca.RemovedDate = null)
                 .Build().ToList();
+            A.CallTo(() => selfAssessmentDataService.IsCentreSelfAssessment(A<int>._, A<int>._)).Returns(true);
             A.CallTo(() => selfAssessmentDataService.GetCandidateAssessments(A<int>._, A<int>._))
                 .Returns(candidateAssessments);
 
             // When
-            var result = selfAssessmentService.CanDelegateAccessSelfAssessment(1, 1);
+            var result = selfAssessmentService.CanDelegateAccessSelfAssessment(1, 1, 1);
 
             // Then
             result.Should().BeTrue();
@@ -54,11 +55,13 @@
                 .With(ca => ca.CompletedDate = null)
                 .With(ca => ca.RemovedDate = null)
                 .Build().ToList();
+
+            A.CallTo(() => selfAssessmentDataService.IsCentreSelfAssessment(A<int>._, A<int>._)).Returns(true);
             A.CallTo(() => selfAssessmentDataService.GetCandidateAssessments(A<int>._, A<int>._))
                 .Returns(candidateAssessments);
 
             // When
-            var result = selfAssessmentService.CanDelegateAccessSelfAssessment(1, 1);
+            var result = selfAssessmentService.CanDelegateAccessSelfAssessment(1, 1, 1);
 
             // Then
             result.Should().BeTrue();
@@ -78,7 +81,7 @@
                 .Returns(candidateAssessments);
 
             // When
-            var result = selfAssessmentService.CanDelegateAccessSelfAssessment(1, 1);
+            var result = selfAssessmentService.CanDelegateAccessSelfAssessment(1, 1, 1);
 
             // Then
             result.Should().BeFalse();
@@ -92,7 +95,7 @@
                 .Returns(new List<CandidateAssessment>());
 
             // When
-            var result = selfAssessmentService.CanDelegateAccessSelfAssessment(1, 1);
+            var result = selfAssessmentService.CanDelegateAccessSelfAssessment(1, 1, 1);
 
             // Then
             result.Should().BeFalse();
