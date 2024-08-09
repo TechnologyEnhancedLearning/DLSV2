@@ -11,6 +11,8 @@
     using System;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
+    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using System.Threading.Tasks;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -20,14 +22,17 @@
     public class SelfAssessmentReportsController : Controller
     {
         private readonly ISelfAssessmentReportService selfAssessmentReportService;
+        private readonly ITableauConnectionHelperService tableauConnectionHelper;
         private readonly IClockUtility clockUtility;
 
         public SelfAssessmentReportsController(
             ISelfAssessmentReportService selfAssessmentReportService,
+            ITableauConnectionHelperService tableauConnectionHelper,
             IClockUtility clockUtility
         )
         {
             this.selfAssessmentReportService = selfAssessmentReportService;
+            this.tableauConnectionHelper = tableauConnectionHelper;
             this.clockUtility = clockUtility;
         }
         public IActionResult Index()
@@ -62,6 +67,15 @@
                 FileHelper.GetContentTypeFromFileName(fileName),
                 fileName
             );
+        }
+        [HttpGet]
+        [Route("LaunchTableauDashboards")]
+        public async Task<IActionResult> LaunchTableauDashboards()
+        {
+            var userEmail = User.GetUserPrimaryEmail();
+            var jwt = tableauConnectionHelper.GetTableauJwt(userEmail);
+            var url = await tableauConnectionHelper.AuthenticateUserAsync(jwt);
+            return RedirectToPage(url);
         }
     }
 }

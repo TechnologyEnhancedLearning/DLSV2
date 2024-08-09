@@ -46,21 +46,13 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-    using Microsoft.IdentityModel.Tokens;
-    using Microsoft.AspNetCore.Http;
-    using System.Linq;
     using Microsoft.AspNetCore.Identity;
-    using AspNetCoreRateLimit;
     using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
     using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
     using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
     using System;
     using IsolationLevel = System.Transactions.IsolationLevel;
-    using System.Collections.Concurrent;
     using Serilog;
-    using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
-    using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
-    using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
 
     public class Startup
     {
@@ -560,6 +552,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
             services.AddScoped<IFreshdeskApiClient, FreshdeskApiClient>();
             services.AddScoped<ILearningHubUserApiClient, LearningHubUserApiClient>();
+            services.AddScoped<ITableauConnectionHelperService, TableauConnectionHelper>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
