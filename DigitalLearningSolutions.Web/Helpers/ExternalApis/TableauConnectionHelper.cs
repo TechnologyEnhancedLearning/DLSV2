@@ -82,13 +82,12 @@
 
                 var requestContent = new StringContent($"{{ \"token\": \"{jwtToken}\" }}", Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync("/api/3.8/auth/signin", requestContent); // Adjust API version as needed
+                HttpResponseMessage response = await client.PostAsync("/api/3.8/auth/signin", requestContent);
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    // Process the response body if needed
-                    return dashboardUrl; // Return the response for further processing
+                    return dashboardUrl;
                 }
                 else
                 {
