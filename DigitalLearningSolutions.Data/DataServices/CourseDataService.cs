@@ -125,7 +125,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId);
 
         bool IsCourseCompleted(int candidateId, int customisationId);
-
+        bool IsCourseCompleted(int candidateId, int customisationId, int progressID);
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
 
         public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
@@ -1828,11 +1828,26 @@ namespace DigitalLearningSolutions.Data.DataServices
                                 FROM  Progress AS p INNER JOIN
                                                 Customisations AS cu ON p.CustomisationID = cu.CustomisationID INNER JOIN
                                                 Applications AS a ON cu.ApplicationID = a.ApplicationID
-                                WHERE  (p.CandidateID = @candidateId) AND p.CustomisationID = @customisationId
+                                WHERE  (p.CandidateID = @candidateId) AND p.CustomisationID = @customisationId 
                                 AND (NOT (p.Completed IS NULL)))
                             THEN CAST(1 AS BIT)
                             ELSE CAST(0 AS BIT) END",
                 new { candidateId, customisationId }
+            );
+        }
+        public bool IsCourseCompleted(int candidateId, int customisationId, int progressID)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                            SELECT p.Completed
+                                FROM  Progress AS p INNER JOIN
+                                                Customisations AS cu ON p.CustomisationID = cu.CustomisationID INNER JOIN
+                                                Applications AS a ON cu.ApplicationID = a.ApplicationID
+                                WHERE  (p.CandidateID = @candidateId) AND p.CustomisationID = @customisationId AND progressID =@progressID
+                                AND (NOT (p.Completed IS NULL)))
+                            THEN CAST(1 AS BIT)
+                            ELSE CAST(0 AS BIT) END",
+                new { candidateId, customisationId, progressID }
             );
         }
 

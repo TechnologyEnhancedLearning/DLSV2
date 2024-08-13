@@ -21,7 +21,7 @@
             A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(10);
 
             // When
-            var result = controller.Index(CustomisationId);
+            var result = controller.Index(CustomisationId, progressID);
 
             // Then
             var expectedModel = new InitialMenuViewModel(expectedCourseContent);
@@ -44,7 +44,7 @@
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
 
             // When
-            var result = controller.Index(customisationId);
+            var result = controller.Index(customisationId, progressID);
 
             // Then
             result.Should()
@@ -74,7 +74,7 @@
             A.CallTo(() => courseContentService.GetProgressId(CandidateId, customisationId)).Returns(10);
 
             // When
-            var result = controller.Index(customisationId);
+            var result = controller.Index(customisationId, progressID);
 
             // Then
             var expectedModel = new InitialMenuViewModel(expectedCourseContent);
@@ -91,7 +91,7 @@
                 .Returns(3);
 
             // When
-            var result = controller.Index(CustomisationId);
+            var result = controller.Index(CustomisationId, progressID);
 
             // Then
             result.Should()
@@ -112,7 +112,7 @@
                 .Returns(null);
 
             // When
-            var result = controller.Index(CustomisationId);
+            var result = controller.Index(CustomisationId, progressID);
 
             // Then
             result.Should()
@@ -129,7 +129,7 @@
             const int customisationId = 1;
 
             // When
-            controller.Index(1);
+            controller.Index(1,2);
 
             // Then
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, customisationId)).MustHaveHappened();
@@ -147,7 +147,7 @@
             A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(progressId);
 
             // When
-            controller.Index(CustomisationId);
+            controller.Index(CustomisationId, progressID);
 
             // Then
             A.CallTo(() => sessionService.StartOrUpdateDelegateSession(CandidateId, CustomisationId, A<ISession>._)).MustHaveHappened();
@@ -160,7 +160,7 @@
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId)).Returns(null);
 
             // When
-            controller.Index(CustomisationId);
+            controller.Index(CustomisationId, progressID);
 
             // Then
             A.CallTo(() => courseContentService.GetOrCreateProgressId(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
@@ -173,7 +173,7 @@
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId)).Returns(null);
 
             // When
-            controller.Index(CustomisationId);
+            controller.Index(CustomisationId, progressID);
 
             // Then
             A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
@@ -186,7 +186,7 @@
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
 
             // When
-            controller.Index(CustomisationId);
+            controller.Index(CustomisationId, progressID);
 
             // Then
             A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
@@ -203,7 +203,7 @@
             A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(1);
 
             // When
-            controller.Index(CustomisationId);
+            controller.Index(CustomisationId, progressID);
 
             // Then
             A.CallTo(() => sessionService.StartOrUpdateDelegateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
@@ -221,7 +221,7 @@
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
 
             // When
-            controller.Index(CustomisationId);
+            controller.Index(CustomisationId, progressID);
 
             // Then
             A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
@@ -236,7 +236,7 @@
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
 
             // When
-            controller.Index(CustomisationId);
+            controller.Index(CustomisationId, progressID);
 
             // Then
             A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
@@ -298,7 +298,7 @@
             A.CallTo(() => courseService.GetSelfRegister(CustomisationId)).Returns(true);
 
             // When
-            var result = controller.Index(CustomisationId);
+            var result = controller.Index(CustomisationId, progressID);
 
             // Then
             result.Should()
