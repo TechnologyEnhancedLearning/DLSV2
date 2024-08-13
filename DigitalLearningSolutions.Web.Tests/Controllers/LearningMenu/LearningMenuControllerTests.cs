@@ -34,6 +34,8 @@
         private ISessionService sessionService = null!;
         private ITutorialContentService tutorialContentService = null!;
         private ICourseService courseService = null!;
+        private IProgressService progressService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -49,6 +51,8 @@
             postLearningAssessmentService = A.Fake<IPostLearningAssessmentService>();
             courseCompletionService = A.Fake<ICourseCompletionService>();
             courseService = A.Fake<ICourseService>();
+            progressService = A.Fake<IProgressService>();
+            userService = A.Fake<IUserService>();
             clockUtility = A.Fake<IClockUtility>();
 
             controller = new LearningMenuController(
@@ -62,6 +66,8 @@
                     sessionService,
                     courseCompletionService,
                     courseService,
+                    progressService,
+                    userService,
                     clockUtility
                 ).WithDefaultContext()
                 .WithMockHttpContextSession()

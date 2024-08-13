@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
@@ -56,6 +57,8 @@
             int sectionId,
             int customisationId
         );
+
+        IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
     }
 
     public class ProgressService : IProgressService
@@ -249,6 +252,11 @@
         )
         {
             return progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
+        }
+
+        public IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId)
+        {
+            return progressDataService.GetDelegateProgressForCourse(delegateId, customisationId);
         }
     }
 }

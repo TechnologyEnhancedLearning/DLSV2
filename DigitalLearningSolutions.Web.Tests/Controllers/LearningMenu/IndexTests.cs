@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningMenu
 {
+    using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FakeItEasy;
@@ -7,6 +8,7 @@
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
+    using System.Collections.Generic;
 
     public partial class LearningMenuControllerTests
     {
@@ -15,6 +17,11 @@
         {
             // Given
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+            var course = CourseContentHelper.CreateDefaultCourse();
+            A.CallTo(() => courseService.GetCourse(CustomisationId)).Returns(course);
+            A.CallTo(() => progressService.GetDelegateProgressForCourse(CandidateId, CustomisationId)).Returns(
+               new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+           );
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
              .Returns(expectedCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
@@ -38,7 +45,13 @@
             var section = CourseContentHelper.CreateDefaultCourseSection(id: sectionId);
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(customisationId);
             expectedCourseContent.Sections.Add(section);
+            var course = CourseContentHelper.CreateDefaultCourse();
+            course.CustomisationId = customisationId;
 
+            A.CallTo(() => courseService.GetCourse(customisationId)).Returns(course);
+            A.CallTo(() => progressService.GetDelegateProgressForCourse(CandidateId, customisationId)).Returns(
+                new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+            );
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, customisationId))
                 .Returns(expectedCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
@@ -67,6 +80,13 @@
 
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(customisationId);
             expectedCourseContent.Sections.AddRange(new[] { section1, section2, section3 });
+            var course = CourseContentHelper.CreateDefaultCourse();
+            course.CustomisationId = customisationId;
+
+            A.CallTo(() => courseService.GetCourse(customisationId)).Returns(course);
+            A.CallTo(() => progressService.GetDelegateProgressForCourse(CandidateId, customisationId)).Returns(
+               new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+           );
 
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, customisationId))
                 .Returns(expectedCourseContent);
@@ -86,6 +106,12 @@
         public void Index_should_return_404_if_unknown_course()
         {
             // Given
+            var course = CourseContentHelper.CreateDefaultCourse();
+
+            A.CallTo(() => courseService.GetCourse(CustomisationId)).Returns(course);
+            A.CallTo(() => progressService.GetDelegateProgressForCourse(CandidateId, CustomisationId)).Returns(
+               new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+           );
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId)).Returns(null);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(3);
@@ -106,6 +132,12 @@
         {
             // Given
             var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+            var course = CourseContentHelper.CreateDefaultCourse();
+
+            A.CallTo(() => courseService.GetCourse(CustomisationId)).Returns(course);
+            A.CallTo(() => progressService.GetDelegateProgressForCourse(CandidateId, CustomisationId)).Returns(
+               new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+           );
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
                 .Returns(defaultCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -127,6 +159,13 @@
         {
             // Given
             const int customisationId = 1;
+            var course = CourseContentHelper.CreateDefaultCourse();
+
+            A.CallTo(() => courseService.GetCourse(customisationId)).Returns(course);
+            A.CallTo(() => progressService.GetDelegateProgressForCourse(CandidateId, customisationId)).Returns(
+                new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+            );
+
 
             // When
             controller.Index(1,2);
@@ -141,6 +180,12 @@
             // Given
             const int progressId = 13;
             var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+            var course = CourseContentHelper.CreateDefaultCourse();
+
+            A.CallTo(() => courseService.GetCourse(CustomisationId)).Returns(course);
+            A.CallTo(() => progressService.GetDelegateProgressForCourse(CandidateId, CustomisationId)).Returns(
+                new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+            );
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
              .Returns(defaultCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(progressId);
@@ -197,6 +242,12 @@
         {
             // Given
             var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+            var course = CourseContentHelper.CreateDefaultCourse();
+
+            A.CallTo(() => courseService.GetCourse(CustomisationId)).Returns(course);
+            A.CallTo(() => progressService.GetDelegateProgressForCourse(CandidateId, CustomisationId)).Returns(
+                new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+            );
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
                 .Returns(defaultCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
@@ -291,6 +342,13 @@
         {
             // Given
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+
+            var course = CourseContentHelper.CreateDefaultCourse();
+
+            A.CallTo(() => courseService.GetCourse(CustomisationId)).Returns(course);
+            A.CallTo(() => progressService.GetDelegateProgressForCourse(CandidateId, CustomisationId)).Returns(
+                new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+            );
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
              .Returns(expectedCourseContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
