@@ -234,10 +234,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         [Route("/{dlsSubApplication}/RequestSupport/SupportSummary")]
         public IActionResult SupportSummary(DlsSubApplication dlsSubApplication, SupportSummaryViewModel supportSummaryViewModel)
         {
+            if (!TempData.Any())
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
+            }
             var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
                 MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
                 TempData
-            ).GetAwaiter().GetResult(); ;
+            ).GetAwaiter().GetResult(); 
             var model = new SupportSummaryViewModel(data);
             return View("SupportTicketSummaryPage", model);
         }
@@ -245,12 +249,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         [HttpPost]
         [Route("/{dlsSubApplication}/RequestSupport/SubmitSupportSummary")]
         public IActionResult SubmitSupportSummary(DlsSubApplication dlsSubApplication, SupportSummaryViewModel model)
-
         {
+            if (!TempData.Any())
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
+            }
             var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
                 MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
                 TempData
-            ).GetAwaiter().GetResult(); ;
+            ).GetAwaiter().GetResult(); 
             data.GroupId = configuration.GetFreshdeskCreateTicketGroupId();
             data.ProductId = configuration.GetFreshdeskCreateTicketProductId();
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
