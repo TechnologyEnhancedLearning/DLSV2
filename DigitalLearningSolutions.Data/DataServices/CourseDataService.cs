@@ -125,7 +125,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId);
 
         bool IsCourseCompleted(int candidateId, int customisationId);
-
+        bool IsCourseCompleted(int candidateId, int customisationId, int progressID);
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
 
         public (IEnumerable<CourseStatistics>, int) GetCourseStatisticsAtCentre(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
@@ -137,6 +137,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields);
 
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive);
+        bool IsSelfEnrollmentAllowed(int customisationId);
+        Customisation? GetCourse(int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -1828,11 +1830,26 @@ namespace DigitalLearningSolutions.Data.DataServices
                                 FROM  Progress AS p INNER JOIN
                                                 Customisations AS cu ON p.CustomisationID = cu.CustomisationID INNER JOIN
                                                 Applications AS a ON cu.ApplicationID = a.ApplicationID
-                                WHERE  (p.CandidateID = @candidateId) AND p.CustomisationID = @customisationId
+                                WHERE  (p.CandidateID = @candidateId) AND p.CustomisationID = @customisationId 
                                 AND (NOT (p.Completed IS NULL)))
                             THEN CAST(1 AS BIT)
                             ELSE CAST(0 AS BIT) END",
                 new { candidateId, customisationId }
+            );
+        }
+        public bool IsCourseCompleted(int candidateId, int customisationId, int progressID)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                            SELECT p.Completed
+                                FROM  Progress AS p INNER JOIN
+                                                Customisations AS cu ON p.CustomisationID = cu.CustomisationID INNER JOIN
+                                                Applications AS a ON cu.ApplicationID = a.ApplicationID
+                                WHERE  (p.CandidateID = @candidateId) AND p.CustomisationID = @customisationId AND progressID =@progressID
+                                AND (NOT (p.Completed IS NULL)))
+                            THEN CAST(1 AS BIT)
+                            ELSE CAST(0 AS BIT) END",
+                new { candidateId, customisationId, progressID }
             );
         }
 
@@ -1968,6 +1985,39 @@ namespace DigitalLearningSolutions.Data.DataServices
             IEnumerable<DelegateAssessmentStatistics> delegateAssessmentStatistics = connection.Query<DelegateAssessmentStatistics>(assessmentStatisticsSelectQuery,
                 new { searchString, centreId, categoryName, isActive }, commandTimeout: 3000);
             return delegateAssessmentStatistics;
+        }
+
+        public bool IsSelfEnrollmentAllowed(int customisationId)
+        {
+            int selfRegister = connection.QueryFirstOrDefault<int>(
+                @"SELECT COUNT(CustomisationID) FROM Customisations 
+						            WHERE CustomisationID = @customisationID AND SelfRegister = 1 AND Active = 1",
+                new { customisationId });
+
+            return selfRegister > 0;
+        }
+
+        public Customisation? GetCourse(int customisationId)
+        {
+            return connection.Query<Customisation>(
+                @"SELECT CustomisationID
+                        ,Active
+                        ,CentreID
+                        ,ApplicationID
+                        ,CustomisationName
+                        ,IsAssessed
+                        ,Password
+                        ,SelfRegister
+                        ,TutCompletionThreshold
+                        ,DiagCompletionThreshold
+                        ,DiagObjSelect
+                        ,HideInLearnerPortal
+                        ,NotificationEmails
+                    FROM Customisations 
+						WHERE CustomisationID = @customisationID ",
+                new { customisationId }).FirstOrDefault();
+
+            
         }
     }
 }

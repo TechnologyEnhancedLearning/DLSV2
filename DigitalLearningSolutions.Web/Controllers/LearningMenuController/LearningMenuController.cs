@@ -28,6 +28,8 @@
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
         private readonly ICourseService courseService;
+        private readonly IProgressService progressService;
+        private readonly IUserService userService;
         private readonly IClockUtility clockUtility;
 
         public LearningMenuController(
@@ -41,6 +43,8 @@
             ISessionService sessionService,
             ICourseCompletionService courseCompletionService,
             ICourseService courseService,
+            IProgressService progressService,
+            IUserService userService,
             IClockUtility clockUtility
         )
         {
@@ -55,20 +59,43 @@
             this.courseCompletionService = courseCompletionService;
             this.clockUtility = clockUtility;
             this.courseService = courseService;
+            this.progressService = progressService;
+            this.userService = userService;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
-        public IActionResult Index(int customisationId)
+        public IActionResult Index(int customisationId, int progressID)
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var candidateId = User.GetCandidateIdKnownNotNull();
+
+            string courseValidationErrorMessage = "Redirecting to 403 as course/centre id was not available for self enrolment. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId.ToString() ?? "null"}";
+
+            string courseErrorMessage = "Redirecting to 404 as course/centre id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId.ToString() ?? "null"}";
+
+            var course = courseService.GetCourse(customisationId);
+
+            if (course == null)
+            {
+                logger.LogError(courseErrorMessage);
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            if (course.CustomisationName == "ESR" || !course.Active ||
+                !ValidateCourse(candidateId, customisationId))
+            {
+                logger.LogError(courseValidationErrorMessage);
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
             if (courseContent == null)
             {
-                logger.LogError(
-                    "Redirecting to 404 as course/centre id was not found. " +
-                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId.ToString() ?? "null"}");
+                logger.LogError(courseErrorMessage);
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
             if (!String.IsNullOrEmpty(courseContent.Password) && !courseContent.PasswordSubmitted)
@@ -100,7 +127,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressID);
 
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
@@ -605,6 +632,14 @@
             else
                 TempData["LearningActivity"] = "Current";
         }
+        private void SetTempData(int candidateId, int customisationId,int progressID)
+        {
+            var isCompleted = courseService.IsCourseCompleted(candidateId, customisationId, progressID);
+            if (isCompleted)
+                TempData["LearningActivity"] = "Completed";
+            else
+                TempData["LearningActivity"] = "Current";
+        }
 
         private bool UniqueIdManipulationDetected(int candidateId, int customisationId)
         {
@@ -619,7 +654,48 @@
             {
                 return false;
             }
+            return true;
+        }
 
+        private bool ValidateCourse(int candidateId, int customisationId)
+        {
+            var progress = progressService.GetDelegateProgressForCourse(candidateId, customisationId);
+
+            if (progress.Any())
+            {
+                if (!progress.Where(p => p.RemovedDate == null).Any())
+                {
+                    if (!IsValidCourseForEnrloment(customisationId))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                if (!IsValidCourseForEnrloment(customisationId))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool IsValidCourseForEnrloment(int customisationId)
+        {
+            if (!courseService.IsSelfEnrollmentAllowed(customisationId))
+            {
+                var centreId = User.GetCentreIdKnownNotNull();
+                var userId = User.GetUserIdKnownNotNull();
+                var userEntity = userService.GetUserById(userId);
+
+                var adminAccount = userEntity!.GetCentreAccountSet(centreId)?.AdminAccount;
+
+                if (adminAccount == null)
+                {
+                    return false;
+                }
+            }
             return true;
         }
     }
