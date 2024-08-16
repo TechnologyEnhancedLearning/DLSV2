@@ -16,6 +16,19 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Scripts\NewFolder1\**" />
+      <Compile Remove="Scripts\NewFolder2\**" />
+      <Content Remove="Scripts\NewFolder1\**" />
+      <Content Remove="Scripts\NewFolder2\**" />
+      <EmbeddedResource Remove="Scripts\NewFolder1\**" />
+      <EmbeddedResource Remove="Scripts\NewFolder2\**" />
+      <None Remove="Scripts\NewFolder1\**" />
+      <None Remove="Scripts\NewFolder2\**" />
+      <TypeScriptCompile Remove="Scripts\NewFolder1\**" />
+      <TypeScriptCompile Remove="Scripts\NewFolder2\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Content Remove="wwwroot\README.txt" />
     </ItemGroup>
 

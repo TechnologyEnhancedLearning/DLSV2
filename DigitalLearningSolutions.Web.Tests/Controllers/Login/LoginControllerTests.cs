@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -59,7 +60,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
             config = A.Fake<IConfiguration>();
             apiClient = A.Fake<ILearningHubUserApiClient>();
 
-
+            DateHelper.userTimeZone = DateHelper.DefaultTimeZone;
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             controller = new LoginController(
