@@ -11,6 +11,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs;
+    using DigitalLearningSolutions.Data.Extensions;
+    using Microsoft.Extensions.Configuration;
 
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [SetSelectedTab(nameof(NavMenuTab.System))]
@@ -20,10 +22,14 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
     public class SuperAdminFaqsController : Controller
     {
         private readonly IFaqsService faqsService;
+        private readonly IConfiguration configuration;
+        private readonly string legacyUrl;
 
-        public SuperAdminFaqsController(IFaqsService faqsService)
+        public SuperAdminFaqsController(IFaqsService faqsService, IConfiguration configuration)
         {
             this.faqsService = faqsService;
+            this.configuration = configuration;
+            legacyUrl = configuration.GetCurrentSystemBaseUrl();
         }
 
         public IActionResult Index()
@@ -36,6 +42,22 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
             var model = new FaqsPageViewModel(faqs);
 
             return View("SuperAdminFaqs", model);
+        }
+        public IActionResult ManageFaqs()
+        {
+            return RedirectToPage(legacyUrl + "tracking/admin-faqs");
+        }
+        public IActionResult Resources()
+        {
+            return RedirectToPage(legacyUrl + "tracking/admin-resources");
+        }
+        public IActionResult Notifications()
+        {
+            return RedirectToPage(legacyUrl + "tracking/admin-notifications");
+        }
+        public IActionResult Brands()
+        {
+            return RedirectToPage(legacyUrl + "tracking/admin-landing");
         }
     }
 }
