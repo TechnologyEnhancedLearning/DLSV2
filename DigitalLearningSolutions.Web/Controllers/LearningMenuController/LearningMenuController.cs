@@ -232,7 +232,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
 
             var model = new SectionContentViewModel(config, sectionContent, customisationId, sectionId);
             return View("Section/Section", model);
@@ -273,7 +273,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
             var model = new DiagnosticAssessmentViewModel(diagnosticAssessment, customisationId, sectionId);
             return View("Diagnostic/Diagnostic", model);
         }
@@ -309,7 +309,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
             var model = new DiagnosticContentViewModel(
                 config,
                 diagnosticContent,
@@ -358,7 +358,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
             var model = new PostLearningAssessmentViewModel(postLearningAssessment, customisationId, sectionId);
             return View("PostLearning/PostLearning", model);
         }
@@ -447,7 +447,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value );
             /* Course progress doesn't get updated if the auth token expires by the end of the tutorials.
               Some tutorials are longer than the default auth token lifetime of 1 hour, so we set the auth expiry to 8 hours.
               See HEEDLS-637 and HEEDLS-674 for more details */
@@ -581,7 +581,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
             var model = new CourseCompletionViewModel(config, courseCompletion, progressId.Value);
             return View("Completion/Completion", model);
         }
