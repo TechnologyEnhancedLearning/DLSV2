@@ -43,21 +43,25 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
 
             return View("SuperAdminFaqs", model);
         }
+        [Route("Faqs/Manage")]
         public IActionResult ManageFaqs()
         {
-            return RedirectToPage(legacyUrl + "tracking/admin-faqs");
+            return Redirect(legacyUrl + "/tracking/admin-faqs");
         }
+        [Route("Resources")]
         public IActionResult Resources()
         {
-            return RedirectToPage(legacyUrl + "tracking/admin-resources");
+            return Redirect(legacyUrl + "/tracking/admin-resources");
         }
+        [Route("Notifications")]
         public IActionResult Notifications()
         {
-            return RedirectToPage(legacyUrl + "tracking/admin-notifications");
+            return Redirect(legacyUrl + "/tracking/admin-notifications");
         }
+        [Route("Brands")]
         public IActionResult Brands()
         {
-            return RedirectToPage(legacyUrl + "tracking/admin-landing");
+            return Redirect(legacyUrl + "/tracking/admin-landing");
         }
     }
 }
