@@ -587,6 +587,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
             services.AddScoped<VerifyUserHasVerifiedPrimaryEmail>();
             services.AddScoped<VerifyAdminAndDelegateUserCentre>();
+            services.AddScoped<IsCentreAuthorizedSelfAssessment>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

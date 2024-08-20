@@ -500,6 +500,7 @@
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("{selfAssessmentId:int}/EditCompleteByDate")]
         public IActionResult EditCompleteByDate(
             int delegateUserId,
