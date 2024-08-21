@@ -173,6 +173,7 @@
           </h2>
         </legend>
         <input type="hidden" asp-for="CandidateAssessmentSupervisorVerificationId" />
+                <input type="hidden" asp-for="NumberOfSelfAssessedOptionalCompetencies" />
         <nhs-form-group nhs-validation-for="SupervisorComments">
           <vc:text-area asp-for="SupervisorComments" character-count="null" label="@(Model.SelfAssessmentResultSummary.ReviewerCommentsLabel == null ? "Reviewer comments": Model.SelfAssessmentResultSummary.ReviewerCommentsLabel.ToString())" rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
         </nhs-form-group>
@@ -204,7 +205,7 @@
             <span asp-validation-for="SignedOff" class="text-danger"></span>
           </div>
         </nhs-form-group>
-                @if (Model.NumberOfSelfAssessedOptionalCompetencies >= Model.SelfAssessmentResultSummary.MinimumOptionalCompetencies)
+                @if (Model.NumberOfSelfAssessedOptionalCompetencies > 0)
                 {
                     <nhs-form-group nhs-validation-for="OptionalCompetenciesChecked">
                         <div class="nhsuk-checkboxes__item">

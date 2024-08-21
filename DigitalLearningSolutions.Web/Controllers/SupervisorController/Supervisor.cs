@@ -1188,7 +1188,7 @@
             SignOffProfileAssessmentViewModel model
         )
         {
-            if (!ModelState.IsValid)
+            if ((!ModelState.IsValid) && (model.NumberOfSelfAssessedOptionalCompetencies > 0) && (!model.OptionalCompetenciesChecked))
             {
                 SelfAssessmentResultSummary? selfAssessmentSummary =
                     supervisorService.GetSelfAssessmentResultSummary(candidateAssessmentId, supervisorDelegateId);
