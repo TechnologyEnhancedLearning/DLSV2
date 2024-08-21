@@ -275,7 +275,7 @@ namespace DigitalLearningSolutions.Web.Services
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)
         {
             return userDataService.GetDelegateUserCardsByCentreId(centreId).Where(
-                user => user.Approved && !user.SelfReg && (string.IsNullOrEmpty(user.Password) || !string.IsNullOrEmpty(user.Password)) &&
+                user => user.Approved && !user.SelfReg && 
                         !string.IsNullOrEmpty(user.EmailAddress)
                         && !Guid.TryParse(user.EmailAddress, out _)
                         && user.RegistrationConfirmationHash != null
