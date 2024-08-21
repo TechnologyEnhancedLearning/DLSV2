@@ -16,6 +16,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
+    using System;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -74,6 +75,12 @@
             var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUserCard);
             var delegateCourses =
                 courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
+            foreach (var course in delegateCourses)
+            {
+                course.Enrolled = (DateTime)DateHelper.GetLocalDateTime(course.Enrolled);
+                course.LastUpdated = (DateTime)DateHelper.GetLocalDateTime(course.LastUpdated);
+                course.Completed = course.Completed?.TimeOfDay == TimeSpan.Zero ? course.Completed : DateHelper.GetLocalDateTime(course.Completed);
+            }
 
             var selfAssessments =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateEntity.UserAccount.Id, centreId);
@@ -83,6 +90,8 @@
                 selfassessment.SupervisorCount = selfAssessmentService.GetSupervisorsCountFromCandidateAssessmentId(selfassessment.CandidateAssessmentId);
                 selfassessment.IsSameCentre = selfAssessmentService.CheckForSameCentre(centreId, selfassessment.CandidateAssessmentId);
                 selfassessment.DelegateUserId = delegateUserCard.UserId;
+                selfassessment.StartedDate = (DateTime)DateHelper.GetLocalDateTime(selfassessment.StartedDate);
+                selfassessment.LastAccessed = DateHelper.GetLocalDateTime(selfassessment.LastAccessed);
             }
 
             var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses, selfAssessments);
