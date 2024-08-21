@@ -236,7 +236,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         {
             if (!TempData.Any())
             {
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
                 MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
