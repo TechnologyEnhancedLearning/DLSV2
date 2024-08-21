@@ -147,6 +147,10 @@
         [Route("WelcomeEmail")]
         public IActionResult WelcomeEmail()
         {
+            if (!TempData.Any())
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
             var data = GetBulkUploadData();
             var model = new WelcomeEmailViewModel() { Day = data.Day, Month = data.Month, Year = data.Year, DelegatesToRegister = data.ToRegisterActiveCount + data.ToRegisterInactiveCount };
             return View(model);
@@ -265,6 +269,10 @@
         [Route("UploadSummary")]
         public IActionResult UploadSummary()
         {
+            if (!TempData.Any())
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
             var data = GetBulkUploadData();
             var centreId = User.GetCentreIdKnownNotNull();
             string? groupName;
@@ -295,6 +303,10 @@
         [HttpPost]
         public IActionResult StartProcessing()
         {
+            if (!TempData.Any())
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
             var centreId = User.GetCentreIdKnownNotNull();
             var data = GetBulkUploadData();
             var adminId = User.GetAdminIdKnownNotNull();
