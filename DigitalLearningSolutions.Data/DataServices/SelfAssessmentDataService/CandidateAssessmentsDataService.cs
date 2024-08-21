@@ -170,7 +170,7 @@
         public void UpdateLastAccessed(int selfAssessmentId, int delegateUserId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE CandidateAssessments SET LastAccessed = GETDATE()
+                @"UPDATE CandidateAssessments SET LastAccessed = GETUTCDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId",
                 new { selfAssessmentId, delegateUserId }
             );

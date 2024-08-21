@@ -70,12 +70,15 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(LoginViewModel model)
+        public async Task<IActionResult> Index(LoginViewModel model, string timeZone = "Europe/London")
         {
+            ModelState.Remove("timeZone");
             if (!ModelState.IsValid)
             {
                 return View("Index", model);
             }
+
+            DateHelper.userTimeZone = timeZone ?? DateHelper.DefaultTimeZone;
 
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
 

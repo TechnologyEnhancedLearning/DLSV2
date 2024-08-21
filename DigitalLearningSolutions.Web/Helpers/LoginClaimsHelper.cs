@@ -50,6 +50,7 @@
                 new Claim(CustomClaimTypes.UserId, userAccount.Id.ToString()),
                 new Claim(CustomClaimTypes.UserForename, userAccount.FirstName),
                 new Claim(CustomClaimTypes.UserSurname, userAccount.LastName),
+                new Claim(CustomClaimTypes.UserTimeZone, DateHelper.userTimeZone),
             };
 
             return claims;
