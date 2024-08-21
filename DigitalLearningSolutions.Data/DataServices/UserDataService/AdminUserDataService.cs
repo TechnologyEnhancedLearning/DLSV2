@@ -218,7 +218,8 @@
         {
             var users = connection.Query<AdminUser>(
                 @$"{BaseSelectAdminQuery}
-                    WHERE au.Active = 1 AND au.Approved = 1 AND au.CentreId = @centreId",
+                    WHERE au.Active = 1 AND au.Approved = 1 AND au.CentreId = @centreId
+                    ORDER BY au.Forename, au.Surname",
                 new { centreId }
             ).ToList();
 
@@ -227,10 +228,10 @@
 
         public int GetNumberOfAdminsAtCentre(int centreId)
         {
-         var count =    connection.ExecuteScalar(
-                @"SELECT COUNT(*) FROM AdminUsers WHERE CentreID = @centreId",
-                new { centreId }
-            );
+            var count = connection.ExecuteScalar(
+                   @"SELECT COUNT(*) FROM AdminUsers WHERE CentreID = @centreId",
+                   new { centreId }
+               );
             return Convert.ToInt32(count);
         }
 
