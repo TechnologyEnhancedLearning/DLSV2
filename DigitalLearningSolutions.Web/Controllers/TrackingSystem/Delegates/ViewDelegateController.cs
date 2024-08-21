@@ -78,7 +78,7 @@
             foreach (var course in delegateCourses)
             {
                 course.Enrolled = (DateTime)DateHelper.GetLocalDateTime(course.Enrolled);
-                course.LastUpdated = (DateTime)DateHelper.GetLocalDateTime(course.LastUpdated);
+                course.LastUpdated = DateHelper.GetLocalDateTime(course.LastUpdated);
                 course.Completed = course.Completed?.TimeOfDay == TimeSpan.Zero ? course.Completed : DateHelper.GetLocalDateTime(course.Completed);
             }
 
