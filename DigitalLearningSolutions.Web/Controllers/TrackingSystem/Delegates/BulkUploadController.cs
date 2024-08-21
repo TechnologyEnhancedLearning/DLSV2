@@ -149,7 +149,7 @@
         {
             if (!TempData.Any())
             {
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var data = GetBulkUploadData();
             var model = new WelcomeEmailViewModel() { Day = data.Day, Month = data.Month, Year = data.Year, DelegatesToRegister = data.ToRegisterActiveCount + data.ToRegisterInactiveCount };
@@ -271,7 +271,7 @@
         {
             if (!TempData.Any())
             {
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var data = GetBulkUploadData();
             var centreId = User.GetCentreIdKnownNotNull();
@@ -305,7 +305,7 @@
         {
             if (!TempData.Any())
             {
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var centreId = User.GetCentreIdKnownNotNull();
             var data = GetBulkUploadData();
