@@ -36,6 +36,7 @@
         }
 
         [HttpGet]
+        [NoCaching]
         [Route("{page:int=1}")]
         public IActionResult Index(int page = 1)
         {
