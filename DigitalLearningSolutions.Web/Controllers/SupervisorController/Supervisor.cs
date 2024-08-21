@@ -1383,7 +1383,7 @@
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(competencymaindata.SelfAssessmentID, delegateUserId);
             if (!CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs))
             {
-                return NotFound();
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
             }
 
             var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(competencymaindata.CandidateAssessmentID);
