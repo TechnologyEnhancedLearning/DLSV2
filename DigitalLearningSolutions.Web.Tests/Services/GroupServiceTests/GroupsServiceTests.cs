@@ -13,7 +13,7 @@
     using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    
+
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
@@ -52,7 +52,7 @@
         private IEmailSchedulerService emailSchedulerService = null!;
         private IGroupsDataService groupsDataService = null!;
         private IGroupsService groupsService = null!;
-        private IJobGroupsDataService jobGroupsDataService = null!;
+        private IJobGroupsService jobGroupsService = null!;
         private IEnrolService enrolService = null!;
         private ILogger<IGroupsService> logger = null!;
         private IProgressDataService progressDataService = null!;
@@ -73,11 +73,11 @@
             configuration = A.Fake<IConfiguration>();
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
+            jobGroupsService = A.Fake<IJobGroupsService>(x => x.Strict());
             userDataService = A.Fake<IUserDataService>();
             notificationPreferencesDataService = A.Fake<INotificationPreferencesDataService>();
 
-            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
+            A.CallTo(() => jobGroupsService.GetJobGroupsAlphabetical()).Returns(
                 JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
             A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
@@ -102,7 +102,7 @@
                 clockUtility,
                 tutorialContentDataService,
                 emailService,
-                jobGroupsDataService,
+                jobGroupsService,
                 progressDataService,
                 configuration,
                 centreRegistrationPromptsService,
@@ -111,7 +111,7 @@
                 notificationPreferencesDataService
             );
 
-            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
+            A.CallTo(() => jobGroupsService.GetJobGroupsAlphabetical()).Returns(
                JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
            );
             A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
@@ -554,7 +554,7 @@
                 true
             );
 
-            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(jobGroups);
+            A.CallTo(() => jobGroupsService.GetJobGroupsAlphabetical()).Returns(jobGroups);
 
             SetUpGenerateGroupFakes(timeNow);
 
@@ -721,7 +721,7 @@
         private void DelegateProgressRecordMustNotHaveBeenUpdated()
         {
             A.CallTo(
-                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
+                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._, A<int>._)
             ).MustNotHaveHappened();
         }
 
@@ -736,7 +736,8 @@
                     A<int>._,
                     A<int?>._,
                     A<DateTime?>._,
-                    A<int>._
+                    A<int>._,
+                      A<DateTime>._
                 )
             ).MustNotHaveHappened();
             A.CallTo(
@@ -764,7 +765,7 @@
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();
             A.CallTo(
-                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
+                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._, A<int>._)
             ).DoesNothing();
             A.CallTo(
                 () => progressDataService.CreateNewDelegateProgress(
@@ -775,7 +776,8 @@
                     A<int>._,
                     A<int?>._,
                     A<DateTime?>._,
-                    A<int>._
+                    A<int>._,
+                      A<DateTime>._
                 )
             ).Returns(0);
             A.CallTo(() => progressDataService.CreateNewAspProgress(A<int>._, A<int>._)).DoesNothing();
@@ -800,11 +802,12 @@
                     A<int>._,
                     A<int>._,
                     A<int>._,
-                    A<DateTime>._,
+                    A<DateTime?>._,
                     A<int>._,
                     A<int?>._,
                     A<DateTime?>._,
-                    A<int>._
+                    A<int>._,
+                    A<DateTime>._
                 )
             ).Returns(newProgressId);
             A.CallTo(() => tutorialContentDataService.GetTutorialIdsForCourse(A<int>._))

@@ -149,6 +149,8 @@
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
         ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
+        IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId);
+
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -545,6 +547,10 @@
         public bool IsUnsupervisedSelfAssessment(int selfAssessmentId)
         {
             return selfAssessmentDataService.IsUnsupervisedSelfAssessment(selfAssessmentId);
+        }
+        public IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId)
+        {
+            return selfAssessmentDataService.GetCandidateAssessments(delegateUserId,selfAssessmentId);
         }
     }
 }

@@ -1,17 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
     public class VerifyAdminUserCanAccessDelegateUser : IActionFilter
     {
-        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
-        public VerifyAdminUserCanAccessDelegateUser(IUserDataService userDataService)
+        public VerifyAdminUserCanAccessDelegateUser(IUserService userService)
         {
-            this.userDataService = userDataService;
+            this.userService = userService;
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
@@ -25,7 +25,7 @@
 
             var centreId = controller.User.GetCentreIdKnownNotNull();
             var delegateUserId = int.Parse(context.RouteData.Values["delegateId"].ToString()!);
-            var delegateAccount = userDataService.GetDelegateUserById(delegateUserId);
+            var delegateAccount = userService.GetDelegateUserById(delegateUserId);
 
             if (delegateAccount == null)
             {

@@ -56,7 +56,7 @@
         }
 
         [TestCase(1, "Self enrolled")]
-        [TestCase(2, "Enrolled by Test Admin")]
+        [TestCase(2, "Enrolled by Admin - Test Admin")]
         [TestCase(3, "Group")]
         [TestCase(4, "System")]
         public void DelegateCourseInfoViewModel_sets_enrollment_method_correctly(

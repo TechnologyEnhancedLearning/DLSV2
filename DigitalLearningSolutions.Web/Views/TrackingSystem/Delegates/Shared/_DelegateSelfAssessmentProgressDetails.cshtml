@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
+@using DigitalLearningSolutions.Web.Helpers
 @model CurrentSelfAssessment
 
 <dl class="nhsuk-summary-list details-list-with-button word-break">
@@ -7,7 +8,7 @@
             Enrolled
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="enrolled-date">
-            @Model.StartedDate
+            @Model.StartedDate.ToString(DateHelper.StandardDateAndTimeFormat)
         </dd>
         <dd class="nhsuk-summary-list__actions"></dd>
     </div>
@@ -17,7 +18,7 @@
             Supervisor count
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="supervisor-count">
-          @Model.SupervisorCount
+            @Model.SupervisorCount
         </dd>
         <dd class="nhsuk-summary-list__actions"></dd>
     </div>
@@ -27,7 +28,7 @@
             Complete by
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
-            @(Model.CompleteByDate != null ? Model.CompleteByDate : "-")
+            @(Model.CompleteByDate != null ? Model.CompleteByDate?.ToShortDateString() : "-")
         </dd>
         <dd class="nhsuk-summary-list__actions">
             <a data-return-page-enabled="true"
@@ -47,7 +48,7 @@
             Last access
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-accessed">
-            @Model.LastAccessed
+            @Model.LastAccessed?.ToString(DateHelper.StandardDateAndTimeFormat)
         </dd>
         <dd class="nhsuk-summary-list__actions"></dd>
     </div>
@@ -61,7 +62,7 @@
                 string enrolmentMethod = Model.EnrolmentMethodId switch
                 {
                     1 => "Self enrolled",
-                    2 => "Admin/supervisor enrolled",
+                    2 => Model.EnrolledByFullName != null ? "Enrolled by Admin/Supervisor - " + Model.EnrolledByFullName : "Admin/Supervisor enrolled",
                     3 => "Group",
                     _ => "System",
                 };

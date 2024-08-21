@@ -2,9 +2,10 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 {
     using System;
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
-    using DigitalLearningSolutions.Data.Models.Email;    
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
@@ -33,11 +34,11 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             clockUtility = A.Fake<IClockUtility>();
             A.CallTo(() => smtpClientFactory.GetSmtpClient()).Returns(smtpClient);
 
-            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailPort)).Returns("25");
-            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailUsername)).Returns("username");
-            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailPassword)).Returns("password");
-            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailServer)).Returns("smtp.example.com");
-            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailFromAddress))
+            A.CallTo(() => configDataService.GetConfigValue(ConfigConstants.MailPort)).Returns("25");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigConstants.MailUsername)).Returns("username");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigConstants.MailPassword)).Returns("password");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigConstants.MailServer)).Returns("smtp.example.com");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigConstants.MailFromAddress))
                 .Returns("test@example.com");
 
             var logger = A.Fake<ILogger<EmailService>>();
@@ -50,11 +51,11 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
         }
 
-        [TestCase(ConfigDataService.MailPort)]
-        [TestCase(ConfigDataService.MailUsername)]
-        [TestCase(ConfigDataService.MailPassword)]
-        [TestCase(ConfigDataService.MailServer)]
-        [TestCase(ConfigDataService.MailFromAddress)]
+        [TestCase(ConfigConstants.MailPort)]
+        [TestCase(ConfigConstants.MailUsername)]
+        [TestCase(ConfigConstants.MailPassword)]
+        [TestCase(ConfigConstants.MailServer)]
+        [TestCase(ConfigConstants.MailFromAddress)]
         public void Trying_to_send_mail_with_null_config_values_should_throw_an_exception(string configKey)
         {
             // Given

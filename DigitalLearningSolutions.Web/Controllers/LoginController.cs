@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
@@ -23,13 +22,14 @@
     using DigitalLearningSolutions.Data.Extensions;
     using Microsoft.AspNetCore.Authentication.OpenIdConnect;
     using DigitalLearningSolutions.Data.ApiClients;
+    using DigitalLearningSolutions.Data.Constants;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
     public class LoginController : Controller
     {
         private readonly IClockUtility clockUtility;
-        private readonly IConfigDataService configDataService;
+        private readonly IConfigService configService;
         private readonly ILogger<LoginController> logger;
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
@@ -43,7 +43,7 @@
             ILogger<LoginController> logger,
             IUserService userService,
             IClockUtility clockUtility,
-            IConfigDataService configDataService,
+            IConfigService configService,
             IConfiguration config,
             ILearningHubUserApiClient learningHubUserApiClient
         )
@@ -53,7 +53,7 @@
             this.logger = logger;
             this.userService = userService;
             this.clockUtility = clockUtility;
-            this.configDataService = configDataService;
+            this.configService = configService;
             this.config = config;
             this.learningHubUserApiClient = learningHubUserApiClient;
         }
@@ -70,12 +70,15 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(LoginViewModel model)
+        public async Task<IActionResult> Index(LoginViewModel model, string timeZone = "Europe/London")
         {
+            ModelState.Remove("timeZone");
             if (!ModelState.IsValid)
             {
                 return View("Index", model);
             }
+
+            DateHelper.userTimeZone = timeZone ?? DateHelper.DefaultTimeZone;
 
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
 
@@ -91,7 +94,7 @@
                 case LoginAttemptResult.AccountLocked:
                     return View("AccountLocked");
                 case LoginAttemptResult.InactiveAccount:
-                    var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+                    var supportEmail = configService.GetConfigValue(ConfigConstants.SupportEmail);
                     var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
                     return View("AccountInactive", inactiveAccountModel);
                 case LoginAttemptResult.UnverifiedEmail:
@@ -269,7 +272,7 @@
 
         public IActionResult AccountInactive()
         {
-            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var supportEmail = configService.GetConfigValue(ConfigConstants.SupportEmail);
             var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
             return View(
                 "AccountInactive",
@@ -278,7 +281,7 @@
 
         public IActionResult RemoteFailure()
         {
-            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var supportEmail = configService.GetConfigValue(ConfigConstants.SupportEmail);
             var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
             return View(
                 "RemoteAuthenticationFailure",
@@ -316,7 +319,7 @@
                 return this.View("ForgottenPassword", model);
             }
 
-            ViewData["SupportEmail"] = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            ViewData["SupportEmail"] = configService.GetConfigValue(ConfigConstants.SupportEmail);
             var hasMultipleUsers = await this.learningHubUserApiClient.hasMultipleUsersForEmailAsync(model.EmailAddress);
             var requestSuccess = await this.learningHubUserApiClient.forgotPasswordAsync(model.EmailAddress);
             if (hasMultipleUsers || !requestSuccess)

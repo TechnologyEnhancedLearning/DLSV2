@@ -1,8 +1,14 @@
 ﻿@using DigitalLearningSolutions.Data.Helpers
+@using webDateHelper = DigitalLearningSolutions.Web.Helpers.DateHelper
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 @model DelegateCourseInfoViewModel
-
+@{
+    var courseCompleted = Model.Completed != null ?
+            Convert.ToDateTime(Model.Completed).TimeOfDay == TimeSpan.Zero ? Convert.ToDateTime(Model.Completed).ToString(webDateHelper.StandardDateFormat) :
+            Convert.ToDateTime(Model.Completed).ToString(webDateHelper.StandardDateAndTimeFormat)
+            : "-";
+}
 <dl class="nhsuk-summary-list details-list-with-button word-break">
     @if (Model.AccessedVia.Equals(DelegateAccessRoute.ActivityDelegates))
     {
@@ -60,7 +66,7 @@
             Complete by
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
-            @(Model.CompleteBy ?? "-")
+            @(Model.CompleteBy != null ? Convert.ToDateTime(Model.CompleteBy).ToString(webDateHelper.StandardDateFormat) : "-")
         </dd>
         <dd class="nhsuk-summary-list__actions">
             <a data-return-page-enabled="true"
@@ -79,7 +85,7 @@
             Last access
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-accessed">
-            @Model.LastAccessed
+            @(Model.LastAccessed ?? "-")
         </dd>
         <dd class="nhsuk-summary-list__actions"></dd>
     </div>
@@ -89,7 +95,7 @@
             Completed
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="completed-date">
-            @(Model.Completed ?? "-")
+            @(courseCompleted)
         </dd>
         <dd class="nhsuk-summary-list__actions">
             <a data-return-page-enabled="true"
@@ -166,12 +172,12 @@
             <div hidden data-filter-value="@FilteringHelper.GetFilterValueForAdminField(courseCustomPrompt)"></div>
             <dd class="nhsuk-summary-list__actions">
                 <a data-return-page-enabled="true"
-               asp-controller="DelegateProgress"
-               asp-action="EditDelegateCourseAdminField"
-               asp-route-progressId="@Model.ProgressId"
-               asp-route-promptNumber="@courseCustomPrompt.PromptNumber"
-               asp-route-accessedVia="@Model.AccessedVia"
-               asp-route-returnPageQuery="@Model.ReturnPageQuery">
+                   asp-controller="DelegateProgress"
+                   asp-action="EditDelegateCourseAdminField"
+                   asp-route-progressId="@Model.ProgressId"
+                   asp-route-promptNumber="@courseCustomPrompt.PromptNumber"
+                   asp-route-accessedVia="@Model.AccessedVia"
+                   asp-route-returnPageQuery="@Model.ReturnPageQuery">
                     Edit<span class="nhsuk-u-visually-hidden"> @courseCustomPrompt.PromptText</span>
                 </a>
             </dd>

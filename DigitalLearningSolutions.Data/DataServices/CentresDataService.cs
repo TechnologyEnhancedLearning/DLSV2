@@ -179,7 +179,7 @@
                             c.ContactSurname,
                             c.ContactEmail,
                             c.ContactTelephone,
-                            c.pwEmail AS CentreEmail,
+                            c.AutoRegisterManagerEmail AS CentreEmail,
                             c.ShowOnMap,
                             c.CMSAdministrators AS CmsAdministratorSpots,
                             c.CMSManagers AS CmsManagerSpots,
@@ -231,7 +231,7 @@
                             c.ContactEmail,
                             c.ContactTelephone,
                             c.pwTelephone AS CentreTelephone,
-                            c.pwEmail AS CentreEmail,
+                            c.AutoRegisterManagerEmail AS CentreEmail,
                             c.pwPostCode AS CentrePostcode,
                             c.ShowOnMap,
                             c.Long AS Longitude,
@@ -460,7 +460,7 @@
                     CentreName = @centreName,
                     CentreTypeId = @centreTypeId,
                     RegionId = @regionId,
-                    pwEmail = @centreEmail,
+                    AutoRegisterManagerEmail = @centreEmail,
                     IPPrefix = @ipPrefix,
                     ShowOnMap = @showOnMap
                 WHERE CentreId = @centreId",
@@ -504,7 +504,7 @@
                     ContactTelephone,
                     CentreTypeID,
                     RegionID,
-                    pwEmail,
+                    AutoRegisterManagerEmail,
                     IPPrefix,
                     ShowOnMap
                     )

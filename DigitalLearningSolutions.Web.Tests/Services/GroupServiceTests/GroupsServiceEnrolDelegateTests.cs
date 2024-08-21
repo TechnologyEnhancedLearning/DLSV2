@@ -3,6 +3,7 @@
     using System;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.Models.Email;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions.Execution;
@@ -53,11 +54,12 @@
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
-                        testDate,
+                        null,
                         3,
                         null,
                         A<DateTime?>._,
-                        A<int>._
+                        A<int>._,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -95,11 +97,12 @@
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
-                        testDate,
+                        null,
                         3,
                         null,
                         A<DateTime?>._,
-                        A<int>._
+                        A<int>._,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -137,11 +140,12 @@
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
-                        testDate,
+                        null,
                         3,
                         null,
                         A<DateTime?>._,
-                        A<int>._
+                        A<int>._,
+                        testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -179,11 +183,12 @@
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
-                        testDate,
+                        null,
                         3,
                         null,
                         A<DateTime?>._,
-                        0
+                        0,
+                        testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -222,11 +227,12 @@
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
-                        testDate,
+                        null,
                         3,
                         null,
                         testDate.AddMonths(12),
-                        supervisorId
+                        supervisorId,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -264,11 +270,12 @@
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
-                        testDate,
+                        null,
                         3,
                         null,
                         null,
-                        A<int>._
+                        A<int>._,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -308,11 +315,12 @@
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
-                        testDate,
+                        null,
                         3,
                         null,
                         expectedFutureDate,
-                        A<int>._
+                        A<int>._,
+                          testDate
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -348,7 +356,8 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         A<int>._,
-                        A<DateTime?>._
+                        A<DateTime?>._,
+                        A<int>._
                     )
                 ).MustHaveHappened();
             }
@@ -384,7 +393,8 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         reusableProgressRecord.SupervisorAdminId,
-                        A<DateTime?>._
+                        A<DateTime?>._,
+                        A<int>._
                     )
                 ).MustHaveHappened();
             }
@@ -420,7 +430,8 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         supervisorId,
-                        A<DateTime?>._
+                        A<DateTime?>._,
+                        A<int>._
                     )
                 ).MustHaveHappened();
             }
@@ -456,7 +467,8 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         A<int>._,
-                        null
+                        null,
+                         A<int>._
                     )
                 ).MustHaveHappened();
             }
@@ -494,7 +506,8 @@
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         A<int>._,
-                        expectedFutureDate
+                        expectedFutureDate,
+                         A<int>._
                     )
                 ).MustHaveHappened();
             }

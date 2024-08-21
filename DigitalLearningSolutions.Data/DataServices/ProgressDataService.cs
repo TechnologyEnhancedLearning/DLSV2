@@ -15,17 +15,18 @@
     {
         IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
 
-        void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate);
-
+        void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate, int enrollmentMethodID);
+        void UpdateProgressSupervisor(int progressId, int supervisorAdminId);
         int CreateNewDelegateProgress(
             int delegateId,
             int customisationId,
             int customisationVersion,
-            DateTime submittedTime,
+            DateTime? submittedTime,
             int enrollmentMethodId,
             int? enrolledByAdminId,
             DateTime? completeByDate,
-            int supervisorAdminId
+            int supervisorAdminId,
+            DateTime firstSubmittedTime
         );
 
         void CreateNewAspProgress(int tutorialId, int progressId);
@@ -143,27 +144,42 @@
         public void UpdateProgressSupervisorAndCompleteByDate(
             int progressId,
             int supervisorAdminId,
-            DateTime? completeByDate
+            DateTime? completeByDate,
+            int enrollmentMethodID
         )
         {
             connection.Execute(
                 @"UPDATE Progress SET
                         SupervisorAdminID = @supervisorAdminId,
-                        CompleteByDate = @completeByDate
+                        CompleteByDate = @completeByDate,
+                        EnrollmentMethodID = @enrollmentMethodID
                     WHERE ProgressID = @progressId",
-                new { progressId, supervisorAdminId, completeByDate }
+                new { progressId, supervisorAdminId, completeByDate, enrollmentMethodID }
             );
         }
 
+        public void UpdateProgressSupervisor(
+            int progressId,
+            int supervisorAdminId
+        )
+        {
+            connection.Execute(
+                @"UPDATE Progress SET
+                        SupervisorAdminID = @supervisorAdminId
+                    WHERE ProgressID = @progressId",
+                new { progressId, supervisorAdminId }
+            );
+        }
         public int CreateNewDelegateProgress(
             int delegateId,
             int customisationId,
             int customisationVersion,
-            DateTime submittedTime,
+            DateTime? submittedTime,
             int enrollmentMethodId,
             int? enrolledByAdminId,
             DateTime? completeByDate,
-            int supervisorAdminId
+            int supervisorAdminId,
+            DateTime firstSubmittedTime
         )
         {
             var progressId = connection.QuerySingle<int>(
@@ -175,7 +191,8 @@
                         EnrollmentMethodID,
                         EnrolledByAdminID,
                         CompleteByDate,
-                        SupervisorAdminID)
+                        SupervisorAdminID,
+                        FirstSubmittedTime)
                     OUTPUT Inserted.ProgressID
                     VALUES (
                         @delegateId,
@@ -185,7 +202,8 @@
                         @enrollmentMethodId,
                         @enrolledByAdminId,
                         @completeByDate,
-                        @supervisorAdminId)",
+                        @supervisorAdminId,
+                        @firstSubmittedTime)",
                 new
                 {
                     delegateId,
@@ -196,6 +214,7 @@
                     enrolledByAdminId,
                     completeByDate,
                     supervisorAdminId,
+                    firstSubmittedTime
                 }
             );
 

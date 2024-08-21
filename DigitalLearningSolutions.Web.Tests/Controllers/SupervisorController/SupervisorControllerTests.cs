@@ -1,9 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Support
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
+
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.SupervisorController;
     using DigitalLearningSolutions.Web.Services;
@@ -21,21 +18,19 @@
         private IFrameworkNotificationService frameworkNotificationService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
         private IFrameworkService frameworkService = null!;
-        private IConfigDataService configDataService = null!;
+        private IConfigService configService = null!;
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
-        private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
         private ILogger<SupervisorController> logger = null!;
         private IConfiguration config = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IMultiPageFormService multiPageFormService = null!;
         private IRegistrationService registrationService = null!;
-        private ICentresDataService centresDataService = null!;
-        private IUserService userService = null!;
+        private ICentresService centresService = null!;
         private IEmailGenerationService emailGenerationService = null!;
         private IEmailService emailService = null!;
         private IClockUtility clockUtility = null!;
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
-        private ISelfAssessmentDataService selfAssessmentDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -45,21 +40,19 @@
             frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
             frameworkService = A.Fake<IFrameworkService>();
-            configDataService = A.Fake<IConfigDataService>();
+            configService = A.Fake<IConfigService>();
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
-            userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             logger = A.Fake<ILogger<SupervisorController>>();
             config = A.Fake<IConfiguration>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
             registrationService = A.Fake<IRegistrationService>();
-            centresDataService = A.Fake<ICentresDataService>();
-            userService = A.Fake<IUserService>();
+            centresService = A.Fake<ICentresService>();
             emailGenerationService = A.Fake<IEmailGenerationService>();
             emailService = A.Fake<IEmailService>();
             clockUtility = A.Fake<IClockUtility>();
             candidateAssessmentDownloadFileService = A.Fake<ICandidateAssessmentDownloadFileService>();
-            selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
 
             A.CallTo(() => candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(A<int>._, A<int>._, A<bool>._))
                 .Returns(new byte[] { });
@@ -76,20 +69,18 @@
                    frameworkNotificationService,
                    selfAssessmentService,
                    frameworkService,
-                   configDataService,
+                   configService,
                    centreRegistrationPromptsService,
-                   userDataService,
+                   userService,
                    logger,
                    config,
                    searchSortFilterPaginateService,
                    multiPageFormService,
                    registrationService,
-                   centresDataService,
-                   userService,
+                   centresService,
                    emailGenerationService,
                    emailService,
                    candidateAssessmentDownloadFileService,
-                   selfAssessmentDataService,
                    clockUtility
                );
             string expectedFileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0, 30) : selfAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";

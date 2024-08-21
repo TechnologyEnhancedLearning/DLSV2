@@ -2,8 +2,6 @@
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
@@ -18,6 +16,7 @@
     using Microsoft.FeatureManagement.Mvc;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
+    using Microsoft.AspNetCore.Hosting;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -26,32 +25,35 @@
     [Route("TrackingSystem/Delegates/All")]
     public class AllDelegatesController : Controller
     {
-        private const string DelegateFilterCookieName = "DelegateFilter";
+        private string DelegateFilterCookieName = "DelegateFilter";
         private readonly IDelegateDownloadFileService delegateDownloadFileService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private readonly PromptsService promptsService;
         private readonly IPaginateService paginateService;
-        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
         private readonly IGroupsService groupsService;
         private readonly IConfiguration configuration;
+        private readonly IWebHostEnvironment env;
 
         public AllDelegatesController(
             IDelegateDownloadFileService delegateDownloadFileService,
-            IUserDataService userDataService,
+            IUserService userDataService,
             PromptsService promptsService,
-            IJobGroupsDataService jobGroupsDataService,
+            IJobGroupsService jobGroupsDataService,
             IPaginateService paginateService,
             IGroupsService groupsService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IWebHostEnvironment env
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
-            this.userDataService = userDataService;
+            this.userService = userDataService;
             this.promptsService = promptsService;
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.jobGroupsService = jobGroupsDataService;
             this.paginateService = paginateService;
             this.groupsService = groupsService;
             this.configuration = configuration;
+            this.env = env;
         }
 
         [NoCaching]
@@ -68,7 +70,7 @@
         )
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
-            var loggedInSuperAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
+            var loggedInSuperAdmin = userService.GetAdminById(User.GetAdminId()!.Value);
             if (loggedInSuperAdmin.AdminAccount.Active == false)
             {
                 return NotFound();
@@ -76,6 +78,8 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
+
+            DelegateFilterCookieName += env.EnvironmentName;
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
@@ -88,21 +92,19 @@
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
             var centreId = User.GetCentreIdKnownNotNull();
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
             var groups = groupsService.GetActiveGroups(centreId);
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions, groups);
 
-            var CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl();
-
-            if (TempData["allDelegatesCentreId"] != null && TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString()
-                    && existingFilterString != null &&(TempData["LastBaseUrl"].ToString() != CurrentSiteBaseUrl))
+            if (existingFilterString != null && TempData["allDelegatesCentreId"] != null &&
+                TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString())
             {
                 if (existingFilterString.Contains("Answer"))
                     existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
-                if (existingFilterString.Contains("DelegateGroup"))
+                if (existingFilterString != null && existingFilterString.Contains("DelegateGroup"))
                     existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
             }
 
@@ -163,7 +165,14 @@
                             jobGroupId = Convert.ToInt32(filterValue);
 
                         if (filter.Contains("DelegateGroupId"))
+                        {
                             groupId = Convert.ToInt32(filterValue);
+                            if (!(groups.Any(g => g.Item1 == groupId)))
+                            {
+                                groupId = null;
+                                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
+                            }
+                        }
 
                         if (filter.Contains("Answer1"))
                             answer1 = filterValue;
@@ -186,14 +195,14 @@
                 }
             }
 
-            (var delegates, var resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
+            (var delegates, var resultCount) = this.userService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId, groupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6);
 
             if (delegates.Count() == 0 && resultCount > 0)
             {
                 page = 1; offSet = 0;
-                (delegates, resultCount) = this.userDataService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
+                (delegates, resultCount) = this.userService.GetDelegateUserCards(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection, centreId,
                                                 isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId, groupId,
                                                 answer1, answer2, answer3, answer4, answer5, answer6);
             }
@@ -210,7 +219,6 @@
 
             result.Page = page;
             TempData["Page"] = result.Page;
-            TempData["LastBaseUrl"] = configuration.GetCurrentSystemBaseUrl();
 
             var model = new AllDelegatesViewModel(
                 result,

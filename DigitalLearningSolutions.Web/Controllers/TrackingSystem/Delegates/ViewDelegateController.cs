@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
@@ -18,6 +16,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
+    using System;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -31,32 +30,26 @@
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
         private readonly PromptsService promptsService;
-        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
         private readonly IEmailVerificationService emailVerificationService;
-        private readonly IEmailVerificationDataService emailVerificationDataService;
         private readonly ISelfAssessmentService selfAssessmentService;
 
         public ViewDelegateController(
-            IUserDataService userDataService,
             IUserService userService,
             PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
             IConfiguration config,
             IEmailVerificationService emailVerificationService,
-            IEmailVerificationDataService emailVerificationDataService,
             ISelfAssessmentService selfAssessmentService
         )
         {
-            this.userDataService = userDataService;
             this.userService = userService;
             this.promptsService = promptsService;
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.config = config;
             this.emailVerificationService = emailVerificationService;
-            this.emailVerificationDataService = emailVerificationDataService;
             this.selfAssessmentService = selfAssessmentService;
         }
 
@@ -82,6 +75,12 @@
             var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUserCard);
             var delegateCourses =
                 courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
+            foreach (var course in delegateCourses)
+            {
+                course.Enrolled = (DateTime)DateHelper.GetLocalDateTime(course.Enrolled);
+                course.LastUpdated = (DateTime)DateHelper.GetLocalDateTime(course.LastUpdated);
+                course.Completed = course.Completed?.TimeOfDay == TimeSpan.Zero ? course.Completed : DateHelper.GetLocalDateTime(course.Completed);
+            }
 
             var selfAssessments =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateEntity.UserAccount.Id, centreId);
@@ -91,6 +90,8 @@
                 selfassessment.SupervisorCount = selfAssessmentService.GetSupervisorsCountFromCandidateAssessmentId(selfassessment.CandidateAssessmentId);
                 selfassessment.IsSameCentre = selfAssessmentService.CheckForSameCentre(centreId, selfassessment.CandidateAssessmentId);
                 selfassessment.DelegateUserId = delegateUserCard.UserId;
+                selfassessment.StartedDate = (DateTime)DateHelper.GetLocalDateTime(selfassessment.StartedDate);
+                selfassessment.LastAccessed = DateHelper.GetLocalDateTime(selfassessment.LastAccessed);
             }
 
             var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses, selfAssessments);
@@ -108,7 +109,7 @@
             }
 
 
-            EmailVerificationDetails emailVerificationDetails = emailVerificationDataService.GetEmailVerificationDetailsById(delegateEntity.UserAccount.EmailVerificationHashID ?? 0);
+            EmailVerificationDetails emailVerificationDetails = emailVerificationService.GetEmailVerificationDetailsById(delegateEntity.UserAccount.EmailVerificationHashID ?? 0);
 
             if (delegateEntity.UserAccount.EmailVerified == null
                 && delegateEntity.UserAccount.EmailVerificationHashID != null
@@ -125,7 +126,7 @@
         [Route("SendWelcomeEmail")]
         public IActionResult SendWelcomeEmail(int delegateId)
         {
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
+            var delegateUser = userService.GetDelegateUserCardById(delegateId)!;
             var model = new WelcomeEmailSentViewModel(delegateUser);
 
             if (delegateUser.RegistrationConfirmationHash != null)
@@ -149,7 +150,7 @@
         [Route("DeactivateDelegate")]
         public IActionResult DeactivateDelegate(int delegateId)
         {
-            userDataService.DeactivateDelegateUser(delegateId);
+            userService.DeactivateDelegateUser(delegateId);
 
             return RedirectToAction("Index", new { delegateId });
         }
@@ -159,14 +160,14 @@
         public IActionResult ReactivateDelegate(int delegateId)
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            var delegateUser = userService.GetDelegateUserCardById(delegateId);
 
             if (delegateUser?.CentreId != centreId)
             {
                 return new NotFoundResult();
             }
 
-            userDataService.ActivateDelegateUser(delegateId);
+            userService.ActivateDelegateUser(delegateId);
 
             return RedirectToAction("Index", new { delegateId });
         }
@@ -175,9 +176,9 @@
         [Route("DeleteAccount")]
         public IActionResult DeleteAccount(int delegateId)
         {
-            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+            var userId = userService.GetUserIdFromDelegateId(delegateId);
 
-            userDataService.DeleteUserAndAccounts(userId);
+            userService.DeleteUserAndAccounts(userId);
 
             return RedirectToAction("Index", "AllDelegates");
         }

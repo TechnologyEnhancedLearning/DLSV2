@@ -19,7 +19,7 @@
         private const int CentreId = 101;
         private const int AdminId = 1;
         private ICommonService commonService = null!;
-        private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService = null!;
+        private ICompetencyLearningResourcesService competencyLearningResourcesService = null!;
         private IConfiguration config = null!;
         private FrameworksController controller = null!;
         private IFrameworkNotificationService frameworkNotificationService = null!;
@@ -38,7 +38,7 @@
             var logger = A.Fake<ILogger<FrameworksController>>();
             config = A.Fake<IConfiguration>();
             importCompetenciesFromFileService = A.Fake<IImportCompetenciesFromFileService>();
-            competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
+            competencyLearningResourcesService = A.Fake<ICompetencyLearningResourcesService>();
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
@@ -62,7 +62,7 @@
                 frameworkNotificationService,
                 logger,
                 importCompetenciesFromFileService,
-                competencyLearningResourcesDataService,
+                competencyLearningResourcesService,
                 learningHubApiClient,
                 searchSortFilterPaginateService,
                 multiPageFormService

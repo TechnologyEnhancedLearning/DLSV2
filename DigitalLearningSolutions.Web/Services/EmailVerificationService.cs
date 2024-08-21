@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
@@ -30,6 +31,7 @@
             string emailAddress,
             string baseUrl
         );
+        EmailVerificationDetails? GetEmailVerificationDetailsById(int id);
     }
 
     public class EmailVerificationService : IEmailVerificationService
@@ -125,6 +127,10 @@
             };
 
             return new Email(emailSubject, body, emailAddress);
+        }
+        public EmailVerificationDetails? GetEmailVerificationDetailsById(int id)
+        {
+            return emailVerificationDataService.GetEmailVerificationDetailsById(id);
         }
     }
 }

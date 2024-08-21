@@ -2,9 +2,8 @@
 {
     using System;
     using System.Globalization;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Certificates;
-    using DigitalLearningSolutions.Data.Models.External.Maps;    
+    using DigitalLearningSolutions.Data.Models.External.Maps;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Services;
@@ -22,7 +21,7 @@
 
     public class CentreConfigurationControllerTests
     {
-        private readonly ICentresDataService centresDataService = A.Fake<ICentresDataService>();
+        private readonly ICentresService centresService = A.Fake<ICentresService>();
 
         private readonly IImageResizeService imageResizeService = A.Fake<IImageResizeService>();
 
@@ -39,7 +38,7 @@
             certificateService = A.Fake<ICertificateService>();
             controller =
                 new ConfigurationController(
-                        centresDataService,
+                        centresService,
                         mapsApiHelper,
                         logger,
                         imageResizeService,
@@ -49,7 +48,7 @@
                     .WithMockUser(true);
 
             A.CallTo(
-                () => centresDataService.UpdateCentreWebsiteDetails(
+                () => centresService.UpdateCentreWebsiteDetails(
                     A<int>._,
                     A<string>._,
                     A<double>._,
@@ -68,7 +67,7 @@
         [TearDown]
         public void Cleanup()
         {
-            Fake.ClearRecordedCalls(centresDataService);
+            Fake.ClearRecordedCalls(centresService);
             Fake.ClearRecordedCalls(mapsApiHelper);
             Fake.ClearRecordedCalls(logger);
             Fake.ClearRecordedCalls(imageResizeService);
@@ -126,7 +125,7 @@
 
             // Then
             A.CallTo(
-                    () => centresDataService.UpdateCentreDetails(
+                    () => centresService.UpdateCentreDetails(
                         A<int>._,
                         A<string>._,
                         A<string>._,
@@ -156,7 +155,7 @@
 
             // Then
             A.CallTo(
-                    () => centresDataService.UpdateCentreDetails(
+                    () => centresService.UpdateCentreDetails(
                         A<int>._,
                         A<string>._,
                         A<string>._,
@@ -199,7 +198,7 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
-            A.CallTo(() => centresDataService.UpdateCentreDetails(2, null, model.BannerText, null, null))
+            A.CallTo(() => centresService.UpdateCentreDetails(2, null, model.BannerText, null, null))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -307,7 +306,7 @@
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
             A.CallTo(
-                () => centresDataService.UpdateCentreWebsiteDetails(
+                () => centresService.UpdateCentreWebsiteDetails(
                     A<int>._,
                     "AA123",
                     latitude,
@@ -341,7 +340,7 @@
         {
             // Given
             var centre = CentreTestHelper.GetDefaultCentre();
-            A.CallTo(() => centresDataService.GetCentreDetailsById(centre.CentreId)).Returns(centre);
+            A.CallTo(() => centresService.GetCentreDetailsById(centre.CentreId)).Returns(centre);
             var certificateInformation = CertificateTestHelper.GetDefaultCertificate();
             //var certificateInformation = new CertificateInformation(
             //    0,
