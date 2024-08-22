@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Enums;
     using Microsoft.AspNetCore.Http;
+    using NodaTime;
     using System;
 
     public static class DateHelper
@@ -36,21 +37,28 @@
             };
         }
 
-        public static DateTime? GetLocalDateTime(DateTime? dateUtc)
+        public static DateTime? GetLocalDateTime(DateTime? utcDateTime)
         {
-            if (dateUtc == null)
+            if (utcDateTime == null)
                 return null;
+            try
+            {
+                var accessor = new HttpContextAccessor();
+                var ianaTimeZoneId = accessor.HttpContext.User.GetUserTimeZone(CustomClaimTypes.UserTimeZone);
 
-            var accessor = new HttpContextAccessor();
-            var timeZone = accessor.HttpContext.User.GetUserTimeZone(CustomClaimTypes.UserTimeZone);
+                var timeZoneProvider = DateTimeZoneProviders.Tzdb;
+                var dateTimeZone = timeZoneProvider.GetZoneOrNull(ianaTimeZoneId);
+                var instant = Instant.FromDateTimeUtc(DateTime.SpecifyKind((DateTime)utcDateTime, DateTimeKind.Utc));
+                var userZonedDateTime = instant.InZone(dateTimeZone);
+                var userLocalDateTime = userZonedDateTime.ToDateTimeUnspecified();
 
-            if (string.IsNullOrEmpty(timeZone))
-                timeZone = DefaultTimeZone;
-
-            TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
-            DateTime localDateTime = TimeZoneInfo.ConvertTimeFromUtc((DateTime)dateUtc, timeZoneInfo);
-
-            return localDateTime;
+                return userLocalDateTime;
+            }
+            catch (Exception)
+            {
+                return utcDateTime;
+            }
+           
         }
     }
 }
