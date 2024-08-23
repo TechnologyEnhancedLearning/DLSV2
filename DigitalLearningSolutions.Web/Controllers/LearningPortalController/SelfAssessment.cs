@@ -27,6 +27,11 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using DocumentFormat.OpenXml.EMMA;
     using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Models.Common;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.AspNetCore.Mvc.ViewEngines;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    using System.IO;
 
     public partial class LearningPortalController
     {
@@ -1638,6 +1643,179 @@
                     "SelfAssessmentOverview",
                     new { selfAssessmentId, vocabulary }
                 );
+        }
+
+      
+        [Route("/LearningPortal/selfAssessments/{selfassessmentId:int}/{vocabulary}/Certificate")]
+
+        public IActionResult CompetencySelfAssessmentCertificate(int selfAssessmentId, string vocabulary)
+        {
+            int supervisorDelegateId = 0;
+            var adminId = User.GetAdminId();
+            User.GetUserIdKnownNotNull();
+            var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(selfAssessmentId, User.GetUserIdKnownNotNull());
+            if((competencymaindata == null)|| ( competencymaindata.LearnerId != User.GetUserIdKnownNotNull()) || (selfAssessmentId == 0))
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+            var delegateUserId = competencymaindata.LearnerId;
+            if (vocabulary == "Supervise")
+            {
+                var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value);
+             var checkSupervisorDelegate = supervisorDelegateDetails.Where(x=> x.DelegateUserID == competencymaindata.LearnerId).FirstOrDefault();
+                if (checkSupervisorDelegate == null)
+                {
+                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+                }
+                var supervisorDelegate = supervisorService.GetSupervisorDelegate(User.GetAdminIdKnownNotNull(), delegateUserId);
+                supervisorDelegateId = supervisorDelegate.ID;
+            }
+            var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
+            var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(competencymaindata.SelfAssessmentID, delegateUserId);
+
+            if (!CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs))
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
+            }
+
+            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(competencymaindata.CandidateAssessmentID);
+            var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, competencymaindata.SelfAssessmentID);
+            var competencyIds = recentResults.Select(c => c.Id).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, null);
+            foreach (var competency in competencies)
+            {
+                competency.QuestionLabel = assessment.QuestionLabel;
+                foreach (var assessmentQuestion in competency.AssessmentQuestions)
+                {
+                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
+                    {
+                        assessmentQuestion.LevelDescriptors = selfAssessmentService
+                            .GetLevelDescriptorsForAssessmentQuestion(
+                                assessmentQuestion.Id,
+                                assessmentQuestion.MinValue,
+                                assessmentQuestion.MaxValue,
+                                assessmentQuestion.MinValue == 0
+                            ).ToList();
+                    }
+                }
+            }
+
+            var CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
+            var competencySummaries = from g in CompetencyGroups
+                                      let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
+                                      let selfAssessedCount = questions.Count(q => q.Result.HasValue)
+                                      let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
+
+                                      select new
+                                      {
+                                          SelfAssessedCount = selfAssessedCount,
+                                          VerifiedCount = verifiedCount,
+                                          Questions = questions.Count()
+                                      };
+
+            int sumVerifiedCount = competencySummaries.Sum(item => item.VerifiedCount);
+            int sumQuestions = competencySummaries.Sum(item => item.Questions);
+            var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
+            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, vocabulary, accessors, activitySummaryCompetencySelfAssesment, sumQuestions, sumVerifiedCount, supervisorDelegateId);
+            return View("SelfAssessments/CompetencySelfAssessmentCertificate", model);
+        }
+        [Route("DownloadCertificate")]
+        public async Task<IActionResult> DownloadCertificate(int candidateAssessmentId)
+        {
+            PdfReportStatusResponse pdfReportStatusResponse = new PdfReportStatusResponse();
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
+            if (competencymaindata == null || candidateAssessmentId == 0)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+            var delegateUserId = competencymaindata.LearnerId;
+            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
+            var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
+            var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, competencymaindata.SelfAssessmentID);
+            var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
+            var competencyIds = recentResults.Select(c => c.Id).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, null);
+            foreach (var competency in competencies)
+            {
+                competency.QuestionLabel = assessment.QuestionLabel;
+                foreach (var assessmentQuestion in competency.AssessmentQuestions)
+                {
+                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
+                    {
+                        assessmentQuestion.LevelDescriptors = selfAssessmentService
+                            .GetLevelDescriptorsForAssessmentQuestion(
+                                assessmentQuestion.Id,
+                                assessmentQuestion.MinValue,
+                                assessmentQuestion.MaxValue,
+                                assessmentQuestion.MinValue == 0
+                            ).ToList();
+                    }
+                }
+            }
+
+            var CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
+            var competencySummaries = from g in CompetencyGroups
+                                      let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
+                                      let selfAssessedCount = questions.Count(q => q.Result.HasValue)
+                                      let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
+                                      select new
+                                      {
+                                          SelfAssessedCount = selfAssessedCount,
+                                          VerifiedCount = verifiedCount,
+                                          Questions = questions.Count()
+                                      };
+
+            int sumVerifiedCount = competencySummaries.Sum(item => item.VerifiedCount);
+            int sumQuestions = competencySummaries.Sum(item => item.Questions);
+            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, "Proficiencies", accessors, activitySummaryCompetencySelfAssesment, sumQuestions, sumVerifiedCount, null);
+            var renderedViewHTML = RenderRazorViewToString(this, "SelfAssessments/DownloadCompetencySelfAssessmentCertificate", model);
+
+            var pdfReportResponse = await pdfService.PdfReport(candidateAssessmentId.ToString(), renderedViewHTML, delegateId);
+            if (pdfReportResponse != null)
+            {
+                do
+                {
+                    pdfReportStatusResponse = await pdfService.PdfReportStatus(pdfReportResponse);
+                } while (pdfReportStatusResponse.Id == 1);
+
+                var pdfReportFile = await pdfService.GetPdfReportFile(pdfReportResponse);
+                if (pdfReportFile != null)
+                {
+                    var nameTextLength = string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerName) ? 0 : model.CompetencySelfAssessmentCertificates.LearnerName.Length;
+                    var isPrnExist = !string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerPRN);
+                    var fileName = $"Competency Certificate - {model.CompetencySelfAssessmentCertificates.LearnerName.Substring(0, nameTextLength >= 15 ? 15 : nameTextLength)}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf" : ".pdf");
+                    return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
+                }
+            }
+            return View("SelfAssessments/CompetencySelfAssessmentCertificate", model);
+        }
+
+        public static string RenderRazorViewToString(Controller controller, string viewName, object model = null)
+        {
+            controller.ViewData.Model = model;
+            using (var sw = new StringWriter())
+            {
+                IViewEngine viewEngine =
+                    controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as
+                        ICompositeViewEngine;
+                ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, viewName, false);
+
+                ViewContext viewContext = new ViewContext(
+                    controller.ControllerContext,
+                    viewResult.View,
+                    controller.ViewData,
+                    controller.TempData,
+                    sw,
+                    new HtmlHelperOptions()
+                );
+                viewResult.View.RenderAsync(viewContext);
+                return sw.GetStringBuilder().ToString();
+            }
         }
     }
 }
