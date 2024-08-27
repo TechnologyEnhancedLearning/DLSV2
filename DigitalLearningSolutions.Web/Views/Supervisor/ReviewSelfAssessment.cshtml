@@ -96,7 +96,7 @@
             </a>
         }
 
-        @if (ViewBag.CanViewCertificate)
+        @if (Model.CompetencySummaries.CanViewCertificate)
         {
             <a class="nhsuk-button"
            asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
@@ -106,14 +106,11 @@
                 Certificate
             </a>
         }
-        @if (
-        Model.DelegateSelfAssessment.SignOffRequested > 0 &&
-        competencySummaries.Sum(c => (int)c["verifiedCount"]) == competencySummaries.Sum(c => (int)c["questionsCount"])
-        )
+        @if (Model.DelegateSelfAssessment.SignOffRequested > 0 && Model.CompetencySummaries.VerifiedCount == Model.CompetencySummaries.QuestionsCount)
         {
             <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>
         }
-        @if ((Model.DelegateSelfAssessment.ResultsVerificationRequests > 1) && (competencySummaries.Sum(c => (int)c["verifiedCount"]) < competencySummaries.Sum(c => (int)c["questionsCount"])))
+        @if ((Model.DelegateSelfAssessment.ResultsVerificationRequests > 1) && Model.CompetencySummaries.VerifiedCount < Model.CompetencySummaries.QuestionsCount)
         {
             <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Confirm multiple results</a>
         }

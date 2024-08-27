@@ -490,8 +490,8 @@
             {
                 searchModel.IsSupervisorResultsReviewed = assessment.IsSupervisorResultsReviewed;
             }
-
-            ViewBag.CanViewCertificate = CertificateHelper.CanViewCertificate(recentResults, model.SupervisorSignOffs);
+            var competencySummaries = CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs);
+            ViewBag.CanViewCertificate = competencySummaries.CanViewCertificate;
             ViewBag.SupervisorSelfAssessmentReview = assessment.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
@@ -1672,51 +1672,18 @@
             }
             var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(competencymaindata.SelfAssessmentID, delegateUserId);
-
-            if (!CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs))
+            var competencySummaries = CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs);
+            if (!competencySummaries.CanViewCertificate)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
             }
-
             var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(competencymaindata.CandidateAssessmentID);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, competencymaindata.SelfAssessmentID);
             var competencyIds = recentResults.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
-            var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, null);
-            foreach (var competency in competencies)
-            {
-                competency.QuestionLabel = assessment.QuestionLabel;
-                foreach (var assessmentQuestion in competency.AssessmentQuestions)
-                {
-                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
-                    {
-                        assessmentQuestion.LevelDescriptors = selfAssessmentService
-                            .GetLevelDescriptorsForAssessmentQuestion(
-                                assessmentQuestion.Id,
-                                assessmentQuestion.MinValue,
-                                assessmentQuestion.MaxValue,
-                                assessmentQuestion.MinValue == 0
-                            ).ToList();
-                    }
-                }
-            }
-
-            var CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
-            var competencySummaries = from g in CompetencyGroups
-                                      let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
-                                      let selfAssessedCount = questions.Count(q => q.Result.HasValue)
-                                      let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
-
-                                      select new
-                                      {
-                                          SelfAssessedCount = selfAssessedCount,
-                                          VerifiedCount = verifiedCount,
-                                          Questions = questions.Count()
-                                      };
-
-            int sumVerifiedCount = competencySummaries.Sum(item => item.VerifiedCount);
-            int sumQuestions = competencySummaries.Sum(item => item.Questions);
+            int sumVerifiedCount = competencySummaries.VerifiedCount;
+            int sumQuestions = competencySummaries.QuestionsCount;
             var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
             var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, vocabulary, accessors, activitySummaryCompetencySelfAssesment, sumQuestions, sumVerifiedCount, supervisorDelegateId);
             return View("SelfAssessments/CompetencySelfAssessmentCertificate", model);
@@ -1740,24 +1707,6 @@
             var competencyIds = recentResults.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
             var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, null);
-            foreach (var competency in competencies)
-            {
-                competency.QuestionLabel = assessment.QuestionLabel;
-                foreach (var assessmentQuestion in competency.AssessmentQuestions)
-                {
-                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
-                    {
-                        assessmentQuestion.LevelDescriptors = selfAssessmentService
-                            .GetLevelDescriptorsForAssessmentQuestion(
-                                assessmentQuestion.Id,
-                                assessmentQuestion.MinValue,
-                                assessmentQuestion.MaxValue,
-                                assessmentQuestion.MinValue == 0
-                            ).ToList();
-                    }
-                }
-            }
-
             var CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
             var competencySummaries = from g in CompetencyGroups
                                       let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
