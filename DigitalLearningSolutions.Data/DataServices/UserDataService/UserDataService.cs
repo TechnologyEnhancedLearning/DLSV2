@@ -25,6 +25,7 @@
         AdminUser? GetAdminUserById(int id);
 
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
+        List<AdminUser> GetAdminUsersAtCentreForCategory(int centreId, int categoryId);
 
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 

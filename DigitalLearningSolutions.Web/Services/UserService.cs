@@ -317,8 +317,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         public IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId)
         {
-            return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
-                .Where(au => au.CategoryId == categoryId || au.CategoryId == null);
+            return userDataService.GetAdminUsersAtCentreForCategory(centreId, categoryId);
+
         }
 
         public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
@@ -894,7 +894,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             userDataService.ApproveDelegateUsers(ids);
         }
-        
+
         public (IEnumerable<AdminEntity>, int) GetAllAdmins(string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold)
         {
             return userDataService.GetAllAdmins(search, offset, rows, adminId, userStatus, role, centreId, failedLoginThreshold);
@@ -902,7 +902,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public void UpdateAdminUserAndSpecialPermissions(int adminId, bool isCentreAdmin, bool isSupervisor, bool isNominatedSupervisor, bool isTrainer, bool isContentCreator, bool isContentManager, bool importOnly, int? categoryId, bool isCentreManager, bool isSuperAdmin, bool isReportsViewer, bool isLocalWorkforceManager, bool isFrameworkDeveloper, bool isWorkforceManager)
         {
-            userDataService.UpdateAdminUserAndSpecialPermissions(adminId, isCentreAdmin, isSupervisor, isNominatedSupervisor, isTrainer, isContentCreator, isContentManager,importOnly, categoryId, isCentreManager, isSuperAdmin, isReportsViewer, isLocalWorkforceManager, isFrameworkDeveloper, isWorkforceManager);
+            userDataService.UpdateAdminUserAndSpecialPermissions(adminId, isCentreAdmin, isSupervisor, isNominatedSupervisor, isTrainer, isContentCreator, isContentManager, importOnly, categoryId, isCentreManager, isSuperAdmin, isReportsViewer, isLocalWorkforceManager, isFrameworkDeveloper, isWorkforceManager);
         }
 
         public int GetUserIdFromAdminId(int adminId)
@@ -929,7 +929,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.IsUserAlreadyAdminAtCentre(userId, centreId);
         }
-        
+
         public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
         {
             return userDataService.GetAdminsByCentreId(centreId);

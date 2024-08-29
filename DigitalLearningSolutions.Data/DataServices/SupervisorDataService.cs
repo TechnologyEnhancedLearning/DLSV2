@@ -393,13 +393,21 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
         {
             return connection.Query<SupervisorForEnrolDelegate>(
-                $@"SELECT AdminID, Forename + ' ' + Surname + ' (' + Email +')' AS Name, Email FROM AdminUsers AS au
-                    WHERE (Supervisor = 1) AND (CentreID = @CentreID) AND (CategoryID = 0 OR
-                         CategoryID = (SELECT au.CategoryID FROM Applications AS a INNER JOIN
-                           Customisations AS c ON a.ApplicationID = c.ApplicationID
-                            WHERE (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1)
-                            GROUP BY AdminID, Surname, Forename, Email, CentreName
-                            ORDER BY Surname, Forename",
+                $@"SELECT aa.ID AS AdminID,
+                        u.FirstName + ' ' +  u.LastName + ' (' + COALESCE(ucd.Email, u.PrimaryEmail) +')' AS Name, 
+			            COALESCE(ucd.Email, u.PrimaryEmail) AS Email 
+				FROM  AdminAccounts AS aa INNER JOIN
+                                Users AS u ON aa.UserID = u.ID INNER JOIN
+                                Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
+                                UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID
+                WHERE (aa.IsSupervisor = 1) AND (c.CentreID = @CentreID) AND 
+						(ISNULL(aa.CategoryID, 0) = 0 OR CategoryID = 
+								(SELECT aa.CategoryID FROM Applications AS a INNER JOIN
+										Customisations AS c ON a.ApplicationID = c.ApplicationID
+										WHERE (c.CustomisationID = @CustomisationID))) AND 
+							(aa.Active = 1)
+				GROUP BY aa.ID, u.LastName, u.FirstName, COALESCE(ucd.Email, u.PrimaryEmail), CentreName
+				ORDER BY u.FirstName, u.LastName",
                 new { CentreID, CustomisationID });
         }
 
