@@ -418,4 +418,10 @@
   <data name="TD_4436_Alter_uspCreateProgressRecord_V3_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-4436-Alter_uspCreateProgressRecord_V3_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="TD_4634_Alter_GetCompletedCoursesForCandidate_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4634-Alter_GetCompletedCoursesForCandidate_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4634_Alter_GetCompletedCoursesForCandidate_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4634-Alter_GetCompletedCoursesForCandidate_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
 </root>
