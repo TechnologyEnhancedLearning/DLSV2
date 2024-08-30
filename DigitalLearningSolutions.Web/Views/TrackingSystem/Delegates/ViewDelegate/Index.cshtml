@@ -103,48 +103,60 @@
             @if (Model.DelegateInfo.IsActive)
             {
                 <a class="nhsuk-button view-delegate-button"
-                   role="button"
-                   asp-controller="EditDelegate"
-                   asp-action="Index"
-                   asp-route-delegateId="@Model.DelegateInfo.Id">
+               role="button"
+               asp-controller="EditDelegate"
+               asp-action="Index"
+               asp-route-delegateId="@Model.DelegateInfo.Id">
                     Edit details
                 </a>
                 <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
-                   role="button"
-                   asp-controller="SetDelegatePassword"
-                   asp-action="Index"
-                   asp-route-delegateId="@Model.DelegateInfo.Id"
-                   asp-route-isFromViewDelegatePage="true">
+               role="button"
+               asp-controller="SetDelegatePassword"
+               asp-action="Index"
+               asp-route-delegateId="@Model.DelegateInfo.Id"
+               asp-route-isFromViewDelegatePage="true">
                     Set password
                 </a>
                 @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin
                && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Email) && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Name))
                 {
                     <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
-                       role="button"
-                       asp-controller="PromoteToAdmin"
-                       asp-action="Index"
-                       asp-route-delegateId="@Model.DelegateInfo.Id">
+               role="button"
+               asp-controller="PromoteToAdmin"
+               asp-action="Index"
+               asp-route-delegateId="@Model.DelegateInfo.Id">
                         Promote to admin
                     </a>
                 }
                 if (Model.DelegateInfo.RegistrationConfirmationHash != null)
                 {
-                    <form asp-action="DeleteAccount" asp-route-delegateId="@Model.DelegateInfo.Id">
+                    <form asp-action="DeleteAccount" asp-route-delegateuserId="@Model.DelegateInfo.Id">
                         <button class="nhsuk-button delete-button view-delegate-button"
-                                type="submit">
+                        type="submit">
                             Delete account
                         </button>
                     </form>
                 }
                 else
                 {
-                    <form asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
-                        <button class="nhsuk-button delete-button view-delegate-button"
-                                type="submit">
+                    if (Model.DelegateInfo.IsAdmin)
+                    {
+                        <a class="nhsuk-button delete-button view-delegate-button" role="button"
+                           asp-controller="DeactivateDelegate"
+                           asp-action="Index"
+                           asp-route-delegateId="@Model.DelegateInfo.Id">
                             Deactivate account
-                        </button>
-                    </form>
+                        </a>
+                    }
+                    else
+                    {
+                        <form asp-action="DeactivateDelegate" asp-route-asp-route-delegateId="@Model.DelegateInfo.Id">
+                            <button class="nhsuk-button delete-button view-delegate-button"
+                                type="submit">
+                                Deactivate account
+                            </button>
+                        </form>
+                    }
                 }
             }
             else
@@ -153,7 +165,7 @@
                 {
                     <form asp-action="DeleteAccount" asp-route-delegateId="@Model.DelegateInfo.Id">
                         <button class="nhsuk-button delete-button view-delegate-button"
-                                type="submit">
+                        type="submit">
                             Delete account
                         </button>
                     </form>
@@ -186,7 +198,7 @@
             if (delegateCourseInfoViewModel.ProgressId != null)
             {
                 <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
-            }            
+            }
         }
         @foreach (var delegateSelfAssessmentInfoViewModel in Model.SelfAssessments)
         {
@@ -199,12 +211,12 @@
     @if (Model.DelegateInfo.IsActive && !string.IsNullOrEmpty(Model.DelegateInfo.Email))
     {
         <a class="nhsuk-button nhsuk-button--secondary"
-           role="button"
-           asp-controller="Enrol"
-           asp-action="StartEnrolProcess"
-           asp-route-delegateId="@Model.DelegateInfo.Id"
-           asp-route-delegateUserId="@Model.DelegateInfo.UserId"
-           asp-route-delegateName="@Model.DelegateInfo.Name">
+       role="button"
+       asp-controller="Enrol"
+       asp-action="StartEnrolProcess"
+       asp-route-delegateId="@Model.DelegateInfo.Id"
+       asp-route-delegateUserId="@Model.DelegateInfo.UserId"
+       asp-route-delegateName="@Model.DelegateInfo.Name">
             Enrol on activity
         </a>
     }

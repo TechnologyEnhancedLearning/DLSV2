@@ -290,6 +290,8 @@
         public bool PrimaryEmailInUseAtCentres(string email);
 
         public int? GetUserIdFromLearningHubAuthId(int learningHubAuthId);
+       void DeactivateAdminAccount(int userId, int centreId);
+        int? CheckDelegateIsActive(int delegateId);
     }
 
     public partial class UserDataService : IUserDataService
