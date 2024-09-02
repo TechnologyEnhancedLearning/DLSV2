@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
     using GDS.MultiPageFormData;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public partial class LearningPortalControllerTests
     {
@@ -69,6 +70,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                     "mock"
                 )
             );
+            DateHelper.userTimeZone = "Europe/London";
             controller = new LearningPortalController(
                 centresService,
                 courseService,

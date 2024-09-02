@@ -16,6 +16,7 @@
         [SetSelectedTab(nameof(NavMenuTab.SwitchApplication))]
         public IActionResult Index()
         {
+            DateHelper.userTimeZone = DateHelper.userTimeZone ?? User.GetUserTimeZone(CustomClaimTypes.UserTimeZone);
             var learningPortalAccess = User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;
             var trackingSystemAccess = User.HasCentreAdminPermissions();
             var contentManagementSystemAccess =
