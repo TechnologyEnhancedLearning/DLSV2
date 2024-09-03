@@ -4,7 +4,7 @@ namespace DigitalLearningSolutions.Data.Migrations
 {
     using FluentMigrator;
 
-    [Migration(202408271645)]
+    [Migration(202408051645)]
     public class AlterAvailableandCompletedCoursesForDelegate : Migration
     {
         public override void Up()
