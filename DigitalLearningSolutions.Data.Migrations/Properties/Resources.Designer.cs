@@ -1901,30 +1901,6 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2]    Script Date: 27/06/2024 09:38:12 ******/
-        ///SET ANSI_NULLS ON
-        ///GO
-        ///
-        ///SET QUOTED_IDENTIFIER ON
-        ///GO
-        ///
-        ///
-        ///-- =============================================
-        ///-- Author:		Kevin Whittaker
-        ///-- Create date: 11/04/2019
-        ///-- Description:	Creates the Progress and aspProgress record for a new user with no return value
-        ///-- Returns:		Nothing
-        ///
-        ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[uspCreate [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_4223_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up {
-            get {
-                return ResourceManager.GetString("TD_4223_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to 
         ////****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 20/08/2024 11:57:38 ******/
         ///SET ANSI_NULLS ON
@@ -2051,7 +2027,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns a list of active progress records for the candidate.
         ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
         ///-- =============================================
-        ///ALTER PROC [rest of string was truncated]&quot;;.
+        ///ALTER PROCEDURE [dbo].[Ge [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_up {
             get {
