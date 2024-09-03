@@ -2060,6 +2060,50 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 27/08/2024 14:41:29 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the paramet [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Down {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 27/08/2024 14:41:29 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the paramet [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Up {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecord_V3]    Script Date: 14/08/2024 14:46:35 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -2100,6 +2144,52 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_4436_Alter_uspCreateProgressRecord_V3_Up {
             get {
                 return ResourceManager.GetString("TD_4436_Alter_uspCreateProgressRecord_V3_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2]    Script Date: 27/08/2024 15:06:49 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 11/04/2019
+        ///-- Description:	Creates the Progress and aspProgress record for a new user with no return value
+        ///-- Returns:		Nothing
+        ///
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspCreatePr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2]    Script Date: 27/08/2024 15:06:49 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 11/04/2019
+        ///-- Description:	Creates the Progress and aspProgress record for a new user with no return value
+        ///-- Returns:		Nothing
+        ///
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspCreatePr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up", resourceCulture);
             }
         }
         

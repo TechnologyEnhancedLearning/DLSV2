@@ -427,7 +427,18 @@
   <data name="TD_4243_Alter_GetCompletedCoursesForCandidate_proc_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TD-4243_Alter_GetCompletedCoursesForCandidate_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="TD_4243_Alter_GetActivitiesForDelegateEnrolment_proc_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TD-4243_Alter_GetActivitiesForDelegateEnrolment_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+
+  <data name="TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+
   </data>
 </root>
