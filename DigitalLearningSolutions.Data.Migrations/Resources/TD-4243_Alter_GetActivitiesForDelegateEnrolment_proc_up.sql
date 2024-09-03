@@ -23,7 +23,7 @@ AS
 	SET NOCOUNT ON;
 			SELECT * FROM
 			-- Insert statements for procedure here
-			(SELECT cu.CustomisationID, cu.Active, cu.CurrentVersion, cu.CentreID, cu.ApplicationID, (CASE WHEN cu.CustomisationName <> '' THEN a.ApplicationName + ' - ' + cu.CustomisationName ELSE a.ApplicationName END) AS CourseName, cu.CustomisationText, 0 AS IncludesSignposting, 0 AS IsSelfAssessment, cu.SelfRegister AS SelfRegister,
+			(SELECT DISTINCT cu.CustomisationID, cu.Active, cu.CurrentVersion, cu.CentreID, cu.ApplicationID, (CASE WHEN cu.CustomisationName <> '' THEN a.ApplicationName + ' - ' + cu.CustomisationName ELSE a.ApplicationName END) AS CourseName, cu.CustomisationText, 0 AS IncludesSignposting, 0 AS IsSelfAssessment, cu.SelfRegister AS SelfRegister,
 					   cu.IsAssessed, dbo.CheckCustomisationSectionHasDiagnostic(cu.CustomisationID, 0) AS HasDiagnostic, 
 					   dbo.CheckCustomisationSectionHasLearning(cu.CustomisationID, 0) AS HasLearning, (SELECT BrandName FROM Brands WHERE BrandID = a.BrandID) AS Brand, (SELECT CategoryName FROM CourseCategories WHERE CourseCategoryID = a.CourseCategoryID) AS Category, (SELECT CourseTopic FROM CourseTopics WHERE CourseTopicID = a.CourseTopicID) AS Topic, dbo.CheckDelegateStatusForCustomisation(cu.CustomisationID, @DelegateID) AS DelegateStatus,
                        cu.HideInLearnerPortal
