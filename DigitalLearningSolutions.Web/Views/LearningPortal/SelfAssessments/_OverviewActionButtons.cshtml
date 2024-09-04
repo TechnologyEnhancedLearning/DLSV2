@@ -34,7 +34,7 @@
 @if (ViewBag.CanViewCertificate)
 {
     <a class="nhsuk-button "
-   asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+       asp-route-CandidateAssessmentId="@Model.SelfAssessment.CandidateAssessmentId"
    asp-route-vocabulary="@Model.VocabPlural()"
    asp-action="CompetencySelfAssessmentCertificate"
    role="button">
