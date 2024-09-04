@@ -2051,7 +2051,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns a list of active progress records for the candidate.
         ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
         ///-- =============================================
-        ///ALTER PROC [rest of string was truncated]&quot;;.
+        ///ALTER PROCEDURE [dbo].[Ge [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_up {
             get {
