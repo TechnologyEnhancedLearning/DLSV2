@@ -402,6 +402,7 @@
         [Route("ViewDelegateProgress")]
         public IActionResult ViewDelegateProgress(int progressId, DelegateAccessRoute accessedVia)
         {
+            var abc = 0;
             var delegateCourseProgess = progressService.GetCourseProgressInfo(progressId);
 
             if (delegateCourseProgess == null)
