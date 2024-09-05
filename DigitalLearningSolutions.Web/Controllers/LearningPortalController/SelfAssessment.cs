@@ -1618,15 +1618,14 @@
         }
 
       
-        [Route("/LearningPortal/selfAssessments/{selfassessmentId:int}/{vocabulary}/Certificate")]
+        [Route("/LearningPortal/selfAssessments/{CandidateAssessmentId:int}/{vocabulary}/Certificate")]
 
-        public IActionResult CompetencySelfAssessmentCertificate(int selfAssessmentId, string vocabulary)
+        public IActionResult CompetencySelfAssessmentCertificate(int CandidateAssessmentId, string vocabulary)
         {
             int supervisorDelegateId = 0;
             var adminId = User.GetAdminId();
-            User.GetUserIdKnownNotNull();
-            var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(selfAssessmentId, User.GetUserIdKnownNotNull());
-            if((competencymaindata == null)|| ( competencymaindata.LearnerId != User.GetUserIdKnownNotNull()) || (selfAssessmentId == 0))
+           var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(CandidateAssessmentId);
+            if ((competencymaindata == null)|| ( competencymaindata.LearnerId != User.GetUserIdKnownNotNull()) || (CandidateAssessmentId == 0))
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
