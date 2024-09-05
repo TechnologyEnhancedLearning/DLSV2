@@ -70,6 +70,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         )]
         public IActionResult Index(int delegateId)
         {
+            var abc = 0;
             var categoryId = User.GetAdminCategoryId();
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
