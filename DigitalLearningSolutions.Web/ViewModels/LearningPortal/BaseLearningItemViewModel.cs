@@ -14,6 +14,7 @@
             IsSelfAssessment = course.IsSelfAssessment;
             SelfRegister = course.SelfRegister;
             IncludesSignposting = course.IncludesSignposting;
+            Active = course.Active;
         }
 
         public string Name { get; set; }
@@ -24,5 +25,6 @@
         public bool IsSelfAssessment { get; }
         public bool SelfRegister { get; }
         public bool IncludesSignposting { get; }
+        public bool Active { get; }
     }
 }
