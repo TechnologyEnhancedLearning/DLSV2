@@ -334,7 +334,8 @@ namespace DigitalLearningSolutions.Data.DataServices
             LEFT OUTER JOIN Users AS uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
             INNER JOIN DelegateAccounts AS da ON da.ID = pr.CandidateID
             INNER JOIN Users AS u ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID";
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
+            INNER JOIN CentreApplications AS ca ON ca.ApplicationID = ap.ApplicationID AND ca.CentreID = cu.CentreID";
 
         private readonly string courseAssessmentDetailsQuery = $@"SELECT
                         c.CustomisationID,
