@@ -8,6 +8,5 @@
         public DateTime? Evaluated { get; set; }
         public DateTime? ArchivedDate { get; set; }
         public DateTime? RemovedDate { get; set; }
-        public bool Published { get; set; }
     }
 }

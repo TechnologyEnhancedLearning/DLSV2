@@ -12,7 +12,6 @@
         public bool IsSelfAssessment { get; set; }
         public bool SelfRegister { get; set; }
         public bool IncludesSignposting { get; set; }
-        public bool Active { get; set; }
         public int? CurrentVersion { get; set; }
         public override string SearchableName
         {
