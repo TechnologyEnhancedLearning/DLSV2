@@ -170,7 +170,7 @@
         public void UpdateLastAccessed(int selfAssessmentId, int delegateUserId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE CandidateAssessments SET LastAccessed = GETDATE()
+                @"UPDATE CandidateAssessments SET LastAccessed = GETUTCDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId",
                 new { selfAssessmentId, delegateUserId }
             );
@@ -335,7 +335,7 @@
                 new { selfAssessmentId, delegateUserId }
             );
         }
-        public CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
+        public CompetencySelfAssessmentCertificate? GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
         {
             return connection.QueryFirstOrDefault<CompetencySelfAssessmentCertificate>(
                 @"SELECT
@@ -388,7 +388,6 @@
                 new { candidateAssessmentID }
             );
         }
-
         public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID)
         {
             return connection.Query<CompetencyCountSelfAssessmentCertificate>(
@@ -423,9 +422,9 @@
                 new { selfAssessmentId, delegateUserID }
             );
         }
-        public ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
+        public ActivitySummaryCompetencySelfAssesment? GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
         {
-            return connection.QueryFirstOrDefault<ActivitySummaryCompetencySelfAssesment>(
+            return connection.QueryFirstOrDefault<ActivitySummaryCompetencySelfAssesment?>(
                 @"SELECT ca.ID AS CandidateAssessmentID, ca.SelfAssessmentID, sa.Name AS RoleName, casv.ID AS CandidateAssessmentSupervisorVerificationId,
                  (SELECT COUNT(sas1.CompetencyID) AS CompetencyAssessmentQuestionCount
                  FROM    SelfAssessmentStructure AS sas1 INNER JOIN

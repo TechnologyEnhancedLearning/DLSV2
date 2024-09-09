@@ -43,11 +43,11 @@
             var actionPlanResources = Builder<ActionPlanResource>.CreateListOfSize(2).Build().ToArray();
 
             var bannerText = "bannerText";
-            A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(DelegateUserId, A<int>._)).Returns(selfAssessments);
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(DelegateUserId))
                 .Returns((actionPlanResources, apiIsAccessible));
-            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
             A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("true");
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
             allItems.AddRange(selfAssessments);
@@ -146,7 +146,7 @@
             {
                 currentCourse,
             };
-            A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
@@ -167,7 +167,7 @@
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(2),
             };
-            A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var result = controller.SetCurrentCourseCompleteByDate(3, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
@@ -197,7 +197,7 @@
             controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
 
             // Then
-            A.CallTo(() => courseDataService.SetCompleteByDate(progressId, CandidateId, newDate)).MustHaveHappened();
+            A.CallTo(() => courseService.SetCompleteByDate(progressId, CandidateId, newDate)).MustHaveHappened();
         }
 
         [Test]
@@ -212,7 +212,7 @@
             controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
 
             // Then
-            A.CallTo(() => courseDataService.SetCompleteByDate(progressId, CandidateId, null)).MustHaveHappened();
+            A.CallTo(() => courseService.SetCompleteByDate(progressId, CandidateId, null)).MustHaveHappened();
         }
 
         [Test]
@@ -249,7 +249,7 @@
             controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
 
             // Then
-            A.CallTo(() => courseDataService.SetCompleteByDate(1, CandidateId, A<DateTime>._)).MustNotHaveHappened();
+            A.CallTo(() => courseService.SetCompleteByDate(1, CandidateId, A<DateTime>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -259,7 +259,7 @@
             controller.RemoveCurrentCourse(1);
 
             // Then
-            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, CandidateId, RemovalMethod.RemovedByDelegate))
+            A.CallTo(() => courseService.RemoveCurrentCourse(1, CandidateId, RemovalMethod.RemovedByDelegate))
                 .MustHaveHappened();
         }
 
@@ -273,7 +273,7 @@
             {
                 currentCourse,
             };
-            A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var result = controller.RemoveCurrentCourseConfirmation(customisationId, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
@@ -292,7 +292,7 @@
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(2),
             };
-            A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var result = controller.RemoveCurrentCourseConfirmation(3, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
@@ -314,7 +314,7 @@
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: progressId, locked: true),
             };
-            A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             controller.RequestUnlock(progressId);
@@ -331,7 +331,7 @@
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: 2, locked: true),
             };
-            A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var result = controller.RequestUnlock(3);
@@ -353,7 +353,7 @@
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: progressId),
             };
-            A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var result = controller.RequestUnlock(progressId);
@@ -371,7 +371,7 @@
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
             A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
@@ -425,12 +425,12 @@
 
         private void GivenCurrentActivitiesAreEmptyLists()
         {
-            A.CallTo(() => courseDataService.GetCurrentCourses(A<int>._)).Returns(new List<CurrentCourse>());
+            A.CallTo(() => courseService.GetCurrentCourses(A<int>._)).Returns(new List<CurrentCourse>());
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(A<int>._, A<int>._))
                 .Returns(new List<CurrentSelfAssessment>());
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(A<int>._))
                 .Returns((new List<ActionPlanResource>(), false));
-            A.CallTo(() => centresDataService.GetBannerText(A<int>._)).Returns("bannerText");
+            A.CallTo(() => centresService.GetBannerText(A<int>._)).Returns("bannerText");
         }
     }
 }

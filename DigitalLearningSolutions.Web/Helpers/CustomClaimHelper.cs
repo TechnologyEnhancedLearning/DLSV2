@@ -172,5 +172,10 @@
         {
             return user.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber)!;
         }
+
+        public static string GetUserTimeZone(this ClaimsPrincipal user, string customClaimType)
+        {
+            return user.FindFirst(customClaimType)?.Value;
+        }
     }
 }

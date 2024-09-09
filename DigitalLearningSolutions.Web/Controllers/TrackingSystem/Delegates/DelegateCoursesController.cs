@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -31,24 +30,24 @@
         private readonly ICourseService courseService;
         private readonly IPaginateService paginateService;
         private readonly IActivityService activityService;
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly ICourseTopicsDataService courseTopicsDataService;
+        private readonly ICourseCategoriesService courseCategoriesService;
+        private readonly ICourseTopicsService courseTopicsService;
 
         public DelegateCoursesController(
             ICourseService courseService,
             ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService,
             IPaginateService paginateService,
             IActivityService activityService,
-            ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseTopicsDataService courseTopicsDataService
+            ICourseCategoriesService courseCategoriesService,
+            ICourseTopicsService courseTopicsService
         )
         {
             this.courseService = courseService;
             this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
             this.paginateService = paginateService;
             this.activityService = activityService;
-            this.courseCategoriesDataService = courseCategoriesDataService;
-            this.courseTopicsDataService = courseTopicsDataService;
+            this.courseCategoriesService = courseCategoriesService;
+            this.courseTopicsService = courseTopicsService;
         }
 
         [NoCaching]
@@ -80,8 +79,8 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
-            var Categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
-            var Topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+            var Categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
+            var Topics = courseTopicsService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             string isActive, categoryName, courseTopic, hasAdminFields, isCourse, isSelfAssessment;

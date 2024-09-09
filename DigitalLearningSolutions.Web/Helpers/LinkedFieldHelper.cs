@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
@@ -13,7 +12,7 @@
         public static List<LinkedFieldChange> GetLinkedFieldChanges(
             RegistrationFieldAnswers oldAnswers,
             RegistrationFieldAnswers newAnswers,
-            IJobGroupsDataService jobGroupsDataService,
+            IJobGroupsService jobGroupsService,
             ICentreRegistrationPromptsService centreRegistrationPromptsService
         )
         {
@@ -21,8 +20,8 @@
 
             if (newAnswers.JobGroupId != oldAnswers.JobGroupId)
             {
-                var oldJobGroup = jobGroupsDataService.GetJobGroupName(oldAnswers.JobGroupId);
-                var newJobGroup = jobGroupsDataService.GetJobGroupName(newAnswers.JobGroupId);
+                var oldJobGroup = jobGroupsService.GetJobGroupName(oldAnswers.JobGroupId);
+                var newJobGroup = jobGroupsService.GetJobGroupName(newAnswers.JobGroupId);
                 changedLinkedFieldsWithAnswers.Add(
                     new LinkedFieldChange(
                         RegistrationField.JobGroup.LinkedToFieldId,

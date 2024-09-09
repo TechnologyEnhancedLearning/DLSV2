@@ -1,5 +1,4 @@
-﻿using DigitalLearningSolutions.Data.DataServices;
-using DigitalLearningSolutions.Data.Models.Courses;
+﻿using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Helpers;

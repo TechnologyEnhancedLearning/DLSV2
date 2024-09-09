@@ -157,18 +157,18 @@
            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff);
         int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
           int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
-        string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId);
+        string? GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId);
 
-        RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
+        RemoveSelfAssessmentDelegate? GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId);
         void RemoveDelegateSelfAssessment(int candidateAssessmentsId);
         int? GetSupervisorsCountFromCandidateAssessmentId(int candidateAssessmentsId);
         bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
         int? GetDelegateAccountId(int centreId, int delegateUserId);
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
         IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID);
-        CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
+        CompetencySelfAssessmentCertificate? GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
-        ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
+        ActivitySummaryCompetencySelfAssesment? GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
     }
 
@@ -624,7 +624,7 @@
             );
             return ResultCount;
         }
-        public string GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId)
+        public string? GetSelfAssessmentActivityDelegatesSupervisor(int selfAssessmentId, int delegateUserId)
         {
             return connection.Query<string>(
                 @$"SELECT
@@ -647,7 +647,7 @@
                 new { delegateUserId, selfAssessmentId }
             ).FirstOrDefault();
         }
-        public RemoveSelfAssessmentDelegate GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId)
+        public RemoveSelfAssessmentDelegate? GetDelegateSelfAssessmentByCandidateAssessmentsId(int candidateAssessmentsId)
         {
             return connection.QueryFirstOrDefault<RemoveSelfAssessmentDelegate>(
                  @"Select

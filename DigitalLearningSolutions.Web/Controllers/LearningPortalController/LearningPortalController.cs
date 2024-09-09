@@ -1,7 +1,5 @@
 namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
@@ -18,10 +16,10 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
     public partial class LearningPortalController : Controller
     {
         private readonly IActionPlanService actionPlanService;
-        private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
         private readonly IConfiguration config;
-        private readonly ICourseDataService courseDataService;
-        private readonly IUserDataService userDataService;
+        private readonly ICourseService courseService;
+        private readonly IUserService userService;
 
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ILogger<LearningPortalController> logger;
@@ -35,9 +33,9 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly IClockUtility clockUtility;
         private readonly IPdfService pdfService;
         public LearningPortalController(
-            ICentresDataService centresDataService,
-            ICourseDataService courseDataService,
-            IUserDataService userDataService,
+            ICentresService centresService,
+            ICourseService courseService,
+            IUserService userService,
             ISelfAssessmentService selfAssessmentService,
             ISupervisorService supervisorService,
             IFrameworkService frameworkService,
@@ -53,9 +51,9 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IPdfService pdfService
         )
         {
-            this.centresDataService = centresDataService;
-            this.courseDataService = courseDataService;
-            this.userDataService = userDataService;
+            this.centresService = centresService;
+            this.courseService = courseService;
+            this.userService = userService;
             this.selfAssessmentService = selfAssessmentService;
             this.supervisorService = supervisorService;
             this.frameworkService = frameworkService;
@@ -69,6 +67,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.multiPageFormService = multiPageFormService;
             this.clockUtility = clockUtility;
             this.pdfService = pdfService;
+            DateHelper.userTimeZone = DateHelper.userTimeZone ?? User.GetUserTimeZone(CustomClaimTypes.UserTimeZone);
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
@@ -85,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private string? GetBannerText()
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var bannerText = centresDataService.GetBannerText(centreId);
+            var bannerText = centresService.GetBannerText(centreId);
             return bannerText;
         }
     }

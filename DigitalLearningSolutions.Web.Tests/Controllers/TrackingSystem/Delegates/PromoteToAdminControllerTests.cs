@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -22,9 +20,8 @@
     {
         private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
         private PromoteToAdminController controller = null!;
-        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private ICourseCategoriesService courseCategoriesService = null!;
         private IRegistrationService registrationService = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IEmailGenerationService emailGenerationService = null!;
         private IEmailService emailService = null!;
@@ -32,18 +29,15 @@
         [SetUp]
         public void Setup()
         {
-            userDataService = A.Fake<IUserDataService>();
-            userService = A.Fake<IUserService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
-            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
+            courseCategoriesService = A.Fake<ICourseCategoriesService>();
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
             emailGenerationService = A.Fake<IEmailGenerationService>();
             emailService = A.Fake<IEmailService>();
 
             controller = new PromoteToAdminController(
-                    userDataService,
-                    courseCategoriesDataService,
+                    courseCategoriesService,
                     centreContractAdminUsageService,
                     registrationService,
                     new NullLogger<PromoteToAdminController>(),
@@ -78,7 +72,7 @@
             delegateEntity.UserAccount.FirstName = "TestUserName";
             delegateEntity.UserAccount.PrimaryEmail = "test@example.com";
 
-            A.CallTo(() => userDataService.GetDelegateById(delegateId)).Returns(delegateEntity);
+            A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(delegateEntity);
 
             AdminUser returnedAdminUser = new AdminUser()
             {

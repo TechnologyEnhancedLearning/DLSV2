@@ -1,8 +1,6 @@
 ﻿
 namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
@@ -27,18 +25,16 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
     [SetSelectedTab(nameof(NavMenuTab.Admins))]
     public class DelegatesController : Controller
     {
-        private readonly IUserDataService userDataService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
-        private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
         private readonly IUserService userService;
-        public DelegatesController(IUserDataService userDataService,
-            ICentresDataService centresDataService,
+        public DelegatesController(
+            ICentresService centresService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IUserService userService
             )
         {
-            this.userDataService = userDataService;
-            this.centresDataService = centresDataService;
+            this.centresService = centresService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.userService = userService;
         }
@@ -56,6 +52,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
           string? SearchString = "",
           string? ExistingFilterString = "")
         {
+            Search = Search == null ? string.Empty : Search.Trim();
 
             if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
@@ -107,9 +104,9 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
                     }
                 }
             }
-            (var Delegates, var ResultCount) = this.userDataService.GetAllDelegates(Search ?? string.Empty, offSet, itemsPerPage ?? 0, DelegateId, AccountStatus, LHLinkStatus, CentreId, AuthHelper.FailedLoginThreshold);
+            (var Delegates, var ResultCount) = this.userService.GetAllDelegates(Search ?? string.Empty, offSet, itemsPerPage ?? 0, DelegateId, AccountStatus, LHLinkStatus, CentreId, AuthHelper.FailedLoginThreshold);
 
-            var centres = centresDataService.GetAllCentres().ToList();
+            var centres = centresService.GetAllCentres().ToList();
             centres.Insert(0, (0, "Any"));
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
@@ -183,7 +180,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
         [Route("SuperAdmin/Delegates/{delegateId=0:int}/InactivateDelegateConfirmation")]
         public IActionResult InactivateDelegateConfirmation(int delegateId = 0)
         {
-            var delegateEntity = userDataService.GetDelegateById(delegateId);
+            var delegateEntity = userService.GetDelegateById(delegateId);
             if (!delegateEntity.DelegateAccount.Active)
             {
                 return StatusCode((int)HttpStatusCode.Gone);
@@ -219,7 +216,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
             TempData["DelegateId"] = delegateId;
             if (confirmationViewModel.IsChecked)
             {
-                this.userDataService.DeactivateDelegateUser(delegateId);
+                this.userService.DeactivateDelegateUser(delegateId);
                 return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
             }
             else
@@ -234,7 +231,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
         [Route("SuperAdmin/Delegates/{delegateId=0:int}/ActivateDelegate")]
         public IActionResult ActivateDelegate(int delegateId = 0)
         {
-            userDataService.ActivateDelegateUser(delegateId);
+            userService.ActivateDelegateUser(delegateId);
             TempData["DelegateId"] = delegateId;
             return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
         }
@@ -243,11 +240,11 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
         [Route("SuperAdmin/Delegates/{delegateId=0:int}/RemoveCentreEmailConfirmation")]
         public IActionResult RemoveCentreEmailConfirmation(int delegateId = 0)
         {
-            var delegateEntity = userDataService.GetDelegateById(delegateId);
+            var delegateEntity = userService.GetDelegateById(delegateId);
 
             if (delegateEntity != null)
             {
-                var userCenterEmail = userDataService.GetCentreEmail(delegateEntity.DelegateAccount.UserId, delegateEntity.DelegateAccount.CentreId);
+                var userCenterEmail = userService.GetCentreEmail(delegateEntity.DelegateAccount.UserId, delegateEntity.DelegateAccount.CentreId);
                 if (userCenterEmail == null) 
                     return StatusCode((int)HttpStatusCode.Gone);
             }
@@ -282,10 +279,10 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
             TempData["DelegateId"] = delegateId;
             if (confirmationViewModel.IsChecked)
             {
-                var delegateEntity = userDataService.GetDelegateById(delegateId);
+                var delegateEntity = userService.GetDelegateById(delegateId);
                 if (delegateEntity != null)
                 {
-                    userDataService.DeleteUserCentreDetail(delegateEntity.DelegateAccount.UserId, delegateEntity.DelegateAccount.CentreId);
+                    userService.DeleteUserCentreDetail(delegateEntity.DelegateAccount.UserId, delegateEntity.DelegateAccount.CentreId);
                 }
                 return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
             }
@@ -303,7 +300,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Delegates
         [Route("SuperAdmin/Delegates/{delegateId=0:int}/ApproveDelegate")]
         public IActionResult ApproveDelegate(int delegateId = 0)
         {
-            userDataService.ApproveDelegateUsers(delegateId);
+            userService.ApproveDelegateUsers(delegateId);
             TempData["DelegateId"] = delegateId;
             return RedirectToAction("Index", "Delegates", new { DelegateId = delegateId });
         }

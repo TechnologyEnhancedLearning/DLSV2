@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
@@ -21,58 +20,82 @@
         private const int MinimumTutorialAverageTimeToIncreaseAuthExpiry = 45;
         private readonly ILogger<LearningMenuController> logger;
         private readonly IConfiguration config;
-        private readonly IConfigDataService configDataService;
         private readonly ICourseContentService courseContentService;
         private readonly ISessionService sessionService;
-        private readonly ISectionContentDataService sectionContentDataService;
-        private readonly ITutorialContentDataService tutorialContentDataService;
+        private readonly ISectionContentService sectionContentService;
+        private readonly ITutorialContentService tutorialContentService;
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
-        private readonly ICourseDataService courseDataService;
+        private readonly ICourseService courseService;
+        private readonly IProgressService progressService;
+        private readonly IUserService userService;
         private readonly IClockUtility clockUtility;
 
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
             IConfiguration config,
-            IConfigDataService configDataService,
             ICourseContentService courseContentService,
-            ISectionContentDataService sectionContentDataService,
-            ITutorialContentDataService tutorialContentDataService,
+            ISectionContentService sectionContentService,
+            ITutorialContentService tutorialContentService,
             IDiagnosticAssessmentService diagnosticAssessmentService,
             IPostLearningAssessmentService postLearningAssessmentService,
             ISessionService sessionService,
             ICourseCompletionService courseCompletionService,
-            ICourseDataService courseDataService,
+            ICourseService courseService,
+            IProgressService progressService,
+            IUserService userService,
             IClockUtility clockUtility
         )
         {
             this.logger = logger;
             this.config = config;
-            this.configDataService = configDataService;
             this.courseContentService = courseContentService;
-            this.tutorialContentDataService = tutorialContentDataService;
+            this.tutorialContentService = tutorialContentService;
             this.sessionService = sessionService;
-            this.sectionContentDataService = sectionContentDataService;
+            this.sectionContentService = sectionContentService;
             this.diagnosticAssessmentService = diagnosticAssessmentService;
             this.postLearningAssessmentService = postLearningAssessmentService;
             this.courseCompletionService = courseCompletionService;
             this.clockUtility = clockUtility;
-            this.courseDataService = courseDataService;
+            this.courseService = courseService;
+            this.progressService = progressService;
+            this.userService = userService;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
-        public IActionResult Index(int customisationId)
+        public IActionResult Index(int customisationId, int progressID)
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var candidateId = User.GetCandidateIdKnownNotNull();
+
+            string courseValidationErrorMessage = "Redirecting to 403 as course/centre id was not available for self enrolment. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId.ToString() ?? "null"}";
+
+            string courseErrorMessage = "Redirecting to 404 as course/centre id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId.ToString() ?? "null"}";
+
+            var course = courseService.GetCourse(customisationId);
+
+            if (course == null)
+            {
+                logger.LogError(courseErrorMessage);
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            if (course.CustomisationName == "ESR" || !course.Active ||
+                !ValidateCourse(candidateId, customisationId))
+            {
+                logger.LogError(courseValidationErrorMessage);
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
             if (courseContent == null)
             {
-                logger.LogError(
-                    "Redirecting to 404 as course/centre id was not found. " +
-                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId.ToString() ?? "null"}");
+                logger.LogError(courseErrorMessage);
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
             if (!String.IsNullOrEmpty(courseContent.Password) && !courseContent.PasswordSubmitted)
@@ -104,7 +127,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressID);
 
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
@@ -123,7 +146,7 @@
                     $"centre id: {centreId.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-            var isCompleted = courseDataService.IsCourseCompleted(candidateId, customisationId);
+            var isCompleted = courseService.IsCourseCompleted(candidateId, customisationId);
             if (isCompleted)
                 TempData["LearningActivity"] = "Completed";
             else
@@ -179,7 +202,7 @@
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreIdKnownNotNull();
-            var sectionContent = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
+            var sectionContent = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
             if (sectionContent == null)
             {
@@ -236,7 +259,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
 
             var model = new SectionContentViewModel(config, sectionContent, customisationId, sectionId);
             return View("Section/Section", model);
@@ -277,7 +300,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
             var model = new DiagnosticAssessmentViewModel(diagnosticAssessment, customisationId, sectionId);
             return View("Diagnostic/Diagnostic", model);
         }
@@ -313,7 +336,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
             var model = new DiagnosticContentViewModel(
                 config,
                 diagnosticContent,
@@ -362,7 +385,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
             var model = new PostLearningAssessmentViewModel(postLearningAssessment, customisationId, sectionId);
             return View("PostLearning/PostLearning", model);
         }
@@ -418,7 +441,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
 
             var tutorialInformation =
-                tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+                tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             if (tutorialInformation == null)
             {
@@ -451,7 +474,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value );
             /* Course progress doesn't get updated if the auth token expires by the end of the tutorials.
               Some tutorials are longer than the default auth token lifetime of 1 hour, so we set the auth expiry to 8 hours.
               See HEEDLS-637 and HEEDLS-674 for more details */
@@ -470,7 +493,7 @@
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreIdKnownNotNull();
 
-            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             if (tutorialContent?.TutorialPath == null)
             {
@@ -516,7 +539,7 @@
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreIdKnownNotNull();
 
-            var tutorialVideo = tutorialContentDataService.GetTutorialVideo(customisationId, sectionId, tutorialId);
+            var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
 
             if (tutorialVideo == null)
             {
@@ -585,7 +608,7 @@
                 courseContentService.UpdateProgress(progressId.Value);
             };
 
-            SetTempData(candidateId, customisationId);
+            SetTempData(candidateId, customisationId, progressId.Value);
             var model = new CourseCompletionViewModel(config, courseCompletion, progressId.Value);
             return View("Completion/Completion", model);
         }
@@ -603,7 +626,15 @@
 
         private void SetTempData(int candidateId, int customisationId)
         {
-            var isCompleted = courseDataService.IsCourseCompleted(candidateId, customisationId);
+            var isCompleted = courseService.IsCourseCompleted(candidateId, customisationId);
+            if (isCompleted)
+                TempData["LearningActivity"] = "Completed";
+            else
+                TempData["LearningActivity"] = "Current";
+        }
+        private void SetTempData(int candidateId, int customisationId,int progressID)
+        {
+            var isCompleted = courseService.IsCourseCompleted(candidateId, customisationId, progressID);
             if (isCompleted)
                 TempData["LearningActivity"] = "Completed";
             else
@@ -618,12 +649,53 @@
                 return false;
             }
 
-            bool isSelfRegister = courseDataService.GetSelfRegister(customisationId);
+            bool isSelfRegister = courseService.GetSelfRegister(customisationId);
             if (isSelfRegister)
             {
                 return false;
             }
+            return true;
+        }
 
+        private bool ValidateCourse(int candidateId, int customisationId)
+        {
+            var progress = progressService.GetDelegateProgressForCourse(candidateId, customisationId);
+
+            if (progress.Any())
+            {
+                if (!progress.Where(p => p.RemovedDate == null).Any())
+                {
+                    if (!IsValidCourseForEnrloment(customisationId))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                if (!IsValidCourseForEnrloment(customisationId))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool IsValidCourseForEnrloment(int customisationId)
+        {
+            if (!courseService.IsSelfEnrollmentAllowed(customisationId))
+            {
+                var centreId = User.GetCentreIdKnownNotNull();
+                var userId = User.GetUserIdKnownNotNull();
+                var userEntity = userService.GetUserById(userId);
+
+                var adminAccount = userEntity!.GetCentreAccountSet(centreId)?.AdminAccount;
+
+                if (adminAccount == null)
+                {
+                    return false;
+                }
+            }
             return true;
         }
     }

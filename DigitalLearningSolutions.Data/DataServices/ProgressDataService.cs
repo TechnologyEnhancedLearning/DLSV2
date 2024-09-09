@@ -15,7 +15,8 @@
     {
         IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
 
-        void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate, int enrollmentMethodID, DateTime? firstSubmittedTime);
+        void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate, int enrollmentMethodID);
+        void UpdateProgressSupervisor(int progressId, int supervisorAdminId);
         int CreateNewDelegateProgress(
             int delegateId,
             int customisationId,
@@ -144,21 +145,31 @@
             int progressId,
             int supervisorAdminId,
             DateTime? completeByDate,
-            int enrollmentMethodID,
-            DateTime? firstSubmittedTime
+            int enrollmentMethodID
         )
         {
             connection.Execute(
                 @"UPDATE Progress SET
                         SupervisorAdminID = @supervisorAdminId,
                         CompleteByDate = @completeByDate,
-                        EnrollmentMethodID = @enrollmentMethodID,
-                        FirstSubmittedTime= @firstSubmittedTime
+                        EnrollmentMethodID = @enrollmentMethodID
                     WHERE ProgressID = @progressId",
-                new { progressId, supervisorAdminId, completeByDate, enrollmentMethodID, @firstSubmittedTime }
+                new { progressId, supervisorAdminId, completeByDate, enrollmentMethodID }
             );
         }
 
+        public void UpdateProgressSupervisor(
+            int progressId,
+            int supervisorAdminId
+        )
+        {
+            connection.Execute(
+                @"UPDATE Progress SET
+                        SupervisorAdminID = @supervisorAdminId
+                    WHERE ProgressID = @progressId",
+                new { progressId, supervisorAdminId }
+            );
+        }
         public int CreateNewDelegateProgress(
             int delegateId,
             int customisationId,

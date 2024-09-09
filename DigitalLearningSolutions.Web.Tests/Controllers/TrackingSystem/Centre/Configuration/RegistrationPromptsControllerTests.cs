@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Configuration
 {
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
@@ -27,7 +26,7 @@
         private IMultiPageFormService multiPageFormService = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
         private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
-        private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         private static IEnumerable<TestCaseData> AddAnswerModelErrorTestData
         {
@@ -57,13 +56,13 @@
         public void Setup()
         {
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
-            userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
 
             registrationPromptsController =
                 new RegistrationPromptsController(
                         centreRegistrationPromptsService,
-                        userDataService,
+                        userService,
                         multiPageFormService
                     )
                     .WithDefaultContext()
@@ -77,7 +76,7 @@
             registrationPromptsControllerWithMockHttpContext =
                 new RegistrationPromptsController(
                         centreRegistrationPromptsService,
-                        userDataService,
+                        userService,
                         multiPageFormService
                     )
                     .WithMockHttpContext(httpRequest, cookieName, cookieValue)

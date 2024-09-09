@@ -357,8 +357,7 @@
                         reusableProgressRecord.ProgressId,
                         A<int>._,
                         A<DateTime?>._,
-                        A<int>._,
-                        A<DateTime?>._
+                        A<int>._
                     )
                 ).MustHaveHappened();
             }
@@ -395,8 +394,7 @@
                         reusableProgressRecord.ProgressId,
                         reusableProgressRecord.SupervisorAdminId,
                         A<DateTime?>._,
-                        A<int>._,
-                         A<DateTime?>._
+                        A<int>._
                     )
                 ).MustHaveHappened();
             }
@@ -433,8 +431,7 @@
                         reusableProgressRecord.ProgressId,
                         supervisorId,
                         A<DateTime?>._,
-                        A<int>._,
-                        A<DateTime?>._
+                        A<int>._
                     )
                 ).MustHaveHappened();
             }
@@ -471,8 +468,7 @@
                         reusableProgressRecord.ProgressId,
                         A<int>._,
                         null,
-                         A<int>._,
-                          A<DateTime?>._
+                         A<int>._
                     )
                 ).MustHaveHappened();
             }
@@ -511,8 +507,7 @@
                         reusableProgressRecord.ProgressId,
                         A<int>._,
                         expectedFutureDate,
-                         A<int>._,
-                          A<DateTime?>._
+                         A<int>._
                     )
                 ).MustHaveHappened();
             }

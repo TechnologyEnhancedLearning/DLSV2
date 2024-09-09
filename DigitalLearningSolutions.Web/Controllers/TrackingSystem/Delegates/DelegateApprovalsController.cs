@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -20,15 +19,15 @@
     public class DelegateApprovalsController : Controller
     {
         private readonly IDelegateApprovalsService delegateApprovalsService;
-        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public DelegateApprovalsController(
             IDelegateApprovalsService delegateApprovalsService,
-            IUserDataService userDataService
+            IUserService userService
         )
         {
             this.delegateApprovalsService = delegateApprovalsService;
-            this.userDataService = userDataService;
+            this.userService = userService;
         }
 
         public IActionResult Index()
@@ -65,7 +64,7 @@
         [Route("/TrackingSystem/Delegates/Reject")]
         public IActionResult DelegateRejectionPage(int delegateId)
         {
-            var delegateEntity = userDataService.GetDelegateById(delegateId);
+            var delegateEntity = userService.GetDelegateById(delegateId);
             var model = new RejectDelegateViewModel(delegateEntity);
             return View(model);
         }

@@ -3,8 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Web.Attributes;
@@ -23,7 +21,6 @@
     [ServiceFilter(typeof(VerifyUserHasVerifiedPrimaryEmail))]
     public class RegisterInternalAdminController : Controller
     {
-        private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
         private readonly IConfiguration config;
         private readonly IDelegateApprovalsService delegateApprovalsService;
@@ -31,13 +28,10 @@
         private readonly IFeatureManager featureManager;
         private readonly IRegisterAdminService registerAdminService;
         private readonly IRegistrationService registrationService;
-        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
         public RegisterInternalAdminController(
-            ICentresDataService centresDataService,
             ICentresService centresService,
-            IUserDataService userDataService,
             IUserService userService,
             IRegistrationService registrationService,
             IDelegateApprovalsService delegateApprovalsService,
@@ -47,9 +41,7 @@
             IConfiguration config
         )
         {
-            this.centresDataService = centresDataService;
             this.centresService = centresService;
-            this.userDataService = userDataService;
             this.userService = userService;
             this.registrationService = registrationService;
             this.delegateApprovalsService = delegateApprovalsService;
@@ -62,7 +54,7 @@
         [HttpGet]
         public IActionResult Index(int? centreId = null)
         {
-            var centreName = centreId == null ? null : centresDataService.GetCentreName(centreId.Value);
+            var centreName = centreId == null ? null : centresService.GetCentreName(centreId.Value);
 
             if (centreName == null)
             {
@@ -81,7 +73,7 @@
                 Centre = centreId,
                 CentreName = centreName,
                 PrimaryEmail = User.GetUserPrimaryEmailKnownNotNull(),
-                CentreSpecificEmail = userDataService.GetCentreEmail(User.GetUserIdKnownNotNull(), centreId.Value),
+                CentreSpecificEmail = userService.GetCentreEmail(User.GetUserIdKnownNotNull(), centreId.Value),
             };
 
             return View(model);
@@ -103,7 +95,7 @@
                 userId,
                 nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
                 ModelState,
-                userDataService
+                userService
             );
 
             RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(
@@ -117,7 +109,7 @@
 
             if (!ModelState.IsValid)
             {
-                model.CentreName = centresDataService.GetCentreName(model.Centre!.Value);
+                model.CentreName = centresService.GetCentreName(model.Centre!.Value);
                 model.PrimaryEmail = User.GetUserPrimaryEmailKnownNotNull();
                 return View(model);
             }
@@ -128,7 +120,7 @@
                 model.CentreSpecificEmail
             );
 
-            var delegateAccount = userDataService.GetDelegateAccountsByUserId(userId)
+            var delegateAccount = userService.GetDelegateAccountsByUserId(userId)
                 .SingleOrDefault(da => da.CentreId == model.Centre);
 
             if (delegateAccount == null)

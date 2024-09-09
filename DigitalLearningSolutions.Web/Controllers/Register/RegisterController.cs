@@ -3,8 +3,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Web.Attributes;
@@ -23,37 +21,37 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [SetSelectedTab(nameof(NavMenuTab.Register))]
     public class RegisterController : Controller
     {
-        private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
         private readonly ICryptoService cryptoService;
         private readonly IFeatureManager featureManager;
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
-        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
         private readonly ISupervisorService supervisorService;
 
         public RegisterController(
-            ICentresDataService centresDataService,
-            IJobGroupsDataService jobGroupsDataService,
+            ICentresService centresService,
+            IJobGroupsService jobGroupsService,
             IRegistrationService registrationService,
             ICryptoService cryptoService,
             PromptsService promptsService,
             IFeatureManager featureManager,
             ISupervisorDelegateService supervisorDelegateService,
-            IUserDataService userDataService,
+            IUserService userService,
             ISupervisorService supervisorService
         )
         {
-            this.centresDataService = centresDataService;
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.centresService = centresService;
+            this.jobGroupsService = jobGroupsService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
             this.promptsService = promptsService;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;
-            this.userDataService = userDataService;
             this.supervisorService = supervisorService;
+            this.userService = userService;
         }
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
@@ -345,7 +343,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private string? GetCentreName(int? centreId)
         {
-            return centreId == null ? null : centresDataService.GetCentreName(centreId.Value);
+            return centreId == null ? null : centresService.GetCentreName(centreId.Value);
         }
 
         private IEnumerable<EditDelegateRegistrationPromptViewModel>
@@ -382,9 +380,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void PopulatePersonalInformationExtraFields(PersonalInformationViewModel model)
         {
-            model.CentreName = model.Centre.HasValue ? centresDataService.GetCentreName(model.Centre.Value) : null;
+            model.CentreName = model.Centre.HasValue ? centresService.GetCentreName(model.Centre.Value) : null;
             model.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
-                centresDataService.GetCentresForDelegateSelfRegistrationAlphabetical(),
+                centresService.GetCentresForDelegateSelfRegistrationAlphabetical(),
                 model.Centre
             );
         }
@@ -397,15 +395,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             model.DelegateRegistrationPrompts =
                 GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
-                jobGroupsDataService.GetJobGroupsAlphabetical(),
+                jobGroupsService.GetJobGroupsAlphabetical(),
                 model.JobGroup
             );
         }
 
         private void PopulateSummaryExtraFields(SummaryViewModel model, DelegateRegistrationData data)
         {
-            model.Centre = centresDataService.GetCentreName((int)data.Centre!);
-            model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
+            model.Centre = centresService.GetCentreName((int)data.Centre!);
+            model.JobGroup = jobGroupsService.GetJobGroupName((int)data.JobGroup!);
             model.DelegateRegistrationPrompts = GetDelegateRegistrationPromptsFromData(data);
         }
 
@@ -421,7 +419,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 model.PrimaryEmail,
                 nameof(PersonalInformationViewModel.PrimaryEmail),
                 ModelState,
-                userDataService,
+                userService,
                 CommonValidationErrorMessages.EmailInUseDuringDelegateRegistration
             );
 
@@ -430,7 +428,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 model.Centre,
                 nameof(PersonalInformationViewModel.CentreSpecificEmail),
                 ModelState,
-                userDataService
+                userService
             );
         }
     }

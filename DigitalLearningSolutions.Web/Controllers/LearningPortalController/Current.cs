@@ -22,9 +22,6 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DocumentFormat.OpenXml.EMMA;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.AspNetCore.Mvc.ViewEngines;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -42,7 +39,7 @@
             sortBy ??= CourseSortByOptions.LastAccessed.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
-            var currentCourses = courseDataService.GetCurrentCourses(delegateId);
+            var currentCourses = courseService.GetCurrentCourses(delegateId);
             var bannerText = GetBannerText();
 
             var centreId = User.GetCentreIdKnownNotNull();
@@ -80,7 +77,7 @@
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
-            var currentCourses = courseDataService.GetCurrentCourses(delegateId);
+            var currentCourses = courseService.GetCurrentCourses(delegateId);
             var centreId = User.GetCentreIdKnownNotNull();
 
             var selfAssessment =
@@ -110,7 +107,7 @@
                 ? (DateTime?)null
                 : new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
 
-            courseDataService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), completeByDate);
+            courseService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), completeByDate);
             return RedirectToAction("Current");
         }
 
@@ -118,7 +115,7 @@
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
         public IActionResult SetCurrentCourseCompleteByDate(int id, ReturnPageQuery returnPageQuery)
         {
-            var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
+            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
             if (course == null)
             {
@@ -152,7 +149,7 @@
         [Route("/LearningPortal/Current/Remove/{id:int}")]
         public IActionResult RemoveCurrentCourseConfirmation(int id, ReturnPageQuery returnPageQuery)
         {
-            var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
+            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
             if (course == null)
             {
@@ -170,7 +167,7 @@
         [HttpPost]
         public IActionResult RemoveCurrentCourse(int progressId)
         {
-            courseDataService.RemoveCurrentCourse(
+            courseService.RemoveCurrentCourse(
                 progressId,
                 User.GetCandidateIdKnownNotNull(),
                 RemovalMethod.RemovedByDelegate
@@ -181,7 +178,7 @@
         [Route("/LearningPortal/Current/RequestUnlock/{progressId:int}")]
         public IActionResult RequestUnlock(int progressId)
         {
-            var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
+            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.ProgressID == progressId && c.PLLocked);
             if (course == null)
             {
@@ -342,181 +339,6 @@
             var (resources, apiIsAccessible) =
                 await actionPlanService.GetIncompleteActionPlanResources(delegateUserId);
             return (resources.ToList(), apiIsAccessible);
-        }
-        [Route("/LearningPortal/Current/{candidateAssessmentId:int}/{route:int}/Certificate")]
-        [NoCaching]
-        public IActionResult CompetencySelfAssessmentCertificate(int candidateAssessmentId, int route)
-        {
-            int supervisorDelegateId = 0;
-            if (candidateAssessmentId == 0)
-            {
-                return NotFound();
-            }
-
-            var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
-            if (competencymaindata == null)
-            {
-                return NotFound();
-            }
-
-            var delegateUserId = competencymaindata.LearnerId;
-            if (route == 3)
-            {
-                var supervisorDelegate = supervisorService.GetSupervisorDelegate(User.GetAdminIdKnownNotNull(), delegateUserId);
-                supervisorDelegateId = supervisorDelegate.ID;
-            }
-            var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
-            var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(competencymaindata.SelfAssessmentID, delegateUserId);
-
-            if (!CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs))
-            {
-                return NotFound();
-            }
-
-            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
-            var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, competencymaindata.SelfAssessmentID);
-            var competencyIds = recentResults.Select(c => c.Id).ToArray();
-            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
-            var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, null);
-            foreach (var competency in competencies)
-            {
-                competency.QuestionLabel = assessment.QuestionLabel;
-                foreach (var assessmentQuestion in competency.AssessmentQuestions)
-                {
-                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
-                    {
-                        assessmentQuestion.LevelDescriptors = selfAssessmentService
-                            .GetLevelDescriptorsForAssessmentQuestion(
-                                assessmentQuestion.Id,
-                                assessmentQuestion.MinValue,
-                                assessmentQuestion.MaxValue,
-                                assessmentQuestion.MinValue == 0
-                            ).ToList();
-                    }
-                }
-            }
-
-            var CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
-            var competencySummaries = from g in CompetencyGroups
-                                      let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
-                                      let selfAssessedCount = questions.Count(q => q.Result.HasValue)
-                                      let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
-
-                                      select new
-                                      {
-                                          SelfAssessedCount = selfAssessedCount,
-                                          VerifiedCount = verifiedCount,
-                                          Questions = questions.Count()
-                                      };
-
-            int sumVerifiedCount = competencySummaries.Sum(item => item.VerifiedCount);
-            int sumQuestions = competencySummaries.Sum(item => item.Questions);
-            var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
-            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, route, accessors, activitySummaryCompetencySelfAssesment, sumQuestions, sumVerifiedCount, supervisorDelegateId);
-            return View("Current/CompetencySelfAssessmentCertificate", model);
-        }
-        [Route("DownloadCertificate")]
-        public async Task<IActionResult> DownloadCertificate(int candidateAssessmentId)
-        {
-            PdfReportStatusResponse pdfReportStatusResponse = new PdfReportStatusResponse();
-            if (candidateAssessmentId == 0)
-            {
-                return NotFound();
-            }
-            var delegateId = User.GetCandidateIdKnownNotNull();
-            var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
-
-            if (competencymaindata == null)
-            {
-                return NotFound();
-            }
-            var delegateUserId = competencymaindata.LearnerId;
-
-            var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
-            var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
-            var activitySummaryCompetencySelfAssesment = selfAssessmentService.GetActivitySummaryCompetencySelfAssesment(competencymaindata.Id);
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, competencymaindata.SelfAssessmentID);
-            var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
-            var competencyIds = recentResults.Select(c => c.Id).ToArray();
-            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
-            var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, null);
-            foreach (var competency in competencies)
-            {
-                competency.QuestionLabel = assessment.QuestionLabel;
-                foreach (var assessmentQuestion in competency.AssessmentQuestions)
-                {
-                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
-                    {
-                        assessmentQuestion.LevelDescriptors = selfAssessmentService
-                            .GetLevelDescriptorsForAssessmentQuestion(
-                                assessmentQuestion.Id,
-                                assessmentQuestion.MinValue,
-                                assessmentQuestion.MaxValue,
-                                assessmentQuestion.MinValue == 0
-                            ).ToList();
-                    }
-                }
-            }
-
-            var CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
-            var competencySummaries = from g in CompetencyGroups
-                                      let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
-                                      let selfAssessedCount = questions.Count(q => q.Result.HasValue)
-                                      let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
-                                      select new
-                                      {
-                                          SelfAssessedCount = selfAssessedCount,
-                                          VerifiedCount = verifiedCount,
-                                          Questions = questions.Count()
-                                      };
-
-            int sumVerifiedCount = competencySummaries.Sum(item => item.VerifiedCount);
-            int sumQuestions = competencySummaries.Sum(item => item.Questions);
-            var model = new CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, 1, accessors, activitySummaryCompetencySelfAssesment, sumQuestions, sumVerifiedCount, null);
-            var renderedViewHTML = RenderRazorViewToString(this, "Current/DownloadCompetencySelfAssessmentCertificate", model);
-
-            var pdfReportResponse = await pdfService.PdfReport(candidateAssessmentId.ToString(), renderedViewHTML, delegateId);
-            if (pdfReportResponse != null)
-            {
-                do
-                {
-                    pdfReportStatusResponse = await pdfService.PdfReportStatus(pdfReportResponse);
-                } while (pdfReportStatusResponse.Id == 1);
-
-                var pdfReportFile = await pdfService.GetPdfReportFile(pdfReportResponse);
-                if (pdfReportFile != null)
-                {
-                    var nameTextLength = string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerName) ? 0 : model.CompetencySelfAssessmentCertificates.LearnerName.Length;
-                    var isPrnExist = !string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerPRN);
-                    var fileName = $"Competency Certificate - {model.CompetencySelfAssessmentCertificates.LearnerName.Substring(0, nameTextLength >= 15 ? 15 : nameTextLength)}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf" : ".pdf");
-                    return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
-                }
-            }
-            return View("Current/CompetencySelfAssessmentCertificate", model);
-        }
-
-        public static string RenderRazorViewToString(Controller controller, string viewName, object model = null)
-        {
-            controller.ViewData.Model = model;
-            using (var sw = new StringWriter())
-            {
-                IViewEngine viewEngine =
-                    controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as
-                        ICompositeViewEngine;
-                ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, viewName, false);
-
-                ViewContext viewContext = new ViewContext(
-                    controller.ControllerContext,
-                    viewResult.View,
-                    controller.ViewData,
-                    controller.TempData,
-                    sw,
-                    new HtmlHelperOptions()
-                );
-                viewResult.View.RenderAsync(viewContext);
-                return sw.GetStringBuilder().ToString();
-            }
         }
     }
 }
