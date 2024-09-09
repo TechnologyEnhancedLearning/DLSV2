@@ -22,6 +22,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DateHelper = DigitalLearningSolutions.Web.Helpers.DateHelper;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -221,11 +222,17 @@
                         (courseDelegatesData, resultCount) = courseDelegatesService.GetCoursesAndCourseDelegatesPerPageForCentre(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
                             customisationId, centreId, adminCategoryId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3);
                     }
+                    foreach (var courseDelegate in courseDelegatesData.Delegates)
+                    {
+                        courseDelegate.Enrolled = (DateTime)DateHelper.GetLocalDateTime(courseDelegate.Enrolled);
+                        courseDelegate.LastUpdated = DateHelper.GetLocalDateTime(courseDelegate.LastUpdated);
+                        courseDelegate.Completed = courseDelegate.Completed?.TimeOfDay == TimeSpan.Zero ? courseDelegate.Completed : DateHelper.GetLocalDateTime(courseDelegate.Completed);
+                    }
                 }
                 else
                 {
                     (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
-                        selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
+                    selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
 
                     if (selfAssessmentDelegatesData?.Delegates?.Count() == 0 && resultCount > 0)
                     {
