@@ -243,19 +243,22 @@
 
                     var adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
 
-                    foreach (var delagate in selfAssessmentDelegatesData.Delegates ?? Enumerable.Empty<SelfAssessmentDelegate>())
+                    foreach (var saDelegate in selfAssessmentDelegatesData.Delegates ?? Enumerable.Empty<SelfAssessmentDelegate>())
                     {
-                        var competencies = selfAssessmentService.GetCandidateAssessmentResultsById(delagate.CandidateAssessmentsId, adminId).ToList();
+                        var competencies = selfAssessmentService.GetCandidateAssessmentResultsById(saDelegate.CandidateAssessmentsId, adminId).ToList();
                         if (competencies?.Count() > 0)
                         {
                             var questions = competencies.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
                             var selfAssessedCount = questions.Count(q => q.Result.HasValue);
                             var verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required));
 
-                            delagate.Progress = "Self assessed: " + selfAssessedCount + " / " + questions.Count() + Environment.NewLine +
+                            saDelegate.Progress = "Self assessed: " + selfAssessedCount + " / " + questions.Count() + Environment.NewLine +
                                                 "Confirmed: " + verifiedCount + " / " + questions.Count();
-
                         }
+                        saDelegate.StartedDate = (DateTime)DateHelper.GetLocalDateTime(saDelegate.StartedDate);
+                        saDelegate.LastAccessed = DateHelper.GetLocalDateTime(saDelegate.LastAccessed);
+                        saDelegate.SubmittedDate = DateHelper.GetLocalDateTime(saDelegate.SubmittedDate);
+                        saDelegate.RemovedDate = DateHelper.GetLocalDateTime(saDelegate.RemovedDate);
                     }
                 }
 
