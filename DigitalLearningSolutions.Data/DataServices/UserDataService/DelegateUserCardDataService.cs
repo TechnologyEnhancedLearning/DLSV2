@@ -187,7 +187,7 @@
 
                             AND Approved = 1
 
-                            AND EmailAddress LIKE '%_@_%.__%'";
+                            AND EmailAddress LIKE '%_@_%'";
         public DelegateUserCard? GetDelegateUserCardById(int id)
         {
             var user = connection.Query<DelegateUserCard>(
@@ -224,7 +224,7 @@
             {
                 searchString = searchString.Trim();
             }
-            
+
             if (groupId.HasValue)
             {
                 var groupDelegatesForCentre = $@"SELECT DelegateID FROM GroupDelegates WHERE GroupID in (
@@ -232,7 +232,7 @@
 											)";
                 DelegatewhereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " AND GroupID = @groupId )";
             }
-                
+
 
             var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches FROM ( " + DelegateUserExportSelectQuery + " ) D " + DelegatewhereConditon;
 
@@ -339,7 +339,7 @@
 											)";
             if (groupId.HasValue)
                 DelegatewhereConditon += "AND D.ID IN ( " + groupDelegatesForCentre + " AND GroupID = @groupId )";
-                
+
 
             string orderBy;
 
@@ -424,7 +424,7 @@
                         WHERE da.CentreId = @centreId
                         AND da.Approved = 1
                         AND da.Active = 1
-                        AND (u.PrimaryEmail like '%_@_%.__%' OR ucd.Email IS NOT NULL)
+                        AND (u.PrimaryEmail like '%_@_%' OR ucd.Email IS NOT NULL)
                         AND NOT EXISTS (SELECT DelegateID FROM GroupDelegates WHERE DelegateID = da.ID
                                         AND GroupID = @groupId)",
                 new

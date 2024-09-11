@@ -14,20 +14,10 @@
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
-                        @if (Model.SourcePageTitle != String.Empty)
-                        {
-                            <div><partial name="_NhsChevronLeft" /> Go back to @Model.SourcePageTitle</div>
-                        }
-                        @if (Model.SourcePageTitle == String.Empty)
-                        {
-                            <div><partial name="_NhsChevronLeft" /> Go back</div>
-                        }
+                        <div><partial name="_NhsChevronLeft" />Go back</div>
                     </a>
                 </li>
             </ol>
-            <p class="nhsuk-breadcrumb__back">
-                <a class="nhsuk-breadcrumb__link" href="@Model.SourceUrl">Go back to @Model.SourcePageTitle</a>
-            </p>
         </div>
     </nav>
 }
@@ -41,7 +31,7 @@
         <p class="nhsuk-body-l">Step 3 of 4</p>
 
         <form method="post" asp-action="UserFeedbackTaskDifficultySet">
-            <input type="hidden" asp-for="SourceUrl" value="@Model.SourceUrl" />
+            <input type="hidden" asp-for="SourceUrl" value="@Context.Request.Path" />
             <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
 
             <div class="nhsuk-hint" id="feedback-difficulty-hint">

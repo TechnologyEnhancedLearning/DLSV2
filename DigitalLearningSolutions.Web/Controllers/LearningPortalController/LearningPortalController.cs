@@ -67,6 +67,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.multiPageFormService = multiPageFormService;
             this.clockUtility = clockUtility;
             this.pdfService = pdfService;
+            DateHelper.userTimeZone = DateHelper.userTimeZone ?? User.GetUserTimeZone(CustomClaimTypes.UserTimeZone);
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]

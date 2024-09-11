@@ -11,13 +11,13 @@
             EvaluatedDate = item.Evaluated;
             ArchivedDate = item.ArchivedDate;
             RemovedDate = item.RemovedDate;
-            Published = item.Published;
+            CheckUnpublishedCourse = item.CheckUnpublishedCourse;
         }
 
         public DateTime CompletedDate { get; }
         public DateTime? EvaluatedDate { get; }
         public DateTime? ArchivedDate { get; }
         public DateTime? RemovedDate { get; }
-        public bool Published { get; }
+        public int CheckUnpublishedCourse { get; }
     }
 }

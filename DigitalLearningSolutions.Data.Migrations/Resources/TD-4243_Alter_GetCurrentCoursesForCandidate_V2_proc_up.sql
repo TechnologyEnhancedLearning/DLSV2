@@ -23,7 +23,7 @@ BEGIN
 	SET NOCOUNT ON;
  
     -- Insert statements for procedure here
-	SELECT p.ProgressID, (CASE WHEN cu.CustomisationName <> '' THEN a.ApplicationName + ' - ' + cu.CustomisationName ELSE a.ApplicationName END) AS CourseName, p.CustomisationID, p.SubmittedTime AS LastAccessed, 
+	SELECT DISTINCT p.ProgressID, (CASE WHEN cu.CustomisationName <> '' THEN a.ApplicationName + ' - ' + cu.CustomisationName ELSE a.ApplicationName END) AS CourseName, p.CustomisationID, p.SubmittedTime AS LastAccessed, 
                p.FirstSubmittedTime AS StartedDate, p.DiagnosticScore, p.PLLocked, cu.IsAssessed, dbo.CheckCustomisationSectionHasDiagnostic(p.CustomisationID, 0) 
                AS HasDiagnostic, dbo.CheckCustomisationSectionHasLearning(p.CustomisationID, 0) AS HasLearning,
                    COALESCE

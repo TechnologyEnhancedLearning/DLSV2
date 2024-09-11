@@ -198,6 +198,8 @@
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
+            //set the source URL to the sequentially previous page route which is Task Achieved
+            userFeedbackViewModel.SourceUrl ??= "/UserFeedbackTaskAchieved";
             userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
             return View("UserFeedbackTaskAttempted", userFeedbackViewModel);
@@ -247,6 +249,9 @@
         )]
         public IActionResult UserFeedbackTaskDifficultySet(UserFeedbackViewModel userFeedbackViewModel)
         {
+            //set the SourceURL to blank so we can retrieve the original sourceURL whether current/completed/available
+            userFeedbackViewModel.SourceUrl = null;
+
             userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
             SaveMultiPageFormData(userFeedbackViewModel);
@@ -277,7 +282,6 @@
 
             transaction.Complete();
 
-            userFeedbackViewModel.SourceUrl = data.SourceUrl;
 
             return RedirectToAction("UserFeedbackComplete", userFeedbackViewModel);
         }

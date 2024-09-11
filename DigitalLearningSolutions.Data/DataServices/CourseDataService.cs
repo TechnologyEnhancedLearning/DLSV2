@@ -153,7 +153,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 WHERE pr.CustomisationID = cu.CustomisationID
                     AND can.CentreID = @centreId
                     AND RemovedDate IS NULL
-                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS DelegateCount";
+                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%') AS DelegateCount";
 
         private const string CompletedCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
@@ -164,7 +164,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.centreID
                 WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
                     AND can.CentreID = @centreId
-                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS CompletedCount";
+                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%') AS CompletedCount";
 
         private const string AllAttemptsQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
@@ -334,7 +334,8 @@ namespace DigitalLearningSolutions.Data.DataServices
             LEFT OUTER JOIN Users AS uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
             INNER JOIN DelegateAccounts AS da ON da.ID = pr.CandidateID
             INNER JOIN Users AS u ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID";
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
+            INNER JOIN CentreApplications AS ca ON ca.ApplicationID = ap.ApplicationID AND ca.CentreID = cu.CentreID";
 
         private readonly string courseAssessmentDetailsQuery = $@"SELECT
                         c.CustomisationID,
@@ -1130,7 +1131,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
 					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'";
 
             string orderBy;
             string sortOrder;
@@ -1638,7 +1639,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE da.CentreID = @centreId
                         AND p.CustomisationID = @customisationId
                         AND ap.DefaultContentTypeID <> 4
-                        AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'",
+                        AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'",
                 new { customisationId, centreId }
             );
         }
@@ -1684,7 +1685,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
 					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'";
 
 
             var mainSql = "SELECT COUNT(*) AS TotalRecords " + fromTableQuery;
@@ -1785,7 +1786,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
 					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'";
 
             string orderBy;
             string sortOrder;
@@ -1970,7 +1971,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                             INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = can.DelegateUserID 
 						    LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID AND ucd.centreID = can.CentreID
                         WHERE can.CentreID = @centreId AND can.SelfAssessmentID = csa.SelfAssessmentID
-                            AND can.RemovedDate IS NULL AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS DelegateCount,
+                            AND can.RemovedDate IS NULL AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%') AS DelegateCount,
                         (Select COUNT(*) FROM
                             (SELECT can.ID FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
                                 LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas ON can.ID = cas.CandidateAssessmentID
@@ -2024,7 +2025,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 						WHERE CustomisationID = @customisationID ",
                 new { customisationId }).FirstOrDefault();
 
-            
+
         }
     }
 }

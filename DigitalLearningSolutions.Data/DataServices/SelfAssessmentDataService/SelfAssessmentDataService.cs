@@ -167,7 +167,6 @@
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
         IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID);
         CompetencySelfAssessmentCertificate? GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
-        CompetencySelfAssessmentCertificate? GetCompetencySelfAssessmentCertificate(int selfassessmentId, int userId);
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
         ActivitySummaryCompetencySelfAssesment? GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
@@ -248,7 +247,7 @@
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
                 AND ((@submitted IS NULL) OR (@submitted = 1 AND (ca.SubmittedDate IS NOT NULL)) OR (@submitted = 0 AND (ca.SubmittedDate IS NULL)))
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%' ";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%' ";
 
             var groupBy = $@" GROUP BY 
 				da.CandidateNumber,
@@ -383,7 +382,7 @@
             var whereQuery = $@" WHERE sa.ID = @selfAssessmentId 
                 AND da.CentreID = @centreID AND csa.CentreID = @centreID
                 AND (ca.RemovedDate IS NULL)
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%' ";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%' ";
 
             var groupBy = $@" GROUP BY 
 				da.CandidateNumber,
@@ -473,7 +472,7 @@
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
                 AND ((@submitted IS NULL) OR (@submitted = 1 AND (ca.SubmittedDate IS NOT NULL)) OR (@submitted = 0 AND (ca.SubmittedDate IS NULL)))
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%' ";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%' ";
 
             var groupBy = $@" GROUP BY 
 				da.CandidateNumber,
@@ -577,7 +576,7 @@
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
                 AND ((@submitted IS NULL) OR (@submitted = 1 AND (ca.SubmittedDate IS NOT NULL)) OR (@submitted = 0 AND (ca.SubmittedDate IS NULL)))
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%' ";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%' ";
 
             var groupBy = $@" GROUP BY 
 				da.CandidateNumber,
