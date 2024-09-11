@@ -13,16 +13,7 @@
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item">
-                    <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
-                        @if (Model.SourcePageTitle != String.Empty)
-                        {
-                            <div><partial name="_NhsChevronLeft" /> Go back to @Model.SourcePageTitle</div>
-                        }
-                        @if (Model.SourcePageTitle == String.Empty)
-                        {
-                            <div><partial name="_NhsChevronLeft" /> Go back</div>
-                        }
-                    </a>
+                    @* no link required in the Thank You For The Feedback page*@
                 </li>
             </ol>
             <p class="nhsuk-breadcrumb__back">

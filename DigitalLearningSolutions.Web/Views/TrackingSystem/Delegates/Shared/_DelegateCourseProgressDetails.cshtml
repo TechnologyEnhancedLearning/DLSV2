@@ -1,7 +1,14 @@
 ﻿@using DigitalLearningSolutions.Data.Helpers
+@using DateHelper = DigitalLearningSolutions.Web.Helpers.DateHelper
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 @model DelegateCourseInfoViewModel
+@{
+    var courseCompleted = Model.Completed != null ?
+            Convert.ToDateTime(Model.Completed).TimeOfDay == TimeSpan.Zero ? Convert.ToDateTime(Model.Completed).ToString(DateHelper.StandardDateFormat) :
+            Convert.ToDateTime(Model.Completed).ToString(DateHelper.StandardDateAndTimeFormat)
+            : "-";
+}
 
 <dl class="nhsuk-summary-list details-list-with-button word-break">
     @if (Model.AccessedVia.Equals(DelegateAccessRoute.ActivityDelegates))
@@ -55,7 +62,7 @@
             Complete by
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
-            @(Model.CompleteBy ?? "-")
+            @(Model.CompleteBy != null ? Convert.ToDateTime(Model.CompleteBy).ToString(DateHelper.StandardDateFormat) : "-")
         </dd>
         <dd class="nhsuk-summary-list__actions">
             <a data-return-page-enabled="true"
@@ -84,7 +91,7 @@
             Completed
         </dt>
         <dd class="nhsuk-summary-list__value" data-name-for-sorting="completed-date">
-            @(Model.Completed ?? "-")
+            @(courseCompleted)
         </dd>
         <dd class="nhsuk-summary-list__actions">
             <a data-return-page-enabled="true"

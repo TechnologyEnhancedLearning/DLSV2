@@ -29,7 +29,7 @@
             this.dashboardInformationService = dashboardInformationService;
             this.systemNotificationsService = systemNotificationsService;
         }
-
+        [NoCaching]
         public IActionResult Index()
         {
             var adminId = User.GetAdminId()!.Value;

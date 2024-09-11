@@ -22,6 +22,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DateHelper = DigitalLearningSolutions.Web.Helpers.DateHelper;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -221,11 +222,17 @@
                         (courseDelegatesData, resultCount) = courseDelegatesService.GetCoursesAndCourseDelegatesPerPageForCentre(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
                             customisationId, centreId, adminCategoryId, isDelegateActive, isProgressLocked, removed, hasCompleted, answer1, answer2, answer3);
                     }
+                    foreach (var courseDelegate in courseDelegatesData.Delegates)
+                    {
+                        courseDelegate.Enrolled = (DateTime)DateHelper.GetLocalDateTime(courseDelegate.Enrolled);
+                        courseDelegate.LastUpdated = DateHelper.GetLocalDateTime(courseDelegate.LastUpdated);
+                        courseDelegate.Completed = courseDelegate.Completed?.TimeOfDay == TimeSpan.Zero ? courseDelegate.Completed : DateHelper.GetLocalDateTime(courseDelegate.Completed);
+                    }
                 }
                 else
                 {
                     (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
-                        selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
+                    selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
 
                     if (selfAssessmentDelegatesData?.Delegates?.Count() == 0 && resultCount > 0)
                     {
@@ -236,19 +243,22 @@
 
                     var adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
 
-                    foreach (var delagate in selfAssessmentDelegatesData.Delegates ?? Enumerable.Empty<SelfAssessmentDelegate>())
+                    foreach (var saDelegate in selfAssessmentDelegatesData.Delegates ?? Enumerable.Empty<SelfAssessmentDelegate>())
                     {
-                        var competencies = selfAssessmentService.GetCandidateAssessmentResultsById(delagate.CandidateAssessmentsId, adminId).ToList();
+                        var competencies = selfAssessmentService.GetCandidateAssessmentResultsById(saDelegate.CandidateAssessmentsId, adminId).ToList();
                         if (competencies?.Count() > 0)
                         {
                             var questions = competencies.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
                             var selfAssessedCount = questions.Count(q => q.Result.HasValue);
                             var verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required));
 
-                            delagate.Progress = "Self assessed: " + selfAssessedCount + " / " + questions.Count() + Environment.NewLine +
+                            saDelegate.Progress = "Self assessed: " + selfAssessedCount + " / " + questions.Count() + Environment.NewLine +
                                                 "Confirmed: " + verifiedCount + " / " + questions.Count();
-
                         }
+                        saDelegate.StartedDate = (DateTime)DateHelper.GetLocalDateTime(saDelegate.StartedDate);
+                        saDelegate.LastAccessed = DateHelper.GetLocalDateTime(saDelegate.LastAccessed);
+                        saDelegate.SubmittedDate = DateHelper.GetLocalDateTime(saDelegate.SubmittedDate);
+                        saDelegate.RemovedDate = DateHelper.GetLocalDateTime(saDelegate.RemovedDate);
                     }
                 }
 

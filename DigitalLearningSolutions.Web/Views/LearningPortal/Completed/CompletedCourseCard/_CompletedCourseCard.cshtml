@@ -31,7 +31,7 @@
     </details>
 
     <div class="flex-row">
-        @if (Model.ArchivedDate == null && Model.RemovedDate == null)
+        @if (Model.ArchivedDate == null && Model.RemovedDate == null && Model.CheckUnpublishedCourse > 0 && Model.Active)
         {
             <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2"
                aria-describedby="@Model.Id-name"

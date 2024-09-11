@@ -8,7 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
@@ -735,15 +735,13 @@
                 .With(au => au.IsSupervisor = true)
                 .With(au => au.CategoryId = 2)
                 .TheRest().With(au => au.IsSupervisor = false).Build().ToList();
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
+            A.CallTo(() => userDataService.GetAdminUsersAtCentreForCategory(A<int>._, A<int>._)).Returns(adminUsers);
 
             // When
             var result = userService.GetSupervisorsAtCentreForCategory(1, 1).ToList();
 
             // Then
-            result.Should().HaveCount(5);
-            result.Should().OnlyContain(au => au.IsSupervisor);
-            result.Should().OnlyContain(au => au.CategoryId == null || au.CategoryId == 1);
+            result.Should().BeEquivalentTo(adminUsers);
         }
 
         [Test]

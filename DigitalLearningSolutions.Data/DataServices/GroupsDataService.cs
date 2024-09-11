@@ -174,7 +174,7 @@
                             JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
                             LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
                             WHERE gd.GroupID = g.GroupID
-                                AND (u.PrimaryEmail like '%_@_%.__%' OR ucd.Email is NOT NULL)
+                                AND (u.PrimaryEmail like '%_@_%' OR ucd.Email is NOT NULL)
                                 AND da.Approved = 1 AND da.Active = 1) AS DelegateCount,
                         ({CourseCountSql}) AS CoursesCount,
                         g.CreatedByAdminUserID AS AddedByAdminId,
@@ -213,7 +213,7 @@
                 new { centreId }
             );
         }
-public IEnumerable<Group> GetGroupsForRegistrationResponse(int centreId, string? answer1, string? answer2, string? answer3, string? jobGroup, string? answer4, string? answer5, string? answer6)
+        public IEnumerable<Group> GetGroupsForRegistrationResponse(int centreId, string? answer1, string? answer2, string? answer3, string? jobGroup, string? answer4, string? answer5, string? answer6)
         {
             return connection.Query<Group>(
                 @$"{groupsSql}
@@ -337,7 +337,7 @@ public IEnumerable<Group> GetGroupsForRegistrationResponse(int centreId, string?
                     JOIN Users AS u ON u.ID = da.UserID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
                     WHERE gd.GroupID = @groupId
-                        AND (u.PrimaryEmail like '%_@_%.__%' OR ucd.Email is NOT NULL)
+                        AND (u.PrimaryEmail like '%_@_%' OR ucd.Email is NOT NULL)
                         AND da.Approved = 1 AND da.Active = 1",
                 new { groupId }
             );
