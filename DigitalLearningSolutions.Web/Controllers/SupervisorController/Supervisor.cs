@@ -1167,13 +1167,15 @@
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             IEnumerable<CandidateAssessmentSupervisorVerificationSummary>? verificationsSummary =
                 supervisorService.GetCandidateAssessmentSupervisorVerificationSummaries(candidateAssessmentId);
+            var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentSummary.SelfAssessmentID, selfAssessmentSummary.DelegateUserID);
             SignOffProfileAssessmentViewModel? model = new SignOffProfileAssessmentViewModel()
             {
                 SelfAssessmentResultSummary = selfAssessmentSummary,
                 SupervisorDelegate = supervisorDelegate,
                 CandidateAssessmentSupervisorVerificationId =
                     selfAssessmentSummary?.CandidateAssessmentSupervisorVerificationId,
-                CandidateAssessmentSupervisorVerificationSummaries = verificationsSummary
+                CandidateAssessmentSupervisorVerificationSummaries = verificationsSummary,
+                NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment)
             };
             return View("SignOffProfileAssessment", model);
         }
@@ -1186,7 +1188,7 @@
             SignOffProfileAssessmentViewModel model
         )
         {
-            if (!ModelState.IsValid)
+            if ((!ModelState.IsValid) && (model.NumberOfSelfAssessedOptionalCompetencies > 0) && (!model.OptionalCompetenciesChecked))
             {
                 SelfAssessmentResultSummary? selfAssessmentSummary =
                     supervisorService.GetSelfAssessmentResultSummary(candidateAssessmentId, supervisorDelegateId);
@@ -1194,13 +1196,15 @@
                     supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 IEnumerable<CandidateAssessmentSupervisorVerificationSummary>? verificationsSummary =
                     supervisorService.GetCandidateAssessmentSupervisorVerificationSummaries(candidateAssessmentId);
+                var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentSummary.SelfAssessmentID, selfAssessmentSummary.DelegateUserID);
                 SignOffProfileAssessmentViewModel? newModel = new SignOffProfileAssessmentViewModel()
                 {
                     SelfAssessmentResultSummary = selfAssessmentSummary,
                     SupervisorDelegate = supervisorDelegate,
                     CandidateAssessmentSupervisorVerificationId =
                         selfAssessmentSummary.CandidateAssessmentSupervisorVerificationId,
-                    CandidateAssessmentSupervisorVerificationSummaries = verificationsSummary
+                    CandidateAssessmentSupervisorVerificationSummaries = verificationsSummary,
+                    NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment)
                 };
                 return View("SignOffProfileAssessment", newModel);
             }

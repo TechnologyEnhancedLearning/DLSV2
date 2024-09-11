@@ -238,7 +238,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
 
-            int existingId = (int)connection.ExecuteScalar(
+            int existingId = Convert.ToInt32(connection.ExecuteScalar(
                 @"
                     SELECT COALESCE
                     ((SELECT Top 1 ID
@@ -253,7 +253,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     supervisorAdminId = supervisorAdminId ?? 0,
                     delegateUserId = delegateUserId ?? 0
                 }
-            );
+            ));
 
             if (existingId > 0)
             {
@@ -285,7 +285,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     return -1;
                 }
 
-                existingId = (int)connection.ExecuteScalar(
+                existingId = Convert.ToInt32(connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
                     ((SELECT ID
@@ -302,7 +302,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         supervisorAdminId = supervisorAdminId ?? 0,
                         delegateUserId = delegateUserId ?? 0
                     }
-                ); return existingId;
+                )); return existingId;
             }
         }
 
@@ -802,15 +802,15 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         }
         public int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
         {
-            int candidateAssessmentId = (int)connection.ExecuteScalar(
+            int candidateAssessmentId = Convert.ToInt32(connection.ExecuteScalar(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                    WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
-              new { selfAssessmentId, delegateUserId });
+              new { selfAssessmentId, delegateUserId }));
             if (candidateAssessmentId > 0)
             {
-                var candidateAssessmentSupervisorsId = (int)connection.ExecuteScalar(
+                var candidateAssessmentSupervisorsId = Convert.ToInt32(connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
                     ((SELECT ID
@@ -818,7 +818,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         WHERE (CandidateAssessmentID = @candidateAssessmentId)
                             AND (SupervisorDelegateId = @supervisorDelegateId)                        
 							AND ((SelfAssessmentSupervisorRoleID IS NULL) OR (SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleId))), 0) AS CandidateAssessmentSupervisorID", new
-                    { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId });
+                    { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }));
 
                 if (candidateAssessmentSupervisorsId == 0)
                 {
@@ -1075,7 +1075,7 @@ WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) A
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) OR
              (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.SupportingComments IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) OR
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3)) AS MeetingCount,
-              sa.SignOffSupervisorStatement
+              sa.SignOffSupervisorStatement,ca.DelegateUserID
 FROM   NRPProfessionalGroups AS npg RIGHT OUTER JOIN
              NRPSubGroups AS nsg RIGHT OUTER JOIN
              SelfAssessmentSupervisorRoles AS sasr RIGHT OUTER JOIN
