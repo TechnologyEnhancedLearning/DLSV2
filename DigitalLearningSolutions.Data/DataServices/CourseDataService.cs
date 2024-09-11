@@ -548,9 +548,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic
                   WHERE ID = @candidateAssessmentId
 
-                --UPDATE CandidateAssessmentSupervisors SET Removed = NULL
-                --  {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
-                --  WHERE CandidateAssessmentID = @candidateAssessmentId
+                UPDATE CandidateAssessmentSupervisors SET Removed = NULL
+                 {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
+                WHERE CandidateAssessmentID = @candidateAssessmentId
 
                 COMMIT TRANSACTION";
 
