@@ -87,7 +87,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             if (adminAccount != null)
             {
                 var adminentity = new AdminEntity(adminAccount, userEntity.UserAccount, null);
-                CultureInfo currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
                 roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false)
                                                 .Select(d => d.DisplayText).ToList<string>();
             }
