@@ -56,7 +56,10 @@
         private const string TableauUsername = "Username";
         private const string TableauClientName = "ClientName";
         private const string TableauSiteUrl = "SiteUrl";
-        private const string TableauDashboardUrl = "CompetencyDashboardUrl";
+        private const string TableauWorkbookName = "WorkBookName";
+        private const string TableauViewName = "ViewName";
+        private const string TableauSiteName = "SiteName";
+        private const string TableauAuthApi = "AuthApiPath";
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName]!;
@@ -249,9 +252,22 @@
         {
             return config[$"{TableauSectionKey}:{TableauSiteUrl}"]!;
         }
-        public static string GetTableauDashboardUrl(this IConfiguration config)
+        public static string GetTableauAuthApi(this IConfiguration config)
         {
-            return config[$"{TableauSectionKey}:{TableauDashboardUrl}"]!;
+            return config[$"{TableauSectionKey}:{TableauAuthApi}"]!;
         }
+        public static string GetTableauSiteName(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauSiteName}"]!;
+        }
+        public static string GetTableauWorkbookName(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauWorkbookName}"]!;
+        }
+        public static string GetTableauViewName(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauViewName}"]!;
+        }
+
     }
 }

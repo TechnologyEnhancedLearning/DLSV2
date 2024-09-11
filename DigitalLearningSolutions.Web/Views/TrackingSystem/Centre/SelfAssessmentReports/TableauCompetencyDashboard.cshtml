@@ -1,0 +1,22 @@
+﻿@{
+    var tableauServerUrl = ViewBag.TableauServerUrl;
+    var workbookName = ViewBag.WorkbookName;
+    var viewName = ViewBag.ViewName;
+    var jwtToken = ViewBag.JwtToken;
+    var siteName = ViewBag.SiteName;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau Embedded View</title>
+    @* We are not using Yarn/npm for the Tableau JS becaue of errors during installation relating to a missing dependency *@
+    <script type="module" src="@tableauServerUrl/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+</head>
+<body>
+   <tableau-viz id="tableauViz"
+                 src="@tableauServerUrl/#/site/@siteName/views/@workbookName/@viewName" token="@jwtToken">
+    </tableau-viz>
+</body>
+</html>
