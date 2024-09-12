@@ -25,8 +25,7 @@
         { "selfAssessedCount", selfAssessedCount },
         { "verifiedCount", verifiedCount }
       };
-    var competencyQuestionsSummary = competencySummaries.Sum(c => (int)c["questionsCount"]);
-    var competencyVerifiedSummary = competencySummaries.Sum(c => (int)c["verifiedCount"]);
+
     Layout = "SelfAssessments/_Layout";
     ViewData["Title"] = "Self Assessment - Proficiencies";
     ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
@@ -200,13 +199,10 @@
                         All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and confirmed,
                         before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.
                     </p>
-                    @if (competencyQuestionsSummary == competencyVerifiedSummary)
-                     {
                     <p class="nhsuk-body-l">
                         Your self assessment does not contain enough optional proficiencies to request sign off.
                         Go to Manage Optional Competencies to choose the optional competencies that you wish to include..
                     </p>
-                     }
                 }
             </div>
         }
