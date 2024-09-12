@@ -41,7 +41,7 @@
                 { "aud", "tableau" },
                 { "exp", new DateTimeOffset(DateTime.UtcNow.AddMinutes(5)).ToUnixTimeSeconds() },
                 { "sub", user },
-                { "scp", new[] { "tableau:content:read" } },
+                { "scp", new[] { "tableau:views:embed" } },
                 { "users.primaryemail", email}
         };
             var token = new JwtSecurityToken(header, payload);
