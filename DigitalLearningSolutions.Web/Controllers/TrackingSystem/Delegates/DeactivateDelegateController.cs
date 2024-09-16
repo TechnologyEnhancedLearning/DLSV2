@@ -3,7 +3,6 @@
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
