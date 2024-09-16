@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.UserFeedback
+@using Microsoft.AspNetCore.Http.Extensions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model UserFeedbackViewModel;
@@ -29,7 +30,7 @@
     </div>
     <div class="nhsuk-grid-column-two-thirds">
         <form method="post" asp-action="UserFeedbackTaskAttemptedSet">
-            <input type="hidden" asp-for="SourceUrl" value="@Context.Request.Path" />
+            <input type="hidden" asp-for="SourceUrl" value="@Context.Request.GetDisplayUrl()" />
             <input type="hidden" asp-for="SourcePageTitle" value="@Model.SourcePageTitle" />
 
             <p class="nhsuk-body-l">Step 2 of 4</p>

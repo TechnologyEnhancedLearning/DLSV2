@@ -30,7 +30,7 @@
             this._userFeedbackService = userFeedbackService;
             this._multiPageFormService = multiPageFormService;
             this._userFeedbackViewModel = new UserFeedbackViewModel();
-            this.config = config; 
+            this.config = config;
         }
 
         [Route("/Index")]
@@ -38,7 +38,7 @@
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
             _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
-            
+
             _userFeedbackViewModel = new()
             {
                 UserId = User.GetUserId(),
@@ -51,13 +51,13 @@
                 TaskRating = null,
             };
 
-            if(sourcePageTitle == "Digital Learning Solutions - Page no longer available")
+            if (sourcePageTitle == "Digital Learning Solutions - Page no longer available")
             {
                 var url = ContentUrlHelper.ReplaceUrlSegment(sourceUrl);
-                _userFeedbackViewModel.SourceUrl  = url;
+                _userFeedbackViewModel.SourceUrl = url;
                 _userFeedbackViewModel.SourcePageTitle = "Welcome";
             }
-            
+
             if (_userFeedbackViewModel.UserId == null || _userFeedbackViewModel.UserId == 0)
             {
                 return GuestFeedbackStart(_userFeedbackViewModel);
@@ -198,8 +198,6 @@
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
 
-            //set the source URL to the sequentially previous page route which is Task Achieved
-            userFeedbackViewModel.SourceUrl ??= "/UserFeedbackTaskAchieved";
             userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
             return View("UserFeedbackTaskAttempted", userFeedbackViewModel);
