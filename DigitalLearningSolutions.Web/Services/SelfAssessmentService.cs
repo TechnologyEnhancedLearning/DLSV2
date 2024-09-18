@@ -1,16 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using AngleSharp.Attributes;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Common.Users;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SelfAssessments.Export;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public interface ISelfAssessmentService
     {
@@ -150,6 +148,7 @@
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
         IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId);
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
+        bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
 
     }
 
@@ -553,6 +552,11 @@
         public bool IsCentreSelfAssessment(int selfAssessmentId, int centreId)
         {
             return selfAssessmentDataService.IsCentreSelfAssessment(selfAssessmentId, centreId);
+        }
+
+        public bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId)
+        {
+            return selfAssessmentDataService.HasMinimumOptionalCompetencies(selfAssessmentId, delegateUserId);
         }
     }
 }

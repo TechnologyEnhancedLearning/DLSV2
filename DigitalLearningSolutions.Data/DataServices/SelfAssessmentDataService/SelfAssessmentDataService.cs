@@ -1,9 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Common.Users;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
@@ -11,6 +7,10 @@
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SelfAssessments.Export;
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
 
     public interface ISelfAssessmentDataService
     {
@@ -171,6 +171,7 @@
         ActivitySummaryCompetencySelfAssesment? GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
+        bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -728,6 +729,25 @@
                 new { selfAssessmentId, centreId }
             );
             return ResultCount > 0;
+        }
+
+        public bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId)
+        {
+            return connection.ExecuteScalar<bool>(
+                        @"SELECT CASE WHEN COUNT(SAS.ID)>=(SELECT MinimumOptionalCompetencies FROM SelfAssessments WHERE ID = @selfAssessmentId) 
+			                        THEN 1 ELSE 0 END AS HasMinimumOptionalCompetencies
+	                        FROM CandidateAssessmentOptionalCompetencies AS CAOC
+		                        INNER JOIN CandidateAssessments  AS CA
+			                        ON CAOC.CandidateAssessmentID = CA.ID AND CA.SelfAssessmentID = @selfAssessmentId
+			                        AND CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL
+		                        INNER JOIN SelfAssessmentStructure AS SAS
+			                        ON CAOC.CompetencyID = SAS.CompetencyID AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
+			                        AND SAS.SelfAssessmentID = @selfAssessmentId
+		                        INNER JOIN SelfAssessments AS SA
+			                        ON SAS.SelfAssessmentID = SA.ID					
+	                        WHERE (CAOC.IncludedInSelfAssessment = 1)",
+                        new { selfAssessmentId, delegateUserId }
+                    );
         }
     }
 }
