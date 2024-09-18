@@ -39,12 +39,15 @@
                         }
                     </li>
                 }
+                @if (Model.SelfAssessmentSelects.Any())
+                {
+                  <li>
+                    <a asp-controller="SelfAssessmentReports" asp-action="TableauCompetencyDashboard">@($"View Tableau Competency Dashboards")</a>
+                  </li>
+                }
             }
         </ul>
-        @if (Model.SelfAssessmentSelects.Any())
-            {
-            <a asp-controller="SelfAssessmentReports" asp-action="TableauCompetencyDashboard">@($"View Tableau Competency Dashboards")</a>
-            }
+        
 
     </div>
 </div>
