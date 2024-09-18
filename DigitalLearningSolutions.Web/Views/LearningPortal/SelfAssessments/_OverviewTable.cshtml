@@ -34,7 +34,16 @@
         <tbody class="nhsuk-table__body row-outer" id="comp-@competency.RowNo">
             <tr class="nhsuk-table__row first-row">
                 <td rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-text-align-left">
+                    <span class="nhsuk-table-responsive__heading">@Model.First().Vocabulary </span>
                   <div class="nhsuk-grid-row">
+                        <div class="nhsuk-grid-column-full">
+                        @if (competency.Optional)
+                        {
+                               <div class="card-filter-tag">
+                                    <strong class="nhsuk-tag nhsuk-tag--blue">Optional</strong>
+                                </div> 
+                        }
+                        </div>
                         <div class="nhsuk-grid-column-full">
                             <partial name="_CompetencyFlags"
                                      model="competency.CompetencyFlags" />
