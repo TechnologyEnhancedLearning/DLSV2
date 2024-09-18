@@ -194,6 +194,8 @@ namespace DigitalLearningSolutions.Web.Services
            string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
            );
         void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
+        void DeactivateAdminAccount(int userId, int centreId);
+        int? CheckDelegateIsActive(int delegateId);
     }
 
     public class UserService : IUserService
@@ -955,6 +957,14 @@ namespace DigitalLearningSolutions.Web.Services
         public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
         {
             userDataService.UpdateUserDetailsAccount(firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId);
+        }
+        public void DeactivateAdminAccount(int userId, int centreId)
+        {
+            userDataService.DeactivateAdminAccount(userId, centreId);
+        }
+        public int? CheckDelegateIsActive(int delegateId)
+        {
+            return userDataService.CheckDelegateIsActive(delegateId);
         }
     }
 }
