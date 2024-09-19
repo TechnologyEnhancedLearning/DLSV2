@@ -23,7 +23,7 @@
 <form method="post" asp-action="AddOptionalCompetencies" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
     <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-            <h1 id="page-heading" class="nhsuk-heading-xl">Add optional proficiency to your assessment?</h1>
+            <h1 id="page-heading" class="nhsuk-heading-xl">Add optional @Model.VocabPlural().ToLower() to your assessment?</h1>
         </div>
         <div class="nhsuk-grid-column-two-thirds">
             <p class="nhsuk-u-padding-top-5">During your assessment you will need to add one or more optional proficiencies to your assessment to be certified within your role</p>
