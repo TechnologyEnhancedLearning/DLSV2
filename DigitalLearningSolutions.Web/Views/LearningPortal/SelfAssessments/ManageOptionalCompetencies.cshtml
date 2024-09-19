@@ -1,13 +1,26 @@
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using DigitalLearningSolutions.Web.Extensions
 @model ManageOptionalCompetenciesViewModel
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
     ViewData["Title"] = "Self Assessment - Optional Proficiencies";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
+    var backLinkData = Html.GetRouteValues();
 }
-
-@section breadcrumbs {
+@if (ViewBag.FromAddOptionalPage != null)
+{
+    @section breadcrumbs {
+    <li class="nhsuk-breadcrumb__item">
+        <div style="max-height:10px">
+            <vc:back-link asp-controller="LearningPortal" asp-action="AddOptionalCompetencies" asp-all-route-data="@backLinkData" link-text="Go back" />
+        </div>
+    </li>
+    }
+}
+else
+{
+    @section breadcrumbs {
     <li class="nhsuk-breadcrumb__item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
     </li>
@@ -15,17 +28,32 @@
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural() home</a>
     </li>
     <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
+    }
 }
+
 
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
-           asp-route-vocabulary="@Model.VocabPlural()"
-           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-            Back to @Model.VocabPlural()
-        </a>
-    </p>
+    @if (ViewBag.FromAddOptionalPage != null)
+    {
+        <p class="nhsuk-breadcrumb__back">
+            <a class="nhsuk-breadcrumb__backlink" asp-action="AddOptionalCompetencies"
+               asp-route-vocabulary="@Model.VocabPlural()"
+               asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+                Back to add optional @Model.VocabPlural().ToLower()?
+            </a>
+        </p>
+    }
+    else
+    {
+        <p class="nhsuk-breadcrumb__back">
+            <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+               asp-route-vocabulary="@Model.VocabPlural()"
+               asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+                Back to @Model.VocabPlural()
+            </a>
+        </p>
+    }
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
@@ -96,14 +124,28 @@
 </form>
 
 <div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link"
-       asp-action="SelfAssessmentOverview"
-       asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-        </svg>
-        Cancel
-    </a>
+    @if (ViewBag.FromAddOptionalPage != null)
+    {
+        <a class="nhsuk-back-link__link"
+           asp-action="AddOptionalCompetencies"
+           asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    }
+    else
+    {
+        <a class="nhsuk-back-link__link"
+           asp-action="SelfAssessmentOverview"
+           asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    }
 </div>
 
 @section scripts {
