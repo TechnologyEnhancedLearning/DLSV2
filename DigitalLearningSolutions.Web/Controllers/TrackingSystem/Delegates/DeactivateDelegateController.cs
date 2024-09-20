@@ -86,7 +86,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             if (adminAccount != null)
             {
                 var adminentity = new AdminEntity(adminAccount, userEntity.UserAccount, null);
-                roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false)
+                roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false && s.DisplayText != "Active")
                                                 .Select(d => d.DisplayText).ToList<string>();
             }
             return roles;
