@@ -254,32 +254,35 @@
                                         }
                                     </tbody>
                                 </table>
-                                <h2 class="heading2">Achievements</h2>
-                                <h4 class="heading4">The following post learning assessments have been passed:</h4>
-                                <br />
-                                <table role="table" class="table table-striped nhsuk-lede-text--small">
-                                    <tr>
-                                        <th align="left">
-                                            Assessment
-                                        </th>
-                                        <th align="left">
-                                            Outcome
-                                        </th>
-                                    </tr>
-                                    <tbody>
-                                        @foreach (var entry in Model.SectionDetails.Where(pass => pass.PLPassed))
-                                        {
-                                            <tr>
-                                                <td>
-                                                    @entry.SectionName
-                                                </td>
-                                                <td style="color:#0e6935;font-weight:normal;">
-                                                    @("PASSED")
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
+                                @if (Model.SectionDetails.Where(pass => pass.PLPassed).Any())
+                                {
+                                    <h2 class="heading2">Achievements</h2>
+                                    <h4 class="heading4">The following post learning assessments have been passed:</h4>
+                                    <br />
+                                    <table role="table" class="table table-striped nhsuk-lede-text--small">
+                                        <tr>
+                                            <th align="left">
+                                                Assessment
+                                            </th>
+                                            <th align="left">
+                                                Outcome
+                                            </th>
+                                        </tr>
+                                        <tbody>
+                                            @foreach (var entry in Model.SectionDetails.Where(pass => pass.PLPassed))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @entry.SectionName
+                                                    </td>
+                                                    <td style="color:#0e6935;font-weight:normal;">
+                                                        @("PASSED")
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
                             </div>
                         </div>
                     </div>
