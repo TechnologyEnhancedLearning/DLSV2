@@ -17,7 +17,7 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
-        public bool Registered { get; set; }
+        public bool Enrolled { get; set; }
         public bool Completed { get; set; }
         public bool Evaluated { get; set; }
     }

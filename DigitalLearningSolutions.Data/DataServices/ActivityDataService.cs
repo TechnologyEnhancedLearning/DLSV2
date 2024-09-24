@@ -151,7 +151,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     da.Answer4,
                     da.Answer5,
                     da.Answer6,
-                    al.Registered,
+                    al.Registered AS Enrolled,
                     al.Completed,
                     al.Evaluated
                     FROM   Applications AS a INNER JOIN
