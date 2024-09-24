@@ -143,7 +143,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     c.CustomisationName,
                     u.FirstName,
                     u.LastName,
-                    u.PrimaryEmail,
+                    CASE WHEN COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%@%' THEN COALESCE(ucd.Email, u.PrimaryEmail) ELSE '' END AS EmailAddress,
                     da.CandidateNumber AS DelegateId,
                     da.Answer1,
                     da.Answer2,
@@ -158,7 +158,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                                  tActivityLog AS al ON a.ApplicationID = al.ApplicationID INNER JOIN
                                  Users AS u INNER JOIN
                                  DelegateAccounts AS da ON u.ID = da.UserID ON al.CandidateID = da.ID AND al.CentreID = da.CentreID INNER JOIN
-                                 Customisations AS c ON al.CustomisationID = c.CustomisationID
+                                 Customisations AS c ON al.CustomisationID = c.CustomisationID LEFT OUTER JOIN
+                                 UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = al.CentreID
                     WHERE (al.LogDate >= @startDate) AND (@endDate IS NULL OR
                                  al.LogDate <= @endDate) AND (al.CentreID = @centreId) AND (@jobGroupId IS NULL OR
                                  al.JobGroupID = @jobGroupId) AND (@customisationId IS NULL OR
