@@ -57,11 +57,29 @@
 
         public int UpdateDelegateSessionDuration(int sessionId, DateTime currentUtcTime)
         {
-            return connection.Execute(
-                @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, @currentUtcTime)
-                   WHERE [SessionID] = @sessionId AND Active = 1;",
-                new { sessionId, currentUtcTime }
-            );
+            int retryCount = 3;
+            bool success = false;
+            var rowsCount = 0;
+            while (retryCount > 0 && !success)
+            {
+                try
+                {
+                    rowsCount = connection.Execute(
+                                @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, @currentUtcTime)
+                                WHERE [SessionID] = @sessionId AND Active = 1;",
+                                new { sessionId, currentUtcTime });
+                    success = true;
+                }
+                catch (Exception)
+                {
+                    retryCount--;
+                    if (retryCount == 0)
+                    {
+                        throw;
+                    }
+                }
+            }
+            return rowsCount;
         }
 
         public int StartAdminSession(int adminId)
