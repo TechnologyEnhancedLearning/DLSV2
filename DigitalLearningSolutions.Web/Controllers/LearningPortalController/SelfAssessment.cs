@@ -23,10 +23,6 @@
     using Microsoft.Extensions.Logging;
     using GDS.MultiPageFormData.Enums;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
-    using DocumentFormat.OpenXml.EMMA;
-    using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Models.Common;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -427,6 +423,52 @@
         }
 
         [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/AddOptional")]
+        public IActionResult AddOptionalCompetencies(int selfAssessmentId, string vocabulary)
+        {
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
+            if (assessment == null)
+            {
+                logger.LogWarning(
+                    $"Attempt to display self assessment overview for user {delegateUserId} with no self assessment"
+                );
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+
+            var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
+            if (optionalCompetencies.Any())
+            {
+                if (!selfAssessmentService.HasMinimumOptionalCompetencies(selfAssessmentId, delegateUserId))
+                {
+                    var model = new AddOptionalCompetenciesViewModel { SelfAssessment = assessment };
+                    return View("SelfAssessments/AddOptionalCompetencies", model);
+                }
+            }
+
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
+        }
+
+        [HttpPost]
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/AddOptional")]
+        public IActionResult AddOptionalCompetencies(string vocabulary, int selfAssessmentId)
+        {
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
+            if (assessment == null)
+            {
+                logger.LogWarning(
+                    $"Attempt to display self assessment overview for user {delegateUserId} with no self assessment"
+                );
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+
+            TempData["FromAddOptional"] = "true";
+
+            return RedirectToAction("ManageOptionalCompetencies", new { selfAssessmentId, vocabulary });
+        }
+
+        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}")]
         public IActionResult SelfAssessmentOverview(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, SearchSelfAssessmentOverviewViewModel searchModel = null)
@@ -479,7 +521,7 @@
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = Math.Max(competencies.Count(), 1),
                 NumberOfOptionalCompetencies = optionalCompetencies.Count(),
-                NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment ) ,
+                NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment),
                 SupervisorSignOffs = supervisorSignOffs,
                 SearchViewModel = searchViewModel
             };
@@ -1463,6 +1505,13 @@
                 CompetencyGroups = optionalCompetencies.GroupBy(competency => competency.CompetencyGroup),
                 IncludedSelfAssessmentStructureIds = includedSelfAssessmentStructureIds,
             };
+
+            if (TempData["FromAddOptional"] != null)
+            {
+                ViewBag.FromAddOptionalPage = "true";
+                TempData.Remove("FromAddOptional");
+            }
+
             return View("SelfAssessments/ManageOptionalCompetencies", model);
         }
 
@@ -1645,7 +1694,7 @@
                 );
         }
 
-      
+
         [Route("/LearningPortal/selfAssessments/{CandidateAssessmentId:int}/{vocabulary}/Certificate")]
 
         public IActionResult CompetencySelfAssessmentCertificate(int CandidateAssessmentId, string vocabulary)
@@ -1654,12 +1703,12 @@
             var adminId = User.GetAdminId();
             var userId = User.GetUserIdKnownNotNull();
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(CandidateAssessmentId);
-            if ((competencymaindata == null)|| ( competencymaindata.LearnerId != User.GetUserIdKnownNotNull()) || (CandidateAssessmentId == 0) || (userId != competencymaindata.LearnerId))
+            if ((competencymaindata == null) || (competencymaindata.LearnerId != User.GetUserIdKnownNotNull()) || (CandidateAssessmentId == 0) || (userId != competencymaindata.LearnerId))
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
             var delegateUserId = competencymaindata.LearnerId;
-             var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
+            var recentResults = selfAssessmentService.GetMostRecentResults(competencymaindata.SelfAssessmentID, competencymaindata.LearnerDelegateAccountId).ToList();
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(competencymaindata.SelfAssessmentID, delegateUserId);
             if (!CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs))
             {
@@ -1723,7 +1772,7 @@
             if (vocabulary == "Proficiencies")
             {
                 var userId = User.GetUserIdKnownNotNull();
-                if(userId != competencymaindata.LearnerId ) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+                if (userId != competencymaindata.LearnerId) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
 
             }
             if (vocabulary == "ProfileAssessment")

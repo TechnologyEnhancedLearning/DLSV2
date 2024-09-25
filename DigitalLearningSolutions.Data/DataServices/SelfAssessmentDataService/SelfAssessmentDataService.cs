@@ -171,6 +171,7 @@
         ActivitySummaryCompetencySelfAssesment? GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
+        bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -728,6 +729,25 @@
                 new { selfAssessmentId, centreId }
             );
             return ResultCount > 0;
+        }
+
+        public bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId)
+        {
+            return connection.ExecuteScalar<bool>(
+                        @"SELECT CASE WHEN COUNT(SAS.ID)>=(SELECT MinimumOptionalCompetencies FROM SelfAssessments WHERE ID = @selfAssessmentId) 
+			                        THEN 1 ELSE 0 END AS HasMinimumOptionalCompetencies
+	                        FROM CandidateAssessmentOptionalCompetencies AS CAOC
+		                        INNER JOIN CandidateAssessments  AS CA
+			                        ON CAOC.CandidateAssessmentID = CA.ID AND CA.SelfAssessmentID = @selfAssessmentId
+			                        AND CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL
+		                        INNER JOIN SelfAssessmentStructure AS SAS
+			                        ON CAOC.CompetencyID = SAS.CompetencyID AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
+			                        AND SAS.SelfAssessmentID = @selfAssessmentId
+		                        INNER JOIN SelfAssessments AS SA
+			                        ON SAS.SelfAssessmentID = SA.ID					
+	                        WHERE (CAOC.IncludedInSelfAssessment = 1)",
+                        new { selfAssessmentId, delegateUserId }
+                    );
         }
     }
 }
