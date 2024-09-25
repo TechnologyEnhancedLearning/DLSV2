@@ -42,7 +42,7 @@
                 { "exp", new DateTimeOffset(DateTime.UtcNow.AddMinutes(5)).ToUnixTimeSeconds() },
                 { "sub", user },
                 { "scp", new[] { "tableau:views:embed" } },
-                { "UsersPrimaryEmail", email}
+                { "Email", email}
         };
             var token = new JwtSecurityToken(header, payload);
             var tokenHandler = new JwtSecurityTokenHandler();
