@@ -1,4 +1,5 @@
-﻿@{
+﻿@using DigitalLearningSolutions.Web.Helpers
+@{
     var tableauServerUrl = ViewBag.TableauServerUrl;
     var workbookName = ViewBag.WorkbookName;
     var viewName = ViewBag.ViewName;
@@ -16,11 +17,17 @@
     </a>
 </div>
 <h1>@ViewData["Title"]</h1>
+<feature name="@(FeatureFlags.TableauSelfAssessmentDashboards)">
     <tableau-viz id='tableau-viz'
                  src='@srcUrl' token='@jwtToken' toolbar='bottom'>
+        If the dashboard doesn't appear after a few seconds, <a href="#">reload the page</a>
     </tableau-viz>
-@section scripts {
-    @* We are not using Yarn/npm for the Tableau JS becaue of errors during installation relating to a missing dependency *@
-    <script type="module" src="@tableauServerUrl/javascripts/api/tableau.embedding.3.latest.min.js"></script>
-}
-
+    @section scripts {
+        @* We are not using Yarn/npm for the Tableau JS becaue of errors during installation relating to a missing dependency *@
+        <script type="module" src="@tableauServerUrl/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+    }
+</feature>
+<feature name="@(FeatureFlags.TableauSelfAssessmentDashboards)" negate="true">
+    <h2>Oops! We are still working on this area of the site</h2>
+    <p class="nhsuk-lede-text">This feature is under development and should be available soon.</p>
+</feature>
