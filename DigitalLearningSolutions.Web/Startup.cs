@@ -46,21 +46,13 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-    using Microsoft.IdentityModel.Tokens;
-    using Microsoft.AspNetCore.Http;
-    using System.Linq;
     using Microsoft.AspNetCore.Identity;
-    using AspNetCoreRateLimit;
     using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
     using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
     using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
     using System;
     using IsolationLevel = System.Transactions.IsolationLevel;
-    using System.Collections.Concurrent;
     using Serilog;
-    using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
-    using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
-    using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
 
     public class Startup
     {
@@ -560,6 +552,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<ILearningHubReportApiClient, LearningHubReportApiClient>();
             services.AddScoped<IFreshdeskApiClient, FreshdeskApiClient>();
             services.AddScoped<ILearningHubUserApiClient, LearningHubUserApiClient>();
+            services.AddScoped<ITableauConnectionHelperService, TableauConnectionHelper>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
@@ -592,12 +585,13 @@ namespace DigitalLearningSolutions.Web
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
         {
+            var tableauServerUrl = config.GetTableauSiteUrl();
             app.UseMiddleware<DLSIPRateLimitMiddleware>();
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("content-security-policy",
                     "default-src 'self'; " +
-                    "script-src 'self' 'unsafe-hashes' 'sha256-oywvD6W6okwID679n4cvPJtWLowSS70Pz87v1ryS0DU=' 'sha256-kbHtQyYDQKz4SWMQ8OHVol3EC0t3tHEJFPCSwNG9NxQ' 'sha256-YoDy5WvNzQHMq2kYTFhDYiGnEgPrvAY5Il6eUu/P4xY=' 'sha256-/n13APBYdqlQW71ZpWflMB/QoXNSUKDxZk1rgZc+Jz8=' https://script.hotjar.com https://www.google-analytics.com https://static.hotjar.com https://www.googletagmanager.com https://cdnjs.cloudflare.com 'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=' 'sha256-VQKp2qxuvQmMpqE/U/ASQ0ZQ0pIDvC3dgQPPCqDlvBo=';" +
+                    $"script-src 'self' 'nonce-random772362' https://script.hotjar.com https://www.google-analytics.com https://static.hotjar.com https://www.googletagmanager.com https://cdnjs.cloudflare.com {tableauServerUrl} 'unsafe-hashes' 'sha256-oywvD6W6okwID679n4cvPJtWLowSS70Pz87v1ryS0DU=' 'sha256-kbHtQyYDQKz4SWMQ8OHVol3EC0t3tHEJFPCSwNG9NxQ' 'sha256-YoDy5WvNzQHMq2kYTFhDYiGnEgPrvAY5Il6eUu/P4xY=' 'sha256-/n13APBYdqlQW71ZpWflMB/QoXNSUKDxZk1rgZc+Jz8='   'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=' 'sha256-VQKp2qxuvQmMpqE/U/ASQ0ZQ0pIDvC3dgQPPCqDlvBo=';" +
                     "style-src 'self' 'unsafe-inline' https://use.fontawesome.com; " +
                     "font-src https://script.hotjar.com https://assets.nhs.uk/; " +
                     "connect-src 'self' http: ws:; " +

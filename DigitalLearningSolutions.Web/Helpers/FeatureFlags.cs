@@ -14,5 +14,6 @@
         public const string UserFeedbackBar = "UserFeedbackBar";
         public const string ShowSelfAssessmentProgressButtons = "ShowSelfAssessmentProgressButtons";
         public const string LoginWithLearningHub = "LoginWithLearningHub";
+        public const string TableauSelfAssessmentDashboards = "TableauSelfAssessmentDashboards";
     }
 }
