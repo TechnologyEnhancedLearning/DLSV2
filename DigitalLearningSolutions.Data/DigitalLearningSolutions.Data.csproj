@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.95.4" />
+    <PackageReference Include="ClosedXML" Version="0.104.1" />
     <PackageReference Include="Dapper" Version="2.1.24" />
     <PackageReference Include="Dapper.FluentMap" Version="2.0.0" />
     <PackageReference Include="Freshdesk.Api" Version="0.13.6" />
