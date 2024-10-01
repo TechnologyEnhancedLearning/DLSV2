@@ -143,7 +143,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     c.CustomisationName,
                     u.FirstName,
                     u.LastName,
-                    CASE WHEN COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%@%' THEN COALESCE(ucd.Email, u.PrimaryEmail) ELSE '' END AS EmailAddress,
+                    COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
                     da.CandidateNumber AS DelegateId,
                     da.Answer1,
                     da.Answer2,
@@ -166,7 +166,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                                  al.CustomisationID = @customisationId) AND (@courseCategoryId IS NULL OR
                                  al.CourseCategoryID = @courseCategoryId) AND (al.Registered = 1 OR
                                  al.Completed = 1 OR
-                                 al.Evaluated = 1) AND EXISTS
+                                 al.Evaluated = 1) AND
+                          (u.PrimaryEmail like '%_@_%' OR ucd.Email IS NOT NULL) AND EXISTS
                                      (SELECT ApplicationID
                                     FROM    Applications AS ap
                                     WHERE (ApplicationID = al.ApplicationID) AND (DefaultContentTypeID <> 4))
