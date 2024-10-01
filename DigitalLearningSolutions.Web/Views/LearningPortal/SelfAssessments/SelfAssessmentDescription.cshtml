@@ -48,7 +48,7 @@ else
 
 @if (Model.LinearNavigation)
 {
-    <a role="button" class="nhsuk-button @(Model.UserBookmark != null || bookmarkIsRelevant ? "nhsuk-button--secondary" : "") trigger-loader" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
+    <a role="button" class="nhsuk-button @(Model.UserBookmark != null || bookmarkIsRelevant ? "nhsuk-button--secondary" : "") trigger-loader" asp-action="AddOptionalCompetencies" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
     @if (Model.UserBookmark != null)
     {
         if (bookmarkIsRelevant)
