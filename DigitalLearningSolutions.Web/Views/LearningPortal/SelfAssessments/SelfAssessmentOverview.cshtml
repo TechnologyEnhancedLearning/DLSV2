@@ -65,7 +65,7 @@
             </div>
         }
         <partial name="_OverviewActionButtons.cshtml" model=Model />
-        @if (competencyQuestionsSummary == competencyVerifiedSummary)
+        @if ((competencyQuestionsSummary == competencyVerifiedSummary) && (Model.NumberOfSelfAssessedOptionalCompetencies <= Model.SelfAssessment.MinimumOptionalCompetencies))
         {
             <div class="nhsuk-warning-callout">
                 <h3 class="nhsuk-warning-callout__label">
@@ -175,7 +175,7 @@
                 <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
                 <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs"
                          view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", competencySummaries.Sum(c => (int)c["questionsCount"]) == competencySummaries.Sum(c => (int)c["verifiedCount"]) }})" />
-                @if ((Model.AllQuestionsVerifiedOrNotRequired) && (Model.NumberOfSelfAssessedOptionalCompetencies >= Model.SelfAssessment.MinimumOptionalCompetencies))
+                @if (Model.AllQuestionsVerifiedOrNotRequired)
                 {
                     @if (!Model.SupervisorSignOffs.Any())
                     {
