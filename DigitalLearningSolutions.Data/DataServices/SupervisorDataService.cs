@@ -263,16 +263,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             }
             else
             {
-                if (supervisorAdminId == null)
-                {
-                    supervisorAdminId = (int?)connection.ExecuteScalar(
-                    @"SELECT AdminID FROM AdminUsers WHERE Email = @supervisorEmail AND Active = 1 AND CentreID = @centreId", new { supervisorEmail, centreId }
-                    );
-                }
-                if (supervisorAdminId != null)
-                {
-                    connection.Execute(@"UPDATE AdminUsers SET Supervisor = 1 WHERE AdminID = @supervisorAdminId AND Supervisor = 0", new { supervisorAdminId });
-                }
                 var numberOfAffectedRows = connection.Execute(
                     @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, DelegateUserID, SupervisorEmail, AddedByDelegate)
                     VALUES (@supervisorAdminId, @delegateEmail, @delegateUserId, @supervisorEmail, @addedByDelegate)",
