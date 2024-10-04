@@ -54,6 +54,10 @@
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            if (!supervisorDelegateDetails.Any())
+            {
+                supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(adminId);
+            }
             var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
             var allSupervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
                 supervisor =>
@@ -312,7 +316,7 @@
         public IActionResult DelegateProfileAssessments(int supervisorDelegateId, int delegateUserId = 0)
         {
             var adminId = GetAdminId();
-            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsByIdWithoutRemoveClause(supervisorDelegateId, adminId, delegateUserId);
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
