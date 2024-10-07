@@ -140,7 +140,7 @@
                     last.DateInformation.GetDateRangeLabel(
                         DateHelper.StandardDateFormat,
                         filterData.EndDate ?? clockUtility.UtcNow,
-                        true
+                        false
                     ),
                     last.Enrolments,
                     last.Completions,
