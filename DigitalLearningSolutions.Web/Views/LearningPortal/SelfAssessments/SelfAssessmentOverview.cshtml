@@ -41,7 +41,7 @@
 }
 
 @section mobilebacklink
-{
+    {
     <p class="nhsuk-breadcrumb__back">
         <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
            asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
@@ -64,10 +64,25 @@
                          view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
             </div>
         }
+        <partial name="_OverviewActionButtons.cshtml" model=Model />
+        @if ((competencyQuestionsSummary == competencyVerifiedSummary) && (Model.NumberOfSelfAssessedOptionalCompetencies <= Model.SelfAssessment.MinimumOptionalCompetencies))
+        {
+            <div class="nhsuk-warning-callout">
+                <h3 class="nhsuk-warning-callout__label">
+                    <span role="text">
+                        <span class="nhsuk-u-visually-hidden">Important: </span>
+                        You need to add optional @(Model.VocabPlural().ToLower())
+                    </span>
+                </h3>
+                <p>
+                    Your self assessment does not contain enough optional @(Model.VocabPlural().ToLower()) to request sign off.
+                    Go to Manage optional @(Model.VocabPlural().ToLower()) to choose the optional @(Model.VocabPlural().ToLower()) that you wish to include.
+                </p>
+            </div>
+        }
         <partial name="SelfAssessments/_SearchSelfAssessmentOverview"
                  model="@Model.SearchViewModel"
                  view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
-        <partial name="_OverviewActionButtons.cshtml" model=Model />
         <p><span role="alert">@Model.CompetencyGroups.Sum(g => g.Count()) matching @Model.VocabPlural().ToLower()</span></p>
         @if (Model.CompetencyGroups.Any())
         {
@@ -160,7 +175,7 @@
                 <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
                 <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs"
                          view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", competencySummaries.Sum(c => (int)c["questionsCount"]) == competencySummaries.Sum(c => (int)c["verifiedCount"]) }})" />
-                @if ((Model.AllQuestionsVerifiedOrNotRequired) && (Model.NumberOfSelfAssessedOptionalCompetencies >= Model.SelfAssessment.MinimumOptionalCompetencies))
+                @if (Model.AllQuestionsVerifiedOrNotRequired)
                 {
                     @if (!Model.SupervisorSignOffs.Any())
                     {
@@ -200,13 +215,6 @@
                         All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and confirmed,
                         before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.
                     </p>
-                    @if (competencyQuestionsSummary == competencyVerifiedSummary)
-                     {
-                    <p class="nhsuk-body-l">
-                        Your self assessment does not contain enough optional proficiencies to request sign off.
-                        Go to Manage Optional Competencies to choose the optional competencies that you wish to include..
-                    </p>
-                     }
                 }
             </div>
         }
