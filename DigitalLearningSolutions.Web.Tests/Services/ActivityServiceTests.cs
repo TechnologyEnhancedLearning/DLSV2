@@ -436,7 +436,7 @@
 
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2020-9-1"),
-                DateTime.Parse("2021-9-1"),
+                DateTime.Parse("2021-9-30"),
                 null,
                 null,
                 null,
