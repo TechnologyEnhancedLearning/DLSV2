@@ -1727,29 +1727,19 @@
             return View("SelfAssessments/CompetencySelfAssessmentCertificate", model);
         }
 
-        [Route("/LearningPortal/selfAssessments/{CandidateAssessmentId:int}/{vocabulary}/DownloadCertificate")]
-        public async Task<IActionResult> DownloadCertificate(int candidateAssessmentId, string vocabulary)
+        [Route("/LearningPortal/selfAssessments/{CandidateAssessmentId:int}/Proficiencies/DownloadCertificate")]
+        public async Task<IActionResult> DownloadCertificate(int candidateAssessmentId)
         {
             PdfReportStatusResponse pdfReportStatusResponse = new PdfReportStatusResponse();
             var delegateId = User.GetCandidateIdKnownNotNull();
+            var userId = User.GetUserIdKnownNotNull();
+
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
-            if (competencymaindata == null || candidateAssessmentId == 0)
+            if (competencymaindata == null || candidateAssessmentId == 0 || userId == 0)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            if (vocabulary == "Proficiencies")
-            {
-                var userId = User.GetUserIdKnownNotNull();
                 if (userId != competencymaindata.LearnerId) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-
-            }
-            if (vocabulary == "ProfileAssessment")
-            {
-                var adminId = User.GetAdminId();
-                var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value);
-                var checkSupervisorDelegate = supervisorDelegateDetails.Where(x => x.DelegateUserID == competencymaindata.LearnerId).FirstOrDefault();
-                if (checkSupervisorDelegate == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            }
             var delegateUserId = competencymaindata.LearnerId;
             var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
@@ -1790,7 +1780,7 @@
             return View("SelfAssessments/CompetencySelfAssessmentCertificate", model);
         }
 
-        public static string RenderRazorViewToString(Controller controller, string viewName, object model = null)
+        private static string RenderRazorViewToString(Controller controller, string viewName, object model = null)
         {
             controller.ViewData.Model = model;
             using (var sw = new StringWriter())
