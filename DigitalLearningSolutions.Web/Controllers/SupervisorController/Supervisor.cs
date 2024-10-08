@@ -1432,42 +1432,13 @@
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
             var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, null);
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(competencymaindata.SelfAssessmentID, delegateUserId);
-            if (!CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs))
+            var competencySummaries = CertificateHelper.CanViewCertificate(recentResults, supervisorSignOffs);
+            if (!competencySummaries.CanViewCertificate)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 401 });
             }
-            foreach (var competency in competencies)
-            {
-                competency.QuestionLabel = assessment.QuestionLabel;
-                foreach (var assessmentQuestion in competency.AssessmentQuestions)
-                {
-                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
-                    {
-                        assessmentQuestion.LevelDescriptors = selfAssessmentService
-                            .GetLevelDescriptorsForAssessmentQuestion(
-                                assessmentQuestion.Id,
-                                assessmentQuestion.MinValue,
-                                assessmentQuestion.MaxValue,
-                                assessmentQuestion.MinValue == 0
-                            ).ToList();
-                    }
-                }
-            }
-
-            var CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
-            var competencySummaries = from g in CompetencyGroups
-                                      let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
-                                      let selfAssessedCount = questions.Count(q => q.Result.HasValue)
-                                      let verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required))
-                                      select new
-                                      {
-                                          SelfAssessedCount = selfAssessedCount,
-                                          VerifiedCount = verifiedCount,
-                                          Questions = questions.Count()
-                                      };
-
-            int sumVerifiedCount = competencySummaries.Sum(item => item.VerifiedCount);
-            int sumQuestions = competencySummaries.Sum(item => item.Questions);
+            int sumVerifiedCount = competencySummaries.VerifiedCount;
+            int sumQuestions = competencySummaries.QuestionsCount;
             var model = new ViewModels.LearningPortal.SelfAssessments.CompetencySelfAssessmentCertificateViewModel(competencymaindata, competencycount, "Proficiencies", accessors, activitySummaryCompetencySelfAssesment, sumQuestions, sumVerifiedCount, null);
             var renderedViewHTML = RenderRazorViewToString(this, "SelfAssessments/DownloadCompetencySelfAssessmentCertificate", model);
 
