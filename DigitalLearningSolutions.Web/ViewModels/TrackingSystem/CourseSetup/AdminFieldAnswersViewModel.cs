@@ -23,7 +23,6 @@
 
         public List<string> Options => NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(OptionsString);
 
-        [Required(ErrorMessage = "Enter a response")]
         [MaxLength(100, ErrorMessage = "Response must be 100 characters or fewer")]
         public string? Answer { get; set; }
 

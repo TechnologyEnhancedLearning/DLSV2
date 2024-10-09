@@ -6,65 +6,66 @@
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit course admin field" : "Edit course admin field";
-  var cancelLinkData = Html.GetRouteValues();
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Edit course admin field" : "Edit course admin field";
+    var cancelLinkData = Html.GetRouteValues();
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new []{ nameof(EditAdminFieldViewModel.OptionsString), nameof(EditAdminFieldViewModel.Answer)})" />
-    }
-    <h1 class="nhsuk-heading-xl">Edit course admin field</h1>
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new []{ nameof(EditAdminFieldViewModel.OptionsString), nameof(EditAdminFieldViewModel.Answer)})" />
+        }
+        <h1 class="nhsuk-heading-xl">Edit course admin field</h1>
 
-    <form method="post" novalidate asp-action="EditAdminField">
-      <div class="hidden-submit">
-        <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>
-      </div>
+        <form method="post" novalidate asp-action="EditAdminField">
+            <div class="hidden-submit">
+                <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>
+            </div>
 
-      <input type="hidden" asp-for="OptionsString" />
-      <input type="hidden" asp-for="Prompt" />
-      <input type="hidden" asp-for="PromptNumber" />
+            <input type="hidden" asp-for="OptionsString" />
+            <input type="hidden" asp-for="Prompt" />
+            <input type="hidden" asp-for="PromptNumber" />
 
-      <vc:field-name-value-display display-name="Field" field-value="@Model.Prompt" />
+            <vc:field-name-value-display display-name="Field" field-value="@Model.Prompt" />
 
-      @if (string.IsNullOrEmpty(Model.OptionsString))
-      {
-        <partial name="_NoConfiguredAnswers" />
-      }
-      else
-      {
-        <partial name="_AdminFieldAnswerTable" model="Model" />
-      }
+            @if (string.IsNullOrEmpty(Model.OptionsString))
+            {
+                <partial name="_NoConfiguredAnswers" />
+            }
+            else
+            {
+                <partial name="_AdminFieldAnswerTable" model="Model" />
+            }
 
-      <div class="nhsuk-grid-row divider">
-        <div class="nhsuk-grid-column-one-half">
-          <vc:text-input asp-for="@nameof(Model.Answer)"
-                         label="Add a new response"
-                         populate-with-current-value="true"
-                         type="text"
-                         spell-check="true"
-                         autocomplete=""
-                         hint-text=""
-                         css-class="nhsuk-u-width-full"
-                         required="true" />
-          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.AddPromptAction">Add</button>
-        </div>
-      </div>
+            <div class="nhsuk-grid-row divider">
+                <div class="nhsuk-grid-column-one-half">
+                    <vc:text-input asp-for="@nameof(Model.Answer)"
+                                   label="Add a new response"
+                                   populate-with-current-value="true"
+                                   type="text"
+                                   spell-check="true"
+                                   autocomplete=""
+                                   hint-text=""
+                                   css-class="nhsuk-u-width-full"
+                                   required="false" />
+                    <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.AddPromptAction">Add</button>
+                </div>
+            </div>
 
-      <div class="nhsuk-grid-row divider">
-        <div class="nhsuk-grid-column-one-half">
-          <p class="nhsuk-label">Want to edit responses in bulk?</p>
-          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.BulkAction">Bulk edit</button>
-        </div>
-      </div>
+            <div class="nhsuk-grid-row divider">
+                <div class="nhsuk-grid-column-one-half">
+                    <p class="nhsuk-label">Want to edit responses in bulk?</p>
+                    <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.BulkAction">Bulk edit</button>
+                </div>
+            </div>
 
-      <div class="nhsuk-u-margin-bottom-3">
-        <button name="action" class="nhsuk-button" value="@AdminFieldsController.SaveAction">Save</button>
-      </div>
-    </form>
+            <div class="nhsuk-u-margin-bottom-3">
+                <button name="action" class="nhsuk-button" value="@AdminFieldsController.SaveAction">Save</button>
+            </div>
+        </form>
 
-    <vc:cancel-link asp-controller="AdminFields" asp-action="Index" asp-all-route-data="@cancelLinkData" />
-  </div>
+        <vc:cancel-link asp-controller="AdminFields" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+    </div>
 </div>
