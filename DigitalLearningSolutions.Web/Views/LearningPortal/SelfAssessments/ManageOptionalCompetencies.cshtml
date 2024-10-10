@@ -119,27 +119,23 @@ else
                                 <dl class="nhsuk-summary-list">
 
                                     @foreach (var competency in competencyGroup)
-                                    {
-                                        <div class="nhsuk-summary-list__row">
-                                            @foreach (var flag in competency.CompetencyFlags)
-                                            {
-                                                <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
-                                                    <strong class="nhsuk-tag @flag.FlagTagClass">
-                                                        @flag.FlagName
-                                                    </strong>
-                                                </span>
-                                            }
+                                    {   <div class="nhsuk-summary-list__row">
+
                                             <dd class="nhsuk-summary-list__value">
+                                                @foreach (var flag in competency.CompetencyFlags)
+                                                {
+                                                    <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                                        <strong class="nhsuk-tag @flag.FlagTagClass">
+                                                            @flag.FlagName
+                                                        </strong>
+                                                    </span>
+                                                }
                                                 @competency.Name
                                             </dd>
                                         </div>
                                     }
                                 </dl>
-
-
                             </div>
-
-
                         </details>
                     }
                     else
