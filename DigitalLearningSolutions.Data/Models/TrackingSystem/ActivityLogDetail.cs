@@ -9,7 +9,7 @@
         public string? CustomisationName { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? PrimaryEmail { get; set; }
+        public string? EmailAddress { get; set; }
         public string? DelegateId { get; set; }
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }

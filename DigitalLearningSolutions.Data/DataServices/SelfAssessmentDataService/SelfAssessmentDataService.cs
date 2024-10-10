@@ -672,8 +672,19 @@
         public void RemoveDelegateSelfAssessment(int candidateAssessmentsId)
         {
             connection.Execute(
-                @"UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID =2
-                      WHERE ID = @candidateAssessmentsId",
+                @"BEGIN TRY
+                    BEGIN TRANSACTION
+                        UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID = 2
+                            WHERE ID = @candidateAssessmentsId AND RemovedDate IS NULL
+
+                        UPDATE CandidateAssessmentSupervisors SET Removed = GETUTCDATE()
+                            WHERE CandidateAssessmentID = @candidateAssessmentsId AND Removed IS NULL
+
+                        COMMIT TRANSACTION
+                END TRY
+                BEGIN CATCH
+                    ROLLBACK TRANSACTION
+                END CATCH",
                 new { candidateAssessmentsId }
             );
         }

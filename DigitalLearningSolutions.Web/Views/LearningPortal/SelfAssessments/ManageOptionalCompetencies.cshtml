@@ -100,21 +100,47 @@ else
                 <div class="nhsuk-checkboxes">
                     @foreach (var competency in competencyGroup)
                     {
-                        <div class="nhsuk-checkboxes__item">
-                            <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.Key" id="competency-check-@competency.SelfAssessmentStructureId" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.SelfAssessmentStructureId) : false)" type="checkbox" value="@competency.SelfAssessmentStructureId">
-                            <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.SelfAssessmentStructureId">
-                                @foreach (var flag in competency.CompetencyFlags)
-                                {
-                                    <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
-                                        <strong class="nhsuk-tag @flag.FlagTagClass">
-                                            @flag.FlagName
-                                        </strong>
-                                    </span>
-                                }
+                        @if (competency.GroupOptionalCompetencies)
+                        {
+                            <div class="nhsuk-checkboxes__item">
 
-                                @competency.Name
-                            </label>
-                        </div>
+                                <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input select-all-checkbox" id="result-check-@competency.SelfAssessmentStructureId" name="resultChecked" type="checkbox" value="@competency.SelfAssessmentStructureId">
+                                <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@competency.SelfAssessmentStructureId">
+                                    <h3 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">  @competencyGroup.Key</h3>
+                                </label>
+                            </div>
+
+                            <details class="nhsuk-details">
+                                <summary class="nhsuk-details__summary nhsuk-u-padding-0">
+                                    <span class="nhsuk-u-margin-bottom-0">
+                                        <span class="nhsuk-details__summary-text"> &nbsp;&nbsp; What&rsquo;s included in the @competency.CompetencyGroup   </span>
+                                    </span>
+                                </summary>
+
+                                <div class="nhsuk-details__text nhsuk-u-margin-left-6 nhsuk-u-margin-top-2">
+                                    @(Html.Raw(@competency.Name))
+                                </div>
+                            </details>
+                            <br />
+                        }
+                        else
+                        {
+                            <div class="nhsuk-checkboxes__item">
+                                <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.Key" id="competency-check-@competency.SelfAssessmentStructureId" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.SelfAssessmentStructureId) : false)" type="checkbox" value="@competency.SelfAssessmentStructureId">
+                                <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.SelfAssessmentStructureId">
+                                    @foreach (var flag in competency.CompetencyFlags)
+                                    {
+                                        <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                            <strong class="nhsuk-tag @flag.FlagTagClass">
+                                                @flag.FlagName
+                                            </strong>
+                                        </span>
+                                    }
+
+                                    @competency.Name
+                                </label>
+                            </div>
+                        }
                     }
                 </div>
             </fieldset>
@@ -124,28 +150,14 @@ else
 </form>
 
 <div class="nhsuk-back-link">
-    @if (ViewBag.FromAddOptionalPage != null)
-    {
-        <a class="nhsuk-back-link__link"
-           asp-action="AddOptionalCompetencies"
-           asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
-            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-            </svg>
-            Cancel
-        </a>
-    }
-    else
-    {
-        <a class="nhsuk-back-link__link"
-           asp-action="SelfAssessmentOverview"
-           asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
-            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-            </svg>
-            Cancel
-        </a>
-    }
+    <a class="nhsuk-back-link__link"
+       asp-action="SelfAssessmentOverview"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
 </div>
 
 @section scripts {
