@@ -103,7 +103,7 @@ else
 
                                     <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input select-all-checkbox" id="result-check-@competencyGroup.Key" name="groupOptionalCompetenciesChecked" checked="@(competencyGroup.Any(x => x.IncludedInSelfAssessment == true) ? true : false)" type="checkbox" value="@competencyGroup.Key">
                                     <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@competencyGroup.Key">
-                                        <h3 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">  Select all @Model.VocabPlural().ToLower()</h3>
+                                        <h3>  Select all @Model.VocabPlural().ToLower()</h3>
                                     </label>
                                 </div>
 
