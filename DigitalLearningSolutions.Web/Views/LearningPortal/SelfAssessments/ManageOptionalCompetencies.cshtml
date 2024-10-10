@@ -120,26 +120,27 @@ else
 
                                     @foreach (var competency in competencyGroup)
                                     {
+                                        <div class="nhsuk-grid-row">
+                                            <div class="nhsuk-grid-column-full">
+                                                @foreach (var flag in competency.CompetencyFlags)
+                                                {
+                                                    <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                                        <strong class="nhsuk-tag @flag.FlagTagClass">
+                                                            @flag.FlagName
+                                                        </strong>
+                                                    </span>
+                                                }
+                                            </div>
+                                        </div>
                                         <div class="nhsuk-summary-list__row">
-                                            @foreach (var flag in competency.CompetencyFlags)
-                                            {
-                                                <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
-                                                    <strong class="nhsuk-tag @flag.FlagTagClass">
-                                                        @flag.FlagName
-                                                    </strong>
-                                                </span>
-                                            }
+
                                             <dd class="nhsuk-summary-list__value">
                                                 @competency.Name
                                             </dd>
                                         </div>
                                     }
                                 </dl>
-
-
                             </div>
-
-
                         </details>
                     }
                     else
