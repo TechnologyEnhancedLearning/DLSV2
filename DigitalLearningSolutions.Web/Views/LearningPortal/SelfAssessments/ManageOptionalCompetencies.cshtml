@@ -119,9 +119,9 @@ else
                                 <dl class="nhsuk-summary-list">
 
                                     @foreach (var competency in competencyGroup)
-                                    {
-                                        <div class="nhsuk-grid-row">
-                                            <div class="nhsuk-grid-column-full">
+                                    {   <div class="nhsuk-summary-list__row">
+
+                                            <dd class="nhsuk-summary-list__value">
                                                 @foreach (var flag in competency.CompetencyFlags)
                                                 {
                                                     <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
@@ -130,11 +130,6 @@ else
                                                         </strong>
                                                     </span>
                                                 }
-                                            </div>
-                                        </div>
-                                        <div class="nhsuk-summary-list__row">
-
-                                            <dd class="nhsuk-summary-list__value">
                                                 @competency.Name
                                             </dd>
                                         </div>
