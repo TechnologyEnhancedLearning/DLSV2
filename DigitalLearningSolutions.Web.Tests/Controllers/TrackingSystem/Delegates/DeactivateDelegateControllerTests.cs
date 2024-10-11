@@ -104,6 +104,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
         public void Index_post_returns_view_for_deactivate_delegate_only()
         {
             // Given
+            int? centreId = controller.User.GetCentreId();
             var formData = new DeactivateDelegateAccountViewModel
             {
                 DelegateId = 1,
@@ -118,16 +119,21 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             var result = controller.Index(formData);
 
             // Then
+            A.CallTo(() => userService.DeactivateDelegateUser(DelegateId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.DeactivateAdminAccount(formData.UserId, centreId.Value)).MustNotHaveHappened();
+
             result.Should().BeRedirectToActionResult()
                 .WithControllerName("ViewDelegate")
                 .WithActionName("Index")
                 .WithRouteValue("delegateId", formData.DelegateId);
+
         }
 
         [Test]
         public void Index_post_returns_view_for_deactivate_delegate_and_admin()
         {
             // Given
+            int? centreId = controller.User.GetCentreId();
             var formData = new DeactivateDelegateAccountViewModel
             {
                 DelegateId = 1,
@@ -142,6 +148,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             var result = controller.Index(formData);
 
             // Then
+            A.CallTo(() => userService.DeactivateDelegateUser(DelegateId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.DeactivateAdminAccount(formData.UserId, centreId.Value)).MustHaveHappenedOnceExactly();
+
             result.Should().BeRedirectToActionResult()
                 .WithControllerName("ViewDelegate")
                 .WithActionName("Index")
