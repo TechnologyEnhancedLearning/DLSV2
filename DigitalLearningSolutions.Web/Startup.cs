@@ -205,6 +205,18 @@ namespace DigitalLearningSolutions.Web
             RegisterHelpers(services);
             RegisterHttpClients(services);
             RegisterWebServiceFilters(services);
+
+            // Add CORS policy for tableau
+            services.AddCors(options =>
+            {
+                options.AddPolicy("SecurePolicy", builder =>
+                {
+                    builder.WithOrigins("https://qa.telemetry.tableausoftware.com")
+                           .WithMethods("GET", "OPTIONS")
+                           .WithHeaders("Authorization", "Content-Type")
+                           .AllowCredentials();
+                });
+            });
         }
 
         private void SetUpAuthentication(IServiceCollection services)
