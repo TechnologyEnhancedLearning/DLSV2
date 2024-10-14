@@ -114,6 +114,7 @@
 
         public IEnumerable<CentresExport> GetAllCentresForSuperAdminExport(string search, int region,
           int centreType, int contractType, string centreStatus, int exportQueryRowLimit, int currentRun);
+        Centre? CountRegisterUserByCentreId(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -323,6 +324,27 @@
                     commandTimeout: 3000
             );
             return (centreEntity, resultCount);
+        }
+
+        public Centre? CountRegisterUserByCentreId(int centreId)
+        {
+            return connection.QueryFirstOrDefault<Centre>(
+                $@"SELECT c.CentreID,
+                            c.CentreName,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone,
+                            c.Active,
+                            c.CentreTypeId,
+                            c.RegionID,
+							c.AutoRegisterManagerEmail,
+							(SELECT COUNT(da.ID) AS RegisterUser
+                 FROM    DelegateAccounts da  WHERE (da.CentreID = c.CentreID)  AND (da.Active = 1)) AS RegisterUser
+                        FROM Centres AS c
+                        WHERE c.CentreID = @centreId",
+                new { centreId }
+            );
         }
 
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()

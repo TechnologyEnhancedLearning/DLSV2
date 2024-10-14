@@ -1,7 +1,9 @@
 ﻿using DigitalLearningSolutions.Data.Enums;
+using DigitalLearningSolutions.Data.Extensions;
 using DigitalLearningSolutions.Data.Helpers;
 using DigitalLearningSolutions.Data.Models.Centres;
 using DigitalLearningSolutions.Data.Models.Courses;
+using DigitalLearningSolutions.Data.Models.Email;
 using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Extensions;
@@ -13,6 +15,7 @@ using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuratio
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Configuration;
 using Microsoft.FeatureManagement.Mvc;
 using Org.BouncyCastle.Asn1.Misc;
 using System;
@@ -35,8 +38,14 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         private readonly ICourseService courseService;
         private readonly ICentresDownloadFileService centresDownloadFileService;
         private readonly ICentreSelfAssessmentsService centreSelfAssessmentsService;
+        private readonly IPasswordResetService passwordResetService;
+        private readonly IConfiguration config;
+        private readonly IConfigService configService;
+
+
         public CentresController(ICentresService centresService, ICentreApplicationsService centreApplicationsService, ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IRegionService regionService, IContractTypesService contractTypesService, ICourseService courseService, ICentresDownloadFileService centresDownloadFileService, ICentreSelfAssessmentsService centreSelfAssessmentsService)
+            IRegionService regionService, IContractTypesService contractTypesService, ICourseService courseService, ICentresDownloadFileService centresDownloadFileService,
+            ICentreSelfAssessmentsService centreSelfAssessmentsService, IPasswordResetService passwordResetService, IConfiguration config, IConfigService configService)
         {
             this.centresService = centresService;
             this.centreApplicationsService = centreApplicationsService;
@@ -46,6 +55,9 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             this.courseService = courseService;
             this.centresDownloadFileService = centresDownloadFileService;
             this.centreSelfAssessmentsService = centreSelfAssessmentsService;
+            this.passwordResetService = passwordResetService;
+            this.config = config;
+            this.configService = configService;
         }
 
         [Route("SuperAdmin/Centres/{page=0:int}")]
@@ -121,7 +133,20 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 null,
                 new PaginationOptions(page, itemsPerPage)
             );
-
+            var modifiedCentres = centres.Select(item =>
+            {
+                var centreEntity = this.centresService.UpdateCentreWithCounts(item);
+                if (centreEntity.Centre.RegisterUser == 0 && centreEntity.Centre.AutoRegisterManagerEmail != null)
+                {
+                    var baseUrl = config.GetEmailInvite();
+                    var supportEmail = this.configService.GetConfigValue("SupportEmail");
+                    baseUrl = baseUrl.Replace("{centreId}", item.Centre.CentreId.ToString());
+                    Email welcomeEmail = this.passwordResetService.GenerateEmailInviteForCentreManager(centreEntity.Centre.CentreName, centreEntity.Centre.AutoRegisterManagerEmail, baseUrl, supportEmail);
+                    centreEntity.Centre.EmailInvite = "mailto:" + string.Join(",", welcomeEmail.To) + "?subject=" + welcomeEmail.Subject + "&body=" + welcomeEmail.Body.TextBody.Replace("&", "%26");
+                }
+                return centreEntity;
+            }).ToList();
+            centres = modifiedCentres;
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 centres,
                 searchSortPaginationOptions
