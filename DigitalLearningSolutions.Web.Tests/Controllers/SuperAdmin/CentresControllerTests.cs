@@ -15,7 +15,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
-using DigitalLearningSolutions.Data.DataServices;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 {
