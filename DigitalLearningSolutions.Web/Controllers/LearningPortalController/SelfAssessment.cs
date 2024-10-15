@@ -1538,6 +1538,23 @@
                     );
                 }
             }
+            if (model.GroupOptionalCompetenciesChecked != null)
+            {
+                var optionalCompetencies =
+               selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
+                foreach (var competencyGroup in model.GroupOptionalCompetenciesChecked)
+                {
+                    var IncludedSelfAssessmentStructureIds = optionalCompetencies.Where(x => x.CompetencyGroup == competencyGroup).Select(x => x.SelfAssessmentStructureId).ToList();
+                    foreach (var selfAssessmentStructureId in IncludedSelfAssessmentStructureIds)
+                    {
+                        selfAssessmentService.UpdateCandidateAssessmentOptionalCompetencies(
+                            selfAssessmentStructureId.Value,
+                            delegateUserId
+                        );
+                    }
+                }
+
+            }
 
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
         }
