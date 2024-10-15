@@ -25,7 +25,8 @@
         { "selfAssessedCount", selfAssessedCount },
         { "verifiedCount", verifiedCount }
       };
-
+    var competencyQuestionsSummary = competencySummaries.Sum(c => (int)c["questionsCount"]);
+    var competencyVerifiedSummary = competencySummaries.Sum(c => (int)c["verifiedCount"]);
     Layout = "SelfAssessments/_Layout";
     ViewData["Title"] = "Self Assessment - Proficiencies";
     ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
@@ -40,7 +41,7 @@
 }
 
 @section mobilebacklink
-{
+    {
     <p class="nhsuk-breadcrumb__back">
         <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
            asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
@@ -63,10 +64,25 @@
                          view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
             </div>
         }
+        <partial name="_OverviewActionButtons.cshtml" model=Model />
+        @if ((competencyQuestionsSummary == competencyVerifiedSummary) && (Model.NumberOfSelfAssessedOptionalCompetencies < Model.SelfAssessment.MinimumOptionalCompetencies))
+        {
+            <div class="nhsuk-warning-callout">
+                <h3 class="nhsuk-warning-callout__label">
+                    <span role="text">
+                        <span class="nhsuk-u-visually-hidden">Important: </span>
+                        You need to add optional @(Model.VocabPlural().ToLower())
+                    </span>
+                </h3>
+                <p>
+                    Your self assessment does not contain enough optional @(Model.VocabPlural().ToLower()) to request sign off.
+                    Go to Manage optional @(Model.VocabPlural().ToLower()) to choose the optional @(Model.VocabPlural().ToLower()) that you wish to include.
+                </p>
+            </div>
+        }
         <partial name="SelfAssessments/_SearchSelfAssessmentOverview"
                  model="@Model.SearchViewModel"
                  view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
-        <partial name="_OverviewActionButtons.cshtml" model=Model />
         <p><span role="alert">@Model.CompetencyGroups.Sum(g => g.Count()) matching @Model.VocabPlural().ToLower()</span></p>
         @if (Model.CompetencyGroups.Any())
         {
@@ -182,6 +198,7 @@
                     }
                     @if (!Model.SupervisorSignOffs.Where(x => x.Verified == null).Any()
                    && latestResult > latestSignoff
+                   && (Model.NumberOfSelfAssessedOptionalCompetencies >= Model.SelfAssessment.MinimumOptionalCompetencies)
                    )
                     {
                         <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"

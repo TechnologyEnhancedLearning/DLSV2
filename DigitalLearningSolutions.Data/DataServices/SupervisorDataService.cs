@@ -238,7 +238,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
 
-            int existingId = (int)connection.ExecuteScalar(
+            int existingId = Convert.ToInt32(connection.ExecuteScalar(
                 @"
                     SELECT COALESCE
                     ((SELECT Top 1 ID
@@ -253,7 +253,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     supervisorAdminId = supervisorAdminId ?? 0,
                     delegateUserId = delegateUserId ?? 0
                 }
-            );
+            ));
 
             if (existingId > 0)
             {
@@ -263,16 +263,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             }
             else
             {
-                if (supervisorAdminId == null)
-                {
-                    supervisorAdminId = (int?)connection.ExecuteScalar(
-                    @"SELECT AdminID FROM AdminUsers WHERE Email = @supervisorEmail AND Active = 1 AND CentreID = @centreId", new { supervisorEmail, centreId }
-                    );
-                }
-                if (supervisorAdminId != null)
-                {
-                    connection.Execute(@"UPDATE AdminUsers SET Supervisor = 1 WHERE AdminID = @supervisorAdminId AND Supervisor = 0", new { supervisorAdminId });
-                }
                 var numberOfAffectedRows = connection.Execute(
                     @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, DelegateUserID, SupervisorEmail, AddedByDelegate)
                     VALUES (@supervisorAdminId, @delegateEmail, @delegateUserId, @supervisorEmail, @addedByDelegate)",
@@ -285,7 +275,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     return -1;
                 }
 
-                existingId = (int)connection.ExecuteScalar(
+                existingId = Convert.ToInt32(connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
                     ((SELECT ID
@@ -302,7 +292,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         supervisorAdminId = supervisorAdminId ?? 0,
                         delegateUserId = delegateUserId ?? 0
                     }
-                ); return existingId;
+                )); return existingId;
             }
         }
 
@@ -393,13 +383,21 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
         {
             return connection.Query<SupervisorForEnrolDelegate>(
-                $@"SELECT AdminID, Forename + ' ' + Surname + ' (' + Email +'),' + ' ' + CentreName AS Name, Email FROM AdminUsers AS au
-                    WHERE (Supervisor = 1) AND (CentreID = @CentreID) AND (CategoryID = 0 OR
-                         CategoryID = (SELECT au.CategoryID FROM Applications AS a INNER JOIN
-                           Customisations AS c ON a.ApplicationID = c.ApplicationID
-                            WHERE (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1)
-                            GROUP BY AdminID, Surname, Forename, Email, CentreName
-                            ORDER BY Surname, Forename",
+                $@"SELECT aa.ID AS AdminID,
+                        u.FirstName + ' ' +  u.LastName + ' (' + COALESCE(ucd.Email, u.PrimaryEmail) +')' AS Name, 
+			            COALESCE(ucd.Email, u.PrimaryEmail) AS Email 
+				FROM  AdminAccounts AS aa INNER JOIN
+                                Users AS u ON aa.UserID = u.ID INNER JOIN
+                                Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
+                                UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID
+                WHERE (aa.IsSupervisor = 1) AND (c.CentreID = @CentreID) AND 
+						(ISNULL(aa.CategoryID, 0) = 0 OR CategoryID = 
+								(SELECT aa.CategoryID FROM Applications AS a INNER JOIN
+										Customisations AS c ON a.ApplicationID = c.ApplicationID
+										WHERE (c.CustomisationID = @CustomisationID))) AND 
+							(aa.Active = 1)
+				GROUP BY aa.ID, u.LastName, u.FirstName, COALESCE(ucd.Email, u.PrimaryEmail), CentreName
+				ORDER BY u.FirstName, u.LastName",
                 new { CentreID, CustomisationID });
         }
 
@@ -794,15 +792,15 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         }
         public int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
         {
-            int candidateAssessmentId = (int)connection.ExecuteScalar(
+            int candidateAssessmentId = Convert.ToInt32(connection.ExecuteScalar(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                    WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
-              new { selfAssessmentId, delegateUserId });
+              new { selfAssessmentId, delegateUserId }));
             if (candidateAssessmentId > 0)
             {
-                var candidateAssessmentSupervisorsId = (int)connection.ExecuteScalar(
+                var candidateAssessmentSupervisorsId = Convert.ToInt32(connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
                     ((SELECT ID
@@ -810,7 +808,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         WHERE (CandidateAssessmentID = @candidateAssessmentId)
                             AND (SupervisorDelegateId = @supervisorDelegateId)                        
 							AND ((SelfAssessmentSupervisorRoleID IS NULL) OR (SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleId))), 0) AS CandidateAssessmentSupervisorID", new
-                    { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId });
+                    { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }));
 
                 if (candidateAssessmentSupervisorsId == 0)
                 {
@@ -1067,7 +1065,7 @@ WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) A
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) OR
              (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.SupportingComments IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) OR
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3)) AS MeetingCount,
-              sa.SignOffSupervisorStatement
+              sa.SignOffSupervisorStatement,ca.DelegateUserID
 FROM   NRPProfessionalGroups AS npg RIGHT OUTER JOIN
              NRPSubGroups AS nsg RIGHT OUTER JOIN
              SelfAssessmentSupervisorRoles AS sasr RIGHT OUTER JOIN

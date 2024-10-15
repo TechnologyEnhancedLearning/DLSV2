@@ -55,7 +55,10 @@
     </p>
   </nav>
 }
-
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new[] {nameof(Model.OptionalCompetenciesChecked) })" />
+}
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
@@ -170,6 +173,7 @@
           </h2>
         </legend>
         <input type="hidden" asp-for="CandidateAssessmentSupervisorVerificationId" />
+                <input type="hidden" asp-for="NumberOfSelfAssessedOptionalCompetencies" />
         <nhs-form-group nhs-validation-for="SupervisorComments">
           <vc:text-area asp-for="SupervisorComments" character-count="null" label="@(Model.SelfAssessmentResultSummary.ReviewerCommentsLabel == null ? "Reviewer comments": Model.SelfAssessmentResultSummary.ReviewerCommentsLabel.ToString())" rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
         </nhs-form-group>
@@ -201,7 +205,18 @@
             <span asp-validation-for="SignedOff" class="text-danger"></span>
           </div>
         </nhs-form-group>
-      </fieldset>
+                @if (Model.NumberOfSelfAssessedOptionalCompetencies > 0)
+                {
+                    <nhs-form-group nhs-validation-for="OptionalCompetenciesChecked">
+                        <div class="nhsuk-checkboxes__item">
+                            <input class="nhsuk-checkboxes__input" id="optional-competencies" name="OptionalCompetenciesChecked" asp-for="OptionalCompetenciesChecked" type="checkbox">
+                            <label class="nhsuk-label nhsuk-checkboxes__label" for="optional-competencies">
+                                I have reviewed the optional competencies included in this self assessment and confirm them to be appropriate to the learner’s role.
+                            </label>
+                        </div>
+                    </nhs-form-group>
+                }
+            </fieldset>
       <button class="nhsuk-button nhsuk-u-margin-bottom-0" type="submit">
         Submit
       </button>

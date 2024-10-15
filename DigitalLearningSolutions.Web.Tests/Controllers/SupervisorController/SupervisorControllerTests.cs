@@ -31,6 +31,7 @@
         private IEmailService emailService = null!;
         private IClockUtility clockUtility = null!;
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
+        private IPdfService pdfService = null!;
 
         [SetUp]
         public void Setup()
@@ -53,7 +54,7 @@
             emailService = A.Fake<IEmailService>();
             clockUtility = A.Fake<IClockUtility>();
             candidateAssessmentDownloadFileService = A.Fake<ICandidateAssessmentDownloadFileService>();
-
+            pdfService = A.Fake<IPdfService>();
             A.CallTo(() => candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(A<int>._, A<int>._, A<bool>._))
                 .Returns(new byte[] { });
         }
@@ -81,7 +82,8 @@
                    emailGenerationService,
                    emailService,
                    candidateAssessmentDownloadFileService,
-                   clockUtility
+                   clockUtility,
+                   pdfService
                );
             string expectedFileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0, 30) : selfAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
 

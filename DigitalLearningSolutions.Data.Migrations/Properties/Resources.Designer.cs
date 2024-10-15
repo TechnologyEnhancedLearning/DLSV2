@@ -2051,7 +2051,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns a list of active progress records for the candidate.
         ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
         ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[Ge [rest of string was truncated]&quot;;.
+        ///ALTER PROC [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_up {
             get {
@@ -2190,6 +2190,50 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up {
             get {
                 return ResourceManager.GetString("TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 05/09/2024 16:24:49 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4634_Alter_GetCompletedCoursesForCandidate_DOWN {
+            get {
+                return ResourceManager.GetString("TD_4634_Alter_GetCompletedCoursesForCandidate_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 05/09/2024 16:24:49 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4634_Alter_GetCompletedCoursesForCandidate_UP {
+            get {
+                return ResourceManager.GetString("TD_4634_Alter_GetCompletedCoursesForCandidate_UP", resourceCulture);
             }
         }
         

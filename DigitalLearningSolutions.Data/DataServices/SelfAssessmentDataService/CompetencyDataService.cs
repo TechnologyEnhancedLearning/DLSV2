@@ -456,7 +456,8 @@
                         CG.ID AS CompetencyGroupID,
                         'Capability' AS Vocabulary,
                         SAS.Optional,
-                        COALESCE (CAOC.IncludedInSelfAssessment, 0) AS IncludedInSelfAssessment
+                        COALESCE (CAOC.IncludedInSelfAssessment, 0) AS IncludedInSelfAssessment,
+                        SAS.GroupOptionalCompetencies 
                     FROM Competencies AS C
                     INNER JOIN CandidateAssessments AS CA
                         ON CA.SelfAssessmentID = @selfAssessmentId AND CA.DelegateUserID = @delegateUserId AND CA.RemovedDate IS NULL

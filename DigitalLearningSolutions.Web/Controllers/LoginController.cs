@@ -179,6 +179,7 @@
         {
             var userEntity = userService.GetUserById(User.GetUserIdKnownNotNull());
             var centreAccountSet = userEntity?.GetCentreAccountSet(centreId);
+            DateHelper.userTimeZone ??= User.GetUserTimeZone(CustomClaimTypes.UserTimeZone);
 
             if (centreAccountSet?.IsCentreActive != true)
             {

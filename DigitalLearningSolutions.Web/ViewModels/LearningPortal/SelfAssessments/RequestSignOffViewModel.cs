@@ -14,6 +14,11 @@
         [Required]
         [Range(1, 1, ErrorMessage = "Please tick to confirm that you understand the request sign-off statement")]
         public bool StatementChecked { get; set; }
+        [Required]
+        [Range(1, 1, ErrorMessage = "Please tick to confirm that you have include optional competencies that are appropriate to your role before requesting sign-off")]
+        public bool OptionalCompetenciesChecked { get; set; }
+        public int NumberOfSelfAssessedOptionalCompetencies { get; set; }
+
         public string VocabPlural()
         {
             if (SelfAssessment != null)
