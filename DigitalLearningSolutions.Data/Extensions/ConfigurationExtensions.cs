@@ -60,6 +60,7 @@
         private const string TableauViewName = "ViewName";
         private const string TableauSiteName = "SiteName";
         private const string TableauAuthApi = "AuthApiPath";
+        private const string EmailInvite = "EmailInvite";
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName]!;
@@ -268,6 +269,9 @@
         {
             return config[$"{TableauSectionKey}:{TableauViewName}"]!;
         }
-
+        public static string GetEmailInvite(this IConfiguration config)
+        {
+            return config[EmailInvite]!;
+        }
     }
 }

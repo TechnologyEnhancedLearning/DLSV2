@@ -43,5 +43,9 @@ namespace DigitalLearningSolutions.Data.Models.Centres
         public DateTime? ContractReviewDate { get; set; }
         public string? RegistrationEmail { get; set; }
         public bool AddITSPcourses { get; set; }
+        public int RegisterUser { get; set; }
+        public string? AutoRegisterManagerEmail { get; set; }
+        public string? EmailInvite { get; set; }
+
     }
 }
