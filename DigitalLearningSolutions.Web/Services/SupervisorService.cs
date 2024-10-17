@@ -33,6 +33,8 @@ namespace DigitalLearningSolutions.Web.Services
         SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
         IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
+        IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(int adminId);
+        SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
@@ -265,6 +267,14 @@ namespace DigitalLearningSolutions.Web.Services
         public int? ValidateDelegate(int centreId, string delegateEmail)
         {
             return supervisorDataService.ValidateDelegate(centreId, delegateEmail);
+        }
+        public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(int adminId)
+        {
+            return supervisorDataService.GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(adminId);
+        }
+        public SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId)
+        {
+            return supervisorDataService.GetSupervisorDelegateDetailsByIdWithoutRemoveClause(supervisorDelegateId,adminId, delegateUserId);
         }
     }
 }
