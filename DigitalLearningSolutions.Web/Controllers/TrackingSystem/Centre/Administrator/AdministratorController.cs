@@ -68,7 +68,7 @@
                 Request,
                 AdminFilterCookieName
             );
-
+            searchString = searchString == null ? null : searchString.Trim();
             var centreId = User.GetCentreIdKnownNotNull();
             var adminsAtCentre = userService.GetAdminsByCentreId(centreId);
             var categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
