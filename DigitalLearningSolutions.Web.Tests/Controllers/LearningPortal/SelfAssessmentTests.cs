@@ -774,5 +774,101 @@
 
             result.Should().BeViewResult().ModelAs<ManageOptionalCompetenciesViewModel>().CompetencyGroups?.ToList()[0].ToList()[1].CompetencyFlags.Count().Should().Be(0);
         }
+
+
+        [Test]
+        public void SelfAssessmentOverview_Should_Return_View_With_All_Competencies()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
+            var appliedFilterViewModel = new List<AppliedFilterViewModel>();
+            var competencies = new List<Competency>
+            {
+                new Competency { CompetencyGroup = "A", Id = 1, CompetencyGroupID = 1,SelfAssessmentStructureId=1, Optional = true },
+                new Competency { CompetencyGroup = "A", Id = 2, CompetencyGroupID = 1,SelfAssessmentStructureId=2, Optional = false },
+                new Competency { CompetencyGroup = "A", Id = 3, CompetencyGroupID = 1,SelfAssessmentStructureId=3, Optional = false },
+            };
+            var supervisorSignOffs = new List<SupervisorSignOff>();
+            var expectedModel = new SelfAssessmentOverviewViewModel
+            {
+                SelfAssessment = selfAssessment,
+                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
+                PreviousCompetencyNumber = 3,
+                SupervisorSignOffs = supervisorSignOffs,
+                SearchViewModel = new SearchSelfAssessmentOverviewViewModel("", SelfAssessmentId, selfAssessment.Vocabulary!, false, false, appliedFilterViewModel),
+                AllQuestionsVerifiedOrNotRequired = true
+            };
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
+                .Returns(selfAssessment);
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, DelegateUserId))
+                .Returns(competencies);
+
+            // When
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary!);
+
+            // Then
+            result.Should().BeViewResult()
+                .WithViewName("SelfAssessments/SelfAssessmentOverview")
+                .Model.Should().BeEquivalentTo(expectedModel);
+
+            result.Should().BeViewResult().ModelAs<SelfAssessmentOverviewViewModel>().CompetencyGroups.ToList()[0].Count().Should().Be(3);
+        }
+
+        [Test]
+        public void SelfAssessmentOverview_Should_Return_View_With_Optional_Filter_Applied()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
+            var appliedFilterViewModel = new List<AppliedFilterViewModel>
+            {
+                new AppliedFilterViewModel{DisplayText = "Optional", FilterCategory =  null!, FilterValue ="-4", TagClass = ""},
+            };
+            var search = new SearchSelfAssessmentOverviewViewModel
+            {
+                AppliedFilters = appliedFilterViewModel,
+                SelfAssessmentId = SelfAssessmentId,
+                Vocabulary = selfAssessment.Vocabulary!,
+                SearchText = "",
+                CompetencyFlags = null!,
+
+            };
+            var competencies = new List<Competency>
+            {
+                new Competency { CompetencyGroup = "A", Id = 1, CompetencyGroupID = 1,SelfAssessmentStructureId=1, Optional = true },
+                new Competency { CompetencyGroup = "A", Id = 2, CompetencyGroupID = 1,SelfAssessmentStructureId=2, Optional = false },
+                new Competency { CompetencyGroup = "A", Id = 3, CompetencyGroupID = 1,SelfAssessmentStructureId=3, Optional = false },
+            };
+            var optionalCompetencies = new List<Competency>
+            {
+                new Competency { CompetencyGroup = "A", Id = 1, CompetencyGroupID = 1,SelfAssessmentStructureId=1, Optional = true },
+            };
+            var supervisorSignOffs = new List<SupervisorSignOff>();
+            var expectedModel = new SelfAssessmentOverviewViewModel
+            {
+                SelfAssessment = selfAssessment,
+                CompetencyGroups = optionalCompetencies.GroupBy(competency => competency.CompetencyGroup),
+                PreviousCompetencyNumber = 1,
+                SupervisorSignOffs = supervisorSignOffs,
+                SearchViewModel = search,
+                AllQuestionsVerifiedOrNotRequired = true,
+                NumberOfOptionalCompetencies = 1,
+            };
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
+                .Returns(selfAssessment);
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, DelegateUserId))
+                .Returns(competencies);
+            A.CallTo(() => selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessment.Id, DelegateUserId))
+               .Returns(optionalCompetencies);
+
+            // When
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary!, searchModel: search);
+
+            // Then
+            result.Should().BeViewResult()
+                .WithViewName("SelfAssessments/SelfAssessmentOverview")
+                .Model.Should().BeEquivalentTo(expectedModel);
+
+            result.Should().BeViewResult().ModelAs<SelfAssessmentOverviewViewModel>().CompetencyGroups.ToList()[0].Count().Should().Be(1);
+        }
     }
 }
