@@ -94,7 +94,7 @@ else
                     {
 
                         <div class="nhsuk-checkboxes__item">
-                            <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input select-all-checkbox" id="result-check-@competencyGroup.Key" name="groupOptionalCompetenciesChecked" checked="@(competencyGroup.Any(x => x.IncludedInSelfAssessment == true) ? true : false)" type="checkbox" value="@competencyGroup.Key">
+                            <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input" id="result-check-@competencyGroup.Key" name="groupOptionalCompetenciesChecked" checked="@(competencyGroup.Any(x => x.IncludedInSelfAssessment == true) ? true : false)" type="checkbox" value="@competencyGroup.Key">
                             <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@competencyGroup.Key">
                                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                                     <span class="nhsuk-fieldset__heading">
@@ -145,17 +145,11 @@ else
                                 @competencyGroup.Key
                             </span>
                         </legend>
-                        <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
-                            <div class="nhsuk-grid-column-full">
-                                <a class="nhsuk-button select-all-button select-all status-tag  nhsuk-u-margin-bottom-1" role="button" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
-                                <a class="nhsuk-button select-all-button deselect-all status-tag  nhsuk-u-margin-bottom-1" role="button" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
-                            </div>
-                        </div>
                         <div class="nhsuk-checkboxes">
                             @foreach (var competency in competencyGroup)
                             {
                                 <div class="nhsuk-checkboxes__item">
-                                    <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.Key" id="competency-check-@competency.SelfAssessmentStructureId" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.SelfAssessmentStructureId) : false)" type="checkbox" value="@competency.SelfAssessmentStructureId">
+                                    <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Key" id="competency-check-@competency.SelfAssessmentStructureId" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.SelfAssessmentStructureId) : false)" type="checkbox" value="@competency.SelfAssessmentStructureId">
                                     <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.SelfAssessmentStructureId">
                                         @foreach (var flag in competency.CompetencyFlags)
                                         {
@@ -190,7 +184,3 @@ else
         Cancel
     </a>
 </div>
-
-@section scripts {
-    <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
-}
