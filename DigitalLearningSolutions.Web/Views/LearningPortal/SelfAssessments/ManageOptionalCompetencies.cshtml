@@ -8,11 +8,7 @@
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
     var backLinkData = Html.GetRouteValues();
 }
-<style>
-    .nhsuk-details__summary-text {
-        padding: 10px;
-    }
-</style>
+
 @if (ViewBag.FromAddOptionalPage != null)
 {
     @section breadcrumbs {
@@ -62,66 +58,91 @@ else
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>Choose optional @Model.VocabPlural().ToLower()</h1>
+<h1>Optional @Model.VocabPlural().ToLower()</h1>
 @if (errorHasOccurred)
 {
     <vc:error-summary order-of-property-names="@(new[] { nameof(Model.IncludedSelfAssessmentStructureIds) })" />
 }
-<h2>
-    <small>Which optional @Model.VocabPlural().ToLower() would you like to include in your self-assessment?</small>
-</h2>
-@if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null)
-{
-    <div class="nhsuk-warning-callout">
-        <h3 class="nhsuk-warning-callout__label">
-            <span role="text">
-                <span class="nhsuk-u-visually-hidden">Important: </span>
-                How to choose your optional @Model.VocabPlural().ToLower()
-            </span>
-        </h3>
-        <div>@Html.Raw(Model.SelfAssessment.ManageOptionalCompetenciesPrompt)</div>
-    </div>
-}
-<form method="post">
-    <nhs-form-group nhs-validation-for="IncludedSelfAssessmentStructureIds">
-        @foreach (var competencyGroup in Model.CompetencyGroups)
-        {
-            <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-4">
+<div class="nhsuk-u-reading-width">
+    @if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null)
+    {
+        <div class="nhsuk-warning-callout">
+            <h2 class="nhsuk-warning-callout__label">
+                <span role="text">
+                    <span class="nhsuk-u-visually-hidden">Important: </span>
+                    How to choose your optional @Model.VocabPlural().ToLower()
+                </span>
+            </h2>
+            <div>@Html.Raw(Model.SelfAssessment.ManageOptionalCompetenciesPrompt)</div>
+        </div>
+    }
+    <form method="post">
+        <nhs-form-group nhs-validation-for="IncludedSelfAssessmentStructureIds">
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend">
+                    <h2>
+                        Select your optional @Model.VocabPlural().ToLower()
+                    </h2>
+                </legend>
 
-                @if (competencyGroup.Count() > 1)
+
+                @foreach (var competencyGroup in Model.CompetencyGroups)
                 {
-                    @if (competencyGroup.Any(x => x.GroupOptionalCompetencies))
+                    @if (competencyGroup.Count() > 1)
                     {
-
-                        <div class="nhsuk-checkboxes__item">
-                            <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input select-all-checkbox" id="result-check-@competencyGroup.Key" name="groupOptionalCompetenciesChecked" checked="@(competencyGroup.Any(x => x.IncludedInSelfAssessment == true) ? true : false)" type="checkbox" value="@competencyGroup.Key">
-                            <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@competencyGroup.Key">
-                                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                                    <span class="nhsuk-fieldset__heading">
+                        @if (competencyGroup.Any(x => x.GroupOptionalCompetencies))
+                        {
+                            <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-6">
+                                <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input" id="result-check-@competencyGroup.Key" name="groupOptionalCompetenciesChecked" checked="@(competencyGroup.Any(x => x.IncludedInSelfAssessment == true) ? true : false)" type="checkbox" value="@competencyGroup.Key">
+                                <label class="nhsuk-label nhsuk-checkboxes__label heading-checkboxes__label" for="result-check-@competencyGroup.Key" aria-details="@competencyGroup.Key-details">
+                                    <h3 class="nhsuk-u-margin-bottom-2">
                                         @competencyGroup.Key
-                                    </span>
-                                </legend>
-                            </label>
-                        </div>
-                        <details class="nhsuk-details">
-                            <summary class="nhsuk-details__summary nhsuk-u-padding-0">
-                                <h3 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
-                                    <span class="nhsuk-u-margin-bottom-0">
-                                        <span class="nhsuk-details__summary-text" id="@competencyGroup.Key">
-                                            What&rsquo;s included in the @competencyGroup.Key
-                                        </span>
-                                    </span>
+                                    </h3>
+                                </label>
+                                <div class="nhsuk-checkboxes__description" id="@competencyGroup.Key-details">
+                                    <details class="nhsuk-details">
+                                        <summary class="nhsuk-details__summary">
+                                            <span class="nhsuk-details__summary-text" role="button">
+                                                What&rsquo;s included in the <span class="nhsuk-u-visually-hidden"> @competencyGroup.Key </span>group
+                                            </span>
+                                        </summary>
 
+                                        <div class="nhsuk-details__text">
+                                            <ul>
+
+                                                @foreach (var competency in competencyGroup)
+                                                {
+                                                    <li>
+                                                        @foreach (var flag in competency.CompetencyFlags)
+                                                        {
+                                                            <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                                                <strong class="nhsuk-tag @flag.FlagTagClass">
+                                                                    @flag.FlagName
+                                                                </strong>
+                                                            </span>
+                                                        }
+                                                        @competency.Name
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="nhsuk-u-margin-bottom-6">
+                                <h3>
+                                    @competencyGroup.Key
                                 </h3>
-                            </summary>
-
-                            <div class="nhsuk-details__text nhsuk-card">
-                                <dl class="nhsuk-summary-list">
-
+                                <div class="nhsuk-checkboxes">
                                     @foreach (var competency in competencyGroup)
-                                    {   <div class="nhsuk-summary-list__row">
-
-                                            <dd class="nhsuk-summary-list__value">
+                                    {
+                                        <div class="nhsuk-checkboxes__item">
+                                            <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Key" id="competency-check-@competency.SelfAssessmentStructureId" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.SelfAssessmentStructureId) : false)" type="checkbox" value="@competency.SelfAssessmentStructureId">
+                                            <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.SelfAssessmentStructureId">
                                                 @foreach (var flag in competency.CompetencyFlags)
                                                 {
                                                     <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
@@ -130,56 +151,23 @@ else
                                                         </strong>
                                                     </span>
                                                 }
+
                                                 @competency.Name
-                                            </dd>
+                                            </label>
                                         </div>
+
                                     }
-                                </dl>
-                            </div>
-                        </details>
-                    }
-                    else
-                    {
-                        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                            <span class="nhsuk-fieldset__heading">
-                                @competencyGroup.Key
-                            </span>
-                        </legend>
-                        <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
-                            <div class="nhsuk-grid-column-full">
-                                <a class="nhsuk-button select-all-button select-all status-tag  nhsuk-u-margin-bottom-1" role="button" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
-                                <a class="nhsuk-button select-all-button deselect-all status-tag  nhsuk-u-margin-bottom-1" role="button" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
-                            </div>
-                        </div>
-                        <div class="nhsuk-checkboxes">
-                            @foreach (var competency in competencyGroup)
-                            {
-                                <div class="nhsuk-checkboxes__item">
-                                    <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.Key" id="competency-check-@competency.SelfAssessmentStructureId" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.SelfAssessmentStructureId) : false)" type="checkbox" value="@competency.SelfAssessmentStructureId">
-                                    <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.SelfAssessmentStructureId">
-                                        @foreach (var flag in competency.CompetencyFlags)
-                                        {
-                                            <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
-                                                <strong class="nhsuk-tag @flag.FlagTagClass">
-                                                    @flag.FlagName
-                                                </strong>
-                                            </span>
-                                        }
-
-                                        @competency.Name
-                                    </label>
                                 </div>
-
-                            }
-                        </div>
+                            </div>
+                        }
                     }
+
                 }
             </fieldset>
-        }
-    </nhs-form-group>
-    <button class="nhsuk-button" type="submit">Submit</button>
-</form>
-
+        </nhs-form-group>
+        <button class="nhsuk-button" type="submit">Submit</button>
+    </form>
+</div>
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link"
        asp-action="SelfAssessmentOverview"
@@ -190,7 +178,3 @@ else
         Cancel
     </a>
 </div>
-
-@section scripts {
-    <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
-}
