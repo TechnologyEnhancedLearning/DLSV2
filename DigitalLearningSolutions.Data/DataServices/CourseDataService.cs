@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId);
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId, int? adminUserId);
 
         bool IsCourseCompleted(int candidateId, int customisationId);
         bool IsCourseCompleted(int candidateId, int customisationId, int progressID);
@@ -442,7 +442,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
         public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId)
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId, int? adminUserId)
         {
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
@@ -541,7 +541,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                         new { candidateAssessmentId, enrolmentMethodId, completeByDateDynamic }
                     );
             }
-                if (candidateAssessmentId > 1 && supervisorDelegateId !=0)
+
+            if (candidateAssessmentId > 1 && supervisorDelegateId !=0)
+
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
@@ -556,6 +558,23 @@ namespace DigitalLearningSolutions.Data.DataServices
 
                 connection.Execute(sqlQuery
                 , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic });
+            }
+
+            if (supervisorId > 0)
+            {
+                
+                adminUserId = Convert.ToInt32(connection.ExecuteScalar(@"SELECT UserID FROM AdminAccounts WHERE (AdminAccounts.ID = @supervisorId)",
+                    new { supervisorId })
+                    );
+
+                if (delegateUserId == adminUserId)
+                {
+                    connection.Execute(
+                            @"UPDATE CandidateAssessments SET NonReportable = 1  WHERE ID = @candidateAssessmentId",
+                            new { candidateAssessmentId }
+                        );
+
+                }
             }
 
             if (candidateAssessmentId < 1)
