@@ -326,7 +326,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     sessionEnrol.CompleteByDate,
                     (int)sessionEnrol.DelegateUserID,
                     centreId,
-                    GetAdminID()
+                    GetAdminID(),0
                     );
 
             }
