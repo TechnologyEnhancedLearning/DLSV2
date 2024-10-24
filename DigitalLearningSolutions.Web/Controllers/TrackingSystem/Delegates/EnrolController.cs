@@ -122,6 +122,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             sessionEnrol.IsSelfAssessment = selectedCourse.IsSelfAssessment;
             sessionEnrol.AssessmentVersion = selectedCourse.CurrentVersion.GetValueOrDefault();
             sessionEnrol.AssessmentName = selectedCourse.Name;
+            sessionEnrol.AssessmentCategoryID = selectedCourse.CategoryID;
 
             multiPageFormService.SetMultiPageFormData(
                 sessionEnrol,
@@ -201,7 +202,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
               MultiPageFormDataFeature.EnrolDelegateInActivity,
               TempData).GetAwaiter().GetResult();
-            var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(sessionEnrol.AssessmentID.GetValueOrDefault(), centreId.Value);
+            var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(centreId.Value, sessionEnrol.AssessmentCategoryID.Value);
             if (!sessionEnrol.IsSelfAssessment)
             {
                 var model = new EnrolSupervisorViewModel(
@@ -233,7 +234,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         {
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(MultiPageFormDataFeature.EnrolDelegateInActivity, TempData).GetAwaiter().GetResult();
-            var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(sessionEnrol.AssessmentID.Value, centreId.Value);
+            var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(centreId.Value, sessionEnrol.AssessmentCategoryID.Value);
             var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
 
             if (!ModelState.IsValid)
