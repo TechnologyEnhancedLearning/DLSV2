@@ -230,13 +230,12 @@
 				sa.SupervisorResultsReview";
 
             var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa
-                INNER JOIN CourseCategories AS cc ON sa.CategoryID = cc.CourseCategoryID
 				INNER JOIN dbo.CandidateAssessments AS ca WITH (NOLOCK) ON sa.ID = ca.SelfAssessmentID 
 				INNER JOIN dbo.CentreSelfAssessments AS csa  WITH (NOLOCK) ON sa.ID = csa.SelfAssessmentID 
                 INNER JOIN dbo.DelegateAccounts da WITH (NOLOCK) ON ca.CentreID = da.CentreID AND ca.DelegateUserID = da.UserID AND da.CentreID = csa.CentreID
                 INNER JOIN dbo.Users u WITH (NOLOCK) ON DA.UserID = u.ID
                 LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
-				LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = ca.EnrolledByAdminID AND aaEnrolledBy.CategoryID = cc.CourseCategoryID
+				LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = ca.EnrolledByAdminID 
                 LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID
                 LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
                 LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND
@@ -244,7 +243,7 @@
 
                 WHERE sa.ID = @selfAssessmentId 
                 AND da.CentreID = @centreID AND csa.CentreID = @centreID
-                AND (ca.RemovedDate IS NULL)
+                AND (ca.RemovedDate IS NULL) AND ( aaEnrolledBy.CategoryID IS NULL OR sa.CategoryID = aaEnrolledBy.CategoryID)
                 AND ( u.FirstName + ' ' + u.LastName + ' ' + COALESCE(ucd.Email, u.PrimaryEmail) + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @searchString + N'%')
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
