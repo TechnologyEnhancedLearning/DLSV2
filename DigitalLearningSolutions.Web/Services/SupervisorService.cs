@@ -32,7 +32,7 @@ namespace DigitalLearningSolutions.Web.Services
         CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId);
         SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
-        IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
+        IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CentreID, int CategoryID);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
@@ -172,9 +172,9 @@ namespace DigitalLearningSolutions.Web.Services
             return supervisorDataService.GetSupervisorDelegateDetailsForAdminId(adminId);
         }
 
-        public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
+        public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CentreID, int CategoryID)
         {
-            return supervisorDataService.GetSupervisorForEnrolDelegate(CustomisationID, CentreID);
+            return supervisorDataService.GetSupervisorForEnrolDelegate(CentreID, CategoryID);
         }
 
         public SelfAssessmentSupervisorRole? GetSupervisorRoleById(int id)

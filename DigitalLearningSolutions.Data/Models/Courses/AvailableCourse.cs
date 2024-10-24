@@ -17,6 +17,7 @@
         }
         public int DelegateStatus { get; set; }
         public bool HideInLearnerPortal { get; set; }
+        public int CategoryID { get; set; }
 
         private string? category;
         private string? topic;
