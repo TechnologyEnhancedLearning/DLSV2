@@ -35,7 +35,7 @@
         CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId);
         SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
-        IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
+        IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CentreID, int CategoryID);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
@@ -380,7 +380,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             }
         }
 
-        public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
+        public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CentreID, int CategoryID)
         {
             return connection.Query<SupervisorForEnrolDelegate>(
                 $@"SELECT aa.ID AS AdminID,
@@ -391,14 +391,11 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                                 Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
                                 UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID
                 WHERE (aa.IsSupervisor = 1) AND (c.CentreID = @CentreID) AND 
-						(ISNULL(aa.CategoryID, 0) = 0 OR CategoryID = 
-								(SELECT aa.CategoryID FROM Applications AS a INNER JOIN
-										Customisations AS c ON a.ApplicationID = c.ApplicationID
-										WHERE (c.CustomisationID = @CustomisationID))) AND 
+						(ISNULL(aa.CategoryID, 0) = 0 OR aa.CategoryID = @CategoryID) AND 
 							(aa.Active = 1)
 				GROUP BY aa.ID, u.LastName, u.FirstName, COALESCE(ucd.Email, u.PrimaryEmail), CentreName
 				ORDER BY u.FirstName, u.LastName",
-                new { CentreID, CustomisationID });
+                new { CentreID, CategoryID });
         }
 
         public bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId)
