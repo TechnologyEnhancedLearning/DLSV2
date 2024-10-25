@@ -23,7 +23,7 @@
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedSignOffs(int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId);
         DelegateSelfAssessment? GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId);
-        IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId);
+        IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId, int? categoryId);
         RoleProfile? GetRoleProfileById(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesBySelfAssessmentIdForSupervisor(int selfAssessmentId);
@@ -738,7 +738,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             }
             return numberOfAffectedRows;
         }
-        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int delegateUserId, int centreId)
+        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int delegateUserId, int centreId, int? categoryId)
         {
             return connection.Query<RoleProfile>(
                 $@"SELECT rp.ID, rp.Name AS RoleProfileName, rp.Description, rp.BrandID, rp.ParentSelfAssessmentID, rp.[National], rp.[Public], rp.CreatedByAdminID AS OwnerAdminID, rp.NRPProfessionalGroupID, rp.NRPSubGroupID, rp.NRPRoleID, rp.PublishStatusID, 0 AS UserRole, rp.CreatedDate,
@@ -759,8 +759,10 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                              (SELECT SelfAssessmentID
                              FROM    CandidateAssessments AS CA
-                             WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL))) AND ((rp.SupervisorSelfAssessmentReview = 1) OR
-                         (rp.SupervisorResultsReview = 1))", new { delegateUserId, centreId }
+                             WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL)
+                                AND (CompletedDate IS NULL)))
+                        AND ((rp.SupervisorSelfAssessmentReview = 1) OR (rp.SupervisorResultsReview = 1))
+                        AND (ISNULL(@categoryId, 0) = 0 OR rp.CategoryID = @categoryId)", new { delegateUserId, centreId, categoryId }
                 );
         }
 
