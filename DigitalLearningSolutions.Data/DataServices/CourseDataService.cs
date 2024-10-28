@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId, int? adminUserId);
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId);
 
         bool IsCourseCompleted(int candidateId, int customisationId);
         bool IsCourseCompleted(int candidateId, int customisationId, int progressID);
@@ -442,7 +442,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
         public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId, int? adminUserId)
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId)
         {
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
@@ -563,7 +563,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             if (supervisorId > 0)
             {
                 
-                adminUserId = Convert.ToInt32(connection.ExecuteScalar(@"SELECT UserID FROM AdminAccounts WHERE (AdminAccounts.ID = @supervisorId)",
+                var adminUserId = Convert.ToInt32(connection.ExecuteScalar(@"SELECT UserID FROM AdminAccounts WHERE (AdminAccounts.ID = @supervisorId)",
                     new { supervisorId })
                     );
 
