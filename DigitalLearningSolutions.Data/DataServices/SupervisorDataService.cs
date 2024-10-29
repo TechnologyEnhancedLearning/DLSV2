@@ -18,7 +18,7 @@
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId);
         SupervisorDelegate GetSupervisorDelegate(int adminId, int delegateUserId);
         int? ValidateDelegate(int centreId, string delegateEmail);
-        IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
+        IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int? adminIdCategoryId);
         DelegateSelfAssessment? GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedSignOffs(int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId);
@@ -554,7 +554,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             return true;
         }
 
-        public IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId)
+        public IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int? adminIdCategoryId)
         {
             return connection.Query<DelegateSelfAssessment>(
                 @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,CONVERT(BIT, IIF(cas.CandidateAssessmentID IS NULL, 0, 1)) AS IsAssignedToSupervisor,ca.DelegateUserID,
@@ -575,7 +575,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  RIGHT OUTER JOIN SupervisorDelegates AS sd ON sd.ID=@supervisorDelegateId
                  RIGHT OUTER JOIN AdminAccounts AS au ON au.ID = sd.SupervisorAdminID
                  WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = @supervisorDelegateId OR (cas.CandidateAssessmentID IS NULL)  AND ((sa.SupervisorSelfAssessmentReview = 1) OR
-                         (sa.SupervisorResultsReview = 1)))", new { supervisorDelegateId }
+                       (sa.SupervisorResultsReview = 1))) AND
+                       (ISNULL(@adminIdCategoryId, 0) = 0 OR sa.CategoryID = @adminIdCategoryId) ", new { supervisorDelegateId, adminIdCategoryId }
                 );
         }
         public DelegateSelfAssessment? GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId)
