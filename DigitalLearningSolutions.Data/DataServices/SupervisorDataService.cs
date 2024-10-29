@@ -23,7 +23,7 @@
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedSignOffs(int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId);
         DelegateSelfAssessment? GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId);
-        IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId);
+        IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId, int? categoryId);
         RoleProfile? GetRoleProfileById(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesBySelfAssessmentIdForSupervisor(int selfAssessmentId);
@@ -35,7 +35,7 @@
         CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId);
         SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
-        IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
+        IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CentreID, int CategoryID);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
@@ -382,7 +382,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             }
         }
 
-        public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
+        public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CentreID, int CategoryID)
         {
             return connection.Query<SupervisorForEnrolDelegate>(
                 $@"SELECT aa.ID AS AdminID,
@@ -393,14 +393,11 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                                 Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
                                 UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID
                 WHERE (aa.IsSupervisor = 1) AND (c.CentreID = @CentreID) AND 
-						(ISNULL(aa.CategoryID, 0) = 0 OR CategoryID = 
-								(SELECT aa.CategoryID FROM Applications AS a INNER JOIN
-										Customisations AS c ON a.ApplicationID = c.ApplicationID
-										WHERE (c.CustomisationID = @CustomisationID))) AND 
+						(ISNULL(aa.CategoryID, 0) = 0 OR aa.CategoryID = @CategoryID) AND 
 							(aa.Active = 1)
 				GROUP BY aa.ID, u.LastName, u.FirstName, COALESCE(ucd.Email, u.PrimaryEmail), CentreName
 				ORDER BY u.FirstName, u.LastName",
-                new { CentreID, CustomisationID });
+                new { CentreID, CategoryID });
         }
 
         public bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId)
@@ -638,7 +635,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             }
             return numberOfAffectedRows;
         }
-        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int delegateUserId, int centreId)
+        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int delegateUserId, int centreId, int? categoryId)
         {
             return connection.Query<RoleProfile>(
                 $@"SELECT rp.ID, rp.Name AS RoleProfileName, rp.Description, rp.BrandID, rp.ParentSelfAssessmentID, rp.[National], rp.[Public], rp.CreatedByAdminID AS OwnerAdminID, rp.NRPProfessionalGroupID, rp.NRPSubGroupID, rp.NRPRoleID, rp.PublishStatusID, 0 AS UserRole, rp.CreatedDate,
@@ -659,8 +656,10 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                              (SELECT SelfAssessmentID
                              FROM    CandidateAssessments AS CA
-                             WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL))) AND ((rp.SupervisorSelfAssessmentReview = 1) OR
-                         (rp.SupervisorResultsReview = 1))", new { delegateUserId, centreId }
+                             WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL)
+                                AND (CompletedDate IS NULL)))
+                        AND ((rp.SupervisorSelfAssessmentReview = 1) OR (rp.SupervisorResultsReview = 1))
+                        AND (ISNULL(@categoryId, 0) = 0 OR rp.CategoryID = @categoryId)", new { delegateUserId, centreId, categoryId }
                 );
         }
 

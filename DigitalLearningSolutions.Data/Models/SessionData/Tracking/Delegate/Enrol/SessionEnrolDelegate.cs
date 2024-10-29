@@ -16,5 +16,6 @@
         public string? SupervisorEmail { get; set; }
         public bool IsSelfAssessment { get; set; }
         public int AssessmentVersion { get; set; }
+        public int? AssessmentCategoryID { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace DigitalLearningSolutions.Web.Services
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedSignOffs(int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId);
         DelegateSelfAssessment? GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId);
-        IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId);
+        IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId, int? categoryId);
         RoleProfile? GetRoleProfileById(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesBySelfAssessmentIdForSupervisor(int selfAssessmentId);
@@ -32,7 +32,7 @@ namespace DigitalLearningSolutions.Web.Services
         CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId);
         SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
-        IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
+        IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CentreID, int CategoryID);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
@@ -77,9 +77,9 @@ namespace DigitalLearningSolutions.Web.Services
             return supervisorDataService.EnrolDelegateOnAssessment(delegateUserId, supervisorDelegateId, selfAssessmentId, completeByDate, selfAssessmentSupervisorRoleId, adminId, centreId, isLoggedInUser);
         }
 
-        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId)
+        public IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId, int? categoryId)
         {
-            return supervisorDataService.GetAvailableRoleProfilesForDelegate(candidateId, centreId);
+            return supervisorDataService.GetAvailableRoleProfilesForDelegate(candidateId, centreId, categoryId);
         }
 
         public CandidateAssessmentSupervisor? GetCandidateAssessmentSupervisor(int candidateAssessmentID, int supervisorDelegateId, int selfAssessmentSupervisorRoleId)
@@ -172,9 +172,9 @@ namespace DigitalLearningSolutions.Web.Services
             return supervisorDataService.GetSupervisorDelegateDetailsForAdminId(adminId, adminIdCategoryID);
         }
 
-        public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
+        public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CentreID, int CategoryID)
         {
-            return supervisorDataService.GetSupervisorForEnrolDelegate(CustomisationID, CentreID);
+            return supervisorDataService.GetSupervisorForEnrolDelegate(CentreID, CategoryID);
         }
 
         public SelfAssessmentSupervisorRole? GetSupervisorRoleById(int id)
