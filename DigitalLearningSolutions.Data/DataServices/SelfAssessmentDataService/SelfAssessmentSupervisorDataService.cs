@@ -103,6 +103,9 @@
             int delegateUserId
         )
         {
+            var selfAssessmentCategoryId = connection.ExecuteScalar<int>(@"SELECT CategoryID FROM SelfAssessments WHERE ID = @selfAssessmentId",
+                    new { selfAssessmentId });
+
             return connection.Query<SelfAssessmentSupervisor>(
                 @"SELECT DISTINCT
                     sd.ID AS SupervisorDelegateID,
@@ -122,8 +125,9 @@
                 WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.DelegateUserID = @delegateUserId)
 		            AND (au.Supervisor = 1 OR au.NominatedSupervisor = 1) AND (au.Active = 1)
 		            AND (ca.SelfAssessmentID <> @selfAssessmentId)
+                    AND (au.CategoryID = 0 OR au.CategoryID = @selfAssessmentCategoryId)
                 ORDER BY SupervisorName",
-                new { selfAssessmentId, delegateUserId }
+                new { selfAssessmentId, delegateUserId, selfAssessmentCategoryId }
             );
         }
 
