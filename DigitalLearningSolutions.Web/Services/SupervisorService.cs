@@ -11,7 +11,7 @@ namespace DigitalLearningSolutions.Web.Services
     {
         //GET DATA
         DashboardData? GetDashboardDataForAdminId(int adminId);
-        IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
+        IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId, int? adminIdCategoryID);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId);
         SupervisorDelegate GetSupervisorDelegate(int adminId, int delegateUserId);
         int? ValidateDelegate(int centreId, string delegateEmail);
@@ -167,9 +167,9 @@ namespace DigitalLearningSolutions.Web.Services
             return supervisorDataService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
         }
 
-        public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId)
+        public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId, int? adminIdCategoryID)
         {
-            return supervisorDataService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            return supervisorDataService.GetSupervisorDelegateDetailsForAdminId(adminId, adminIdCategoryID);
         }
 
         public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
