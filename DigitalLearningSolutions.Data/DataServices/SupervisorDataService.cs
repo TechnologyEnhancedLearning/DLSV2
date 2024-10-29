@@ -14,7 +14,7 @@
     {
         //GET DATA
         DashboardData? GetDashboardDataForAdminId(int adminId);
-        IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
+        IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId, int? adminIdCategoryID);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId);
         SupervisorDelegate GetSupervisorDelegate(int adminId, int delegateUserId);
         int? ValidateDelegate(int centreId, string delegateEmail);
@@ -160,7 +160,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 ).FirstOrDefault();
         }
 
-        public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId)
+        public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId, int? adminIdCategoryID)
         {
             return connection.Query<SupervisorDelegateDetail>(
                 $@"SELECT sd.ID, 
@@ -179,7 +179,9 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         CandidateAssessmentSupervisors AS cas ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL AND cas.SupervisorDelegateId = sd.ID INNER JOIN
                         SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID 
                         WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = sd.ID OR (cas.CandidateAssessmentID IS NULL)
-				        AND ((sa.SupervisorSelfAssessmentReview = 1) OR (sa.SupervisorResultsReview = 1)))) AS CandidateAssessmentCount, 
+				        AND ((sa.SupervisorSelfAssessmentReview = 1) OR (sa.SupervisorResultsReview = 1)))
+                        AND (ISNULL(@adminIdCategoryID, 0) = 0 OR sa.CategoryID = @adminIdCategoryID)
+                            ) AS CandidateAssessmentCount, 
 		                CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, 
 		                CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) AS DelegateIsSupervisor,             
 		                da.ID AS Expr1
@@ -212,7 +214,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     WHERE (sd.SupervisorAdminID = @adminId) AND (sd.Removed IS NULL) AND 
                      (u.ID = da.UserID OR sd.DelegateUserID IS NULL)
                     ORDER BY u.LastName, COALESCE (u.FirstName, sd.DelegateEmail)
-                    ", new { adminId }
+                    ", new { adminId, adminIdCategoryID }
                 );
         }
 
