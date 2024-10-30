@@ -205,7 +205,6 @@
         }
 
         public IEnumerable<Administrator> GetValidSupervisorsForActivity(
-            int centreId,
             int selfAssessmentId,
             int delegateUserId
         )
@@ -243,7 +242,7 @@
                         )
                         AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (Email LIKE '%@%')
                         ORDER BY Forename, Surname",
-                new { centreId, selfAssessmentId, delegateUserId }
+                new { selfAssessmentId, delegateUserId }
             );
         }
 

@@ -120,7 +120,7 @@
 
         SupervisorComment? GetSupervisorComments(int delegateUserId, int resultId);
 
-        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int delegateUserId);
+        IEnumerable<Administrator> GetValidSupervisorsForActivity(int selfAssessmentId, int delegateUserId);
 
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
 
