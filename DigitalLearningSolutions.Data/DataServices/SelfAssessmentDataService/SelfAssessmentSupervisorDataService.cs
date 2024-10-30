@@ -76,7 +76,9 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @delegateUserId)
+                            AND (ca.SelfAssessmentID = @selfAssessmentId)
+                            AND (au.CategoryID = 0 OR au.CategoryID IN (select CategoryID from SelfAssessments where ID = @selfAssessmentId))
                         ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }
             );
