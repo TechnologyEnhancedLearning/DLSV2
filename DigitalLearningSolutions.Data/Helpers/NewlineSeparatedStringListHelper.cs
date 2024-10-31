@@ -17,7 +17,10 @@
         public static string AddStringToNewlineSeparatedList(string? list, string newItem)
         {
             var options = list != null ? SplitNewlineSeparatedList(list) : new List<string>();
-            options.Add(newItem?.Trim());
+            if (!string.IsNullOrWhiteSpace(newItem))
+            {
+                options.Add(newItem.Trim());
+            }
             return JoinNewlineSeparatedList(options);
         }
 
