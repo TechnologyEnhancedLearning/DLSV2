@@ -23,13 +23,10 @@
 
     public class SupervisorControllerTests
     {
-        private const int CandidateId = 11;
         private const int DelegateUserId = 11;
         private const int SelfAssessmentId = 1;
         private const int CentreId = 2;
         public const int AdminId = 7;
-        public const int DelegateId = 2;
-        public const int UserId = 2;
         public const string EmailAddress = "email";
         private ISupervisorService supervisorService = null!;
         private ICommonService commonService = null!;
@@ -156,64 +153,13 @@
 
 
         [Test]
-        public void ReviewDelegateSelfAssessment_Should_Return_View_With_Optional_Competency_Is_True()
+        public void ReviewDelegateSelfAssessment_Should_Return_View_With_Optional_Competency()
         {
             // Given
             int candidateAssessmentId = 1;
             int supervisorDelegateId = 2;
-            var superviseDelegate = SupervisorTestHelper.CreateDefaultSupervisorDelegateDetail();
-            var delegateSelfAssessment = SupervisorTestHelper.CreateDefaultDelegateSelfAssessment();
-            var appliedFilterViewModel = new List<AppliedFilterViewModel>();
-            var competencySummaries = new CompetencySummary();
-            var search = new SearchSupervisorCompetencyViewModel();
-            var competencies = new List<Competency>
-     {
-         new Competency { CompetencyGroup = "A", Id = 1, CompetencyGroupID = 1,SelfAssessmentStructureId=1, Optional = true },
-         new Competency { CompetencyGroup = "A", Id = 2, CompetencyGroupID = 1,SelfAssessmentStructureId=1, Optional = false },
-     };
-            var expectedCompetencyGroups = competencies.GroupBy(c => c.CompetencyGroup).ToList();
-            var supervisorSignOffs = new List<SupervisorSignOff>();
-            var expectedModel = new ReviewSelfAssessmentViewModel()
-            {
-                SupervisorDelegateDetail = superviseDelegate,
-                DelegateSelfAssessment = delegateSelfAssessment,
-                CompetencyGroups = expectedCompetencyGroups,
-                IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
-                SearchViewModel = search,
-                CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Assessor") ?? false,
-                SupervisorSignOffs = supervisorSignOffs, 
-                CompetencySummaries = competencySummaries 
-            };
-            var loggedInAdmin = UserTestHelper.GetDefaultAdminEntity();
-            A.CallTo(() => userService.GetAdminById(loggedInAdmin.AdminAccount.Id)).Returns(loggedInAdmin);
-
-            A.CallTo(() => supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, AdminId, 0))
-                .Returns(superviseDelegate);
-            A.CallTo(() => supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, AdminId))
-                 .Returns(delegateSelfAssessment);
-            A.CallTo(() => selfAssessmentService.GetMostRecentResults(SelfAssessmentId, DelegateUserId))
-                .Returns(competencies);
-
-            // When
-            var result = controller.ReviewDelegateSelfAssessment(supervisorDelegateId, candidateAssessmentId, SelfAssessmentId);
-
-            // Then
-            result.Should().BeViewResult().ModelAs<ReviewSelfAssessmentViewModel>();
-
-            result.Should().BeViewResult()
-                .WithViewName("ReviewSelfAssessment")
-                .ModelAs<ReviewSelfAssessmentViewModel>()
-                .CompetencyGroups?.FirstOrDefault()?.FirstOrDefault()?.Optional.Should().Be(true);
-        }
-        [Test]
-        public void ReviewDelegateSelfAssessment_Should_Return_View_With_Optional_Competency_Is_False()
-        {
-            // Given
-            int candidateAssessmentId = 1;
-            int supervisorDelegateId = 2;
-            var superviseDelegate = SupervisorTestHelper.CreateDefaultSupervisorDelegateDetail();
-            var delegateSelfAssessment = SupervisorTestHelper.CreateDefaultDelegateSelfAssessment();
+            var superviseDelegate = SupervisorTagTestHelper.CreateDefaultSupervisorDelegateDetail();
+            var delegateSelfAssessment = SupervisorTagTestHelper.CreateDefaultDelegateSelfAssessment();
             var appliedFilterViewModel = new List<AppliedFilterViewModel>();
             var competencySummaries = new CompetencySummary();
             var search = new SearchSupervisorCompetencyViewModel();
@@ -253,9 +199,14 @@
             result.Should().BeViewResult().ModelAs<ReviewSelfAssessmentViewModel>();
 
             result.Should().BeViewResult()
-                .WithViewName("ReviewSelfAssessment")
-                .ModelAs<ReviewSelfAssessmentViewModel>()
-                .CompetencyGroups?.FirstOrDefault()?.FirstOrDefault()?.Optional.Should().Be(false);
+            .WithViewName("ReviewSelfAssessment")
+            .ModelAs<ReviewSelfAssessmentViewModel>()
+            .CompetencyGroups ?.SelectMany(group => group).FirstOrDefault(x => x.Id == 1)?.Optional.Should().Be(true);
+            result.Should().BeViewResult()
+           .WithViewName("ReviewSelfAssessment")
+           .ModelAs<ReviewSelfAssessmentViewModel>()
+           .CompetencyGroups?.SelectMany(group => group).FirstOrDefault(x => x.Id == 2)?.Optional.Should().Be(false);
         }
+       
     }
 }
