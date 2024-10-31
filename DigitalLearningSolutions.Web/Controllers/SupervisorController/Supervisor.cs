@@ -321,7 +321,7 @@
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
-            var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
+            var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, loggedInAdminUser.CategoryId);
             var model = new DelegateSelfAssessmentsViewModel()
             {
                 IsNominatedSupervisor = loggedInAdminUser?.IsSupervisor == true ? false : loggedInAdminUser?.IsNominatedSupervisor ?? false,

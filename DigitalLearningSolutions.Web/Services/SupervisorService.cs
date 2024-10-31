@@ -15,7 +15,7 @@ namespace DigitalLearningSolutions.Web.Services
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId);
         SupervisorDelegate GetSupervisorDelegate(int adminId, int delegateUserId);
         int? ValidateDelegate(int centreId, string delegateEmail);
-        IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
+        IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int? adminIdCategoryId);
         DelegateSelfAssessment? GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedSignOffs(int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId);
@@ -137,9 +137,9 @@ namespace DigitalLearningSolutions.Web.Services
             return supervisorDataService.GetSelfAssessmentResultSummary(candidateAssessmentId, supervisorDelegateId);
         }
 
-        public IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId)
+        public IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int? adminIdCategoryId)
         {
-            return supervisorDataService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
+            return supervisorDataService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminIdCategoryId);
         }
 
         public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId)
