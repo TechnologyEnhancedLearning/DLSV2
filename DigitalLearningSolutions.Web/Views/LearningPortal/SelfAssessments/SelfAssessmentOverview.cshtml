@@ -65,7 +65,7 @@
             </div>
         }
         <partial name="_OverviewActionButtons.cshtml" model=Model />
-        @if ((competencyQuestionsSummary == competencyVerifiedSummary) && (Model.NumberOfSelfAssessedOptionalCompetencies <= Model.SelfAssessment.MinimumOptionalCompetencies))
+        @if ((competencyQuestionsSummary == competencyVerifiedSummary) && (Model.NumberOfSelfAssessedOptionalCompetencies < Model.SelfAssessment.MinimumOptionalCompetencies))
         {
             <div class="nhsuk-warning-callout">
                 <h3 class="nhsuk-warning-callout__label">
@@ -198,6 +198,7 @@
                     }
                     @if (!Model.SupervisorSignOffs.Where(x => x.Verified == null).Any()
                    && latestResult > latestSignoff
+                   && (Model.NumberOfSelfAssessedOptionalCompetencies >= Model.SelfAssessment.MinimumOptionalCompetencies)
                    )
                     {
                         <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
