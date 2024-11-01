@@ -640,8 +640,11 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
                     CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID INNER JOIN
-                    Users AS u ON ca.DelegateUserID = u.ID
-                WHERE (sd.SupervisorAdminID = @adminId) AND (casv.Verified IS NULL) AND (cas.Removed IS NULL) AND (sd.Removed IS NULL)", new { adminId }
+                    Users AS u ON ca.DelegateUserID = u.ID INNER JOIN
+					AdminAccounts As aa ON sd.SupervisorAdminID = aa.ID
+                WHERE (sd.SupervisorAdminID = @adminId) AND (casv.Verified IS NULL) AND (cas.Removed IS NULL)
+                        AND (sd.Removed IS NULL)
+                        AND (aa.CategoryID is null or sa.CategoryID = aa.CategoryID)", new { adminId }
                 );
         }
         public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId)
@@ -659,8 +662,10 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 						    SELECT TOP 1 sar2.DateTime
 						    FROM SelfAssessmentResults AS sar2
 						    WHERE sar2.ID = sar.ID AND sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID AND sar2.Result != 0 ORDER BY sar2.ID DESC
-					)
+					) INNER JOIN
+		            AdminAccounts AS aa ON sd.SupervisorAdminID = aa.ID
                 WHERE (sd.SupervisorAdminID = @adminId) AND (cas.Removed IS NULL) AND (sasv.Verified IS NULL) AND (sd.Removed IS NULL)
+                        AND (aa.CategoryID is null or sa.CategoryID = aa.CategoryID)
 				GROUP BY sa.ID, ca.ID, sd.ID, u.FirstName, u.LastName, sa.Name,cast(sasv.Requested as date)", new { adminId }
                 );
         }
