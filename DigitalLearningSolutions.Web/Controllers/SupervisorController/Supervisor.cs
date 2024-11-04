@@ -1272,9 +1272,13 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/NominateSupervisor")]
         public IActionResult NominateSupervisor(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
+            var centreId = User.GetCentreIdKnownNotNull();
+            var loggedInAdmin = userService.GetAdminById(GetAdminId());
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
-            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
+            var categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery, categories, loggedInAdmin.CategoryId);
             if (TempData["NominateSupervisorError"] != null)
             {
                 if (Convert.ToBoolean(TempData["NominateSupervisorError"].ToString()))
@@ -1299,13 +1303,13 @@
                     supervisorDelegateDetail.DelegateUserID,
                     (int)User.GetCentreId()
                 );
-
+                supervisorDelegate.SelfAssessmentCategory = supervisorDelegate.SelfAssessmentCategory == 0   ? adminUser.CategoryId.Value  : supervisorDelegate.SelfAssessmentCategory;
                 var centreName = adminUser.CentreName;
 
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
                 if (supervisorDelegateDetail.DelegateUserID != null)
                 {
-                    registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId(), true);
+                    registrationService.PromoteDelegateToAdmin(adminRoles, supervisorDelegate.SelfAssessmentCategory, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId(), true);
 
                     if (delegateUser != null && adminUser != null)
                     {
