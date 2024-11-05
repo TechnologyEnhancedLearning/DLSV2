@@ -57,7 +57,8 @@
                 ON sd.SupervisorAdminID = au.AdminID
             INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID AND au.CentreID = da.CentreID AND da.Active=1
             LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID";
+                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+		   LEFT OUTER JOIN SelfAssessments sa ON sa.id  = ca.SelfAssessmentID AND sa.CategoryID = au.CategoryID";
 
         public SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int delegateUserId)
         {
