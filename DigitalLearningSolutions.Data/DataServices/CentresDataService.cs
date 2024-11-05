@@ -22,9 +22,9 @@
           string centreStatus);
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
-        CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
+        CentreSummaryForContactDisplay? GetCentreSummaryForContactDisplay(int centreId);
 
-        CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId);
+        CentreSummaryForRoleLimits? GetRoleLimitsForCentre(int centreId);
 
         void UpdateCentreRoleLimits(
             int centreId,
@@ -368,7 +368,7 @@
             );
         }
 
-        public CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId)
+        public CentreSummaryForContactDisplay? GetCentreSummaryForContactDisplay(int centreId)
         {
             return connection.QueryFirstOrDefault<CentreSummaryForContactDisplay>(
                 @"SELECT CentreID,CentreName,pwTelephone AS Telephone,pwEmail AS Email,pwWebURL AS WebUrl,pwHours AS Hours
@@ -739,7 +739,7 @@
             );
         }
 
-        public CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId)
+        public CentreSummaryForRoleLimits? GetRoleLimitsForCentre(int centreId)
         {
             return connection.QueryFirstOrDefault<CentreSummaryForRoleLimits>(
                 @"SELECT CentreId,
