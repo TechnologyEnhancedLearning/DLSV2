@@ -105,7 +105,8 @@
                emailService,
                candidateAssessmentDownloadFileService,
                clockUtility,
-               pdfService
+               pdfService,
+               courseCategoriesService
            );
             controller.ControllerContext = new ControllerContext
             { HttpContext = new DefaultHttpContext { User = user } };
@@ -158,6 +159,7 @@
             // Given
             int candidateAssessmentId = 1;
             int supervisorDelegateId = 2;
+            int? adminIdCategoryId = 0;
             var superviseDelegate = SupervisorTagTestHelper.CreateDefaultSupervisorDelegateDetail();
             var delegateSelfAssessment = SupervisorTagTestHelper.CreateDefaultDelegateSelfAssessment();
             var appliedFilterViewModel = new List<AppliedFilterViewModel>();
@@ -187,7 +189,7 @@
 
             A.CallTo(() => supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, AdminId, 0))
                 .Returns(superviseDelegate);
-            A.CallTo(() => supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, AdminId))
+            A.CallTo(() => supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, AdminId, adminIdCategoryId))
                  .Returns(delegateSelfAssessment);
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(SelfAssessmentId, DelegateUserId))
                 .Returns(competencies);
