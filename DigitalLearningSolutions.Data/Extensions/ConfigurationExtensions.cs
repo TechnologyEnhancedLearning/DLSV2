@@ -268,6 +268,5 @@
         {
             return config[$"{TableauSectionKey}:{TableauViewName}"]!;
         }
-
     }
 }

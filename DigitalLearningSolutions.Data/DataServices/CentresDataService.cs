@@ -22,9 +22,9 @@
           string centreStatus);
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
-        CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId);
+        CentreSummaryForContactDisplay? GetCentreSummaryForContactDisplay(int centreId);
 
-        CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId);
+        CentreSummaryForRoleLimits? GetRoleLimitsForCentre(int centreId);
 
         void UpdateCentreRoleLimits(
             int centreId,
@@ -114,6 +114,7 @@
 
         public IEnumerable<CentresExport> GetAllCentresForSuperAdminExport(string search, int region,
           int centreType, int contractType, string centreStatus, int exportQueryRowLimit, int currentRun);
+        Centre? CountRegisterUserByCentreId(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -325,6 +326,27 @@
             return (centreEntity, resultCount);
         }
 
+        public Centre? CountRegisterUserByCentreId(int centreId)
+        {
+            return connection.QueryFirstOrDefault<Centre>(
+                $@"SELECT c.CentreID,
+                            c.CentreName,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone,
+                            c.Active,
+                            c.CentreTypeId,
+                            c.RegionID,
+							c.AutoRegisterManagerEmail,
+							(SELECT COUNT(da.ID) AS RegisterUser
+                 FROM    DelegateAccounts da  WHERE (da.CentreID = c.CentreID)  AND (da.Active = 1)) AS RegisterUser
+                        FROM Centres AS c
+                        WHERE c.CentreID = @centreId",
+                new { centreId }
+            );
+        }
+
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
         {
             return connection.Query<CentreSummaryForFindYourCentre>(
@@ -346,7 +368,7 @@
             );
         }
 
-        public CentreSummaryForContactDisplay GetCentreSummaryForContactDisplay(int centreId)
+        public CentreSummaryForContactDisplay? GetCentreSummaryForContactDisplay(int centreId)
         {
             return connection.QueryFirstOrDefault<CentreSummaryForContactDisplay>(
                 @"SELECT CentreID,CentreName,pwTelephone AS Telephone,pwEmail AS Email,pwWebURL AS WebUrl,pwHours AS Hours
@@ -717,7 +739,7 @@
             );
         }
 
-        public CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId)
+        public CentreSummaryForRoleLimits? GetRoleLimitsForCentre(int centreId)
         {
             return connection.QueryFirstOrDefault<CentreSummaryForRoleLimits>(
                 @"SELECT CentreId,

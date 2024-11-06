@@ -100,6 +100,7 @@
             byte[]? centreSignature,
             byte[]? centreLogo
         );
+        CentreEntity UpdateCentreWithCounts(CentreEntity item);
     }
 
     public class CentresService : ICentresService
@@ -263,6 +264,13 @@
         public void UpdateCentreDetails(int centreId, string? notifyEmail, string bannerText, byte[]? centreSignature, byte[]? centreLogo)
         {
             centresDataService.UpdateCentreDetails(centreId, notifyEmail, bannerText, centreSignature, centreLogo);
+        }
+        public  CentreEntity UpdateCentreWithCounts(CentreEntity item)
+        {
+            var count = this.centresDataService.CountRegisterUserByCentreId(item.Centre.CentreId);
+            item.Centre.RegisterUser = count.RegisterUser;
+            item.Centre.AutoRegisterManagerEmail = count.AutoRegisterManagerEmail;
+            return item;
         }
     }
 }

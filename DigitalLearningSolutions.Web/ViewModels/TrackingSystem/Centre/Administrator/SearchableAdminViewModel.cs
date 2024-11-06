@@ -17,7 +17,8 @@
         )
         {
             Id = admin.AdminAccount.Id;
-            Name = admin.SearchableName;
+            Name = string.IsNullOrWhiteSpace(admin.UserAccount.FirstName) ? admin.UserAccount.LastName :
+                    $"{admin.UserAccount.LastName}, {admin.UserAccount.FirstName}";
             CategoryName = admin.AdminAccount.CategoryName ?? "All";
             EmailAddress = admin.EmailForCentreNotifications;
             IsLocked = admin.UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
