@@ -259,7 +259,7 @@
             // Then
             result.Should().BeViewResult().ModelAs<ReviewSelfAssessmentViewModel>();
 
-            var competencyGroups = result.Should().BeViewResult()
+            result.Should().BeViewResult()
             .WithViewName("ReviewSelfAssessment")
             .ModelAs<ReviewSelfAssessmentViewModel>()
             .CompetencyGroups?.Should().NotBeNull();
