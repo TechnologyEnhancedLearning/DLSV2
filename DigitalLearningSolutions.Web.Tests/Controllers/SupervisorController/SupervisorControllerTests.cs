@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Support
 {
-    using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.SupervisorController;
@@ -8,7 +7,6 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using DigitalLearningSolutions.Web.ViewModels.Supervisor;
     using FakeItEasy;
     using FluentAssertions;
