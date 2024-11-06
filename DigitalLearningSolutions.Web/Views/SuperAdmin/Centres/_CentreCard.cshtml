@@ -94,6 +94,12 @@
                     Reactivate centre
                 </a>
             }
+             @if (Model.RegisterUser == 0 && Model.AutoRegisterManagerEmail != null)
+            { 
+            <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" href="@Model.EmailInvite">
+                    Email Invite
+            </a>
+            } 
         </div>
     </details>
 </div>
