@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SelfAssessments.Export;
+    using MailKit;
     using Microsoft.Extensions.Logging;
 
     public interface ISelfAssessmentDataService
@@ -172,6 +173,7 @@
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
+        int GetSelfAssessmentCategoryId(int selfAssessmentId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -759,6 +761,14 @@
 	                        WHERE (CAOC.IncludedInSelfAssessment = 1)",
                         new { selfAssessmentId, delegateUserId }
                     );
+        }
+
+        public int GetSelfAssessmentCategoryId(int selfAssessmentId)
+        {
+            return connection.ExecuteScalar<int>(
+                @"SELECT CategoryID FROM SelfAssessments WHERE ID = @selfAssessmentId",
+                new { selfAssessmentId}
+            );
         }
     }
 }

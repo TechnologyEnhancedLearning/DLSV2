@@ -162,7 +162,7 @@
             if (isCourse == "true")
                 delegateActivities = courseService.GetDelegateCourses(searchString ?? string.Empty, centreId, categoryId, true, null, isActive, categoryName, courseTopic, hasAdminFields).ToList();
             if (isSelfAssessment == "true" && courseTopic == "Any" && hasAdminFields == "Any")
-                delegateAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
+                delegateAssessments = courseService.GetDelegateAssessmentsByCategoryId(searchString, centreId, categoryName, isActive, categoryId);
 
             delegateAssessments = UpdateCompletedCount(delegateAssessments);
 

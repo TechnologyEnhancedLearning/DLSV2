@@ -137,6 +137,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields);
 
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive);
+
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentreByCategoryId(string searchString, int centreId, string categoryName, string isActive, int? categoryId);
         bool IsSelfEnrollmentAllowed(int customisationId);
         Customisation? GetCourse(int customisationId);
     }
@@ -1992,6 +1994,46 @@ namespace DigitalLearningSolutions.Data.DataServices
 
             IEnumerable<DelegateAssessmentStatistics> delegateAssessmentStatistics = connection.Query<DelegateAssessmentStatistics>(assessmentStatisticsSelectQuery,
                 new { searchString, centreId, categoryName, isActive }, commandTimeout: 3000);
+            return delegateAssessmentStatistics;
+        }
+
+
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentreByCategoryId(string searchString, int centreId, string categoryName, string isActive, int? categoryId)
+        {
+            string assessmentStatisticsSelectQuery = $@"SELECT
+                        sa.Name AS Name,
+                        cc.CategoryName AS Category,
+                        CASE 
+                          WHEN sa.SupervisorSelfAssessmentReview = 0 AND sa.SupervisorResultsReview = 0 THEN 0
+                          ELSE 1
+                        END AS Supervised,
+                        (SELECT COUNT(can.ID)
+                        FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
+                            INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = can.DelegateUserID 
+						    LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID AND ucd.centreID = can.CentreID
+                        WHERE can.CentreID = @centreId AND can.SelfAssessmentID = csa.SelfAssessmentID
+                            AND can.RemovedDate IS NULL AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%') AS DelegateCount,
+                        (Select COUNT(*) FROM
+                            (SELECT can.ID FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
+                                LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas ON can.ID = cas.CandidateAssessmentID
+                                LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
+                                WHERE can.CentreID = @centreId AND can.SelfAssessmentID = CSA.SelfAssessmentID AND can.RemovedDate IS NULL
+                                AND (can.SubmittedDate IS NOT NULL OR (casv.SignedOff = 1 AND casv.Verified IS NOT NULL)) GROUP BY can.ID) A
+                                ) AS SubmittedSignedOffCount,
+                        CC.Active AS Active,
+                        sa.ID AS SelfAssessmentId
+                        from CentreSelfAssessments AS csa 
+                        INNER join SelfAssessments AS sa ON csa.SelfAssessmentID = sa.ID
+                        INNER JOIN CourseCategories AS cc ON sa.CategoryID = cc.CourseCategoryID
+                        WHERE csa.CentreID= @centreId
+                                AND sa.[Name] LIKE '%' + @searchString + '%'
+		                        AND ((@categoryName = 'Any') OR (cc.CategoryName = @categoryName))
+                                AND (ISNULL(@categoryId, 0) = 0 OR sa.CategoryID = @categoryId)
+		                        AND ((@isActive = 'Any') OR (@isActive = 'true' AND  sa.ArchivedDate IS NULL) OR (@isActive = 'false' AND sa.ArchivedDate IS NOT NULL))
+                                ";
+
+            IEnumerable<DelegateAssessmentStatistics> delegateAssessmentStatistics = connection.Query<DelegateAssessmentStatistics>(assessmentStatisticsSelectQuery,
+                new { searchString, centreId, categoryName, isActive, categoryId }, commandTimeout: 3000);
             return delegateAssessmentStatistics;
         }
 
