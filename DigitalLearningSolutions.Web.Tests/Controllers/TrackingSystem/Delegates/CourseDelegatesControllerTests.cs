@@ -23,6 +23,7 @@
     public class CourseDelegatesControllerTests
     {
         private const int UserCentreId = 3;
+        private const int SelfAssessmentId = 1;
         private ActivityDelegatesController controller = null!;
         private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
@@ -122,8 +123,10 @@
                     ), 0)
                 );
 
+            A.CallTo(() => selfAssessmentDelegatesService.GetSelfAssessmentCategoryId(1)).Returns(1);
+
             // When
-            var result = controller.Index(2);
+            var result = controller.Index(2,1);
 
             // Then
             result.Should().BeNotFoundResult();
@@ -155,6 +158,7 @@
         {
             // Given
             const int customisationId = 2;
+            const int selfAssessmentId = 2;
             var searchString = string.Empty;
             var sortBy = "SearchableName";
             var sortDirection = "Ascending";
@@ -207,7 +211,7 @@
                 );
 
             // When
-            var result = courseDelegatesController.Index(customisationId);
+            var result = courseDelegatesController.Index(customisationId, selfAssessmentId);
 
             // Then
             using (new AssertionScope())
