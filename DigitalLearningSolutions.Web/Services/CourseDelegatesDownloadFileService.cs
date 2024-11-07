@@ -227,12 +227,12 @@
             {
                 courses = GetCoursesToExport(centreId, adminCategoryId, searchString, sortBy, filterString, sortDirection);
                 if (courseTopic == "Any" && hasAdminFields == "Any")
-                    selfAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
+                    selfAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive, adminCategoryId);
             }
             if (isCourse == "true")
                 courses = GetCoursesToExport(centreId, adminCategoryId, searchString, sortBy, filterString, sortDirection);
             if (isSelfAssessment == "true" && courseTopic == "Any" && hasAdminFields == "Any")
-                selfAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive);
+                selfAssessments = courseService.GetDelegateAssessments(searchString, centreId, categoryName, isActive, adminCategoryId);
 
             if (selfAssessments.Any())
             {

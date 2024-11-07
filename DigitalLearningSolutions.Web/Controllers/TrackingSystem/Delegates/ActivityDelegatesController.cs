@@ -131,6 +131,12 @@
 
             var centreId = User.GetCentreIdKnownNotNull();
             var adminCategoryId = User.GetAdminCategoryId();
+            var selfAssessmentCategoryId = selfAssessmentService.GetSelfAssessmentCategoryId((int)selfAssessmentId);
+
+            if (adminCategoryId > 0 && adminCategoryId != selfAssessmentCategoryId)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
 
             bool? isDelegateActive, isProgressLocked, removed, hasCompleted, submitted, signedOff;
             isDelegateActive = isProgressLocked = removed = hasCompleted = submitted = signedOff = null;

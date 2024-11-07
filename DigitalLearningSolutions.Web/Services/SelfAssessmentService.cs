@@ -149,6 +149,7 @@
         IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId);
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
+        public int GetSelfAssessmentCategoryId(int selfAssessmentId);
 
     }
 
@@ -556,6 +557,11 @@
         public bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId)
         {
             return selfAssessmentDataService.HasMinimumOptionalCompetencies(selfAssessmentId, delegateUserId);
+        }
+
+        public int GetSelfAssessmentCategoryId(int selfAssessmentId)
+        {
+            return selfAssessmentDataService.GetSelfAssessmentCategoryId(selfAssessmentId);
         }
     }
 }
