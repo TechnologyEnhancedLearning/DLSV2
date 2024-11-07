@@ -23,6 +23,7 @@
     public class CourseDelegatesControllerTests
     {
         private const int UserCentreId = 3;
+        private const int selfAssessmentId = 3;
         private ActivityDelegatesController controller = null!;
         private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
@@ -123,7 +124,7 @@
                 );
 
             // When
-            var result = controller.Index(2);
+            var result = controller.Index(2, selfAssessmentId);
 
             // Then
             result.Should().BeNotFoundResult();
@@ -207,7 +208,7 @@
                 );
 
             // When
-            var result = courseDelegatesController.Index(customisationId);
+            var result = courseDelegatesController.Index(customisationId, selfAssessmentId);
 
             // Then
             using (new AssertionScope())
