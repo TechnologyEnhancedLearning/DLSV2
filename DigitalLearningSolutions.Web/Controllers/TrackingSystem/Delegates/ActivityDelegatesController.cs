@@ -131,12 +131,7 @@
 
             var centreId = User.GetCentreIdKnownNotNull();
             var adminCategoryId = User.GetAdminCategoryId();
-            var selfAssessmentCategoryId = selfAssessmentService.GetSelfAssessmentCategoryId((int)selfAssessmentId);
 
-            if (adminCategoryId > 0 && adminCategoryId != selfAssessmentCategoryId)
-            {
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            }
 
             bool? isDelegateActive, isProgressLocked, removed, hasCompleted, submitted, signedOff;
             isDelegateActive = isProgressLocked = removed = hasCompleted = submitted = signedOff = null;
@@ -216,7 +211,7 @@
             {
                 var courseDelegatesData = new CourseDelegatesData();
                 var selfAssessmentDelegatesData = new SelfAssessmentDelegatesData();
-                var resultCount = 0;
+                int? resultCount;
                 if (isCourseDelegate)
                 {
                     (courseDelegatesData, resultCount) = courseDelegatesService.GetCoursesAndCourseDelegatesPerPageForCentre(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
@@ -238,14 +233,20 @@
                 else
                 {
                     (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
-                    selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
+                    selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, adminCategoryId);
+
+                    if (selfAssessmentDelegatesData?.Delegates == null && resultCount == null)
+                    {
+                        //redirect as unauthorized through null comparisions when category Id is a mismatch.
+                        return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+                    }
 
                     if (selfAssessmentDelegatesData?.Delegates?.Count() == 0 && resultCount > 0)
                     {
                         page = 1; offSet = 0;
                         (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
-                            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
-                    }
+                            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, adminCategoryId);
+                    }                    
 
                     var adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
 
@@ -280,7 +281,7 @@
                 {
                     var result = paginateService.Paginate(
                     courseDelegatesData.Delegates,
-                    resultCount,
+                    (int)resultCount,
                     new PaginationOptions(page, itemsPerPage),
                     new FilterOptions(existingFilterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
                     searchString,
@@ -298,7 +299,7 @@
                 {
                     var result = paginateService.Paginate(
                     selfAssessmentDelegatesData.Delegates,
-                    resultCount,
+                    (int)resultCount,
                     new PaginationOptions(page, itemsPerPage),
                     new FilterOptions(existingFilterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
                     searchString,
