@@ -172,6 +172,7 @@
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
+        int GetSelfAssessmentCategoryId(int selfAssessmentId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -243,7 +244,7 @@
 
                 WHERE sa.ID = @selfAssessmentId 
                 AND da.CentreID = @centreID AND csa.CentreID = @centreID
-                AND (ca.RemovedDate IS NULL) AND ( aaEnrolledBy.CategoryID IS NULL OR sa.CategoryID = aaEnrolledBy.CategoryID)
+                AND (ca.RemovedDate IS NULL)
                 AND ( u.FirstName + ' ' + u.LastName + ' ' + COALESCE(ucd.Email, u.PrimaryEmail) + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @searchString + N'%')
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
@@ -759,6 +760,14 @@
 	                        WHERE (CAOC.IncludedInSelfAssessment = 1)",
                         new { selfAssessmentId, delegateUserId }
                     );
+        }
+
+        public int GetSelfAssessmentCategoryId(int selfAssessmentId)
+        {
+            return connection.ExecuteScalar<int>(
+                @"SELECT CategoryID FROM SelfAssessments WHERE ID = @selfAssessmentId",
+                new { selfAssessmentId }
+            );
         }
     }
 }
