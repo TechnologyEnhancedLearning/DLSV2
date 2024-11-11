@@ -410,7 +410,7 @@
                         IF (@existentResultId IS NOT NULL AND (@existentResult <> @result OR @result IS NULL OR @existentResult IS NULL))
                             BEGIN
                             UPDATE SelfAssessmentResults
-                            SET [Result] = @result, [DateTime]  = GETUTCDATE(),
+                            SET [SelfAssessmentID] = @selfAssessmentId, [Result] = @result, [DateTime]  = GETUTCDATE(),
                                 [SupportingComments] = @supportingComments
                             WHERE ID = @existentResultId
 
