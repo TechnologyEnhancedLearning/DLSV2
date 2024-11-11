@@ -396,7 +396,6 @@
                         SELECT TOP 1 @existentResultId = ID, @existentResult = [Result]
                         FROM SelfAssessmentResults
                         WHERE [DelegateUserID] = @delegateUserId
-                            AND [SelfAssessmentID] = @selfAssessmentId
                             AND [CompetencyID] = @competencyId
                             AND [AssessmentQuestionID] = @assessmentQuestionId
                         ORDER BY DateTime DESC
