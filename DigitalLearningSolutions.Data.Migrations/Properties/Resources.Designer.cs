@@ -2288,6 +2288,29 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[GetOtherCentresForSelfAssessment]    Script Date: 12/11/2024 08:47:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/01/2024
+        ///-- Description:	Gets a comma separated list of other centres for a user self assessment
+        ///-- =============================================
+        ///CREATE OR ALTER FUNCTION [dbo].[GetOtherCentresForSelfAssessment]
+        ///(
+        ///	-- Add the para [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4950_dboGetOtherCentresForSelfAssessmentCreateOrAlter {
+            get {
+                return ResourceManager.GetString("TD-4950-dboGetOtherCentresForSelfAssessmentCreateOrAlter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
