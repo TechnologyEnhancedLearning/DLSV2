@@ -32,6 +32,7 @@
                     0 AS UserIsVerifier,
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM SelfAssessmentResults s
+                INNER JOIN SelfAssessmentStructure AS sas ON s.CompetencyID = sas.CompetencyID AND sas.SelfAssessmentID = @selfAssessmentId
                 LEFT OUTER JOIN DelegateAccounts AS da ON s.DelegateUserID = da.UserID
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
@@ -43,9 +44,8 @@
 					ON sd.SupervisorAdminID = adu.AdminID
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
                     ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
-                        AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
+                        AND rr.SelfAssessmentID = @selfAssessmentId AND s.Result = rr.LevelValue
                 WHERE da.ID = @delegateId
-                AND s.SelfAssessmentID = @selfAssessmentId
             )";
 
         private const string SpecificAssessmentResults =
@@ -68,7 +68,8 @@
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM CandidateAssessments ca
                 INNER JOIN SelfAssessmentResults s
-                    ON s.DelegateUserID = ca.DelegateUserID AND s.SelfAssessmentID = ca.SelfAssessmentID
+                    ON s.DelegateUserID = ca.DelegateUserID
+                INNER JOIN SelfAssessmentStructure AS sas ON s.CompetencyID = sas.CompetencyID AND sas.SelfAssessmentID = ca.SelfAssessmentID
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas 
@@ -79,7 +80,7 @@
 						     ON sd.SupervisorAdminID = adu.AdminID
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
                     ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
-                        AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
+                        AND rr.SelfAssessmentID = ca.SelfAssessmentID AND s.Result = rr.LevelValue
                 WHERE ca.ID = @candidateAssessmentId
             )";
 
