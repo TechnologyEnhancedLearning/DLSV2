@@ -99,7 +99,9 @@
                 var delegateCourses = Builder<CourseStatisticsWithAdminFieldResponseCounts>.CreateListOfSize(5).Build();
                 A.CallTo(() => courseService.GetDelegateCourses(string.Empty, 1, 1, true, true, string.Empty, string.Empty, string.Empty, string.Empty)).Returns(delegateCourses);
 
-                A.CallTo(() => courseService.GetDelegateAssessments(A<string>._, A<int>._, A<string>._, A<string>._)).MustHaveHappened();
+
+                var delegateSelfAssessments = Builder<DelegateAssessmentStatistics>.CreateListOfSize(5).Build();
+                A.CallTo(() => courseService.GetDelegateAssessments(A<string>._, A<int>._, A<string>._, A<string>._, A<int>._)).Returns(delegateSelfAssessments);
                 A.CallTo(
                     () => paginateService.Paginate(A<IEnumerable<CourseStatistics>>._,
                          A<int>._,

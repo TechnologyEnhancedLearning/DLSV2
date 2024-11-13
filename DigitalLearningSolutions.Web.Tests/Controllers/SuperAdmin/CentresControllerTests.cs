@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
 {
@@ -29,6 +30,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         private readonly ICentresDownloadFileService centresDownloadFileService = A.Fake<ICentresDownloadFileService>();
         private readonly ICentreSelfAssessmentsService centreSelfAssessmentsService = A.Fake<ICentreSelfAssessmentsService>();
         private CentresController controller = null!;
+        private readonly IPasswordResetService passwordResetService =  A.Fake<IPasswordResetService>();
+        private IConfiguration config = A.Fake<IConfiguration>();
+        private readonly IConfigService configService = A.Fake<IConfigService>();
 
         [SetUp]
         public void Setup()
@@ -41,7 +45,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             contractTypesService,
             courseService,
             centresDownloadFileService,
-            centreSelfAssessmentsService
+            centreSelfAssessmentsService,
+            passwordResetService,
+            config,
+            configService
             )
             .WithDefaultContext()
             .WithMockUser(true);

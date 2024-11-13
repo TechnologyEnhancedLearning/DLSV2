@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
 {
     using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
@@ -21,6 +22,9 @@
             CentreType = centre.CentreTypes.CentreType;
             Active =centre.Centre.Active;
             ReturnPageQuery = returnPageQuery;
+            RegisterUser  = centre.Centre.RegisterUser;
+            AutoRegisterManagerEmail = centre.Centre.AutoRegisterManagerEmail;
+            EmailInvite = centre.Centre.EmailInvite;
         }
 
         public int CentreId { get; set; }
@@ -33,5 +37,8 @@
         public string CentreType { get; set; }
         public bool Active { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; set; }
+        public string EmailInvite { get; set; }
+        public int RegisterUser { get; set; }
+        public string AutoRegisterManagerEmail { get; set; }
     }
 }

@@ -136,7 +136,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<CourseStatistics> GetDelegateCourseStatisticsAtCentre(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields);
 
-        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive);
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive, int? categoryId);
+
         bool IsSelfEnrollmentAllowed(int customisationId);
         Customisation? GetCourse(int customisationId);
     }
@@ -541,7 +542,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         new { candidateAssessmentId, enrolmentMethodId, completeByDateDynamic }
                     );
             }
-                if (candidateAssessmentId > 1 && supervisorDelegateId !=0)
+            if (candidateAssessmentId > 1 && supervisorDelegateId !=0)
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
@@ -556,6 +557,23 @@ namespace DigitalLearningSolutions.Data.DataServices
 
                 connection.Execute(sqlQuery
                 , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic });
+            }
+
+            if (supervisorId > 0)
+            {
+                
+                var adminUserId = Convert.ToInt32(connection.ExecuteScalar(@"SELECT UserID FROM AdminAccounts WHERE (AdminAccounts.ID = @supervisorId)",
+                    new { supervisorId })
+                    );
+
+                if (delegateUserId == adminUserId)
+                {
+                    connection.Execute(
+                            @"UPDATE CandidateAssessments SET NonReportable = 1  WHERE ID = @candidateAssessmentId",
+                            new { candidateAssessmentId }
+                        );
+
+                }
             }
 
             if (candidateAssessmentId < 1)
@@ -1957,7 +1975,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return courseStatistics;
         }
 
-        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive)
+        public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive, int? categoryId)
         {
             string assessmentStatisticsSelectQuery = $@"SELECT
                         sa.Name AS Name,
@@ -1987,11 +2005,12 @@ namespace DigitalLearningSolutions.Data.DataServices
                         WHERE csa.CentreID= @centreId
                                 AND sa.[Name] LIKE '%' + @searchString + '%'
 		                        AND ((@categoryName = 'Any') OR (cc.CategoryName = @categoryName))
+                                AND (ISNULL(@categoryId, 0) = 0 OR sa.CategoryID = @categoryId)
 		                        AND ((@isActive = 'Any') OR (@isActive = 'true' AND  sa.ArchivedDate IS NULL) OR (@isActive = 'false' AND sa.ArchivedDate IS NOT NULL))
                                 ";
 
             IEnumerable<DelegateAssessmentStatistics> delegateAssessmentStatistics = connection.Query<DelegateAssessmentStatistics>(assessmentStatisticsSelectQuery,
-                new { searchString, centreId, categoryName, isActive }, commandTimeout: 3000);
+                new { searchString, centreId, categoryName, isActive, categoryId }, commandTimeout: 3000);
             return delegateAssessmentStatistics;
         }
 

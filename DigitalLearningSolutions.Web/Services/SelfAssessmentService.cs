@@ -87,7 +87,7 @@
 
         IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int delegateUserId);
 
-        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int delegateUserId);
+        IEnumerable<Administrator> GetValidSupervisorsForActivity(int selfAssessmentId, int delegateUserId);
 
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
 
@@ -128,8 +128,8 @@
         );
 
         void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
-        public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
+        public (SelfAssessmentDelegatesData, int?) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, int? adminCategoryId);
         public SelfAssessmentDelegatesData GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff);
         public int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
@@ -149,6 +149,7 @@
         IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId);
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
+        public int GetSelfAssessmentCategoryId(int selfAssessmentId);
 
     }
 
@@ -253,12 +254,11 @@
         }
 
         public IEnumerable<Administrator> GetValidSupervisorsForActivity(
-            int centreId,
             int selfAssessmentId,
             int delegateUserId
         )
         {
-            return selfAssessmentDataService.GetValidSupervisorsForActivity(centreId, selfAssessmentId, delegateUserId).Where(c => !Guid.TryParse(c.Email, out _));
+            return selfAssessmentDataService.GetValidSupervisorsForActivity(selfAssessmentId, delegateUserId).Where(c => !Guid.TryParse(c.Email, out _));
         }
 
         public Administrator GetSupervisorByAdminId(int supervisorAdminId)
@@ -448,9 +448,18 @@
             return selfAssessmentDataService.GetSelfAssessmentNameById(selfAssessmentId);
         }
 
-        public (SelfAssessmentDelegatesData, int) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
+        public (SelfAssessmentDelegatesData, int?) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, int? adminCategoryId)
         {
+
+            var selfAssessmentCategoryId = selfAssessmentDataService.GetSelfAssessmentCategoryId((int)selfAssessmentId);
+
+            if (adminCategoryId > 0  && adminCategoryId != selfAssessmentCategoryId)
+            {
+                // return null variants of the object when the categoryID mismatches 
+                return (new SelfAssessmentDelegatesData(), null);      
+            }
+
             (var delegateselfAssessments, int resultCount) = selfAssessmentDataService.GetSelfAssessmentDelegates(searchString, offSet, itemsPerPage, sortBy, sortDirection,
             selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
 
@@ -557,6 +566,11 @@
         public bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId)
         {
             return selfAssessmentDataService.HasMinimumOptionalCompetencies(selfAssessmentId, delegateUserId);
+        }
+
+        public int GetSelfAssessmentCategoryId(int selfAssessmentId)
+        {
+            return selfAssessmentDataService.GetSelfAssessmentCategoryId(selfAssessmentId);
         }
     }
 }

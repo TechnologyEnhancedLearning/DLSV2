@@ -120,7 +120,7 @@
 
         SupervisorComment? GetSupervisorComments(int delegateUserId, int resultId);
 
-        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int delegateUserId);
+        IEnumerable<Administrator> GetValidSupervisorsForActivity(int selfAssessmentId, int delegateUserId);
 
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
 
@@ -172,6 +172,7 @@
         bool IsUnsupervisedSelfAssessment(int selfAssessmentId);
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
+        int GetSelfAssessmentCategoryId(int selfAssessmentId);
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
@@ -229,13 +230,13 @@
 				sa.SupervisorSelfAssessmentReview,
 				sa.SupervisorResultsReview";
 
-            var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa 
+            var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa
 				INNER JOIN dbo.CandidateAssessments AS ca WITH (NOLOCK) ON sa.ID = ca.SelfAssessmentID 
 				INNER JOIN dbo.CentreSelfAssessments AS csa  WITH (NOLOCK) ON sa.ID = csa.SelfAssessmentID 
                 INNER JOIN dbo.DelegateAccounts da WITH (NOLOCK) ON ca.CentreID = da.CentreID AND ca.DelegateUserID = da.UserID AND da.CentreID = csa.CentreID
                 INNER JOIN dbo.Users u WITH (NOLOCK) ON DA.UserID = u.ID
                 LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
-				LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = ca.EnrolledByAdminID
+				LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = ca.EnrolledByAdminID 
                 LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID
                 LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
                 LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND
@@ -672,8 +673,19 @@
         public void RemoveDelegateSelfAssessment(int candidateAssessmentsId)
         {
             connection.Execute(
-                @"UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID =2
-                      WHERE ID = @candidateAssessmentsId",
+                @"BEGIN TRY
+                    BEGIN TRANSACTION
+                        UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID = 2
+                            WHERE ID = @candidateAssessmentsId AND RemovedDate IS NULL
+
+                        UPDATE CandidateAssessmentSupervisors SET Removed = GETUTCDATE()
+                            WHERE CandidateAssessmentID = @candidateAssessmentsId AND Removed IS NULL
+
+                        COMMIT TRANSACTION
+                END TRY
+                BEGIN CATCH
+                    ROLLBACK TRANSACTION
+                END CATCH",
                 new { candidateAssessmentsId }
             );
         }
@@ -748,6 +760,14 @@
 	                        WHERE (CAOC.IncludedInSelfAssessment = 1)",
                         new { selfAssessmentId, delegateUserId }
                     );
+        }
+
+        public int GetSelfAssessmentCategoryId(int selfAssessmentId)
+        {
+            return connection.ExecuteScalar<int>(
+                @"SELECT CategoryID FROM SelfAssessments WHERE ID = @selfAssessmentId",
+                new { selfAssessmentId }
+            );
         }
     }
 }

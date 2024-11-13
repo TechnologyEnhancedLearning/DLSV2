@@ -48,7 +48,7 @@
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ??
-                   NameQueryHelper.GetSortableFullName(UserAccount.FirstName, UserAccount.LastName);
+                   NameQueryHelper.GetSortableFullName(UserAccount.FirstName, UserAccount.LastName, UserAccount.PrimaryEmail, UserCentreDetails?.Email);
             set => SearchableNameOverrideForFuzzySharp = value;
         }
 
@@ -57,6 +57,7 @@
             UserCentreDetails?.Email
         );
 
+        public int? CategoryId => AdminAccount.CategoryId;
         public string? CategoryName => AdminAccount.CategoryName;
         public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
         public bool IsUserActive => UserAccount.Active;
