@@ -23,6 +23,7 @@
     public class CourseDelegatesControllerTests
     {
         private const int UserCentreId = 3;
+        private const int selfAssessmentId = 3;
         private ActivityDelegatesController controller = null!;
         private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
@@ -94,7 +95,7 @@
             var selfAssessmentDelegate = new SelfAssessmentDelegate(6, "Lname");
 
             A.CallTo(() => selfAssessmentDelegatesService.GetSelfAssessmentDelegatesPerPage("", 0, 10, "SearchableName", "Ascending",
-                6, UserCentreId, null, null, null, null))
+                6, UserCentreId, null, null, null, null, null))
                 .Returns((new SelfAssessmentDelegatesData(
                         new List<SelfAssessmentDelegate> { selfAssessmentDelegate }
                     ), 1)
@@ -123,7 +124,7 @@
                 );
 
             // When
-            var result = controller.Index(2);
+            var result = controller.Index(2, selfAssessmentId);
 
             // Then
             result.Should().BeNotFoundResult();
@@ -136,7 +137,7 @@
             var selfAssessmentDelegate = new SelfAssessmentDelegate(6, "Lname");
 
             A.CallTo(() => selfAssessmentDelegatesService.GetSelfAssessmentDelegatesPerPage("", 0, 10, "SearchableName", "Ascending",
-                10, UserCentreId, null, null, null, null))
+                10, UserCentreId, null, null, null, null, null))
                 .Returns((new SelfAssessmentDelegatesData(
                         new List<SelfAssessmentDelegate> { selfAssessmentDelegate }
                     ), 0)
@@ -146,8 +147,7 @@
             var result = controller.Index(null, 10);
 
             // Then
-            result.Should().BeViewResult().ModelAs<ActivityDelegatesViewModel>()
-            .DelegatesDetails?.Delegates?.Should().BeEmpty();
+            result.Should().BeRedirectToActionResult();
         }
 
         [Test]
@@ -207,7 +207,7 @@
                 );
 
             // When
-            var result = courseDelegatesController.Index(customisationId);
+            var result = courseDelegatesController.Index(customisationId, selfAssessmentId);
 
             // Then
             using (new AssertionScope())
