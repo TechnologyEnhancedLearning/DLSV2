@@ -478,7 +478,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 15/10/2021
         ///-- Description:	Reorders the CompetencyAssessmentQuestions - moving the given competency question up or down.
         ///-- =============================================
-        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]        /// [rest of string was truncated]&quot;;.
+        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_379_ReorderCompetencyAssessmentQuestionsSP {
             get {
@@ -1504,7 +1505,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@EmailProfileName nvarchar(100),
         ///	@TestOnly bit
         ///AS
-        ///BEGIN        /// [rest of string was truncated]&quot;;.
+        ///BEGIN
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
             get {
@@ -2295,8 +2297,6 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///SET QUOTED_IDENTIFIER ON
         ///GO
         ///
-        ///-- =============================================
-        ///-- Author:		Kevin Whittaker
         ///-- Create date: 22/01/2024
         ///-- Description:	Gets a comma separated list of other centres for a user self assessment
         ///-- =============================================
@@ -2307,6 +2307,46 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_4950_dboGetOtherCentresForSelfAssessmentCreateOrAlter {
             get {
                 return ResourceManager.GetString("TD-4950-dboGetOtherCentresForSelfAssessmentCreateOrAlter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 22/10/2024 16:55:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ========= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4878_Alter_GetActivitiesForDelegateEnrolment_Down {
+            get {
+                return ResourceManager.GetString("TD_4878_Alter_GetActivitiesForDelegateEnrolment_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 22/10/2024 16:55:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ========= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4878_Alter_GetActivitiesForDelegateEnrolment_Up {
+            get {
+                return ResourceManager.GetString("TD_4878_Alter_GetActivitiesForDelegateEnrolment_Up", resourceCulture);
             }
         }
         
