@@ -577,7 +577,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
-               {signedOffFields}
+                 {signedOffFields}
                  (SELECT COUNT(*) AS Expr1
                     FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL) AND (Superceded = 0)) AS ResultsVerificationRequests,
@@ -590,7 +590,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                              NRPSubGroups AS sg ON sa.NRPSubGroupID = sg.ID LEFT OUTER JOIN
                              NRPRoles AS r ON sa.NRPRoleID = r.ID
                              LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                WHERE (ca.ID = @candidateAssessmentId) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID = @adminId) AND (ISNULL(@adminIdCategoryID, 0) = 0 OR sa.CategoryID = @adminIdCategoryId)",
+                WHERE (ca.ID = @candidateAssessmentId) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID = @adminId) AND (sa.CategoryID = @adminIdCategoryId OR ISNULL(@adminIdCategoryID, 0) = 0)",
                 new { candidateAssessmentId, adminId, adminIdCategoryId }
                 ).FirstOrDefault();
         }
