@@ -2288,6 +2288,50 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to USE [mbdbx101_uar]
+        ///GO
+        ////****** Object:  StoredProcedure [dbo].[GetCandidateAssessmentResultsById]    Script Date: 14/11/2024 14:31:31 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmen [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4950_AlterGetCandidateAssessmentResultsById_DOWN {
+            get {
+                return ResourceManager.GetString("TD_4950_AlterGetCandidateAssessmentResultsById_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to USE [mbdbx101_uar]
+        ///GO
+        ////****** Object:  StoredProcedure [dbo].[GetCandidateAssessmentResultsById]    Script Date: 14/11/2024 14:31:31 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmen [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4950_AlterGetCandidateAssessmentResultsById_UP {
+            get {
+                return ResourceManager.GetString("TD_4950_AlterGetCandidateAssessmentResultsById_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[GetOtherCentresForSelfAssessment]    Script Date: 12/11/2024 08:47:08 ******/
         ///SET ANSI_NULLS ON
         ///GO
