@@ -59,7 +59,7 @@
             var supervisorEmail = GetUserEmail();
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId);
             var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
             var allSupervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
                 supervisor =>
@@ -335,10 +335,11 @@
         public IActionResult AllStaffList()
         {
             var adminId = GetAdminId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreId = GetCentreId();
             var loggedInUserId = User.GetUserId();
             var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId)
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId)
                 .Select(supervisor =>
                 {
                     return supervisor;
@@ -1386,14 +1387,15 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId:int}/ProfileAssessment/{candidateAssessmentId:int}/Certificate")]
         public IActionResult CompetencySelfAssessmentCertificatesupervisor(int candidateAssessmentId, int supervisorDelegateId)
         {
-            var adminId = User.GetAdminId();
+            var adminId = GetAdminId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             User.GetUserIdKnownNotNull();
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
             if ((competencymaindata == null) || (candidateAssessmentId == 0))
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId);
             var checkSupervisorDelegate = supervisorDelegateDetails.Where(x => x.DelegateUserID == competencymaindata.LearnerId).FirstOrDefault();
             if ((checkSupervisorDelegate == null))
             {
@@ -1423,13 +1425,14 @@
         {
             PdfReportStatusResponse pdfReportStatusResponse = new PdfReportStatusResponse();
             var delegateId = User.GetCandidateIdKnownNotNull();
-            var adminId = User.GetAdminId();
+            var adminId = GetAdminId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
             if (competencymaindata == null || candidateAssessmentId == 0 || adminId == 0)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId);
             var checkSupervisorDelegate = supervisorDelegateDetails.Where(x => x.DelegateUserID == competencymaindata.LearnerId).FirstOrDefault();
             if (checkSupervisorDelegate == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var delegateUserId = competencymaindata.LearnerId;
