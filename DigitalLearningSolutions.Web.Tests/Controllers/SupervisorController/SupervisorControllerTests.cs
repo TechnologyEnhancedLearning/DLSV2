@@ -48,6 +48,7 @@
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
         private IPdfService pdfService = null!;
         private SupervisorController controller = null!;
+        private ICourseCategoriesService courseCategoriesService = null!;
 
         [SetUp]
         public void Setup()
@@ -71,6 +72,8 @@
             clockUtility = A.Fake<IClockUtility>();
             candidateAssessmentDownloadFileService = A.Fake<ICandidateAssessmentDownloadFileService>();
             pdfService = A.Fake<IPdfService>();
+            courseCategoriesService = A.Fake<ICourseCategoriesService>();
+
             A.CallTo(() => candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(A<int>._, A<int>._, A<bool>._))
                 .Returns(new byte[] { });
 
@@ -137,7 +140,8 @@
                    emailService,
                    candidateAssessmentDownloadFileService,
                    clockUtility,
-                   pdfService
+                   pdfService,
+                   courseCategoriesService
                );
             string expectedFileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0, 30) : selfAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
 
