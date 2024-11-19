@@ -429,7 +429,10 @@
             }
             else
             {
-                data!.SectionContentData = null;
+                if (data!.SectionContentData == null)
+                {
+                    data!.SectionContentData = null;
+                }
             }
 
             if (!ModelState.IsValid)
@@ -471,9 +474,18 @@
             }
 
             var showDiagnostic = data.Application!.DiagAssess;
-            var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
+            if (data.SectionContentData != null && data.SectionContentData.Count >=3 )
+            {
+                var tutorial = GetTutorialsFromSectionContentData(data.SectionContentData, tutorials);
+                var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorial);
+                return View("AddNewCentreCourse/SetSectionContent", model);
+            }
+            else
+            {
+                var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
+                return View("AddNewCentreCourse/SetSectionContent", model);
+            }
 
-            return View("AddNewCentreCourse/SetSectionContent", model);
         }
 
         [HttpPost("AddCourse/SetSectionContent")]
@@ -654,8 +666,14 @@
             {
                 data.SectionContentData = new List<SectionContentTempData>();
             }
-
-            data!.SectionContentData!.Add(
+            if (data.SectionContentData != null && data.SectionContentData.Count >= 3)
+            {
+                return RedirectToNextSectionOrSummary(
+               model.Index,
+               new SetCourseContentViewModel(data.CourseContentData!)
+           );
+            }
+                data!.SectionContentData!.Add(
                 new SectionContentTempData(
                     model.Tutorials != null
                         ? model.Tutorials.Select(GetCourseTutorialData)
@@ -726,6 +744,25 @@
             }
 
             return updatedCourses;
+        }
+        private IEnumerable<Tutorial> GetTutorialsFromSectionContentData(List<SectionContentTempData> sectionContentData, List<Tutorial> sectionTutorial)
+        {
+            if (sectionContentData == null || sectionTutorial == null) return new List<Tutorial>();
+            var updatedRecords = sectionContentData
+        .SelectMany(data => data.Tutorials)
+        .Join(sectionTutorial,
+            tempData => new { tempData.TutorialId, tempData.TutorialName },  // Match on both TutorialId and TutorialName
+            index => new { index.TutorialId, index.TutorialName },
+            (tempData, index) => new Tutorial
+            {
+                TutorialId = index.TutorialId,
+                TutorialName = index.TutorialName,
+                Status = tempData.LearningEnabled,  // Updated from sectionContentData
+                DiagStatus = tempData.DiagnosticEnabled // Updated from sectionContentData
+            })
+        .ToList();
+
+            return updatedRecords;
         }
 
     }
