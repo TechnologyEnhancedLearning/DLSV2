@@ -98,9 +98,9 @@
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
             sheet.Cell(rowNum, 2).Value = candidateAssessmentExportSummary.SelfAssessmentResponseCount;
             rowNum++;
-            sheet.Cell(rowNum, 1).Value = "Responses verified";
+            sheet.Cell(rowNum, 1).Value = "Responses confirmed";
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
-            sheet.Cell(rowNum, 2).Value = candidateAssessmentExportSummary.ResponsesVerifiedCount;
+            sheet.Cell(rowNum, 2).Value = candidateAssessmentExportSummary.ResponsesConfirmedCount;
             rowNum++;
             if (candidateAssessmentExportSummary.QuestionCount > candidateAssessmentExportSummary.NoRequirementsSetCount)
             {

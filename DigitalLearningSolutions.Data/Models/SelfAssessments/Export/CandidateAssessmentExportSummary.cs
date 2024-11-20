@@ -9,7 +9,7 @@
         public DateTime? StartDate { get; set; }
         public int QuestionCount { get; set; }
         public int SelfAssessmentResponseCount { get; set; }
-        public int ResponsesVerifiedCount { get; set; }
+        public int ResponsesConfirmedCount { get; set; }
         public int NoRequirementsSetCount { get; set; }
         public int NotMeetingCount { get; set; }
         public int PartiallyMeetingCount { get; set; }
