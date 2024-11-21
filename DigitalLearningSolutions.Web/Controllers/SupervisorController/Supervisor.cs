@@ -58,7 +58,7 @@
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
-            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId); 
+            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId);
             if (!supervisorDelegateDetails.Any())
             {
@@ -343,7 +343,7 @@
             var loggedInUserId = User.GetUserId();
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId,loggedInAdminUser.CategoryId)
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId)
                 .Select(supervisor =>
                 {
                     return supervisor;
@@ -362,6 +362,7 @@
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
+            if (superviseDelegate == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId, selfAssessmentResultId).ToList()
             );
@@ -1310,7 +1311,7 @@
                     supervisorDelegateDetail.DelegateUserID,
                     (int)User.GetCentreId()
                 );
-                supervisorDelegate.SelfAssessmentCategory = supervisorDelegate.SelfAssessmentCategory == 0   ? adminUser.CategoryId.Value  : supervisorDelegate.SelfAssessmentCategory;
+                supervisorDelegate.SelfAssessmentCategory = supervisorDelegate.SelfAssessmentCategory == 0 ? adminUser.CategoryId.Value : supervisorDelegate.SelfAssessmentCategory;
                 var centreName = adminUser.CentreName;
 
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
@@ -1399,7 +1400,7 @@
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value,loggedInAdminUser.CategoryId);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value, loggedInAdminUser.CategoryId);
             var checkSupervisorDelegate = supervisorDelegateDetails.Where(x => x.DelegateUserID == competencymaindata.LearnerId).FirstOrDefault();
             if ((checkSupervisorDelegate == null))
             {
