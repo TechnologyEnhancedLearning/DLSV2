@@ -47,6 +47,6 @@
         [DefaultValue(false)]
         public bool ConfirmedRemove { get; set; }
         public int SelfAssessmentCategory { get; set; }
-        public IEnumerable<SelectListItem> SelfAssessmentCategories { get; set; }
+        public IEnumerable<SelectListItem>? SelfAssessmentCategories { get; set; }
     }
 }
