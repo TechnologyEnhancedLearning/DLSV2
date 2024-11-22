@@ -342,7 +342,6 @@
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreId = GetCentreId();
             var loggedInUserId = User.GetUserId();
-            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId)
                 .Select(supervisor =>
@@ -1399,7 +1398,6 @@
             var adminId = GetAdminId();
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             User.GetUserIdKnownNotNull();
-            var loggedInAdminUser = userService.GetAdminUserById(adminId.Value);
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
             if ((competencymaindata == null) || (candidateAssessmentId == 0))
             {
