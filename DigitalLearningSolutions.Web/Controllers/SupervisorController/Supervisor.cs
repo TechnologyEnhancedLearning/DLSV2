@@ -60,6 +60,10 @@
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId);
+            if (!supervisorDelegateDetails.Any())
+            {
+                supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(adminId);
+            }
             var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
             var allSupervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
                 supervisor =>
@@ -338,6 +342,7 @@
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreId = GetCentreId();
             var loggedInUserId = User.GetUserId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId)
                 .Select(supervisor =>
@@ -358,6 +363,7 @@
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
+            if (superviseDelegate == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId, selfAssessmentResultId).ToList()
             );
@@ -366,6 +372,8 @@
             var competencyIds = reviewedCompetencies.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
             var competencies = SupervisorCompetencyFilterHelper.FilterCompetencies(reviewedCompetencies, competencyFlags, searchModel);
+            delegateSelfAssessment.ResultsVerificationRequests = competencies.SelectMany(competency => competency.AssessmentQuestions)
+        .Count(question => question.Verified == null && question.UserIsVerifier == true);
             var searchViewModel = searchModel == null ?
                 new SearchSupervisorCompetencyViewModel(supervisorDelegateId, searchModel?.SearchText, delegateSelfAssessment.ID, delegateSelfAssessment.IsSupervisorResultsReviewed, false, null, null)
                 : searchModel.Initialise(searchModel.AppliedFilters, competencyFlags.ToList(), delegateSelfAssessment.IsSupervisorResultsReviewed, false);
@@ -393,6 +401,7 @@
                     (int)superviseDelegate.DelegateUserID
                 );
             }
+
             var competencySummaries = CertificateHelper.CanViewCertificate(reviewedCompetencies, model.SupervisorSignOffs);
             model.CompetencySummaries = competencySummaries;
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
@@ -1306,7 +1315,7 @@
                     supervisorDelegateDetail.DelegateUserID,
                     (int)User.GetCentreId()
                 );
-                supervisorDelegate.SelfAssessmentCategory = supervisorDelegate.SelfAssessmentCategory == 0   ? adminUser.CategoryId.Value  : supervisorDelegate.SelfAssessmentCategory;
+                supervisorDelegate.SelfAssessmentCategory = supervisorDelegate.SelfAssessmentCategory == 0 ? adminUser.CategoryId.Value : supervisorDelegate.SelfAssessmentCategory;
                 var centreName = adminUser.CentreName;
 
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
@@ -1390,6 +1399,7 @@
             var adminId = GetAdminId();
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             User.GetUserIdKnownNotNull();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId.Value);
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
             if ((competencymaindata == null) || (candidateAssessmentId == 0))
             {

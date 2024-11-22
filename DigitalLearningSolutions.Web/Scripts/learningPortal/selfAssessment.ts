@@ -1,3 +1,5 @@
+import * as Checkboxes from '../checkboxes';
+
 function onSliderUpdate(inputElement: HTMLInputElement) {
   const selectedRatio = parseInt(inputElement.value, 10) / parseInt(inputElement.max, 10);
   // eslint-disable-next-line no-param-reassign
@@ -13,3 +15,4 @@ inputs.forEach((e) => onSliderUpdate(e));
 inputs.forEach((e) => {
   e.addEventListener('change', () => onSliderUpdate(e));
 });
+Checkboxes.default.setUpSelectAndDeselectInGroupButtons();

@@ -448,6 +448,21 @@
   <data name="TD_4634_Alter_GetCompletedCoursesForCandidate_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD_4634_Alter_GetCompletedCoursesForCandidate_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="TD-4950-dboGetOtherCentresForSelfAssessmentCreateOrAlter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4950-dboGetOtherCentresForSelfAssessmentCreateOrAlter.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="TD_4878_Alter_GetActivitiesForDelegateEnrolment_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4878-Alter_GetActivitiesForDelegateEnrolment_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4878_Alter_GetActivitiesForDelegateEnrolment_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4878-Alter_GetActivitiesForDelegateEnrolment_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4950_AlterGetCandidateAssessmentResultsById_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4950-AlterGetCandidateAssessmentResultsById_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4950_AlterGetCandidateAssessmentResultsById_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4950-AlterGetCandidateAssessmentResultsById_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
   <data name="TD_4950_Alter_GetAssessmentResultsByDelegate_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD_4950_Alter_GetAssessmentResultsByDelegate_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>

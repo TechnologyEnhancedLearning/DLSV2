@@ -73,7 +73,6 @@
             candidateAssessmentDownloadFileService = A.Fake<ICandidateAssessmentDownloadFileService>();
             pdfService = A.Fake<IPdfService>();
             courseCategoriesService = A.Fake<ICourseCategoriesService>();
-
             A.CallTo(() => candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(A<int>._, A<int>._, A<bool>._))
                 .Returns(new byte[] { });
 
