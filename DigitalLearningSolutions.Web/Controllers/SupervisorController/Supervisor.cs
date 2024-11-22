@@ -371,6 +371,8 @@
             var competencyIds = reviewedCompetencies.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
             var competencies = SupervisorCompetencyFilterHelper.FilterCompetencies(reviewedCompetencies, competencyFlags, searchModel);
+            delegateSelfAssessment.ResultsVerificationRequests = competencies.SelectMany(competency => competency.AssessmentQuestions)
+        .Count(question => question.Verified == null && question.UserIsVerifier == true);
             var searchViewModel = searchModel == null ?
                 new SearchSupervisorCompetencyViewModel(supervisorDelegateId, searchModel?.SearchText, delegateSelfAssessment.ID, delegateSelfAssessment.IsSupervisorResultsReviewed, false, null, null)
                 : searchModel.Initialise(searchModel.AppliedFilters, competencyFlags.ToList(), delegateSelfAssessment.IsSupervisorResultsReviewed, false);
@@ -398,6 +400,7 @@
                     (int)superviseDelegate.DelegateUserID
                 );
             }
+
             var competencySummaries = CertificateHelper.CanViewCertificate(reviewedCompetencies, model.SupervisorSignOffs);
             model.CompetencySummaries = competencySummaries;
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
