@@ -57,6 +57,7 @@
             UserCentreDetails?.Email
         );
 
+        public int? CategoryId => AdminAccount.CategoryId;
         public string? CategoryName => AdminAccount.CategoryName;
         public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
         public bool IsUserActive => UserAccount.Active;

@@ -57,7 +57,8 @@
                 ON sd.SupervisorAdminID = au.AdminID
             INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID AND au.CentreID = da.CentreID AND da.Active=1
             LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID";
+                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+		   LEFT OUTER JOIN SelfAssessments sa ON sa.id  = ca.SelfAssessmentID AND sa.CategoryID = au.CategoryID";
 
         public SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int delegateUserId)
         {
@@ -76,7 +77,9 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @delegateUserId)
+                            AND (ca.SelfAssessmentID = @selfAssessmentId)
+                            AND (au.CategoryID = 0 OR au.CategoryID IN (select CategoryID from SelfAssessments where ID = @selfAssessmentId))
                         ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }
             );
@@ -122,6 +125,7 @@
                 WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.DelegateUserID = @delegateUserId)
 		            AND (au.Supervisor = 1 OR au.NominatedSupervisor = 1) AND (au.Active = 1)
 		            AND (ca.SelfAssessmentID <> @selfAssessmentId)
+                    AND (au.CategoryID = 0 OR au.CategoryID IN (select CategoryID from SelfAssessments where ID = @selfAssessmentId))
                 ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }
             );
@@ -148,7 +152,8 @@
                     WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)
                         AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1)
                         AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))
-                        AND au.Active = 1 
+                        AND au.Active = 1
+                        AND (au.CategoryID = 0 OR au.CategoryID IN (select CategoryID from SelfAssessments where ID = @selfAssessmentId))
                 ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }
             );
@@ -204,7 +209,6 @@
         }
 
         public IEnumerable<Administrator> GetValidSupervisorsForActivity(
-            int centreId,
             int selfAssessmentId,
             int delegateUserId
         )
@@ -242,7 +246,7 @@
                         )
                         AND (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (Email LIKE '%@%')
                         ORDER BY Forename, Surname",
-                new { centreId, selfAssessmentId, delegateUserId }
+                new { selfAssessmentId, delegateUserId }
             );
         }
 

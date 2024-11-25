@@ -694,7 +694,6 @@
             );
 
             var distinctSupervisorCentres = selfAssessmentService.GetValidSupervisorsForActivity(
-               User.GetCentreIdKnownNotNull(),
                selfAssessmentId,
                User.GetUserIdKnownNotNull()
            ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
@@ -728,7 +727,6 @@
                 TempData
             );
             var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetUserIdKnownNotNull()
             ).ToList();
@@ -776,7 +774,6 @@
                 TempData
             );
             var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetUserIdKnownNotNull()
             );
@@ -873,7 +870,6 @@
                 TempData
             );
             var distinctCentres = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetUserIdKnownNotNull()
             ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
@@ -911,7 +907,6 @@
             if (!ModelState.IsValid)
             {
                 var distinctCentres = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreIdKnownNotNull(),
                 model.SelfAssessmentID,
                 User.GetUserIdKnownNotNull()
                 ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
@@ -1072,7 +1067,6 @@
             var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
             var distinctCentres = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetUserIdKnownNotNull()
             ).Select(c => new { c.CentreID, c.CentreName }).Distinct().OrderBy(o => o.CentreName).ToList();
@@ -1756,7 +1750,7 @@
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-                if (userId != competencymaindata.LearnerId) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            if (userId != competencymaindata.LearnerId) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var delegateUserId = competencymaindata.LearnerId;
             var competencycount = selfAssessmentService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentId);
             var accessors = selfAssessmentService.GetAccessor(competencymaindata.SelfAssessmentID, competencymaindata.LearnerId);
