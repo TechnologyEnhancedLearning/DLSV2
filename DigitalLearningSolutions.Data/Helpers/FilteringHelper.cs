@@ -66,7 +66,34 @@
                 ? defaultFilterValue
                 : AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
         }
+        public static string? GetFilterString(
+           string? existingFilterString,
+           string? newFilterToAdd,
+           bool clearFilters,
+           HttpRequest request,
+           string cookieName,
+           string? q1Options,
+           string? defaultFilterValue = null
+       )
+        {
+            var cookieHasBeenSet = request.Cookies.ContainsKey(cookieName);
+            var noFiltersInQueryParams = existingFilterString == null && newFilterToAdd == null;
+            var cookieValue = request.Cookies[cookieName];
+            if ((clearFilters) || (q1Options == null && cookieValue != null && cookieValue.Contains("Answer1|Not Allowed") ||
+    (cookieValue != null && cookieValue.Contains("Answer1|Allowed"))))
+            {
+                return null;
+            }
 
+            if (cookieHasBeenSet && noFiltersInQueryParams)
+            {
+                return request.Cookies[cookieName] == EmptyFiltersCookieValue ? null : request.Cookies[cookieName];
+            }
+
+            return noFiltersInQueryParams
+                ? defaultFilterValue
+                : AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
+        }
         public static string? GetCategoryAndTopicFilterString(
             string? categoryFilterString,
             string? topicFilterString

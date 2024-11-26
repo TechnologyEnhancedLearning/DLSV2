@@ -95,13 +95,14 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-
-            existingFilterString = FilteringHelper.GetFilterString(
+          var course =  courseService.GetCourse(customisationId.Value);
+                existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
                 clearFilters,
                 Request,
                 filterCookieName,
+                course.Q1Options,
                 CourseDelegateAccountStatusFilterOptions.Active.FilterValue
             );
 
