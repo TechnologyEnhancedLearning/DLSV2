@@ -134,7 +134,7 @@
         int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
         public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
         bool IsSelfEnrollmentAllowed(int customisationId);
-        Customisation? GetCourse(int customisationId);
+        Customisation? GetCourse(int? customisationId);
     }
 
     public class CourseService : ICourseService
@@ -632,7 +632,7 @@
             return courseDataService.IsSelfEnrollmentAllowed(customisationId);
         }
 
-        public Customisation? GetCourse(int customisationId)
+        public Customisation? GetCourse(int? customisationId)
         {
             return courseDataService.GetCourse(customisationId);
         }

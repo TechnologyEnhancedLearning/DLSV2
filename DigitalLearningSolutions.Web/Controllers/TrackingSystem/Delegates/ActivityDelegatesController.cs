@@ -95,7 +95,7 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-          var course =  courseService.GetCourse(customisationId.Value);
+          var course =  courseService.GetCourse(customisationId);
                 existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,

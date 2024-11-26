@@ -139,7 +139,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive, int? categoryId);
 
         bool IsSelfEnrollmentAllowed(int customisationId);
-        Customisation? GetCourse(int customisationId);
+        Customisation? GetCourse(int? customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -2024,7 +2024,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return selfRegister > 0;
         }
 
-        public Customisation? GetCourse(int customisationId)
+        public Customisation? GetCourse(int? customisationId)
         {
             return connection.Query<Customisation>(
                 @"SELECT CustomisationID
