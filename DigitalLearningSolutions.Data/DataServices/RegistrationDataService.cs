@@ -197,56 +197,7 @@
                 isSupervisor = registrationModel.IsSupervisor,
                 isNominatedSupervisor = registrationModel.IsNominatedSupervisor,
             };
-            if (registrationModel.CategoryId == 0)
-            {
-                var adminUserIdwithCategoryIdIsNull = connection.QuerySingle<int>(
-                    @"INSERT INTO AdminAccounts
-                    (
-                        UserID,
-                        CentreID,
-                        CategoryID,
-                        IsCentreAdmin,
-                        IsCentreManager,
-                        Active,
-                        IsContentCreator,
-                        IsContentManager,
-                        ImportOnly,
-                        IsTrainer,
-                        IsSupervisor,
-                        IsNominatedSupervisor
-                    )
-                    OUTPUT Inserted.ID
-                    VALUES
-                    (
-                        @userId,
-                        @centreId,
-                        NULL,
-                        @isCentreAdmin,
-                        @isCentreManager,
-                        @active,
-                        @isContentCreator,
-                        @isContentManager,
-                        @importOnly,
-                        @isTrainer,
-                        @isSupervisor,
-                        @isNominatedSupervisor
-                    )",
-                    adminValues,
-                    transaction
-                );
-
-                connection.Execute(
-                    @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
-                SELECT N.NotificationId, @adminUserIdwithCategoryIdIsNull
-                FROM Notifications N INNER JOIN NotificationRoles NR
-                ON N.NotificationID = NR.NotificationID
-                WHERE RoleID IN @roles AND AutoOptIn = 1",
-                    new { adminUserIdwithCategoryIdIsNull, roles = registrationModel.GetNotificationRoles() },
-                    transaction
-                );
-                transaction.Commit();
-                return adminUserIdwithCategoryIdIsNull;
-            }
+            
             var adminUserId = connection.QuerySingle<int>(
                 @"INSERT INTO AdminAccounts
                     (
@@ -268,7 +219,10 @@
                     (
                         @userId,
                         @centreId,
-                        @categoryId,
+                        CASE 
+                        WHEN @categoryID = 0 THEN NULL 
+                        ELSE @categoryID 
+                        END,
                         @isCentreAdmin,
                         @isCentreManager,
                         @active,
