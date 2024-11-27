@@ -541,7 +541,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                         new { candidateAssessmentId, enrolmentMethodId, completeByDateDynamic }
                     );
             }
-                if (candidateAssessmentId > 1 && supervisorDelegateId !=0)
+
+            if (candidateAssessmentId > 1 && supervisorDelegateId !=0)
+
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
@@ -556,6 +558,23 @@ namespace DigitalLearningSolutions.Data.DataServices
 
                 connection.Execute(sqlQuery
                 , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic });
+            }
+
+            if (supervisorId > 0)
+            {
+                
+                var adminUserId = Convert.ToInt32(connection.ExecuteScalar(@"SELECT UserID FROM AdminAccounts WHERE (AdminAccounts.ID = @supervisorId)",
+                    new { supervisorId })
+                    );
+
+                if (delegateUserId == adminUserId)
+                {
+                    connection.Execute(
+                            @"UPDATE CandidateAssessments SET NonReportable = 1  WHERE ID = @candidateAssessmentId",
+                            new { candidateAssessmentId }
+                        );
+
+                }
             }
 
             if (candidateAssessmentId < 1)

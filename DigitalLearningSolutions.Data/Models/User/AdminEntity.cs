@@ -48,7 +48,7 @@
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ??
-                   NameQueryHelper.GetSortableFullName(UserAccount.FirstName, UserAccount.LastName);
+                   NameQueryHelper.GetSortableFullName(UserAccount.FirstName, UserAccount.LastName, UserAccount.PrimaryEmail, UserCentreDetails?.Email);
             set => SearchableNameOverrideForFuzzySharp = value;
         }
 

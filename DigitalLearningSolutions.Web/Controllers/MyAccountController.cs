@@ -588,7 +588,7 @@
             {
                 var adminentity = new AdminEntity(adminAccount, userEntity.UserAccount, null);
                 CultureInfo currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
-                roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false)
+                roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false && s.DisplayText != "Active")
                                                 .Select(d => d.DisplayText).ToList<string>();
             }
             return roles;
