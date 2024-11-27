@@ -189,14 +189,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     FrameworkGroupId = frameworkCompetencyGroupId,
                     FrameworkCompetencyId = frameworkCompetencyId,
                     FrameworkConfig = detailFramework?.FrameworkConfig,
-                    Competency = new FrameworkCompetency()
-                    {
-                        Name = frameworkCompetency.Name,
-                        Description = frameworkCompetency.Description
-                    },
+                    Competency = frameworkCompetency,
                     MatchingSearchResults = matchingSearchResults.Count,
                     SameCompetency = similarItems,
-                    selectedFlagIds = selectedFlagIds.Any() ? selectedFlagIds.Select(a => a.ToString()).Aggregate((b, c) => b + "," + c) : string.Empty,
+                    selectedFlagIds = selectedFlagIds != null ? selectedFlagIds.Select(a => a.ToString()).Aggregate((b, c) => b + "," + c) : string.Empty
                 };
                 return View("Developer/SimilarCompetency", model);
             }
