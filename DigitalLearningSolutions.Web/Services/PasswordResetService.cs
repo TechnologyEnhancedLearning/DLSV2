@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
+    using FreshdeskApi.Client.Contacts.Models;
     using MimeKit;
 
     public interface IPasswordResetService
@@ -48,6 +49,12 @@
         );
 
         Email GenerateDelegateWelcomeEmail(int delegateId, string baseUrl);
+        Email GenerateEmailInviteForCentreManager(
+           string centreName,
+           string email,
+           string baseUrl,
+           string SupportEmail
+       );
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -199,7 +206,21 @@
             );
             emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
         }
-
+        public Email GenerateEmailInviteForCentreManager(
+           string centreName,
+           string email,
+           string baseUrl,
+           string SupportEmail
+       )
+        {
+            var emailInvite = GenerateEmailInvite(
+                centreName,
+                email,
+                baseUrl,
+                SupportEmail
+            );
+            return emailInvite;
+        }
         private string GenerateResetPasswordHash(int userId)
         {
             var hash = Guid.NewGuid().ToString();
@@ -299,6 +320,33 @@
                             </body>",
             };
             return new Email(emailSubject, body, emailAddress);
+        }
+
+        private static Email GenerateEmailInvite(
+           string centreName,
+           string email,
+           string baseUrl,
+           string SupportEmail
+       )
+        {
+            var completeRegistrationUrl = new UriBuilder(baseUrl);
+            const string emailSubject = "Welcome to the Digital Learning Solutions (DLS) Platform";
+
+            var body = new BodyBuilder
+            {
+                TextBody = $@"Dear Colleague,%0D%0DYour centre,  {centreName}, has been successfully registered on the  Digital Learning Solutions (DLS), and you’ve been pre-registered as the Centre Manager.%0D%0DTo activate your Centre Manager and Learner accounts, please complete your registration by selecting the link below:%0D%0DComplete Your Registration {completeRegistrationUrl.Uri}%0D%0DPlease use {email} during the registration process to ensure it’s successful.%0D%0DFor any questions or assistance, contact us at {SupportEmail}.%0D%0DKind regards,%0D%0D DLS Support Team",
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
+                                <p>Dear Colleague,</p>
+                                <p>Your centre, {centreName}, has been successfully registered on the Digital Learning Solutions (DLS), and you’ve been pre-registered as the Centre Manager.</p>
+                                <p>To activate your Centre Manager and Learner accounts, please complete your registration by selecting the link below:</p>
+                                <p><a href=""{completeRegistrationUrl.Uri}"">Complete Your Registration </a></p>
+                                <p>Please use {email} during the registration process to ensure it’s successful.</p>
+                                <p>For any questions or assistance, contact us at {SupportEmail}.</p>
+                                <p>Kind regards,</p>
+                                <p>DLS Support Team</p>
+                            </body>",
+            };
+            return new Email(emailSubject, body, email);
         }
     }
 }

@@ -30,7 +30,7 @@
             this._userFeedbackService = userFeedbackService;
             this._multiPageFormService = multiPageFormService;
             this._userFeedbackViewModel = new UserFeedbackViewModel();
-            this.config = config; 
+            this.config = config;
         }
 
         [Route("/Index")]
@@ -38,7 +38,7 @@
         {
             ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] = true;
             _multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddUserFeedback, TempData);
-            
+
             _userFeedbackViewModel = new()
             {
                 UserId = User.GetUserId(),
@@ -51,13 +51,13 @@
                 TaskRating = null,
             };
 
-            if(sourcePageTitle == "Digital Learning Solutions - Page no longer available")
+            if (sourcePageTitle == "Digital Learning Solutions - Page no longer available")
             {
                 var url = ContentUrlHelper.ReplaceUrlSegment(sourceUrl);
-                _userFeedbackViewModel.SourceUrl  = url;
+                _userFeedbackViewModel.SourceUrl = url;
                 _userFeedbackViewModel.SourcePageTitle = "Welcome";
             }
-            
+
             if (_userFeedbackViewModel.UserId == null || _userFeedbackViewModel.UserId == 0)
             {
                 return GuestFeedbackStart(_userFeedbackViewModel);
@@ -247,6 +247,9 @@
         )]
         public IActionResult UserFeedbackTaskDifficultySet(UserFeedbackViewModel userFeedbackViewModel)
         {
+            //set the SourceURL to blank so we can retrieve the original sourceURL whether current/completed/available
+            userFeedbackViewModel.SourceUrl = null;
+
             userFeedbackViewModel = MapMultiformDataToViewModel(userFeedbackViewModel);
 
             SaveMultiPageFormData(userFeedbackViewModel);
@@ -277,7 +280,6 @@
 
             transaction.Complete();
 
-            userFeedbackViewModel.SourceUrl = data.SourceUrl;
 
             return RedirectToAction("UserFeedbackComplete", userFeedbackViewModel);
         }

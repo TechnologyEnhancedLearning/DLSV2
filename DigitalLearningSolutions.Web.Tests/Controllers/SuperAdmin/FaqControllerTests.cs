@@ -12,6 +12,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
+    using DigitalLearningSolutions.Data.Extensions;
+    using Microsoft.Extensions.Configuration;
 
     public class FaqControllerTests
     {
@@ -24,12 +26,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         private SuperAdminFaqsController controller = null!;
 
         private IFaqsService faqService = null!;
+        private IConfiguration configuration = null!;
 
         [SetUp]
         public void Setup()
         {
             faqService = A.Fake<IFaqsService>();
-            controller = new SuperAdminFaqsController(faqService);
+            configuration = A.Fake<IConfiguration>();
+            controller = new SuperAdminFaqsController(faqService, configuration);
             A.CallTo(() => faqService.GetAllFaqs())
                 .Returns(faqs);
         }

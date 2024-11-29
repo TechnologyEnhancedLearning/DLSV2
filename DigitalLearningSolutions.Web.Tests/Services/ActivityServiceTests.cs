@@ -18,6 +18,7 @@
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
+    using Microsoft.Extensions.Configuration;
 
     public class ActivityServiceTests
     {
@@ -33,7 +34,8 @@
         private ICommonService commonService = null!;
         private IClockUtility clockUtility = null!;
         private IReportFilterService reportFilterService = null!;
-
+        private IConfiguration configuration = null!;
+        private ICentreRegistrationPromptsService registrationPromptsService = null!;
         [SetUp]
         public void SetUp()
         {
@@ -46,12 +48,16 @@
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
             commonService = A.Fake<ICommonService>();
             clockUtility = A.Fake<IClockUtility>();
+            configuration = A.Fake<IConfiguration>();
+            registrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             activityService = new ActivityService(
                 activityDataService,
                 jobGroupsDataService,
                 courseCategoriesDataService,
                 courseDataService,
-                clockUtility
+                clockUtility,
+                configuration,
+                registrationPromptsService
             );
             reportFilterService = new ReportFilterService(
                 courseCategoriesDataService,
@@ -430,7 +436,7 @@
 
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2020-9-1"),
-                DateTime.Parse("2021-9-1"),
+                DateTime.Parse("2021-9-30"),
                 null,
                 null,
                 null,

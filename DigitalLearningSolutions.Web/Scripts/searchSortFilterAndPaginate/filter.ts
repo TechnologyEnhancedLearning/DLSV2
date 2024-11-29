@@ -262,7 +262,7 @@ function updateAppliedFilters(existingFilterString: string, possibleFilters: IAp
 
 function getMatchingFilterTag(possibleFilters: IAppliedFilterTag[], filter: string): Element {
   const appliedFilterTag = <IAppliedFilterTag>possibleFilters.find(
-    (pf) => pf.filterValue === filter,
+    (pf) => pf.filterValue === filter.trim(),
   );
   return appliedFilterTag.element;
 }
