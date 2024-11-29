@@ -1,0 +1,84 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DeactivateDelegate
+@model DeactivateDelegateAccountViewModel
+
+
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Deactivate account" : "Deactivate account";
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new []{ nameof(Model.Name) })" />
+        }
+
+        <h2 class="nhsuk-heading-l  word-break">Deactivate account - @Model.Name (@Model.Email)</h2>
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-full nhsuk-lede-text">
+                @Model.Name has an active admin account at your centre with following admin roles:
+            </div>
+        </div>
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-full nhsuk-lede-text">
+                <ul>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <li>@role</li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="Index">
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h2 class="nhsuk-fieldset__heading">
+                        Which accounts would you like deactivate?
+                    </h2>
+                </legend>
+               
+                <nhs-form-group nhs-validation-for="Deactivate">
+                    <div class="nhsuk-radios nhsuk-radios--inline">
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="rb-accountonly" name="Deactivate" required="required" type="radio" value="true">
+                            <label class="nhsuk-label nhsuk-radios__label" for="rb-accountonly">
+                                Delegate account only
+                            </label>
+                            <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
+                                The user will still be able to login to your centre with the above admin roles
+                            </div>
+                        </div>
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="rb-accountandadmin" name="Deactivate" required="required" type="radio" value="false">
+                            <label class="nhsuk-label nhsuk-radios__label" for="rb-accountandadmin">
+                                Delegate account and Administrators accounts
+                            </label>
+                            <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
+                                The user will no longer be able to login to your centre
+                            </div>
+                        </div>
+                        <span asp-validation-for="Deactivate" class="text-danger"></span>
+                    </div>
+                </nhs-form-group>
+            </fieldset>
+            <button name="action" class="nhsuk-button delete-button view-delegate-button" value="save">Deactivate account</button>
+            <input type="hidden" asp-for="DelegateId" />
+            <input type="hidden" asp-for="Name" />
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="Roles" />
+            <input type="hidden" asp-for="UserId" />
+        </form>
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link"
+               asp-controller="ViewDelegate"
+               asp-action="Index"
+               asp-route-delegateId="@Model.DelegateId">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </div>
+</div>

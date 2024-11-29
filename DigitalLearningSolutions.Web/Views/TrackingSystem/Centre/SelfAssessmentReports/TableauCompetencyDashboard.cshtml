@@ -1,0 +1,33 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@{
+    var tableauServerUrl = ViewBag.TableauServerUrl;
+    var workbookName = ViewBag.WorkbookName;
+    var viewName = ViewBag.ViewName;
+    var jwtToken = ViewBag.JwtToken;
+    var siteName = ViewBag.SiteName;
+    var srcUrl = $"{tableauServerUrl}/t/{siteName}/views/{workbookName}/{viewName}";
+    ViewData["Title"] = "Supervised self assessments dashboard";
+}
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" role="button" asp-action="Index">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
+            <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+        </svg>
+        Back
+    </a>
+</div>
+<h1>@ViewData["Title"]</h1>
+<feature name="@(FeatureFlags.TableauSelfAssessmentDashboards)">
+    <tableau-viz id='tableau-viz'
+                 src='@srcUrl' token='@jwtToken' toolbar='bottom'>
+        If the dashboard doesn't appear after a few seconds, <a href="#">reload the page</a>
+    </tableau-viz>
+    @section scripts {
+        @* We are not using Yarn/npm for the Tableau JS becaue of errors during installation relating to a missing dependency *@
+        <script type="module" src="@tableauServerUrl/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+    }
+</feature>
+<feature name="@(FeatureFlags.TableauSelfAssessmentDashboards)" negate="true">
+    <h2>Oops! We are still working on this area of the site</h2>
+    <p class="nhsuk-lede-text">This feature is under development and should be available soon.</p>
+</feature>

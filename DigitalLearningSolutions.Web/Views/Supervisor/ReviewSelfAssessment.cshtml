@@ -96,24 +96,21 @@
             </a>
         }
 
-        @if (ViewBag.CanViewCertificate)
+        @if(Model.CompetencySummaries.CanViewCertificate)
         {
             <a class="nhsuk-button"
-           asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
-           asp-action="CompetencySelfAssessmentCertificatesupervisor"
-           asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
-           role="button">
+               asp-route-candidateAssessmentId="@Model.CandidateAssessmentId"
+               asp-action="CompetencySelfAssessmentCertificatesupervisor"
+               asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
+               role="button">
                 Certificate
             </a>
         }
-        @if (
-        Model.DelegateSelfAssessment.SignOffRequested > 0 &&
-        competencySummaries.Sum(c => (int)c["verifiedCount"]) == competencySummaries.Sum(c => (int)c["questionsCount"])
-        )
+        @if(Model.DelegateSelfAssessment.SignOffRequested > 0 && Model.CompetencySummaries.VerifiedCount == Model.CompetencySummaries.QuestionsCount)
         {
             <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>
         }
-        @if ((Model.DelegateSelfAssessment.ResultsVerificationRequests > 1) && (competencySummaries.Sum(c => (int)c["verifiedCount"]) < competencySummaries.Sum(c => (int)c["questionsCount"])))
+        @if((Model.DelegateSelfAssessment.ResultsVerificationRequests > 1) && Model.CompetencySummaries.VerifiedCount < Model.CompetencySummaries.QuestionsCount)
         {
             <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Confirm multiple results</a>
         }
@@ -164,34 +161,48 @@
                     <tr role="row" class="nhsuk-table__row first-row">
                         <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
                             <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
-                            <partial name="_CompetencyFlags" model="competency.CompetencyFlags" />
-                            @if (competency.Description != null && !competency.AlwaysShowDescription)
-                            {
-                                <details class="nhsuk-details">
-                                    <summary class="nhsuk-details__summary">
-                                        <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
-                                            <span class="nhsuk-details__summary-text">
-                                                @competency.Name
-                                            </span>
+                            <div class="nhsuk-grid-row">
+                                <div class="nhsuk-grid-column-full">
+                                    @if (competency.Optional)
+                                    {
+                                        <partial name="Shared/_TagRow" />
+                                    }
+                                </div>
+                                <div class="nhsuk-grid-column-full">
+                                    <partial name="_CompetencyFlags" model="competency.CompetencyFlags" />
+                                </div>
+                                <div class="nhsuk-grid-column-full">
+
+                                    @if (competency.Description != null && !competency.AlwaysShowDescription)
+                                    {
+                                        <details class="nhsuk-details">
+                                            <summary class="nhsuk-details__summary">
+                                                <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
+                                                    <span class="nhsuk-details__summary-text">
+                                                        @competency.Name
+                                                    </span>
+                                                </h2>
+                                            </summary>
+                                            <div class="nhsuk-details__text">
+                                                @(Html.Raw(@competency.Description))
+                                            </div>
+                                        </details>
+                                    }
+                                    else
+                                    {
+                                        <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
+                                            @competency.Name
                                         </h2>
-                                    </summary>
-                                    <div class="nhsuk-details__text">
-                                        @(Html.Raw(@competency.Description))
-                                    </div>
-                                </details>
-                            }
-                            else
-                            {
-                                <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
-                                    @competency.Name
-                                </h2>
-                                @if (competency.Description != null)
-                                {
-                                    <p class="nhsuk-body-l">
-                                        @(Html.Raw(competency.Description))
-                                    </p>
-                                }
-                            }
+                                        @if (competency.Description != null)
+                                        {
+                                            <p class="nhsuk-body-l">
+                                                @(Html.Raw(competency.Description))
+                                            </p>
+                                        }
+                                    }
+                                </div>
+
+                            </div>
                         </td>
                         <partial name="Shared/_AssessmentQuestionReviewCells"
                                  model="competency.AssessmentQuestions.First()"

@@ -153,7 +153,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 WHERE pr.CustomisationID = cu.CustomisationID
                     AND can.CentreID = @centreId
                     AND RemovedDate IS NULL
-                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS DelegateCount";
+                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%') AS DelegateCount";
 
         private const string CompletedCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
@@ -164,7 +164,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.centreID
                 WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
                     AND can.CentreID = @centreId
-                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS CompletedCount";
+                    AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%') AS CompletedCount";
 
         private const string AllAttemptsQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
@@ -533,8 +533,17 @@ namespace DigitalLearningSolutions.Data.DataServices
                     );
                 }
             }
+            if (candidateAssessmentId > 1 && supervisorDelegateId == 0)
+            {
+                connection.Execute(
+                        @"UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic
+                  WHERE ID = @candidateAssessmentId",
+                        new { candidateAssessmentId, enrolmentMethodId, completeByDateDynamic }
+                    );
+            }
 
-            if (candidateAssessmentId > 1)
+            if (candidateAssessmentId > 1 && supervisorDelegateId !=0)
+
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
@@ -542,13 +551,30 @@ namespace DigitalLearningSolutions.Data.DataServices
                   WHERE ID = @candidateAssessmentId
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
-                  {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
-                  WHERE CandidateAssessmentID = @candidateAssessmentId
+                 {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
+                WHERE CandidateAssessmentID = @candidateAssessmentId
 
                 COMMIT TRANSACTION";
 
                 connection.Execute(sqlQuery
                 , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic });
+            }
+
+            if (supervisorId > 0)
+            {
+                
+                var adminUserId = Convert.ToInt32(connection.ExecuteScalar(@"SELECT UserID FROM AdminAccounts WHERE (AdminAccounts.ID = @supervisorId)",
+                    new { supervisorId })
+                    );
+
+                if (delegateUserId == adminUserId)
+                {
+                    connection.Execute(
+                            @"UPDATE CandidateAssessments SET NonReportable = 1  WHERE ID = @candidateAssessmentId",
+                            new { candidateAssessmentId }
+                        );
+
+                }
             }
 
             if (candidateAssessmentId < 1)
@@ -1124,7 +1150,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
 					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'";
 
             string orderBy;
             string sortOrder;
@@ -1632,7 +1658,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE da.CentreID = @centreId
                         AND p.CustomisationID = @customisationId
                         AND ap.DefaultContentTypeID <> 4
-                        AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'",
+                        AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'",
                 new { customisationId, centreId }
             );
         }
@@ -1678,7 +1704,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
 					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'";
 
 
             var mainSql = "SELECT COUNT(*) AS TotalRecords " + fromTableQuery;
@@ -1779,7 +1805,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 				AND ((@answer3 IS NULL) OR ((@answer3 = 'No option selected' OR @answer3 = 'FREETEXTBLANKVALUE') AND (pr.Answer3 IS NULL OR LTRIM(RTRIM(pr.Answer3)) = '')) 
 					OR ((@answer3 = 'FREETEXTNOTBLANKVALUE' AND pr.Answer3 IS NOT NULL AND LTRIM(RTRIM(pr.Answer3)) != '') OR (pr.Answer3 IS NOT NULL AND pr.Answer3 = @answer3)))
                 
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%'";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'";
 
             string orderBy;
             string sortOrder;
@@ -1964,7 +1990,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                             INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = can.DelegateUserID 
 						    LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID AND ucd.centreID = can.CentreID
                         WHERE can.CentreID = @centreId AND can.SelfAssessmentID = csa.SelfAssessmentID
-                            AND can.RemovedDate IS NULL AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%.__%') AS DelegateCount,
+                            AND can.RemovedDate IS NULL AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%') AS DelegateCount,
                         (Select COUNT(*) FROM
                             (SELECT can.ID FROM dbo.CandidateAssessments AS can WITH (NOLOCK)
                                 LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas ON can.ID = cas.CandidateAssessmentID
@@ -2018,7 +2044,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 						WHERE CustomisationID = @customisationID ",
                 new { customisationId }).FirstOrDefault();
 
-            
+
         }
     }
 }

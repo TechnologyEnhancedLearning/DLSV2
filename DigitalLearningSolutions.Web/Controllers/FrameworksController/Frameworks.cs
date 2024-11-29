@@ -59,6 +59,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminId();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
             var isFrameworkContributor = GetIsFrameworkContributor();
+            searchString = searchString == null ? null : searchString.Trim();
             IEnumerable<BrandedFramework> frameworks;
 
             if (tabname == "All") frameworks = frameworkService.GetAllFrameworks(adminId);
