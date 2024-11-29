@@ -218,8 +218,30 @@
         {
             var users = connection.Query<AdminUser>(
                 @$"{BaseSelectAdminQuery}
-                    WHERE au.Active = 1 AND au.Approved = 1 AND au.CentreId = @centreId",
+                    WHERE au.Active = 1 AND au.Approved = 1 AND au.CentreId = @centreId
+                    ORDER BY au.Forename, au.Surname",
                 new { centreId }
+            ).ToList();
+
+            return users;
+        }
+        public List<AdminUser> GetAdminUsersAtCentreForCategory(int centreId, int categoryId)
+        {
+            var users = connection.Query<AdminUser>(
+                @$"SELECT 
+                        aa.ID AS Id,
+                        COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,
+                        u.FirstName,
+                        u.LastName    
+                    FROM AdminAccounts AS aa INNER JOIN
+	                    Users AS u ON aa.UserID = u.ID INNER JOIN
+	                    Centres AS c ON c.CentreID = aa.CentreID LEFT OUTER JOIN
+                        UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID LEFT OUTER JOIN
+	                    CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
+                    WHERE aa.Active = 1 AND aa.CentreId = @centreId AND aa.IsSupervisor = 1 AND
+		                    (aa.CategoryId = @categoryId OR aa.CategoryId IS NULL)
+                    ORDER BY u.FirstName, u.LastName",
+                new { centreId, categoryId }
             ).ToList();
 
             return users;
@@ -227,10 +249,10 @@
 
         public int GetNumberOfAdminsAtCentre(int centreId)
         {
-         var count =    connection.ExecuteScalar(
-                @"SELECT COUNT(*) FROM AdminUsers WHERE CentreID = @centreId",
-                new { centreId }
-            );
+            var count = connection.ExecuteScalar(
+                   @"SELECT COUNT(*) FROM AdminUsers WHERE CentreID = @centreId",
+                   new { centreId }
+               );
             return Convert.ToInt32(count);
         }
 

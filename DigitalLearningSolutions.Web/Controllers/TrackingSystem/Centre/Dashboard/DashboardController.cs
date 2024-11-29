@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -20,22 +19,22 @@
     public class DashboardController : Controller
     {
         private readonly IDashboardInformationService dashboardInformationService;
-        private readonly ISystemNotificationsDataService systemNotificationsDataService;
+        private readonly ISystemNotificationsService systemNotificationsService;
 
         public DashboardController(
             IDashboardInformationService dashboardInformationService,
-            ISystemNotificationsDataService systemNotificationsDataService
+            ISystemNotificationsService systemNotificationsService
         )
         {
             this.dashboardInformationService = dashboardInformationService;
-            this.systemNotificationsDataService = systemNotificationsDataService;
+            this.systemNotificationsService = systemNotificationsService;
         }
-
+        [NoCaching]
         public IActionResult Index()
         {
             var adminId = User.GetAdminId()!.Value;
             var unacknowledgedNotifications =
-                systemNotificationsDataService.GetUnacknowledgedSystemNotifications(adminId).ToList();
+                systemNotificationsService.GetUnacknowledgedSystemNotifications(adminId).ToList();
 
             if (!Request.Cookies.HasSkippedNotificationsCookie(adminId) && unacknowledgedNotifications.Any())
             {

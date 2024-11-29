@@ -47,7 +47,7 @@
             IEnumerable<AdminUser> supervisors
         )
         {
-            var supervisorIdNames = supervisors.Select(s => (s.Id, s.FullName));
+            var supervisorIdNames = supervisors.Select(s => (s.Id, s.FullName + " (" + s.EmailAddress + ")"));
             return SelectListHelper.MapOptionsToSelectListItems(
                 supervisorIdNames,
                 supervisorId

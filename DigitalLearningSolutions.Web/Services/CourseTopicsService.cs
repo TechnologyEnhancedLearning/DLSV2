@@ -7,7 +7,7 @@
 
     public interface ICourseTopicsService
     {
-        IEnumerable<Topic> GetActiveTopicsAvailableAtCentre(int centreId);
+        IEnumerable<Topic> GetCourseTopicsAvailableAtCentre(int centreId);
     }
 
     public class CourseTopicsService : ICourseTopicsService
@@ -20,11 +20,9 @@
         {
             this.courseTopicsDataService = courseTopicsDataService;
         }
-
-        public IEnumerable<Topic> GetActiveTopicsAvailableAtCentre(int centreId)
+        public IEnumerable<Topic> GetCourseTopicsAvailableAtCentre(int centreId)
         {
-            return courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId)
-                .Where(c => c.Active);
+            return courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId);
         }
     }
 }

@@ -3,13 +3,16 @@ namespace DigitalLearningSolutions.Web.Services
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Data;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SuperAdmin;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
+    using DocumentFormat.OpenXml.Office2010.Excel;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
@@ -115,6 +118,84 @@ namespace DigitalLearningSolutions.Web.Services
         UserEntity? GetDelegateUserFromLearningHubAuthId(int learningHubAuthId);
 
         int? GetUserLearningHubAuthId(int userId);
+        bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
+           string email,
+           int centreId,
+           int userId
+       );
+        bool PrimaryEmailIsInUseByOtherUser(string email, int userId);
+        IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId);
+        bool PrimaryEmailIsInUse(string email);
+        void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime);
+        (int? userId, int? centreId, string? centreName) GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                string centreSpecificEmail,
+                string registrationConfirmationHash
+            );
+        (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
+                                    string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
+                                    int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6);
+
+        DelegateUserCard? GetDelegateUserCardById(int id);
+        void DeactivateDelegateUser(int delegateId);
+        void ActivateDelegateUser(int delegateId);
+        int GetUserIdFromDelegateId(int delegateId);
+        void DeleteUserAndAccounts(int userId);
+        public bool PrimaryEmailInUseAtCentres(string email);
+        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
+        int? GetUserIdByAdminId(int adminId);
+        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
+        DelegateAccount? GetDelegateAccountById(int id);
+        int? GetUserIdFromUsername(string username);
+        IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
+        void SetCentreEmail(
+            int userId,
+            int centreId,
+            string? email,
+            DateTime? emailVerified,
+            IDbTransaction? transaction = null
+        );
+        int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
+        List<AdminUser> GetAdminUsersByCentreId(int centreId);
+
+        AdminUser? GetAdminUserById(int id);
+        string GetUserDisplayName(int userId);
+
+        (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(
+      string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
+      );
+        void DeleteUserCentreDetail(int userId, int centreId);
+        void ApproveDelegateUsers(params int[] ids);
+        (IEnumerable<AdminEntity>, int) GetAllAdmins(
+       string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold
+       );
+        void UpdateAdminUserAndSpecialPermissions(
+                    int adminId, bool isCentreAdmin, bool isSupervisor, bool isNominatedSupervisor, bool isTrainer,
+                    bool isContentCreator,
+                    bool isContentManager,
+                    bool importOnly,
+                    int? categoryId,
+                    bool isCentreManager,
+                    bool isSuperAdmin,
+                    bool isReportsViewer,
+                    bool isLocalWorkforceManager,
+                    bool isFrameworkDeveloper,
+                    bool isWorkforceManager
+                );
+        int GetUserIdFromAdminId(int adminId);
+        void DeleteAdminAccount(int adminId);
+        void UpdateAdminStatus(int adminId, bool active);
+        void UpdateAdminCentre(int adminId, int centreId);
+        bool IsUserAlreadyAdminAtCentre(int? userId, int centreId);
+        IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId);
+        void DeactivateAdmin(int adminId);
+        void ActivateUser(int userId);
+        void InactivateUser(int userId);
+        (IEnumerable<UserAccountEntity>, int recordCount) GetUserAccounts(
+           string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
+           );
+        void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
+        void DeactivateAdminAccount(int userId, int centreId);
+        int? CheckDelegateIsActive(int delegateId);
     }
 
     public class UserService : IUserService
@@ -196,7 +277,7 @@ namespace DigitalLearningSolutions.Web.Services
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)
         {
             return userDataService.GetDelegateUserCardsByCentreId(centreId).Where(
-                user => user.Approved && !user.SelfReg && string.IsNullOrEmpty(user.Password) &&
+                user => user.Approved && !user.SelfReg && 
                         !string.IsNullOrEmpty(user.EmailAddress)
                         && !Guid.TryParse(user.EmailAddress, out _)
                         && user.RegistrationConfirmationHash != null
@@ -238,8 +319,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         public IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId)
         {
-            return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
-                .Where(au => au.CategoryId == categoryId || au.CategoryId == null);
+            return userDataService.GetAdminUsersAtCentreForCategory(centreId, categoryId);
+
         }
 
         public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
@@ -675,6 +756,215 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var userId = userDataService.GetUserIdFromLearningHubAuthId(learningHubAuthId);
             return userId == null ? null : GetUserById(userId.Value);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentreByOtherUser(string email, int centreId, int userId)
+        {
+            return userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId);
+        }
+        public bool PrimaryEmailIsInUseByOtherUser(string email, int userId)
+        {
+            return userDataService.PrimaryEmailIsInUseByOtherUser(email, userId);
+        }
+
+        public IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId)
+        {
+            return userDataService.GetCentreDetailsForUser(userId);
+        }
+
+        public bool PrimaryEmailIsInUse(string email)
+        {
+            return userDataService.PrimaryEmailIsInUse(email);
+        }
+
+        public void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime)
+        {
+            userDataService.SetPrimaryEmailVerified(userId, email, verifiedDateTime);
+        }
+
+        public (int? userId, int? centreId, string? centreName) GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(string centreSpecificEmail, string registrationConfirmationHash)
+        {
+            return userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(centreSpecificEmail, registrationConfirmationHash);
+        }
+
+        public (IEnumerable<DelegateUserCard>, int) GetDelegateUserCards(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId,
+                                    string isActive, string isPasswordSet, string isAdmin, string isUnclaimed, string isEmailVerified, string registrationType, int jobGroupId,
+                                    int? groupId, string answer1, string answer2, string answer3, string answer4, string answer5, string answer6)
+        {
+            return userDataService.GetDelegateUserCards(searchString, offSet, itemsPerPage, sortBy, sortDirection, centreId,
+                                    isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, jobGroupId,
+                                    groupId, answer1, answer2, answer3, answer4, answer5, answer6);
+        }
+        public DelegateUserCard? GetDelegateUserCardById(int id)
+        {
+            return userDataService.GetDelegateUserCardById(id);
+        }
+        public void DeactivateDelegateUser(int delegateId)
+        {
+            userDataService.DeactivateDelegateUser(delegateId);
+        }
+        public void ActivateDelegateUser(int delegateId)
+        {
+            userDataService.ActivateDelegateUser(delegateId);
+        }
+        public int GetUserIdFromDelegateId(int delegateId)
+        {
+            return userDataService.GetUserIdFromDelegateId(delegateId);
+        }
+        public void DeleteUserAndAccounts(int userId)
+        {
+            userDataService.DeleteUserAndAccounts(userId);
+        }
+        public bool PrimaryEmailInUseAtCentres(string email)
+        {
+            return userDataService.PrimaryEmailInUseAtCentres(email);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
+        {
+            return userDataService.CentreSpecificEmailIsInUseAtCentre(email, centreId);
+        }
+
+        public int? GetUserIdByAdminId(int adminId)
+        {
+            return userDataService.GetUserIdByAdminId(adminId);
+        }
+
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        {
+            return userDataService.GetAdminUserByEmailAddress(emailAddress);
+        }
+
+        public DelegateAccount? GetDelegateAccountById(int id)
+        {
+            return userDataService.GetDelegateAccountById(id);
+        }
+
+        public int? GetUserIdFromUsername(string username)
+        {
+            return userDataService.GetUserIdFromUsername(username);
+        }
+
+        public IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId)
+        {
+            return userDataService.GetDelegateAccountsByUserId(userId);
+        }
+        public void SetCentreEmail(
+            int userId,
+            int centreId,
+            string? email,
+            DateTime? emailVerified,
+            IDbTransaction? transaction = null)
+        {
+            userDataService.SetCentreEmail(userId, centreId, email, emailVerified, transaction);
+        }
+
+        public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber)
+        {
+            return userDataService.GetDelegateCountWithAnswerForPrompt(centreId, promptNumber);
+        }
+
+        public List<AdminUser> GetAdminUsersByCentreId(int centreId)
+        {
+            return userDataService.GetAdminUsersByCentreId(centreId);
+        }
+
+
+        public AdminUser? GetAdminUserById(int id)
+        {
+            return userDataService.GetAdminUserById(id);
+
+        }
+
+        public string GetUserDisplayName(int userId)
+        {
+            return userDataService.GetUserDisplayName(userId);
+        }
+
+
+        public (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold)
+        {
+            return userDataService.GetAllDelegates(search, offset, rows, delegateId, accountStatus, lhlinkStatus, centreId, failedLoginThreshold);
+        }
+
+        public void DeleteUserCentreDetail(int userId, int centreId)
+        {
+            userDataService.DeleteUserCentreDetail(userId, centreId);
+        }
+
+        public void ApproveDelegateUsers(params int[] ids)
+        {
+            userDataService.ApproveDelegateUsers(ids);
+        }
+
+        public (IEnumerable<AdminEntity>, int) GetAllAdmins(string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold)
+        {
+            return userDataService.GetAllAdmins(search, offset, rows, adminId, userStatus, role, centreId, failedLoginThreshold);
+        }
+
+        public void UpdateAdminUserAndSpecialPermissions(int adminId, bool isCentreAdmin, bool isSupervisor, bool isNominatedSupervisor, bool isTrainer, bool isContentCreator, bool isContentManager, bool importOnly, int? categoryId, bool isCentreManager, bool isSuperAdmin, bool isReportsViewer, bool isLocalWorkforceManager, bool isFrameworkDeveloper, bool isWorkforceManager)
+        {
+            userDataService.UpdateAdminUserAndSpecialPermissions(adminId, isCentreAdmin, isSupervisor, isNominatedSupervisor, isTrainer, isContentCreator, isContentManager, importOnly, categoryId, isCentreManager, isSuperAdmin, isReportsViewer, isLocalWorkforceManager, isFrameworkDeveloper, isWorkforceManager);
+        }
+
+        public int GetUserIdFromAdminId(int adminId)
+        {
+            return userDataService.GetUserIdFromAdminId(adminId);
+        }
+
+        public void DeleteAdminAccount(int adminId)
+        {
+            userDataService.DeleteAdminAccount(adminId);
+        }
+
+        public void UpdateAdminStatus(int adminId, bool active)
+        {
+            userDataService.UpdateAdminStatus(adminId, active);
+        }
+
+        public void UpdateAdminCentre(int adminId, int centreId)
+        {
+            userDataService.UpdateAdminCentre(adminId, centreId);
+        }
+
+        public bool IsUserAlreadyAdminAtCentre(int? userId, int centreId)
+        {
+            return userDataService.IsUserAlreadyAdminAtCentre(userId, centreId);
+        }
+
+        public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
+        {
+            return userDataService.GetAdminsByCentreId(centreId);
+        }
+
+        public void DeactivateAdmin(int adminId)
+        {
+            userDataService.DeactivateAdmin(adminId);
+        }
+
+        public void ActivateUser(int userId)
+        {
+            userDataService.ActivateUser(userId);
+        }
+        public void InactivateUser(int userId)
+        {
+            userDataService.InactivateUser(userId);
+        }
+        public (IEnumerable<UserAccountEntity>, int recordCount) GetUserAccounts(string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold)
+        {
+            return userDataService.GetUserAccounts(search, offset, rows, jobGroupId, userStatus, emailStatus, userId, failedLoginThreshold);
+        }
+        public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
+        {
+            userDataService.UpdateUserDetailsAccount(firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId);
+        }
+        public void DeactivateAdminAccount(int userId, int centreId)
+        {
+            userDataService.DeactivateAdminAccount(userId, centreId);
+        }
+        public int? CheckDelegateIsActive(int delegateId)
+        {
+            return userDataService.CheckDelegateIsActive(delegateId);
         }
     }
 }

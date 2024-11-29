@@ -36,7 +36,7 @@
         {
             // Given
             var context = GetDefaultContext();
-            A.CallTo(() => selfAssessmentService.CanDelegateAccessSelfAssessment(A<int>._, A<int>._)).Returns(false);
+            A.CallTo(() => selfAssessmentService.CanDelegateAccessSelfAssessment(A<int>._, A<int>._, A<int>._)).Returns(false);
 
             // When
             new VerifyDelegateUserCanAccessSelfAssessment(selfAssessmentService, logger).OnActionExecuting(context);
@@ -54,7 +54,7 @@
         {
             // Given
             var context = GetDefaultContext();
-            A.CallTo(() => selfAssessmentService.CanDelegateAccessSelfAssessment(A<int>._, A<int>._)).Returns(true);
+            A.CallTo(() => selfAssessmentService.CanDelegateAccessSelfAssessment(A<int>._, A<int>._, A<int>._)).Returns(true);
 
             // When
             new VerifyDelegateUserCanAccessSelfAssessment(selfAssessmentService, logger).OnActionExecuting(context);

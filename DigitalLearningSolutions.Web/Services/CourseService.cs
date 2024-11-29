@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Configuration;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
@@ -118,9 +119,22 @@
         public (IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>, int) GetCentreCourses(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,
            string isActive, string categoryName, string courseTopic, string hasAdminFields);
 
-        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetDelegateCourses(string searchString,int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal,string isActive, string categoryName, string courseTopic, string hasAdminFields);
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetDelegateCourses(string searchString, int centreId, int? categoryId, bool allCentreCourses, bool? hideInLearnerPortal, string isActive, string categoryName, string courseTopic, string hasAdminFields);
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessments(string searchString, int centreId, string categoryName, string isActive);
         IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId);
+        bool IsCourseCompleted(int candidateId, int customisationId);
+        bool IsCourseCompleted(int candidateId, int customisationId, int progressID);
+        bool GetSelfRegister(int customisationId);
+        IEnumerable<CurrentCourse> GetCurrentCourses(int candidateId);
+        void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
+        void RemoveCurrentCourse(int progressId, int candidateId, RemovalMethod removalMethod);
+        IEnumerable<CompletedCourse> GetCompletedCourses(int candidateId);
+        IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId);
+        void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId);
+        int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
+        public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId);
+        bool IsSelfEnrollmentAllowed(int customisationId);
+        Customisation? GetCourse(int customisationId);
     }
 
     public class CourseService : ICourseService
@@ -373,7 +387,7 @@
         )
         {
             var allPossibleCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
-                .Where(c => c.Active);
+                .Where(c => c.Active && !c.Archived);
 
             var groupCourseIds = groupsDataService.GetGroupCoursesVisibleToCentre(centreId)
                 .Where(gc => gc.IsUsable && gc.GroupId == groupId)
@@ -557,6 +571,70 @@
         public IEnumerable<AvailableCourse> GetAvailableCourses(int delegateId, int? centreId, int categoryId)
         {
             return courseDataService.GetAvailableCourses(delegateId, centreId, categoryId);
+        }
+
+        public bool IsCourseCompleted(int candidateId, int customisationId )
+        {
+            return courseDataService.IsCourseCompleted(candidateId, customisationId);
+        }
+        public bool IsCourseCompleted(int candidateId, int customisationId, int progressID)
+        {
+            return courseDataService.IsCourseCompleted(candidateId, customisationId, progressID);
+        }
+
+        public bool GetSelfRegister(int customisationId)
+        {
+            return courseDataService.GetSelfRegister(customisationId);
+        }
+
+        public IEnumerable<CurrentCourse> GetCurrentCourses(int candidateId)
+        {
+            return courseDataService.GetCurrentCourses(candidateId);
+        }
+
+        public void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate)
+        {
+            courseDataService.SetCompleteByDate(progressId, candidateId, completeByDate);
+        }
+
+        public void RemoveCurrentCourse(int progressId, int candidateId, RemovalMethod removalMethod)
+        {
+            courseDataService.RemoveCurrentCourse(progressId, candidateId, removalMethod);
+        }
+
+        public IEnumerable<CompletedCourse> GetCompletedCourses(int candidateId)
+        {
+            return courseDataService.GetCompletedCourses(candidateId);
+        }
+
+        public IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId)
+        {
+            return courseDataService.GetAvailableCourses(candidateId, centreId);
+        }
+
+        public void EnrolOnSelfAssessment(int selfAssessmentId, int delegateUserId, int centreId)
+        {
+            courseDataService.EnrolOnSelfAssessment(selfAssessmentId, delegateUserId, centreId);
+        }
+
+        public int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId)
+        {
+            return courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(centreId, categoryId);
+        }
+
+        public IEnumerable<Course> GetApplicationsAvailableToCentre(int centreId)
+        {
+            return courseDataService.GetApplicationsAvailableToCentre(centreId);
+        }
+
+        public bool IsSelfEnrollmentAllowed(int customisationId)
+        {
+            return courseDataService.IsSelfEnrollmentAllowed(customisationId);
+        }
+
+        public Customisation? GetCourse(int customisationId)
+        {
+            return courseDataService.GetCourse(customisationId);
         }
     }
 }

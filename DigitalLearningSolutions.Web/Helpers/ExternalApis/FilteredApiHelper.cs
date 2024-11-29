@@ -6,12 +6,10 @@
     using System.Net.Http;
     using System.Security.Claims;
     using System.Text;
-    using System.Text.Json;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using System.Net.Http.Headers;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Utilities;

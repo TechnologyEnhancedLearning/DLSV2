@@ -1,0 +1,107 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@model CompetencySelfAssessmentCertificateViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Competency Self Assessment Certificate";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfassessmentcertificate.css")" asp-append-version="true">
+<style>
+    .nhsuk-breadcrumb {
+        background-color: #f0f4f5;
+        padding: 0 0;
+    }
+
+    .nhsuk-width-container {
+        margin: 0;
+    }
+
+    li:last-child, .nhsuk-list > li:last-child {
+        margin-bottom: 0;
+    }
+
+    .nhsuk-grid-column-full {
+        box-sizing: border-box;
+        padding: 0 0;
+    }
+
+    .nhsuk-breadcrumb__link:visited {
+        color: #330072;
+        background-color: #f4f4f4;
+        border-top: 2px solid blue;
+        margin-left: -10px;
+    }
+
+    .pagebreak {
+        page-break-before: always;
+    }
+
+</style>
+
+
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+
+<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+        <ol class="nhsuk-breadcrumb__list">
+            @if (Model.Vocabulary == "Proficiencies")
+            {
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader " asp-controller="LearningPortal"
+                   asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural"
+                   asp-route-selfAssessmentId="@Model.CompetencySelfAssessmentCertificates.SelfAssessmentID">
+                        &lt; Back
+                    </a>
+                </li>
+            }
+            @if (Model.Vocabulary == "ProfileAssessment")
+            {
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
+                   asp-action="ReviewDelegateSelfAssessment"
+                   asp-route-supervisorDelegateId="@Model.LoggedInSupervisorDelegateId"
+                   asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID">
+                        &lt; Back
+                    </a>
+                </li>
+            }
+        </ol>
+    </div>
+</nav>
+<br />
+<div class="nhsuk-width-container">
+    <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+            <h1>Certificate</h1>
+
+            <h2>@Model.CompetencySelfAssessmentCertificates.SelfAssessment - @Model.CompetencySelfAssessmentCertificates.LearnerName </h2>
+             @if (Model.Vocabulary == "Proficiencies")
+            {
+                <a class="nhsuk-button "
+                asp-controller="LearningPortal"
+               asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID"
+               asp-action="DownloadCertificate"
+               role="button">
+                Download certificate
+            </a>
+            }
+            @if (Model.Vocabulary == "ProfileAssessment")
+            {
+                <a class="nhsuk-button "
+                   asp-controller="Supervisor"
+                   asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID"
+                   asp-action="DownloadCertificate"
+                   role="button">
+                    Download certificate
+                </a>
+            }
+        </div>
+        <div class="certificate nhsuk-grid-column-full">
+            <partial name="_SelfAssessmentCertificateFirstPage.cshtml" model=Model />
+            <br /><br />
+            <partial name="_SelfAssessmentCertificateSecondPage.cshtml" model=Model />
+        
+        </div>
+    </div>
+</div>

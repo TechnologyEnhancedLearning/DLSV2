@@ -61,8 +61,9 @@
                 <tr role="row" class="nhsuk-table__row">
                     <td class="nhsuk-table__cell">
                         <span class="nhsuk-table-responsive__heading">Name/role </span>
-                        @supervisor.SupervisorName, @supervisor.RoleName
-
+                        <span class="text-wrap word-break">
+                            @supervisor.SupervisorName (@supervisor.SupervisorEmail), @supervisor.RoleName
+                        </span>
                     </td>
                     <td class="nhsuk-table__cell">
                         <span class="nhsuk-table-responsive__heading">Centre </span>
@@ -110,7 +111,9 @@ else
                 <tr role="row" class="nhsuk-table__row">
                     <td class="nhsuk-table__cell">
                         <span class="nhsuk-table-responsive__heading">Name/role </span>
-                        @supervisor.SupervisorName, @supervisor.RoleName
+                        <span class="text-wrap word-break">
+                            @supervisor.SupervisorName (@supervisor.SupervisorEmail), @supervisor.RoleName
+                        </span>
                     </td>
                     <td class="nhsuk-table__cell">
                         <span class="nhsuk-table-responsive__heading">Centre </span>

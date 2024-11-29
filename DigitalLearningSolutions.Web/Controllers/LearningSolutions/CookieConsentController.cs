@@ -1,7 +1,8 @@
-﻿using DigitalLearningSolutions.Data.DataServices;
+﻿using DigitalLearningSolutions.Data.Constants;
 using DigitalLearningSolutions.Data.Extensions;
 using DigitalLearningSolutions.Data.Utilities;
 using DigitalLearningSolutions.Web.Helpers;
+using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.ViewModels.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
     public class CookieConsentController : Controller
     {
-        private readonly IConfigDataService configDataService;
+        private readonly IConfigService configService;
         private readonly IConfiguration configuration;
         private readonly IClockUtility clockUtility;
         private readonly ILogger<CookieConsentController> logger;
@@ -21,13 +22,13 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
         private int CookieBannerConsentCookieExpiryDays = 0;
 
         public CookieConsentController(
-            IConfigDataService configDataService,
+            IConfigService configService,
             IConfiguration configuration,
             IClockUtility clockUtility,
             ILogger<CookieConsentController> logger
        )
         {
-            this.configDataService = configDataService;
+            this.configService = configService;
             this.configuration = configuration;
             this.clockUtility = clockUtility;
             this.logger = logger;
@@ -36,8 +37,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
         }
         public IActionResult CookiePolicy()
         {
-            var cookiePolicyContent = configDataService.GetConfigValue(ConfigDataService.CookiePolicyContent);
-            var policyLastUpdatedDate = configDataService.GetConfigValue(ConfigDataService.CookiePolicyUpdatedDate);
+            var cookiePolicyContent = configService.GetConfigValue(ConfigConstants.CookiePolicyContent);
+            var policyLastUpdatedDate = configService.GetConfigValue(ConfigConstants.CookiePolicyUpdatedDate);
             if (cookiePolicyContent == null)
             {
                 logger.LogError("Cookie policy content from Config table is null");

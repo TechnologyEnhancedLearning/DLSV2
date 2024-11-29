@@ -20,18 +20,19 @@
         </ul>
         <p>Once you have submitted a ticket, you will receive an email when a member of support team responds to it.</p>
         <a class="nhsuk-button" asp-controller="RequestSupportTicket" asp-action="TypeofRequest" role="button" asp-route-dlsSubApplication="@DlsSubApplication.TrackingSystem.UrlSegment">Start</a>
-
-        <div class="nhsuk-inset-text">
-            <span class="nhsuk-u-visually-hidden">Information: </span>
-            <p>
-                If you raised any tickets in the old support ticket system, you can view them here:
-                <a class="nhsuk-link--no-visited-state"
-                   asp-controller="SupportTickets"
-                   asp-action="Index"
-                   asp-route-dlsSubApplication="@DlsSubApplication.TrackingSystem.UrlSegment">
-                    View old support tickets
-                </a>
-            </p>
-        </div>
+        <feature name="@(FeatureFlags.ShowAppCardForLegacyTrackingSystem)">
+            <div class="nhsuk-inset-text">
+                <span class="nhsuk-u-visually-hidden">Information: </span>
+                <p>
+                    If you raised any tickets in the old support ticket system, you can view them here:
+                    <a class="nhsuk-link--no-visited-state"
+                       asp-controller="SupportTickets"
+                       asp-action="Index"
+                       asp-route-dlsSubApplication="@DlsSubApplication.TrackingSystem.UrlSegment">
+                        View old support tickets
+                    </a>
+                </p>
+            </div>
+        </feature>
     </div>
 </div>

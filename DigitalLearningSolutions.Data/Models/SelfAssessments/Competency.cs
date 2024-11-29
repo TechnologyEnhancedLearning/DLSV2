@@ -16,6 +16,7 @@
         public string CompetencyGroupDescription { get; set; } = string.Empty;
         public string? Vocabulary { get; set; }
         public bool Optional { get; set; }
+        public bool GroupOptionalCompetencies { get; set; }
         public bool AlwaysShowDescription { get; set; }
         public bool IncludedInSelfAssessment { get; set; }
         public DateTime? Verified { get; set; }
@@ -27,6 +28,7 @@
         public int? CandidateAssessmentSupervisorId { get; set; }
         public string? SupervisorName { get; set; }
         public string? CentreName { get; set; }
+        public int? SelfAssessmentStructureId { get; set; }
         public List<AssessmentQuestion> AssessmentQuestions { get; set; } = new List<AssessmentQuestion>();
         public IEnumerable<CompetencyFlag> CompetencyFlags { get; set; } = new List<CompetencyFlag>();
     }

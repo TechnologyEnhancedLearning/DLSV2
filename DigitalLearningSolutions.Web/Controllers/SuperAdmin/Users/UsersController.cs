@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Users
 {
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
@@ -28,20 +26,18 @@
     [SetSelectedTab(nameof(NavMenuTab.Admins))]
     public class UsersController : Controller
     {
-        private readonly IUserDataService userDataService;
-        private readonly ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private const string UserAccountFilterCookieName = "UserAccountFilter";
         private readonly IUserService userService;
         private readonly IUserCentreAccountsService userCentreAccountsService;
         private readonly IClockUtility clockUtility;
-        public UsersController(IUserDataService userDataService, ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsDataService jobGroupsDataService,IUserCentreAccountsService userCentreAccountsService, IUserService userService, IClockUtility clockUtility)
+        public UsersController(ICentreRegistrationPromptsService centreRegistrationPromptsService, ISearchSortFilterPaginateService searchSortFilterPaginateService, IJobGroupsService jobGroupsService,IUserCentreAccountsService userCentreAccountsService, IUserService userService, IClockUtility clockUtility)
         {
-            this.userDataService = userDataService;
-            this.centreRegistrationPromptsDataService = centreRegistrationPromptsDataService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.jobGroupsService = jobGroupsService;
             this.userService = userService;
             this.userCentreAccountsService = userCentreAccountsService;
             this.clockUtility = clockUtility;
@@ -52,7 +48,7 @@
         {
             InactivateUserViewModel inactivateUserViewModel = new InactivateUserViewModel();
             inactivateUserViewModel.UserId = userId;
-            inactivateUserViewModel.DisplayName = this.userDataService.GetUserDisplayName(userId);
+            inactivateUserViewModel.DisplayName = this.userService.GetUserDisplayName(userId);
 
             if (TempData["SearchString"] != null)
             {
@@ -78,7 +74,7 @@
             TempData["UserId"] = userId;
             if (inactivateUserViewModel.IsChecked)
             {
-                this.userDataService.InactivateUser(userId);
+                this.userService.InactivateUser(userId);
                 return RedirectToAction("Index", "Users", new { UserId = userId });
             }
             else
@@ -103,6 +99,8 @@
           string? ExistingFilterString = ""
         )
         {
+            Search = Search == null ? string.Empty : Search.Trim();
+
             if (string.IsNullOrEmpty(SearchString) || string.IsNullOrEmpty(ExistingFilterString))
             {
                 page = 1;
@@ -156,9 +154,9 @@
                 }
             }
 
-            (var UserAccounts, var ResultCount) = this.userDataService.GetUserAccounts(Search ?? string.Empty, offSet, itemsPerPage ?? 0, JobGroupId, UserStatus, EmailStatus, UserId, AuthHelper.FailedLoginThreshold);
+            (var UserAccounts, var ResultCount) = this.userService.GetUserAccounts(Search ?? string.Empty, offSet, itemsPerPage ?? 0, JobGroupId, UserStatus, EmailStatus, UserId, AuthHelper.FailedLoginThreshold);
 
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
             jobGroups.Insert(0, (0, "Any"));
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
@@ -235,7 +233,7 @@
         [Route("SuperAdmin/Users/{userId=0:int}/EditUserDetails")]
         public IActionResult EditUserDetails(int userId)
         {
-            UserAccount userAccount = this.userDataService.GetUserAccountById(userId);
+            UserAccount userAccount = this.userService.GetUserAccountById(userId);
             EditUserDetailsViewModel editUserDetailsViewModel = new EditUserDetailsViewModel(userAccount);
 
             if (TempData["SearchString"] != null)
@@ -253,7 +251,7 @@
             TempData["UserId"] = userId;
             TempData.Keep();
 
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
             ViewBag.JobGroups = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroups, userAccount.JobGroupId
             );
@@ -266,9 +264,9 @@
         {
             if (ModelState.IsValid)
             {
-                if (!this.userDataService.PrimaryEmailIsInUseByOtherUser(editUserDetailsViewModel.PrimaryEmail, editUserDetailsViewModel.Id))
+                if (!this.userService.PrimaryEmailIsInUseByOtherUser(editUserDetailsViewModel.PrimaryEmail, editUserDetailsViewModel.Id))
                 {
-                    this.userDataService.UpdateUserDetailsAccount(editUserDetailsViewModel.FirstName, editUserDetailsViewModel.LastName, editUserDetailsViewModel.PrimaryEmail, editUserDetailsViewModel.JobGroupId, editUserDetailsViewModel.ProfessionalRegistrationNumber,
+                    this.userService.UpdateUserDetailsAccount(editUserDetailsViewModel.FirstName, editUserDetailsViewModel.LastName, editUserDetailsViewModel.PrimaryEmail, editUserDetailsViewModel.JobGroupId, editUserDetailsViewModel.ProfessionalRegistrationNumber,
                         ((editUserDetailsViewModel.ResetEmailVerification) ? null : editUserDetailsViewModel.EmailVerified),
                         editUserDetailsViewModel.Id);
                     return RedirectToAction("Index", "Users", new { UserId = editUserDetailsViewModel.Id });
@@ -281,7 +279,7 @@
                     );
                 }
             }
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
             ViewBag.JobGroups = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroups, editUserDetailsViewModel.JobGroupId
             );
@@ -332,7 +330,7 @@
         [Route("SuperAdmin/Users/{userId=0:int}/ActivateUser")]
         public IActionResult ActivateUser(int userId = 0)
         {
-            userDataService.ActivateUser(userId);
+            userService.ActivateUser(userId);
             TempData["UserId"] = userId;
             return RedirectToAction("Index", "Users", new { UserId = userId });
         }
@@ -340,7 +338,7 @@
         [Route("SuperAdmin/Users/{userId=0:int}/{email='':string}/VerifyEmail")]
         public IActionResult VerifyEmail(int userId = 0,string email="")
         {
-            userDataService.SetPrimaryEmailVerified(userId,email, clockUtility.UtcNow);
+            userService.SetPrimaryEmailVerified(userId,email, clockUtility.UtcNow);
             TempData["UserId"] = userId;
             return RedirectToAction("Index", "Users", new { UserId = userId });
         }

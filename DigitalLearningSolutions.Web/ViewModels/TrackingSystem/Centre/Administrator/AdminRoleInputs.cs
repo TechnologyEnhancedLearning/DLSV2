@@ -15,7 +15,7 @@
         public static CheckboxListItemViewModel CentreManagerCheckbox = new CheckboxListItemViewModel(
             nameof(EditRolesViewModel.IsCenterManager),
             "Centre manager",
-            "Manages user access permissions for administrators at the centre, sees all support tickets for the centre in addition to having all of the permissions of a centre administrator."
+            "Manages user access permissions for administrators at the centre, in addition to having all of the permissions of a centre administrator."
         );
 
         public static CheckboxListItemViewModel SupervisorCheckbox = new CheckboxListItemViewModel(

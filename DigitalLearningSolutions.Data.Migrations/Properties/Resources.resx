@@ -125,22 +125,22 @@
     <value>..\Scripts\CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_106_CreateOrAlterInsertCustomisation_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2-106-CreateOrAlterInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-106-CreateOrAlterInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_106_DropInsertCustomisation_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2-106-DropInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-106-DropInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_133_AdjustScoresForFilteredSP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2-133-AdjustScoresForFilteredSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-133-AdjustScoresForFilteredSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_133_UnAdjustScoresForFilteredSP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2-133-UnAdjustScoresForFilteredSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-133-UnAdjustScoresForFilteredSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_153_DropFilteredFunctionTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2-153-DropFilteredFunctionTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-153-DropFilteredFunctionTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_153_DropFilteredSPFixes" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2-153-DropFilteredSPFixes.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-153-DropFilteredSPFixes.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_153_FilteredFunctionTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-153-FilteredFunctionTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
@@ -176,85 +176,85 @@
     <value>..\Scripts\DLSV2-379-ReorderCompetencyAssessmentQuestionsSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2-581-GetActiveAvailableCustomisationsForCentreFiltered_V6.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-581-GetActiveAvailableCustomisationsForCentreFiltered_V6.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_95_AddSystemVersioning" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2-95_AddSystemVersioning.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-95_AddSystemVersioning.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_95_RemoveSystemVersioning" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2-95_RemoveSystemVersioning.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-95_RemoveSystemVersioning.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DropActiveAvailableV6" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DropActiveAvailableV6.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DropActiveAvailableV6.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DropApplyLPDefaultsSPChanges" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DropApplyLPDefaultsSPChanges.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="DropFilteredSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DropFilteredSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DropFilteredSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DropGetActiveAvailableV5" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DropGetActiveAvailableV5.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DropGetActiveAvailableV5.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DropReorderFrameworkCompetenciesAndGroupsSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DropReorderFrameworkCompetenciesAndGroupsSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DropReorderFrameworkCompetenciesAndGroupsSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="FilteredSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\FilteredSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="GetActiveAvailableV5" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\GetActiveAvailableV5.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\GetActiveAvailableV5.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\HEEDLS-667-GetActiveAvailableCustomisationsForCentreFiltered_V5-Signposting-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\HEEDLS-667-GetActiveAvailableCustomisationsForCentreFiltered_V5-Signposting-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\HEEDLS-667-GetActiveAvailableCustomisationsForCentreFiltered_V5-Signposting-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="UAR-831-CreateViewsForAdminUsersAndCandidatesTables-UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\UAR-831-CreateViewsForAdminUsersAndCandidatesTables-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\UAR-831-CreateViewsForAdminUsersAndCandidatesTables-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="UAR-831-CreateViewsForAdminUsersAndCandidatesTables-DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\UAR-831-CreateViewsForAdminUsersAndCandidatesTables-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\UAR-831-CreateViewsForAdminUsersAndCandidatesTables-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="UAR_858_SnapshotData_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\UAR-858-SnapshotData-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\UAR-858-SnapshotData-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="UAR_859_PopulateUsersTableFromAccountsTables_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\UAR-859-PopulateUsersTableFromAccountsTables-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\UAR-859-PopulateUsersTableFromAccountsTables-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD-786-GetSelfRegisteredFlag_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-786-GetSelfRegisteredFlag_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-786-GetSelfRegisteredFlag_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD-786-GetSelfRegisteredFlag_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-786-GetSelfRegisteredFlag_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-786-GetSelfRegisteredFlag_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="td_1043_getactivitiesforenrolment_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\td-1043-getactivitiesforenrolment_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\td-1043-getactivitiesforenrolment_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="td_1043_getactivitiesforenrolment" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\td-1043-getactivitiesforenrolment.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\td-1043-getactivitiesforenrolment.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="td_264_alterviewadminusersaddcentrename_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\td_264_alterviewadminusersaddcentrename_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\td_264_alterviewadminusersaddcentrename_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="td_264_alterviewadminusersaddcentrename_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\td_264_alterviewadminusersaddcentrename_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\td_264_alterviewadminusersaddcentrename_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="td_1131_alterviewcandidatesadduserid_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\td_1131_alterviewcandidatesadduserid_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\td_1131_alterviewcandidatesadduserid_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="td_1131_alterviewcandidatesadduserid_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\td_1131_alterviewcandidatesadduserid_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\td_1131_alterviewcandidatesadduserid_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="CookiePolicy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CookiePolicy.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\CookiePolicy.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1220_AddSystemVersioning_SelfAssessmentResultSupervisorVerifications" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-1220-AddSystemVersioning_SelfAssessmentResultSupervisorVerifications.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1220_RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-1220-RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-1220-RemoveSystemVersioning_SelfAssessmentResultSupervisorVerifications.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="td_1610_update_getactivitiesfordelegateenrolment_proc_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\td-1610-update_getactivitiesfordelegateenrolment_proc_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
@@ -263,10 +263,10 @@
     <value>..\Scripts\td-1610-update_getactivitiesfordelegateenrolment_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="TD_1766_GetActivitiesForDelegateEnrolmentTweak_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-1766-GetActivitiesForDelegateEnrolmentTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-1766-GetActivitiesForDelegateEnrolmentTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1766_GetActivitiesForDelegateEnrolmentTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-1766-GetActivitiesForDelegateEnrolmentTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-1766-GetActivitiesForDelegateEnrolmentTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1913_AlterGroupCustomisation_Add_V2_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-1913-AlterGroupCustomisation_Add_V2_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
@@ -275,43 +275,43 @@
     <value>..\Scripts\TD-1913-AlterGroupCustomisation_Add_V2_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="TD_2117_CreatePopulateReportSelfAssessmentActivityLog_SP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2117-CreatePopulateReportSelfAssessmentActivityLog-SP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-2117-CreatePopulateReportSelfAssessmentActivityLog-SP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1766_GetCurrentCoursesForCandidateTweak_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-1766-GetCurrentCoursesForCandidateTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-1766-GetCurrentCoursesForCandidateTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1766_GetCurrentCoursesForCandidateTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-1766-GetCurrentCoursesForCandidateTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-1766-GetCurrentCoursesForCandidateTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2094-GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-2094-GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_2094_GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2094-GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-2094-GetActivitiesForDelegateEnrolmentDelegateStatusPropertyTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TermsAndConditionsOldrecord" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TermsAndConditionsOldrecord.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\TermsAndConditionsOldrecord.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1766_GetCompletedCoursesForCandidateTweak_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-1766-GetCompletedCoursesForCandidateTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-1766-GetCompletedCoursesForCandidateTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1766_GetCompletedCoursesForCandidateTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-1766-GetCompletedCoursesForCandidateTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-1766-GetCompletedCoursesForCandidateTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TermsConditions" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TermsConditions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\TermsConditions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1943_CookiePolicyContentHtmlOldRecord" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TD_1943_CookiePolicyContentHtmlOldRecord.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\TD_1943_CookiePolicyContentHtmlOldRecord.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_1943_CookiesPolicy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TD_1943_CookiesPolicy.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\TD_1943_CookiesPolicy.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2508-GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-2508-GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_2508_GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2508-GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-2508-GetActivitiesForDelegateEnrolmentHiddenInLearningPortalTweak_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3000_CheckDelegateStatusForCustomisationFix_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-3000-CheckDelegateStatusForCustomisationFix_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
@@ -320,16 +320,16 @@
     <value>..\Scripts\TD-3000-CheckDelegateStatusForCustomisationFix_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="TD_3187_CreateGetAssessmentResultsByDelegate_SP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-3187-CreateGetAssessmentResultsByDelegate-SP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-3187-CreateGetAssessmentResultsByDelegate-SP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3187_CreateGetCandidateAssessmentResultsById_SP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-3187-CreateGetCandidateAssessmentResultsById-SP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-3187-CreateGetCandidateAssessmentResultsById-SP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3190_SendOneMonthSelfAssessmentOverdueRemindersSP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-3190-SendOneMonthSelfAssessmentOverdueRemindersSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-3190-SendOneMonthSelfAssessmentOverdueRemindersSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-3190-SendOneMonthSelfAssessmentTBCRemindersSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-3190-SendOneMonthSelfAssessmentTBCRemindersSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3190_FixSelfAssessmentReminderQueriesSP_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-3190-FixSelfAssessmentReminderQueriesSP_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
@@ -347,22 +347,22 @@
     <value>..\Scripts\TD-2481-Update_uspReturnSectionsForCandCust_V2_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="TD_2036_SwitchOffPeriodFields_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2036-SwitchOffPeriodFields-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-2036-SwitchOffPeriodFields-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_2036_SwitchOffPeriodFields_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2036-SwitchOffPeriodFields-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-2036-SwitchOffPeriodFields-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_2036_SwitchSystemVersioningOffAllTables_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2036-SwitchSystemVersioningOffAllTables-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-2036-SwitchSystemVersioningOffAllTables-DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3629_DeleteDeprecatedTables_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-3629-DeleteDeprecatedTables_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-3629-DeleteDeprecatedTables_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_2036_SwitchSystemVersioningOffAllTables_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-2036-SwitchSystemVersioningOffAllTables-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-2036-SwitchSystemVersioningOffAllTables-UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3664_RestoreDroppedSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-3664-RestoreDroppedSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\TD-3664-RestoreDroppedSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3623_Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-3623-Alter_uspCreateProgressRecordWithCompleteWithinMonthsSPs_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
@@ -377,16 +377,16 @@
     <value>..\Scripts\TD-4015-GetCompletedCoursesForCandidateFix_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="TD_3671_Alter_CheckDelegateStatusForCustomisation_func_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TD_3671_Alter_CheckDelegateStatusForCustomisation_func_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\TD_3671_Alter_CheckDelegateStatusForCustomisation_func_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TD-3671-Alter_GetCurrentCoursesForCandidate_V2_proc_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\TD-3671-Alter_GetCurrentCoursesForCandidate_V2_proc_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3671_Alter_CheckDelegateStatusForCustomisation_func_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TD_3671_Alter_CheckDelegateStatusForCustomisation_func_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\TD_3671_Alter_CheckDelegateStatusForCustomisation_func_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_3671_Alter_GetCurrentCoursesForCandidate_V2_proc_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TD-3671-Alter_GetCurrentCoursesForCandidate_V2_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\TD-3671-Alter_GetCurrentCoursesForCandidate_V2_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="TD_4223_Alter_uspCreateProgressRecord_V3_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-4223-Alter_uspCreateProgressRecord_V3_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
@@ -405,5 +405,62 @@
   </data>
   <data name="TD_4223_Alter_GroupCustomisation_Add_V2_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-4223-Alter_GroupCustomisation_Add_V2_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4243_Alter_GetCurrentCoursesForCandidate_V2_proc_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+  </data>
+  <data name="TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4243_Alter_GetCurrentCoursesForCandidate_V2_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+  </data>
+  <data name="TD_4436_Alter_uspCreateProgressRecord_V3_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_uspCreateProgressRecord_V3_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4436_Alter_uspCreateProgressRecord_V3_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_uspCreateProgressRecord_V3_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4243_Alter_GetActivitiesForDelegateEnrolment_proc_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4243_Alter_GetActivitiesForDelegateEnrolment_proc_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+  </data>
+  <data name="TD_4243_Alter_GetActivitiesForDelegateEnrolment_proc_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4243_Alter_GetActivitiesForDelegateEnrolment_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+  </data>
+  <data name="TD_4243_Alter_GetCompletedCoursesForCandidate_proc_down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4243_Alter_GetCompletedCoursesForCandidate_proc_down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+  </data>
+  <data name="TD_4243_Alter_GetCompletedCoursesForCandidate_proc_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4243_Alter_GetCompletedCoursesForCandidate_proc_up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+  </data>
+  <data name="TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-4436-Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4634_Alter_GetCompletedCoursesForCandidate_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD_4634_Alter_GetCompletedCoursesForCandidate_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4634_Alter_GetCompletedCoursesForCandidate_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD_4634_Alter_GetCompletedCoursesForCandidate_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4950_Alter_GetAssessmentResultsByDelegate_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD_4950_Alter_GetAssessmentResultsByDelegate_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4950_Alter_GetAssessmentResultsByDelegate_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD_4950_Alter_GetAssessmentResultsByDelegate_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD-4950-dboGetOtherCentresForSelfAssessmentCreateOrAlter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4950-dboGetOtherCentresForSelfAssessmentCreateOrAlter.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="TD_4950_AlterGetCandidateAssessmentResultsById_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4950-AlterGetCandidateAssessmentResultsById_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_4950_AlterGetCandidateAssessmentResultsById_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD-4950-AlterGetCandidateAssessmentResultsById_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
 </root>

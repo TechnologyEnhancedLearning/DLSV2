@@ -1925,6 +1925,436 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 20/08/2024 11:57:38 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ======= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4243_Alter_GetActivitiesForDelegateEnrolment_proc_down {
+            get {
+                return ResourceManager.GetString("TD_4243_Alter_GetActivitiesForDelegateEnrolment_proc_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 20/08/2024 11:57:38 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ======= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4243_Alter_GetActivitiesForDelegateEnrolment_proc_up {
+            get {
+                return ResourceManager.GetString("TD_4243_Alter_GetActivitiesForDelegateEnrolment_proc_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 20/08/2024 11:58:45 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCourses [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4243_Alter_GetCompletedCoursesForCandidate_proc_down {
+            get {
+                return ResourceManager.GetString("TD_4243_Alter_GetCompletedCoursesForCandidate_proc_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 20/08/2024 11:58:45 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCourses [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4243_Alter_GetCompletedCoursesForCandidate_proc_up {
+            get {
+                return ResourceManager.GetString("TD_4243_Alter_GetCompletedCoursesForCandidate_proc_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 22/07/2024 10:11:35 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        /// 
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        /// 
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROCEDU [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_down {
+            get {
+                return ResourceManager.GetString("TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        /// 
+        ////****** Object:  StoredProcedure [dbo].[GetCurrentCoursesForCandidate_V2]    Script Date: 22/07/2024 10:11:35 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        /// 
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        /// 
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of active progress records for the candidate.
+        ///-- Change 18/09/2018: Adds logic to exclude Removed courses from returned results.
+        ///-- =============================================
+        ///ALTER PROC [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_up {
+            get {
+                return ResourceManager.GetString("TD_4243_Alter_GetCurrentCoursesForCandidate_V2_proc_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 27/08/2024 14:41:29 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the paramet [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Down {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GroupCustomisation_Add_V2]    Script Date: 27/08/2024 14:41:29 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/10/2018
+        ///-- Description:	Adds a customisation to a group and enrols all group delegates on the customisation if applicable.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GroupCustomisation_Add_V2]
+        ///	-- Add the paramet [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Up {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_GroupCustomisation_Add_V2_UpdateCompleteBy_Supervisor_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecord_V3]    Script Date: 14/08/2024 14:46:35 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15 February 2012
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and CustomisationID don&apos;t [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_uspCreateProgressRecord_V3_Down {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_uspCreateProgressRecord_V3_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecord_V3]    Script Date: 14/08/2024 14:46:35 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15 February 2012
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and CustomisationID don&apos;t [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_uspCreateProgressRecord_V3_Up {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_uspCreateProgressRecord_V3_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2]    Script Date: 27/08/2024 15:06:49 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 11/04/2019
+        ///-- Description:	Creates the Progress and aspProgress record for a new user with no return value
+        ///-- Returns:		Nothing
+        ///
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspCreatePr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2]    Script Date: 27/08/2024 15:06:49 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 11/04/2019
+        ///-- Description:	Creates the Progress and aspProgress record for a new user with no return value
+        ///-- Returns:		Nothing
+        ///
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspCreatePr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up {
+            get {
+                return ResourceManager.GetString("TD_4436_Alter_uspCreateProgressRecordWithCompleteWithinMonths_Quiet_V2_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 05/09/2024 16:24:49 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4634_Alter_GetCompletedCoursesForCandidate_DOWN {
+            get {
+                return ResourceManager.GetString("TD_4634_Alter_GetCompletedCoursesForCandidate_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 05/09/2024 16:24:49 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4634_Alter_GetCompletedCoursesForCandidate_UP {
+            get {
+                return ResourceManager.GetString("TD_4634_Alter_GetCompletedCoursesForCandidate_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetAssessmentResultsByDelegate]    Script Date: 07/11/2024 21:36:58 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns assessment results for a delegate
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetAssessmentResultsByDelegate]
+        ///	@selfAssessmentId as Int = 0,
+        ///	@delegateId as int = 0
+        ///AS
+        ///BEGIN [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4950_Alter_GetAssessmentResultsByDelegate_DOWN {
+            get {
+                return ResourceManager.GetString("TD_4950_Alter_GetAssessmentResultsByDelegate_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetAssessmentResultsByDelegate]    Script Date: 07/11/2024 21:36:58 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns assessment results for a delegate
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetAssessmentResultsByDelegate]
+        ///	@selfAssessmentId as Int = 0,
+        ///	@delegateId as int = 0
+        ///AS
+        ///BEGIN [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4950_Alter_GetAssessmentResultsByDelegate_UP {
+            get {
+                return ResourceManager.GetString("TD_4950_Alter_GetAssessmentResultsByDelegate_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to USE [mbdbx101_uar]
+        ///GO
+        ////****** Object:  StoredProcedure [dbo].[GetCandidateAssessmentResultsById]    Script Date: 14/11/2024 14:31:31 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmen [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4950_AlterGetCandidateAssessmentResultsById_DOWN {
+            get {
+                return ResourceManager.GetString("TD_4950_AlterGetCandidateAssessmentResultsById_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to USE [mbdbx101_uar]
+        ///GO
+        ////****** Object:  StoredProcedure [dbo].[GetCandidateAssessmentResultsById]    Script Date: 14/11/2024 14:31:31 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmen [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4950_AlterGetCandidateAssessmentResultsById_UP {
+            get {
+                return ResourceManager.GetString("TD_4950_AlterGetCandidateAssessmentResultsById_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[GetOtherCentresForSelfAssessment]    Script Date: 12/11/2024 08:47:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/01/2024
+        ///-- Description:	Gets a comma separated list of other centres for a user self assessment
+        ///-- =============================================
+        ///CREATE OR ALTER FUNCTION [dbo].[GetOtherCentresForSelfAssessment]
+        ///(
+        ///	-- Add the para [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_4950_dboGetOtherCentresForSelfAssessmentCreateOrAlter {
+            get {
+                return ResourceManager.GetString("TD-4950-dboGetOtherCentresForSelfAssessmentCreateOrAlter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO

@@ -54,10 +54,6 @@ details.nhsuk-details {
   }
 }
 
-.nhsuk-details__summary-text {
-  text-decoration: none;
-}
-
 .score {
   margin-left: 48px;
   color: $color_nhsuk-black;
@@ -246,4 +242,8 @@ details.nhsuk-details {
 
 .text-area-edit-90 {
   height: 90px
+}
+
+.heading-checkboxes__label {
+  padding: 4px 12px 4px;
 }

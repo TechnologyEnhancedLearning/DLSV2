@@ -2,7 +2,6 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
@@ -21,21 +20,21 @@
     {
         private const string FindCentreFilterCookieName = "FindCentre";
         private readonly ICentresService centresService;
-        private readonly IRegionDataService regionDataService;
+        private readonly IRegionService regionService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IConfiguration configuration;
         private readonly IFeatureManager featureManager;
 
         public FindYourCentreController(
             ICentresService centresService,
-            IRegionDataService regionDataService,
+            IRegionService regionService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IConfiguration configuration,
             IFeatureManager featureManager
         )
         {
             this.centresService = centresService;
-            this.regionDataService = regionDataService;
+            this.regionService = regionService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.configuration = configuration;
             this.featureManager = featureManager;
@@ -67,7 +66,7 @@
             );
 
             var centreSummaries = centresService.GetAllCentreSummariesForFindCentre();
-            var regions = regionDataService.GetRegionsAlphabetical();
+            var regions = regionService.GetRegionsAlphabetical();
 
             var availableFilters = FindYourCentreViewModelFilterOptions
                 .GetFindCentreFilterModels(regions).ToList();

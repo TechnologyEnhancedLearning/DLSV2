@@ -31,13 +31,14 @@
     </details>
 
     <div class="flex-row">
-        @if (Model.ArchivedDate == null && Model.RemovedDate == null)
+        @if (Model.ArchivedDate == null && Model.RemovedDate == null && Model.CheckUnpublishedCourse > 0 && Model.Active)
         {
             <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2"
                aria-describedby="@Model.Id-name"
                asp-controller="LearningMenu"
                asp-action="Index"
                asp-route-customisationId="@Model.Id"
+               asp-route-progressID="@Model.ProgressId"
                role="button">
                 Launch course <span class="nhsuk-u-visually-hidden">@Model.Name</span>
             </a>

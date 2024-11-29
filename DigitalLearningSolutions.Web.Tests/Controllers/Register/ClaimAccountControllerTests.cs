@@ -2,8 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.User;    
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Services;
@@ -28,7 +27,6 @@
         private const string DefaultCandidateNumber = "CN777";
         private const string Password = "password";
         private IUserService userService = null!;
-        private IUserDataService userDataService = null!;
         private IClaimAccountService claimAccountService = null!;
         private IConfiguration config = null!;
         private IEmailVerificationService emailVerificationService = null!;
@@ -39,10 +37,9 @@
         public void Setup()
         {
             userService = A.Fake<IUserService>();
-            userDataService = A.Fake<IUserDataService>();
             claimAccountService = A.Fake<IClaimAccountService>();
-            config= A.Fake<IConfiguration>();
-            emailVerificationService= A.Fake<IEmailVerificationService>();
+            config = A.Fake<IConfiguration>();
+            emailVerificationService = A.Fake<IEmailVerificationService>();
             controller = GetClaimAccountController();
             controllerWithLoggedInUser = GetClaimAccountController().WithMockUser(
                 true,
@@ -190,7 +187,7 @@
             // Given
             var model = GivenClaimAccountViewModel(wasPasswordSetByAdmin: true);
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(model.Email)).Returns(false);
+            A.CallTo(() => userService.PrimaryEmailIsInUse(model.Email)).Returns(false);
 
             // When
             var result = await controller.CompleteRegistrationWithoutPassword(
@@ -228,7 +225,7 @@
             // Given
             var model = GivenClaimAccountViewModel(wasPasswordSetByAdmin: true);
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(model.Email)).Returns(true);
+            A.CallTo(() => userService.PrimaryEmailIsInUse(model.Email)).Returns(true);
 
             // When
             var result = await controller.CompleteRegistrationWithoutPassword(
@@ -337,7 +334,7 @@
             var model = GivenClaimAccountViewModel(wasPasswordSetByAdmin: false);
             var passwordFormData = new ConfirmPasswordViewModel { Password = Password };
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(model.Email)).Returns(false);
+            A.CallTo(() => userService.PrimaryEmailIsInUse(model.Email)).Returns(false);
 
             // When
             var result = await controller.CompleteRegistration(
@@ -376,7 +373,7 @@
             // Given
             var model = GivenClaimAccountViewModel(wasPasswordSetByAdmin: false);
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(model.Email)).Returns(true);
+            A.CallTo(() => userService.PrimaryEmailIsInUse(model.Email)).Returns(true);
 
             // When
             var result = await controller.CompleteRegistration(
@@ -501,7 +498,7 @@
 
             controller.ModelState.AddModelError("ConfirmPassword", "Required");
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(model.Email)).Returns(false);
+            A.CallTo(() => userService.PrimaryEmailIsInUse(model.Email)).Returns(false);
 
             // When
             var result = await controller.CompleteRegistration(
@@ -814,7 +811,7 @@
             };
 
             A.CallTo(
-                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                () => userService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
                     email,
                     registrationConfirmationHash
                 )
@@ -863,7 +860,7 @@
         private void GivenEmailAndCodeDoNotMatchAUserToBeClaimed(string email, string code)
         {
             A.CallTo(
-                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                () => userService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
                     email,
                     code
                 )
@@ -891,7 +888,7 @@
 
         private ClaimAccountController GetClaimAccountController()
         {
-            return new ClaimAccountController(userService, userDataService, claimAccountService,config,emailVerificationService)
+            return new ClaimAccountController(userService, claimAccountService, config, emailVerificationService)
                 .WithDefaultContext()
                 .WithMockTempData();
         }

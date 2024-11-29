@@ -36,6 +36,10 @@
             int customisationId,
             int centreId
         );
+
+        int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber);
+
+        int[] GetCourseFieldPromptIdsForCustomisation(int customisationId);
     }
 
     public class CourseAdminFieldsService : ICourseAdminFieldsService
@@ -412,6 +416,16 @@
             }
 
             return list;
+        }
+
+        public int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber)
+        {
+            return courseAdminFieldsDataService.GetAnswerCountForCourseAdminField(customisationId, promptNumber);
+        }
+
+        public int[] GetCourseFieldPromptIdsForCustomisation(int customisationId)
+        {
+            return courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(customisationId);
         }
     }
 }

@@ -6,8 +6,6 @@
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
@@ -39,18 +37,16 @@
         private readonly IConfiguration config;
         private readonly IEmailVerificationService emailVerificationService;
         private readonly IImageResizeService imageResizeService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IJobGroupsService jobGroupsService;
         private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
-        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IUserService userService,
-            IUserDataService userDataService,
             IImageResizeService imageResizeService,
-            IJobGroupsDataService jobGroupsDataService,
+            IJobGroupsService jobGroupsService,
             IEmailVerificationService emailVerificationService,
             PromptsService registrationPromptsService,
             ILogger<MyAccountController> logger,
@@ -59,9 +55,8 @@
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userService = userService;
-            this.userDataService = userDataService;
             this.imageResizeService = imageResizeService;
-            this.jobGroupsDataService = jobGroupsDataService;
+            this.jobGroupsService = jobGroupsService;
             this.emailVerificationService = emailVerificationService;
             promptsService = registrationPromptsService;
             this.logger = logger;
@@ -123,7 +118,7 @@
             var userEntity = userService.GetUserById(userId);
             var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
 
             var customPrompts =
                 centreId != null
@@ -201,7 +196,7 @@
                 delegateAccount?.Id
             );
 
-            var userCentreDetails = userDataService.GetCentreDetailsForUser(userEntity!.UserAccount.Id).ToList();
+            var userCentreDetails = userService.GetCentreDetailsForUser(userEntity!.UserAccount.Id).ToList();
 
             SaveUserDetails(
                 userEntity.UserAccount,
@@ -285,7 +280,7 @@
             int? centreId
         )
         {
-            if (userDataService.PrimaryEmailIsInUseByOtherUser(formData.Email!, userId))
+            if (userService.PrimaryEmailIsInUseByOtherUser(formData.Email!, userId))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
@@ -458,7 +453,7 @@
         private bool IsCentreSpecificEmailAlreadyInUse(string? email, int centreId, int userId)
         {
             return !string.IsNullOrWhiteSpace(email) &&
-                   userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId);
+                   userService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId);
         }
 
         private IActionResult ReturnToEditDetailsViewWithErrors(
@@ -468,7 +463,7 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
             var customPrompts = centreId != null
                 ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(formData, centreId.Value)
                 : new List<EditDelegateRegistrationPromptViewModel>();
@@ -514,7 +509,7 @@
             var userEntity = userService.GetUserById(userId);
             var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
 
             var customPrompts = centreId != null
                 ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateAccount, centreId.Value)
@@ -557,7 +552,7 @@
             var userEntity = userService.GetUserById(userId);
             var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
 
             var customPrompts = centreId != null
                 ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateAccount, centreId.Value)
@@ -593,7 +588,7 @@
             {
                 var adminentity = new AdminEntity(adminAccount, userEntity.UserAccount, null);
                 CultureInfo currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
-                roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false)
+                roles = FilterableTagHelper.GetCurrentTagsForAdmin(adminentity).Where(s => s.Hidden == false && s.DisplayText != "Active")
                                                 .Select(d => d.DisplayText).ToList<string>();
             }
             return roles;

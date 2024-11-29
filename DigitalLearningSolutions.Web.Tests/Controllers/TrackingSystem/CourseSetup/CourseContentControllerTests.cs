@@ -1,8 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models;    
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -14,7 +13,7 @@
 
     internal class CourseContentControllerTests
     {
-        private readonly ICourseDataService courseDataService = A.Fake<ICourseDataService>();
+        private readonly ICourseService courseService = A.Fake<ICourseService>();
         private readonly ISectionService sectionService = A.Fake<ISectionService>();
         private readonly ITutorialService tutorialService = A.Fake<ITutorialService>();
         private CourseContentController controller = null!;
@@ -22,7 +21,7 @@
         [SetUp]
         public void Setup()
         {
-            controller = new CourseContentController(courseDataService, sectionService, tutorialService)
+            controller = new CourseContentController(courseService, sectionService, tutorialService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101);
         }
@@ -31,7 +30,7 @@
         public void Index_returns_Index_page_when_appropriate_course_found()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
                 .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
             A.CallTo(() => sectionService.GetSectionsAndTutorialsForCustomisation(A<int>._, A<int>._))
                 .Returns(new List<Section>());
@@ -47,7 +46,7 @@
         public void EditSection_returns_NotFound_when_no_matching_section_found()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
                 .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
             A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(A<int>._, A<int>._))
                 .Returns(null);
@@ -63,7 +62,7 @@
         public void EditSection_returns_EditSection_page_when_appropriate_course_and_section_found()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
                 .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
             A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(A<int>._, A<int>._))
                 .Returns(new Section(1, "Section", new List<Tutorial>()));

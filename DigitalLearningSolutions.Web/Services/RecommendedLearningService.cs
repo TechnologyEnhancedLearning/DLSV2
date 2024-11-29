@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Extensions;
@@ -50,7 +51,7 @@
             )
         {
             var hasMaxSignpostedResources = Int32.TryParse(
-                configDataService.GetConfigValue(ConfigDataService.MaxSignpostedResources),
+                configDataService.GetConfigValue(ConfigConstants.MaxSignpostedResources),
                 out var maxSignpostedResources
             );
 

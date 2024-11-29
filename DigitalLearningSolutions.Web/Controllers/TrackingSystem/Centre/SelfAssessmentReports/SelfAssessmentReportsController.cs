@@ -11,6 +11,10 @@
     using System;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
+    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
+    using DigitalLearningSolutions.Data.Extensions;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -20,15 +24,26 @@
     public class SelfAssessmentReportsController : Controller
     {
         private readonly ISelfAssessmentReportService selfAssessmentReportService;
+        private readonly ITableauConnectionHelperService tableauConnectionHelper;
         private readonly IClockUtility clockUtility;
-
+        private readonly string tableauUrl;
+        private readonly string tableauSiteName;
+        private readonly string workbookName;
+        private readonly string viewName;
         public SelfAssessmentReportsController(
             ISelfAssessmentReportService selfAssessmentReportService,
-            IClockUtility clockUtility
+            ITableauConnectionHelperService tableauConnectionHelper,
+            IClockUtility clockUtility,
+            IConfiguration config
         )
         {
             this.selfAssessmentReportService = selfAssessmentReportService;
+            this.tableauConnectionHelper = tableauConnectionHelper;
             this.clockUtility = clockUtility;
+            tableauUrl = config.GetTableauSiteUrl();
+            tableauSiteName = config.GetTableauSiteName();
+            workbookName = config.GetTableauWorkbookName();
+            viewName = config.GetTableauViewName();
         }
         public IActionResult Index()
         {
@@ -62,6 +77,20 @@
                 FileHelper.GetContentTypeFromFileName(fileName),
                 fileName
             );
+        }
+        [HttpGet]
+        [Route("TableauCompetencyDashboard")]
+        public IActionResult TableauCompetencyDashboard()
+        {
+            var userEmail = User.GetUserPrimaryEmail();
+            var jwt = tableauConnectionHelper.GetTableauJwt(userEmail);
+            ViewBag.SiteName = tableauSiteName;
+            ViewBag.TableauServerUrl = tableauUrl;
+            ViewBag.WorkbookName = workbookName;
+            ViewBag.ViewName = viewName;
+            ViewBag.JwtToken = jwt;
+
+            return View();
         }
     }
 }

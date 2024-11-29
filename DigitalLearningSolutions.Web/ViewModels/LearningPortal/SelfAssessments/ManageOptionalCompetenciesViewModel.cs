@@ -10,6 +10,7 @@
         public CurrentSelfAssessment? SelfAssessment { get; set; }
         public IEnumerable<IGrouping<string, Competency>>? CompetencyGroups { get; set; }
         public List<int>? IncludedSelfAssessmentStructureIds { get; set; }
+        public List<string>? GroupOptionalCompetenciesChecked { get; set; }
         public string VocabPlural()
         {
             return FrameworkVocabularyHelper.VocabularyPlural(SelfAssessment.Vocabulary);

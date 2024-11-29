@@ -17,51 +17,57 @@
         private const int CandidateId = 11;
         private const int CentreId = 2;
         private const int CustomisationId = 12;
+        const int progressID = 34;
         private const int SectionId = 199;
         private const int TutorialId = 842;
         private ISession httpContextSession = null!;
         private IAuthenticationService? authenticationService = null!;
         private IClockUtility clockUtility = null!;
         private IConfiguration config = null!;
-        private IConfigDataService configDataService = null!;
+        //private IConfigDataService configDataService = null!;
         private LearningMenuController controller = null!;
         private ICourseCompletionService courseCompletionService = null!;
         private ICourseContentService courseContentService = null!;
         private IDiagnosticAssessmentService diagnosticAssessmentService = null!;
         private IPostLearningAssessmentService postLearningAssessmentService = null!;
-        private ISectionContentDataService sectionContentDataService = null!;
+        private ISectionContentService sectionContentService = null!;
         private ISessionService sessionService = null!;
-        private ITutorialContentDataService tutorialContentDataService = null!;
-        private ICourseDataService courseDataService = null!;
+        private ITutorialContentService tutorialContentService = null!;
+        private ICourseService courseService = null!;
+        private IProgressService progressService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
         {
             var logger = A.Fake<ILogger<LearningMenuController>>();
             config = A.Fake<IConfiguration>();
-            configDataService = A.Fake<IConfigDataService>();
+            //configDataService = A.Fake<IConfigDataService>();
             courseContentService = A.Fake<ICourseContentService>();
-            tutorialContentDataService = A.Fake<ITutorialContentDataService>();
+            tutorialContentService = A.Fake<ITutorialContentService>();
             sessionService = A.Fake<ISessionService>();
-            sectionContentDataService = A.Fake<ISectionContentDataService>();
+            sectionContentService = A.Fake<ISectionContentService>();
             diagnosticAssessmentService = A.Fake<IDiagnosticAssessmentService>();
             postLearningAssessmentService = A.Fake<IPostLearningAssessmentService>();
             courseCompletionService = A.Fake<ICourseCompletionService>();
-            courseDataService = A.Fake<ICourseDataService>();
+            courseService = A.Fake<ICourseService>();
+            progressService = A.Fake<IProgressService>();
+            userService = A.Fake<IUserService>();
             clockUtility = A.Fake<IClockUtility>();
 
             controller = new LearningMenuController(
                     logger,
                     config,
-                    configDataService,
                     courseContentService,
-                    sectionContentDataService,
-                    tutorialContentDataService,
+                    sectionContentService,
+                    tutorialContentService,
                     diagnosticAssessmentService,
                     postLearningAssessmentService,
                     sessionService,
                     courseCompletionService,
-                    courseDataService,
+                    courseService,
+                    progressService,
+                    userService,
                     clockUtility
                 ).WithDefaultContext()
                 .WithMockHttpContextSession()

@@ -104,16 +104,13 @@
             {
                 tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive));
             }
-            if (courseStatistics.Active)
+            if (courseStatistics.HideInLearnerPortal)
             {
-                if (courseStatistics.HideInLearnerPortal)
-                {
-                    tags.Add(new SearchableTagViewModel(CourseVisibilityFilterOptions.IsHiddenInLearningPortal));
-                }
-                else
-                {
-                    tags.Add(new SearchableTagViewModel(CourseVisibilityFilterOptions.IsNotHiddenInLearningPortal));
-                }
+                tags.Add(new SearchableTagViewModel(CourseVisibilityFilterOptions.IsHiddenInLearningPortal));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseVisibilityFilterOptions.IsNotHiddenInLearningPortal));
             }
             return tags;
         }
@@ -235,7 +232,7 @@
              ? new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.SignedOff)
              : new SearchableTagViewModel(SelfAssessmentSignedOffFilterOptions.NotSignedOff);
                 tags.Add(signedOffTag);
-                
+
             }
 
             return tags;

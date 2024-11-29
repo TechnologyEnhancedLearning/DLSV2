@@ -2,8 +2,6 @@
 {
     using System.Linq;
     using System.Net;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
@@ -30,16 +28,14 @@
     {
         private const string AdminFilterCookieName = "AdminFilter";
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly ICourseCategoriesService courseCategoriesService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
-        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
         private readonly IEmailService emailService;
         private readonly IEmailGenerationService emailGenerationService;
 
         public AdministratorController(
-            IUserDataService userDataService,
-            ICourseCategoriesDataService courseCategoriesDataService,
+            ICourseCategoriesService courseCategoriesService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
             IUserService userService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
@@ -47,8 +43,7 @@
             IEmailGenerationService emailGenerationService
         )
         {
-            this.userDataService = userDataService;
-            this.courseCategoriesDataService = courseCategoriesDataService;
+            this.courseCategoriesService = courseCategoriesService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.userService = userService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
@@ -73,11 +68,11 @@
                 Request,
                 AdminFilterCookieName
             );
-
+            searchString = searchString == null ? null : searchString.Trim();
             var centreId = User.GetCentreIdKnownNotNull();
-            var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
-            var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
+            var adminsAtCentre = userService.GetAdminsByCentreId(centreId);
+            var categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            var loggedInAdmin = userService.GetAdminById(User.GetAdminId()!.Value);
 
             var availableFilters =
                 AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories);
@@ -111,10 +106,10 @@
         public IActionResult AllAdmins()
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
+            var loggedInAdmin = userService.GetAdminById(User.GetAdminId()!.Value);
 
-            var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            var adminsAtCentre = userService.GetAdminsByCentreId(centreId);
+            var categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var model = new AllAdminsViewModel(
                 adminsAtCentre,
                 categories,
@@ -129,9 +124,9 @@
         public IActionResult EditAdminRoles(int adminId, ReturnPageQuery returnPageQuery)
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var adminUser = userDataService.GetAdminUserById(adminId);
+            var adminUser = userService.GetAdminUserById(adminId);
 
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            var categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
@@ -150,7 +145,7 @@
                 adminRoles.IsContentCreator || adminRoles.IsTrainer || adminRoles.IsCentreManager || adminRoles.IsContentManager))
             {
                 var centreId = User.GetCentreIdKnownNotNull();
-                var adminUser = userDataService.GetAdminUserById(adminId);
+                var adminUser = userService.GetAdminUserById(adminId);
 
                 adminUser.IsCentreAdmin = adminRoles.IsCentreAdmin;
                 adminUser.IsSupervisor = adminRoles.IsSupervisor;
@@ -162,7 +157,7 @@
                 adminUser.IsContentManager = model.ContentManagementRole.IsContentManager;
 
 
-                var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+                var categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
                 categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
                 var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
@@ -229,7 +224,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult UnlockAccount(int adminId)
         {
-            userService.ResetFailedLoginCountByUserId(userDataService.GetUserIdByAdminId(adminId)!.Value);
+            userService.ResetFailedLoginCountByUserId(userService.GetUserIdByAdminId(adminId)!.Value);
 
             return RedirectToAction("Index");
         }
@@ -239,7 +234,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult DeactivateOrDeleteAdmin(int adminId, ReturnPageQuery returnPageQuery)
         {
-            var admin = userDataService.GetAdminById(adminId);
+            var admin = userService.GetAdminById(adminId);
 
             if (!CurrentUserCanDeactivateAdmin(admin!.AdminAccount))
             {
@@ -255,7 +250,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult DeactivateOrDeleteAdmin(int adminId, DeactivateAdminViewModel model)
         {
-            var admin = userDataService.GetAdminById(adminId);
+            var admin = userService.GetAdminById(adminId);
 
             if (!CurrentUserCanDeactivateAdmin(admin!.AdminAccount))
             {
@@ -285,7 +280,7 @@
 
         private bool CurrentUserCanDeactivateAdmin(AdminAccount adminToDeactivate)
         {
-            var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.GetValueOrDefault());
+            var loggedInAdmin = userService.GetAdminById(User.GetAdminId()!.GetValueOrDefault());
 
             return UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminToDeactivate, loggedInAdmin!.AdminAccount);
         }

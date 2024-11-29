@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -54,7 +55,7 @@
 
             var delegateAccountToBeClaimed = delegateAccounts.First();
 
-            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var supportEmail = configDataService.GetConfigValue(ConfigConstants.SupportEmail);
 
             return new ClaimAccountViewModel
             {

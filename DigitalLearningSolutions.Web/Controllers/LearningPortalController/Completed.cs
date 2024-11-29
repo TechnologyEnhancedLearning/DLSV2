@@ -29,7 +29,7 @@
             sortBy ??= CourseSortByOptions.CompletedDate.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
-            var completedCourses = courseDataService.GetCompletedCourses(delegateId);
+            var completedCourses = courseService.GetCompletedCourses(delegateId);
             var (completedLearningResources, apiIsAccessible) =
                 await GetCompletedLearningResourcesIfSignpostingEnabled(delegateUserId);
             var bannerText = GetBannerText();
@@ -62,7 +62,7 @@
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
             var delegateUserId = User.GetUserIdKnownNotNull();
-            var completedCourses = courseDataService.GetCompletedCourses(delegateId);
+            var completedCourses = courseService.GetCompletedCourses(delegateId);
             var (completedLearningResources, _) = await GetCompletedLearningResourcesIfSignpostingEnabled(delegateUserId);
             var model = new AllCompletedItemsPageViewModel(completedCourses, completedLearningResources, config);
             return View("Completed/AllCompletedItems", model);

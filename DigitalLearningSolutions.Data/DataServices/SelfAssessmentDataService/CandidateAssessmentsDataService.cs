@@ -137,7 +137,8 @@
                         SA.SignOffRequestorStatement,
                         SA.ManageSupervisorsDescription,
                         CA.NonReportable,
-					 U.FirstName +' '+ U.LastName AS DelegateName
+					 U.FirstName +' '+ U.LastName AS DelegateName,
+                    SA.MinimumOptionalCompetencies
                     FROM CandidateAssessments CA
                     JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
@@ -162,7 +163,7 @@
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable,
-                        U.FirstName , U.LastName",
+                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies",
                 new { delegateUserId, selfAssessmentId }
             );
         }
@@ -170,7 +171,7 @@
         public void UpdateLastAccessed(int selfAssessmentId, int delegateUserId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE CandidateAssessments SET LastAccessed = GETDATE()
+                @"UPDATE CandidateAssessments SET LastAccessed = GETUTCDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId",
                 new { selfAssessmentId, delegateUserId }
             );
@@ -328,14 +329,15 @@
                         DelegateUserID,
                         SelfAssessmentID,
                         CompletedDate,
-                        RemovedDate
+                        RemovedDate,
+                        CentreId
                     FROM CandidateAssessments
                     WHERE SelfAssessmentID = @selfAssessmentId
                         AND DelegateUserID = @delegateUserId",
                 new { selfAssessmentId, delegateUserId }
             );
         }
-        public CompetencySelfAssessmentCertificate GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
+        public CompetencySelfAssessmentCertificate? GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
         {
             return connection.QueryFirstOrDefault<CompetencySelfAssessmentCertificate>(
                 @"SELECT
@@ -388,7 +390,6 @@
                 new { candidateAssessmentID }
             );
         }
-
         public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID)
         {
             return connection.Query<CompetencyCountSelfAssessmentCertificate>(
@@ -423,9 +424,9 @@
                 new { selfAssessmentId, delegateUserID }
             );
         }
-        public ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
+        public ActivitySummaryCompetencySelfAssesment? GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId)
         {
-            return connection.QueryFirstOrDefault<ActivitySummaryCompetencySelfAssesment>(
+            return connection.QueryFirstOrDefault<ActivitySummaryCompetencySelfAssesment?>(
                 @"SELECT ca.ID AS CandidateAssessmentID, ca.SelfAssessmentID, sa.Name AS RoleName, casv.ID AS CandidateAssessmentSupervisorVerificationId,
                  (SELECT COUNT(sas1.CompetencyID) AS CompetencyAssessmentQuestionCount
                  FROM    SelfAssessmentStructure AS sas1 INNER JOIN
@@ -438,7 +439,7 @@
                      FROM   SelfAssessmentStructure AS sas1 INNER JOIN
              CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID LEFT OUTER JOIN
-             SelfAssessmentResults AS sar1 ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
+             SelfAssessmentResults AS sar1 ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
                  LEFT OUTER JOIN    CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                   WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) OR
              (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (caoc1.IncludedInSelfAssessment = 1) OR

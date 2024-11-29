@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
@@ -56,6 +57,8 @@
             int sectionId,
             int customisationId
         );
+
+        IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
     }
 
     public class ProgressService : IProgressService
@@ -102,13 +105,7 @@
 
             using var transaction = new TransactionScope();
 
-            progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                progressId,
-                supervisorId,
-                courseInfo.CompleteBy,
-                2,
-               clockUtility.UtcNow
-            );
+            progressDataService.UpdateProgressSupervisor(progressId, supervisorId);
 
             progressDataService.ClearAspProgressVerificationRequest(progressId);
 
@@ -255,6 +252,11 @@
         )
         {
             return progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
+        }
+
+        public IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId)
+        {
+            return progressDataService.GetDelegateProgressForCourse(delegateId, customisationId);
         }
     }
 }

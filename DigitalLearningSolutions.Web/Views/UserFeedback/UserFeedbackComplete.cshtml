@@ -13,25 +13,18 @@
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item">
-                    <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
-                        @if (Model.SourcePageTitle != String.Empty)
-                        {
-                            <div><partial name="_NhsChevronLeft" /> Go back to @Model.SourcePageTitle</div>
-                        }
-                        @if (Model.SourcePageTitle == String.Empty)
-                        {
-                            <div><partial name="_NhsChevronLeft" /> Go back</div>
-                        }
-                    </a>
+                    @* no link required in the Thank You For The Feedback page*@
                 </li>
             </ol>
+            <p class="nhsuk-breadcrumb__back">
+                <a class="nhsuk-breadcrumb__link" href="@Model.SourceUrl">Go back to @Model.SourcePageTitle</a>
+            </p>
         </div>
     </nav>
 }
 
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-        <h2 class="nhsuk-caption-l">Join our user research panel</h2>
         <h1 id="page-heading" class="nhsuk-heading-xl">Thank you for your feedback</h1>
     </div>
     <div class="nhsuk-grid-column-two-thirds">

@@ -12,8 +12,7 @@
             </ol>
             <p class="nhsuk-breadcrumb__back">
                 <a class="nhsuk-breadcrumb__backlink"
-                 asp-controller="Centres" asp-action="Index"
-                >Back to Centres</a>
+                   asp-controller="Centres" asp-action="Index">Back to Centres</a>
             </p>
         </div>
     </nav>
@@ -179,7 +178,7 @@
                         <b>Server space</b>
                     </dt>
                     <dd class="nhsuk-summary-list__value">
-                        @Model.ServerSpaceBytes
+                        @Model.ServerSpaceBytes GB
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -187,7 +186,14 @@
                         <b>Per delegate upload space</b>
                     </dt>
                     <dd class="nhsuk-summary-list__value">
-                        @Model.CandidateByteLimit
+                        @if (@Model.CandidateByteLimit == 1024)
+                        {
+                            @($"{Model.CandidateByteLimit / 1024} GB")
+                        }
+                        else
+                        {
+                            @($"{Model.CandidateByteLimit} MB")
+                        }
                     </dd>
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -208,7 +214,7 @@
                asp-controller="Centres"
                asp-action="CentreRoleLimits"
                asp-route-centreId="@Model.CentreId">
-              Customise role limits
+                Customise role limits
             </a>
         </div>
     </div>

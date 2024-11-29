@@ -1,6 +1,6 @@
 namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
-    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
@@ -19,27 +19,24 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
     public class LearningSolutionsController : Controller
     {
-        private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
-        private readonly IConfigDataService configDataService;
+        private readonly IConfigService configService;
         private readonly ILogger<LearningSolutionsController> logger;
 
         public LearningSolutionsController(
-            IConfigDataService configDataService,
+            IConfigService configService,
             ILogger<LearningSolutionsController> logger,
-            ICentresDataService centresDataService,
             ICentresService centresService
         )
         {
-            this.configDataService = configDataService;
+            this.configService = configService;
             this.logger = logger;
-            this.centresDataService = centresDataService;
             this.centresService = centresService;
         }
 
         public IActionResult AccessibilityHelp()
         {
-            var accessibilityText = configDataService.GetConfigValue(ConfigDataService.AccessibilityHelpText);
+            var accessibilityText = configService.GetConfigValue(ConfigConstants.AccessibilityHelpText);
             if (accessibilityText == null)
             {
                 logger.LogError("Accessibility text from Config table is null");
@@ -49,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             DateTime lastUpdatedDate = DateTime.Now;
             DateTime nextReviewDate = DateTime.Now;
 
-            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AccessibilityHelpText);
+            lastUpdatedDate = configService.GetConfigLastUpdated(ConfigConstants.AccessibilityHelpText);
             nextReviewDate = lastUpdatedDate.AddYears(3);
 
             var model = new AccessibilityHelpViewModel(accessibilityText, lastUpdatedDate, nextReviewDate);
@@ -58,7 +55,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         public IActionResult Terms()
         {
-            var termsText = configDataService.GetConfigValue(ConfigDataService.TermsText);
+            var termsText = configService.GetConfigValue(ConfigConstants.TermsText);
             if (termsText == null)
             {
                 logger.LogError("Terms text from Config table is null");
@@ -67,7 +64,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             DateTime lastUpdatedDate = DateTime.Now;
             DateTime nextReviewDate = DateTime.Now;
 
-            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.TermsText);
+            lastUpdatedDate = configService.GetConfigLastUpdated(ConfigConstants.TermsText);
             nextReviewDate = lastUpdatedDate.AddYears(3);
             var model = new TermsViewModel(termsText, lastUpdatedDate, nextReviewDate);
             return View(model);
@@ -75,7 +72,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         public IActionResult Contact()
         {
-            var contactText = configDataService.GetConfigValue(ConfigDataService.ContactText);
+            var contactText = configService.GetConfigValue(ConfigConstants.ContactText);
             if (contactText == null)
             {
                 logger.LogError("Contact text from Config table is null");
@@ -154,14 +151,14 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             var centreId = User.GetCentreId();
             if (centreId != null)
             {
-                bannerText = centresDataService.GetBannerText((int)centreId);
+                bannerText = centresService.GetBannerText((int)centreId);
             }
             return bannerText;
         }
 
         public IActionResult AcceptableUsePolicy()
         {
-            var acceptableUsePolicyText = configDataService.GetConfigValue(ConfigDataService.AcceptableUsePolicyText);
+            var acceptableUsePolicyText = configService.GetConfigValue(ConfigConstants.AcceptableUsePolicyText);
 
             if (acceptableUsePolicyText == null)
             {
@@ -171,14 +168,14 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             DateTime lastUpdatedDate = DateTime.Now;
             DateTime nextReviewDate = DateTime.Now;
 
-            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.AcceptableUsePolicyText);
+            lastUpdatedDate = configService.GetConfigLastUpdated(ConfigConstants.AcceptableUsePolicyText);
             nextReviewDate = lastUpdatedDate.AddYears(3);
             var model = new AcceptableUsePolicyViewModel(acceptableUsePolicyText, lastUpdatedDate, nextReviewDate);
             return View(model);
         }
         public IActionResult PrivacyNotice()
         {
-            var PrivacyPolicyText = configDataService.GetConfigValue(ConfigDataService.PrivacyPolicyText);
+            var PrivacyPolicyText = configService.GetConfigValue(ConfigConstants.PrivacyPolicyText);
             if (PrivacyPolicyText == null)
             {
                 logger.LogError("PrivacyPolicy text from Config table is null");
@@ -188,7 +185,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             DateTime lastUpdatedDate = DateTime.Now;
             DateTime nextReviewDate = DateTime.Now;
 
-            lastUpdatedDate = configDataService.GetConfigLastUpdated(ConfigDataService.PrivacyPolicyText);
+            lastUpdatedDate = configService.GetConfigLastUpdated(ConfigConstants.PrivacyPolicyText);
             nextReviewDate = lastUpdatedDate.AddYears(3);
 
             var model = new PrivacyNoticeViewModel(PrivacyPolicyText, lastUpdatedDate, nextReviewDate);
