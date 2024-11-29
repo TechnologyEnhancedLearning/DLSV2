@@ -19,14 +19,14 @@
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
                 <li class="nhsuk-breadcrumb__item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-                   asp-action="DelegateProfileAssessments"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName</a>
+                       asp-action="DelegateProfileAssessments"
+                       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName</a>
                 </li>
                 <li class="nhsuk-breadcrumb__item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-                   asp-action="ReviewDelegateSelfAssessment"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-                   asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
+                       asp-action="ReviewDelegateSelfAssessment"
+                       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+                       asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
                         @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
                     </a>
                 </li>
@@ -37,9 +37,9 @@
         </div>
         <p class="nhsuk-breadcrumb__back">
             <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-           asp-action="ReviewDelegateSelfAssessment"
-           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-           asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
+               asp-action="ReviewDelegateSelfAssessment"
+               asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+               asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
                 Back to  @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
             </a>
         </p>
@@ -122,13 +122,15 @@
     }
     @if (Model.Competency.AssessmentQuestions.First().IncludeComments)
     {
+        var promptText = string.IsNullOrEmpty(Model.Competency.AssessmentQuestions.First()?.CommentsPrompt) ?
+        Model.DelegateSelfAssessment.ReviewerCommentsLabel : Model.Competency.AssessmentQuestions.First()?.CommentsPrompt;
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
                 @(((Model.Competency.AssessmentQuestions.First().SignedOff == true && Model.Competency.AssessmentQuestions.First().Verified.HasValue)
                     || (Model.Competency.AssessmentQuestions.First().ResultId != null && Model.Competency.AssessmentQuestions.First().Verified == null && Model.Competency.AssessmentQuestions.First().Requested != null && Model.Competency.AssessmentQuestions.First().UserIsVerifier == false)
                     || (Model.Competency.AssessmentQuestions.First().Verified == null && Model.Competency.AssessmentQuestions.First().Requested != null)
                     && (!String.IsNullOrEmpty(Model.DelegateSelfAssessment.ReviewerCommentsLabel)))
-                    ? Model.DelegateSelfAssessment.ReviewerCommentsLabel : "Comments")
+                    ? promptText : "Comments")
             </dt>
             <dd class="nhsuk-summary-list__value">
                 @Html.Raw(Model.Competency.AssessmentQuestions.First().SupportingComments)
