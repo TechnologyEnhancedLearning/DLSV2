@@ -16,6 +16,7 @@
         public string CompetencyGroupDescription { get; set; } = string.Empty;
         public string? Vocabulary { get; set; }
         public bool Optional { get; set; }
+        public bool GroupOptionalCompetencies { get; set; }
         public bool AlwaysShowDescription { get; set; }
         public bool IncludedInSelfAssessment { get; set; }
         public DateTime? Verified { get; set; }

@@ -49,7 +49,17 @@
 
         private const string LearningHubUserAPIUserAPIUrl = "LearningHubUserApi:UserApiUrl";
         private const string UserResearchUrlName = "UserResearchUrl";
-
+        private const string TableauSectionKey = "TableauDashboards";
+        private const string TableauClientId = "ClientId";
+        private const string TableauClientSecretId = "ClientSecretId";
+        private const string TableauClientSecret = "ClientSecret";
+        private const string TableauUsername = "Username";
+        private const string TableauClientName = "ClientName";
+        private const string TableauSiteUrl = "SiteUrl";
+        private const string TableauWorkbookName = "WorkBookName";
+        private const string TableauViewName = "ViewName";
+        private const string TableauSiteName = "SiteName";
+        private const string TableauAuthApi = "AuthApiPath";
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName]!;
@@ -180,7 +190,7 @@
         }
         public static int GetMaxBulkUploadRowsLimit(this IConfiguration config)
         {
-             int.TryParse(config[MaxBulkUploadRowsLimitKey],out int limitKey);
+            int.TryParse(config[MaxBulkUploadRowsLimitKey], out int limitKey);
             return limitKey;
         }
 
@@ -201,7 +211,7 @@
 
         public static long GetFreshdeskCreateTicketGroupId(this IConfiguration config)
         {
-           long.TryParse(config[FreshdeskCreateTicketGroupId], out long ticketGroupId);
+            long.TryParse(config[FreshdeskCreateTicketGroupId], out long ticketGroupId);
             return ticketGroupId;
         }
         public static long GetFreshdeskCreateTicketProductId(this IConfiguration config)
@@ -217,6 +227,46 @@
         public static string GetUserResearchUrl(this IConfiguration config)
         {
             return config[UserResearchUrlName]!;
+        }
+        public static string GetTableauClientName(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauClientName}"]!;
+        }
+        public static string GetTableauClientId(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauClientId}"]!;
+        }
+        public static string GetTableauClientSecret(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauClientSecret}"]!;
+        }
+        public static string GetTableauClientSecretId(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauClientSecretId}"]!;
+        }
+        public static string GetTableauUser(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauUsername}"]!;
+        }
+        public static string GetTableauSiteUrl(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauSiteUrl}"]!;
+        }
+        public static string GetTableauAuthApi(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauAuthApi}"]!;
+        }
+        public static string GetTableauSiteName(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauSiteName}"]!;
+        }
+        public static string GetTableauWorkbookName(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauWorkbookName}"]!;
+        }
+        public static string GetTableauViewName(this IConfiguration config)
+        {
+            return config[$"{TableauSectionKey}:{TableauViewName}"]!;
         }
     }
 }

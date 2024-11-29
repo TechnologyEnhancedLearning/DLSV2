@@ -187,33 +187,17 @@
         public SupervisorComment? GetSupervisorComments(int delegateUserId, int resultId)
         {
             return connection.Query<SupervisorComment>(
-                @"SELECT
-                    sar.AssessmentQuestionID,
-                    sea.Name,
-                    au.Forename + ' ' + au.Surname As SupervisorName,
-                    sasr.RoleName,
-                    sasv.Comments,
-                    sar.DelegateUserID,
-                    sar.CompetencyID,
-                    com.Name AS CompetencyName,
-                    sar.SelfAssessmentID,
-                    sasv.CandidateAssessmentSupervisorID,
-                    sasv.SelfAssessmentResultId,
-                    sasv.Verified,
-                    sar.ID,
-                    sstrc.CompetencyGroupID, 
-                    sea.Vocabulary,
-                    sasv.SignedOff,
-                    sea.ReviewerCommentsLabel
+                @"SELECT TOP (1) sar.AssessmentQuestionID, sea.Name, au.Forename + ' ' + au.Surname AS SupervisorName, sasr.RoleName, sasv.Comments, sar.DelegateUserID, sar.CompetencyID, com.Name AS CompetencyName, sar.SelfAssessmentID, sasv.CandidateAssessmentSupervisorID, 
+                        sasv.SelfAssessmentResultId, sasv.Verified, sar.ID, sstrc.CompetencyGroupID, sea.Vocabulary, sasv.SignedOff, sea.ReviewerCommentsLabel
                     FROM   SelfAssessmentResultSupervisorVerifications AS sasv INNER JOIN
-                    SelfAssessmentResults AS sar ON sasv.SelfAssessmentResultId = sar.ID AND sasv.Superceded = 0 INNER JOIN
-                    SelfAssessments AS sea ON sar.SelfAssessmentID = sea.ID INNER JOIN
-                    SelfAssessmentStructure AS sstrc ON sar.CompetencyID = sstrc.CompetencyID INNER JOIN
-                    Competencies AS com ON sar.CompetencyID = com.ID INNER JOIN
-                    CandidateAssessmentSupervisors AS cas ON sasv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
-                    SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
-                    AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID INNER JOIN
-                    SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+                        SelfAssessmentResults AS sar ON sasv.SelfAssessmentResultId = sar.ID AND sasv.Superceded = 0 INNER JOIN
+                        SelfAssessmentStructure AS sstrc ON sar.CompetencyID = sstrc.CompetencyID INNER JOIN
+                        Competencies AS com ON sar.CompetencyID = com.ID INNER JOIN
+                        CandidateAssessmentSupervisors AS cas ON sasv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+                        SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
+                        AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID INNER JOIN
+                        SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID INNER JOIN
+                        SelfAssessments AS sea ON sstrc.SelfAssessmentID = sea.ID
                     WHERE (sar.DelegateUserID = @delegateUserId) AND (sasv.SelfAssessmentResultId = @resultId)",
                 new { delegateUserId, resultId }
             ).FirstOrDefault();

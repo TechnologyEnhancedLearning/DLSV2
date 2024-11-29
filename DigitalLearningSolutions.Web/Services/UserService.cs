@@ -194,6 +194,8 @@ namespace DigitalLearningSolutions.Web.Services
            string search, int offset, int rows, int jobGroupId, string userStatus, string emailStatus, int userId, int failedLoginThreshold
            );
         void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId);
+        void DeactivateAdminAccount(int userId, int centreId);
+        int? CheckDelegateIsActive(int delegateId);
     }
 
     public class UserService : IUserService
@@ -275,7 +277,7 @@ namespace DigitalLearningSolutions.Web.Services
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)
         {
             return userDataService.GetDelegateUserCardsByCentreId(centreId).Where(
-                user => user.Approved && !user.SelfReg && string.IsNullOrEmpty(user.Password) &&
+                user => user.Approved && !user.SelfReg && 
                         !string.IsNullOrEmpty(user.EmailAddress)
                         && !Guid.TryParse(user.EmailAddress, out _)
                         && user.RegistrationConfirmationHash != null
@@ -317,8 +319,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         public IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId)
         {
-            return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
-                .Where(au => au.CategoryId == categoryId || au.CategoryId == null);
+            return userDataService.GetAdminUsersAtCentreForCategory(centreId, categoryId);
+
         }
 
         public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
@@ -894,7 +896,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             userDataService.ApproveDelegateUsers(ids);
         }
-        
+
         public (IEnumerable<AdminEntity>, int) GetAllAdmins(string search, int offset, int rows, int? adminId, string userStatus, string role, int? centreId, int failedLoginThreshold)
         {
             return userDataService.GetAllAdmins(search, offset, rows, adminId, userStatus, role, centreId, failedLoginThreshold);
@@ -902,7 +904,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public void UpdateAdminUserAndSpecialPermissions(int adminId, bool isCentreAdmin, bool isSupervisor, bool isNominatedSupervisor, bool isTrainer, bool isContentCreator, bool isContentManager, bool importOnly, int? categoryId, bool isCentreManager, bool isSuperAdmin, bool isReportsViewer, bool isLocalWorkforceManager, bool isFrameworkDeveloper, bool isWorkforceManager)
         {
-            userDataService.UpdateAdminUserAndSpecialPermissions(adminId, isCentreAdmin, isSupervisor, isNominatedSupervisor, isTrainer, isContentCreator, isContentManager,importOnly, categoryId, isCentreManager, isSuperAdmin, isReportsViewer, isLocalWorkforceManager, isFrameworkDeveloper, isWorkforceManager);
+            userDataService.UpdateAdminUserAndSpecialPermissions(adminId, isCentreAdmin, isSupervisor, isNominatedSupervisor, isTrainer, isContentCreator, isContentManager, importOnly, categoryId, isCentreManager, isSuperAdmin, isReportsViewer, isLocalWorkforceManager, isFrameworkDeveloper, isWorkforceManager);
         }
 
         public int GetUserIdFromAdminId(int adminId)
@@ -929,7 +931,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return userDataService.IsUserAlreadyAdminAtCentre(userId, centreId);
         }
-        
+
         public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
         {
             return userDataService.GetAdminsByCentreId(centreId);
@@ -955,6 +957,14 @@ namespace DigitalLearningSolutions.Web.Services
         public void UpdateUserDetailsAccount(string firstName, string lastName, string primaryEmail, int jobGroupId, string? prnNumber, DateTime? emailVerified, int userId)
         {
             userDataService.UpdateUserDetailsAccount(firstName, lastName, primaryEmail, jobGroupId, prnNumber, emailVerified, userId);
+        }
+        public void DeactivateAdminAccount(int userId, int centreId)
+        {
+            userDataService.DeactivateAdminAccount(userId, centreId);
+        }
+        public int? CheckDelegateIsActive(int delegateId)
+        {
+            return userDataService.CheckDelegateIsActive(delegateId);
         }
     }
 }

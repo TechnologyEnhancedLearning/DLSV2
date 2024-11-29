@@ -19,6 +19,8 @@ namespace DigitalLearningSolutions.Web.Extensions
         {
             switch (status)
             {
+                case SelfAssessmentCompetencyFilter.Optional:
+                    return "Optional";
                 case SelfAssessmentCompetencyFilter.RequiresSelfAssessment:
                     return "Requires self assessment";
                 case SelfAssessmentCompetencyFilter.SelfAssessed:
