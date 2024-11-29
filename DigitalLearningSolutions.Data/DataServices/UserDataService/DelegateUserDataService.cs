@@ -389,7 +389,15 @@
                 new { delegateId }
             );
         }
-
+        public void DeactivateAdminAccount(int userId ,int centreId)
+        {
+            connection.Execute(
+                @"UPDATE AdminAccounts
+                    SET Active =0
+                    WHERE UserID =  @userId AND CentreID = @centreId",
+                new { userId, centreId }
+            );
+        }
         public void ActivateDelegateUser(int delegateId)
         {
             connection.Execute(
@@ -419,7 +427,15 @@
                 new { delegateId }
             ).Single();
         }
-
+        public int? CheckDelegateIsActive(int delegateId)
+        {
+            return connection.Query<int?>(
+                @"SELECT CandidateID
+                    FROM Candidates
+                    WHERE CandidateID = @delegateId AND Active =1",
+                new { delegateId }
+            ).FirstOrDefault();
+        }
         public void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId)
         {
             connection.Execute(

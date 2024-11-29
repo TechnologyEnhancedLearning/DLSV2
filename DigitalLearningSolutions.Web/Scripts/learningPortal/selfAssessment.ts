@@ -15,5 +15,4 @@ inputs.forEach((e) => onSliderUpdate(e));
 inputs.forEach((e) => {
   e.addEventListener('change', () => onSliderUpdate(e));
 });
-
 Checkboxes.default.setUpSelectAndDeselectInGroupButtons();

@@ -10,11 +10,9 @@ namespace DigitalLearningSolutions.Web.Helpers
 {
     public class CertificateHelper
     {
-        public static bool CanViewCertificate(List<Competency> reviewedCompetencies, IEnumerable<SupervisorSignOff>? SupervisorSignOffs)
+        public static CompetencySummary CanViewCertificate(List<Competency> reviewedCompetencies, IEnumerable<SupervisorSignOff>? SupervisorSignOffs)
         {
-
             var CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup);
-
             var competencySummaries = CompetencyGroups.Select(g =>
             {
                 var questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
@@ -38,9 +36,15 @@ namespace DigitalLearningSolutions.Web.Helpers
 
             var allComptConfirmed = competencySummaries.Count() == 0 ? false : competencySummaries.Sum(c => c.VerifiedCount) == competencySummaries.Sum(c => c.QuestionsCount);
 
-            return SupervisorSignOffs?.FirstOrDefault()?.Verified != null &&
-                    SupervisorSignOffs.FirstOrDefault().SignedOff &&
-                    allComptConfirmed && latestResult <= latestSignoff;
+            var model = new CompetencySummary()
+            {
+                VerifiedCount = competencySummaries.Sum(item => item.VerifiedCount),
+                QuestionsCount = competencySummaries.Sum(item => item.QuestionsCount),
+                CanViewCertificate = SupervisorSignOffs?.FirstOrDefault()?.Verified != null &&
+                   SupervisorSignOffs.FirstOrDefault().SignedOff &&
+                allComptConfirmed && latestResult <= latestSignoff
+            };
+            return model;
         }
     }
 }

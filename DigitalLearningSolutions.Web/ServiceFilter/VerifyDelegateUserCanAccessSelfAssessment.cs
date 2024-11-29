@@ -31,8 +31,9 @@
 
             var selfAssessmentId = int.Parse(context.RouteData.Values["selfAssessmentId"].ToString()!);
             var delegateUserId = controller.User.GetUserIdKnownNotNull();
+            var centreId = controller.User.GetCentreIdKnownNotNull();
             var canAccessSelfAssessment =
-                selfAssessmentService.CanDelegateAccessSelfAssessment(delegateUserId, selfAssessmentId);
+                selfAssessmentService.CanDelegateAccessSelfAssessment(delegateUserId, selfAssessmentId, centreId);
 
             if (!canAccessSelfAssessment)
             {

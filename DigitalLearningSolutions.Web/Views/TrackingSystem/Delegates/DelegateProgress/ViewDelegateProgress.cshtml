@@ -42,15 +42,15 @@
         }
 
         /*.p-4 {
-                                    padding: 1.5rem !important
-                                }
+                                                            padding: 1.5rem !important
+                                                        }
 
-                                #Logo {
-                                    max-width: 500px;
-                                    max-height: 90px;
-                                    height: auto;
-                                    width: auto;
-                                }*/
+                                                        #Logo {
+                                                            max-width: 500px;
+                                                            max-height: 90px;
+                                                            height: auto;
+                                                            width: auto;
+                                                        }*/
 
         .heading2 {
             font-size: 2rem;
@@ -212,36 +212,39 @@
                         }
                     </tbody>
                 </table>
-                <div style="height:20px"></div>
-                <h2 class="heading2">Achievements</h2>
-                <h4 class="heading4">The following post learning assessments have been passed:</h4>
-                <table class="nhsuk-table-responsive">
-                    <thead class="nhsuk-table__head">
-                        <tr class="nhsuk-table__row" role="row">
-                            <th class="nhsuk-table__header" role="columnheader" scope="col">
-                                Assessment
-                            </th>
-                            <th class="nhsuk-table__header" role="columnheader" scope="col">
-                                Outcome
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="nhsuk-table__body">
-                        @foreach (var entry in Model.SectionDetails.Where(pass => pass.PLPassed))
-                        {
-                            <tr class="nhsuk-table__row">
-                                <td class="nhsuk-table__cell" data-label="Assessment" role="cell">
-                                    <span class="nhsuk-table-responsive__heading">Assessment</span>
-                                    @entry.SectionName
-                                </td>
-                                <td class="nhsuk-table__cell" data-label="Outcome" role="cell">
-                                    <span class="nhsuk-table-responsive__heading">Outcome</span>
-                                    <span style="color:#0e6935;font-weight:normal;">@("PASSED")</span>
-                                </td>
+                @if (Model.SectionDetails.Where(pass => pass.PLPassed).Any())
+                {
+                    <div style="height:20px"></div>
+                    <h2 class="heading2">Achievements</h2>
+                    <h4 class="heading4">The following post learning assessments have been passed:</h4>
+                    <table class="nhsuk-table-responsive">
+                        <thead class="nhsuk-table__head">
+                            <tr class="nhsuk-table__row" role="row">
+                                <th class="nhsuk-table__header" role="columnheader" scope="col">
+                                    Assessment
+                                </th>
+                                <th class="nhsuk-table__header" role="columnheader" scope="col">
+                                    Outcome
+                                </th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="nhsuk-table__body">
+                            @foreach (var entry in Model.SectionDetails.Where(pass => pass.PLPassed))
+                            {
+                                <tr class="nhsuk-table__row">
+                                    <td class="nhsuk-table__cell" data-label="Assessment" role="cell">
+                                        <span class="nhsuk-table-responsive__heading">Assessment</span>
+                                        @entry.SectionName
+                                    </td>
+                                    <td class="nhsuk-table__cell" data-label="Outcome" role="cell">
+                                        <span class="nhsuk-table-responsive__heading">Outcome</span>
+                                        <span style="color:#0e6935;font-weight:normal;">@("PASSED")</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
             </div>
         </div>
     </div>

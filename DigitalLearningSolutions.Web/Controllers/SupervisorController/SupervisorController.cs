@@ -26,6 +26,7 @@
         private readonly IEmailService emailService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
         private readonly IClockUtility clockUtility;
+        private readonly IPdfService pdfService;
 
         public SupervisorController(
            ISupervisorService supervisorService,
@@ -45,7 +46,8 @@
            IEmailGenerationService emailGenerationService,
            IEmailService emailService,
            ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
-           IClockUtility clockUtility
+           IClockUtility clockUtility,
+           IPdfService pdfService
            )
         {
             this.supervisorService = supervisorService;
@@ -62,6 +64,7 @@
             this.emailService = emailService;
             this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
             this.clockUtility = clockUtility;
+            this.pdfService = pdfService;
         }
 
         private int GetCentreId()

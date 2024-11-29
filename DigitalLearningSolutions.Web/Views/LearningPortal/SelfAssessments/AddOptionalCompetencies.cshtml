@@ -1,0 +1,46 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@model AddOptionalCompetenciesViewModel
+@{
+    ViewData["Title"] = "Add optional " + Model.VocabPlural().ToLower();
+    Layout = "SelfAssessments/_Layout";
+}
+@section breadcrumbs {
+    <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
+    </li>
+    <li class="nhsuk-breadcrumb__item">Add optional @(Model.VocabPlural().ToLower())?</li>
+}
+
+@section mobilebacklink
+{
+    <p class="nhsuk-breadcrumb__back">
+        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
+           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+            Back to @Model.SelfAssessment.Name
+        </a>
+    </p>
+}
+<form method="post" asp-action="AddOptionalCompetencies" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
+    <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+            <h1 id="page-heading" class="nhsuk-heading-xl">Add optional @Model.VocabPlural().ToLower() to your assessment?</h1>
+        </div>
+        <div class="nhsuk-grid-column-two-thirds">
+            <p class="nhsuk-u-padding-top-5">During your assessment you will need to add one or more optional @Model.VocabPlural().ToLower() to your assessment to be certified within your role</p>
+            <details class="nhsuk-details">
+                <summary class="nhsuk-details__summary nhsuk-u-padding-10">
+                    <span class="nhsuk-u-margin-bottom-0">
+                        <span class="nhsuk-details__summary-text">What are optional @Model.VocabPlural().ToLower()?</span>
+                    </span>
+                </summary>
+                <div class="nhsuk-details__text nhsuk-u-margin-left-6 nhsuk-u-margin-top-2">
+                    <p>Optional @Model.VocabPlural().ToLower() refer to specific skills or competencies that are not part of the core requirements but may be added based on your role, specialisation, or the needs of your workplace.</p>
+                </div>
+            </details>
+            <p class="nhsuk-u-padding-bottom-5">These @Model.VocabPlural().ToLower() might be different depending on your role or organization so you may need to discuss this with your educator or manager</p>
+
+            <button class="nhsuk-button" type="submit">Add optional @Model.VocabPlural().ToLower() to assessment</button>
+            <a class="nhsuk-button nhsuk-button--secondary trigger-loader" role="button" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Remind me later</a>
+        </div>
+    </div>
+</form>

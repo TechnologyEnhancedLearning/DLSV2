@@ -20,7 +20,7 @@
             "A user with this email address is already registered; if this is you, please log in using the button below";
 
         public const string WrongEmailForCentreDuringAdminRegistration =
-            "This email address does not match the one held by the centre; either your primary email or centre email must match the one held by the centre";
+            "This email address does not match the one held by the centre; your primary email must match the one held by the centre";
 
         public const string PasswordRegex = @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[a-z]).*";
         public const string PasswordInvalidCharacters = "Password must contain at least 1 uppercase and 1 lowercase letter, 1 number and 1 symbol";

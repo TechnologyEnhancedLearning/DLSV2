@@ -52,10 +52,10 @@
                     		, CASE WHEN sv.Verified IS NOT NULL AND sv.SignedOff = 1 AND COALESCE (rr.LevelRAG, 0) = 3 THEN s.ID ELSE NULL END AS Confirmed
                     		, CASE WHEN sas.Optional = 1  THEN s.CompetencyID ELSE NULL END AS Optional
                     FROM   SelfAssessmentResults AS s LEFT OUTER JOIN
-                                 SelfAssessmentStructure AS sas ON s.SelfAssessmentID = sas.SelfAssessmentID AND s.CompetencyID = sas.CompetencyID LEFT OUTER JOIN
+                                 SelfAssessmentStructure AS sas ON sas.SelfAssessmentID = @selfAssessmentId AND s.CompetencyID = sas.CompetencyID LEFT OUTER JOIN
                                  SelfAssessmentResultSupervisorVerifications AS sv ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0 LEFT OUTER JOIN
-                                 CompetencyAssessmentQuestionRoleRequirements AS rr ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
-                    WHERE (s.SelfAssessmentID = @selfAssessmentId)
+                                 CompetencyAssessmentQuestionRoleRequirements AS rr ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND sas.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
+                    WHERE (sas.SelfAssessmentID = @selfAssessmentId)
                                 )
                     SELECT 
                         sa.Name AS SelfAssessment

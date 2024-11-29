@@ -13,5 +13,6 @@
         public DateTime? CompletedDate { get; set; }
 
         public DateTime? RemovedDate { get; set; }
+        public int CentreId { get; set; }
     }
 }

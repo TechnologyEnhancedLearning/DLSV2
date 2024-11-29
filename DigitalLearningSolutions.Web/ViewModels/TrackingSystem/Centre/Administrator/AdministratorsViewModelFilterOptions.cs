@@ -8,8 +8,6 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class AdministratorsViewModelFilterOptions
     {
@@ -51,7 +49,7 @@
 
         public static List<FilterModel> GetAllAdministratorsFilterModels(IEnumerable<Category> categories)
         {
-            var categoryStrings = categories.Select(c => c.CategoryName);
+            var categoryStrings = categories.Select(c => c.CategoryName.Trim());
             categoryStrings = categoryStrings.Prepend("All");
             var filters = new List<FilterModel>
             {

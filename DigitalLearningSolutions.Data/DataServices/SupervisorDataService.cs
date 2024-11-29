@@ -36,6 +36,8 @@
         SelfAssessmentResultSummary? GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
         IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
+        IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(int adminId);
+        SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
@@ -214,6 +216,61 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 );
         }
 
+        public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(int adminId)
+        {
+            return connection.Query<SupervisorDelegateDetail>(
+                $@"SELECT sd.ID, 
+		                sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.DelegateUserID,da.Active,
+                        sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Removed, sd.InviteHash, 
+		                u.FirstName, u.LastName, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail,
+		                jg.JobGroupName, 
+		                da.Answer1, da.Answer2, da.Answer3, da.Answer4, da.Answer5, da.Answer6, da.CandidateNumber, 
+		                cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, 
+		                cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4,             
+		                cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, 
+		                COALESCE (au.CentreID, da.CentreID) AS CentreID, 
+		                au.Forename + ' ' + au.Surname AS SupervisorName,                 
+		                (SELECT COUNT(ca.ID) AS Expr1
+                        FROM CandidateAssessments AS ca  LEFT JOIN
+                        CandidateAssessmentSupervisors AS cas ON cas.CandidateAssessmentID = ca.ID AND cas.Removed IS NULL AND cas.SupervisorDelegateId = sd.ID INNER JOIN
+                        SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID 
+                        WHERE (ca.RemovedDate IS NULL) AND (ca.DelegateUserID=sd.DelegateUserID) AND (cas.SupervisorDelegateId = sd.ID OR (cas.CandidateAssessmentID IS NULL)
+				        AND ((sa.SupervisorSelfAssessmentReview = 1) OR (sa.SupervisorResultsReview = 1)))) AS CandidateAssessmentCount, 
+		                CAST(COALESCE (au2.IsNominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, 
+		                CAST(COALESCE (au2.IsSupervisor, 0) AS Bit) AS DelegateIsSupervisor,             
+		                da.ID AS Expr1
+                    FROM   CustomPrompts AS cp6 
+	                    RIGHT OUTER JOIN CustomPrompts AS cp5 
+	                    RIGHT OUTER JOIN DelegateAccounts AS da
+	                    RIGHT OUTER JOIN SupervisorDelegates AS sd 
+	                    INNER JOIN AdminUsers AS au 
+		                    ON sd.SupervisorAdminID = au.AdminID 
+	                    INNER JOIN Centres AS ct 
+		                    ON au.CentreID = ct.CentreID 
+	                    ON da.CentreID = ct.CentreID 
+		                    AND da.UserID = sd.DelegateUserID 
+	                    LEFT OUTER JOIN Users AS u 
+	                    LEFT OUTER JOIN JobGroups AS jg 
+		                    ON u.JobGroupID = jg.JobGroupID
+	                    ON da.UserID = u.ID 
+	                    LEFT OUTER JOIN CustomPrompts AS cp1 
+		                    ON ct.CustomField1PromptID = cp1.CustomPromptID 
+	                    LEFT OUTER JOIN CustomPrompts AS cp2 
+		                    ON ct.CustomField2PromptID = cp2.CustomPromptID 
+	                    LEFT OUTER JOIN CustomPrompts AS cp3 
+		                    ON ct.CustomField3PromptID = cp3.CustomPromptID 
+	                    LEFT OUTER JOIN CustomPrompts AS cp4 
+		                    ON ct.CustomField4PromptID = cp4.CustomPromptID 
+	                    ON cp5.CustomPromptID = ct.CustomField5PromptID 
+	                    ON cp6.CustomPromptID = ct.CustomField6PromptID 
+	                    LEFT OUTER JOIN AdminAccounts AS au2 
+		                    ON da.UserID = au2.UserID AND da.CentreID = au2.CentreID
+                    WHERE (sd.SupervisorAdminID = @adminId)  AND 
+                     (u.ID = da.UserID OR sd.DelegateUserID IS NULL)
+                    ORDER BY u.LastName, COALESCE (u.FirstName, sd.DelegateEmail)
+                    ", new { adminId }
+                );
+        }
         public int AddSuperviseDelegate(int? supervisorAdminId, int? delegateUserId, string delegateEmail, string supervisorEmail, int centreId)
         {
             var addedByDelegate = (delegateUserId != null);
@@ -238,7 +295,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             AND da.CentreID = @centreId", new { delegateEmail, centreId });
             }
 
-            int existingId = (int)connection.ExecuteScalar(
+            int existingId = Convert.ToInt32(connection.ExecuteScalar(
                 @"
                     SELECT COALESCE
                     ((SELECT Top 1 ID
@@ -253,7 +310,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     supervisorAdminId = supervisorAdminId ?? 0,
                     delegateUserId = delegateUserId ?? 0
                 }
-            );
+            ));
 
             if (existingId > 0)
             {
@@ -263,16 +320,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             }
             else
             {
-                if (supervisorAdminId == null)
-                {
-                    supervisorAdminId = (int?)connection.ExecuteScalar(
-                    @"SELECT AdminID FROM AdminUsers WHERE Email = @supervisorEmail AND Active = 1 AND CentreID = @centreId", new { supervisorEmail, centreId }
-                    );
-                }
-                if (supervisorAdminId != null)
-                {
-                    connection.Execute(@"UPDATE AdminUsers SET Supervisor = 1 WHERE AdminID = @supervisorAdminId AND Supervisor = 0", new { supervisorAdminId });
-                }
                 var numberOfAffectedRows = connection.Execute(
                     @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, DelegateUserID, SupervisorEmail, AddedByDelegate)
                     VALUES (@supervisorAdminId, @delegateEmail, @delegateUserId, @supervisorEmail, @addedByDelegate)",
@@ -285,7 +332,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     return -1;
                 }
 
-                existingId = (int)connection.ExecuteScalar(
+                existingId = Convert.ToInt32(connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
                     ((SELECT ID
@@ -302,7 +349,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         supervisorAdminId = supervisorAdminId ?? 0,
                         delegateUserId = delegateUserId ?? 0
                     }
-                ); return existingId;
+                )); return existingId;
             }
         }
 
@@ -313,6 +360,49 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.ID = @supervisorDelegateId) AND (sd.DelegateUserID = @delegateUserId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateUserId }
+            ).FirstOrDefault();
+
+            if (supervisorDelegateDetail != null && supervisorDelegateDetail.DelegateID != null)
+            {
+                delegateId = (int)supervisorDelegateDetail!.DelegateID!;
+            }
+
+            if (delegateUserId == 0)
+            {
+                if (supervisorDelegateDetail != null && supervisorDelegateDetail.DelegateUserID != null)
+                {
+                    delegateUserId = (int)supervisorDelegateDetail!.DelegateUserID!;
+                }
+            }
+
+            var delegateDetails = connection.Query<SupervisorDelegateDetail>(
+               $@"SELECT u.ID AS DelegateUserId, u.FirstName, u.LastName, u.ProfessionalRegistrationNumber, u.PrimaryEmail AS CandidateEmail, da.CandidateNumber
+                    FROM   Users u
+                    INNER JOIN DelegateAccounts da
+                        ON da.UserID = u.ID
+                    WHERE u.ID = @delegateUserId AND u.Active = 1 AND da.Active = 1 AND da.ID = @delegateId", new { delegateUserId, delegateId }
+            ).FirstOrDefault();
+
+            if (supervisorDelegateDetail != null && delegateDetails != null)
+            {
+                supervisorDelegateDetail.DelegateUserID = delegateUserId;
+                supervisorDelegateDetail.FirstName = delegateDetails.FirstName;
+                supervisorDelegateDetail.LastName = delegateDetails.LastName;
+                supervisorDelegateDetail.ProfessionalRegistrationNumber = delegateDetails.ProfessionalRegistrationNumber;
+                supervisorDelegateDetail.CandidateEmail = delegateDetails.CandidateEmail;
+                supervisorDelegateDetail.CandidateNumber = delegateDetails.CandidateNumber;
+            }
+
+            return supervisorDelegateDetail!;
+        }
+
+        public SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId)
+        {
+            int delegateId = 0;
+            var supervisorDelegateDetail = connection.Query<SupervisorDelegateDetail>(
+                $@"SELECT {supervisorDelegateDetailFields}
+                    FROM   {supervisorDelegateDetailTables}
+                    WHERE (sd.ID = @supervisorDelegateId) AND (sd.DelegateUserID = @delegateUserId OR sd.SupervisorAdminID = @adminId)", new { supervisorDelegateId, adminId, delegateUserId }
             ).FirstOrDefault();
 
             if (supervisorDelegateDetail != null && supervisorDelegateDetail.DelegateID != null)
@@ -393,13 +483,21 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
         {
             return connection.Query<SupervisorForEnrolDelegate>(
-                $@"SELECT AdminID, Forename + ' ' + Surname + ' (' + Email +'),' + ' ' + CentreName AS Name, Email FROM AdminUsers AS au
-                    WHERE (Supervisor = 1) AND (CentreID = @CentreID) AND (CategoryID = 0 OR
-                         CategoryID = (SELECT au.CategoryID FROM Applications AS a INNER JOIN
-                           Customisations AS c ON a.ApplicationID = c.ApplicationID
-                            WHERE (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1)
-                            GROUP BY AdminID, Surname, Forename, Email, CentreName
-                            ORDER BY Surname, Forename",
+                $@"SELECT aa.ID AS AdminID,
+                        u.FirstName + ' ' +  u.LastName + ' (' + COALESCE(ucd.Email, u.PrimaryEmail) +')' AS Name, 
+			            COALESCE(ucd.Email, u.PrimaryEmail) AS Email 
+				FROM  AdminAccounts AS aa INNER JOIN
+                                Users AS u ON aa.UserID = u.ID INNER JOIN
+                                Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
+                                UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID
+                WHERE (aa.IsSupervisor = 1) AND (c.CentreID = @CentreID) AND 
+						(ISNULL(aa.CategoryID, 0) = 0 OR CategoryID = 
+								(SELECT aa.CategoryID FROM Applications AS a INNER JOIN
+										Customisations AS c ON a.ApplicationID = c.ApplicationID
+										WHERE (c.CustomisationID = @CustomisationID))) AND 
+							(aa.Active = 1)
+				GROUP BY aa.ID, u.LastName, u.FirstName, COALESCE(ucd.Email, u.PrimaryEmail), CentreName
+				ORDER BY u.FirstName, u.LastName",
                 new { CentreID, CustomisationID });
         }
 
@@ -794,15 +892,15 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         }
         public int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
         {
-            int candidateAssessmentId = (int)connection.ExecuteScalar(
+            int candidateAssessmentId = Convert.ToInt32(connection.ExecuteScalar(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                    WHERE (SelfAssessmentID = @selfAssessmentId) AND (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
-              new { selfAssessmentId, delegateUserId });
+              new { selfAssessmentId, delegateUserId }));
             if (candidateAssessmentId > 0)
             {
-                var candidateAssessmentSupervisorsId = (int)connection.ExecuteScalar(
+                var candidateAssessmentSupervisorsId = Convert.ToInt32(connection.ExecuteScalar(
                     @"
                     SELECT COALESCE
                     ((SELECT ID
@@ -810,7 +908,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                         WHERE (CandidateAssessmentID = @candidateAssessmentId)
                             AND (SupervisorDelegateId = @supervisorDelegateId)                        
 							AND ((SelfAssessmentSupervisorRoleID IS NULL) OR (SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleId))), 0) AS CandidateAssessmentSupervisorID", new
-                    { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId });
+                    { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }));
 
                 if (candidateAssessmentSupervisorsId == 0)
                 {
@@ -998,7 +1096,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 FROM   SelfAssessmentStructure AS sas1 INNER JOIN
              CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID LEFT OUTER JOIN
-             SelfAssessmentResults AS sar1 ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
+             SelfAssessmentResults AS sar1 ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
                  LEFT OUTER JOIN    CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
 WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) OR
              (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -1009,7 +1107,7 @@ FROM   SelfAssessmentResultSupervisorVerifications AS sasrv INNER JOIN
              SelfAssessmentResults AS sar1 ON sasrv.SelfAssessmentResultId = sar1.ID AND sasrv.Superceded = 0 RIGHT OUTER JOIN
              SelfAssessmentStructure AS sas1 INNER JOIN
              CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID=sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
+             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
 				 LEFT OUTER JOIN    CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
 WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) OR
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) OR
@@ -1022,7 +1120,7 @@ FROM   SelfAssessmentResultSupervisorVerifications AS sasrv INNER JOIN
              sar1.AssessmentQuestionID = caqrr1.AssessmentQuestionID RIGHT OUTER JOIN
              SelfAssessmentStructure AS sas1 INNER JOIN
              CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID=sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
+             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
 			 LEFT OUTER JOIN   CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
 WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.ID IS NULL) OR
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.ID IS NULL) OR
@@ -1035,7 +1133,7 @@ FROM   SelfAssessmentResultSupervisorVerifications AS sasrv INNER JOIN
              sar1.AssessmentQuestionID = caqrr1.AssessmentQuestionID RIGHT OUTER JOIN
              SelfAssessmentStructure AS sas1 INNER JOIN
              CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID=sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
+             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
 			 LEFT OUTER JOIN   CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
 WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 1) OR
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 1) OR
@@ -1048,7 +1146,7 @@ FROM   SelfAssessmentResultSupervisorVerifications AS sasrv INNER JOIN
              sar1.AssessmentQuestionID = caqrr1.AssessmentQuestionID RIGHT OUTER JOIN
              SelfAssessmentStructure AS sas1 INNER JOIN
              CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID=sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
+             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
 			 LEFT OUTER JOIN   CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
 WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 2) OR
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 2) OR
@@ -1061,13 +1159,13 @@ FROM   SelfAssessmentResultSupervisorVerifications AS sasrv INNER JOIN
              sar1.AssessmentQuestionID = caqrr1.AssessmentQuestionID RIGHT OUTER JOIN
              SelfAssessmentStructure AS sas1 INNER JOIN
              CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID=sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
+             CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
 			 LEFT OUTER JOIN   CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
 WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) OR
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) OR
              (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.SupportingComments IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) OR
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL)) AND (sasrv.SignedOff = 1) AND (caqrr1.LevelRAG = 3)) AS MeetingCount,
-              sa.SignOffSupervisorStatement
+              sa.SignOffSupervisorStatement,ca.DelegateUserID
 FROM   NRPProfessionalGroups AS npg RIGHT OUTER JOIN
              NRPSubGroups AS nsg RIGHT OUTER JOIN
              SelfAssessmentSupervisorRoles AS sasr RIGHT OUTER JOIN
@@ -1111,7 +1209,7 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
 	                    ON sas1.SelfAssessmentID = ca1.SelfAssessmentID 
                     INNER JOIN CompetencyAssessmentQuestions AS caq1 
 	                    ON sas1.CompetencyID = caq1.CompetencyID 
-	                    ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
+	                    ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID
                     LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS caoc1 
 	                    ON sas1.CompetencyID = caoc1.CompetencyID 
 	                    AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID 
