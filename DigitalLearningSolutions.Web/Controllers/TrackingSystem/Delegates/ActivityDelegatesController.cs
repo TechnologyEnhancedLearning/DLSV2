@@ -141,25 +141,7 @@
             if (!string.IsNullOrEmpty(existingFilterString))
             {
                 var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-
-                if (!string.IsNullOrEmpty(newFilterToAdd))
-                {
-                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
-                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
-                    if (dupfilters.Count() > 1)
-                    {
-                        foreach (var filter in selectedFilters)
-                        {
-                            if (filter.Contains(filterHeader))
-                            {
-                                selectedFilters.Remove(filter);
-                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
-                                break;
-                            }
-                        }
-                    }
-                }
-
+                existingFilterString = FilteringHelper.RemoveDuplicateFilters(newFilterToAdd, existingFilterString);
                 if (selectedFilters.Count > 0)
                 {
                     foreach (var filter in selectedFilters)
@@ -277,7 +259,7 @@
                     : selfAssessmentService.GetSelfAssessmentNameById((int)selfAssessmentId);
                 if (!string.IsNullOrEmpty(existingFilterString))
                 {
-                    existingFilterString = FilteringHelper.CheckIfFilterisValid(clearFilters, existingFilterString, newFilterToAdd, availableFilters, Request, filterCookieName, Response);
+                    existingFilterString = FilteringHelper.GetValidFilters( existingFilterString, newFilterToAdd, availableFilters, Request, filterCookieName);
                 }
                 if (isCourseDelegate)
                 {
@@ -593,6 +575,7 @@
                 return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
         }
+
     }
 }
 
