@@ -170,7 +170,6 @@
         public  static  string? CheckIfFilterisValid(bool clearFilters, string existingFilterString, string newFilterToAdd, IEnumerable<FilterModel> availableFilters, HttpRequest request,
        string cookieName, HttpResponse response)
         {
-            
             var cookieValue = request.Cookies[cookieName];
             if (string.IsNullOrEmpty(cookieValue) || cookieValue == EmptyFiltersCookieValue)
             {
