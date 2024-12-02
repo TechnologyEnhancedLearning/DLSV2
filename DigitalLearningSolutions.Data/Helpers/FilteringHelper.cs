@@ -66,35 +66,7 @@
                 ? defaultFilterValue
                 : AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
         }
-        public static string? GetFilterString(
-           string? existingFilterString,
-           string? newFilterToAdd,
-           bool clearFilters,
-           HttpRequest request,
-           string cookieName,
-           string? q1Options,
-           string? defaultFilterValue = null
-       )
-        {
-            var cookieHasBeenSet = request.Cookies.ContainsKey(cookieName);
-            var noFiltersInQueryParams = existingFilterString == null && newFilterToAdd == null;
-            var cookieValue = request.Cookies[cookieName];
-            if ((clearFilters) || (q1Options == null && cookieValue != null && cookieValue.Contains("Answer1|Not Allowed") ||
-    (cookieValue != null && cookieValue.Contains("Answer1|Allowed"))))
-            {
-                return null;
-            }
-
-            if (cookieHasBeenSet && noFiltersInQueryParams)
-            {
-                return request.Cookies[cookieName] == EmptyFiltersCookieValue ? null : request.Cookies[cookieName];
-            }
-
-            return noFiltersInQueryParams
-                ? defaultFilterValue
-                : AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
-        }
-        public static string? GetCategoryAndTopicFilterString(
+       public static string? GetCategoryAndTopicFilterString(
             string? categoryFilterString,
             string? topicFilterString
         )
@@ -195,7 +167,36 @@
                 : answer;
             return BuildFilterValueString(group, group.Split('(')[0], propertyValue);
         }
+        public  static  string? CheckIfFilterisValid(bool clearFilters, string existingFilterString, string newFilterToAdd, IEnumerable<FilterModel> availableFilters, HttpRequest request,
+       string cookieName, HttpResponse response)
+        {
+            if (!request.Cookies.ContainsKey(cookieName) || string.IsNullOrEmpty(request.Cookies[cookieName]) || clearFilters)
+                return null;
 
+            var cookieValue = request.Cookies[cookieName];
+            if (string.IsNullOrEmpty(cookieValue) || cookieValue == EmptyFiltersCookieValue)
+            {
+                return existingFilterString;
+            }
+            var existingFilters = cookieValue.Split('╡');
+            var validFilterValues = availableFilters
+                .SelectMany(filter => filter.FilterOptions)
+                .Select(option => option.FilterValue)
+                .ToHashSet();
+           
+            var filteredResults = existingFilters
+        .Where(entry => IsFilterInvalid(entry, validFilterValues))
+        .ToList();
+            var newCookieValue = string.Join("╡", filteredResults);
+            if (string.IsNullOrEmpty(newCookieValue)) return null;
+            return AddNewFilterToFilterString(newCookieValue, newFilterToAdd);  
+        }
+
+        private static  bool IsFilterInvalid(string filterEntry, HashSet<string> validFilterValues)
+        {
+            if (validFilterValues.Contains(filterEntry)) return true;
+            return false;
+        }
         private static IEnumerable<FilterOptionModel> GetFilterOptionsForPromptWithOptions(Prompt prompt)
         {
             var group = GetFilterGroupForPrompt(prompt);

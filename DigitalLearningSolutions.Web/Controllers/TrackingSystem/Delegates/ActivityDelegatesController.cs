@@ -95,14 +95,12 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-          var course =  courseService.GetCourse(customisationId);
                 existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
                 clearFilters,
                 Request,
                 filterCookieName,
-                course.Q1Options,
                 CourseDelegateAccountStatusFilterOptions.Active.FilterValue
             );
 
@@ -277,7 +275,7 @@
                 var activityName = isCourseDelegate
                     ? courseService.GetCourseNameAndApplication((int)customisationId).CourseName
                     : selfAssessmentService.GetSelfAssessmentNameById((int)selfAssessmentId);
-
+                existingFilterString = FilteringHelper.CheckIfFilterisValid(clearFilters, existingFilterString, newFilterToAdd, availableFilters, Request, filterCookieName, Response);
                 if (isCourseDelegate)
                 {
                     var result = paginateService.Paginate(

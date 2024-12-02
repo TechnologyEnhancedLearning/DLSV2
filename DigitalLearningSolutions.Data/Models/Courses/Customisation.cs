@@ -43,7 +43,6 @@
         public string? NotificationEmails { get; set; }
         public int CustomisationId { get; set; }
         public bool Active { get; set; }
-        public string? Q1Options { get; set; }
 
     }
 }

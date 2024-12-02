@@ -2040,7 +2040,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                         ,DiagObjSelect
                         ,HideInLearnerPortal
                         ,NotificationEmails
-                        ,Q1Options
                     FROM Customisations 
 						WHERE CustomisationID = @customisationID ",
                 new { customisationId }).FirstOrDefault();
