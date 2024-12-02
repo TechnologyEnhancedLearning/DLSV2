@@ -275,7 +275,10 @@
                 var activityName = isCourseDelegate
                     ? courseService.GetCourseNameAndApplication((int)customisationId).CourseName
                     : selfAssessmentService.GetSelfAssessmentNameById((int)selfAssessmentId);
-                existingFilterString = FilteringHelper.CheckIfFilterisValid(clearFilters, existingFilterString, newFilterToAdd, availableFilters, Request, filterCookieName, Response);
+                if (!string.IsNullOrEmpty(existingFilterString))
+                {
+                    existingFilterString = FilteringHelper.CheckIfFilterisValid(clearFilters, existingFilterString, newFilterToAdd, availableFilters, Request, filterCookieName, Response);
+                }
                 if (isCourseDelegate)
                 {
                     var result = paginateService.Paginate(
