@@ -174,7 +174,7 @@
             {
                 return existingFilterString;
             }
-            var existingFilters = cookieValue.Split('╡');
+            var existingFilters = cookieValue.Split(FilterSeparator);
             var validFilterValues = availableFilters
                 .SelectMany(filter => filter.FilterOptions)
                 .Select(option => option.FilterValue)
@@ -183,7 +183,7 @@
             var filteredResults = existingFilters
         .Where(entry => IsFilterInvalid(entry, validFilterValues))
         .ToList();
-            var newCookieValue = string.Join("╡", filteredResults);
+            var newCookieValue = string.Join(FilterSeparator, filteredResults);
             if (string.IsNullOrEmpty(newCookieValue)) return null;
             newCookieValue = AddNewFilterToFilterString(newCookieValue, newFilterToAdd);
             return RemoveDuplicateFilters( newFilterToAdd, newCookieValue);
