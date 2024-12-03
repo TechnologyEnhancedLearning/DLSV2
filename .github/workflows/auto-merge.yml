@@ -1,0 +1,178 @@
+name: Auto Merge Dependabot PRs
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        
+      - name: Set up GitHub CLI
+        run: |
+          # Install GitHub CLI (gh)
+          sudo apt-get update
+          sudo apt-get install gh
+
+          # Authenticate GitHub CLI using the provided token
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          
+      - name: Wait for CI workflow to pass (Ensure CI workflow succeeded)
+        id: wait_for_ci
+        run: |
+           # Get the PR number from the GitHub event
+            PR_NUMBER=${{ github.event.pull_request.number }}
+            echo "Checking CI status for PR #$PR_NUMBER"
+            
+            # Define the maximum wait time (in seconds) and the polling interval (in seconds)
+            MAX_WAIT_TIME=600  # 10 minutes
+            POLL_INTERVAL=10   # Check every 10 seconds
+            
+            # Initialize a timer
+            elapsed_time=0
+            
+            # Poll CI status until all checks are completed
+            while true; do
+              # Fetch the status check rollup for the PR
+              CI_STATUS=$(gh pr view $PR_NUMBER --json statusCheckRollup)
+              
+              # Log the fetched response
+              echo "CI Status Response: $CI_STATUS"
+              
+              # Parse the checks and check their status
+              ALL_COMPLETED=true
+              ALL_CHECKS_PASSED=true
+              
+              for check in $(echo "$CI_STATUS" | jq -r '.statusCheckRollup[] | @base64'); do
+                _jq() {
+                  echo "${check}" | base64 --decode | jq -r "${1}"
+                }
+                
+                status=$(_jq '.status')
+                conclusion=$(_jq '.conclusion')
+                check_name=$(_jq '.name')
+            
+                # Log check details
+                echo "Check: $check_name, Status: $status, Conclusion: $conclusion"
+                 if [[ "$check_name" == "auto-merge" ]]; then
+                    echo "Skipping 'auto-merge' workflow check to prevent self-referencing."
+                    continue
+                  fi
+                  
+                # If any check is still in progress, set ALL_COMPLETED to false
+                if [[ "$status" == "IN_PROGRESS" ]]; then
+                  ALL_COMPLETED=false
+                fi
+            
+                # If any completed check has failed, set ALL_CHECKS_PASSED to false
+                if [[ "$status" == "COMPLETED" && "$conclusion" != "SUCCESS" ]]; then
+                  ALL_CHECKS_PASSED=false
+                fi
+              done
+            
+              # Break the loop if all checks are completed
+              if [[ "$ALL_COMPLETED" == true ]]; then
+                break
+              fi
+            
+              # Wait for the next polling interval
+              echo "Waiting for checks to complete... ($elapsed_time/$MAX_WAIT_TIME seconds elapsed)"
+              sleep $POLL_INTERVAL
+              elapsed_time=$((elapsed_time + POLL_INTERVAL))
+            
+              # Exit if the maximum wait time is exceeded
+              if [[ "$elapsed_time" -ge "$MAX_WAIT_TIME" ]]; then
+                echo "Timed out waiting for CI checks to complete."
+                exit 1
+              fi
+            done
+            
+            # Final check: Ensure all CI checks passed
+            if [[ "$ALL_CHECKS_PASSED" == false ]]; then
+              echo "One or more CI checks failed. Aborting merge."
+              exit 1
+            fi
+            
+            echo "All CI checks passed successfully."
+
+          
+      - name: Check Target Branch and PR Title
+        id: check_branch
+        run: |
+          PR_TITLE='${{ github.event.pull_request.title }}'
+          echo "Original PR Title: $PR_TITLE"
+          
+          # Escape problematic quotes
+          ESCAPED_TITLE=$(echo "$PR_TITLE" | sed 's/"/\\"/g')
+          echo "Escaped PR Title: $ESCAPED_TITLE"
+
+          if [[ "$ESCAPED_TITLE" =~ ([0-9]+\.[0-9]+\.[0-9]+).*to.*([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            # Extract version numbers
+            OLD_VERSION="${BASH_REMATCH[1]}"
+            NEW_VERSION="${BASH_REMATCH[2]}"
+            echo "Version change detected: $OLD_VERSION to $NEW_VERSION"
+            
+            # Split version into major, minor, patch components
+            OLD_MAJOR=$(echo "$OLD_VERSION" | cut -d '.' -f1)
+            OLD_MINOR=$(echo "$OLD_VERSION" | cut -d '.' -f2)
+            OLD_PATCH=$(echo "$OLD_VERSION" | cut -d '.' -f3)
+            
+            NEW_MAJOR=$(echo "$NEW_VERSION" | cut -d '.' -f1)
+            NEW_MINOR=$(echo "$NEW_VERSION" | cut -d '.' -f2)
+            NEW_PATCH=$(echo "$NEW_VERSION" | cut -d '.' -f3)
+            
+            # Check if it's a minor or patch update
+            if [[ "$OLD_MAJOR" == "$NEW_MAJOR" ]] && [[ "$OLD_MINOR" == "$NEW_MINOR" ]] && [[ "$NEW_PATCH" -gt "$OLD_PATCH" ]]; then
+              echo "Patch update detected"
+              echo "should_merge=true" >> $GITHUB_ENV
+            elif [[ "$OLD_MAJOR" == "$NEW_MAJOR" ]] && [[ "$NEW_MINOR" -gt "$OLD_MINOR" ]]; then
+              echo "Minor update detected"
+              echo "should_merge=true" >> $GITHUB_ENV
+            else
+              echo "No minor/patch update detected"
+              echo "should_merge=false" >> $GITHUB_ENV
+            fi
+          else
+            echo "No version change detected"
+            echo "should_merge=false" >> $GITHUB_ENV
+          fi
+
+      - name: Debug Context
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log("Target branch:", context.payload.pull_request.base.ref);
+
+      - name: Check if Should Merge
+        run: |
+          echo "DEBUG: should_merge=${{ env.should_merge }}"
+          if [[ "${{ env.should_merge }}" == "true" ]] && [[ "${{ github.event.pull_request.base.ref }}" == "Automatic_version_update_dependabot" ]]; then
+            echo "DEBUG: should merge PR"
+            echo "should_merge=true" >> $GITHUB_ENV
+          else
+            echo "DEBUG: skip merge"
+            echo "should_merge=false" >> $GITHUB_ENV
+          fi
+
+      - name: Merge Pull Request
+        if: ${{ env.should_merge == 'true' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              merge_method: "squash"
+            });
