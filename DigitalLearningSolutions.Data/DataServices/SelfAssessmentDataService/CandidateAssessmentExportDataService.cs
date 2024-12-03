@@ -31,12 +31,12 @@
                               SelfAssessmentResults AS sar1 ON sarsv.SelfAssessmentResultId = sar1.ID AND sarsv.Superceded = 0 RIGHT OUTER JOIN
                               SelfAssessmentStructure AS sas1 INNER JOIN
                               CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
+                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caoc1.IncludedInSelfAssessment = 1) OR
                               (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (sarsv.SignedOff = 1) AND (NOT (sar1.SupportingComments IS NULL)) OR
-                              (ca1.ID = ca.ID) AND (sarsv.SignedOff = 1) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL))) AS ResponsesVerifiedCount,
+                              (ca1.ID = ca.ID) AND (sarsv.SignedOff = 1) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL))) AS ResponsesConfirmedCount,
                  (SELECT COUNT(sas1.CompetencyID) AS NoRequirementsSetCount
                  FROM    SelfAssessmentResultSupervisorVerifications AS sarsv INNER JOIN
                               SelfAssessmentResults AS sar1 ON sarsv.SelfAssessmentResultId = sar1.ID AND sarsv.Superceded = 0 LEFT OUTER JOIN
@@ -44,7 +44,7 @@
                               sar1.AssessmentQuestionID = caqrr1.AssessmentQuestionID RIGHT OUTER JOIN
                               SelfAssessmentStructure AS sas1 INNER JOIN
                               CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
+                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.ID IS NULL) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.ID IS NULL) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -57,7 +57,7 @@
                               sar1.AssessmentQuestionID = caqrr1.AssessmentQuestionID RIGHT OUTER JOIN
                               SelfAssessmentStructure AS sas1 INNER JOIN
                               CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
+                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 1) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 1) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -70,7 +70,7 @@
                               sar1.AssessmentQuestionID = caqrr1.AssessmentQuestionID RIGHT OUTER JOIN
                               SelfAssessmentStructure AS sas1 INNER JOIN
                               CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
+                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 2) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 2) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -83,7 +83,7 @@
                               sar1.AssessmentQuestionID = caqrr1.AssessmentQuestionID RIGHT OUTER JOIN
                               SelfAssessmentStructure AS sas1 INNER JOIN
                               CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
-                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.SelfAssessmentID =sas1.SelfAssessmentID and sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
+                              CompetencyAssessmentQuestions AS caq1 ON sas1.CompetencyID = caq1.CompetencyID ON sar1.CompetencyID=sas1.CompetencyID AND sar1.AssessmentQuestionID = caq1.AssessmentQuestionID AND sar1.DelegateUserID = ca1.DelegateUserID LEFT OUTER JOIN
                               CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
                  WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) OR
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (caoc1.IncludedInSelfAssessment = 1) OR
@@ -128,7 +128,7 @@ WHERE (ca.ID = @candidateAssessmentId  AND ca.DelegateUserID  = @delegateUserID)
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM CandidateAssessments ca
                 INNER JOIN SelfAssessmentResults s
-                    ON s.DelegateUserID = ca.DelegateUserID INNER JOIN SelfAssessmentStructure AS sas ON s.CompetencyID = sas.CompetencyID AND sas.SelfAssessmentID = @candidateAssessmentId           
+                    ON s.DelegateUserID = ca.DelegateUserID INNER JOIN SelfAssessmentStructure AS sas ON s.CompetencyID = sas.CompetencyID AND sas.SelfAssessmentID = s.SelfAssessmentID         
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas 

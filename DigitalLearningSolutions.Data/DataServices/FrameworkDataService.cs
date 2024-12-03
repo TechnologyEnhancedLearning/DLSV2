@@ -299,7 +299,7 @@
 
         private const string FrameworkTables =
             @"Frameworks AS FW LEFT OUTER JOIN
-             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId 
+             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(IsDeleted, 0) = 0
             LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
 
         private const string AssessmentQuestionFields =
