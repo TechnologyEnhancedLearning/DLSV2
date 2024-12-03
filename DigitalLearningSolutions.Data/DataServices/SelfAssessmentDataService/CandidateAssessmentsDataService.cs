@@ -8,7 +8,7 @@
 
     public partial class SelfAssessmentDataService
     {
-        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId)
+        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId, int? adminCategoryId)
         {
             return connection.Query<CurrentSelfAssessment>(
                 @"SELECT  SelfAssessment.Id,
@@ -67,7 +67,7 @@
                         CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID LEFT OUTER JOIN
                         AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = CA.EnrolledByAdminID LEFT OUTER JOIN
 						Users AS uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
-                    WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL)
+                    WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL) AND (ISNULL(@adminCategoryId, 0) = 0 OR sa.CategoryID = @adminCategoryId)
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
@@ -83,7 +83,7 @@
 						(casv.Verified IS NOT NULL)
                     GROUP BY SelfAssessmentID,casv.SignedOff
                     )Signoff ON  SelfAssessment.Id =Signoff.SelfAssessmentID",
-                new { delegateUserId, centreId }
+                new { delegateUserId, centreId, adminCategoryId }
             );
         }
 
