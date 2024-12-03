@@ -197,7 +197,7 @@
                 isSupervisor = registrationModel.IsSupervisor,
                 isNominatedSupervisor = registrationModel.IsNominatedSupervisor,
             };
-
+            
             var adminUserId = connection.QuerySingle<int>(
                 @"INSERT INTO AdminAccounts
                     (
@@ -219,7 +219,10 @@
                     (
                         @userId,
                         @centreId,
-                        @categoryId,
+                        CASE 
+                        WHEN @categoryID = 0 THEN NULL 
+                        ELSE @categoryID 
+                        END,
                         @isCentreAdmin,
                         @isCentreManager,
                         @active,
