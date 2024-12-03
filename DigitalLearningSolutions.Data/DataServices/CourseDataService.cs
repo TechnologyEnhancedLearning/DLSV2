@@ -542,9 +542,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         new { candidateAssessmentId, enrolmentMethodId, completeByDateDynamic }
                     );
             }
-
             if (candidateAssessmentId > 1 && supervisorDelegateId !=0)
-
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
