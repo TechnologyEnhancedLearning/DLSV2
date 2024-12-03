@@ -1314,7 +1314,7 @@
                     supervisorDelegateDetail.DelegateUserID,
                     (int)User.GetCentreId()
                 );
-                supervisorDelegate.SelfAssessmentCategory = supervisorDelegate.SelfAssessmentCategory == 0 ? adminUser.CategoryId.Value : supervisorDelegate.SelfAssessmentCategory;
+                supervisorDelegate.SelfAssessmentCategory = supervisorDelegate.SelfAssessmentCategory == 0 ? (adminUser.CategoryId.HasValue ? adminUser.CategoryId.Value : 0) : supervisorDelegate.SelfAssessmentCategory;
                 var centreName = adminUser.CentreName;
 
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
