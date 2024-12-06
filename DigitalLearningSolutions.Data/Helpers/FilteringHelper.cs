@@ -66,8 +66,7 @@
                 ? defaultFilterValue
                 : AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
         }
-
-        public static string? GetCategoryAndTopicFilterString(
+       public static string? GetCategoryAndTopicFilterString(
             string? categoryFilterString,
             string? topicFilterString
         )
@@ -168,7 +167,59 @@
                 : answer;
             return BuildFilterValueString(group, group.Split('(')[0], propertyValue);
         }
+        public  static  string? GetValidFilters(string existingFilterString, string newFilterToAdd, IEnumerable<FilterModel> availableFilters, HttpRequest request, string cookieName)
+        {
+            var cookieValue = request.Cookies[cookieName];
+            if (string.IsNullOrEmpty(cookieValue) || cookieValue == EmptyFiltersCookieValue)
+            {
+                return existingFilterString;
+            }
+            var existingFilters = cookieValue.Split(FilterSeparator);
+            var validFilterValues = availableFilters
+                .SelectMany(filter => filter.FilterOptions)
+                .Select(option => option.FilterValue)
+                .ToHashSet();
+           
+            var filteredResults = existingFilters
+        .Where(entry => IsFilterInvalid(entry, validFilterValues))
+        .ToList();
+            var newCookieValue = string.Join(FilterSeparator, filteredResults);
+            if (string.IsNullOrEmpty(newCookieValue)) return null;
+            newCookieValue = AddNewFilterToFilterString(newCookieValue, newFilterToAdd);
+            return RemoveDuplicateFilters( newFilterToAdd, newCookieValue);
+        }
 
+        private static  bool IsFilterInvalid(string filterEntry, HashSet<string> validFilterValues)
+        {
+            if (validFilterValues.Contains(filterEntry)) return true;
+            return false;
+        }
+        public  static string RemoveDuplicateFilters(string newFilterToAdd, string? existingFilterString)
+        {
+            if (string.IsNullOrEmpty(existingFilterString))
+            {
+                return existingFilterString ?? string.Empty;
+            }
+            var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
+            if (!string.IsNullOrEmpty(newFilterToAdd))
+            {
+                var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
+                var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
+                if (dupfilters.Count() > 1)
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        if (filter.Contains(filterHeader))
+                        {
+                            selectedFilters.Remove(filter);
+                            existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
+                            break;
+                        }
+                    }
+                }
+            }
+            return existingFilterString;
+        }
         private static IEnumerable<FilterOptionModel> GetFilterOptionsForPromptWithOptions(Prompt prompt)
         {
             var group = GetFilterGroupForPrompt(prompt);

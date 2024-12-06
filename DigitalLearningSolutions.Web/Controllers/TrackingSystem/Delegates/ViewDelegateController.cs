@@ -81,9 +81,10 @@
                 course.LastUpdated = DateHelper.GetLocalDateTime(course.LastUpdated);
                 course.Completed = course.Completed?.TimeOfDay == TimeSpan.Zero ? course.Completed : DateHelper.GetLocalDateTime(course.Completed);
             }
+            
 
             var selfAssessments =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateEntity.UserAccount.Id, centreId);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateEntity.UserAccount.Id, centreId, categoryIdFilter);
 
             foreach (var selfassessment in selfAssessments)
             {

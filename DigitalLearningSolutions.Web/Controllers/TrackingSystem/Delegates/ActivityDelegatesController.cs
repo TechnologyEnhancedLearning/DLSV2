@@ -95,8 +95,7 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-
-            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
                 clearFilters,
@@ -142,25 +141,7 @@
             if (!string.IsNullOrEmpty(existingFilterString))
             {
                 var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-
-                if (!string.IsNullOrEmpty(newFilterToAdd))
-                {
-                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
-                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
-                    if (dupfilters.Count() > 1)
-                    {
-                        foreach (var filter in selectedFilters)
-                        {
-                            if (filter.Contains(filterHeader))
-                            {
-                                selectedFilters.Remove(filter);
-                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
-                                break;
-                            }
-                        }
-                    }
-                }
-
+                existingFilterString = FilteringHelper.RemoveDuplicateFilters(newFilterToAdd, existingFilterString);
                 if (selectedFilters.Count > 0)
                 {
                     foreach (var filter in selectedFilters)
@@ -276,7 +257,10 @@
                 var activityName = isCourseDelegate
                     ? courseService.GetCourseNameAndApplication((int)customisationId).CourseName
                     : selfAssessmentService.GetSelfAssessmentNameById((int)selfAssessmentId);
-
+                if (!string.IsNullOrEmpty(existingFilterString))
+                {
+                    existingFilterString = FilteringHelper.GetValidFilters( existingFilterString, newFilterToAdd, availableFilters, Request, filterCookieName);
+                }
                 if (isCourseDelegate)
                 {
                     var result = paginateService.Paginate(
@@ -591,6 +575,7 @@
                 return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
         }
+
     }
 }
 
