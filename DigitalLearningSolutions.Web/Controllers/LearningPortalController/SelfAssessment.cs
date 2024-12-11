@@ -1558,6 +1558,12 @@
         public IActionResult RequestSignOff(int selfAssessmentId)
         {
             var delegateUserId = User.GetUserIdKnownNotNull();
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var recentResults = selfAssessmentService.GetMostRecentResults(selfAssessmentId, delegateId).ToList();
+            var competencySummaries = CertificateHelper.CompetencySummation(recentResults);
+           
+            if (competencySummaries.QuestionsCount != competencySummaries.VerifiedCount)  return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
             var supervisors =
                 selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, delegateUserId);
@@ -1568,6 +1574,8 @@
                 Supervisors = supervisors,
                 NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment)
             };
+            if (model.NumberOfSelfAssessedOptionalCompetencies < model.SelfAssessment.MinimumOptionalCompetencies) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            
             return View("SelfAssessments/RequestSignOff", model);
         }
 
