@@ -515,7 +515,7 @@
         )
         {
             var model = ReviewCompetencySelfAsessmentData(supervisorDelegateId, candidateAssessmentId, resultId);
-            if (model  == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            if (model == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             return View("ReviewCompetencySelfAsessment", model);
         }
 
@@ -589,7 +589,7 @@
                 );
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var delegateSelfAssessment =
-                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId );
+                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId);
             if (delegateSelfAssessment == null) return null;
             var assessmentQuestion = GetLevelDescriptorsForAssessmentQuestion(competency.AssessmentQuestions.First());
             competency.CompetencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id);

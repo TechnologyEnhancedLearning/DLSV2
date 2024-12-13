@@ -351,7 +351,7 @@ If this looks like a mistake, please contact {supervisorDelegate.SupervisorName}
             int candidateAssessmentId = candidateAssessmentSupervisor.CandidateAssessmentID;
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateUserId);
             string centreName = GetCentreName(centreId);
-            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentSupervisor.CandidateAssessmentID,0);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentSupervisor.CandidateAssessmentID, 0);
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Self Assessment Results Review Request - Digital Learning Solutions";
             string? profileReviewUrl = GetSupervisorProfileReviewUrl(supervisorDelegateId, candidateAssessmentId, selfAssessmentResultId);
             BodyBuilder? builder = new BodyBuilder();

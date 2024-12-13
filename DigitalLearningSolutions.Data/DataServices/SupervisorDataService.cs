@@ -594,7 +594,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 WHERE  (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = @supervisorDelegateId)  AND (cas.Removed IS NULL) AND (sa.ID = @selfAssessmentId)", new { selfAssessmentId, supervisorDelegateId }
                ).FirstOrDefault();
         }
-        public DelegateSelfAssessment? GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId, int? adminIdCategoryId )
+        public DelegateSelfAssessment? GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId, int? adminIdCategoryId)
         {
             return connection.Query<DelegateSelfAssessment>(
                @$"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.QuestionLabel, sa.DescriptionLabel, sa.ReviewerCommentsLabel,

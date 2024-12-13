@@ -275,7 +275,7 @@ namespace DigitalLearningSolutions.Web.Services
         }
         public SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId)
         {
-            return supervisorDataService.GetSupervisorDelegateDetailsByIdWithoutRemoveClause(supervisorDelegateId,adminId, delegateUserId);
+            return supervisorDataService.GetSupervisorDelegateDetailsByIdWithoutRemoveClause(supervisorDelegateId, adminId, delegateUserId);
         }
     }
 }
