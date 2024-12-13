@@ -95,14 +95,14 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-                existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                filterCookieName,
-                CourseDelegateAccountStatusFilterOptions.Active.FilterValue
-            );
+            existingFilterString = FilteringHelper.GetFilterString(
+            existingFilterString,
+            newFilterToAdd,
+            clearFilters,
+            Request,
+            filterCookieName,
+            CourseDelegateAccountStatusFilterOptions.Active.FilterValue
+        );
 
             if (isCourseDelegate)
             {
@@ -227,7 +227,7 @@
                         page = 1; offSet = 0;
                         (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
                             selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, adminCategoryId);
-                    }                    
+                    }
 
                     var adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
 
@@ -259,7 +259,7 @@
                     : selfAssessmentService.GetSelfAssessmentNameById((int)selfAssessmentId);
                 if (!string.IsNullOrEmpty(existingFilterString))
                 {
-                    existingFilterString = FilteringHelper.GetValidFilters( existingFilterString, newFilterToAdd, availableFilters, Request, filterCookieName);
+                    existingFilterString = FilteringHelper.GetValidFilters(existingFilterString, newFilterToAdd, availableFilters, Request, filterCookieName);
                 }
                 if (isCourseDelegate)
                 {
@@ -375,7 +375,9 @@
                         fileName
             );
         }
+
         [Route("DownloadActivityDelegates/{selfAssessmentId:int}")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessSelfAssessment))]
         public IActionResult DownloadActivityDelegates(
             int selfAssessmentId,
              string? searchString = null,
@@ -387,7 +389,6 @@
             searchString = searchString == null ? string.Empty : searchString.Trim();
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-
 
             bool? isDelegateActive, isProgressLocked, removed, hasCompleted, submitted, signedOff;
             isDelegateActive = isProgressLocked = removed = hasCompleted = submitted = signedOff = null;
@@ -456,6 +457,7 @@
                         fileName
             );
         }
+
         [Route("TrackingSystem/Delegates/ActivityDelegates/{candidateAssessmentsId}/Remove")]
         [HttpGet]
         public IActionResult RemoveDelegateSelfAssessment(int candidateAssessmentsId)
@@ -466,12 +468,21 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var selfAssessmentDelegate = selfAssessmentService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
-            if (selfAssessmentDelegate == null)
+            if (selfAssessmentDelegate != null)
+            {
+                var adminCategoryId = User.GetAdminCategoryId();
+                var selfAssessmentCategoryId = selfAssessmentService.GetSelfAssessmentCategoryId(selfAssessmentDelegate.SelfAssessmentID);
+                if (adminCategoryId > 0 && adminCategoryId != selfAssessmentCategoryId)
+                {
+                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+                }
+                var model = new DelegateSelfAssessmenteViewModel(selfAssessmentDelegate);
+                return View(model);
+            }
+            else
             {
                 return new NotFoundResult();
             }
-            var model = new DelegateSelfAssessmenteViewModel(selfAssessmentDelegate);
-            return View(model);
         }
 
         [Route("TrackingSystem/Delegates/ActivityDelegates/{candidateAssessmentsId}/Remove")]
@@ -502,6 +513,7 @@
 
         [HttpGet]
         [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessSelfAssessment))]
         [Route("{selfAssessmentId:int}/EditCompleteByDate")]
         public IActionResult EditCompleteByDate(
             int delegateUserId,
