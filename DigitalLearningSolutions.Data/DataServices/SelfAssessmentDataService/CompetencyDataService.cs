@@ -288,7 +288,7 @@
                         INNER JOIN DelegateAccounts DA1 ON CA.DelegateUserID = DA1.UserID AND au.CentreID = DA1.CentreID AND DA1.Active=1
                     WHERE (LAR.Verified IS NULL) 
 	                    AND ((LAR.Result IS NOT NULL) OR (LAR.SupportingComments IS NOT NULL)) 
-	                    AND (LAR.Requested IS NOT NULL)
+	                    AND (LAR.Requested IS NOT NULL) AND (au.CategoryID = 0 OR au.CategoryID IN (select CategoryID from SelfAssessments where ID = @selfAssessmentId))
                     ORDER BY SupervisorVerificationRequested DESC, C.Name",
                 (competency, assessmentQuestion) =>
                 {
