@@ -31,6 +31,7 @@
     [Route("TrackingSystem/Delegates/ActivityDelegates")]
     public class ActivityDelegatesController : Controller
     {
+
         private string courseDelegatesFilterCookieName = "CourseDelegatesFilter";
         private string selfAssessmentDelegatesFilterCookieName = "SelfAssessmentDelegatesFilter";
         private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
