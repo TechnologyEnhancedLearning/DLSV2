@@ -83,7 +83,7 @@
             }
 
             var selfAssessments =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateEntity.UserAccount.Id, centreId);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateEntity.UserAccount.Id, centreId, categoryIdFilter);
 
             foreach (var selfassessment in selfAssessments)
             {
