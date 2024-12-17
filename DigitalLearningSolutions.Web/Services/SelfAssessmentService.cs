@@ -15,8 +15,8 @@
         //Self Assessments
         string? GetSelfAssessmentNameById(int selfAssessmentId);
         // Candidate Assessments
+        IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId, int? adminIdCategoryID);
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId);
-
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int delegateUserId, int selfAssessmentId);
 
         void SetBookmark(int selfAssessmentId, int delegateUserId, string bookmark);
@@ -404,11 +404,14 @@
             return selfAssessmentDataService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId);
         }
 
+        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId, int? adminIdCategoryID)
+        {
+            return selfAssessmentDataService.GetSelfAssessmentsForCandidate(delegateUserId, centreId, adminIdCategoryID);
+        }
         public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId)
         {
             return selfAssessmentDataService.GetSelfAssessmentsForCandidate(delegateUserId, centreId);
         }
-
         public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateId)
         {
             return selfAssessmentDataService.GetMostRecentResults(selfAssessmentId, delegateId);

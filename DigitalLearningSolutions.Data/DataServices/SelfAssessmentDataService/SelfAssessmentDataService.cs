@@ -72,8 +72,8 @@
 
         // CandidateAssessmentsDataService
 
+        IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId, int? adminIdCategoryID);
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId);
-
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int delegateUserId, int selfAssessmentId);
 
         void UpdateLastAccessed(int selfAssessmentId, int delegateUserId);
@@ -174,7 +174,6 @@
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
         int GetSelfAssessmentCategoryId(int selfAssessmentId);
     }
-
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
     {
         private readonly IDbConnection connection;
