@@ -279,7 +279,10 @@
                             IsContentCreator = @isContentCreator,
                             IsContentManager = @isContentManager,
                             ImportOnly = @importOnly,
-                            CategoryID = @categoryId,
+                            CategoryID = CASE 
+                        WHEN @categoryID = 0 THEN NULL 
+                        ELSE @categoryID 
+                        END,
                             IsCentreManager = @isCentreManager
                         WHERE ID = @adminId",
                 new
