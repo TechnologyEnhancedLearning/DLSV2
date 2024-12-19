@@ -5,16 +5,19 @@
 namespace DigitalLearningSolutions.Web.Services
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Frameworks.Import;
     using Microsoft.AspNetCore.Http;
 
     public interface IImportCompetenciesFromFileService
     {
-
+        byte[] GetCompetencyFileForFramework(int frameworkId, bool v);
         public ImportCompetenciesResult ProcessCompetenciesFromFile(IFormFile file, int adminUserId, int frameworkId);
     }
     public class ImportCompetenciesFromFileService : IImportCompetenciesFromFileService
@@ -114,6 +117,19 @@ namespace DigitalLearningSolutions.Web.Services
             }.OrderBy(x => x);
             var actualHeaders = table.Fields.Select(x => x.Name.ToLower()).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);
+        }
+
+        public byte[] GetCompetencyFileForFramework(int frameworkId, bool blank)
+        {
+            using var workbook = new XLWorkbook();
+            PopulateCompetenciesSheet(workbook, frameworkId, blank);
+            if (blank)
+            {
+                ClosedXmlHelper.HideWorkSheetColumn(workbook, "DelegateID");
+            }
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
         }
     }
 }
