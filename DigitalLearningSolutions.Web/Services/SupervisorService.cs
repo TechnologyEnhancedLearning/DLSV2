@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Web.Services
         DelegateSelfAssessment? GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId, int? adminIdCategoryId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedSignOffs(int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId);
-        DelegateSelfAssessment? GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId);
+        DelegateSelfAssessment? GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId, int? adminIdCategoryId);
         IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId, int? categoryId);
         RoleProfile? GetRoleProfileById(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId);
@@ -115,9 +115,9 @@ namespace DigitalLearningSolutions.Web.Services
             return supervisorDataService.GetRoleProfileById(selfAssessmentId);
         }
 
-        public DelegateSelfAssessment? GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId)
+        public DelegateSelfAssessment? GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId, int? adminIdCategoryId)
         {
-            return supervisorDataService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+            return supervisorDataService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, adminIdCategoryId);
         }
 
         public DelegateSelfAssessment? GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId, int? adminIdCategoryId)
@@ -275,7 +275,7 @@ namespace DigitalLearningSolutions.Web.Services
         }
         public SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId)
         {
-            return supervisorDataService.GetSupervisorDelegateDetailsByIdWithoutRemoveClause(supervisorDelegateId,adminId, delegateUserId);
+            return supervisorDataService.GetSupervisorDelegateDetailsByIdWithoutRemoveClause(supervisorDelegateId, adminId, delegateUserId);
         }
     }
 }
