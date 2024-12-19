@@ -146,7 +146,7 @@
                         CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID LEFT OUTER JOIN
                         AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = CA.EnrolledByAdminID LEFT OUTER JOIN
 						Users AS uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
-                    WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL) AND (ISNULL(@adminCategoryId, 0) = 0 OR sa.CategoryID = @adminCategoryId)
+                    WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL)
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
@@ -162,7 +162,7 @@
 						(casv.Verified IS NOT NULL)
                     GROUP BY SelfAssessmentID,casv.SignedOff
                     )Signoff ON  SelfAssessment.Id =Signoff.SelfAssessmentID",
-                new { delegateUserId, centreId, adminCategoryId }
+                new { delegateUserId, centreId }
             );
         }
         public CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int delegateUserId, int selfAssessmentId)
