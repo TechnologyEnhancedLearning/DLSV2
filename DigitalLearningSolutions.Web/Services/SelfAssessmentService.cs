@@ -410,7 +410,7 @@
         }
         public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId)
         {
-            return selfAssessmentDataService.GetSelfAssessmentsForCandidate(delegateUserId, centreId, adminCategoryId);
+            return selfAssessmentDataService.GetSelfAssessmentsForCandidate(delegateUserId, centreId);
         }
         public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int delegateId)
         {
