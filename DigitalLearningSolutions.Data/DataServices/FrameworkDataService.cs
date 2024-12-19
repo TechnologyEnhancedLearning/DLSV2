@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Data.Models.Frameworks.Import;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using Microsoft.Extensions.Logging;
     using AssessmentQuestion = DigitalLearningSolutions.Data.Models.Frameworks.AssessmentQuestion;
@@ -98,6 +99,7 @@
         );
 
         Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
+        IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId);
 
         //  Comments:
         IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId);
@@ -2394,6 +2396,23 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     FROM   FrameworkDefaultQuestions
                     WHERE (FrameworkId = @frameworkId) AND (NOT EXISTS  (SELECT * FROM CompetencyAssessmentQuestions WHERE AssessmentQuestionID = FrameworkDefaultQuestions.AssessmentQuestionID AND CompetencyID = @competencyId))",
                 new { competencyId, frameworkId }
+            );
+        }
+
+        public IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId)
+        {
+            return connection.Query<BulkCompetency>(
+                @"SELECT fc.ID, cg.Name AS CompetencyGroup, cg.Description AS GroupDescription, c.Name AS Competency, c.Description AS CompetencyDescription, c.AlwaysShowDescription, STRING_AGG(f.FlagName, ', ') AS FlagsCsv
+                    FROM   Flags AS f RIGHT OUTER JOIN
+                         CompetencyFlags AS cf ON f.ID = cf.FlagID RIGHT OUTER JOIN
+                         Competencies AS c INNER JOIN
+                         FrameworkCompetencies AS fc ON c.ID = fc.CompetencyID INNER JOIN
+                         FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID INNER JOIN
+                         CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID ON cf.CompetencyID = c.ID
+                    WHERE (fc.FrameworkID = @frameworkId)
+                    GROUP BY fc.ID, cg.Name, cg.Description, c.Name, c.Description, c.AlwaysShowDescription, fcg.Ordering, fc.Ordering
+                    ORDER BY fcg.Ordering, fc.Ordering",
+                new { frameworkId }
             );
         }
     }
