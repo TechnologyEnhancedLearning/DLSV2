@@ -57,25 +57,27 @@
                 return View("Index", model);
             }
 
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                FindCentreFilterCookieName
-            );
-
             var centreSummaries = centresService.GetAllCentreSummariesForFindCentre();
             var regions = regionService.GetRegionsAlphabetical();
 
             var availableFilters = FindYourCentreViewModelFilterOptions
                 .GetFindCentreFilterModels(regions).ToList();
 
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                FindCentreFilterCookieName,
+                null,
+                availableFilters
+            );
+
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString, searchMatchCutoff: 90),
                 null,
                 new FilterOptions(
-                    existingFilterString,
+                    filterString,
                     availableFilters
                 ),
                 new PaginationOptions(page, itemsPerPage)

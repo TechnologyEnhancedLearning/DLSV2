@@ -80,14 +80,6 @@
             sortDirection ??= GenericSortingHelper.Ascending;
 
             DelegateFilterCookieName += env.EnvironmentName;
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                DelegateFilterCookieName,
-                DelegateActiveStatusFilterOptions.IsActive.FilterValue
-            );
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
 
@@ -99,41 +91,24 @@
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions, groups);
 
-            if (existingFilterString != null && TempData["allDelegatesCentreId"] != null &&
-                TempData["allDelegatesCentreId"].ToString() != User.GetCentreId().ToString())
-            {
-                if (existingFilterString.Contains("Answer"))
-                    existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableFilters, existingFilterString);
-                if (existingFilterString != null && existingFilterString.Contains("DelegateGroup"))
-                    existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
-            }
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                DelegateFilterCookieName,
+                DelegateActiveStatusFilterOptions.IsActive.FilterValue,
+                availableFilters
+            );
 
             string isActive, isPasswordSet, isAdmin, isUnclaimed, isEmailVerified, registrationType, answer1, answer2, answer3, answer4, answer5, answer6;
             isActive = isPasswordSet = isAdmin = isUnclaimed = isEmailVerified = registrationType = answer1 = answer2 = answer3 = answer4 = answer5 = answer6 = "Any";
             int jobGroupId = 0;
             int? groupId = null;
 
-            if (!string.IsNullOrEmpty(existingFilterString))
+            if (!string.IsNullOrEmpty(filterString))
             {
-                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-
-                if (!string.IsNullOrEmpty(newFilterToAdd))
-                {
-                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[1];
-                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
-                    if (dupfilters.Count() > 1)
-                    {
-                        foreach (var filter in selectedFilters)
-                        {
-                            if (filter.Contains(filterHeader))
-                            {
-                                selectedFilters.Remove(filter);
-                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
-                                break;
-                            }
-                        }
-                    }
-                }
+                var selectedFilters = filterString.Split(FilteringHelper.FilterSeparator).ToList();
 
                 if (selectedFilters.Count > 0)
                 {
@@ -167,11 +142,6 @@
                         if (filter.Contains("DelegateGroupId"))
                         {
                             groupId = Convert.ToInt32(filterValue);
-                            if (!(groups.Any(g => g.Item1 == groupId)))
-                            {
-                                groupId = null;
-                                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
-                            }
                         }
 
                         if (filter.Contains("Answer1"))
@@ -211,7 +181,7 @@
                 delegates,
                 resultCount,
                 new PaginationOptions(page, itemsPerPage),
-                new FilterOptions(existingFilterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),
+                new FilterOptions(filterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),
                 searchString,
                 sortBy,
                 sortDirection
@@ -229,9 +199,8 @@
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
 
-            Response.UpdateFilterCookie(DelegateFilterCookieName, existingFilterString);
+            Response.UpdateFilterCookie(DelegateFilterCookieName, filterString);
             TempData.Remove("delegateRegistered");
-            TempData["allDelegatesCentreId"] = User.GetCentreId().ToString();
             return View(model);
         }
 

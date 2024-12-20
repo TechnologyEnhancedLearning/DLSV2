@@ -78,14 +78,6 @@
             int page = 1
         )
         {
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                AddGroupDelegateCookieName
-            );
-
             var centreId = User.GetCentreIdKnownNotNull();
             var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
@@ -97,13 +89,23 @@
                 promptsWithOptions
             );
 
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                AddGroupDelegateCookieName,
+                null,
+                availableFilters
+            );
+
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(
                     DefaultSortByOptions.Name.PropertyName,
                     GenericSortingHelper.Ascending
                 ),
-                new FilterOptions(existingFilterString, availableFilters),
+                new FilterOptions(filterString, availableFilters),
                 new PaginationOptions(page)
             );
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(

@@ -4,14 +4,12 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
-    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -67,15 +65,6 @@
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
 
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                CourseFilterCookieName,
-                CourseStatusFilterOptions.IsActive.FilterValue
-            );
-
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
@@ -89,33 +78,19 @@
             var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
 
-            if (TempData["DelegateActivitiesCentreId"] != null && TempData["DelegateActivitiesCentreId"].ToString() != User.GetCentreId().ToString()
-                    && existingFilterString != null)
-            {
-                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
-            }
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                CourseFilterCookieName,
+                CourseStatusFilterOptions.IsActive.FilterValue,
+                availableFilters
+            );
 
-            if (!string.IsNullOrEmpty(existingFilterString))
+            if (!string.IsNullOrEmpty(filterString))
             {
-                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-
-                if (!string.IsNullOrEmpty(newFilterToAdd))
-                {
-                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
-                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
-                    if (dupfilters.Count() > 1)
-                    {
-                        foreach (var filter in selectedFilters)
-                        {
-                            if (filter.Contains(filterHeader))
-                            {
-                                selectedFilters.Remove(filter);
-                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
-                                break;
-                            }
-                        }
-                    }
-                }
+                var selectedFilters = filterString.Split(FilteringHelper.FilterSeparator).ToList();
 
                 if (selectedFilters.Count > 0)
                 {
@@ -177,7 +152,7 @@
                 allItems,
                 resultCount,
                 new PaginationOptions(page, itemsPerPage),
-                new FilterOptions(existingFilterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),
+                new FilterOptions(filterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),
                 searchString,
                 sortBy,
                 sortDirection
@@ -204,7 +179,6 @@
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
             Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);
-            TempData["DelegateActivitiesCentreId"] = centreId;
 
             return View(model);
         }

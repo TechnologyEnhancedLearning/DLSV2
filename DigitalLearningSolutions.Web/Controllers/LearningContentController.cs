@@ -53,14 +53,6 @@
             }
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                BrandCoursesFilterCookieName
-            );
-
             var tutorials = tutorialService.GetPublicTutorialSummariesForBrand(brandId);
             var applications = courseService.GetApplicationsThatHaveSectionsByBrandId(brandId).ToList();
 
@@ -69,11 +61,21 @@
             var availableFilters = LearningContentViewModelFilterOptions
                 .GetFilterOptions(categories, topics).ToList();
 
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                BrandCoursesFilterCookieName,
+                null,
+                availableFilters
+            );
+
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
                 new SortOptions(sortBy, sortDirection),
                 new FilterOptions(
-                    existingFilterString,
+                    filterString,
                     availableFilters
                 ),
                 new PaginationOptions(page)
