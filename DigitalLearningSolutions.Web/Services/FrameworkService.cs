@@ -2,6 +2,7 @@
 using DigitalLearningSolutions.Data.Models.Common;
 using DigitalLearningSolutions.Data.Models.Email;
 using DigitalLearningSolutions.Data.Models.Frameworks;
+using DigitalLearningSolutions.Data.Models.Frameworks.Import;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using System.Collections.Generic;
 using AssessmentQuestion = DigitalLearningSolutions.Data.Models.Frameworks.AssessmentQuestion;
@@ -55,6 +56,7 @@ namespace DigitalLearningSolutions.Web.Services
         int GetMaxFrameworkCompetencyID();
 
         int GetMaxFrameworkCompetencyGroupID();
+        IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId);
 
         //  Assessment questions:
         IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
@@ -377,6 +379,11 @@ namespace DigitalLearningSolutions.Web.Services
         public BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId)
         {
             return frameworkDataService.GetBrandedFrameworkByFrameworkId(frameworkId, adminId);
+        }
+
+        public IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId)
+        {
+            return frameworkDataService.GetBulkCompetenciesForFramework(frameworkId);
         }
 
         public CollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId)
