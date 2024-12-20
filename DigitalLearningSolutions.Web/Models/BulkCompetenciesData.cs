@@ -11,7 +11,7 @@ namespace DigitalLearningSolutions.Web.Models
             FrameworkId = frameworkId;
             AdminUserId = adminUserId;
             CompetenciesFileName = competenciesFileName;
-            TabName = tabName; 
+            TabName = tabName;
         }
         public int FrameworkId { get; set; }
         public string TabName { get; set; }
