@@ -2,59 +2,96 @@
 @using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model ImportCompetenciesViewModel
 @{
-  ViewData["Title"] = "Framework - Import Competencies";
-  ViewData["Application"] = "Framework Service";
-  ViewData["HeaderPathName"] = "Framework Service";
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  var cancelLinkData = Html.GetRouteValues();
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Bulk upload competencies" : "Bulk upload competencies";
+    var cancelLinkData = Html.GetRouteValues();
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
+    <partial name="Shared/_NavMenuItems" />
 }
-  @section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
-        <li class="nhsuk-breadcrumb__item">Excel import</li>
-      </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
-    </div>
-  </nav>
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+                <li class="nhsuk-breadcrumb__item">Bulk upload</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
+        </div>
+    </nav>
 }
-  <div class="nhsuk-grid-row">
+<div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      @if (errorHasOccurred)
-    {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ImportFile) })" />
-    }
-    <h1 class="nhsuk-heading-xl">Import from Excel</h1>
-    <vc:inset-text css-class="" text="The building blocks for your framework will be referred to as 'competencies' for the purpose of importing. Once they have been imported, they will be referred to using your chosen vocabulary."></vc:inset-text>
-    <p class="nhsuk-body-m">
-      To import competencies from Excel, you will need an .xlsx worksheet file saved to your computer that meets the following requirements:
-      <ul>
-        <li>Has import data formatted as a table on the first worksheet in the file</li>
-        <li>
-          Has the following column titles on the cells in the first row:
-          <ul>
-            <li><strong>Competency group</strong> (cell A1)</li>
-            <li><strong>Competency name</strong> (cell B1)</li>
-            <li><strong>Competency description</strong> (cell C1)</li>
-          </ul>
-        </li>
-        <li>Import data in subsequent rows with no blank rows (including hidden rows)</li>
-        <li>Import data must be formatted as a table (select all data and choose "Format as Table" in Excel</li>
-        <li>Import data rows must include a <strong>Competency name</strong></li>
-        <li>If <strong>Competency group</strong> is left blank, the competency will be imported without a group and listed after grouped competencies in the framework</li>
-      </ul>
-    </p>
-    <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
-      <input type="hidden" asp-for="@Model.FrameworkId" />
-      <vc:file-input asp-for="@nameof(Model.ImportFile)" label="Excel file ready for import" hint-text="" css-class="nhsuk-u-width-one-half" />
-      <button class="nhsuk-button" type="submit">Upload and import</button>
-    </form>
-    <vc:cancel-link asp-controller="Frameworks" asp-action="ViewFramework" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
-  </div>
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ImportFile) })" />
+        }
+        <h1 class="nhsuk-heading-xl">Bulk upload or update competencies</h1>
+        <vc:inset-text css-class="" text="The building blocks for your framework will be referred to as 'competencies' for the purpose of importing. Once they have been imported, they will be referred to using your chosen vocabulary."></vc:inset-text>
+        <p class="nhsuk-body-m">
+            To bulk add and/or update competencies in your framework, download an Excel workbook using one of the options below.
+        </p>
+        <form>
+            <div class="nhsuk-form-group">
+
+                <fieldset class="nhsuk-fieldset" aria-describedby="download-hint">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                        <h1 class="nhsuk-fieldset__heading">
+                            What would you like to download?
+                        </h1>
+                    </legend>
+                    <div class="nhsuk-hint" id="download-hint">
+                        Select one option
+                    </div>
+                    <div class="nhsuk-radios nhsuk-radios--conditional">
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="download-option-1" type="radio" name="download-option" value="1" aria-describedby="download-option-1-hint" aria-controls="conditional-download-1" aria-expanded="false">
+                            <label class="nhsuk-label nhsuk-radios__label" for="download-option-1">
+                                Download a blank template for bulk adding competencies to your framework
+                            </label>
+                        </div>
+                        <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-download-1">
+                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-1-hint">
+                                This Excel file will be empty.<br />
+                                New competencies can be added by including their details on a blank row.
+                            </div>
+                            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-DownloadOption="1" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
+                                Download template
+                            </a>
+                        </div>
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" id="download-option-2" type="radio" name="download-option" value="2" aria-describedby="download-option-2-hint" aria-controls="conditional-download-2" aria-expanded="false">
+                            <label class="nhsuk-label nhsuk-radios__label" for="download-option-2">
+                                Download existing competencies in your framework for bulk modification and addition.
+                            </label>
+                        </div>
+                        <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-download-2">
+                            <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-2-hint">
+                                This Excel file will include all existing competencies whose details you can update.<br />
+                                New competencies can be added by including their details on a blank row.
+                            </div>
+                            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-DownloadOption="2" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
+                                Download competencies
+                            </a>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+        </form>
+        <h2>Upload file</h2>
+        <p class="nhsuk-body-m">
+            Once you have an Excel competencies workbook, add or update competencies to the worksheet, save and start the upload process.
+        </p>
+        <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="@Model.FrameworkId" />
+            <vc:file-input asp-for="@nameof(Model.ImportFile)" label="Excel file ready for import" hint-text="" css-class="nhsuk-u-width-one-half" />
+            <button class="nhsuk-button" type="submit">Start upload</button>
+        </form>
+        <vc:cancel-link asp-controller="Frameworks" asp-action="ViewFramework" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
+    </div>
 </div>
