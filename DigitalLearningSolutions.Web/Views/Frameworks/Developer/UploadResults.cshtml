@@ -1,0 +1,64 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@using Microsoft.Extensions.Configuration
+@model ImportCompetenciesResultsViewModel
+@{
+  ViewData["Title"] = "Framework - Import Competencies";
+  ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var cancelLinkData = Html.GetRouteValues();
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+  @section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item">Excel import</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
+    </div>
+  </nav>
+}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">Import competencies complete</h1>
+
+      <h2>Summary of results:</h2>
+      <ul>
+        <li>@Model.ProcessedCount @(Model.ProcessedCount == 1 ? "line" : "lines") processed</li>
+        <li>@Model.CompetencyGroupsInsertedCount new @(Model.CompetencyGroupsInsertedCount == 1 ? "competency group" : "competency groups") inserted</li>
+        <li>@Model.CompetenciesInsertedCount new @(Model.CompetenciesInsertedCount == 1 ? "competency" : "competencies") inserted</li>
+        <li>@Model.SkippedCount rows @(Model.SkippedCount == 1 ? "record" : "records") skipped (nothing inserted but no errors)</li>
+        <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "line" : "lines") skipped due to errors</li>
+      </ul>
+
+      @if (Model.ErrorCount > 0)
+    {
+      <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            The imported Excel worksheet contained errors
+          </span>
+        </h3>
+        <p>The lines below were skipped due to errors during processing:</p>
+        <ul>
+          @foreach (var (rowNumber, errorMessage) in Model.Errors)
+          {
+            <li>Line @rowNumber: @errorMessage</li>
+          }
+        </ul>
+      </div>
+    }
+
+    <vc:action-link asp-controller="Frameworks" asp-action="ViewFramework" asp-all-route-data="@cancelLinkData" link-text="View Framework Structure" />
+  </div>
+</div>

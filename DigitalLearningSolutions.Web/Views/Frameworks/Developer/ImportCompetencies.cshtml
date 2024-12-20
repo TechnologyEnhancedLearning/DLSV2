@@ -59,7 +59,7 @@
                                 This Excel file will be empty.<br />
                                 New competencies can be added by including their details on a blank row.
                             </div>
-                            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-DownloadOption="1" asp-controller="FrameworksController" asp-action="DownloadCompetencies" target="_blank">
+                            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-DownloadOption="1" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
                                 Download template
                             </a>
                         </div>
@@ -74,7 +74,7 @@
                                 This Excel file will include all existing competencies whose details you can update.<br />
                                 New competencies can be added by including their details on a blank row.
                             </div>
-                            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-DownloadOption="2" asp-controller="FrameworksController" asp-action="DownloadCompetencies" target="_blank">
+                            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-DownloadOption="2" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
                                 Download competencies
                             </a>
                         </div>

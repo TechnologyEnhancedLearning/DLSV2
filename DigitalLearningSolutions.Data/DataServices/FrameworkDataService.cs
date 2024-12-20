@@ -2401,8 +2401,16 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
 
         public IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId)
         {
-            return connection.Query<BulkCompetency>(
-                @"SELECT fc.ID, cg.Name AS CompetencyGroup, cg.Description AS GroupDescription, c.Name AS Competency, c.Description AS CompetencyDescription, c.AlwaysShowDescription, STRING_AGG(f.FlagName, ', ') AS FlagsCsv
+            if(frameworkId < 1)
+            {
+                return connection.Query<BulkCompetency>(
+                @"SELECT NULL AS ID, '' AS CompetencyGroup, '' AS GroupDescription, '' AS Competency, '' AS CompetencyDescription, NULL AS AlwaysShowDescription, '' AS FlagsCsv"
+            );
+            }
+            else
+            {
+                return connection.Query<BulkCompetency>(
+                                @"SELECT fc.ID, cg.Name AS CompetencyGroup, cg.Description AS GroupDescription, c.Name AS Competency, c.Description AS CompetencyDescription, c.AlwaysShowDescription, STRING_AGG(f.FlagName, ', ') AS FlagsCsv
                     FROM   Flags AS f RIGHT OUTER JOIN
                          CompetencyFlags AS cf ON f.ID = cf.FlagID RIGHT OUTER JOIN
                          Competencies AS c INNER JOIN
@@ -2412,8 +2420,10 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     WHERE (fc.FrameworkID = @frameworkId)
                     GROUP BY fc.ID, cg.Name, cg.Description, c.Name, c.Description, c.AlwaysShowDescription, fcg.Ordering, fc.Ordering
                     ORDER BY fcg.Ordering, fc.Ordering",
-                new { frameworkId }
-            );
+                                new { frameworkId }
+                            );
+            }
+            
         }
     }
 }
