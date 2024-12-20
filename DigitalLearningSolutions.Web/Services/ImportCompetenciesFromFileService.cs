@@ -4,14 +4,13 @@
 
 namespace DigitalLearningSolutions.Web.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using ClosedXML.Excel;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Frameworks.Import;
     using Microsoft.AspNetCore.Http;
 
@@ -23,6 +22,8 @@ namespace DigitalLearningSolutions.Web.Services
     public class ImportCompetenciesFromFileService : IImportCompetenciesFromFileService
     {
         private readonly IFrameworkService frameworkService;
+        private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
+        public const string CompetenciesSheetName = "CompetenciesBulkUpload";
         public ImportCompetenciesFromFileService(
            IFrameworkService frameworkService
        )
@@ -76,9 +77,9 @@ namespace DigitalLearningSolutions.Web.Services
             }
             //If competency group is set, check if competency group exists within framework and add if not and get the Framework Competency Group ID
             int? frameworkCompetencyGroupId = null;
-            if (competencyRow.CompetencyGroupName != null)
+            if (competencyRow.CompetencyGroup != null)
             {
-                var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroupName, null, adminUserId);
+                var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroup, null, adminUserId);
                 if (newCompetencyGroupId > 0)
                 {
                     frameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminUserId);
@@ -91,7 +92,7 @@ namespace DigitalLearningSolutions.Web.Services
             }
 
             //Check if competency already exists in framework competency group and add if not
-            var newCompetencyId = frameworkService.InsertCompetency(competencyRow.CompetencyName, competencyRow.CompetencyDescription, adminUserId);
+            var newCompetencyId = frameworkService.InsertCompetency(competencyRow.Competency, competencyRow.CompetencyDescription, adminUserId);
             if (newCompetencyId > 0)
             {
                 var newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminUserId, frameworkId);
@@ -125,11 +126,31 @@ namespace DigitalLearningSolutions.Web.Services
             PopulateCompetenciesSheet(workbook, frameworkId, blank);
             if (blank)
             {
-                ClosedXmlHelper.HideWorkSheetColumn(workbook, "DelegateID");
+                ClosedXmlHelper.HideWorkSheetColumn(workbook, "ID");
             }
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();
+        }
+        private void PopulateCompetenciesSheet(IXLWorkbook workbook, int frameworkId, bool blank)
+        {
+
+
+            var competencyRecords = frameworkService.GetBulkCompetenciesForFramework(blank ? 0 : frameworkId);
+            var competencies = competencyRecords.Select(
+                x => new
+                {
+                    ID = x.id,
+                    x.CompetencyGroup,
+                    x.GroupDescription,
+                    x.Competency,
+                    x.CompetencyDescription,
+                    x.AlwaysShowDescription,
+                    FlagsCSV = x.FlagsCsv,
+                }
+            );
+
+            ClosedXmlHelper.AddSheetToWorkbook(workbook, CompetenciesSheetName, competencies, TableTheme);
         }
     }
 }
