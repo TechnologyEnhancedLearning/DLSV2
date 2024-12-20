@@ -1,16 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Frameworks.Import
 {
     using ClosedXML.Excel;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     public enum RowStatus
     {
         NotYetProcessed,
         Skipped,
-        CompetencyGroupInserted,
         CompetencyGroupAndCompetencyInserted,
-        CompetencyInserted
+        CompetencyInserted,
+        CompetencyUpdated,
+        CompetencyGroupInserted,
+        CompetencyGroupUpdated,
+        CompetencyGroupAndCompetencyUpdated
     }
     public class CompetencyTableRow : BulkCompetency
     {
@@ -23,9 +23,12 @@
             }
 
             RowNumber = row.RowNumber();
-            CompetencyGroup = FindFieldValue("competency group");
-            Competency = FindFieldValue("competency name");
-            CompetencyDescription = FindFieldValue("competency description");
+            id = int.Parse(FindFieldValue("ID"));
+            CompetencyGroup = FindFieldValue("CompetencyGroup");
+            Competency = FindFieldValue("Competency");
+            CompetencyDescription = FindFieldValue("CompetencyDescription");
+            GroupDescription = FindFieldValue("CompetencyGroupDescription");
+            FlagsCsv = FindFieldValue("FlagsCSV");
             RowStatus = RowStatus.NotYetProcessed;
         }
         public int RowNumber { get; set; }
