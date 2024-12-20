@@ -12,6 +12,8 @@
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
     using GDS.MultiPageFormData;
+    using DigitalLearningSolutions.Data.Utilities;
+    using Microsoft.AspNetCore.Hosting;
 
     public partial class FrameworkControllerTests
     {
@@ -28,6 +30,8 @@
         private ILearningHubApiClient learningHubApiClient = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IMultiPageFormService multiPageFormService = null!;
+        private IClockUtility clockUtility = null!;
+        private IWebHostEnvironment webHostEnvironment = null!;
 
         [SetUp]
         public void SetUp()
@@ -42,7 +46,8 @@
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             multiPageFormService = A.Fake<IMultiPageFormService>();
-
+            clockUtility = A.Fake<ClockUtility>();
+            webHostEnvironment = A.Fake<IWebHostEnvironment>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
             var user = new ClaimsPrincipal(
@@ -65,7 +70,9 @@
                 competencyLearningResourcesService,
                 learningHubApiClient,
                 searchSortFilterPaginateService,
-                multiPageFormService
+                multiPageFormService,
+                clockUtility,
+                webHostEnvironment
             )
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },
