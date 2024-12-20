@@ -8,7 +8,7 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks.Import
 {
     public class BulkCompetency
     {
-        public int? id {  get; set; }
+        public int? id { get; set; }
         public string? CompetencyGroup { get; set; }
         public string? GroupDescription { get; set; }
         public string? Competency { get; set; }

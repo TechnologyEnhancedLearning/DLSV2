@@ -2401,7 +2401,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
 
         public IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId)
         {
-            if(frameworkId < 1)
+            if (frameworkId < 1)
             {
                 return connection.Query<BulkCompetency>(
                 @"SELECT NULL AS ID, '' AS CompetencyGroup, '' AS GroupDescription, '' AS Competency, '' AS CompetencyDescription, NULL AS AlwaysShowDescription, '' AS FlagsCsv"
@@ -2423,7 +2423,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                                 new { frameworkId }
                             );
             }
-            
+
         }
     }
 }

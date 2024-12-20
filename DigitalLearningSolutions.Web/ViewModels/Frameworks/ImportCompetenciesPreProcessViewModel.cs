@@ -25,7 +25,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public int CompetencyGroupsToAddCount { get; set; }
         public int CompetencyGroupsToUpdateCount { get; set; }
         public int ToUpdateOrSkipCount { get; set; }
-       
+
         private static string MapReasonToErrorMessage(BulkCompetenciesResult.ErrorReason reason)
         {
             return reason switch
