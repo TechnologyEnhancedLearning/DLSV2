@@ -43,7 +43,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
                 ImportCompetenciesResult.ErrorReason.TooLongCompetencyName =>
                     "Competency must be 255 characters or less.",
                 ImportCompetenciesResult.ErrorReason.InvalidAlwaysShowDescription =>
-                    "Always show description is invalid. The Always show description  field must contain 'TRUE' or 'FALSE'",
+                    "Always show description is invalid. The Always show description field must contain 'TRUE' or 'FALSE'",
                 _ => "Unspecified error.",
             };
         }
