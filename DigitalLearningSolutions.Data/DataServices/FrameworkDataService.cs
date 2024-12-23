@@ -2410,15 +2410,19 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             else
             {
                 return connection.Query<BulkCompetency>(
-                                @"SELECT fc.ID, cg.Name AS CompetencyGroup, cg.Description AS GroupDescription, c.Name AS Competency, c.Description AS CompetencyDescription, c.AlwaysShowDescription, STRING_AGG(f.FlagName, ', ') AS FlagsCsv
-                    FROM   Flags AS f RIGHT OUTER JOIN
-                         CompetencyFlags AS cf ON f.ID = cf.FlagID RIGHT OUTER JOIN
+                @"SELECT fc.ID, cg.Name AS CompetencyGroup, cg.Description AS GroupDescription, c.Name AS Competency, c.Description AS CompetencyDescription, c.AlwaysShowDescription, STUFF((
+                        SELECT ', ' + f.FlagName
+                        FROM Flags AS f
+                        INNER JOIN CompetencyFlags AS cf ON f.ID = cf.FlagID
+                        WHERE cf.CompetencyID = c.ID
+                        FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS FlagsCsv
+                    FROM 
                          Competencies AS c INNER JOIN
                          FrameworkCompetencies AS fc ON c.ID = fc.CompetencyID INNER JOIN
                          FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID INNER JOIN
-                         CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID ON cf.CompetencyID = c.ID
+                         CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID
                     WHERE (fc.FrameworkID = @frameworkId)
-                    GROUP BY fc.ID, cg.Name, cg.Description, c.Name, c.Description, c.AlwaysShowDescription, fcg.Ordering, fc.Ordering
+                    GROUP BY fc.ID, c.ID, cg.Name, cg.Description, c.Name, c.Description, c.AlwaysShowDescription, fcg.Ordering, fc.Ordering
                     ORDER BY fcg.Ordering, fc.Ordering",
                                 new { frameworkId }
                             );
