@@ -30,7 +30,7 @@
 <p class="nhsuk-body-l">@(Model.ErrorCount == 0 ? "Your file is error free and ready to be processed. Check the information below looks, correct before processing" : "Your file contains the following, including some errors:")</p>
 <ul>
     <li>@Model.ToProcessCount @(Model.ToProcessCount == 1 ? "row" : "rows") to process</li>
-    <li>@Model.CompetencyGroupsToAddCount new @(Model.CompetencyGroupsToAddCount == 1 ? "competency" : "competencies") to register</li>
+    <li>@Model.CompetenciesToAddCount new @(Model.CompetenciesToAddCount == 1 ? "competency" : "competencies") to add</li>
     <li>@Model.ToUpdateOrSkipCount delegate @(Model.ToUpdateOrSkipCount == 1 ? "record" : "records") to update (or skip if unchanged)</li>
     @if (Model.ErrorCount > 0)
     {
@@ -71,9 +71,11 @@ else
     <p class="nhsuk-body-m">
         Once you have made corrections to the Excel competency workbook to address the errors above, save and restart the upload process.
     </p>
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="StartUpload" enctype="multipart/form-data">
+    <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
 
-        <vc:file-input asp-for="@nameof(Model.CompetenciesFileName)" label="File with corrected competencies information" hint-text="" css-class="nhsuk-u-width-one-half" />
+        <vc:file-input asp-for="@nameof(Model.ImportFile)" label="File with corrected competencies information" hint-text="" css-class="nhsuk-u-width-one-half" />
+        <input type="hidden" asp-for="IsNotBlank" />
+        <input type="hidden" asp-for="TabName"/>
 
         <button class="nhsuk-button" type="submit">Upload file</button>
     </form>
