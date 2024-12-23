@@ -40,7 +40,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
         [HttpPost]
         [Route("/Framework/{frameworkId}/{tabname}/Import")]
-        public IActionResult StartImport(ImportCompetenciesViewModel model, string tabname)
+        [Route("/Framework/{frameworkId}/{tabname}/ImportCompleted")]
+        public IActionResult StartImport(ImportCompetenciesViewModel model, string tabname, bool isNotBlank)
         {
             if (!ModelState.IsValid)
                 return View("Developer/ImportCompetencies", model);
@@ -50,11 +51,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 var workbook = new XLWorkbook(model.ImportFile.OpenReadStream());
                 if (!workbook.Worksheets.Contains(ImportCompetenciesFromFileService.CompetenciesSheetName))
                 {
-                    ModelState.AddModelError("InvalidWorksheet", CommonValidationErrorMessages.InvalidCompetenciesUploadExcelFile);
+                    ModelState.AddModelError("ImportFile", CommonValidationErrorMessages.InvalidCompetenciesUploadExcelFile);
                     return View("Developer/ImportCompetencies", model);
                 }
                 var competenciesFileName = FileHelper.UploadFile(webHostEnvironment, model.ImportFile);
-                setupBulkUploadData(model.FrameworkId, adminUserID, competenciesFileName, tabname);
+                setupBulkUploadData(model.FrameworkId, adminUserID, competenciesFileName, tabname, isNotBlank);
 
                 return RedirectToAction("ImportCompleted", "Frameworks", new { frameworkId = model.FrameworkId, tabname });
             }
@@ -78,7 +79,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             try
             {
                 var results = importCompetenciesFromFileService.PreProcessCompetenciesTable(workbook);
-                var resultsModel = new ImportCompetenciesPreProcessViewModel(results);
+                var resultsModel = new ImportCompetenciesPreProcessViewModel(results) { IsNotBlank = data.IsNotBlank, TabName = data.TabName };
                 data.CompetenciesToProcessCount = resultsModel.ToProcessCount;
                 data.CompetenciesToAddCount = resultsModel.CompetenciesToAddCount;
                 data.CompetenciesToUpdateCount = resultsModel.CompetenciesToUpdateCount;
@@ -92,12 +93,12 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
         }
 
-        private void setupBulkUploadData(int frameworkId, int adminUserID, string competenciessFileName, string tabName)
+        private void setupBulkUploadData(int frameworkId, int adminUserID, string competenciessFileName, string tabName, bool isNotBlank)
         {
             TempData.Clear();
             multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("BulkCompetencyDataCWF"), TempData);
             var today = clockUtility.UtcToday;
-            var bulkUploadData = new BulkCompetenciesData(frameworkId, adminUserID, competenciessFileName, tabName);
+            var bulkUploadData = new BulkCompetenciesData(frameworkId, adminUserID, competenciessFileName, tabName, isNotBlank);
             setBulkUploadData(bulkUploadData);
         }
         private void setBulkUploadData(BulkCompetenciesData bulkUploadData)
