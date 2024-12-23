@@ -26,7 +26,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public int CompetencyGroupsToAddCount { get; set; }
         public int CompetencyGroupsToUpdateCount { get; set; }
         public int ToUpdateOrSkipCount { get; set; }
-        public string? CompetenciesFileName { get; set; }
+        public string? ImportFile { get; set; }
+        public bool IsNotBlank { get; set; }
+        public string TabName { get; set; }
 
         private static string MapReasonToErrorMessage(ImportCompetenciesResult.ErrorReason reason)
         {
