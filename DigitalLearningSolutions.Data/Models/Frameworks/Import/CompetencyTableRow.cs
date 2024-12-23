@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Frameworks.Import
 {
     using ClosedXML.Excel;
+
     public enum RowStatus
     {
         NotYetProcessed,
@@ -10,7 +11,8 @@
         CompetencyUpdated,
         CompetencyGroupInserted,
         CompetencyGroupUpdated,
-        CompetencyGroupAndCompetencyUpdated
+        CompetencyGroupAndCompetencyUpdated,
+        InvalidAlwaysShowDescription
     }
     public class CompetencyTableRow : BulkCompetency
     {
@@ -18,20 +20,23 @@
         {
             string? FindFieldValue(string name)
             {
-                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString()?.ToLower() == name).ColumnNumber();
+                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString()?.ToLower() == name.ToLower()).ColumnNumber();
                 return row.Cell(colNumber).GetValue<string?>();
             }
 
             RowNumber = row.RowNumber();
-            id = int.Parse(FindFieldValue("ID"));
+            id = row.Cell(1).GetValue<int?>();
             CompetencyGroup = FindFieldValue("CompetencyGroup");
             Competency = FindFieldValue("Competency");
             CompetencyDescription = FindFieldValue("CompetencyDescription");
-            GroupDescription = FindFieldValue("CompetencyGroupDescription");
+            GroupDescription = FindFieldValue("GroupDescription");
+            AlwaysShowDescriptionRaw = FindFieldValue("AlwaysShowDescription");
+            AlwaysShowDescription = bool.TryParse(AlwaysShowDescriptionRaw, out var hasPrn) ? hasPrn : (bool?)null;
             FlagsCsv = FindFieldValue("FlagsCSV");
             RowStatus = RowStatus.NotYetProcessed;
         }
         public int RowNumber { get; set; }
+        public string? AlwaysShowDescriptionRaw { get; set; }
         public ImportCompetenciesResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }
         public bool Validate()
@@ -47,6 +52,10 @@
             else if (Competency.Length > 500)
             {
                 Error = ImportCompetenciesResult.ErrorReason.TooLongCompetencyName;
+            }
+            else if (!string.IsNullOrWhiteSpace(AlwaysShowDescriptionRaw) && !bool.TryParse(AlwaysShowDescriptionRaw, out _))
+            {
+                Error = ImportCompetenciesResult.ErrorReason.InvalidAlwaysShowDescription;
             }
 
             return !Error.HasValue;

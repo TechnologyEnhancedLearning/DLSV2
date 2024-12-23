@@ -12,12 +12,14 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Frameworks.Import;
+    using DigitalLearningSolutions.Web.Models;
     using Microsoft.AspNetCore.Http;
 
     public interface IImportCompetenciesFromFileService
     {
         byte[] GetCompetencyFileForFramework(int frameworkId, bool v);
-        public ImportCompetenciesResult ProcessCompetenciesFromFile(IFormFile file, int adminUserId, int frameworkId);
+        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook);
+        public ImportCompetenciesResult ProcessCompetenciesFromFile(IXLWorkbook workbook, int adminUserId, int frameworkId);
     }
     public class ImportCompetenciesFromFileService : IImportCompetenciesFromFileService
     {
@@ -30,17 +32,39 @@ namespace DigitalLearningSolutions.Web.Services
         {
             this.frameworkService = frameworkService;
         }
-        public ImportCompetenciesResult ProcessCompetenciesFromFile(IFormFile file, int adminUserId, int frameworkId)
+        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook)
+        {
+            var table = OpenCompetenciesTable(workbook);
+            var competencyRows = table.Rows().Skip(1).Select(row => new CompetencyTableRow(table, row)).ToList();
+            foreach (var competencyRow in competencyRows)
+            {
+                PreProcessCompetencyRow(competencyRow);
+            }
+            return new ImportCompetenciesResult(competencyRows);
+        }
+        private void PreProcessCompetencyRow(CompetencyTableRow competencyRow)
+        {
+            competencyRow.Validate();
+            if (competencyRow.id == null)
+            {
+                competencyRow.RowStatus = RowStatus.CompetencyInserted;
+            }
+            else
+            {
+                competencyRow.RowStatus = RowStatus.CompetencyUpdated;
+            }
+        }
+        public ImportCompetenciesResult ProcessCompetenciesFromFile(IXLWorkbook workbook, int adminUserId, int frameworkId)
         {
             int maxFrameworkCompetencyId = frameworkService.GetMaxFrameworkCompetencyID();
             int maxFrameworkCompetencyGroupId = frameworkService.GetMaxFrameworkCompetencyGroupID();
-            var table = OpenCompetenciesTable(file);
+            var table = OpenCompetenciesTable(workbook);
             return ProcessCompetenciesTable(table, adminUserId, frameworkId, maxFrameworkCompetencyId, maxFrameworkCompetencyGroupId);
         }
-        internal IXLTable OpenCompetenciesTable(IFormFile file)
+        internal IXLTable OpenCompetenciesTable(IXLWorkbook workbook)
         {
-            var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(1);
+            worksheet.Columns(1, 15).Unhide();
             if (worksheet.Tables.Count() == 0)
             {
                 throw new InvalidHeadersException();
@@ -112,11 +136,15 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var expectedHeaders = new List<string>
             {
-                "competency group",
-                "competency name",
-                "competency description"
+                "ID",
+                "CompetencyGroup",
+                "GroupDescription",
+                "Competency",
+                "CompetencyDescription",
+                "AlwaysShowDescription",
+                "FlagsCSV"
             }.OrderBy(x => x);
-            var actualHeaders = table.Fields.Select(x => x.Name.ToLower()).OrderBy(x => x);
+            var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);
         }
 
@@ -128,6 +156,13 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 ClosedXmlHelper.HideWorkSheetColumn(workbook, "ID");
             }
+            var options = new List<string> { "TRUE", "FALSE" };
+            ClosedXmlHelper.AddValidationListToWorksheetColumn(workbook, 6, options);
+            var rowCount = workbook.Worksheet(1).RangeUsed().RowCount();
+            ClosedXmlHelper.AddValidationRangeToWorksheetColumn(workbook, 1, 1, rowCount, 1);
+            // Calculate the workbook
+            workbook.CalculateMode = XLCalculateMode.Auto;
+            workbook.RecalculateAllFormulas();
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();

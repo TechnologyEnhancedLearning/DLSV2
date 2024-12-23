@@ -9,8 +9,8 @@
         public ImportCompetenciesResultsViewModel(ImportCompetenciesResult importCompetenciesResult)
         {
             ProcessedCount = importCompetenciesResult.ProcessedCount;
-            CompetenciesInsertedCount = importCompetenciesResult.CompetenciesInsertedCount;
-            CompetencyGroupsInsertedCount = importCompetenciesResult.CompetencyGroupsInsertedCount;
+            CompetenciesInsertedCount = importCompetenciesResult.CompetencyAddedCount;
+            CompetencyGroupsInsertedCount = importCompetenciesResult.GroupAddedCount;
             SkippedCount = importCompetenciesResult.SkippedCount;
             Errors = importCompetenciesResult.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason)));
         }
