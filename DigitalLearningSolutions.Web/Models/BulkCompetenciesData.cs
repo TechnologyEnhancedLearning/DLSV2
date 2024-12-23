@@ -19,9 +19,9 @@ namespace DigitalLearningSolutions.Web.Models
         public string CompetenciesFileName { get; set; }
         public List<int> AssessmentQuestionIDs { get; set; }
         public int? AddAssessmentQuestionOption { get; set; }
-        public int ToProcessCount { get; set; }
-        public int ToAddCount { get; set; }
-        public int ToUpdateCount { get; set; }
+        public int CompetenciesToProcessCount { get; set; }
+        public int CompetenciesToAddCount { get; set; }
+        public int CompetenciesToUpdateCount { get; set; }
         public int LastRowProcessed { get; set; }
         public int SubtotalCompetenciesAdded { get; set; }
         public int SubtotalCompetenciesUpdated { get; set; }
