@@ -44,6 +44,7 @@ namespace DigitalLearningSolutions.Web.Services
         }
         private void PreProcessCompetencyRow(CompetencyTableRow competencyRow)
         {
+            competencyRow.Validate();
             if (competencyRow.id == null)
             {
                 competencyRow.RowStatus = RowStatus.CompetencyInserted;
