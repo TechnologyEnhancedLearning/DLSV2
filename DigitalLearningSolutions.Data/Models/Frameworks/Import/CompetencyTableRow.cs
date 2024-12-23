@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Frameworks.Import
 {
     using ClosedXML.Excel;
+    using Org.BouncyCastle.Asn1.X509;
+
     public enum RowStatus
     {
         NotYetProcessed,
@@ -18,16 +20,16 @@
         {
             string? FindFieldValue(string name)
             {
-                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString()?.ToLower() == name).ColumnNumber();
+                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString()?.ToLower() == name.ToLower()).ColumnNumber();
                 return row.Cell(colNumber).GetValue<string?>();
             }
 
             RowNumber = row.RowNumber();
-            id = int.Parse(FindFieldValue("ID"));
+            id = row.Cell(1).GetValue<int?>();
             CompetencyGroup = FindFieldValue("CompetencyGroup");
             Competency = FindFieldValue("Competency");
             CompetencyDescription = FindFieldValue("CompetencyDescription");
-            GroupDescription = FindFieldValue("CompetencyGroupDescription");
+            GroupDescription = FindFieldValue("GroupDescription");
             FlagsCsv = FindFieldValue("FlagsCSV");
             RowStatus = RowStatus.NotYetProcessed;
         }
