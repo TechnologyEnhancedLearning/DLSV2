@@ -2,12 +2,13 @@
 using System;
 using DigitalLearningSolutions.Web.Models;
 using System.Linq;
+using DigitalLearningSolutions.Data.Models.Frameworks.Import;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
     public class ImportCompetenciesPreProcessViewModel
     {
-        public ImportCompetenciesPreProcessViewModel(BulkCompetenciesResult bulkCompetenciesResult)
+        public ImportCompetenciesPreProcessViewModel(ImportCompetenciesResult bulkCompetenciesResult)
         {
             ToProcessCount = bulkCompetenciesResult.ProcessedCount;
             CompetenciesToAddCount = bulkCompetenciesResult.CompetencyAddedCount;
@@ -25,20 +26,21 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public int CompetencyGroupsToAddCount { get; set; }
         public int CompetencyGroupsToUpdateCount { get; set; }
         public int ToUpdateOrSkipCount { get; set; }
+        public string? CompetenciesFileName { get; set; }
 
-        private static string MapReasonToErrorMessage(BulkCompetenciesResult.ErrorReason reason)
+        private static string MapReasonToErrorMessage(ImportCompetenciesResult.ErrorReason reason)
         {
             return reason switch
             {
-                BulkCompetenciesResult.ErrorReason.TooLongCompetencyGroupName =>
+                ImportCompetenciesResult.ErrorReason.TooLongCompetencyGroupName =>
                     "Group name must be 255 characters or less.",
-                BulkCompetenciesResult.ErrorReason.MissingCompetencyName =>
+                ImportCompetenciesResult.ErrorReason.MissingCompetencyName =>
                     "Competency is blank. Competency is a required field and cannot be left blank",
-                BulkCompetenciesResult.ErrorReason.InvalidId =>
+                ImportCompetenciesResult.ErrorReason.InvalidId =>
                     "The ID provided does not match a Competency ID in this Framework",
-                BulkCompetenciesResult.ErrorReason.TooLongCompetencyName =>
+                ImportCompetenciesResult.ErrorReason.TooLongCompetencyName =>
                     "Competency must be 255 characters or less.",
-                BulkCompetenciesResult.ErrorReason.InvalidAlwaysShowDescription =>
+                ImportCompetenciesResult.ErrorReason.InvalidAlwaysShowDescription =>
                     "Always show description is invalid. The Always show description  field must contain 'TRUE' or 'FALSE'",
                 _ => "Unspecified error.",
             };

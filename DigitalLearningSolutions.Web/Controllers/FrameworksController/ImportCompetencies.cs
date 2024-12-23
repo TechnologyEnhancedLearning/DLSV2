@@ -1,21 +1,19 @@
 ﻿using ClosedXML.Excel;
 using DigitalLearningSolutions.Data.Exceptions;
-using DigitalLearningSolutions.Data.Migrations;
-using DigitalLearningSolutions.Data.Utilities;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using GDS.MultiPageFormData.Enums;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     public partial class FrameworksController
     {
         [Route("/Framework/{frameworkId}/{tabname}/Import")]
-        public IActionResult ImportCompetencies(int frameworkId, string tabname)
+        public IActionResult ImportCompetencies(int frameworkId, string tabname, bool isNotBlank)
         {
             var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
@@ -23,7 +21,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return StatusCode(403);
             var model = new ImportCompetenciesViewModel()
             {
-                FrameworkId = frameworkId
+                FrameworkId = frameworkId,
+                IsNotBlank = isNotBlank
             };
             return View("Developer/ImportCompetencies", model);
         }
@@ -72,7 +71,25 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Framework/{frameworkId}/{tabname}/ImportCompleted")]
         public IActionResult ImportCompleted()
         {
-            return View("Developer/ImportCompleted");
+            var data = GetBulkUploadData();
+            var uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
+            var filePath = Path.Combine(uploadDir, data.CompetenciesFileName);
+            var workbook = new XLWorkbook(filePath);
+            try
+            {
+                var results = importCompetenciesFromFileService.PreProcessCompetenciesTable(workbook);
+                var resultsModel = new ImportCompetenciesPreProcessViewModel(results);
+                data.CompetenciesToProcessCount = resultsModel.ToProcessCount;
+                data.CompetenciesToAddCount = resultsModel.CompetenciesToAddCount;
+                data.CompetenciesToUpdateCount = resultsModel.CompetenciesToUpdateCount;
+                setBulkUploadData(data);
+                return View("Developer/ImportCompleted", resultsModel);
+            }
+            catch (InvalidHeadersException)
+            {
+                FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
+                return View("ImportFailed");
+            }
         }
 
         private void setupBulkUploadData(int frameworkId, int adminUserID, string competenciessFileName, string tabName)
