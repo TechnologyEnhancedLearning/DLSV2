@@ -150,8 +150,8 @@
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedFileName, result!.FileDownloadName);
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result!.FileDownloadName, Is.EqualTo(expectedFileName));
             });
         }
 

@@ -20,7 +20,7 @@
             var passwordIsCorrect = cryptoService.VerifyHashedPassword(null, "password");
 
             // Then
-            Assert.IsFalse(passwordIsCorrect);
+            Assert.That(passwordIsCorrect, Is.False);
         }
 
         [Test]
@@ -32,7 +32,7 @@
             var passwordIsCorrect = cryptoService.VerifyHashedPassword(passwordHash, password);
 
             // Then
-            Assert.IsTrue(passwordIsCorrect);
+           Assert.That(passwordIsCorrect, Is.True);
         }
     }
 }

@@ -138,7 +138,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
             // Then
             result.Should().BeViewResult().WithViewName("Index").ModelAs<LoginViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
+            Assert.That(controller.ModelState.IsValid, Is.False);
         }
 
         [Test]
@@ -263,7 +263,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
             // Then
             result.Should().BeViewResult().WithViewName("Index").ModelAs<LoginViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
+            Assert.That(controller.ModelState.IsValid, Is.False);
         }
 
         [Test]
@@ -279,7 +279,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 
             // Then
             result.Should().BeViewResult().WithViewName("Index").ModelAs<LoginViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
+            Assert.That(controller.ModelState.IsValid, Is.False);
         }
 
         [Test]

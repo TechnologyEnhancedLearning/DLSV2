@@ -96,7 +96,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
 
             // Then
             result.Should().BeViewResult().ModelAs<DeactivateDelegateAccountViewModel>().DelegateId.Should().Be(DelegateId);
-            Assert.IsFalse(controller.ModelState.IsValid);
+            Assert.That(controller.ModelState.IsValid, Is.False);
         }
 
 
