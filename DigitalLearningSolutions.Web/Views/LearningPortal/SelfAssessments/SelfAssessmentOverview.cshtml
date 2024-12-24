@@ -14,6 +14,9 @@
       .Select(q => q.ResultDateTime)
       .DefaultIfEmpty(DateTime.MinValue)
       .Max();
+    bool signedOff = (from record in Model.SupervisorSignOffs
+                      orderby record.ID descending
+                      select record.SignedOff).FirstOrDefault();
     var competencySummaries = from g in Model.CompetencyGroups
                               let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
                               let selfAssessedCount = questions.Count(q => q.Result.HasValue)
@@ -41,7 +44,7 @@
 }
 
 @section mobilebacklink
-    {
+{
     <p class="nhsuk-breadcrumb__back">
         <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
            asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
@@ -197,7 +200,7 @@
                         </div>
                     }
                     @if (!Model.SupervisorSignOffs.Where(x => x.Verified == null).Any()
-                   && latestResult > latestSignoff
+                   && (latestResult > latestSignoff || !signedOff)
                    && (Model.NumberOfSelfAssessedOptionalCompetencies >= Model.SelfAssessment.MinimumOptionalCompetencies)
                    )
                     {

@@ -1215,7 +1215,7 @@
             SignOffProfileAssessmentViewModel model
         )
         {
-            if ((!ModelState.IsValid) && (model.NumberOfSelfAssessedOptionalCompetencies > 0) && (!model.OptionalCompetenciesChecked))
+            if ((!ModelState.IsValid) && (model.NumberOfSelfAssessedOptionalCompetencies > 0) && (!model.OptionalCompetenciesChecked) && model.SignedOff)
             {
                 SelfAssessmentResultSummary? selfAssessmentSummary =
                     supervisorService.GetSelfAssessmentResultSummary(candidateAssessmentId, supervisorDelegateId);
@@ -1231,7 +1231,10 @@
                     CandidateAssessmentSupervisorVerificationId =
                         selfAssessmentSummary.CandidateAssessmentSupervisorVerificationId,
                     CandidateAssessmentSupervisorVerificationSummaries = verificationsSummary,
-                    NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment)
+                    NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment),
+                    SupervisorComments = model.SupervisorComments,
+                    SignedOff = model.SignedOff,
+                    IsSignOffverified = model.SignedOff
                 };
                 return View("SignOffProfileAssessment", newModel);
             }
