@@ -72,7 +72,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
 
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
 
-                Assert.AreEqual(0, tempDataDictionary.Keys.Count);
+                Assert.That(tempDataDictionary.Keys.Count, Is.EqualTo(0));
             }
         }
     }

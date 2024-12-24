@@ -515,7 +515,7 @@
                 .ModelAs<ClaimAccountCompleteRegistrationViewModel>().Should()
                 .BeEquivalentTo(completeRegistrationViewModel);
 
-            Assert.IsFalse(controller.ModelState.IsValid);
+            Assert.That(controller.ModelState.IsValid, Is.False);
         }
 
         [Test]
