@@ -87,7 +87,7 @@
             // Then
             result.Should().BeViewResult().WithDefaultViewName()
                 .ModelAs<EditCentreWebsiteDetailsViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
+            Assert.That(controller.ModelState.IsValid, Is.False);
         }
 
         [TestCase("OVER_DAILY_LIMIT")]
