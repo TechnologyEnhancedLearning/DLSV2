@@ -40,7 +40,7 @@
             var apiResponse = freshdeskService.CreateNewTicket(ticketRequest);
 
             //Assert 
-            Assert.AreEqual(expectedResponse, apiResponse);
+            Assert.That(apiResponse, Is.EqualTo(expectedResponse));
         }
         [Test]
         public void CreateNewTicket_returns_API_Authentication_error()
@@ -60,7 +60,7 @@
             var apiResponse = freshdeskService.CreateNewTicket(ticketRequest);
 
             //Assert 
-            Assert.AreEqual(expectedResponse, apiResponse);
+            Assert.That(apiResponse, Is.EqualTo(expectedResponse));
         }
         [Test]
         public void CreateNewTicket_returns_API_error()
@@ -80,7 +80,7 @@
             var apiResponse = freshdeskService.CreateNewTicket(ticketRequest);
 
             //Assert 
-            Assert.AreEqual(expectedResponse, apiResponse);
+            Assert.That(apiResponse, Is.EqualTo(expectedResponse));
         }
         [Test]
         public async Task CreateNewTicket_returns_API_data_if_retrieved()
@@ -100,7 +100,7 @@
             var apiResponse = freshdeskService.CreateNewTicket(ticketRequest);
 
             //Assert 
-            Assert.AreEqual(expectedResponse, apiResponse);
+            Assert.That(apiResponse, Is.EqualTo(expectedResponse));
         }
     }
 }
