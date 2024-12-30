@@ -28,6 +28,7 @@
                     "Competency name was not provided. Competency name is a required field and cannot be left blank",
                 ImportCompetenciesResult.ErrorReason.TooLongCompetencyName => "Competency name must be 500 characters or fewer",
                 ImportCompetenciesResult.ErrorReason.TooLongCompetencyGroupName => "Competency group name must be 255 characters or fewer",
+                _ => "Unknown error",
             };
         }
     }
