@@ -66,7 +66,7 @@
 
         public static void SessionsShouldBeApproximatelyEquivalent(Session session1, Session session2)
         {
-            const int tenSecondsInMilliseconds = 10000;
+            var tenSecondsInMilliseconds = TimeSpan.FromMilliseconds(10000);
 
             session1.CandidateId.Should().Be(session2.CandidateId);
             session1.CustomisationId.Should().Be(session2.CustomisationId);
