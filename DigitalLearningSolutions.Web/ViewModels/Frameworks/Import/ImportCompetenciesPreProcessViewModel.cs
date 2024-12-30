@@ -4,7 +4,7 @@ using DigitalLearningSolutions.Web.Models;
 using System.Linq;
 using DigitalLearningSolutions.Data.Models.Frameworks.Import;
 
-namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
+namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
 {
     public class ImportCompetenciesPreProcessViewModel
     {

@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
 {
     using DigitalLearningSolutions.Data.Models.Frameworks.Import;
     using System.Collections.Generic;
