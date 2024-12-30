@@ -12,29 +12,27 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Frameworks.Import;
-    using DigitalLearningSolutions.Web.Models;
-    using Microsoft.AspNetCore.Http;
 
     public interface IImportCompetenciesFromFileService
     {
-        byte[] GetCompetencyFileForFramework(int frameworkId, bool v);
-        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook);
-        public ImportCompetenciesResult ProcessCompetenciesFromFile(IXLWorkbook workbook, int adminUserId, int frameworkId);
+        byte[] GetCompetencyFileForFramework(int frameworkId, bool isBlank, string vocabulary);
+        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook, string vocabulary);
+        public ImportCompetenciesResult ProcessCompetenciesFromFile(IXLWorkbook workbook, int adminUserId, int frameworkId, string vocabulary);
     }
     public class ImportCompetenciesFromFileService : IImportCompetenciesFromFileService
     {
         private readonly IFrameworkService frameworkService;
         private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
-        public const string CompetenciesSheetName = "CompetenciesBulkUpload";
+        public const string CompetenciesSheetName = "FrameworkBulkUpload";
         public ImportCompetenciesFromFileService(
            IFrameworkService frameworkService
        )
         {
             this.frameworkService = frameworkService;
         }
-        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook)
+        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook, string vocabulary)
         {
-            var table = OpenCompetenciesTable(workbook);
+            var table = OpenCompetenciesTable(workbook, vocabulary);
             var competencyRows = table.Rows().Skip(1).Select(row => new CompetencyTableRow(table, row)).ToList();
             foreach (var competencyRow in competencyRows)
             {
@@ -54,14 +52,14 @@ namespace DigitalLearningSolutions.Web.Services
                 competencyRow.RowStatus = RowStatus.CompetencyUpdated;
             }
         }
-        public ImportCompetenciesResult ProcessCompetenciesFromFile(IXLWorkbook workbook, int adminUserId, int frameworkId)
+        public ImportCompetenciesResult ProcessCompetenciesFromFile(IXLWorkbook workbook, int adminUserId, int frameworkId, string vocabulary)
         {
             int maxFrameworkCompetencyId = frameworkService.GetMaxFrameworkCompetencyID();
             int maxFrameworkCompetencyGroupId = frameworkService.GetMaxFrameworkCompetencyGroupID();
-            var table = OpenCompetenciesTable(workbook);
+            var table = OpenCompetenciesTable(workbook, vocabulary);
             return ProcessCompetenciesTable(table, adminUserId, frameworkId, maxFrameworkCompetencyId, maxFrameworkCompetencyGroupId);
         }
-        internal IXLTable OpenCompetenciesTable(IXLWorkbook workbook)
+        internal IXLTable OpenCompetenciesTable(IXLWorkbook workbook, string vocabulary)
         {
             var worksheet = workbook.Worksheet(1);
             worksheet.Columns(1, 15).Unhide();
@@ -70,7 +68,7 @@ namespace DigitalLearningSolutions.Web.Services
                 throw new InvalidHeadersException();
             }
             var table = worksheet.Tables.Table(0);
-            if (!ValidateHeaders(table))
+            if (!ValidateHeaders(table, vocabulary))
             {
                 throw new InvalidHeadersException();
             }
@@ -132,15 +130,15 @@ namespace DigitalLearningSolutions.Web.Services
             return maxFrameworkCompetencyGroupId;
         }
 
-        private static bool ValidateHeaders(IXLTable table)
+        private static bool ValidateHeaders(IXLTable table, string Vocabulary)
         {
             var expectedHeaders = new List<string>
             {
                 "ID",
-                "CompetencyGroup",
+                Vocabulary + "Group",
                 "GroupDescription",
-                "Competency",
-                "CompetencyDescription",
+                Vocabulary,
+                Vocabulary + "Description",
                 "AlwaysShowDescription",
                 "FlagsCSV"
             }.OrderBy(x => x);
@@ -148,10 +146,10 @@ namespace DigitalLearningSolutions.Web.Services
             return actualHeaders.SequenceEqual(expectedHeaders);
         }
 
-        public byte[] GetCompetencyFileForFramework(int frameworkId, bool blank)
+        public byte[] GetCompetencyFileForFramework(int frameworkId, bool blank, string vocabulary)
         {
             using var workbook = new XLWorkbook();
-            PopulateCompetenciesSheet(workbook, frameworkId, blank);
+            PopulateCompetenciesSheet(workbook, frameworkId, blank, vocabulary);
             if (blank)
             {
                 ClosedXmlHelper.HideWorkSheetColumn(workbook, "ID");
@@ -167,7 +165,7 @@ namespace DigitalLearningSolutions.Web.Services
             workbook.SaveAs(stream);
             return stream.ToArray();
         }
-        private void PopulateCompetenciesSheet(IXLWorkbook workbook, int frameworkId, bool blank)
+        private void PopulateCompetenciesSheet(IXLWorkbook workbook, int frameworkId, bool blank, string vocabulary)
         {
 
 
@@ -184,8 +182,10 @@ namespace DigitalLearningSolutions.Web.Services
                     FlagsCSV = x.FlagsCsv,
                 }
             );
-
             ClosedXmlHelper.AddSheetToWorkbook(workbook, CompetenciesSheetName, competencies, TableTheme);
+            ClosedXmlHelper.RenameWorksheetColumn(workbook, "CompetencyGroup", vocabulary + "Group");
+            ClosedXmlHelper.RenameWorksheetColumn(workbook, "Competency", vocabulary);
+            ClosedXmlHelper.RenameWorksheetColumn(workbook, "CompetencyDescription", vocabulary + "Description");
         }
     }
 }
