@@ -66,7 +66,7 @@
                                         This Excel file will be empty.<br />
                                         New @Model.FrameworkVocabularyPlural.ToLower() can be added by including their details on a blank row.
                                     </div>
-                                    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-DownloadOption="1" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
+                                    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-vocabulary="@Model.FrameworkVocabularySingular" asp-route-DownloadOption="1" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
                                         Download template
                                     </a>
                                 </div>
@@ -81,7 +81,7 @@
                                         This Excel file will include all existing @Model.FrameworkVocabularyPlural.ToLower() whose details you can update.<br />
                                         New @Model.FrameworkVocabularyPlural.ToLower() can be added by including their details on a blank row.
                                     </div>
-                                    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-DownloadOption="2" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
+                                    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-vocabulary="@Model.FrameworkVocabularySingular" asp-route-DownloadOption="2" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
                                         Download @Model.FrameworkVocabularyPlural.ToLower()
                                     </a>
                                 </div>
@@ -94,7 +94,7 @@
                     <p class="nhsuk-body-m">
                         Download a blank template for bulk adding @Model.FrameworkVocabularyPlural.ToLower() to your framework, <strong>@Model.FrameworkName</strong>. This Excel file will be empty. New @Model.FrameworkVocabularyPlural.ToLower() can be added by including their details on a blank row.
                     </p>
-                    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-DownloadOption="1" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
+                    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-vocabulary="@Model.FrameworkVocabularySingular" asp-route-DownloadOption="1" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
                         Download template
                     </a>
                 }

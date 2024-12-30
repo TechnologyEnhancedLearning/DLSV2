@@ -24,11 +24,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             
             return View("Developer/Import/Index", model);
         }
-        public IActionResult DownloadCompetencies(int frameworkId, int DownloadOption)
+        public IActionResult DownloadCompetencies(int frameworkId, int DownloadOption, string vocabulary)
         {
-            string fileName = DownloadOption == 2 ? $"DLS Competencies for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx" : "DLS Competencies for Bulk Upload.xlsx";
+            string fileName = DownloadOption == 2 ? $"DLS {FrameworkVocabularyHelper.VocabularyPlural(vocabulary)} for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx" : $"DLS {FrameworkVocabularyHelper.VocabularyPlural(vocabulary)} for Bulk Upload.xlsx";
             var content = importCompetenciesFromFileService.GetCompetencyFileForFramework(
-                    frameworkId, DownloadOption == 2 ? false : true
+                    frameworkId, DownloadOption == 2 ? false : true, vocabulary
                 );
             return File(
                 content,
@@ -76,7 +76,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var workbook = new XLWorkbook(filePath);
             try
             {
-                var results = importCompetenciesFromFileService.PreProcessCompetenciesTable(workbook);
+                var results = importCompetenciesFromFileService.PreProcessCompetenciesTable(workbook, data.FrameworkVocubulary);
                 var resultsModel = new ImportCompetenciesPreProcessViewModel(results, data) { IsNotBlank = data.IsNotBlank, TabName = data.TabName };
                 data.CompetenciesToProcessCount = resultsModel.ToProcessCount;
                 data.CompetenciesToAddCount = resultsModel.CompetenciesToAddCount;

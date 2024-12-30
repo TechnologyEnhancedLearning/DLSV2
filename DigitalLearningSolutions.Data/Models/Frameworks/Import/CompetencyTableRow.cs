@@ -26,10 +26,10 @@
 
             RowNumber = row.RowNumber();
             id = row.Cell(1).GetValue<int?>();
-            CompetencyGroup = FindFieldValue("CompetencyGroup");
-            Competency = FindFieldValue("Competency");
-            CompetencyDescription = FindFieldValue("CompetencyDescription");
-            GroupDescription = FindFieldValue("GroupDescription");
+            CompetencyGroup = row.Cell(2).GetValue<string?>();
+            GroupDescription = row.Cell(3).GetValue<string?>();
+            Competency = row.Cell(4).GetValue<string?>();
+            CompetencyDescription = row.Cell(5).GetValue<string?>();
             AlwaysShowDescriptionRaw = FindFieldValue("AlwaysShowDescription");
             AlwaysShowDescription = bool.TryParse(AlwaysShowDescriptionRaw, out var hasPrn) ? hasPrn : (bool?)null;
             FlagsCsv = FindFieldValue("FlagsCSV");
