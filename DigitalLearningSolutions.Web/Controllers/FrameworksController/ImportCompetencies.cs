@@ -21,7 +21,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (userRole < 2)
                 return StatusCode(403);
             var model = new ImportCompetenciesViewModel(framework, isNotBlank);
-            
+
             return View("Developer/Import/Index", model);
         }
         public IActionResult DownloadCompetencies(int frameworkId, int DownloadOption, string vocabulary)
