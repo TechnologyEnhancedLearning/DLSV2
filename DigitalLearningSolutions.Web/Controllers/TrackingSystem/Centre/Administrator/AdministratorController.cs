@@ -61,13 +61,6 @@
                 int? itemsPerPage = null
             )
         {
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                AdminFilterCookieName
-            );
             searchString = searchString == null ? null : searchString.Trim();
             var centreId = User.GetCentreIdKnownNotNull();
             var adminsAtCentre = userService.GetAdminsByCentreId(centreId);
@@ -77,10 +70,20 @@
             var availableFilters =
                 AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories);
 
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                AdminFilterCookieName,
+                null,
+                availableFilters
+            );
+
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
-                new FilterOptions(existingFilterString, availableFilters),
+                new FilterOptions(filterString, availableFilters),
                 new PaginationOptions(page, itemsPerPage)
             );
 

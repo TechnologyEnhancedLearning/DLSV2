@@ -95,34 +95,31 @@
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-            existingFilterString = FilteringHelper.GetFilterString(
-            existingFilterString,
-            newFilterToAdd,
-            clearFilters,
-            Request,
-            filterCookieName,
-            CourseDelegateAccountStatusFilterOptions.Active.FilterValue
-        );
 
-            if (isCourseDelegate)
-            {
-                if (TempData["actDelCustomisationId"] != null && TempData["actDelCustomisationId"].ToString() != customisationId.ToString()
-                        && existingFilterString != null && existingFilterString.Contains("Answer"))
-                {
-                    var availableCourseFilters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId.Value).AdminFields);
-                    existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableCourseFilters, existingFilterString);
-                }
-            }
-            else
+            var availableFilters = isCourseDelegate
+                   ? CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId.Value).AdminFields)
+                   : SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels();
+
+            var filterString = FilteringHelper.GetFilterString(
+                                    existingFilterString,
+                                    newFilterToAdd,
+                                    clearFilters,
+                                    Request,
+                                    filterCookieName,
+                                    CourseDelegateAccountStatusFilterOptions.Active.FilterValue,
+                                    availableFilters
+                                );
+
+            if (!isCourseDelegate)
             {
                 isUnsupervisedSelfAssessment = selfAssessmentService.IsUnsupervisedSelfAssessment((int)selfAssessmentId);
-                if (existingFilterString != null)
+                if (filterString != null)
                 {
                     var existingfilterList = isUnsupervisedSelfAssessment ?
-                        existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SignedOff")).ToList() :
-                        existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SubmittedDate")).ToList();
+                        filterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SignedOff")).ToList() :
+                        filterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SubmittedDate")).ToList();
 
-                    existingFilterString = existingfilterList.Any() ? string.Join(FilteringHelper.FilterSeparator, existingfilterList) : null;
+                    filterString = existingfilterList.Any() ? string.Join(FilteringHelper.FilterSeparator, existingfilterList) : null;
                 }
             }
 
@@ -138,10 +135,10 @@
             string? answer1, answer2, answer3;
             answer1 = answer2 = answer3 = null;
 
-            if (!string.IsNullOrEmpty(existingFilterString))
+            if (!string.IsNullOrEmpty(filterString))
             {
-                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-                existingFilterString = FilteringHelper.RemoveDuplicateFilters(newFilterToAdd, existingFilterString);
+                var selectedFilters = filterString.Split(FilteringHelper.FilterSeparator).ToList();
+
                 if (selectedFilters.Count > 0)
                 {
                     foreach (var filter in selectedFilters)
@@ -250,24 +247,17 @@
                     }
                 }
 
-                var availableFilters = isCourseDelegate
-                   ? CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(courseDelegatesData.CourseAdminFields)
-                   : SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels();
-
                 var activityName = isCourseDelegate
                     ? courseService.GetCourseNameAndApplication((int)customisationId).CourseName
                     : selfAssessmentService.GetSelfAssessmentNameById((int)selfAssessmentId);
-                if (!string.IsNullOrEmpty(existingFilterString))
-                {
-                    existingFilterString = FilteringHelper.GetValidFilters(existingFilterString, newFilterToAdd, availableFilters, Request, filterCookieName);
-                }
+
                 if (isCourseDelegate)
                 {
                     var result = paginateService.Paginate(
                     courseDelegatesData.Delegates,
                     (int)resultCount,
                     new PaginationOptions(page, itemsPerPage),
-                    new FilterOptions(existingFilterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
+                    new FilterOptions(filterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
                     searchString,
                     sortBy,
                     sortDirection);
@@ -285,7 +275,7 @@
                     selfAssessmentDelegatesData.Delegates,
                     (int)resultCount,
                     new PaginationOptions(page, itemsPerPage),
-                    new FilterOptions(existingFilterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
+                    new FilterOptions(filterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
                     searchString,
                     sortBy,
                     sortDirection);
