@@ -135,7 +135,7 @@
             var result = centresService.GetCentreSummaryForContactDisplay(selectedCenter);
 
             // Then
-            result.Should().Equals(1);
+            result.Should().NotBeNull();
         }
 
         [Test]
