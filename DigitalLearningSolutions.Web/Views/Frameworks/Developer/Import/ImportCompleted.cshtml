@@ -27,57 +27,59 @@
     </nav>
 }
 <h1 class="nhsuk-heading-xl">Delegate file uploaded</h1>
-<p class="nhsuk-body-l">@(Model.ErrorCount == 0 ? "Your file is error free and ready to be processed. Check the information below looks, correct before processing" : "Your file contains the following, including some errors:")</p>
-<ul>
-    <li>@Model.ToProcessCount @(Model.ToProcessCount == 1 ? "row" : "rows") to process</li>
-    <li>@Model.CompetenciesToAddCount new @(Model.CompetenciesToAddCount == 1 ? "competency" : "competencies") to add</li>
-    <li>@Model.ToUpdateOrSkipCount delegate @(Model.ToUpdateOrSkipCount == 1 ? "record" : "records") to update (or skip if unchanged)</li>
-    @if (Model.ErrorCount > 0)
+<div class="nhsuk-width-container">
+    <p class="nhsuk-body-l">@(Model.ErrorCount == 0 ? "Your file is error free and ready to be processed. Check the information below looks, correct before processing" : "Your file contains the following, including some errors:")</p>
+    <ul>
+        <li>@Model.ToProcessCount @(Model.ToProcessCount == 1 ? "row" : "rows") to process</li>
+        <li>@Model.CompetenciesToAddCount new @(Model.CompetenciesToAddCount == 1 ? Model.FrameworkVocabularySingular.ToLower() : Model.FrameworkVocabularyPlural.ToLower()) to add</li>
+        <li>@Model.ToUpdateOrSkipCount @Model.FrameworkVocabularySingular.ToLower() @(Model.ToUpdateOrSkipCount == 1 ? "record" : "records") to update (or skip if unchanged)</li>
+        @if (Model.ErrorCount > 0)
+        {
+            <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "row" : "rows") containing errors that cannot be processed</li>
+        }
+        else
+        {
+            <li>No errors</li>
+        }
+    </ul>
+    @if (Model.ErrorCount == 0)
     {
-        <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "row" : "rows") containing errors that cannot be processed</li>
+        <a asp-controller="Frameworks" role="button" asp-route-tabname="Structure" asp-action="AddAssessmentQuestions" class="nhsuk-button">Continue</a>
     }
     else
     {
-        <li>No errors</li>
+        <p class="nhsuk-body-l">Check the information below. You will need fix these errors before continuing or remove the rows with errors from your spreadsheet:</p>
+        <div class="nhsuk-form-group nhsuk-form-group--error">
+            <span class="nhsuk-error-message" id="error-list">
+                <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorCount @Model.FrameworkVocabularySingular.ToLower() @(Model.ErrorCount == 1 ? "row" : "rows") contain errors and cannot be processed
+            </span>
+            <dl class="nhsuk-summary-list">
+                @foreach (var (rowNumber, errorMessage) in Model.Errors)
+                {
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Row @rowNumber
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @errorMessage
+                        </dd>
+
+                    </div>
+                }
+            </dl>
+        </div>
+        <h2>Upload corrected file</h2>
+        <p class="nhsuk-body-m">
+            Once you have made corrections to the Excel competency workbook to address the errors above, save and restart the upload process.
+        </p>
+        <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
+
+            <vc:file-input asp-for="@nameof(Model.ImportFile)" label="File with corrected @Model.FrameworkVocabularyPlural.ToLower() information" hint-text="" css-class="nhsuk-u-width-one-half" />
+            <input type="hidden" asp-for="IsNotBlank" />
+            <input type="hidden" asp-for="TabName" />
+
+            <button class="nhsuk-button" type="submit">Upload file</button>
+        </form>
     }
-</ul>
-@if (Model.ErrorCount == 0)
-{
-    <a asp-controller="Frameworks" role="button" asp-route-tabname="Structure" asp-action="AddAssessmentQuestions" class="nhsuk-button">Continue</a>
-}
-else
-{
-    <p class="nhsuk-body-l">Check the information below. You will need fix these errors before continuing or remove the rows with errors from your spreadsheet:</p>
-    <div class="nhsuk-form-group nhsuk-form-group--error">
-        <span class="nhsuk-error-message" id="error-list">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorCount delegate @(Model.ErrorCount == 1 ? "row" : "rows") contain errors and cannot be processed
-        </span>
-        <dl class="nhsuk-summary-list">
-            @foreach (var (rowNumber, errorMessage) in Model.Errors)
-            {
-                <div class="nhsuk-summary-list__row">
-                    <dt class="nhsuk-summary-list__key">
-                        Row @rowNumber
-                    </dt>
-                    <dd class="nhsuk-summary-list__value">
-                        @errorMessage
-                    </dd>
-
-                </div>
-            }
-        </dl>
-    </div>
-    <h2>Upload corrected file</h2>
-    <p class="nhsuk-body-m">
-        Once you have made corrections to the Excel competency workbook to address the errors above, save and restart the upload process.
-    </p>
-    <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
-
-        <vc:file-input asp-for="@nameof(Model.ImportFile)" label="File with corrected competencies information" hint-text="" css-class="nhsuk-u-width-one-half" />
-        <input type="hidden" asp-for="IsNotBlank" />
-        <input type="hidden" asp-for="TabName" />
-
-        <button class="nhsuk-button" type="submit">Upload file</button>
-    </form>
-}
-<vc:back-link asp-controller="Frameworks" asp-action="Index" asp-all-route-data="@null" link-text="Cancel" />
+    <vc:back-link asp-controller="Frameworks" asp-action="Index" asp-all-route-data="@null" link-text="Cancel" />
+</div>

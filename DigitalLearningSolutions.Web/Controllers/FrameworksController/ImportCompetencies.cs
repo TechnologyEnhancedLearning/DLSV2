@@ -20,11 +20,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2)
                 return StatusCode(403);
-            var model = new ImportCompetenciesViewModel()
-            {
-                Framework = framework,
-                IsNotBlank = isNotBlank
-            };
+            var model = new ImportCompetenciesViewModel(framework, isNotBlank);
+            
             return View("Developer/Import/Index", model);
         }
         public IActionResult DownloadCompetencies(int frameworkId, int DownloadOption)
@@ -80,7 +77,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             try
             {
                 var results = importCompetenciesFromFileService.PreProcessCompetenciesTable(workbook);
-                var resultsModel = new ImportCompetenciesPreProcessViewModel(results) { IsNotBlank = data.IsNotBlank, TabName = data.TabName };
+                var resultsModel = new ImportCompetenciesPreProcessViewModel(results, data) { IsNotBlank = data.IsNotBlank, TabName = data.TabName };
                 data.CompetenciesToProcessCount = resultsModel.ToProcessCount;
                 data.CompetenciesToAddCount = resultsModel.CompetenciesToAddCount;
                 data.CompetenciesToUpdateCount = resultsModel.CompetenciesToUpdateCount;
@@ -104,8 +101,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             TempData.Clear();
             multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("BulkCompetencyDataCWF"), TempData);
+            var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminUserID);
             var today = clockUtility.UtcToday;
-            var bulkUploadData = new BulkCompetenciesData(frameworkId, adminUserID, competenciessFileName, tabName, isNotBlank);
+            var bulkUploadData = new BulkCompetenciesData(framework, adminUserID, competenciessFileName, tabName, isNotBlank);
             setBulkUploadData(bulkUploadData);
         }
         private void setBulkUploadData(BulkCompetenciesData bulkUploadData)
