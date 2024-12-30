@@ -1,6 +1,6 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.Extensions
-@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
 @using Microsoft.Extensions.Configuration
 @model ImportCompetenciesPreProcessViewModel
 @{
@@ -43,7 +43,7 @@
 </ul>
 @if (Model.ErrorCount == 0)
 {
-    <a asp-controller="Frameworks" role="button" asp-action="AddAssessmentQuestions" class="nhsuk-button">Continue</a>
+    <a asp-controller="Frameworks" role="button" asp-route-tabname="Structure" asp-action="AddAssessmentQuestions" class="nhsuk-button">Continue</a>
 }
 else
 {
