@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using DigitalLearningSolutions.Data.Models.Frameworks;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Models
@@ -6,15 +8,21 @@ namespace DigitalLearningSolutions.Web.Models
     public class BulkCompetenciesData
     {
         public BulkCompetenciesData() { }
-        public BulkCompetenciesData(int frameworkId, int adminUserId, string competenciesFileName, string tabName, bool isNotBlank)
+        public BulkCompetenciesData(DetailFramework framework, int adminUserId, string competenciesFileName, string tabName, bool isNotBlank)
         {
-            FrameworkId = frameworkId;
+            FrameworkId = framework.ID;
+            FrameworkName = framework.FrameworkName;
+            PublishStatusID = framework.PublishStatusID;
+            FrameworkVocubulary = framework.FrameworkConfig;
             AdminUserId = adminUserId;
             CompetenciesFileName = competenciesFileName;
             TabName = tabName;
             IsNotBlank = isNotBlank;
         }
         public int FrameworkId { get; set; }
+        public string? FrameworkName { get; set; }
+        public int PublishStatusID { get; set; }
+        public string FrameworkVocubulary { get; set; }
         public string TabName { get; set; }
         public int AdminUserId { get; set; }
         public bool IsNotBlank { get; set; }
