@@ -2404,7 +2404,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             if (frameworkId < 1)
             {
                 return connection.Query<BulkCompetency>(
-                @"SELECT NULL AS ID, '' AS CompetencyGroup, '' AS GroupDescription, '' AS Competency, '' AS CompetencyDescription, NULL AS AlwaysShowDescription, '' AS FlagsCsv"
+                @"SELECT NULL AS ID, '' AS CompetencyGroup, '' AS GroupDescription, '' AS Competency, '' AS CompetencyDescription, 0 AS AlwaysShowDescription, '' AS FlagsCsv"
             );
             }
             else
