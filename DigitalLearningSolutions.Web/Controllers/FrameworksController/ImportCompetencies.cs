@@ -6,7 +6,9 @@ using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import;
 using GDS.MultiPageFormData.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.IO;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -94,8 +96,24 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddAssessmentQuestions()
         {
             var data = GetBulkUploadData();
-
-            return View();
+            var adminId = GetAdminId();
+            var defaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(data.FrameworkId, adminId);
+            var questionList = frameworkService.GetAssessmentQuestions(data.FrameworkId, adminId).ToList();
+            var questionSelectList = new SelectList(questionList, "ID", "Label");
+            var model = new AddAssessmentQuestionsViewModel
+                (
+                data.FrameworkId,
+                data.FrameworkName,
+                data.FrameworkVocubulary,
+                data.PublishStatusID,
+                data.CompetenciesToAddCount,
+                data.CompetenciesToUpdateCount,
+                defaultQuestions,
+                questionSelectList
+                );
+            model.DefaultAssessmentQuestionIDs = data.DefaultQuestionIDs;
+            model.OtherAssessmentQuestionIDs = data.AssessmentQuestionIDs;
+            return View(model);
         }
         private void setupBulkUploadData(int frameworkId, int adminUserID, string competenciessFileName, string tabName, bool isNotBlank)
         {
