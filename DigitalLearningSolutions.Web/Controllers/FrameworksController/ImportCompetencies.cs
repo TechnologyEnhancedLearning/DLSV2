@@ -4,9 +4,12 @@ using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using GDS.MultiPageFormData.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.DotNet.Scaffolding.Shared.Project;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -89,7 +92,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             catch (InvalidHeadersException)
             {
                 FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
-                return View("ImportFailed");
+                return View("Developer/Import/ImportFailed");
             }
         }
         [Route("/Framework/{frameworkId}/{tabname}/Import/AssessmentQuestions")]
@@ -98,6 +101,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var data = GetBulkUploadData();
             var adminId = GetAdminId();
             var defaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(data.FrameworkId, adminId);
+            if (!data.DefaultQuestionIDs.Any() && defaultQuestions.Any() && data.AddDefaultAssessmentQuestions == true)
+            {
+                var defaultQuestionsList = new List<int>();
+                foreach (var question in defaultQuestions)
+                {
+                    defaultQuestionsList.Add(question.ID);
+                }
+                data.DefaultQuestionIDs = defaultQuestionsList;
+                setBulkUploadData(data);
+            }
             var questionList = frameworkService.GetAssessmentQuestions(data.FrameworkId, adminId).ToList();
             var questionSelectList = new SelectList(questionList, "ID", "Label");
             var model = new AddAssessmentQuestionsViewModel
@@ -111,9 +124,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 defaultQuestions,
                 questionSelectList
                 );
+            model.AddDefaultAssessmentQuestions = data.AddDefaultAssessmentQuestions;
+            model.AddCustomAssessmentQuestion = data.AddCustomAssessmentQuestion;
             model.DefaultAssessmentQuestionIDs = data.DefaultQuestionIDs;
             model.OtherAssessmentQuestionIDs = data.AssessmentQuestionIDs;
-            return View(model);
+            return View("Developer/Import/AddAssessmentQuestions", model);
         }
         private void setupBulkUploadData(int frameworkId, int adminUserID, string competenciessFileName, string tabName, bool isNotBlank)
         {

@@ -27,9 +27,10 @@ namespace DigitalLearningSolutions.Web.Models
         public int AdminUserId { get; set; }
         public bool IsNotBlank { get; set; }
         public string CompetenciesFileName { get; set; }
-        public List<int> DefaultQuestionIDs { get; set; }
-        public List<int> AssessmentQuestionIDs { get; set; }
-        public int? AddAssessmentQuestionOption { get; set; }
+        public List<int> DefaultQuestionIDs { get; set; } = [];
+        public List<int> AssessmentQuestionIDs { get; set; } = [];
+        public bool AddDefaultAssessmentQuestions { get; set; } = true;
+        public bool AddCustomAssessmentQuestion { get; set; } = false;
         public int CompetenciesToProcessCount { get; set; }
         public int CompetenciesToAddCount { get; set; }
         public int CompetenciesToUpdateCount { get; set; }
