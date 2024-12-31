@@ -31,7 +31,7 @@
             <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ImportFile) })" />
         }
         <h1 class="nhsuk-heading-xl">Bulk upload @(Model.IsNotBlank ? "or update" : "") @Model.FrameworkVocabularyPlural.ToLower()</h1>
-        <div class="nhsuk-width-container">
+        <div class="nhsuk-u-reading-width">
             @if (Model.PublishStatusID == 3)
             {
                 <partial name="Shared/_PublishedWarning" />
