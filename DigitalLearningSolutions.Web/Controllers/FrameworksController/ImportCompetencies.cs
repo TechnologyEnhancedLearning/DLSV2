@@ -4,11 +4,9 @@ using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using GDS.MultiPageFormData.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.DotNet.Scaffolding.Shared.Project;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -85,7 +83,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 var resultsModel = new ImportCompetenciesPreProcessViewModel(results, data) { IsNotBlank = data.IsNotBlank, TabName = data.TabName };
                 data.CompetenciesToProcessCount = resultsModel.ToProcessCount;
                 data.CompetenciesToAddCount = resultsModel.CompetenciesToAddCount;
-                data.CompetenciesToUpdateCount = resultsModel.CompetenciesToUpdateCount;
+                data.CompetenciesToUpdateCount = resultsModel.ToUpdateOrSkipCount;
                 setBulkUploadData(data);
                 return View("Developer/Import/ImportCompleted", resultsModel);
             }
@@ -153,8 +151,45 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 data.CustomAssessmentQuestionID = null;
             }
+            if (data.CompetenciesToUpdateCount > 0)
+            {
+                data.AddAssessmentQuestionsOption = 2;
+                setBulkUploadData(data);
+                return RedirectToAction("AddQuestionsToWhichCompetencies", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
+            }
+            else
+            {
+                data.AddAssessmentQuestionsOption = 1;
+                setBulkUploadData(data);
+                return RedirectToAction("Summary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
+            }
+        }
+        [Route("/Framework/{frameworkId}/{tabname}/Import/AssessmentQuestions/Competencies")]
+        public IActionResult AddQuestionsToWhichCompetencies()
+        {
+            var data = GetBulkUploadData();
+            var model = new AddQuestionsToWhichCompetenciesViewModel
+                (
+                data.FrameworkId,
+                data.FrameworkName,
+                data.FrameworkVocubulary,
+                data.DefaultQuestionIDs,
+                data.CustomAssessmentQuestionID,
+                data.AddAssessmentQuestionsOption,
+                data.CompetenciesToProcessCount,
+                data.CompetenciesToAddCount,
+                data.CompetenciesToUpdateCount
+                );
+            return View("Developer/Import/AddQuestionsToWhichCompetencies", model);
+        }
+        [HttpPost]
+        [Route("/Framework/{frameworkId}/{tabname}/Import/AssessmentQuestions/Competencies")]
+        public IActionResult AddQuestionsToWhichCompetencies(int AddAssessmentQuestionsOption)
+        {
+            var data = GetBulkUploadData();
+            data.AddAssessmentQuestionsOption = AddAssessmentQuestionsOption;
             setBulkUploadData(data);
-            return RedirectToAction("AddQuestionsToWhichCompetencies");
+            return RedirectToAction("Summary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
         }
         private void setupBulkUploadData(int frameworkId, int adminUserID, string competenciessFileName, string tabName, bool isNotBlank)
         {
