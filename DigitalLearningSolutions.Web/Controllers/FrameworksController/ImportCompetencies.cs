@@ -1,11 +1,9 @@
-﻿using AngleSharp.Dom;
-using ClosedXML.Excel;
+﻿using ClosedXML.Excel;
 using DigitalLearningSolutions.Data.Exceptions;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models;
 using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import;
-using DocumentFormat.OpenXml.EMMA;
 using GDS.MultiPageFormData.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
