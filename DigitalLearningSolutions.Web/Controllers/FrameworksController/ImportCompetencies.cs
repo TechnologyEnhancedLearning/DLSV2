@@ -127,8 +127,20 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             model.AddDefaultAssessmentQuestions = data.AddDefaultAssessmentQuestions;
             model.AddCustomAssessmentQuestion = data.AddCustomAssessmentQuestion;
             model.DefaultAssessmentQuestionIDs = data.DefaultQuestionIDs;
-            model.OtherAssessmentQuestionIDs = data.AssessmentQuestionIDs;
+            model.CustomAssessmentQuestionID = data.CustomAssessmentQuestionID;
             return View("Developer/Import/AddAssessmentQuestions", model);
+        }
+        [HttpPost]
+        [Route("/Framework/{frameworkId}/{tabname}/Import/AssessmentQuestions")]
+        public IActionResult AddAssessmentQuestions(AddAssessmentQuestionsFormData model)
+        {
+            var data = GetBulkUploadData();
+            data.AddDefaultAssessmentQuestions = model.AddDefaultAssessmentQuestions;
+            data.AddCustomAssessmentQuestion = model.AddCustomAssessmentQuestion;
+            data.DefaultQuestionIDs = model.DefaultAssessmentQuestionIDs;
+            data.CustomAssessmentQuestionID = model.CustomAssessmentQuestionID;
+            setBulkUploadData(data);
+            return RedirectToAction("AddQuestionsToWhichCompetencies");
         }
         private void setupBulkUploadData(int frameworkId, int adminUserID, string competenciessFileName, string tabName, bool isNotBlank)
         {

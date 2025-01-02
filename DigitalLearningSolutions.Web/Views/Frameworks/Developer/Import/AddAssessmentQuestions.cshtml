@@ -33,11 +33,11 @@
         <div class="nhsuk-u-reading-width">
             @if (errorHasOccurred)
             {
-                <vc:error-summary order-of-property-names="@(new []{ nameof(AddAssessmentQuestionsFormData.DefaultAssessmentQuestionIDs), nameof(AddAssessmentQuestionsFormData.OtherAssessmentQuestionIDs) })" />
+                <vc:error-summary order-of-property-names="@(new []{ nameof(AddAssessmentQuestionsFormData.DefaultAssessmentQuestionIDs), nameof(AddAssessmentQuestionsFormData.CustomAssessmentQuestionID) })" />
             }
-            <form enctype="multipart/form-data">
+            <form enctype="multipart/form-data" method="post">
                 <div class="nhsuk-form-group">
-                    <fieldset class="nhsuk-fieldset" aria-describedby="@(!ViewData.ModelState.IsValid && Model.AddDefaultAssessmentQuestions == null ? "check-list-error" : "")">
+                    <fieldset class="nhsuk-fieldset" aria-describedby="@(!ViewData.ModelState.IsValid && Model.AddDefaultAssessmentQuestions == true && !Model.DefaultAssessmentQuestionIDs.Any() ? "check-list-error" : "")">
                         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                             <h1 class="nhsuk-fieldset__heading">
                                 @ViewData["Title"]
@@ -50,37 +50,55 @@
                             @if (Model.DefaultQuestions.Any())
                             {
                                 <div class="nhsuk-checkboxes__item">
-                                    <input class="nhsuk-checkboxes__input" id="defaultQuestions" name="defaultQuestions" type="checkbox" asp-for="@Model.AddDefaultAssessmentQuestions" aria-controls="conditional-default-questions" aria-expanded="false">
+                                    <input class="nhsuk-checkboxes__input" id="defaultQuestions" type="checkbox" asp-for="@Model.AddDefaultAssessmentQuestions" aria-controls="conditional-default-questions" aria-expanded="false">
                                     <label class="nhsuk-label nhsuk-checkboxes__label" for="defaultQuestions">
                                         Default framework questions
                                     </label>
-                                </div>
-                                <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="conditional-default-questions">
+                                    <div class="nhsuk-hint nhsuk-checkboxes__hint" id="custom-question-hint">
+                                        choose which default questions associated with this framework to add to the imported and/or updated @Model.FrameworkVocabularyPlural.ToLower()
+                                    </div>
+                                    <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="conditional-default-questions">
 
-                                    <div class="nhsuk-form-group">
-                                        <div class="nhsuk-checkboxes">
-                                            @foreach (var (defaultQuestion, index) in Model.DefaultQuestions.Select((t, i) => (t, i)))
-                                            {
-                                                <div class="nhsuk-checkboxes__item">
-                                                    <input class="nhsuk-checkboxes__input default-question-checkbox"
-                                                           type="checkbox"
-                                                           name="@($"{nameof(Model.DefaultQuestions)}[{index}].{nameof(defaultQuestion.ID)}")"
-                                                           id="learning-enabled-@defaultQuestion.ID"
-                                                           checked="@Model.DefaultAssessmentQuestionIDs.Contains(@defaultQuestion.ID)"
-                                                           value="true" />
-                                                    <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="default-question-@defaultQuestion.ID">
-                                                        @defaultQuestion.Question
-                                                    </label>
-                                                </div>
-                                            }
+                                        <div class="nhsuk-form-group">
+                                            <div class="nhsuk-checkboxes">
+                                                @foreach (var (defaultQuestion, index) in Model.DefaultQuestions.Select((t, i) => (t, i)))
+                                                {
+                                                    <div class="nhsuk-checkboxes__item">
+                                                        <input class="nhsuk-checkboxes__input default-question-checkbox"
+                                                               type="checkbox"
+                                                               name="DefaultAssessmentQuestionIDs"
+                                                               id="default-question-@defaultQuestion.ID"
+                                                               checked="@Model.DefaultAssessmentQuestionIDs.Contains(@defaultQuestion.ID)"
+                                                               value="@defaultQuestion.ID" />
+                                                        <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="default-question-@defaultQuestion.ID">
+                                                            @defaultQuestion.Question
+                                                        </label>
+                                                    </div>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             }
+                            <div class="nhsuk-checkboxes__item">
+                                <input class="nhsuk-checkboxes__input" id="customQuestion" type="checkbox" asp-for="@Model.AddCustomAssessmentQuestion" aria-controls="conditional-custom-question" aria-expanded="false" aria-describedby="custom-question-hint">
+                                <label class="nhsuk-label nhsuk-checkboxes__label" for="customQuestion">
+                                    Custom assessment question
+                                </label>
+                            </div>
+                            <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="conditional-custom-question">
+
+                                <label class="nhsuk-label" for="select-question">
+                                    Add an existing assessment question to the uploaded @Model.FrameworkVocabularyPlural.ToLower()
+                                </label>
+                                <select class="nhsuk-select nhsuk-u-width-three-quarters" id="select-question" asp-items="@Model.QuestionSelectList" asp-for="@Model.CustomAssessmentQuestionID"></select>
+                            </div>
                         </div>
                     </fieldset>
                 </div>
+                <button class="nhsuk-button" type="submit">Next</button>
             </form>
+            <vc:back-link asp-controller="Frameworks" asp-action="Index" asp-all-route-data="@null" link-text="Cancel" />
         </div>
     </div>
 </div>
