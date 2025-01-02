@@ -136,9 +136,23 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var data = GetBulkUploadData();
             data.AddDefaultAssessmentQuestions = model.AddDefaultAssessmentQuestions;
+            if (model.AddDefaultAssessmentQuestions)
+            {
+                data.DefaultQuestionIDs = model.DefaultAssessmentQuestionIDs;
+            }
+            else
+            {
+                data.DefaultQuestionIDs = [];
+            }
             data.AddCustomAssessmentQuestion = model.AddCustomAssessmentQuestion;
-            data.DefaultQuestionIDs = model.DefaultAssessmentQuestionIDs;
-            data.CustomAssessmentQuestionID = model.CustomAssessmentQuestionID;
+            if (model.AddCustomAssessmentQuestion)
+            {
+                data.CustomAssessmentQuestionID = model.CustomAssessmentQuestionID;
+            }
+            else
+            {
+                data.CustomAssessmentQuestionID = null;
+            }
             setBulkUploadData(data);
             return RedirectToAction("AddQuestionsToWhichCompetencies");
         }
