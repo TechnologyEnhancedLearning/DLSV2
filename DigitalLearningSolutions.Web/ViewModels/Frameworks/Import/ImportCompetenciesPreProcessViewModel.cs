@@ -18,8 +18,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
             ToProcessCount = bulkCompetenciesResult.ProcessedCount;
             CompetenciesToAddCount = bulkCompetenciesResult.CompetencyAddedCount;
             ToUpdateOrSkipCount = bulkCompetenciesResult.CompetencyUpdatedCount;
-            CompetencyGroupsToAddCount = bulkCompetenciesResult.GroupAddedCount;
-            CompetencyGroupsToUpdateCount = bulkCompetenciesResult.GroupUpdatedCount;
             Errors = bulkCompetenciesResult.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason, FrameworkVocabularyHelper.VocabularySingular(bulkCompetenciesData.FrameworkVocubulary))));
         }
         public string? FrameworkName { get; set; }
@@ -30,9 +28,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
         public int ErrorCount => Errors.Count();
         public int ToProcessCount { get; set; }
         public int CompetenciesToAddCount { get; set; }
-        public int CompetenciesToUpdateCount { get; set; }
-        public int CompetencyGroupsToAddCount { get; set; }
-        public int CompetencyGroupsToUpdateCount { get; set; }
         public int ToUpdateOrSkipCount { get; set; }
         public string? ImportFile { get; set; }
         public bool IsNotBlank { get; set; }
