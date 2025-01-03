@@ -84,6 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 data.CompetenciesToProcessCount = resultsModel.ToProcessCount;
                 data.CompetenciesToAddCount = resultsModel.CompetenciesToAddCount;
                 data.CompetenciesToUpdateCount = resultsModel.ToUpdateOrSkipCount;
+                data.CompetenciesToReorderCount = results.CompetencyReorderedCount;
                 setBulkUploadData(data);
                 return View("Developer/Import/ImportCompleted", resultsModel);
             }
@@ -92,6 +93,30 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
                 return View("Developer/Import/ImportFailed");
             }
+        }
+        [Route("/Framework/{frameworkId}/{tabname}/Import/Ordering")]
+        public IActionResult ApplyCompetencyOrdering()
+        {
+            var data = GetBulkUploadData();
+            if (data.CompetenciesToReorderCount > 0)
+            {
+                var model = new ApplyCompetencyOrderingViewModel(data.FrameworkId, data.FrameworkName, data.FrameworkVocubulary, data.CompetenciesToReorderCount, data.ReorderCompetenciesOption);
+                return View("Developer/Import/ApplyCompetencyOrdering", model);
+            }
+            return RedirectToAction("AddAssessmentQuestions", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
+        }
+        [HttpPost]
+        [Route("/Framework/{frameworkId}/{tabname}/Import/Ordering")]
+        public IActionResult ApplyCompetencyOrdering(int reorderCompetenciesOption)
+        {
+            var data = GetBulkUploadData();
+
+            if (data.ReorderCompetenciesOption != reorderCompetenciesOption)
+            {
+                data.ReorderCompetenciesOption = reorderCompetenciesOption;
+                setBulkUploadData(data);
+            }
+            return RedirectToAction("AddAssessmentQuestions", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
         }
         [Route("/Framework/{frameworkId}/{tabname}/Import/AssessmentQuestions")]
         public IActionResult AddAssessmentQuestions()
@@ -119,6 +144,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 data.PublishStatusID,
                 data.CompetenciesToAddCount,
                 data.CompetenciesToUpdateCount,
+                data.CompetenciesToReorderCount,
                 defaultQuestions,
                 questionSelectList
                 );

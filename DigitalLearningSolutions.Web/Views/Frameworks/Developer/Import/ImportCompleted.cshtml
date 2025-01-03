@@ -32,23 +32,30 @@
         <div class="nhsuk-u-reading-width">
             <p class="nhsuk-body-l">@(Model.ErrorCount == 0 ? "Your file is error free and ready to be processed. Check the information below looks, correct before processing" : "Your file contains the following, including some errors:")</p>
             <ul>
-                <li>@Model.ToProcessCount @(Model.ToProcessCount == 1 ? "row" : "rows") to process</li>
-                <li>@Model.CompetenciesToAddCount new @(Model.CompetenciesToAddCount == 1 ? Model.FrameworkVocabularySingular.ToLower() : Model.FrameworkVocabularyPlural.ToLower()) to add</li>
-                <li>@Model.ToUpdateOrSkipCount @Model.FrameworkVocabularySingular.ToLower() @(Model.ToUpdateOrSkipCount == 1 ? "record" : "records") to update (or skip if unchanged)</li>
-                <li>In @Model.CompetencyGroupCount @Model.FrameworkVocabularySingular.ToLower() groups</li>
-                <li>With a total of @Model.FlagCount flags assigned to @Model.FrameworkVocabularyPlural.ToLower() (@Model.DistinctFlagsCount distinct flags)</li>
+                <li>@Model.ToProcessCount @(Model.ToProcessCount == 1 ? "row" : "rows") uploaded</li>
                 @if (Model.ErrorCount > 0)
                 {
                     <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "row" : "rows") containing errors that cannot be processed</li>
                 }
                 else
                 {
+                    <li>@Model.CompetenciesToAddCount new @(Model.CompetenciesToAddCount == 1 ? Model.FrameworkVocabularySingular.ToLower() : Model.FrameworkVocabularyPlural.ToLower()) to add</li>
+                    <li>@Model.ToUpdateOrSkipCount @Model.FrameworkVocabularySingular.ToLower() @(Model.ToUpdateOrSkipCount == 1 ? "record" : "records") to update (or skip if unchanged)</li>
+                    <li>In @Model.CompetencyGroupCount @Model.FrameworkVocabularySingular.ToLower() groups</li>
+                    <li>With @Model.FlagCount flags assigned to @Model.FrameworkVocabularyPlural.ToLower() (@Model.DistinctFlagsCount distinct flags)</li>
+                    @if (Model.CompetenciesToReorderCount > 0)
+                    {
+                        <text>
+                        <li>
+                                @Model.CompetenciesToReorderCount existing @Model.FrameworkVocabularySingular.ToLower() @(Model.CompetenciesToReorderCount == 1 ? "record" : "records") have changed sequence in your uploaded sheet. You can choose whether to fix them in the new order next.
+                        </li></text>
+                    }
                     <li>No errors</li>
                 }
             </ul>
             @if (Model.ErrorCount == 0)
             {
-                <a asp-controller="Frameworks" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure" asp-action="AddAssessmentQuestions" class="nhsuk-button">Continue</a>
+                <a asp-controller="Frameworks" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure" asp-action="ApplyCompetencyOrdering" class="nhsuk-button">Continue</a>
             }
             else
             {
@@ -85,7 +92,7 @@
                     <button class="nhsuk-button" type="submit">Upload file</button>
                 </form>
             }
-            <vc:back-link asp-controller="Frameworks" asp-action="Index" asp-all-route-data="@null" link-text="Cancel" />
+            <vc:cancel-link asp-controller="Frameworks" asp-action="CancelImport" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
         </div>
     </div>
 </div>

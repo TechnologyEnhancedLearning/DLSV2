@@ -34,15 +34,16 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var table = OpenCompetenciesTable(workbook, vocabulary);
             var competencyRows = table.Rows().Skip(1).Select(row => new CompetencyTableRow(table, row)).ToList();
+            var newCompetencyIds = competencyRows.Select(row => row.ID ?? 0).ToList();
             var existingCompetencies = frameworkService.GetBulkCompetenciesForFramework(frameworkId);
             var existingIds = existingCompetencies.Select(bc => (int)bc.ID).ToList();
             foreach (var competencyRow in competencyRows)
             {
-                PreProcessCompetencyRow(competencyRow, existingIds);
+                PreProcessCompetencyRow(competencyRow, newCompetencyIds, existingIds);
             }
             return new ImportCompetenciesResult(competencyRows);
         }
-        private void PreProcessCompetencyRow(CompetencyTableRow competencyRow, List<int> existingIds)
+        private void PreProcessCompetencyRow(CompetencyTableRow competencyRow, List<int> newIds, List<int> existingIds)
         {
             if (competencyRow.ID == null)
             {
@@ -50,13 +51,23 @@ namespace DigitalLearningSolutions.Web.Services
             }
             else
             {
-                if (!existingIds.Contains((int)(competencyRow?.ID)))
+                var id = (int)(competencyRow?.ID);
+                if (!existingIds.Contains(id))
                 {
                     competencyRow.RowStatus = RowStatus.InvalidId;
                 }
                 else
                 {
-                    competencyRow.RowStatus = RowStatus.CompetencyUpdated;
+                    int originalIndex = existingIds.IndexOf(id);
+                    int newIndex = newIds.IndexOf(id);
+                    if(originalIndex == newIndex)
+                    {
+                        competencyRow.RowStatus = RowStatus.CompetencyUpdated;
+                    }
+                    else
+                    {
+                        competencyRow.RowStatus = RowStatus.CompetencyUpdatedAndReordered;
+                    }
                 }
             }
             competencyRow.Validate();
