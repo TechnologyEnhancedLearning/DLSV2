@@ -35,6 +35,8 @@
                 <li>@Model.ToProcessCount @(Model.ToProcessCount == 1 ? "row" : "rows") to process</li>
                 <li>@Model.CompetenciesToAddCount new @(Model.CompetenciesToAddCount == 1 ? Model.FrameworkVocabularySingular.ToLower() : Model.FrameworkVocabularyPlural.ToLower()) to add</li>
                 <li>@Model.ToUpdateOrSkipCount @Model.FrameworkVocabularySingular.ToLower() @(Model.ToUpdateOrSkipCount == 1 ? "record" : "records") to update (or skip if unchanged)</li>
+                <li>In @Model.CompetencyGroupCount @Model.FrameworkVocabularySingular.ToLower() groups</li>
+                <li>With a total of @Model.FlagCount flags assigned to @Model.FrameworkVocabularyPlural.ToLower() (@Model.DistinctFlagsCount distinct flags)</li>
                 @if (Model.ErrorCount > 0)
                 {
                     <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "row" : "rows") containing errors that cannot be processed</li>
