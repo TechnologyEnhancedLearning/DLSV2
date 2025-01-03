@@ -29,7 +29,7 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         <div class="nhsuk-u-reading-width">
-            <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SubmitAddWhoToGroup" enctype="multipart/form-data">
+            <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
                 <fieldset class="nhsuk-fieldset">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                         <h1 class="nhsuk-fieldset__heading">
@@ -81,7 +81,7 @@
                 <a asp-controller="Frameworks" asp-action="AddAssessmentQuestions" asp-all-route-data="@cancelLinkData" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
                 <button class="nhsuk-button" type="submit">Next</button>
             </form>
-            <vc:back-link asp-controller="Frameworks" asp-action="Index" asp-all-route-data="@null" link-text="Cancel" />
+            <vc:cancel-link asp-controller="Frameworks" asp-action="CancelImport" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
         </div>
     </div>
 </div>

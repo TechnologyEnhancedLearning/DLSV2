@@ -12,6 +12,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
         int publishStatusId,
         int newCompetencies,
         int existingCompetencies,
+        int competenciesToReorderCount,
         IEnumerable<AssessmentQuestion> defaultQuestions,
         SelectList questionSelectList
         ) : AddAssessmentQuestionsFormData
@@ -23,6 +24,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
         public int PublishStatusID { get; set; } = publishStatusId;
         public int NewCompetencies { get; set; } = newCompetencies;
         public int ExistingCompetencies { get; set; } = existingCompetencies;
+        public int CompetenciesToReorderCount { get; set; } = competenciesToReorderCount;
         public IEnumerable<AssessmentQuestion>? DefaultQuestions { get; set; } = defaultQuestions;
         public SelectList? QuestionSelectList { get; set; } = questionSelectList;
     }

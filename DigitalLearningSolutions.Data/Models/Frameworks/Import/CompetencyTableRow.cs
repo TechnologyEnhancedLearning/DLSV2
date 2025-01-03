@@ -9,6 +9,7 @@
         CompetencyGroupAndCompetencyInserted,
         CompetencyInserted,
         CompetencyUpdated,
+        CompetencyUpdatedAndReordered,
         CompetencyGroupInserted,
         CompetencyGroupUpdated,
         CompetencyGroupAndCompetencyUpdated,
