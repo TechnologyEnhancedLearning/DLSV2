@@ -12,7 +12,8 @@
         CompetencyGroupInserted,
         CompetencyGroupUpdated,
         CompetencyGroupAndCompetencyUpdated,
-        InvalidAlwaysShowDescription
+        InvalidAlwaysShowDescription,
+        InvalidId
     }
     public class CompetencyTableRow : BulkCompetency
     {
@@ -25,7 +26,7 @@
             }
 
             RowNumber = row.RowNumber();
-            id = row.Cell(1).GetValue<int?>();
+            ID = row.Cell(1).GetValue<int?>();
             CompetencyGroup = row.Cell(2).GetValue<string?>();
             GroupDescription = row.Cell(3).GetValue<string?>();
             Competency = row.Cell(4).GetValue<string?>();
@@ -56,6 +57,10 @@
             else if (!string.IsNullOrWhiteSpace(AlwaysShowDescriptionRaw) && !bool.TryParse(AlwaysShowDescriptionRaw, out _))
             {
                 Error = ImportCompetenciesResult.ErrorReason.InvalidAlwaysShowDescription;
+            }
+            else if (RowStatus == RowStatus.InvalidId)
+            {
+                Error = ImportCompetenciesResult.ErrorReason.InvalidId;
             }
 
             return !Error.HasValue;
