@@ -19,6 +19,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
             CompetenciesToAddCount = bulkCompetenciesResult.CompetencyAddedCount;
             ToUpdateOrSkipCount = bulkCompetenciesResult.CompetencyUpdatedCount;
             Errors = bulkCompetenciesResult.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason, FrameworkVocabularyHelper.VocabularySingular(bulkCompetenciesData.FrameworkVocubulary))));
+            FlagCount = bulkCompetenciesResult.FlagCount;
+            DistinctFlagsCount = bulkCompetenciesResult.DistinctFlagsCount;
+            CompetencyGroupCount = bulkCompetenciesResult.CompetencyGroupCount;
         }
         public string? FrameworkName { get; set; }
         public int PublishStatusID { get; set; }
@@ -32,6 +35,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
         public string? ImportFile { get; set; }
         public bool IsNotBlank { get; set; }
         public string TabName { get; set; }
+        public int FlagCount { get; set; }
+        public int DistinctFlagsCount { get; set; }
+        public int CompetencyGroupCount { get; set; }
 
         private static string MapReasonToErrorMessage(ImportCompetenciesResult.ErrorReason reason, string vocabularySingular)
         {
@@ -42,7 +48,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
                 ImportCompetenciesResult.ErrorReason.MissingCompetencyName =>
                     vocabularySingular + " is blank. " + vocabularySingular + " is a required field and cannot be left blank",
                 ImportCompetenciesResult.ErrorReason.InvalidId =>
-                    "The ID provided does not match a " + vocabularySingular + " ID in this Framework",
+                    "The ID provided does not match a " + vocabularySingular + " ID in this Framework. Leave the ID column blank for new competencies.",
                 ImportCompetenciesResult.ErrorReason.TooLongCompetencyName =>
                     vocabularySingular + " must be 500 characters or less.",
                 ImportCompetenciesResult.ErrorReason.InvalidAlwaysShowDescription =>

@@ -79,7 +79,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var workbook = new XLWorkbook(filePath);
             try
             {
-                var results = importCompetenciesFromFileService.PreProcessCompetenciesTable(workbook, data.FrameworkVocubulary);
+                var results = importCompetenciesFromFileService.PreProcessCompetenciesTable(workbook, data.FrameworkVocubulary, data.FrameworkId);
                 var resultsModel = new ImportCompetenciesPreProcessViewModel(results, data) { IsNotBlank = data.IsNotBlank, TabName = data.TabName };
                 data.CompetenciesToProcessCount = resultsModel.ToProcessCount;
                 data.CompetenciesToAddCount = resultsModel.CompetenciesToAddCount;
