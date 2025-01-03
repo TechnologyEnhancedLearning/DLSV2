@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.Services
     public interface IImportCompetenciesFromFileService
     {
         byte[] GetCompetencyFileForFramework(int frameworkId, bool isBlank, string vocabulary);
-        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook, string vocabulary);
+        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook, string vocabulary, int frameworkId);
         public ImportCompetenciesResult ProcessCompetenciesFromFile(IXLWorkbook workbook, int adminUserId, int frameworkId, string vocabulary);
     }
     public class ImportCompetenciesFromFileService : IImportCompetenciesFromFileService
@@ -30,27 +30,36 @@ namespace DigitalLearningSolutions.Web.Services
         {
             this.frameworkService = frameworkService;
         }
-        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook, string vocabulary)
+        public ImportCompetenciesResult PreProcessCompetenciesTable(IXLWorkbook workbook, string vocabulary, int frameworkId)
         {
             var table = OpenCompetenciesTable(workbook, vocabulary);
             var competencyRows = table.Rows().Skip(1).Select(row => new CompetencyTableRow(table, row)).ToList();
+            var existingCompetencies = frameworkService.GetBulkCompetenciesForFramework(frameworkId);
+            var existingIds = existingCompetencies.Select(bc => (int)bc.ID).ToList();
             foreach (var competencyRow in competencyRows)
             {
-                PreProcessCompetencyRow(competencyRow);
+                PreProcessCompetencyRow(competencyRow, existingIds);
             }
             return new ImportCompetenciesResult(competencyRows);
         }
-        private void PreProcessCompetencyRow(CompetencyTableRow competencyRow)
+        private void PreProcessCompetencyRow(CompetencyTableRow competencyRow, List<int> existingIds)
         {
-            competencyRow.Validate();
-            if (competencyRow.id == null)
+            if (competencyRow.ID == null)
             {
                 competencyRow.RowStatus = RowStatus.CompetencyInserted;
             }
             else
             {
-                competencyRow.RowStatus = RowStatus.CompetencyUpdated;
+                if (!existingIds.Contains((int)(competencyRow?.ID)))
+                {
+                    competencyRow.RowStatus = RowStatus.InvalidId;
+                }
+                else
+                {
+                    competencyRow.RowStatus = RowStatus.CompetencyUpdated;
+                }
             }
+            competencyRow.Validate();
         }
         public ImportCompetenciesResult ProcessCompetenciesFromFile(IXLWorkbook workbook, int adminUserId, int frameworkId, string vocabulary)
         {
@@ -77,7 +86,12 @@ namespace DigitalLearningSolutions.Web.Services
         internal ImportCompetenciesResult ProcessCompetenciesTable(IXLTable table, int adminUserId, int frameworkId, int maxFrameworkCompetencyId, int maxFrameworkCompetencyGroupId)
         {
             var competenciesRows = table.Rows().Skip(1).Select(row => new CompetencyTableRow(table, row)).ToList();
-
+            
+            var competencyGroupCount = competenciesRows
+            .Where(row => !string.IsNullOrWhiteSpace(row.CompetencyGroup))
+            .Select(row => row.CompetencyGroup)
+            .Distinct()
+            .Count();
             foreach (var competencyRow in competenciesRows)
             {
                 maxFrameworkCompetencyGroupId = ProcessCompetencyRow(adminUserId, frameworkId, maxFrameworkCompetencyId, maxFrameworkCompetencyGroupId, competencyRow);
@@ -167,13 +181,11 @@ namespace DigitalLearningSolutions.Web.Services
         }
         private void PopulateCompetenciesSheet(IXLWorkbook workbook, int frameworkId, bool blank, string vocabulary)
         {
-
-
             var competencyRecords = frameworkService.GetBulkCompetenciesForFramework(blank ? 0 : frameworkId);
             var competencies = competencyRecords.Select(
                 x => new
                 {
-                    ID = x.id,
+                    x.ID,
                     x.CompetencyGroup,
                     x.GroupDescription,
                     x.Competency,
