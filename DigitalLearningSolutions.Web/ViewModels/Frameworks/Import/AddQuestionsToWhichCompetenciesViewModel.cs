@@ -37,5 +37,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
         public int CompetenciesToProcessCount { get; set; }
         public int CompetenciesToAddCount { get; set; }
         public int CompetenciesToUpdateCount { get; set; }
+        
     }
 }

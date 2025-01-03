@@ -35,6 +35,8 @@ namespace DigitalLearningSolutions.Web.Models
         public int CompetenciesToProcessCount { get; set; }
         public int CompetenciesToAddCount { get; set; }
         public int CompetenciesToUpdateCount { get; set; }
+        public int CompetenciesToReorderCount { get; set; }
+        public int ReorderCompetenciesOption { get; set; } = 1; //1 = ignore order, 2 = apply order
         public int LastRowProcessed { get; set; }
         public int SubtotalCompetenciesAdded { get; set; }
         public int SubtotalCompetenciesUpdated { get; set; }

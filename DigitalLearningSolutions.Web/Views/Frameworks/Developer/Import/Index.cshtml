@@ -110,7 +110,7 @@
                 <vc:file-input asp-for="@nameof(Model.ImportFile)" label="Excel file ready for import" hint-text="" css-class="nhsuk-u-width-one-half" />
                 <button class="nhsuk-button" type="submit">Start upload</button>
             </form>
-            <vc:cancel-link asp-controller="Frameworks" asp-action="ViewFramework" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
+            <vc:cancel-link asp-controller="Frameworks" asp-action="CancelImport" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
         </div>
     </div>
 </div>
