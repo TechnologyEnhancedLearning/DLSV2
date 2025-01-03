@@ -22,7 +22,8 @@
         {
             ProcessedCount = competencyTableRows.Count;
             CompetencyAddedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyInserted | dr.RowStatus == RowStatus.CompetencyGroupAndCompetencyInserted);
-            CompetencyUpdatedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyUpdated);
+            CompetencyUpdatedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyUpdated | dr.RowStatus == RowStatus.CompetencyUpdatedAndReordered);
+            CompetencyReorderedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyUpdatedAndReordered);
             GroupAddedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyGroupInserted | dr.RowStatus == RowStatus.CompetencyGroupAndCompetencyInserted);
             SkippedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.Skipped);
             Errors = competencyTableRows.Where(dr => dr.Error.HasValue).Select(dr => (dr.RowNumber, dr.Error!.Value));
@@ -47,6 +48,7 @@
         public int ProcessedCount { get; set; }
         public int CompetencyAddedCount { get; set; }
         public int CompetencyUpdatedCount { get; set; }
+        public int CompetencyReorderedCount { get; set; }
         public int GroupAddedCount { get; set; }
         public int GroupUpdatedCount { get; set; }
         public int SkippedCount { get; set; }

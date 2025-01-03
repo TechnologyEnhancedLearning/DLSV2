@@ -17,6 +17,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
             FrameworkVocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(bulkCompetenciesData.FrameworkVocubulary);
             ToProcessCount = bulkCompetenciesResult.ProcessedCount;
             CompetenciesToAddCount = bulkCompetenciesResult.CompetencyAddedCount;
+            CompetenciesToReorderCount = bulkCompetenciesResult.CompetencyReorderedCount;
             ToUpdateOrSkipCount = bulkCompetenciesResult.CompetencyUpdatedCount;
             Errors = bulkCompetenciesResult.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason, FrameworkVocabularyHelper.VocabularySingular(bulkCompetenciesData.FrameworkVocubulary))));
             FlagCount = bulkCompetenciesResult.FlagCount;
@@ -31,6 +32,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
         public int ErrorCount => Errors.Count();
         public int ToProcessCount { get; set; }
         public int CompetenciesToAddCount { get; set; }
+        public int CompetenciesToReorderCount { get; set; }
         public int ToUpdateOrSkipCount { get; set; }
         public string? ImportFile { get; set; }
         public bool IsNotBlank { get; set; }
