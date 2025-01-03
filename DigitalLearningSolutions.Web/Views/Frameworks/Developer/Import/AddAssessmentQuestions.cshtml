@@ -96,9 +96,10 @@
                         </div>
                     </fieldset>
                 </div>
+                <a asp-controller="Frameworks" asp-action="@(Model.CompetenciesToReorderCount == 0 ? "ImportCompleted" : "ApplyCompetencyOrdering")" asp-all-route-data="@cancelLinkData" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
                 <button class="nhsuk-button" type="submit">Next</button>
             </form>
-            <vc:back-link asp-controller="Frameworks" asp-action="Index" asp-all-route-data="@null" link-text="Cancel" />
+            <vc:cancel-link asp-controller="Frameworks" asp-action="CancelImport" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
         </div>
     </div>
 </div>
