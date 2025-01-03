@@ -26,6 +26,21 @@
             GroupAddedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyGroupInserted | dr.RowStatus == RowStatus.CompetencyGroupAndCompetencyInserted);
             SkippedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.Skipped);
             Errors = competencyTableRows.Where(dr => dr.Error.HasValue).Select(dr => (dr.RowNumber, dr.Error!.Value));
+            FlagCount = competencyTableRows
+                .Where(row => !string.IsNullOrWhiteSpace(row.FlagsCsv))
+                .SelectMany(static row => row.FlagsCsv.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                .Count();
+            DistinctFlagsCount = competencyTableRows
+                .Where(row => !string.IsNullOrWhiteSpace(row.FlagsCsv))
+                .SelectMany(row => row.FlagsCsv.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                .Select(flag => flag.Trim())
+                .Distinct()
+                .Count();
+            CompetencyGroupCount = competencyTableRows
+                .Where(row => !string.IsNullOrWhiteSpace(row.CompetencyGroup))
+                .Select(static row => row.CompetencyGroup)
+                .Distinct()
+                .Count();
         }
 
         public IEnumerable<(int RowNumber, ErrorReason Reason)>? Errors { get; set; }
@@ -35,5 +50,8 @@
         public int GroupAddedCount { get; set; }
         public int GroupUpdatedCount { get; set; }
         public int SkippedCount { get; set; }
+        public int FlagCount { get; set; }
+        public int DistinctFlagsCount { get; set; }
+        public int CompetencyGroupCount { get; set; }
     }
 }
