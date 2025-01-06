@@ -217,6 +217,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             setBulkUploadData(data);
             return RedirectToAction("Summary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
         }
+        [Route("CancelImport")]
+        public IActionResult CancelImport()
+        {
+            var data = GetBulkUploadData();
+            var frameworkId = data.FrameworkId;
+            FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
+            TempData.Clear();
+            return RedirectToAction("ViewFramework", new { frameworkId, tabname = "Structure" });
+        }
         private void setupBulkUploadData(int frameworkId, int adminUserID, string competenciessFileName, string tabName, bool isNotBlank)
         {
             TempData.Clear();
