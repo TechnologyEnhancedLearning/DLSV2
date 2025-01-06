@@ -100,6 +100,7 @@
 
         Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
         IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId);
+        List<int> GetFrameworkCompetencyOrder(int frameworkId, List<int> frameworkCompetencyIds);
 
         //  Comments:
         IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId);
@@ -2428,6 +2429,17 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                             );
             }
 
+        }
+        public List<int> GetFrameworkCompetencyOrder(int frameworkId, List<int> frameworkCompetencyIds)
+        {
+            return connection.Query<int>(
+                @"SELECT fc.ID
+                    FROM   FrameworkCompetencies AS fc INNER JOIN
+                                 FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID
+                    WHERE (fc.FrameworkID = @frameworkId) AND (fc.ID IN @frameworkCompetencyIds)
+                    ORDER BY fcg.Ordering, fc.Ordering",
+                                new { frameworkId, frameworkCompetencyIds }
+                            ).ToList();
         }
     }
 }
