@@ -59,10 +59,10 @@
                             <div class="nhsuk-radios__item">
                                 <input class="nhsuk-radios__input" id="option-2" asp-for="@Model.AddAssessmentQuestionsOption" type="radio" value="2" aria-describedby="option-2-hint">
                                 <label class="nhsuk-label nhsuk-radios__label" for="option-2">
-                                    Only add questions to @(Model.CompetenciesToAddCount > 0 ? Model.CompetenciesToAddCount + " new and " : "") modified @Model.FrameworkVocabularyPlural.ToLower()
+                                    Only add questions to @(Model.CompetenciesToAddCount > 0 ? " new and " : "") modified @Model.FrameworkVocabularyPlural.ToLower()
                                 </label>
                                 <div class="nhsuk-hint nhsuk-radios__hint" id="option-2-hint">
-                                    @(Model.CompetenciesToAddCount > 0 ? Model.CompetenciesToAddCount + " new @Model.FrameworkVocabularyPlural.ToLower() and only those of the " : "Only those of the ") @Model.CompetenciesToUpdateCount existing @Model.FrameworkVocabularyPlural.ToLower() that have been modified in the sheet will have the assessment questions added
+                                    @(Model.CompetenciesToAddCount > 0 ? Model.CompetenciesToAddCount + $" new {@Model.FrameworkVocabularyPlural.ToLower()} and only those of the " : "Only those of the ") @Model.CompetenciesToUpdateCount existing @Model.FrameworkVocabularyPlural.ToLower() that have been modified in the sheet will have the assessment questions added
                                 </div>
                             </div>
                             <div class="nhsuk-radios__item">
