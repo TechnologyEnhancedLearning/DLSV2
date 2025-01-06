@@ -187,7 +187,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 data.AddAssessmentQuestionsOption = 1;
                 setBulkUploadData(data);
-                return RedirectToAction("Summary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
+                return RedirectToAction("ImportSummary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
             }
         }
         [Route("/Framework/{frameworkId}/{tabname}/Import/AssessmentQuestions/Competencies")]
@@ -215,7 +215,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var data = GetBulkUploadData();
             data.AddAssessmentQuestionsOption = AddAssessmentQuestionsOption;
             setBulkUploadData(data);
-            return RedirectToAction("Summary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
+            return RedirectToAction("ImportSummary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
+        }
+        [Route("/Framework/{frameworkId}/{tabname}/Import/Summary")]
+        public IActionResult ImportSummary()
+        {
+            var data = GetBulkUploadData();
+            var model = new ImportSummaryViewModel(data);
+            return View("Developer/Import/ImportSummary", model);
         }
         [Route("CancelImport")]
         public IActionResult CancelImport()
