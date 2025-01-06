@@ -35,8 +35,7 @@ namespace DigitalLearningSolutions.Web.Services
             var table = OpenCompetenciesTable(workbook, vocabulary);
             var competencyRows = table.Rows().Skip(1).Select(row => new CompetencyTableRow(table, row)).ToList();
             var newCompetencyIds = competencyRows.Select(row => row.ID ?? 0).ToList();
-            var existingCompetencies = frameworkService.GetBulkCompetenciesForFramework(frameworkId);
-            var existingIds = existingCompetencies.Select(bc => (int)bc.ID).ToList();
+            var existingIds = frameworkService.GetFrameworkCompetencyOrder(frameworkId, newCompetencyIds);
             foreach (var competencyRow in competencyRows)
             {
                 PreProcessCompetencyRow(competencyRow, newCompetencyIds, existingIds);
