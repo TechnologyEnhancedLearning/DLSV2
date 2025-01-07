@@ -1516,7 +1516,13 @@ WHERE (FrameworkID = @frameworkId)",
                                  FROM            [CompetencyAssessmentQuestions]
                                  WHERE        ([CompetencyId] = fc.CompetencyID)), 0)+1
                         FROM FrameworkCompetencies AS fc
-                        WHERE Id = @frameworkCompetencyId",
+                        WHERE Id = @frameworkCompetencyId
+                        AND NOT EXISTS (
+                            SELECT 1
+                            FROM CompetencyAssessmentQuestions AS caq
+                            WHERE caq.CompetencyId = fc.CompetencyID
+                            AND caq.AssessmentQuestionID = @assessmentQuestionId
+                        );",
                 new { frameworkCompetencyId, assessmentQuestionId }
             );
             if (numberOfAffectedRows < 1)
