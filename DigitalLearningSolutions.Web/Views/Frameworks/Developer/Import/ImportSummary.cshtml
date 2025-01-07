@@ -101,7 +101,7 @@
             <span class="nhsuk-u-visually-hidden">Important: </span>
             <p>Once @Model.FrameworkVocabularySingular.ToLower() records are processed, changes cannot be undone.</p>
         </div>
-        <form asp-action="StartProcessing">
+        <form method="post">
             <a asp-controller="Frameworks" asp-all-route-data="@cancelLinkData" asp-action="AddQuestionsToWhichCompetencies" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
             <button type="submit" class="nhsuk-button">Process @Model.FrameworkVocabularyPlural.ToLower()</button>
         </form>
