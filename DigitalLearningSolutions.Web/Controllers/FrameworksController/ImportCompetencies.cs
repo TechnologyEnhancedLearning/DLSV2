@@ -224,6 +224,20 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var model = new ImportSummaryViewModel(data);
             return View("Developer/Import/ImportSummary", model);
         }
+        [HttpPost]
+        [Route("/Framework/{frameworkId}/{tabname}/Import/Summary")]
+        public IActionResult ImportSummarySubmit()
+        {
+            var data = GetBulkUploadData();
+            var adminId = GetAdminId();
+            var uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "Uploads\\");
+            var filePath = Path.Combine(uploadDir, data.CompetenciesFileName);
+            var workbook = new XLWorkbook(filePath);
+            var results = importCompetenciesFromFileService.ProcessCompetenciesFromFile(workbook, adminId, data.FrameworkId, data.FrameworkVocubulary, data.ReorderCompetenciesOption, data.AddAssessmentQuestionsOption, data.AddCustomAssessmentQuestion ? (int)data.CustomAssessmentQuestionID : 0, data.AddDefaultAssessmentQuestions ? data.DefaultQuestionIDs : []);
+            data.ImportCompetenciesResult = results;
+            setBulkUploadData(data);
+            return RedirectToAction("UploadResults", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
+        }
         [Route("CancelImport")]
         public IActionResult CancelImport()
         {
