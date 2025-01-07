@@ -127,6 +127,7 @@ namespace DigitalLearningSolutions.Web.Services
             }
             int newCompetencyGroupId = 0;
             int newCompetencyId = 0;
+            int newFrameworkCompetencyId = 0;
             //If competency group is set, check if competency group exists within framework and add if not and get the Framework Competency Group ID
             int ? frameworkCompetencyGroupId = null;
             if (competencyRow.CompetencyGroup != null)
@@ -166,7 +167,7 @@ namespace DigitalLearningSolutions.Web.Services
                 newCompetencyId = frameworkService.InsertCompetency(competencyRow.Competency, competencyRow.CompetencyDescription, adminUserId);
                 if (newCompetencyId > 0)
                 {
-                    var newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminUserId, frameworkId, competencyRow.AlwaysShowDescription ?? false); //including always show desc flag
+                    newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminUserId, frameworkId, competencyRow.AlwaysShowDescription ?? false); //including always show desc flag
                     if (newFrameworkCompetencyId > maxFrameworkCompetencyId)
                     {
                         competencyRow.RowStatus = (competencyRow.RowStatus == RowStatus.CompetencyGroupInserted ? RowStatus.CompetencyGroupAndCompetencyInserted : RowStatus.CompetencyInserted);
@@ -216,11 +217,11 @@ namespace DigitalLearningSolutions.Web.Services
                 {
                     foreach(var id in defaultQuestionIds)
                     {
-                        frameworkService.AddCompetencyAssessmentQuestion((int)competencyRow.ID, id, adminUserId);
+                        frameworkService.AddCompetencyAssessmentQuestion(competencyRow.ID ?? newFrameworkCompetencyId, id, adminUserId);
                     }
                     if(customAssessmentQuestionID > 0)
                     {
-                        frameworkService.AddCompetencyAssessmentQuestion((int)competencyRow.ID, customAssessmentQuestionID, adminUserId);
+                        frameworkService.AddCompetencyAssessmentQuestion(competencyRow.ID ?? newFrameworkCompetencyId, customAssessmentQuestionID, adminUserId);
                     }
                 }
             }
