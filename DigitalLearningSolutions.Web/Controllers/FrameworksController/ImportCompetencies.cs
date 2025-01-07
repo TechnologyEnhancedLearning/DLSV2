@@ -235,8 +235,20 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var workbook = new XLWorkbook(filePath);
             var results = importCompetenciesFromFileService.ProcessCompetenciesFromFile(workbook, adminId, data.FrameworkId, data.FrameworkVocubulary, data.ReorderCompetenciesOption, data.AddAssessmentQuestionsOption, data.AddCustomAssessmentQuestion ? (int)data.CustomAssessmentQuestionID : 0, data.AddDefaultAssessmentQuestions ? data.DefaultQuestionIDs : []);
             data.ImportCompetenciesResult = results;
+            //TO DO apply ordering changes if required:
+            if (data.ReorderCompetenciesOption == 2 && data.CompetenciesToReorderCount > 0)
+            {
+
+            }
             setBulkUploadData(data);
             return RedirectToAction("UploadResults", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
+        }
+        [Route("/Framework/{frameworkId}/{tabname}/Import/Results")]
+        public IActionResult UploadResults()
+        {
+            var data = GetBulkUploadData();
+            var model = new ImportCompetenciesResultsViewModel(data.ImportCompetenciesResult, data.FrameworkId, data.FrameworkName, data.FrameworkVocubulary);
+            return View("Developer/Import/UploadResults", model);
         }
         [Route("CancelImport")]
         public IActionResult CancelImport()
