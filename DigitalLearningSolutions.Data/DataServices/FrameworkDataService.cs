@@ -131,10 +131,10 @@
 
         int InsertCompetency(string name, string? description, int adminId);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
-        void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
+        int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
 
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
@@ -205,7 +205,7 @@
             int adminId
         );
 
-        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId);
+        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription);
         void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
 
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
@@ -656,7 +656,8 @@
             int competencyId,
             int? frameworkCompetencyGroupID,
             int adminId,
-            int frameworkId
+            int frameworkId,
+            bool alwaysShowDescription = false
         )
         {
             if ((competencyId < 1) | (adminId < 1) | (frameworkId < 1))
@@ -978,7 +979,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
         public FrameworkCompetency? GetFrameworkCompetencyById(int Id)
         {
             return connection.QueryFirstOrDefault<FrameworkCompetency>(
-                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering
+                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, c.AlwaysShowDescription
                     FROM FrameworkCompetencies AS fc
                         INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
                     WHERE fc.ID = @Id",
@@ -1045,7 +1046,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             }
         }
 
-        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId)
+        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription)
         {
             if ((frameworkCompetencyId < 1) | (adminId < 1) | (name.Length < 3))
             {
@@ -1057,10 +1058,10 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 
             //DO WE NEED SOMETHING IN HERE TO CHECK WHETHER IT IS USED ELSEWHERE AND WARN THE USER?
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE Competencies SET Name = @name, Description = @description, UpdatedByAdminID = @adminId
+                @"UPDATE Competencies SET Name = @name, Description = @description, UpdatedByAdminID = @adminId, AlwaysShowDescription = CASE WHEN @alwaysShowDescription IS NULL THEN AlwaysShowDescription ELSE @alwaysShowDescription END
                     FROM   Competencies INNER JOIN FrameworkCompetencies AS fc ON Competencies.ID = fc.CompetencyID
                     WHERE (fc.Id = @frameworkCompetencyId)",
-                new { name, description, adminId, frameworkCompetencyId }
+                new { name, description, adminId, frameworkCompetencyId, alwaysShowDescription}
             );
             if (numberOfAffectedRows < 1)
             {
@@ -1094,11 +1095,12 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 new { competencyId, frameworkId });
         }
 
-        public void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
+        public int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
         {
-            connection.Execute(
-                @$"INSERT INTO Flags(FrameworkID, FlagName, FlagGroup, FlagTagClass)
-                    VALUES(@frameworkId, @flagName, @flagGroup, @flagTagClass)",
+            return connection.QuerySingle<int>(
+                @"INSERT INTO Flags(FrameworkID, FlagName, FlagGroup, FlagTagClass)
+                    OUTPUT INSERTED.ID
+                    VALUES(@frameworkId, @flagName, @flagGroup, @flagTagClass);",
                 new { frameworkId, flagName, flagGroup, flagTagClass });
         }
 
