@@ -119,16 +119,16 @@ namespace DigitalLearningSolutions.Web.Services
 
         int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId);
 
-        int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
 
         IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
 
         int InsertCompetency(string name, string? description, int adminId);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
+        int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
-        void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
+        int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
 
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
@@ -199,7 +199,7 @@ namespace DigitalLearningSolutions.Web.Services
             int adminId
         );
 
-        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId);
+        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription = false);
         void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
 
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
@@ -277,9 +277,9 @@ namespace DigitalLearningSolutions.Web.Services
             frameworkDataService.AddCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionId, adminId);
         }
 
-        public void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
+        public int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
         {
-            frameworkDataService.AddCustomFlagToFramework(frameworkId, flagName, flagGroup, flagTagClass);
+            return frameworkDataService.AddCustomFlagToFramework(frameworkId, flagName, flagGroup, flagTagClass);
         }
 
         public void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting)
@@ -602,9 +602,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.InsertCompetencyGroup(groupName, groupDescription, adminId);
         }
 
-        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId)
+        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false)
         {
-            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId);
+            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId, alwaysShowDescription);
         }
 
         public int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId)
@@ -672,9 +672,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.UpdateFrameworkBranding(frameworkId, brandId, categoryId, topicId, adminId);
         }
 
-        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId)
-        {
-            frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name, description, adminId);
+        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription)
+        { 
+            frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name, description, adminId, alwaysShowDescription);
         }
 
         public void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, string? description, int adminId)
