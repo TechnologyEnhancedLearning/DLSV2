@@ -1,4 +1,5 @@
 ﻿using DigitalLearningSolutions.Data.Models.Frameworks;
+using DigitalLearningSolutions.Data.Models.Frameworks.Import;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,5 +43,6 @@ namespace DigitalLearningSolutions.Web.Models
         public int SubtotalCompetenciesUpdated { get; set; }
         public int SubTotalSkipped { get; set; }
         public IEnumerable<(int RowNumber, string ErrorMessage)> Errors { get; set; } = Enumerable.Empty<(int, string)>();
+        public ImportCompetenciesResult ImportCompetenciesResult { get;set;}
     }
 }
