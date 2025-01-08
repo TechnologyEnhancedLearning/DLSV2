@@ -124,6 +124,7 @@
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
 
         int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId);
+        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId);
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
@@ -477,6 +478,7 @@
             }
 
             var existingFrameworks = connection.QuerySingle<int>(
+            var existingFrameworks = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM Frameworks WHERE FrameworkName = @frameworkName",
                 new { frameworkName }
             );
@@ -550,6 +552,7 @@
         }
 
         public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId)
+        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId)
         {
             if ((groupName.Length == 0) | (adminId < 1))
             {
@@ -581,7 +584,26 @@
                     VALUES (@groupName, @groupDescription, @adminId)",
                 new { groupName, groupDescription, adminId }
             );
-            
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting competency group as db insert failed. " +
+                    $"Group name: {groupName}, admin id: {adminId}"
+                );
+                return -1;
+            }
+
+            existingId = connection.QuerySingle<int>(
+                @"SELECT COALESCE
+                 ((SELECT TOP (1) ID
+                  FROM    CompetencyGroups
+                  WHERE (Name = @groupName) AND EXISTS
+                                   (SELECT 1 AS Expr1
+                                   FROM    FrameworkCompetencyGroups
+                                   WHERE (CompetencyGroupID = CompetencyGroups.ID) AND (FrameworkID = @frameworkId) OR
+                                                (CompetencyGroupID = CompetencyGroups.ID) AND (@frameworkId IS NULL))), 0) AS CompetencyGroupID",
+                new { groupName, groupDescription }
+            );
             return existingId;
         }
 
@@ -595,6 +617,7 @@
                 return -2;
             }
 
+            var existingId = connection.QuerySingle<int>(
             var existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
                 new { groupId, frameworkId }
@@ -613,7 +636,19 @@
                                  WHERE        ([FrameworkID] = @frameworkId)), 0)+1, @frameworkId)",
                 new { groupId, adminId, frameworkId }
             );
-           
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting framework competency group as db insert failed. " +
+                    $"Group id: {groupId}, admin id: {adminId}, frameworkId: {frameworkId}"
+                );
+                return -1;
+            }
+
+            existingId = connection.QuerySingle<int>(
+                @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
+                new { groupId, frameworkId }
+            );
             return existingId;
         }
 
@@ -658,12 +693,14 @@
             if (frameworkCompetencyGroupID == null)
             {
                 existingId = connection.QuerySingle<int>(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID IS NULL), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
             else
             {
+                existingId = connection.QuerySingle<int>(
                 existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
@@ -694,12 +731,14 @@
             if (frameworkCompetencyGroupID == null)
             {
                 existingId = connection.QuerySingle<int>(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID IS NULL), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
             else
             {
+                existingId = connection.QuerySingle<int>(
                 existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
@@ -752,6 +791,7 @@
             }
 
             var existingId = connection.QuerySingle<int>(
+            var existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    FrameworkCollaborators
@@ -801,6 +841,7 @@
                 );
             }
 
+            existingId = connection.QuerySingle<int>(
             existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE
                  ((SELECT ID
@@ -990,6 +1031,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             }
 
             var usedElsewhere = connection.QuerySingle<int>(
+            var usedElsewhere = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
                     WHERE CompetencyGroupId = @competencyGroupId
                     AND ID <> @frameworkCompetencyGroupId",
@@ -1160,12 +1202,14 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 
             //Check if used elsewhere and delete competency group if not:
             var usedElsewhere = connection.QuerySingle<int>(
+            var usedElsewhere = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
                     WHERE CompetencyGroupId = @competencyGroupId",
                 new { competencyGroupId }
             );
             if (usedElsewhere == 0)
             {
+                usedElsewhere = connection.QuerySingle<int>(
                 usedElsewhere = connection.QuerySingle<int>(
                     @"SELECT COUNT(*) FROM SelfAssessmentStructure
                     WHERE CompetencyGroupId = @competencyGroupId",
@@ -1198,6 +1242,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
         public void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId)
         {
             var competencyId = connection.QuerySingle<int>(
+            var competencyId = connection.QuerySingle<int>(
                 @"SELECT CompetencyID FROM FrameworkCompetencies WHERE ID = @frameworkCompetencyId",
                 new { frameworkCompetencyId }
             );
@@ -1229,12 +1274,14 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 
             //Check if used elsewhere and delete competency group if not:
             var usedElsewhere = connection.QuerySingle<int>(
+            var usedElsewhere = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM FrameworkCompetencies
                     WHERE CompetencyID = @competencyId",
                 new { competencyId }
             );
             if (usedElsewhere == 0)
             {
+                usedElsewhere = connection.QuerySingle<int>(
                 usedElsewhere = connection.QuerySingle<int>(
                     @"SELECT COUNT(*) FROM SelfAssessmentStructure
                     WHERE CompetencyID = @competencyId",
