@@ -79,7 +79,7 @@
                                 <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-download-2">
                                     <div class="nhsuk-hint nhsuk-radios__hint" id="download-option-2-hint">
                                         This Excel file will include all existing @Model.FrameworkVocabularyPlural.ToLower() whose details you can update.<br />
-                                        New @Model.FrameworkVocabularyPlural.ToLower() can be added by including their details on a blank row.
+                                        New @Model.FrameworkVocabularyPlural.ToLower() can be added by including their details on a blank row, leaving the ID column blank.
                                     </div>
                                     <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-vocabulary="@Model.FrameworkVocabularySingular" asp-route-DownloadOption="2" asp-controller="Frameworks" asp-action="DownloadCompetencies" target="_blank">
                                         Download @Model.FrameworkVocabularyPlural.ToLower()
