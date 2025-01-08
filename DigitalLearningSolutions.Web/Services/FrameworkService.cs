@@ -117,7 +117,7 @@ namespace DigitalLearningSolutions.Web.Services
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
 
-        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId);
+        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId = null);
 
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
 
@@ -597,9 +597,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.InsertCompetency(name, description, adminId);
         }
 
-        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId)
+        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId)
         {
-            return frameworkDataService.InsertCompetencyGroup(groupName, groupDescription, adminId);
+            return frameworkDataService.InsertCompetencyGroup(groupName, groupDescription, adminId, frameworkId);
         }
 
         public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false)
