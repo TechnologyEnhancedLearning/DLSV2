@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Web.Services
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.Frameworks.Import;
     using DocumentFormat.OpenXml.Office2010.Excel;
 
@@ -125,14 +126,13 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 return maxFrameworkCompetencyGroupId;
             }
-            int newCompetencyGroupId = 0;
             int newCompetencyId = 0;
             int newFrameworkCompetencyId = 0;
             //If competency group is set, check if competency group exists within framework and add if not and get the Framework Competency Group ID
             int ? frameworkCompetencyGroupId = null;
             if (competencyRow.CompetencyGroup != null)
             {
-                newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroup, competencyRow.GroupDescription, adminUserId);
+                int newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroup, competencyRow.GroupDescription, adminUserId);
                 if (newCompetencyGroupId > 0)
                 {
                     frameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminUserId);
@@ -181,10 +181,10 @@ namespace DigitalLearningSolutions.Web.Services
 
 
             // If flags are supplied, add them:
-            if (competencyRow.FlagsCsv != null)
+            if (!string.IsNullOrWhiteSpace(competencyRow.FlagsCsv.Trim()))
             {
                 var flags = competencyRow.FlagsCsv.Split(',');
-                int[] flagIds = [];
+                var flagIds = new List<int>();
                 foreach (var flag in flags) {
                     int flagId = 0;
                     var frameworkFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, null);
@@ -195,6 +195,7 @@ namespace DigitalLearningSolutions.Web.Services
                             if (frameworkFlag.FlagName == flag)
                             {
                                 flagId = frameworkFlag.FlagId;
+                                break;
                             }
                         }
                     }
@@ -202,10 +203,14 @@ namespace DigitalLearningSolutions.Web.Services
                     {
                         flagId = frameworkService.AddCustomFlagToFramework(frameworkId, flag, "Flag", "nhsuk-tag--white");
                     }
-                    flagIds.Append(flagId);
+                    flagIds.Add(flagId);
                 }
-                if (flagIds.Any()) {
-                    frameworkService.UpdateCompetencyFlags(frameworkId, newCompetencyId, flagIds);
+                if (flagIds.Count > 0) {
+                    frameworkService.UpdateCompetencyFlags(frameworkId, newCompetencyId, [.. flagIds]);
+                    if (competencyRow.RowStatus == RowStatus.Skipped)
+                    {
+                        competencyRow.RowStatus = RowStatus.CompetencyUpdated;
+                    }
                 }
             }
 
