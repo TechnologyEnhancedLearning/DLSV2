@@ -247,6 +247,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult UploadResults()
         {
             var data = GetBulkUploadData();
+            FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
+            TempData.Clear();
             var model = new ImportCompetenciesResultsViewModel(data.ImportCompetenciesResult, data.FrameworkId, data.FrameworkName, data.FrameworkVocubulary);
             return View("Developer/Import/UploadResults", model);
         }
