@@ -123,7 +123,7 @@
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
 
-        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId);
+        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId);
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
@@ -475,7 +475,7 @@
                 return new BrandedFramework();
             }
 
-            var existingFrameworks = (int)connection.ExecuteScalar(
+            var existingFrameworks = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM Frameworks WHERE FrameworkName = @frameworkName",
                 new { frameworkName }
             );
@@ -548,7 +548,7 @@
             return GetBrandedFrameworkByFrameworkId(frameworkId, adminId);
         }
 
-        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId)
+        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId)
         {
             if ((groupName.Length == 0) | (adminId < 1))
             {
@@ -558,9 +558,16 @@
                 return -2;
             }
             groupDescription = (groupDescription?.Trim() == "" ? null : groupDescription);
-            var existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
-                new { groupName, groupDescription }
+            var existingId = connection.QuerySingle<int>(
+                @"SELECT COALESCE
+                 ((SELECT TOP (1) ID
+                  FROM    CompetencyGroups
+                  WHERE (Name = @groupName) AND EXISTS
+                                   (SELECT 1 AS Expr1
+                                   FROM    FrameworkCompetencyGroups
+                                   WHERE (CompetencyGroupID = CompetencyGroups.ID) AND (FrameworkID = @frameworkId) OR
+                                                (CompetencyGroupID = CompetencyGroups.ID) AND (@frameworkId IS NULL))), 0) AS CompetencyGroupID",
+                new { groupName, groupDescription, frameworkId }
             );
             if (existingId > 0)
             {
@@ -581,8 +588,15 @@
                 return -1;
             }
 
-            existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
+            existingId = connection.QuerySingle<int>(
+                @"SELECT COALESCE
+                 ((SELECT TOP (1) ID
+                  FROM    CompetencyGroups
+                  WHERE (Name = @groupName) AND EXISTS
+                                   (SELECT 1 AS Expr1
+                                   FROM    FrameworkCompetencyGroups
+                                   WHERE (CompetencyGroupID = CompetencyGroups.ID) AND (FrameworkID = @frameworkId) OR
+                                                (CompetencyGroupID = CompetencyGroups.ID) AND (@frameworkId IS NULL))), 0) AS CompetencyGroupID",
                 new { groupName, groupDescription }
             );
             return existingId;
@@ -598,7 +612,7 @@
                 return -2;
             }
 
-            var existingId = (int)connection.ExecuteScalar(
+            var existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
                 new { groupId, frameworkId }
             );
@@ -624,7 +638,7 @@
                 return -1;
             }
 
-            existingId = (int)connection.ExecuteScalar(
+            existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
                 new { groupId, frameworkId }
             );
@@ -671,14 +685,14 @@
             var existingId = 0;
             if (frameworkCompetencyGroupID == null)
             {
-                existingId = (int)connection.ExecuteScalar(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID IS NULL), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
             else
             {
-                existingId = (int)connection.ExecuteScalar(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
@@ -707,14 +721,14 @@
 
             if (frameworkCompetencyGroupID == null)
             {
-                existingId = (int)connection.ExecuteScalar(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID IS NULL), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
             else
             {
-                existingId = (int)connection.ExecuteScalar(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
@@ -765,7 +779,7 @@
                 return -3;
             }
 
-            var existingId = (int)connection.ExecuteScalar(
+            var existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    FrameworkCollaborators
@@ -815,7 +829,7 @@
                 );
             }
 
-            existingId = (int)connection.ExecuteScalar(
+            existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    FrameworkCollaborators
@@ -907,7 +921,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 return false;
             }
 
-            var existingFrameworks = (int)connection.ExecuteScalar(
+            var existingFrameworks = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM Frameworks WHERE FrameworkName = @frameworkName AND ID <> @frameworkId",
                 new { frameworkName, frameworkId }
             );
@@ -1003,7 +1017,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 return;
             }
 
-            var usedElsewhere = (int)connection.ExecuteScalar(
+            var usedElsewhere = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
                     WHERE CompetencyGroupId = @competencyGroupId
                     AND ID <> @frameworkCompetencyGroupId",
@@ -1171,14 +1185,14 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             }
 
             //Check if used elsewhere and delete competency group if not:
-            var usedElsewhere = (int)connection.ExecuteScalar(
+            var usedElsewhere = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
                     WHERE CompetencyGroupId = @competencyGroupId",
                 new { competencyGroupId }
             );
             if (usedElsewhere == 0)
             {
-                usedElsewhere = (int)connection.ExecuteScalar(
+                usedElsewhere = connection.QuerySingle<int>(
                     @"SELECT COUNT(*) FROM SelfAssessmentStructure
                     WHERE CompetencyGroupId = @competencyGroupId",
                     new { competencyGroupId }
@@ -1209,7 +1223,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 
         public void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId)
         {
-            var competencyId = (int)connection.ExecuteScalar(
+            var competencyId = connection.QuerySingle<int>(
                 @"SELECT CompetencyID FROM FrameworkCompetencies WHERE ID = @frameworkCompetencyId",
                 new { frameworkCompetencyId }
             );
@@ -1240,14 +1254,14 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             }
 
             //Check if used elsewhere and delete competency group if not:
-            var usedElsewhere = (int)connection.ExecuteScalar(
+            var usedElsewhere = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM FrameworkCompetencies
                     WHERE CompetencyID = @competencyId",
                 new { competencyId }
             );
             if (usedElsewhere == 0)
             {
-                usedElsewhere = (int)connection.ExecuteScalar(
+                usedElsewhere = connection.QuerySingle<int>(
                     @"SELECT COUNT(*) FROM SelfAssessmentStructure
                     WHERE CompetencyID = @competencyId",
                     new { competencyId }
@@ -1835,10 +1849,10 @@ WHERE (FrameworkID = @frameworkId)",
         public int GetAdminUserRoleForFrameworkId(int adminId, int frameworkId)
         {
             return connection.QuerySingle<int>(
-                @"SELECT CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN COALESCE (fwc.CanModify, 0) = 1 THEN 2 WHEN COALESCE (fwc.CanModify, 0) = 0 THEN 1 ELSE 0 END AS UserRole
-                    FROM   Frameworks AS FW LEFT OUTER JOIN
-                                 FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND fwc.IsDeleted = 0
-                    WHERE (FW.ID = @frameworkId)",
+                @"SELECT CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole
+                FROM Frameworks AS FW LEFT OUTER JOIN
+                FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
+                WHERE FW.ID = @frameworkId and FWC.IsDeleted=0",
                 new { adminId, frameworkId }
             );
         }
