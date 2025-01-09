@@ -59,7 +59,7 @@
             var supervisorEmail = GetUserEmail();
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId);
             if (!supervisorDelegateDetails.Any())
             {
                 supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(adminId);
@@ -325,7 +325,7 @@
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsByIdWithoutRemoveClause(supervisorDelegateId, adminId, delegateUserId);
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
-            var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
+            var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, loggedInAdminUser.CategoryId);
             var model = new DelegateSelfAssessmentsViewModel()
             {
                 IsNominatedSupervisor = loggedInAdminUser?.IsSupervisor == true ? false : loggedInAdminUser?.IsNominatedSupervisor ?? false,
@@ -341,8 +341,9 @@
             var adminId = GetAdminId();
             var centreId = GetCentreId();
             var loggedInUserId = User.GetUserId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId)
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId)
                 .Select(supervisor =>
                 {
                     return supervisor;
@@ -358,12 +359,15 @@
         public IActionResult ReviewDelegateSelfAssessment(int supervisorDelegateId, int candidateAssessmentId, int? selfAssessmentResultId = null, SearchSupervisorCompetencyViewModel searchModel = null)
         {
             var adminId = GetAdminId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
+            if (superviseDelegate == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId, selfAssessmentResultId).ToList()
             );
-            var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId, loggedInAdminUser.CategoryId);
+            if (delegateSelfAssessment == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var competencyIds = reviewedCompetencies.Select(c => c.Id).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
             var competencies = SupervisorCompetencyFilterHelper.FilterCompetencies(reviewedCompetencies, competencyFlags, searchModel);
@@ -380,7 +384,7 @@
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = searchModel,
                 CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle.Contains("Assessor"),
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Assessor") ?? false,
             };
 
             var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
@@ -511,7 +515,7 @@
         )
         {
             var model = ReviewCompetencySelfAsessmentData(supervisorDelegateId, candidateAssessmentId, resultId);
-
+            if (model == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             return View("ReviewCompetencySelfAsessment", model);
         }
 
@@ -583,8 +587,10 @@
                     candidateAssessmentId,
                     adminId
                 );
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var delegateSelfAssessment =
-                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId);
+            if (delegateSelfAssessment == null) return null;
             var assessmentQuestion = GetLevelDescriptorsForAssessmentQuestion(competency.AssessmentQuestions.First());
             competency.CompetencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id);
             var model = new ReviewCompetencySelfAsessmentViewModel()
@@ -606,10 +612,12 @@
         public IActionResult VerifyMultipleResults(int supervisorDelegateId, int candidateAssessmentId)
         {
             var adminId = GetAdminId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var delegateSelfAssessment =
-                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId);
+            if (delegateSelfAssessment == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId)
                     .ToList()
@@ -634,10 +642,11 @@
             if (resultChecked.Count == 0)
             {
                 var adminId = GetAdminId();
+                var loggedInAdminUser = userService.GetAdminUserById(adminId);
                 var superviseDelegate =
                     supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var delegateSelfAssessment =
-                    supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                    supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId);
                 var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                     selfAssessmentService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId)
                         .ToList()
@@ -723,12 +732,14 @@
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
+            var loggedInAdmin = userService.GetAdminById(GetAdminId());
 
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
                 (int)supervisorDelegate.DelegateUserID,
-                GetCentreId()
+                GetCentreId(),
+                loggedInAdmin.CategoryId
             );
             var model = new EnrolDelegateOnProfileAssessmentViewModel()
             {
@@ -748,6 +759,8 @@
                 TempData
             ).GetAwaiter().GetResult();
 
+            var loggedInAdmin = userService.GetAdminById(GetAdminId());
+
             if (selfAssessmentID < 1)
             {
                 ModelState.AddModelError("selfAssessmentId", "You must select a self assessment");
@@ -760,7 +773,8 @@
                     supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
                     (int)supervisorDelegate.DelegateUserID,
-                    GetCentreId()
+                    GetCentreId(),
+                    loggedInAdmin.CategoryId
                 );
                 var model = new EnrolDelegateOnProfileAssessmentViewModel()
                 {
@@ -1251,10 +1265,12 @@
         public IActionResult SignOffHistory(int supervisorDelegateId, int candidateAssessmentId)
         {
             var adminId = GetAdminId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var delegateSelfAssessment =
-                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId);
+            if (delegateSelfAssessment == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var model = new SignOffHistoryViewModel()
             {
                 DelegateSelfAssessment = delegateSelfAssessment,
@@ -1274,9 +1290,13 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/NominateSupervisor")]
         public IActionResult NominateSupervisor(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
+            var centreId = User.GetCentreIdKnownNotNull();
+            var loggedInAdmin = userService.GetAdminById(GetAdminId());
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
-            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
+            var categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery, categories, loggedInAdmin.CategoryId);
             if (TempData["NominateSupervisorError"] != null)
             {
                 if (Convert.ToBoolean(TempData["NominateSupervisorError"].ToString()))
@@ -1301,13 +1321,13 @@
                     supervisorDelegateDetail.DelegateUserID,
                     (int)User.GetCentreId()
                 );
-
+                supervisorDelegate.SelfAssessmentCategory = supervisorDelegate.SelfAssessmentCategory == 0 ? (adminUser.CategoryId.HasValue ? adminUser.CategoryId.Value : 0) : supervisorDelegate.SelfAssessmentCategory;
                 var centreName = adminUser.CentreName;
 
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
                 if (supervisorDelegateDetail.DelegateUserID != null)
                 {
-                    registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId(), true);
+                    registrationService.PromoteDelegateToAdmin(adminRoles, supervisorDelegate.SelfAssessmentCategory, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId(), true);
 
                     if (delegateUser != null && adminUser != null)
                     {
@@ -1384,12 +1404,13 @@
         {
             var adminId = User.GetAdminId();
             User.GetUserIdKnownNotNull();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId.Value);
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
             if ((competencymaindata == null) || (candidateAssessmentId == 0))
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value, loggedInAdminUser.CategoryId);
             var checkSupervisorDelegate = supervisorDelegateDetails.Where(x => x.DelegateUserID == competencymaindata.LearnerId).FirstOrDefault();
             if ((checkSupervisorDelegate == null))
             {
@@ -1420,12 +1441,13 @@
             PdfReportStatusResponse pdfReportStatusResponse = new PdfReportStatusResponse();
             var delegateId = User.GetCandidateIdKnownNotNull();
             var adminId = User.GetAdminId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId.Value);
             var competencymaindata = selfAssessmentService.GetCompetencySelfAssessmentCertificate(candidateAssessmentId);
             if (competencymaindata == null || candidateAssessmentId == 0 || adminId == 0)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId.Value, loggedInAdminUser.CategoryId);
             var checkSupervisorDelegate = supervisorDelegateDetails.Where(x => x.DelegateUserID == competencymaindata.LearnerId).FirstOrDefault();
             if (checkSupervisorDelegate == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var delegateUserId = competencymaindata.LearnerId;
