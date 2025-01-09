@@ -52,11 +52,11 @@
                                 <td role="cell" class="nhsuk-table__cell choose-centre-td">
                                     <span class="nhsuk-table-responsive__heading">Roles: </span>
                                     <div class="centre-role-tags">
-                                        @if (centreRow.IsActiveAdmin)
+                                        @if (Model.UserEntity.AdminAccounts.Any())
                                         {
                                             foreach (var admin in Model.UserEntity.AdminAccounts)
                                             {
-                                                if (centreRow.CentreId==admin.CentreId)
+                                                if (centreRow.CentreId == admin.CentreId)
                                                 {
                                                     <a asp-action="RedirectToAdmin" asp-route-AdminId="@admin.Id">Admin</a>
                                                 }

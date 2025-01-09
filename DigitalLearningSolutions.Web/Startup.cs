@@ -51,7 +51,6 @@ namespace DigitalLearningSolutions.Web
     using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
     using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
     using System;
-    using IsolationLevel = System.Transactions.IsolationLevel;
     using Serilog;
 
     public class Startup
@@ -581,6 +580,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyUserHasVerifiedPrimaryEmail>();
             services.AddScoped<VerifyAdminAndDelegateUserCentre>();
             services.AddScoped<IsCentreAuthorizedSelfAssessment>();
+            services.AddScoped<VerifyAdminUserCanAccessSelfAssessment>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
