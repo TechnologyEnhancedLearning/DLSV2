@@ -200,7 +200,7 @@ namespace DigitalLearningSolutions.Web.Services
         );
 
         void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription = false);
-        void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
+        int UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
 
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
 
@@ -662,9 +662,9 @@ namespace DigitalLearningSolutions.Web.Services
             frameworkDataService.UpdateAssessmentQuestion(id, question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId, commentsPrompt, commentsHint);
         }
 
-        public void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds)
+        public int UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds)
         {
-            frameworkDataService.UpdateCompetencyFlags(frameworkId, competencyId, selectedFlagIds);
+            return frameworkDataService.UpdateCompetencyFlags(frameworkId, competencyId, selectedFlagIds);
         }
 
         public BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId)

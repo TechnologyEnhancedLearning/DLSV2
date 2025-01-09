@@ -206,7 +206,7 @@
         );
 
         void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription);
-        void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
+        int UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
 
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
 
@@ -1025,7 +1025,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
             if (usedElsewhere > 0)
             {
-                var newCompetencyGroupId = InsertCompetencyGroup(name, description, adminId);
+                var newCompetencyGroupId = InsertCompetencyGroup(name, description, adminId, null);
                 if (newCompetencyGroupId > 0)
                 {
                     var numberOfAffectedRows = connection.Execute(
@@ -1086,13 +1086,14 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             }
         }
 
-        public void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds)
+        public int UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds)
         {
+            int totalRowsAffected = 0;
             string? commaSeparatedSelectedFlagIds = null;
             if (selectedFlagIds?.Length > 0)
             {
                 commaSeparatedSelectedFlagIds = String.Join(',', selectedFlagIds);
-                connection.Execute(
+                totalRowsAffected += connection.Execute(
                     @$"INSERT INTO CompetencyFlags(CompetencyID, FlagID, Selected)
 						SELECT @competencyId, f.ID, 1
 						FROM Flags f
@@ -1102,11 +1103,12 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 						)",
                     new { competencyId, selectedFlagIds });
             }
-            connection.Execute(
+            totalRowsAffected += connection.Execute(
                 @$"UPDATE CompetencyFlags
                     SET Selected = (CASE WHEN FlagID IN ({commaSeparatedSelectedFlagIds ?? "null"}) THEN 1 ELSE 0 END)
-                    WHERE CompetencyID = @competencyId",
+                    WHERE CompetencyID = @competencyId AND Selected <> (CASE WHEN FlagID IN ({commaSeparatedSelectedFlagIds ?? "null"}) THEN 1 ELSE 0 END)",
                 new { competencyId, frameworkId });
+            return totalRowsAffected;
         }
 
         public int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
@@ -1127,7 +1129,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 new { frameworkId, id, flagName, flagGroup, flagTagClass });
         }
 
-        public void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction)
+        public void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction) // Valid directions are 'UP' and 'DOWN'
         {
             connection.Execute(
                 "ReorderFrameworkCompetencyGroup",
@@ -1136,7 +1138,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
         }
 
-        public void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction)
+        public void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction) // Valid directions are 'UP' and 'DOWN'
         {
             connection.Execute(
                 "ReorderFrameworkCompetency",
