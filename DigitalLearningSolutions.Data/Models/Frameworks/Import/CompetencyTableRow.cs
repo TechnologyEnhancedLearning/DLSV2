@@ -38,6 +38,7 @@
             RowStatus = RowStatus.NotYetProcessed;
         }
         public int RowNumber { get; set; }
+        public int CompetencyOrderNumber { get; set; }
         public string? AlwaysShowDescriptionRaw { get; set; }
         public ImportCompetenciesResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }
