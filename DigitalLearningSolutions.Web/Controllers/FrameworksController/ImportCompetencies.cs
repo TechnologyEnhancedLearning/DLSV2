@@ -194,6 +194,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddQuestionsToWhichCompetencies()
         {
             var data = GetBulkUploadData();
+            if (data.DefaultQuestionIDs.Count ==0 && data.CustomAssessmentQuestionID == null)
+            {
+                return RedirectToAction("ImportSummary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
+            }
             var model = new AddQuestionsToWhichCompetenciesViewModel
                 (
                 data.FrameworkId,
