@@ -31,6 +31,10 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         <h1 class="nhsuk-heading-xl">@Model.FrameworkVocabularyPlural import summary</h1>
+        @if (Model.PublishStatusID == 3)
+        {
+            <partial name="Shared/_PublishedWarning" />
+        }
         <p class="nhsuk-body-l nhsuk-u-reading-width">Your @Model.FrameworkVocabularySingular.ToLower() sheet is ready to be processed. Please check the details below are correct before proceeding to @process @Model.FrameworkVocabularyPlural.ToLower() in the framework @Model.FrameworkName.</p>
         <h2>Upload summary</h2>
         <dl class="nhsuk-summary-list">
