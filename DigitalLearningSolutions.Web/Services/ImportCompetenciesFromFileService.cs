@@ -133,12 +133,11 @@ namespace DigitalLearningSolutions.Web.Services
                     .Select(row => row.CompetencyGroup)
                     .Distinct()
                     .ToList();
-
-                var existingGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).Select(row => new { row.ID, row.Name })
-                    .Distinct()
-                    .ToList();
                 for (int i = 0; i < competencyGroupCount; i++)
                 {
+                    var existingGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).Select(row => new { row.ID, row.Name })
+                   .Distinct()
+                   .ToList();
                     var placesToMove = Math.Abs(existingGroups.FindIndex(group => group.Name == distinctCompetencyGroups[i])-i);
                     if (placesToMove > 0)
                     {
