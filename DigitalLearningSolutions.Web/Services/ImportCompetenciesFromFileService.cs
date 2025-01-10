@@ -61,7 +61,7 @@ namespace DigitalLearningSolutions.Web.Services
                 {
                     int originalIndex = existingIds.IndexOf(id);
                     int newIndex = newIds.IndexOf(id);
-                    if(originalIndex == newIndex)
+                    if (originalIndex == newIndex)
                     {
                         competencyRow.RowStatus = RowStatus.CompetencyUpdated;
                     }
@@ -101,7 +101,6 @@ namespace DigitalLearningSolutions.Web.Services
             int rowCount = 0;
             string currentGroup = null;
             competenciesRows = competenciesRows
-            .OrderBy(row => row.CompetencyGroup)
             .Select(row =>
             {
                 if (row.CompetencyGroup != currentGroup)
@@ -126,7 +125,32 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 maxFrameworkCompetencyGroupId = ProcessCompetencyRow(adminUserId, frameworkId, maxFrameworkCompetencyId, maxFrameworkCompetencyGroupId, addAssessmentQuestionsOption, reorderCompetenciesOption, customAssessmentQuestionID, defaultQuestionIds, competencyRow);
             }
+            // TO DO: Check for changes to competency group order and apply them if appropriate:
+            if (reorderCompetenciesOption == 2)
+            {
+                var distinctCompetencyGroups = competenciesRows
+                    .Where(row => !string.IsNullOrWhiteSpace(row.CompetencyGroup))
+                    .Select(row => row.CompetencyGroup)
+                    .Distinct()
+                    .ToList();
 
+                var existingGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).Select(row => new { row.ID, row.Name })
+                    .Distinct()
+                    .ToList();
+                for (int i = 0; i < competencyGroupCount; i++)
+                {
+                    var placesToMove = Math.Abs(existingGroups.FindIndex(group => group.Name == distinctCompetencyGroups[i])-i);
+                    if (placesToMove > 0)
+                    {
+                        var thisGroup = existingGroups.FirstOrDefault(group => group.Name == distinctCompetencyGroups[i]);
+                        var direction = existingGroups.FindIndex(group => group.Name == distinctCompetencyGroups[i]) > i ? "UP" : "DOWN";
+                        for (int p = 0; p < placesToMove; p++)
+                        {
+                            frameworkService.MoveFrameworkCompetencyGroup(thisGroup.ID, true, direction);
+                        }
+                    }
+                }
+            }
             return new ImportCompetenciesResult(competenciesRows);
         }
         private int ProcessCompetencyRow(
@@ -148,7 +172,7 @@ namespace DigitalLearningSolutions.Web.Services
             int newCompetencyId = 0;
             int newFrameworkCompetencyId = 0;
             //If competency group is set, check if competency group exists within framework and add if not and get the Framework Competency Group ID
-            int ? frameworkCompetencyGroupId = null;
+            int? frameworkCompetencyGroupId = null;
             if (competencyRow.CompetencyGroup != null)
             {
                 int newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroup, competencyRow.GroupDescription, adminUserId, frameworkId);
@@ -169,10 +193,10 @@ namespace DigitalLearningSolutions.Web.Services
                 if (frameworkCompetency != null)
                 {
                     newCompetencyId = frameworkCompetency.CompetencyID;
-                    if (frameworkCompetency.Name != competencyRow.Competency || frameworkCompetency.Description != competencyRow.CompetencyDescription || frameworkCompetency.AlwaysShowDescription != competencyRow.AlwaysShowDescription )
+                    if (frameworkCompetency.Name != competencyRow.Competency || frameworkCompetency.Description != competencyRow.CompetencyDescription || frameworkCompetency.AlwaysShowDescription != competencyRow.AlwaysShowDescription)
                     {
                         frameworkService.UpdateFrameworkCompetency((int)competencyRow.ID, competencyRow.Competency, competencyRow.CompetencyDescription, adminUserId, competencyRow.AlwaysShowDescription ?? false);
-                        competencyRow.RowStatus = (competencyRow.RowStatus == RowStatus.CompetencyGroupInserted ? RowStatus.CompetencyGroupAndCompetencyUpdated: RowStatus.CompetencyUpdated);
+                        competencyRow.RowStatus = (competencyRow.RowStatus == RowStatus.CompetencyGroupInserted ? RowStatus.CompetencyGroupAndCompetencyUpdated : RowStatus.CompetencyUpdated);
                     }
                     else
                     {
@@ -204,7 +228,8 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 var flags = competencyRow.FlagsCsv.Split(',');
                 var flagIds = new List<int>();
-                foreach (var flag in flags) {
+                foreach (var flag in flags)
+                {
                     int flagId = 0;
                     var frameworkFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, null);
                     if (frameworkFlags.Any())
@@ -224,28 +249,12 @@ namespace DigitalLearningSolutions.Web.Services
                     }
                     flagIds.Add(flagId);
                 }
-                if (flagIds.Count > 0) {
+                if (flagIds.Count > 0)
+                {
                     var updated = frameworkService.UpdateCompetencyFlags(frameworkId, newCompetencyId, [.. flagIds]);
                     if (updated > 0 && competencyRow.RowStatus == RowStatus.Skipped)
                     {
                         competencyRow.RowStatus = RowStatus.CompetencyUpdated;
-                    }
-                }
-            }
-
-
-            // Add assessment questions if necessary:
-            if (defaultQuestionIds.Count > 0 | customAssessmentQuestionID > 0)
-            {
-                if (competencyRow.RowStatus == RowStatus.CompetencyInserted | competencyRow.RowStatus == RowStatus.CompetencyGroupAndCompetencyInserted || addAssessmentQuestionsOption == 2 && competencyRow.RowStatus == RowStatus.CompetencyUpdated | competencyRow.RowStatus == RowStatus.CompetencyGroupAndCompetencyUpdated || addAssessmentQuestionsOption == 3)
-                {
-                    foreach(var id in defaultQuestionIds)
-                    {
-                        frameworkService.AddCompetencyAssessmentQuestion(competencyRow.ID ?? newFrameworkCompetencyId, id, adminUserId);
-                    }
-                    if(customAssessmentQuestionID > 0)
-                    {
-                        frameworkService.AddCompetencyAssessmentQuestion(competencyRow.ID ?? newFrameworkCompetencyId, customAssessmentQuestionID, adminUserId);
                     }
                 }
             }
@@ -272,6 +281,24 @@ namespace DigitalLearningSolutions.Web.Services
                     }
                 }
             }
+
+            // Add assessment questions if necessary:
+            if (defaultQuestionIds.Count > 0 | customAssessmentQuestionID > 0)
+            {
+                if (competencyRow.RowStatus == RowStatus.CompetencyInserted | competencyRow.RowStatus == RowStatus.CompetencyGroupAndCompetencyInserted || addAssessmentQuestionsOption == 2 && competencyRow.RowStatus == RowStatus.CompetencyUpdated | competencyRow.RowStatus == RowStatus.CompetencyGroupAndCompetencyUpdated || addAssessmentQuestionsOption == 3)
+                {
+                    foreach (var id in defaultQuestionIds)
+                    {
+                        frameworkService.AddCompetencyAssessmentQuestion(competencyRow.ID ?? newFrameworkCompetencyId, id, adminUserId);
+                    }
+                    if (customAssessmentQuestionID > 0)
+                    {
+                        frameworkService.AddCompetencyAssessmentQuestion(competencyRow.ID ?? newFrameworkCompetencyId, customAssessmentQuestionID, adminUserId);
+                    }
+                }
+            }
+
+            
 
             return maxFrameworkCompetencyGroupId;
         }
