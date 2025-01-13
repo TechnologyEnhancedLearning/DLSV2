@@ -26,7 +26,8 @@
   <dd class="nhsuk-summary-list__actions">
     @if (!Model.NoContent)
     {
-      <a asp-action="SetCourseContent">
+      <a asp-action="SetCourseContent"
+               asp-route-EditCourseContent="true">
         Change<span class="nhsuk-u-visually-hidden"> course content</span>
       </a>
     }
