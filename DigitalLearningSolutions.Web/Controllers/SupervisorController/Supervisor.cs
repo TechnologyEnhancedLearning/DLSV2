@@ -60,10 +60,6 @@
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId);
-            if (!supervisorDelegateDetails.Any())
-            {
-                supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(adminId);
-            }
             var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
             var allSupervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
                 supervisor =>
