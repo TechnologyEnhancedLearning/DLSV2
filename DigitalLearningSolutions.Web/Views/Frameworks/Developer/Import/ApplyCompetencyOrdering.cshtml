@@ -41,7 +41,7 @@
                         <p>We strongly recommend including all framework competencies in your uploaded sheet if reordering competencies to ensure that the correct sequence is applied.</p>
                     </div>
                     <div class="nhsuk-hint nhsuk-u-margin-bottom-2">
-                        Your uploaded file includes changes to the sequence of existing @Model.FrameworkVocabularyPlural.ToLower(). Choose whether to store the changes to @Model.FrameworkVocabularySingular.ToLower() sequence during update.
+                        Your uploaded file includes changes to the order of existing @Model.FrameworkVocabularyPlural.ToLower(). Choose whether to store the changes to @Model.FrameworkVocabularySingular.ToLower() order during update.
                     </div>
                     <div class="nhsuk-hint">
                         Select an option
@@ -51,7 +51,7 @@
                             <div class="nhsuk-radios__item">
                                 <input class="nhsuk-radios__input" id="option-1" asp-for="@Model.ReorderCompetenciesOption" type="radio" value="1" aria-describedby="option-1-hint">
                                 <label class="nhsuk-label nhsuk-radios__label" for="option-1">
-                                    Ignore changes to @Model.FrameworkVocabularySingular.ToLower() sequence
+                                    Ignore changes to @Model.FrameworkVocabularySingular.ToLower() order
                                 </label>
                                 <div class="nhsuk-hint nhsuk-radios__hint" id="option-1-hint">
                                     @Model.FrameworkVocabularyPlural will be updated if they have changed but there sequence/order in the framework will not change.
@@ -60,10 +60,10 @@
                             <div class="nhsuk-radios__item">
                                 <input class="nhsuk-radios__input" id="option-2" asp-for="@Model.ReorderCompetenciesOption" type="radio" value="2" aria-describedby="option-2-hint">
                                 <label class="nhsuk-label nhsuk-radios__label" for="option-2">
-                                    Apply changes to @Model.FrameworkVocabularySingular.ToLower() sequence
+                                    Apply changes to @Model.FrameworkVocabularySingular.ToLower() order
                                 </label>
                                 <div class="nhsuk-hint nhsuk-radios__hint" id="option-2-hint">
-                                    The sequence of @Model.FrameworkVocabularyPlural.ToLower() in the framework will be changed to reflect the order in the sheet during processing.
+                                    The oder of @Model.FrameworkVocabularyPlural.ToLower() in the framework will be changed to reflect the order in the sheet during processing.
                                 </div>
                             </div>
                         </div>

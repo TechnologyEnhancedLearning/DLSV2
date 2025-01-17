@@ -14,6 +14,7 @@
             CompetenciesUpdatedCount = importCompetenciesResult.CompetencyUpdatedCount;
             CompetencyGroupsInsertedCount = importCompetenciesResult.GroupAddedCount;
             CompetencyGroupsUpdatedCount = importCompetenciesResult.GroupUpdatedCount;
+            CompetenciesReorderedCount = importCompetenciesResult.CompetencyReorderedCount;
             SkippedCount = importCompetenciesResult.SkippedCount;
             Errors = importCompetenciesResult.Errors.Select(x => (x.RowNumber, MapReasonToErrorMessage(x.Reason)));
             FrameworkID = frameworkId;
@@ -26,6 +27,7 @@
         public int ProcessedCount { get; set; }
         public int CompetenciesInsertedCount { get; set; }
         public int CompetenciesUpdatedCount { get; set; }
+        public int CompetenciesReorderedCount { get; set; }
         public int CompetencyGroupsInsertedCount { get; set; }
         public int CompetencyGroupsUpdatedCount { get; set; }
         public int SkippedCount { get; set; }

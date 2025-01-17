@@ -61,13 +61,10 @@ namespace DigitalLearningSolutions.Web.Services
                 {
                     int originalIndex = existingIds.IndexOf(id);
                     int newIndex = newIds.IndexOf(id);
-                    if (originalIndex == newIndex)
+                    competencyRow.RowStatus = RowStatus.CompetencyUpdated;
+                    if (originalIndex != newIndex)
                     {
-                        competencyRow.RowStatus = RowStatus.CompetencyUpdated;
-                    }
-                    else
-                    {
-                        competencyRow.RowStatus = RowStatus.CompetencyUpdatedAndReordered;
+                        competencyRow.Reordered = true;
                     }
                 }
             }
@@ -125,7 +122,7 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 maxFrameworkCompetencyGroupId = ProcessCompetencyRow(adminUserId, frameworkId, maxFrameworkCompetencyId, maxFrameworkCompetencyGroupId, addAssessmentQuestionsOption, reorderCompetenciesOption, customAssessmentQuestionID, defaultQuestionIds, competencyRow);
             }
-            // TO DO: Check for changes to competency group order and apply them if appropriate:
+            // Check for changes to competency group order and apply them if appropriate:
             if (reorderCompetenciesOption == 2)
             {
                 var distinctCompetencyGroups = competenciesRows
@@ -147,6 +144,10 @@ namespace DigitalLearningSolutions.Web.Services
                         {
                             frameworkService.MoveFrameworkCompetencyGroup(thisGroup.ID, true, direction);
                         }
+                        competenciesRows
+                                .Where(row => row.CompetencyGroup == thisGroup.Name)
+                                .ToList()
+                                .ForEach(row => row.Reordered = true);
                     }
                 }
             }
@@ -274,10 +275,7 @@ namespace DigitalLearningSolutions.Web.Services
                         frameworkService.MoveFrameworkCompetency(frameworkCompetencyId, true, direction);
                     }
 
-                    if (competencyRow.RowStatus == RowStatus.Skipped)
-                    {
-                        competencyRow.RowStatus = RowStatus.CompetencyUpdated;
-                    }
+                    competencyRow.Reordered = true;
                 }
             }
 
