@@ -9,7 +9,6 @@
         CompetencyGroupAndCompetencyInserted,
         CompetencyInserted,
         CompetencyUpdated,
-        CompetencyUpdatedAndReordered,
         CompetencyGroupInserted,
         CompetencyGroupUpdated,
         CompetencyGroupAndCompetencyUpdated,
@@ -42,6 +41,7 @@
         public string? AlwaysShowDescriptionRaw { get; set; }
         public ImportCompetenciesResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }
+        public bool Reordered { get; set; } = false;
         public bool Validate()
         {
             if (string.IsNullOrEmpty(Competency))
