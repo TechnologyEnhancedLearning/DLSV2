@@ -1,0 +1,87 @@
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
+
+@model AddQuestionsToWhichCompetenciesViewModel
+
+@{
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Add Assessment Questions" : "Add Assessment Questions";
+    var cancelLinkData = Html.GetRouteValues();
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+                <li class="nhsuk-breadcrumb__item">Bulk upload</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
+        </div>
+    </nav>
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <div class="nhsuk-u-reading-width">
+            <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
+                <fieldset class="nhsuk-fieldset">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                        <h1 class="nhsuk-fieldset__heading">
+                            Which @Model.FrameworkVocabularyPlural.ToLower() should the questions be added to?
+                        </h1>
+                    </legend>
+                    <div class="nhsuk-hint nhsuk-u-margin-bottom-2">
+                        Choose which @Model.FrameworkVocabularyPlural.ToLower() you want to add the @Model.TotalQuestions assessment questions to
+                    </div>
+                    <div class="nhsuk-hint">
+                        Select one option
+                    </div>
+                    <div class="nhsuk-form-group">
+                        <div class="nhsuk-radios">
+                            @if (Model.CompetenciesToAddCount > 0)
+                            {
+                                <div class="nhsuk-radios__item">
+                                    <input class="nhsuk-radios__input" id="option-1" asp-for="@Model.AddAssessmentQuestionsOption" type="radio" value="1" aria-describedby="option-1-hint">
+                                    <label class="nhsuk-label nhsuk-radios__label" for="option-1">
+                                        Only add questions to new @Model.FrameworkVocabularyPlural.ToLower()
+                                    </label>
+                                    <div class="nhsuk-hint nhsuk-radios__hint" id="option-1-hint">
+                                        @Model.TotalQuestions assessment questions will be added to the @Model.CompetenciesToAddCount new @Model.FrameworkVocabularyPlural.ToLower()
+                                    </div>
+                                </div>
+                            }
+                            <div class="nhsuk-radios__item">
+                                <input class="nhsuk-radios__input" id="option-2" asp-for="@Model.AddAssessmentQuestionsOption" type="radio" value="2" aria-describedby="option-2-hint">
+                                <label class="nhsuk-label nhsuk-radios__label" for="option-2">
+                                    Only add questions to @(Model.CompetenciesToAddCount > 0 ? " new and " : "") modified @Model.FrameworkVocabularyPlural.ToLower()
+                                </label>
+                                <div class="nhsuk-hint nhsuk-radios__hint" id="option-2-hint">
+                                    @(Model.CompetenciesToAddCount > 0 ? Model.CompetenciesToAddCount + $" new {@Model.FrameworkVocabularyPlural.ToLower()} and only those of the " : "Only those of the ") @Model.CompetenciesToUpdateCount existing @Model.FrameworkVocabularyPlural.ToLower() that have been modified in the sheet will have the assessment questions added
+                                </div>
+                            </div>
+                            <div class="nhsuk-radios__item">
+                                <input class="nhsuk-radios__input" id="option-3" asp-for="@Model.AddAssessmentQuestionsOption" type="radio" value="3" aria-describedby="option-3-hint">
+                                <label class="nhsuk-label nhsuk-radios__label" for="option-3">
+                                    Add questions to all @Model.FrameworkVocabularyPlural.ToLower() in my uploaded sheet
+                                </label>
+                                <div class="nhsuk-hint nhsuk-radios__hint" id="option-3-hint">
+                                    All @(Model.CompetenciesToProcessCount) @Model.FrameworkVocabularyPlural.ToLower() in the sheet that are will have the assessment questions added to them
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+                <a asp-controller="Frameworks" asp-action="AddAssessmentQuestions" asp-all-route-data="@cancelLinkData" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+                <button class="nhsuk-button" type="submit">Next</button>
+            </form>
+            <vc:cancel-link asp-controller="Frameworks" asp-action="CancelImport" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
+        </div>
+    </div>
+</div>

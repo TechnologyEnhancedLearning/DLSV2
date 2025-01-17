@@ -36,8 +36,8 @@
             {
                 return existingFilterString;
             }
-
-            return existingFilterString + FilterSeparator + newFilterToAdd;
+            var filterString = existingFilterString + FilterSeparator + newFilterToAdd;
+            return RemoveDuplicateFilters(filterString, newFilterToAdd);
         }
 
         public static string? GetFilterString(
@@ -46,7 +46,8 @@
             bool clearFilters,
             HttpRequest request,
             string cookieName,
-            string? defaultFilterValue = null
+            string? defaultFilterValue = null,
+            IEnumerable<FilterModel>? availableFilters = null
         )
         {
             var cookieHasBeenSet = request.Cookies.ContainsKey(cookieName);
@@ -59,17 +60,19 @@
 
             if (cookieHasBeenSet && noFiltersInQueryParams)
             {
-                return request.Cookies[cookieName] == EmptyFiltersCookieValue ? null : request.Cookies[cookieName];
+                return request.Cookies[cookieName] == EmptyFiltersCookieValue ? null : GetValidFilters(request.Cookies[cookieName], availableFilters);
             }
 
-            return noFiltersInQueryParams
-                ? defaultFilterValue
-                : AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
+            var filterString = noFiltersInQueryParams
+                                ? defaultFilterValue
+                                : AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
+
+            return GetValidFilters(filterString, availableFilters);
         }
-       public static string? GetCategoryAndTopicFilterString(
-            string? categoryFilterString,
-            string? topicFilterString
-        )
+        public static string? GetCategoryAndTopicFilterString(
+             string? categoryFilterString,
+             string? topicFilterString
+         )
         {
             if (categoryFilterString == null && topicFilterString == null)
             {
@@ -167,34 +170,33 @@
                 : answer;
             return BuildFilterValueString(group, group.Split('(')[0], propertyValue);
         }
-        public  static  string? GetValidFilters(string existingFilterString, string newFilterToAdd, IEnumerable<FilterModel> availableFilters, HttpRequest request, string cookieName)
+
+        public static string? GetValidFilters(string? existingFilterString, IEnumerable<FilterModel>? availableFilters)
         {
-            var cookieValue = request.Cookies[cookieName];
-            if (string.IsNullOrEmpty(cookieValue) || cookieValue == EmptyFiltersCookieValue)
+            if (string.IsNullOrEmpty(existingFilterString) || availableFilters == null)
             {
-                return existingFilterString;
+                return null;
             }
-            var existingFilters = cookieValue.Split(FilterSeparator);
+            var existingFilters = existingFilterString.Split(FilterSeparator);
             var validFilterValues = availableFilters
-                .SelectMany(filter => filter.FilterOptions)
-                .Select(option => option.FilterValue)
-                .ToHashSet();
-           
+                                    .SelectMany(filter => filter.FilterOptions)
+                                    .Select(option => option.FilterValue)
+                                    .ToHashSet();
+
             var filteredResults = existingFilters
-        .Where(entry => IsFilterInvalid(entry, validFilterValues))
-        .ToList();
-            var newCookieValue = string.Join(FilterSeparator, filteredResults);
-            if (string.IsNullOrEmpty(newCookieValue)) return null;
-            newCookieValue = AddNewFilterToFilterString(newCookieValue, newFilterToAdd);
-            return RemoveDuplicateFilters( newFilterToAdd, newCookieValue);
+                                    .Where(entry => IsFilterInvalid(entry, validFilterValues))
+                                    .ToList();
+            var newFilterString = string.Join(FilterSeparator, filteredResults);
+
+            return string.IsNullOrEmpty(newFilterString) ? null : newFilterString;
         }
 
-        private static  bool IsFilterInvalid(string filterEntry, HashSet<string> validFilterValues)
+        private static bool IsFilterInvalid(string filterEntry, HashSet<string> validFilterValues)
         {
             if (validFilterValues.Contains(filterEntry)) return true;
             return false;
         }
-        public  static string RemoveDuplicateFilters(string newFilterToAdd, string? existingFilterString)
+        public static string RemoveDuplicateFilters(string? existingFilterString, string newFilterToAdd)
         {
             if (string.IsNullOrEmpty(existingFilterString))
             {

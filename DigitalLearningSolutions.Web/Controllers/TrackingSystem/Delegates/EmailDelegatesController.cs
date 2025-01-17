@@ -62,13 +62,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             bool selectAll = false
         )
         {
-            var newFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                EmailDelegateFilterCookieName
-            );
             var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
             var delegateUsers = GetDelegateUserCards();
@@ -79,10 +72,20 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 promptsWithOptions
             );
 
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                EmailDelegateFilterCookieName,
+                null,
+                availableFilters
+            );
+
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
                 null,
-                new FilterOptions(newFilterString, availableFilters),
+                new FilterOptions(filterString, availableFilters),
                 null
             );
 
@@ -115,13 +118,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             if (!ModelState.IsValid)
             {
-                var newFilterString = FilteringHelper.GetFilterString(
-                    existingFilterString,
-                    newFilterToAdd,
-                    clearFilters,
-                    Request,
-                    EmailDelegateFilterCookieName
-                );
                 var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
                 var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
 
@@ -131,10 +127,20 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     promptsWithOptions
                 );
 
+                var filterString = FilteringHelper.GetFilterString(
+                    existingFilterString,
+                    newFilterToAdd,
+                    clearFilters,
+                    Request,
+                    EmailDelegateFilterCookieName,
+                    null,
+                    availableFilters
+                );
+
                 var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                     null,
                     null,
-                    new FilterOptions(newFilterString, availableFilters),
+                    new FilterOptions(filterString, availableFilters),
                     null
                 );
 

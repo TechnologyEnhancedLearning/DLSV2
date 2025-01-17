@@ -71,7 +71,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
              (competencyGroupBase.Description), adminId);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
             }
-            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData(competencyGroupBase.Description), adminId);
+            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData(competencyGroupBase.Description), adminId, frameworkId);
             if (newCompetencyGroupId > 0)
             {
                 var newFrameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);
