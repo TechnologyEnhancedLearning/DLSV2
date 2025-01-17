@@ -22,10 +22,10 @@
         {
             ProcessedCount = competencyTableRows.Count;
             CompetencyAddedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyInserted | dr.RowStatus == RowStatus.CompetencyGroupAndCompetencyInserted);
-            CompetencyUpdatedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyUpdated | dr.RowStatus == RowStatus.CompetencyUpdatedAndReordered);
-            CompetencyReorderedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyUpdatedAndReordered);
+            CompetencyUpdatedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyUpdated | dr.RowStatus == RowStatus.CompetencyGroupAndCompetencyUpdated);
             GroupAddedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyGroupInserted | dr.RowStatus == RowStatus.CompetencyGroupAndCompetencyInserted);
-            SkippedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.Skipped);
+            SkippedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.Skipped && dr.Reordered == false);
+            CompetencyReorderedCount = competencyTableRows.Count(dr => dr.Reordered == true);
             Errors = competencyTableRows.Where(dr => dr.Error.HasValue).Select(dr => (dr.RowNumber, dr.Error!.Value));
             FlagCount = competencyTableRows
                 .Where(row => !string.IsNullOrWhiteSpace(row.FlagsCsv))
