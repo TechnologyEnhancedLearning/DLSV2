@@ -46,9 +46,10 @@
                             Bulk upload <strong>cannot</strong> be used to:
                         </p>
                             <ul>
-                                <li>Delete competencies or competency groups</li>
-                                <li>Remove assessment questions from existing competencies</li>
-                                <li>Add more than one custom assessment question to uploaded competencies</li>
+                            <li>Delete @Model.FrameworkVocabularyPlural.ToLower() or @Model.FrameworkVocabularySingular.ToLower() groups</li>
+                            <li>Remove assessment questions from existing @Model.FrameworkVocabularyPlural.ToLower()</li>
+                            <li>Add more than one custom assessment question to uploaded @Model.FrameworkVocabularyPlural.ToLower()</li>
+                            <li>Remove flags from @Model.FrameworkVocabularyPlural.ToLower()</li>
                             </ul>
                         
                     </div>
@@ -102,7 +103,7 @@
                 }
                 else
                 {
-                    <vc:inset-text css-class="" text="Bulk upload cannot be used to add more than one custom assessment question to uploaded competencies."></vc:inset-text>
+                    <vc:inset-text css-class="" text="Bulk upload cannot be used to add more than one custom assessment question to uploaded @Model.FrameworkVocabularyPlural.ToLower()."></vc:inset-text>
                     <p class="nhsuk-body-m">
                         Download a blank template for bulk adding @Model.FrameworkVocabularyPlural.ToLower() to your framework, <strong>@Model.FrameworkName</strong>. This Excel file will be empty. New @Model.FrameworkVocabularyPlural.ToLower() can be added by including their details on a blank row.
                     </p>
