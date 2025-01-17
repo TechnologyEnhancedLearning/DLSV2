@@ -143,11 +143,11 @@ namespace DigitalLearningSolutions.Web.Services
                         for (int p = 0; p < placesToMove; p++)
                         {
                             frameworkService.MoveFrameworkCompetencyGroup(thisGroup.ID, true, direction);
-                            competenciesRows
+                        }
+                        competenciesRows
                                 .Where(row => row.CompetencyGroup == thisGroup.Name)
                                 .ToList()
                                 .ForEach(row => row.Reordered = true);
-                        }
                     }
                 }
             }
