@@ -15,6 +15,7 @@
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Web.Services;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -30,11 +31,13 @@
         private readonly string tableauSiteName;
         private readonly string workbookName;
         private readonly string viewName;
+        private readonly ISelfAssessmentService selfAssessmentService;
         public SelfAssessmentReportsController(
             ISelfAssessmentReportService selfAssessmentReportService,
             ITableauConnectionHelperService tableauConnectionHelper,
             IClockUtility clockUtility,
-            IConfiguration config
+            IConfiguration config,
+            ISelfAssessmentService selfAssessmentService
         )
         {
             this.selfAssessmentReportService = selfAssessmentReportService;
@@ -44,12 +47,14 @@
             tableauSiteName = config.GetTableauSiteName();
             workbookName = config.GetTableauWorkbookName();
             viewName = config.GetTableauViewName();
+            this.selfAssessmentService = selfAssessmentService;
         }
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId();
-            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, categoryId));
+            var adminCategoryId = User.GetAdminCategoryId();
+            var categoryId = this.selfAssessmentService.GetSelfAssessmentCategoryId(1);
+            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, adminCategoryId), adminCategoryId, categoryId);
             return View(model);
         }
         [HttpGet]
