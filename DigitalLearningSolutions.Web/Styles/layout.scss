@@ -398,3 +398,9 @@ nav, .nhsuk-header__navigation, #header-navigation {
 .field-validation-valid {
   display: none !important;
 }
+
+@media print {
+  .no-print {
+    display: none;
+  }
+}

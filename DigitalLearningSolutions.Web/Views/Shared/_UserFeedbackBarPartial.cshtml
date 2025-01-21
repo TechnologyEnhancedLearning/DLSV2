@@ -7,7 +7,7 @@
 {
     @if (User.Identity.IsAuthenticated)
     {
-        <div class="feedback-bar">
+        <div class="feedback-bar no-print">
 
             <div class="nhsuk-width-container nhsuk-header_container nhsuk-width-container--feedback nhsuk-body-s">
                 <div class="govuk-phase-banner__content feedback-wrapper">
@@ -24,7 +24,7 @@
     }
     else
     {
-        <div class="feedback-bar">
+        <div class="feedback-bar no-print">
             <div class="nhsuk-width-container nhsuk-body-s">
                 <div class="govuk-phase-banner__content feedback-wrapper">
                     <div class="govuk-tag govuk-phase-banner__content__tag feedback-tag">
