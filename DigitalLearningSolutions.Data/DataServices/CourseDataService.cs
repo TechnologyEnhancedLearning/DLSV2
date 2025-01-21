@@ -537,16 +537,16 @@ namespace DigitalLearningSolutions.Data.DataServices
             if (candidateAssessmentId > 1 && supervisorDelegateId == 0)
             {
                 connection.Execute(
-                        @"UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic
+                        @"UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic, EnrolledByAdminId = @enrolledByAdminId
                   WHERE ID = @candidateAssessmentId",
-                        new { candidateAssessmentId, enrolmentMethodId, completeByDateDynamic }
+                        new { candidateAssessmentId, enrolmentMethodId, completeByDateDynamic, enrolledByAdminId }
                     );
             }
             if (candidateAssessmentId > 1 && supervisorDelegateId != 0)
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
-                UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic
+                UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic, EnrolledByAdminId = @enrolledByAdminId
                   WHERE ID = @candidateAssessmentId
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
@@ -556,7 +556,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 COMMIT TRANSACTION";
 
                 connection.Execute(sqlQuery
-                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic, supervisorDelegateId });
+                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic, supervisorDelegateId, enrolledByAdminId });
             }
 
             if (supervisorId > 0)
