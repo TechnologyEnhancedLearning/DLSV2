@@ -716,6 +716,20 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/Framework", model);
         }
 
+        [Route("/Framework/{frameworkId}/Structure/PrintLayout")]
+        public IActionResult PrintLayout(int frameworkId) {
+            var adminId = GetAdminId();
+            var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var routeData = new Dictionary<string, string> { { "frameworkId", detailFramework?.ID.ToString() } };
+            var model = new FrameworkViewModel()
+            {
+                DetailFramework = detailFramework,
+            };
+            model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
+            model.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, selected: true);
+            model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+            return View("Developer/FrameworkPrintLayout", model);
+        }
         [ResponseCache(CacheProfileName = "Never")]
         public IActionResult InsertFramework()
         {
