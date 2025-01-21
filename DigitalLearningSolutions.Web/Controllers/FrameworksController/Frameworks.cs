@@ -725,6 +725,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 DetailFramework = detailFramework,
             };
+            model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
+            model.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, selected: true);
+            model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
             return View("Developer/FrameworkPrintLayout", model);
         }
         [ResponseCache(CacheProfileName = "Never")]

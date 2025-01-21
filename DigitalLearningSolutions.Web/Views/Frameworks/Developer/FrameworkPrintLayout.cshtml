@@ -4,6 +4,7 @@
     ViewData["Title"] = Model.DetailFramework.FrameworkName;
     ViewData["Application"] = "Framework Service";
     ViewData["HeaderPathName"] = "Framework Service";
+    int groupNum = 0;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -14,7 +15,7 @@
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Framework @ViewContext.RouteData.Values["tabname"]</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Framework structure</a></li>
                 <li class="nhsuk-breadcrumb__item">Print layout</li>
             </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Back to Framework</a></p>
@@ -27,5 +28,100 @@
         <h1>
             @Model.DetailFramework.FrameworkName
         </h1>
-    </div>
+            @if (!String.IsNullOrEmpty(Model.DetailFramework.Description))
+            {
+                <div class="nhsuk-card">
+                    <div class="nhsuk-card__content">
+                        <h2 class="nhsuk-card__heading">
+                            Framework description
+
+                        </h2>
+                        <p class="nhsuk-card__description">
+                            @(Html.Raw(Model.DetailFramework.Description))
+                        </p>
+                    </div>
+                </div>
+            }
+            <h2>Framework @Model.VocabPlural().ToLower()</h2>
+
+            @if (Model.FrameworkCompetencyGroups != null)
+            {
+                if (Model.FrameworkCompetencyGroups.Any())
+                {
+                    @foreach (var frameworkCompetencyGroup in Model.FrameworkCompetencyGroups)
+                    {
+                        groupNum++;
+                        <h3>@frameworkCompetencyGroup.Name</h3>
+                        if (frameworkCompetencyGroup.Description != null)
+                        {
+                            <p class="nhsuk-lede-text">
+                                @frameworkCompetencyGroup.Description
+                            </p>
+                        }
+                        
+                        int compNum = 0;
+                        if (frameworkCompetencyGroup.FrameworkCompetencies[0] != null)
+                        {
+                          <table class="nhsuk-table">
+                            <thead role="rowgroup" class="nhsuk-table__head">
+                                <tr role="row">
+                                    <th role="columnheader" class="" scope="col">
+                                        @Model.VocabSingular()
+                                    </th>
+                                    <th role="columnheader" class="status-tag" scope="col">
+                                        Date and Signature
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="nhsuk-table__body">
+                            @foreach (var frameworkCompetency in frameworkCompetencyGroup.FrameworkCompetencies)
+                            {
+                                compNum++;
+                                    <tr role="row" class="nhsuk-table__row">
+                                <td>
+                                    <strong>@frameworkCompetency.Name</strong>
+
+                                    <partial name="_CompetencyFlags" model="Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)" />
+                                    @if (frameworkCompetency.Description != null)
+                                    {
+                                        <p class="nhsuk-lede-text--small">
+                                            @Html.Raw(frameworkCompetency.Description)
+                                        </p>
+                                    }
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                        </tr>
+                            }
+                                </tbody>
+                            </table>
+                        }
+                    }
+                }
+            }
+            @if (Model.FrameworkCompetencies != null)
+            {
+                if (Model.FrameworkCompetencies.Any())
+                {
+                    groupNum++;
+                    int compNum = 0;
+                    <h2>Ungrouped competencies</h2>
+                    foreach (var frameworkCompetency in Model.FrameworkCompetencies)
+                    {
+                        compNum++;
+                        <div class="nhsuk-u-margin-left-8">
+                            <h3>@frameworkCompetency.Name</h3>
+                            <partial name="_CompetencyFlags" model="Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)" />
+                            @if (frameworkCompetency.Description != null)
+                            {
+                                <p class="nhsuk-lede-text--small">
+                                    @frameworkCompetency.Description
+                                </p>
+                            }
+                        </div>
+                    }
+                }
+            }
+        </div>
 </div>
