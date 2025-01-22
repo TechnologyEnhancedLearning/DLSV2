@@ -126,13 +126,35 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public DashboardData? GetDashboardDataForAdminId(int adminId)
         {
             return connection.Query<DashboardData>(
-                @"  SELECT (SELECT COUNT(sd.ID) AS StaffCount
-                        FROM SupervisorDelegates sd
-                        LEFT OUTER JOIN users u
-                            ON u.id = sd.DelegateUserID
-                            AND u.Active = 1
-                        WHERE  (sd.SupervisorAdminID = @adminId) 
-	                        AND (sd.Removed IS NULL)) AS StaffCount,
+                @" SELECT (SELECT COUNT(sd.ID) AS StaffCount
+                        FROM   CustomPrompts AS cp6 
+	                    RIGHT OUTER JOIN CustomPrompts AS cp5 
+	                    RIGHT OUTER JOIN DelegateAccounts AS da
+	                    RIGHT OUTER JOIN SupervisorDelegates AS sd 
+	                    INNER JOIN AdminUsers AS au 
+		                    ON sd.SupervisorAdminID = au.AdminID 
+	                    INNER JOIN Centres AS ct 
+		                    ON au.CentreID = ct.CentreID 
+	                    ON da.CentreID = ct.CentreID 
+		                    AND da.UserID = sd.DelegateUserID 
+	                    LEFT OUTER JOIN Users AS u 
+	                    LEFT OUTER JOIN JobGroups AS jg 
+		                    ON u.JobGroupID = jg.JobGroupID
+	                    ON da.UserID = u.ID 
+	                    LEFT OUTER JOIN CustomPrompts AS cp1 
+		                    ON ct.CustomField1PromptID = cp1.CustomPromptID 
+	                    LEFT OUTER JOIN CustomPrompts AS cp2 
+		                    ON ct.CustomField2PromptID = cp2.CustomPromptID 
+	                    LEFT OUTER JOIN CustomPrompts AS cp3 
+		                    ON ct.CustomField3PromptID = cp3.CustomPromptID 
+	                    LEFT OUTER JOIN CustomPrompts AS cp4 
+		                    ON ct.CustomField4PromptID = cp4.CustomPromptID 
+	                    ON cp5.CustomPromptID = ct.CustomField5PromptID 
+	                    ON cp6.CustomPromptID = ct.CustomField6PromptID 
+	                    LEFT OUTER JOIN AdminAccounts AS au2 
+		                    ON da.UserID = au2.UserID AND da.CentreID = au2.CentreID
+                    WHERE (sd.SupervisorAdminID = @adminId) AND (sd.Removed IS NULL) AND 
+                     (u.ID = da.UserID OR sd.DelegateUserID IS NULL)) AS StaffCount,
                          (SELECT COUNT(ID) AS StaffCount
                          FROM SupervisorDelegates AS SupervisorDelegates_1
                          WHERE (SupervisorAdminID = @adminId)
