@@ -365,7 +365,7 @@
             data!.CourseOptionsData = model.ToCourseOptionsTempData();
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
-            return RedirectToAction("SetCourseContent");
+            return RedirectToAction("SetCourseContent", false);
         }
 
         [HttpGet("AddCourse/SetCourseContent")]
@@ -373,7 +373,7 @@
             typeof(RedirectMissingMultiPageFormData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
         )]
-        public IActionResult SetCourseContent()
+        public IActionResult SetCourseContent(bool editCourseContent)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
@@ -381,6 +381,8 @@
             {
                 return RedirectToAction("Summary");
             }
+            data.EditCourseContent = editCourseContent;
+            multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             var model = data!.CourseContentData != null
                 ? new SetCourseContentViewModel(data.CourseContentData)
@@ -457,7 +459,7 @@
             }
 
             var showDiagnostic = data.Application!.DiagAssess;
-            if (data.SectionContentData != null && data.SectionContentData.Count >=3 )
+            if (data.EditCourseContent)
             {
                 var tutorial = GetTutorialsFromSectionContentData(data.SectionContentData, tutorials);
                 var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorial);
@@ -649,20 +651,19 @@
             {
                 data.SectionContentData = new List<SectionContentTempData>();
             }
-            if (data.SectionContentData != null && data.SectionContentData.Count >= 3)
+            if (data.EditCourseContent)
             {
                 return RedirectToNextSectionOrSummary(
                model.Index,
-               new SetCourseContentViewModel(data.CourseContentData!)
-           );
+               new SetCourseContentViewModel(data.CourseContentData!));
             }
-                data!.SectionContentData!.Add(
-                new SectionContentTempData(
-                    model.Tutorials != null
-                        ? model.Tutorials.Select(GetCourseTutorialData)
-                        : new List<CourseTutorialTempData>()
-                )
-            );
+            data!.SectionContentData!.Add(
+            new SectionContentTempData(
+                model.Tutorials != null
+                    ? model.Tutorials.Select(GetCourseTutorialData)
+                    : new List<CourseTutorialTempData>()
+            )
+        );
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             return RedirectToNextSectionOrSummary(
