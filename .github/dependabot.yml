@@ -4,23 +4,35 @@
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
+registries:
+  tel-azure-package-source:
+    type: nuget-feed
+    url: "https://pkgs.dev.azure.com/e-LfH/_packaging/LearningHubFeed/nuget/v3/index.json"
+    username: "kevin.whittaker" 
+    password: ${{ secrets.AZURE_DEVOPS_PAT }}   
+  nuget-package-source:
+    type: nuget-feed
+    url: "https://api.nuget.org/v3/index.json" 
 updates:
   - package-ecosystem: "nuget" 
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
+    registries:
+      - tel-azure-package-source
+      - nuget-package-source
     target-branch: "Automatic_version_update_dependabot"
     ignore:
       # Ignore updates to packages that start with 'Wildcards'
       - dependency-name: "Microsoft.FeatureManagement.AspNetCore*"
       # Ignore some updates to the package
       - dependency-name: "Microsoft.VisualStudio.Web.CodeGeneration.Design"
-        versions: [">7.0.0"]
+        versions: [">9.0.0"]
       - dependency-name: "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
-        versions: [">7.0.0"]
+        versions: [">9.0.0"]
       - dependency-name: "Microsoft.AspNetCore.Mvc.Testing"
-        versions: [">7.0.0"]
+        versions: [">9.0.0"]
       - dependency-name: "Selenium.WebDriver.ChromeDriver"
         versions: ">=113.0.5672.1278" # Recommended version
       # For all packages, ignore all patch updates
@@ -34,7 +46,7 @@ updates:
       interval: "daily"
     target-branch: "Automatic_version_update_dependabot"
     #  - "dependencies"
-    open-pull-requests-limit: 7
+    open-pull-requests-limit: 10
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]

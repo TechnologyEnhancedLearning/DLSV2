@@ -515,7 +515,7 @@
         )
         {
             var model = ReviewCompetencySelfAsessmentData(supervisorDelegateId, candidateAssessmentId, resultId);
-
+            if (model == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             return View("ReviewCompetencySelfAsessment", model);
         }
 
@@ -587,8 +587,10 @@
                     candidateAssessmentId,
                     adminId
                 );
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var delegateSelfAssessment =
-                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId);
+            if (delegateSelfAssessment == null) return null;
             var assessmentQuestion = GetLevelDescriptorsForAssessmentQuestion(competency.AssessmentQuestions.First());
             competency.CompetencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id);
             var model = new ReviewCompetencySelfAsessmentViewModel()
@@ -610,10 +612,12 @@
         public IActionResult VerifyMultipleResults(int supervisorDelegateId, int candidateAssessmentId)
         {
             var adminId = GetAdminId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var delegateSelfAssessment =
-                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId);
+            if (delegateSelfAssessment == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId)
                     .ToList()
@@ -638,10 +642,11 @@
             if (resultChecked.Count == 0)
             {
                 var adminId = GetAdminId();
+                var loggedInAdminUser = userService.GetAdminUserById(adminId);
                 var superviseDelegate =
                     supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var delegateSelfAssessment =
-                    supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                    supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId);
                 var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                     selfAssessmentService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId)
                         .ToList()
@@ -1260,10 +1265,12 @@
         public IActionResult SignOffHistory(int supervisorDelegateId, int candidateAssessmentId)
         {
             var adminId = GetAdminId();
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var delegateSelfAssessment =
-                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+                supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId, loggedInAdminUser.CategoryId);
+            if (delegateSelfAssessment == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var model = new SignOffHistoryViewModel()
             {
                 DelegateSelfAssessment = delegateSelfAssessment,
