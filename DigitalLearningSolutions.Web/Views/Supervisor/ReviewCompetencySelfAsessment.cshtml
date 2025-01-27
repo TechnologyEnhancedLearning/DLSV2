@@ -122,15 +122,11 @@
     }
     @if (Model.Competency.AssessmentQuestions.First().IncludeComments)
     {
-        var promptText = string.IsNullOrEmpty(Model.Competency.AssessmentQuestions.First()?.CommentsPrompt) ?
+        var commentsLabel = string.IsNullOrEmpty(Model.Competency.AssessmentQuestions.First()?.CommentsPrompt) ?
         Model.DelegateSelfAssessment.ReviewerCommentsLabel : Model.Competency.AssessmentQuestions.First()?.CommentsPrompt;
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-                @(((Model.Competency.AssessmentQuestions.First().SignedOff == true && Model.Competency.AssessmentQuestions.First().Verified.HasValue)
-                    || (Model.Competency.AssessmentQuestions.First().ResultId != null && Model.Competency.AssessmentQuestions.First().Verified == null && Model.Competency.AssessmentQuestions.First().Requested != null && Model.Competency.AssessmentQuestions.First().UserIsVerifier == false)
-                    || (Model.Competency.AssessmentQuestions.First().Verified == null && Model.Competency.AssessmentQuestions.First().Requested != null)
-                    && (!String.IsNullOrEmpty(Model.DelegateSelfAssessment.ReviewerCommentsLabel)))
-                    ? promptText : "Comments")
+                @(!String.IsNullOrEmpty(commentsLabel) ? commentsLabel : "Comments")
             </dt>
             <dd class="nhsuk-summary-list__value">
                 @Html.Raw(Model.Competency.AssessmentQuestions.First().SupportingComments)
