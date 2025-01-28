@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.RoleProfiles;
-    using DigitalLearningSolutions.Web.ViewModels.RoleProfiles;
+    using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+    using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
 
     /// <summary>
     /// This is the older version of the SortingHelper. For future search/sort implementations we should
@@ -13,36 +13,36 @@
     /// </summary>
     public static class SortingHelper
     {
-        public static IEnumerable<RoleProfile> SortRoleProfileItems(
-            IEnumerable<RoleProfile> roleProfiles,
+        public static IEnumerable<CompetencyAssessment> SortCompetencyAssessmentItems(
+            IEnumerable<CompetencyAssessment> competencyAssessments,
             string sortBy,
             string sortDirection
         )
         {
             return sortBy switch
             {
-                RoleProfileSortByOptionTexts.RoleProfileName => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
-                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.RoleProfileName)
-                    : roleProfiles.OrderBy(roleProfile => roleProfile.RoleProfileName),
-                RoleProfileSortByOptionTexts.RoleProfileOwner => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
-                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.Owner)
-                    : roleProfiles.OrderBy(roleProfile => roleProfile.Owner),
-                RoleProfileSortByOptionTexts.RoleProfileCreatedDate => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
-                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.CreatedDate)
-                    : roleProfiles.OrderBy(roleProfile => roleProfile.CreatedDate),
-                RoleProfileSortByOptionTexts.RoleProfilePublishStatus => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
-                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.PublishStatusID)
-                    : roleProfiles.OrderBy(roleProfile => roleProfile.PublishStatusID),
-                RoleProfileSortByOptionTexts.RoleProfileBrand => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
-                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.Brand)
-                    : roleProfiles.OrderBy(roleProfile => roleProfile.Brand),
-                RoleProfileSortByOptionTexts.RoleProfileNationalRoleProfile => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
-                ? roleProfiles.OrderByDescending(roleProfile => roleProfile.NRPRole)
-                : roleProfiles.OrderBy(roleProfile => roleProfile.NRPRole),
-                RoleProfileSortByOptionTexts.RoleProfileNationalRoleGroup => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
-                ? roleProfiles.OrderByDescending(roleProfile => roleProfile.NRPProfessionalGroup)
-                : roleProfiles.OrderBy(roleProfile => roleProfile.NRPProfessionalGroup),
-                _ => roleProfiles
+                CompetencyAssessmentSortByOptionTexts.CompetencyAssessmentName => sortDirection == BaseCompetencyAssessmentsPageViewModel.DescendingText
+                    ? competencyAssessments.OrderByDescending(competencyAssessment => competencyAssessment.CompetencyAssessmentName)
+                    : competencyAssessments.OrderBy(competencyAssessment => competencyAssessment.CompetencyAssessmentName),
+                CompetencyAssessmentSortByOptionTexts.CompetencyAssessmentOwner => sortDirection == BaseCompetencyAssessmentsPageViewModel.DescendingText
+                    ? competencyAssessments.OrderByDescending(competencyAssessment => competencyAssessment.Owner)
+                    : competencyAssessments.OrderBy(competencyAssessment => competencyAssessment.Owner),
+                CompetencyAssessmentSortByOptionTexts.CompetencyAssessmentCreatedDate => sortDirection == BaseCompetencyAssessmentsPageViewModel.DescendingText
+                    ? competencyAssessments.OrderByDescending(competencyAssessment => competencyAssessment.CreatedDate)
+                    : competencyAssessments.OrderBy(competencyAssessment => competencyAssessment.CreatedDate),
+                CompetencyAssessmentSortByOptionTexts.CompetencyAssessmentPublishStatus => sortDirection == BaseCompetencyAssessmentsPageViewModel.DescendingText
+                    ? competencyAssessments.OrderByDescending(competencyAssessment => competencyAssessment.PublishStatusID)
+                    : competencyAssessments.OrderBy(competencyAssessment => competencyAssessment.PublishStatusID),
+                CompetencyAssessmentSortByOptionTexts.CompetencyAssessmentBrand => sortDirection == BaseCompetencyAssessmentsPageViewModel.DescendingText
+                    ? competencyAssessments.OrderByDescending(competencyAssessment => competencyAssessment.Brand)
+                    : competencyAssessments.OrderBy(competencyAssessment => competencyAssessment.Brand),
+                CompetencyAssessmentSortByOptionTexts.CompetencyAssessmentNationalCompetencyAssessment => sortDirection == BaseCompetencyAssessmentsPageViewModel.DescendingText
+                ? competencyAssessments.OrderByDescending(competencyAssessment => competencyAssessment.NRPRole)
+                : competencyAssessments.OrderBy(competencyAssessment => competencyAssessment.NRPRole),
+                CompetencyAssessmentSortByOptionTexts.CompetencyAssessmentNationalRoleGroup => sortDirection == BaseCompetencyAssessmentsPageViewModel.DescendingText
+                ? competencyAssessments.OrderByDescending(competencyAssessment => competencyAssessment.NRPProfessionalGroup)
+                : competencyAssessments.OrderBy(competencyAssessment => competencyAssessment.NRPProfessionalGroup),
+                _ => competencyAssessments
             };
         }
     }
