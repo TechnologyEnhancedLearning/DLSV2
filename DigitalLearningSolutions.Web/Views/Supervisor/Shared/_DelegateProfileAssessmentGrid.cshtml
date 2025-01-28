@@ -38,7 +38,7 @@
                 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
                     <span class="nhsuk-table-responsive__heading">Role links </span>@(delegateSelfAssessment.ProfessionalGroup != null ? delegateSelfAssessment.ProfessionalGroup : "None/Generic")
                     @(delegateSelfAssessment.SubGroup != null ? " / " + delegateSelfAssessment.SubGroup : "")
-                    @(delegateSelfAssessment.RoleProfile != null ? " / " + delegateSelfAssessment.RoleProfile : "")
+                    @(delegateSelfAssessment.CompetencyAssessment != null ? " / " + delegateSelfAssessment.CompetencyAssessment : "")
                 </td>
                 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
                     <span class="nhsuk-table-responsive__heading">Last activity </span>@delegateSelfAssessment.LastAccessed.ToShortDateString()<br /> (@delegateSelfAssessment.LaunchCount launches)

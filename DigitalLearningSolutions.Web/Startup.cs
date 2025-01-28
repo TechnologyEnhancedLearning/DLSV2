@@ -434,7 +434,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRecommendedLearningService, RecommendedLearningService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IResourcesService, ResourcesService>();
-            services.AddScoped<IRoleProfileService, RoleProfileService>();
+            services.AddScoped<ICompetencyAssessmentService, CompetencyAssessmentService>();
             services.AddScoped<ISearchSortFilterPaginateService, SearchSortFilterPaginateService>();
             services.AddScoped<IPaginateService, PaginateService>();
             services.AddScoped<ISectionContentService, SectionContentService>();
@@ -507,7 +507,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegionService, RegionService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IResourceDataService, ResourceDataService>();
-            services.AddScoped<IRoleProfileDataService, RoleProfileDataService>();
+            services.AddScoped<ICompetencyAssessmentDataService, CompetencyAssessmentDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<ISelfAssessmentDataService, SelfAssessmentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();

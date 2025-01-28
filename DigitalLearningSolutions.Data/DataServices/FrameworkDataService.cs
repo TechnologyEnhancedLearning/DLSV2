@@ -2222,7 +2222,7 @@ WHERE (OwnerAdminID = @adminId) OR
                  FROM    FrameworkCollaborators
                  WHERE (FrameworkID = FW.ID) AND (IsDeleted=0)))) AS MyFrameworksCount,
 
-                 (SELECT COUNT(*) FROM SelfAssessments) AS RoleProfileCount,
+                 (SELECT COUNT(*) FROM SelfAssessments) AS CompetencyAssessmentCount,
 
                  (SELECT COUNT(*) FROM SelfAssessments AS RP LEFT OUTER JOIN
              SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId
@@ -2230,7 +2230,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
                  FROM    SelfAssessmentCollaborators
-                 WHERE (SelfAssessmentID = RP.ID)))) AS MyRoleProfileCount",
+                 WHERE (SelfAssessmentID = RP.ID)))) AS MyCompetencyAssessmentCount",
                 new { adminId }
             ).FirstOrDefault();
         }
@@ -2240,7 +2240,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             return connection.Query<DashboardToDoItem>(
                 @"SELECT
                         FW.ID AS FrameworkID,
-                        0 AS RoleProfileID,
+                        0 AS CompetencyAssessmentID,
                         FW.FrameworkName AS ItemName,
                         AU.Forename + ' ' + AU.Surname + (CASE WHEN AU.Active = 1 THEN '' ELSE ' (Inactive)' END) AS RequestorName,
                         FWR.SignOffRequired,
