@@ -25,8 +25,8 @@
             )
         {
             var adminId = GetAdminID();
-            var isWorkforceManager = GetIsWorkforceManager();
-            var isWorkforceContributor = GetIsWorkforceContributor();
+            var isWorkforceManager = GetIsWorkforceManager() | GetIsFrameworkDeveloper();
+            var isWorkforceContributor = GetIsWorkforceContributor() | GetIsFrameworkContributor();
             IEnumerable<CompetencyAssessment> competencyAssessments;
             if (tabname == "All")
             {
