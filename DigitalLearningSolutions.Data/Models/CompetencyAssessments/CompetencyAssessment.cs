@@ -14,6 +14,7 @@
         public string? Owner { get; set; }
         public DateTime? Archived { get; set; }
         public DateTime LastEdit { get; set; }
+        public string? LinkedFrameworks { get; set; }
         public string? NRPProfessionalGroup { get; set; }
         public string? NRPSubGroup { get; set; }
         public string? NRPRole { get; set; }

@@ -10,7 +10,7 @@
         Competency Assessment
       </th>
       <th role="columnheader" class="" scope="col">
-        National Profile Link
+        Framework Links
       </th>
       <th role="columnheader" class="" scope="col">
         Created
@@ -41,11 +41,9 @@
           </span>
         </td>
         <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">National Profile Link </span>
+          <span class="nhsuk-table-responsive__heading">Framework links </span>
           <span class="roleprofile-linkage">
-            @(competencyAssessment.NRPProfessionalGroup != null ? @competencyAssessment.NRPProfessionalGroup : "None/Generic")
-            @(competencyAssessment.NRPSubGroupID != null ? " / " + competencyAssessment.NRPSubGroup : "")
-            @(competencyAssessment.NRPRoleID != null ? " / " + competencyAssessment.NRPRole : "")
+            @competencyAssessment.LinkedFrameworks
           </span>
         </td>
         <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
@@ -71,7 +69,7 @@
           @if (competencyAssessment.UserRole > 1)
           {
             <a asp-action="ViewCompetencyAssessment" asp-route-frameworkId="@competencyAssessment.ID" asp-route-tabname="Structure">
-              View/Edit
+              Manage
             </a>
           }
           else
