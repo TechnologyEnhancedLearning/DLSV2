@@ -50,5 +50,15 @@
             var isWorkforceContributor = User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor);
             return isWorkforceContributor != null && (bool)isWorkforceContributor;
         }
+        private bool GetIsFrameworkDeveloper()
+        {
+            var isFrameworkDeveloper = User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper);
+            return isFrameworkDeveloper != null && (bool)isFrameworkDeveloper;
+        }
+        private bool GetIsFrameworkContributor()
+        {
+            var isFrameworkContributor = User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor);
+            return isFrameworkContributor != null && (bool)isFrameworkContributor;
+        }
     }
 }
