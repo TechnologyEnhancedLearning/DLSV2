@@ -1,0 +1,36 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model CompetencyAssessmentsViewModel
+
+@{
+  ViewData["Title"] = (string)ViewContext.RouteData.Values["tabname"] == "Mine" ? "My Competency Assessments" : "All Competency Assessments";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+  @section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item">Competency Assessments</li>
+      </ol>
+    </div>
+  </nav>
+}
+  @if (Model.IsWorkforceContributor | Model.IsWorkforceManager)
+{
+  <partial name="_SecondaryTabsNavMenu" model="Model.TabNavLinks" />
+}
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if ((string)ViewContext.RouteData.Values["tabname"] == "Mine")
+    {
+            <partial name="_MyCompetencyAssessments.cshtml" model="Model.MyCompetencyAssessmentsViewModel" />
+    }
+    else if ((string)ViewContext.RouteData.Values["tabname"] == "All")
+    {
+            <partial name="_AllCompetencyAssessments.cshtml" model="Model.AllCompetencyAssessmentsViewModel" />
+    }
+  </div>
+</div>

@@ -55,7 +55,7 @@
                 Self Assessment
             </dt>
             <dd class="nhsuk-summary-list__value">
-                @Model.Item1.RoleProfile.RoleProfileName
+                @Model.Item1.CompetencyAssessment.CompetencyAssessmentName
             </dd>
 
             <dd class="nhsuk-summary-list__actions">
@@ -91,7 +91,7 @@
         <dd class="nhsuk-summary-list__actions">
             @if (Model.Item1.SupervisorRoleCount > 1)
             {
-                <a asp-action="QuickAddSupervisor" asp-route-delegateUserId="@Model.Item1.SupervisorDelegateDetail.DelegateUserID.Value" asp-route-selfAssessmentId="@Model.Item1.RoleProfile.ID" asp-route-supervisorDelegateId="@Model.Item1.SupervisorDelegateDetail.ID">
+                <a asp-action="QuickAddSupervisor" asp-route-delegateUserId="@Model.Item1.SupervisorDelegateDetail.DelegateUserID.Value" asp-route-selfAssessmentId="@Model.Item1.CompetencyAssessment.ID" asp-route-supervisorDelegateId="@Model.Item1.SupervisorDelegateDetail.ID">
                     Change<span class="nhsuk-u-visually-hidden"> supervisor role</span>
                 </a>
             }
@@ -102,7 +102,7 @@
     </div>
 
 </dl>
-<a class="nhsuk-button" role="button" asp-action="QuickAddSupervisorConfirm" asp-route-delegateUserId="@Model.Item1.SupervisorDelegateDetail.DelegateUserID.Value" asp-route-selfAssessmentId="@Model.Item1.RoleProfile.ID" asp-route-supervisorDelegateId="@Model.Item1.SupervisorDelegateDetail.ID" asp-route-selfAssessmentSupervisorRoleId="@Model.Item2.GetValueOrDefault()">
+<a class="nhsuk-button" role="button" asp-action="QuickAddSupervisorConfirm" asp-route-delegateUserId="@Model.Item1.SupervisorDelegateDetail.DelegateUserID.Value" asp-route-selfAssessmentId="@Model.Item1.CompetencyAssessment.ID" asp-route-supervisorDelegateId="@Model.Item1.SupervisorDelegateDetail.ID" asp-route-selfAssessmentSupervisorRoleId="@Model.Item2.GetValueOrDefault()">
     Confirm
 </a>
 <div class="nhsuk-back-link">
