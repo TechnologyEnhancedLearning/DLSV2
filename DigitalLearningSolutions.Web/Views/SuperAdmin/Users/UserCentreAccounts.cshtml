@@ -58,7 +58,7 @@
                                             {
                                                 if (centreRow.CentreId == admin.CentreId)
                                                 {
-                                                    <a asp-action="RedirectToAdmin" asp-route-AdminId="@admin.Id">Admin</a>
+                                                    <a asp-action="RedirectToAdmin" asp-route-AdminId="@admin.Id">Admin@(admin.Active ? "" : "(Inactive)")</a>
                                                 }
                                             }
                                         }
