@@ -32,6 +32,7 @@
                .WithColumn("SupervisorRolesTaskStatus").AsBoolean().Nullable()
                .WithColumn("SelfAssessmentOptionsTaskStatus").AsBoolean().Nullable()
                .WithColumn("ReviewTaskStatus").AsBoolean().Nullable();
+            Alter.Table("SelfAssessments").AlterColumn("Description").AsString(int.MaxValue).Nullable();
             Execute.Sql($@"INSERT INTO SelfAssessmentFrameworks (SelfAssessmentId, FrameworkId, CreatedByAdminId)
                             SELECT sa.ID, fc.FrameworkID, sa.CreatedByAdminID
                             FROM   SelfAssessments AS sa INNER JOIN
@@ -49,6 +50,7 @@
         {
             Delete.Table("SelfAssessmentFrameworks");
             Delete.Table("SelfAssessmentTaskStatus");
+            Alter.Table("SelfAssessments").AlterColumn("Description").AsString(int.MaxValue).NotNullable();
         }
 
     }
