@@ -78,7 +78,7 @@
         }
         else
         {
-          <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="CompetencyAssessments" asp-route-competencyAssessmentId="@toDoItem.CompetencyAssessmentID" asp-action="ViewCompetencyAssessment">
+          <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="CompetencyAssessments" asp-route-competencyAssessmentId="@toDoItem.CompetencyAssessmentID" asp-action="ManageCompetencyAssessment">
             @(toDoItem.SignOffRequired ? "Approve " : "Review ") @toDoItem.ItemName for @toDoItem.RequestorName (requested @toDoItem.Requested.ToShortDateString())
           </a>
         }

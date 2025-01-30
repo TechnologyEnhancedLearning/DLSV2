@@ -179,17 +179,18 @@
         [Route("/CompetencyAssessments/Name/{actionname}/{competencyAssessmentId}")]
         [Route("/CompetencyAssessments/Name/{actionname}")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
-        public IActionResult SaveProfileName(CompetencyAssessmentBase competencyAssessmentBase, string actionname, int competencyAssessmentId = 0)
+        public IActionResult SaveProfileName(CompetencyAssessmentBase competencyAssessmentBase, string actionname, int competencyAssessmentId = 0, int? frameworkId = null)
         {
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(CompetencyAssessmentBase.CompetencyAssessmentName));
                 ModelState.AddModelError(nameof(CompetencyAssessmentBase.CompetencyAssessmentName), "Please enter a valid competency assessment name (between 3 and 255 characters)");
-                // do something
                 return View("Name", competencyAssessmentBase);
             }
             else
             {
+                var userCentreId = (int)GetCentreId();
+                var adminId = GetAdminID();
                 if (actionname == "New")
                 {
                     var sameItems = competencyAssessmentService.GetCompetencyAssessmentByName(competencyAssessmentBase.CompetencyAssessmentName, GetAdminID());
@@ -197,30 +198,21 @@
                     {
                         ModelState.Remove(nameof(CompetencyAssessmentBase.CompetencyAssessmentName));
                         ModelState.AddModelError(nameof(CompetencyAssessmentBase.CompetencyAssessmentName), "Another competency assessment exists with that name. Please choose a different name.");
-                        // do something
                         return View("Name", competencyAssessmentBase);
                     }
-                    SessionNewCompetencyAssessment sessionNewCompetencyAssessment = TempData.Peek<SessionNewCompetencyAssessment>();
-                    sessionNewCompetencyAssessment.CompetencyAssessmentBase = competencyAssessmentBase;
-                    TempData.Set(sessionNewCompetencyAssessment);
-                    return RedirectToAction("CompetencyAssessmentProfessionalGroup", "CompetencyAssessments", new { actionname });
+                    competencyAssessmentService.InsertCompetencyAssessment(adminId, userCentreId, competencyAssessmentBase.CompetencyAssessmentName, frameworkId);
                 }
                 else
-                {
-                    var adminId = GetAdminID();
+                { 
+                    
                     var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentName(competencyAssessmentBase.ID, adminId, competencyAssessmentBase.CompetencyAssessmentName);
-                    if (isUpdated)
-                    {
-                        return RedirectToAction("ViewCompetencyAssessment", new { tabname = "Details", competencyAssessmentId });
-                    }
-                    else
+                    if (!isUpdated)
                     {
                         ModelState.AddModelError(nameof(CompetencyAssessmentBase.CompetencyAssessmentName), "Another competency assessment exists with that name. Please choose a different name.");
-                        // do something
                         return View("Name", competencyAssessmentBase);
                     }
                 }
-
+                return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId });
             }
         }
 
@@ -290,7 +282,7 @@
                 }
                 else
                 {
-                    return RedirectToAction("ViewCompetencyAssessment", new { tabname = "Details", competencyAssessmentId });
+                    return RedirectToAction("ManageCompetencyAssessment", new { tabname = "Details", competencyAssessmentId });
                 }
             }
         }
