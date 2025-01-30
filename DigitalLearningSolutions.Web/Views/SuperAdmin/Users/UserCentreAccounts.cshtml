@@ -58,7 +58,15 @@
                                             {
                                                 if (centreRow.CentreId == admin.CentreId)
                                                 {
-                                                    <a asp-action="RedirectToAdmin" asp-route-AdminId="@admin.Id">Admin@(admin.Active ? "" : "(Inactive)")</a>
+                                                    bool IsDelegateActive = false;
+                                                    foreach (var delegates in Model.UserEntity.DelegateAccounts)
+                                                    {
+                                                        if (centreRow.CentreId == delegates.CentreId)
+                                                        {
+                                                            IsDelegateActive = delegates.Active;
+                                                        }
+                                                    }
+                                                    <a asp-action="RedirectToAdmin" asp-route-AdminId="@admin.Id">Admin@(!admin.Active && IsDelegateActive ? "(Inactive)" : "")</a>
                                                 }
                                             }
                                         }
