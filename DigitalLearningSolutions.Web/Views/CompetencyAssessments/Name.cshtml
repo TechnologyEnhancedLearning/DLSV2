@@ -8,7 +8,7 @@
 @section NavMenuItems {
   <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
   @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -37,7 +37,7 @@ else
   </nav>
   }
 }
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+@if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
   <h1>Create a new competency assessment</h1>
 }
@@ -73,7 +73,7 @@ else
   <input name="nrpSubGroupID" type="hidden" asp-for="NRPSubGroupID" />
   <input name="nrpRoleID" type="hidden" asp-for="NRPRoleID" />
   <input name="userRole" type="hidden" asp-for="UserRole" />
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
   {
     <button class="nhsuk-button" type="submit">
       Next
