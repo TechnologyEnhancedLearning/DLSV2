@@ -641,7 +641,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
         public IActionResult AddCollaborator(string actionname, string userEmail, bool canModify, int frameworkId)
         {
-            var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
+            int? centreID = GetCentreId();
+            var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify, centreID);
             if (collaboratorId > 0)
             {
                 frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminId());

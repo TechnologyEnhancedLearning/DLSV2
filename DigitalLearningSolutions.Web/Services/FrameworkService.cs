@@ -124,7 +124,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
 
-        int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
+        int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
         void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
 
@@ -264,9 +264,9 @@ namespace DigitalLearningSolutions.Web.Services
             this.frameworkDataService = frameworkDataService;
         }
 
-        public int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify)
+        public int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID)
         {
-            return frameworkDataService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
+            return frameworkDataService.AddCollaboratorToFramework(frameworkId, userEmail, canModify, centreID);
         }
 
         public void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId)
