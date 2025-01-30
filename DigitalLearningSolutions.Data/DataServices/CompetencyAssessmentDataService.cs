@@ -1,10 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+    using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.Extensions.Logging;
 
     public interface ICompetencyAssessmentDataService
@@ -24,8 +28,16 @@
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
 
         bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID);
+        bool UpdateCompetencyAssessmentBranding(
+            int competencyAssessmentId,
+            int brandId,
+            int categoryId,
+            int adminId
+        );
+        bool UpdateCompetencyAssessmentDescription(int competencyAssessmentId, int adminId, string competencyAssessmentDescription);
         //INSERT DATA
-
+        int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
+        bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
         //DELETE DATA
     }
 
@@ -121,6 +133,33 @@
             ).FirstOrDefault();
         }
 
+        public int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName)
+        {
+            if ((competencyAssessmentName.Length == 0) | (adminId < 1))
+            {
+                logger.LogWarning(
+                    $"Not inserting competency assessmente as it failed server side validation. AdminId: {adminId}, competencyAssessmentName: {competencyAssessmentName}"
+                );
+                return -1;
+            }
+            var result = connection.ExecuteScalar(
+                    @"SELECT COUNT(*) FROM SelfAssessments WHERE [Name] = @competencyAssessmentName",
+                    new { competencyAssessmentName }
+             );
+            int existingSelfAssessments = Convert.ToInt32(result);
+            if (existingSelfAssessments > 0)
+            {
+                return -1;
+            }
+            var assessmentId = connection.QuerySingle<int>(
+               @"INSERT INTO SelfAssessments ([Name], CreatedByCentreID, CreatedByAdminID)
+                    OUTPUT INSERTED.Id
+                    VALUES (@competencyAssessmentName, @centreId, @adminId)"
+            ,
+               new { competencyAssessmentName, centreId, adminId }
+           );
+            return assessmentId;
+        }
         public bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName)
         {
             if ((competencyAssessmentName.Length == 0) | (adminId < 1) | (competencyAssessmentId < 1))
@@ -130,11 +169,11 @@
                 );
                 return false;
             }
-
-            var existingSelfAssessments = (int)connection.ExecuteScalar(
+            var result = connection.ExecuteScalar(
                 @"SELECT COUNT(*) FROM SelfAssessments WHERE [Name] = @competencyAssessmentName AND ID <> @competencyAssessmentId",
                 new { competencyAssessmentName, competencyAssessmentId }
             );
+            int existingSelfAssessments = Convert.ToInt32(result);
             if (existingSelfAssessments > 0)
             {
                 return false;
@@ -179,10 +218,11 @@
 
         public bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID)
         {
-            var sameCount = (int)connection.ExecuteScalar(
+            var result = connection.ExecuteScalar(
                 @"SELECT COUNT(*) FROM CompetencyAssessments WHERE ID = @competencyAssessmentId AND NRPProfessionalGroupID = @nrpProfessionalGroupID",
                 new { competencyAssessmentId, nrpProfessionalGroupID }
             );
+            int sameCount = Convert.ToInt32(result);
             if (sameCount > 0)
             {
                 //same so don't update:
@@ -201,6 +241,76 @@
             }
 
             return false;
+        }
+        public bool UpdateCompetencyAssessmentBranding(
+            int competencyAssessmentId,
+            int brandId,
+            int categoryId,
+            int adminId
+        )
+        {
+            if ((competencyAssessmentId < 1) | (brandId < 1) | (categoryId < 1)  | (adminId < 1))
+            {
+                logger.LogWarning(
+                    $"Not updating competency assessment as it failed server side validation. competencyAssessmentId: {competencyAssessmentId}, brandId: {brandId}, categoryId: {categoryId},  AdminId: {adminId}"
+                );
+                return false;
+            }
+
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessments SET BrandID = @brandId, CategoryID = @categoryId, UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyAssessmentId",
+                new { brandId, categoryId, adminId, competencyAssessmentId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating competency assessment as db update failed. " +
+                    $"frameworkId: {competencyAssessmentId}, brandId: {brandId}, categoryId: {categoryId},  AdminId: {adminId}"
+                );
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool UpdateCompetencyAssessmentDescription(int competencyAssessmentId, int adminId, string competencyAssessmentDescription)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessments SET Description = @competencyAssessmentDescription, UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyAssessmentId",
+                new { adminId, competencyAssessmentId, competencyAssessmentDescription }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating competency assessment as db update failed. " +
+                    $"frameworkId: {competencyAssessmentId}, competencyAssessmentDescription: {competencyAssessmentDescription}, AdminId: {adminId}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"Insert SelfAssessmentFrameworks (SelfAssessmentId, FrameworkId, CreatedByAdminId)
+                    VALUES (@selfAssessmentId, @frameworkId, @adminId)
+                    WHERE NOT EXISTS (SELECT 1 FROM SelfAssessmentFrameworks WHERE SelfAssessmentId = @selfAssessmentId AND FrameworkId = @frameworkId)"
+            ,
+                new { adminId, selfAssessmentId, frameworkId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                "Not inserting SelfAssessmentFrameworks record as db insert failed. " +
+                    $"selfAssessmentId: {selfAssessmentId}, frameworkId: {frameworkId}, AdminId: {adminId}"
+                );
+                return false;
+            }
+
+            return true;
         }
     }
 }

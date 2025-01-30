@@ -12,11 +12,11 @@
                .WithColumn("SelfAssessmentId").AsInt32().NotNullable().ForeignKey("SelfAssessments", "ID")
                .WithColumn("FrameworkId").AsInt32().NotNullable().ForeignKey("Frameworks", "ID")
                .WithColumn("CreatedDate").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentDateTime)
-               .WithColumn("CreatedByUserId").AsInt32().NotNullable().ForeignKey("Users", "ID")
+               .WithColumn("CreatedByAdminId").AsInt32().NotNullable().ForeignKey("AdminAccounts", "ID")
                .WithColumn("RemovedDate").AsDateTime().Nullable()
-               .WithColumn("RemovedByUserId").AsInt32().Nullable().ForeignKey("Users", "ID")
+               .WithColumn("RemovedByAdminId").AsInt32().Nullable().ForeignKey("AdminAccounts", "ID")
                .WithColumn("AmendedDate").AsDateTime().Nullable()
-               .WithColumn("AmendedByUserId").AsInt32().Nullable().ForeignKey("Users", "ID");
+               .WithColumn("AmendedByAdminId").AsInt32().Nullable().ForeignKey("AdminAccounts", "ID");
             Create.Table("SelfAssessmentTaskStatus")
                .WithColumn("ID").AsInt32().NotNullable().PrimaryKey().Identity()
                .WithColumn("SelfAssessmentId").AsInt32().NotNullable().ForeignKey("SelfAssessments", "ID").Unique()
@@ -32,13 +32,12 @@
                .WithColumn("SupervisorRolesTaskStatus").AsBoolean().Nullable()
                .WithColumn("SelfAssessmentOptionsTaskStatus").AsBoolean().Nullable()
                .WithColumn("ReviewTaskStatus").AsBoolean().Nullable();
-            Execute.Sql($@"INSERT INTO SelfAssessmentFrameworks (SelfAssessmentId, FrameworkId, CreatedByUserId)
-                            SELECT sa.ID, fc.FrameworkID, aa.UserID
+            Execute.Sql($@"INSERT INTO SelfAssessmentFrameworks (SelfAssessmentId, FrameworkId, CreatedByAdminId)
+                            SELECT sa.ID, fc.FrameworkID, sa.CreatedByAdminID
                             FROM   SelfAssessments AS sa INNER JOIN
                                          SelfAssessmentStructure AS sas ON sa.ID = sas.SelfAssessmentID INNER JOIN
-                                         FrameworkCompetencies AS fc ON sas.CompetencyID = fc.CompetencyID INNER JOIN
-                                         AdminAccounts AS aa ON sa.CreatedByAdminID = aa.ID
-                            GROUP BY sa.ID, fc.FrameworkID, aa.UserID
+                                         FrameworkCompetencies AS fc ON sas.CompetencyID = fc.CompetencyID
+                            GROUP BY sa.ID, fc.FrameworkID, sa.CreatedByAdminID
                             ");
             Execute.Sql($@"INSERT INTO SelfAssessmentTaskStatus (SelfAssessmentId, IntroductoryTextTaskStatus, BrandingTaskStatus, VocabularyTaskStatus, WorkingGroupTaskStatus, NationalRoleProfileTaskStatus, FrameworkLinksTaskStatus, SelectCompetenciesTaskStatus, OptionalCompetenciesTaskStatus, RoleRequirementsTaskStatus, SupervisorRolesTaskStatus, SelfAssessmentOptionsTaskStatus)
                             SELECT ID, 1,1,1,1,1,1,1,1,1,1,1

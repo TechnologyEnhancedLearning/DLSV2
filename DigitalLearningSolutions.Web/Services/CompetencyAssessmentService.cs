@@ -22,13 +22,18 @@ namespace DigitalLearningSolutions.Web.Services
 
         bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID);
 
+        //INSERT DATA
+        int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
+
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
         private readonly ICompetencyAssessmentDataService competencyAssessmentDataService;
-        public CompetencyAssessmentService(ICompetencyAssessmentDataService competencyAssessmentDataService)
+        private readonly IFrameworkDataService frameworkDataService;
+        public CompetencyAssessmentService(ICompetencyAssessmentDataService competencyAssessmentDataService, IFrameworkDataService frameworkDataService)
         {
             this.competencyAssessmentDataService = competencyAssessmentDataService;
+            this.frameworkDataService = frameworkDataService;
         }
         public IEnumerable<CompetencyAssessment> GetAllCompetencyAssessments(int adminId)
         {
@@ -53,6 +58,20 @@ namespace DigitalLearningSolutions.Web.Services
         public IEnumerable<CompetencyAssessment> GetCompetencyAssessmentsForAdminId(int adminId)
         {
             return competencyAssessmentDataService.GetCompetencyAssessmentsForAdminId(adminId);
+        }
+        public int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId)
+        {
+            var assessmentId = competencyAssessmentDataService.InsertCompetencyAssessment(adminId, centreId, competencyAssessmentName);
+            if(assessmentId > 0 && frameworkId != null)
+            {
+                var framework = frameworkDataService.GetBrandedFrameworkByFrameworkId((int)frameworkId, adminId);
+                if (framework != null) {
+                    competencyAssessmentDataService.InsertSelfAssessmentFramework(adminId, assessmentId, framework.ID);
+                    competencyAssessmentDataService.UpdateCompetencyAssessmentDescription(adminId, assessmentId, framework.Description);
+                    competencyAssessmentDataService.UpdateCompetencyAssessmentBranding(assessmentId, (int)framework.BrandID, (int)framework.CategoryID, adminId);
+                }
+            }
+            return assessmentId;
         }
 
         public bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName)
