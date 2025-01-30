@@ -53,6 +53,7 @@
       else if (Model.DetailFramework.PublishStatusID == 3)
       {
         <button type="submit" class="nhsuk-button">Unpublish</button>
+                <a role="button" asp-controller="CompetencyAssessments" asp-action="CompetencyAssessmentName" asp-route-actionName="New" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button nhsuk-button--secondary">Create assessment</a>
       }
       else
       {
