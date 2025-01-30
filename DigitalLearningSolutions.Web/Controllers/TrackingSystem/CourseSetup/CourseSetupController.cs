@@ -662,9 +662,12 @@
                     sectionsToRemove.Add(section);
                 }
             }
+            if (sectionsToRemove.Count > 0)
+            { 
             foreach (var section in sectionsToRemove)
             {
                 data.SectionContentData.Remove(section);
+            }
             }
             data!.SectionContentData!.Add(
             new SectionContentTempData(
