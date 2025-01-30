@@ -651,11 +651,20 @@
             {
                 data.SectionContentData = new List<SectionContentTempData>();
             }
-            if (data.EditCourseContent)
+            var sectionsToRemove = new List<SectionContentTempData>();
+            foreach (var section in data.SectionContentData)
             {
-                return RedirectToNextSectionOrSummary(
-               model.Index,
-               new SetCourseContentViewModel(data.CourseContentData!));
+                section.Tutorials = section.Tutorials
+                    .Where(t => !model.Tutorials.Any(newT => newT.TutorialId == t.TutorialId))
+                    .ToList();
+                if (!section.Tutorials.Any())
+                {
+                    sectionsToRemove.Add(section);
+                }
+            }
+            foreach (var section in sectionsToRemove)
+            {
+                data.SectionContentData.Remove(section);
             }
             data!.SectionContentData!.Add(
             new SectionContentTempData(
