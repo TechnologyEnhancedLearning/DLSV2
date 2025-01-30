@@ -14,7 +14,7 @@
     {
       <dd class="nhsuk-summary-list__actions">
 
-        <a asp-action="CreateNewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+        <a asp-action="CreateNewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionName="Edit">
           Edit<span class="nhsuk-u-visually-hidden"> name</span>
         </a>
 
@@ -32,7 +32,7 @@
     @if (Model.DetailFramework.UserRole > 1)
     {
       <dd class="nhsuk-summary-list__actions">
-        <a asp-action="FrameworkDescription" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+        <a asp-action="FrameworkDescription" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionName="Edit">
           Edit
         </a>
       </dd>
@@ -48,7 +48,7 @@
     @if (Model.DetailFramework.UserRole > 1)
     {
       <dd class="nhsuk-summary-list__actions">
-        <a asp-action="FrameworkType" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+        <a asp-action="FrameworkType" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionName="Edit">
           Edit
         </a>
       </dd>
@@ -79,7 +79,7 @@
     {
       <dd class="nhsuk-summary-list__actions">
 
-        <a asp-action="SetNewFrameworkBrand" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+        <a asp-action="SetNewFrameworkBrand" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionName="Edit">
           Edit<span class="nhsuk-u-visually-hidden"> branding</span>
         </a>
 
@@ -130,7 +130,7 @@
     {
       <dd class="nhsuk-summary-list__actions">
 
-        <a asp-action="AddCollaborators" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+        <a asp-action="AddCollaborators" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionName="Edit">
           Edit<span class="nhsuk-u-visually-hidden"> working group members</span>
         </a>
 
