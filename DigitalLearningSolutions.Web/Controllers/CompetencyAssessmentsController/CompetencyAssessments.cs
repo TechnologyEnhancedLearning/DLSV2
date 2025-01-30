@@ -92,66 +92,15 @@
             );
             return View("Index", model);
         }
-        public IActionResult StartNewCompetencyAssessmentSession()
-        {
-            var adminId = GetAdminID();
-            TempData.Clear();
-            var sessionNewCompetencyAssessment = new SessionNewCompetencyAssessment();
-            if (!Request.Cookies.ContainsKey(CookieName))
-            {
-                var id = Guid.NewGuid();
 
-                Response.Cookies.Append(
-                    CookieName,
-                    id.ToString(),
-                    new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddDays(30)
-                    });
-
-                sessionNewCompetencyAssessment.Id = id;
-            }
-            else
-            {
-                if (Request.Cookies.TryGetValue(CookieName, out string idString))
-                {
-                    sessionNewCompetencyAssessment.Id = Guid.Parse(idString);
-                }
-                else
-                {
-                    var id = Guid.NewGuid();
-
-                    Response.Cookies.Append(
-                        CookieName,
-                        id.ToString(),
-                        new CookieOptions
-                        {
-                            Expires = DateTimeOffset.UtcNow.AddDays(30)
-                        });
-                    sessionNewCompetencyAssessment.Id = id;
-                }
-            }
-            CompetencyAssessmentBase competencyAssessmentBase = new CompetencyAssessmentBase()
-            {
-                BrandID = 6,
-                OwnerAdminID = adminId,
-                National = true,
-                Public = true,
-                PublishStatusID = 1,
-                UserRole = 3
-            };
-            sessionNewCompetencyAssessment.CompetencyAssessmentBase = competencyAssessmentBase;
-            TempData.Set(sessionNewCompetencyAssessment);
-            return RedirectToAction("CompetencyAssessmentName", "CompetencyAssessments", new { actionname = "New" });
-        }
-
-        [Route("/CompetencyAssessments/Name/{actionname}/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/Name/{actionname}")]
+        [Route("/CompetencyAssessments/{actionName}/Name/{competencyAssessmentId}")]
+        [Route("/CompetencyAssessments/Framework/{frameworkId}/{actionName}/Name")]
+        [Route("/CompetencyAssessments/{actionName}/Name")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
-        public IActionResult CompetencyAssessmentName(string actionname, int competencyAssessmentId = 0)
+        public IActionResult CompetencyAssessmentName(string actionName, int competencyAssessmentId = 0, int? frameworkId = null)
         {
             var adminId = GetAdminID();
-            CompetencyAssessmentBase? competencyAssessmentBase;
+            var competencyAssessmentBase = new CompetencyAssessmentBase();
             if (competencyAssessmentId > 0)
             {
                 competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
@@ -165,21 +114,23 @@
                     return StatusCode(403);
                 }
             }
-            else
+            else if( frameworkId != null )
             {
-                SessionNewCompetencyAssessment sessionNewCompetencyAssessment = TempData.Peek<SessionNewCompetencyAssessment>();
-                TempData.Set(sessionNewCompetencyAssessment);
-                competencyAssessmentBase = sessionNewCompetencyAssessment.CompetencyAssessmentBase;
-                TempData.Set(sessionNewCompetencyAssessment);
+                var framework = frameworkService.GetBaseFrameworkByFrameworkId((int)frameworkId, adminId);
+                if ( framework != null )
+                {
+                    competencyAssessmentBase.CompetencyAssessmentName = framework.FrameworkName;
+                }
             }
             return View("Name", competencyAssessmentBase);
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/Name/{actionname}/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/Name/{actionname}")]
+        [Route("/CompetencyAssessments/{actionName}/Name/{competencyAssessmentId}")]
+        [Route("/CompetencyAssessments/Framework/{frameworkId}/{actionName}/Name")]
+        [Route("/CompetencyAssessments/{actionName}/Name")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
-        public IActionResult SaveProfileName(CompetencyAssessmentBase competencyAssessmentBase, string actionname, int competencyAssessmentId = 0, int? frameworkId = null)
+        public IActionResult SaveProfileName(CompetencyAssessmentBase competencyAssessmentBase, string actionName, int competencyAssessmentId = 0, int? frameworkId = null)
         {
             if (!ModelState.IsValid)
             {
@@ -191,7 +142,7 @@
             {
                 var userCentreId = (int)GetCentreId();
                 var adminId = GetAdminID();
-                if (actionname == "New")
+                if (actionName == "New")
                 {
                     var sameItems = competencyAssessmentService.GetCompetencyAssessmentByName(competencyAssessmentBase.CompetencyAssessmentName, GetAdminID());
                     if (sameItems != null)
@@ -216,10 +167,10 @@
             }
         }
 
-        [Route("/CompetencyAssessments/ProfessionalGroup/{actionname}/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/ProfessionalGroup/{actionname}")]
+        [Route("/CompetencyAssessments/ProfessionalGroup/{actionName}/{competencyAssessmentId}")]
+        [Route("/CompetencyAssessments/ProfessionalGroup/{actionName}")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
-        public IActionResult CompetencyAssessmentProfessionalGroup(string actionname, int competencyAssessmentId = 0)
+        public IActionResult CompetencyAssessmentProfessionalGroup(string actionName, int competencyAssessmentId = 0)
         {
             var adminId = GetAdminID();
             CompetencyAssessmentBase? competencyAssessmentBase;
@@ -253,10 +204,10 @@
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/ProfessionalGroup/{actionname}/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/ProfessionalGroup/{actionname}")]
+        [Route("/CompetencyAssessments/ProfessionalGroup/{actionName}/{competencyAssessmentId}")]
+        [Route("/CompetencyAssessments/ProfessionalGroup/{actionName}")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
-        public IActionResult SaveProfessionalGroup(CompetencyAssessmentBase competencyAssessmentBase, string actionname, int competencyAssessmentId = 0)
+        public IActionResult SaveProfessionalGroup(CompetencyAssessmentBase competencyAssessmentBase, string actionName, int competencyAssessmentId = 0)
         {
             if (competencyAssessmentBase.NRPProfessionalGroupID == null)
             {
@@ -265,12 +216,12 @@
                 // do something
                 return View("Name", competencyAssessmentBase);
             }
-            if (actionname == "New")
+            if (actionName == "New")
             {
                 SessionNewCompetencyAssessment sessionNewCompetencyAssessment = TempData.Peek<SessionNewCompetencyAssessment>();
                 sessionNewCompetencyAssessment.CompetencyAssessmentBase = competencyAssessmentBase;
                 TempData.Set(sessionNewCompetencyAssessment);
-                return RedirectToAction("CompetencyAssessmentSubGroup", "CompetencyAssessments", new { actionname });
+                return RedirectToAction("CompetencyAssessmentSubGroup", "CompetencyAssessments", new { actionName });
             }
             else
             {
@@ -278,7 +229,7 @@
                 var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentProfessionalGroup(competencyAssessmentBase.ID, adminId, competencyAssessmentBase.NRPProfessionalGroupID);
                 if (isUpdated)
                 {
-                    return RedirectToAction("CompetencyAssessmentSubGroup", "CompetencyAssessments", new { actionname, competencyAssessmentId });
+                    return RedirectToAction("CompetencyAssessmentSubGroup", "CompetencyAssessments", new { actionName, competencyAssessmentId });
                 }
                 else
                 {
@@ -287,10 +238,10 @@
             }
         }
 
-        [Route("/CompetencyAssessments/SubGroup/{actionname}/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/SubGroup/{actionname}")]
+        [Route("/CompetencyAssessments/SubGroup/{actionName}/{competencyAssessmentId}")]
+        [Route("/CompetencyAssessments/SubGroup/{actionName}")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
-        public IActionResult CompetencyAssessmentSubGroup(string actionname, int competencyAssessmentId = 0)
+        public IActionResult CompetencyAssessmentSubGroup(string actionName, int competencyAssessmentId = 0)
         {
             return View("SubGroup");
         }

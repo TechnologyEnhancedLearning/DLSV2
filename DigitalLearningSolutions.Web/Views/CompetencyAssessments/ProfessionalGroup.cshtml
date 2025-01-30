@@ -8,7 +8,7 @@
 @section NavMenuItems {
   <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
   @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -63,7 +63,7 @@ else
       <div class="nhsuk-radios__item">
         <input class="nhsuk-radios__input" name="CompetencyAssessmentBase.NRPProfessionalGroupID" id="radio-null" checked="@(Model.CompetencyAssessmentBase.NRPProfessionalGroupID == null)" type="radio" value="">
         <text class="nhsuk-label nhsuk-radios__label" for="radio-null">
-            @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+            @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
             {
               <text>
               Skip professional group and job role linking.
@@ -96,9 +96,9 @@ else
   <input name="nrpSubGroupID" type="hidden" asp-for="CompetencyAssessmentBase.NRPSubGroupID" />
   <input name="nrpRoleID" type="hidden" asp-for="CompetencyAssessmentBase.NRPRoleID" />
   <input name="userRole" type="hidden" asp-for="CompetencyAssessmentBase.UserRole" />
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
   {
-    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="CompetencyAssessmentName" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="CompetencyAssessmentName" asp-route-actionName="@(ViewContext.RouteData.Values["actionName"])">
       Back
     </a>
     <button class="nhsuk-button" type="submit">

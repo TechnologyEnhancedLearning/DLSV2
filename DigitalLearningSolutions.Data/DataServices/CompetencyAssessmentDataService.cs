@@ -295,8 +295,8 @@
         public bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"Insert SelfAssessmentFrameworks (SelfAssessmentId, FrameworkId, CreatedByAdminId)
-                    VALUES (@selfAssessmentId, @frameworkId, @adminId)
+                @"INSERT INTO SelfAssessmentFrameworks (SelfAssessmentId, FrameworkId, CreatedByAdminId)
+                    SELECT @selfAssessmentId, @frameworkId, @adminId
                     WHERE NOT EXISTS (SELECT 1 FROM SelfAssessmentFrameworks WHERE SelfAssessmentId = @selfAssessmentId AND FrameworkId = @frameworkId)"
             ,
                 new { adminId, selfAssessmentId, frameworkId }

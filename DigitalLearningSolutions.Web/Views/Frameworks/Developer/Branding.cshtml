@@ -9,7 +9,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
   @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -88,9 +88,9 @@ else
       </div>
     </div>
   </fieldset>
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
   {
-    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="FrameworkType" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="FrameworkType" asp-route-actionName="@(ViewContext.RouteData.Values["actionName"])">
       Back
     </a>
     <button class="nhsuk-button" role="button" type="submit">
