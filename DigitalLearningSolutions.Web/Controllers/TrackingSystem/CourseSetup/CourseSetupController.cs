@@ -381,7 +381,10 @@
             {
                 return RedirectToAction("Summary");
             }
-            data.EditCourseContent = editCourseContent;
+
+            if (!data.EditCourseContent)
+                data.EditCourseContent = editCourseContent;
+
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             var model = data!.CourseContentData != null
@@ -426,6 +429,23 @@
             }
 
             data.CourseContentData = model.ToDataCourseContentTempData();
+
+            //*** When user changes section using change link or back button, update data.SectionContentData accordingly ***//
+            var newSectionContentData = new List<SectionContentTempData?>();
+            foreach (var secId in model.SelectedSectionIds)
+            {
+                var tutorials = tutorialService.GetTutorialsForSection(secId).ToArray();
+                var sectionContentTempData = new SectionContentTempData(tutorials);
+                sectionContentTempData.Tutorials = sectionContentTempData.Tutorials.ToList();
+
+                newSectionContentData!.Add(sectionContentTempData);
+            }
+            if (data!.SectionContentData != null)
+            {
+                data.SectionContentData = data.SectionContentData
+                .Where(nArray => newSectionContentData.Any(sArray => sArray.Tutorials.FirstOrDefault().TutorialId.Equals(nArray.Tutorials.FirstOrDefault().TutorialId))).ToList();
+            }
+
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             return RedirectToAction(model.IncludeAllSections ? "Summary" : "SetSectionContent");
@@ -462,6 +482,8 @@
             if (data.EditCourseContent)
             {
                 var tutorial = GetTutorialsFromSectionContentData(data.SectionContentData, tutorials);
+                if (tutorial.Count() == 0) // if newly added section in edit mode
+                    tutorial = tutorials;
                 var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorial);
                 return View("AddNewCentreCourse/SetSectionContent", model);
             }
@@ -651,8 +673,30 @@
             {
                 data.SectionContentData = new List<SectionContentTempData>();
             }
-            if (data.EditCourseContent)
+
+            var tutorialId = model.Tutorials.Select(x => x.TutorialId).FirstOrDefault();
+            var tutorialExist = data.SectionContentData!.SelectMany(x => x.Tutorials).Select(y => y.TutorialId).Contains(tutorialId);
+
+
+            if (data.EditCourseContent && tutorialExist) // Edit only for existing sections else add
             {
+                if (model.Tutorials != null)
+                {
+                    data.SectionContentData!
+                            .SelectMany(x => x.Tutorials)
+                            .Join(model!.Tutorials,
+                                sectTut => sectTut.TutorialId,
+                                modTut => modTut.TutorialId,
+                                (sectTut, modTut) =>
+                                {
+                                    sectTut.DiagnosticEnabled = modTut.DiagnosticEnabled;
+                                    sectTut.LearningEnabled = modTut.LearningEnabled;
+                                    return sectTut;
+                                })
+                            .ToList();
+
+                    multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
+                }
                 return RedirectToNextSectionOrSummary(
                model.Index,
                new SetCourseContentViewModel(data.CourseContentData!));
