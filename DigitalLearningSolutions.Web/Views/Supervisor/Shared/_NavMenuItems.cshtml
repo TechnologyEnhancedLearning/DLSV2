@@ -4,26 +4,22 @@
 <li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "Supervisor", action: "Index")">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="Index">
     Dashboard
-    <partial name="_NhsChevronRight" />
   </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.IsSelected("MyStaffList")">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="MyStaffList">
     My Staff
-    <partial name="_NhsChevronRight" />
   </a>
 </li>
 <feature name="@(FeatureFlags.SupervisorProfileAssessmentInterface)">
   <li class="nhsuk-header__navigation-item @Html.IsSelected("SelfAssessments")">
     <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="SelfAssessments">
       Self Assessments
-      <partial name="_NhsChevronRight" />
     </a>
   </li>
 </feature>
 <li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "MyAccount", action: "Index")">
   <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.Supervisor.UrlSegment">
     My account
-    <partial name="_NhsChevronRight" />
   </a>
 </li>
