@@ -7,13 +7,11 @@
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Welcome)">
   <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
     Welcome
-    <partial name="_NhsChevronRight" />
   </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.FindYourCentre)">
   <a class="nhsuk-header__navigation-link" asp-controller="FindYourCentre" asp-action="Index">
     Find your centre
-    <partial name="_NhsChevronRight" />
   </a>
 </li>
 @if (Configuration.IsPricingPageEnabled())
@@ -21,7 +19,6 @@
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Pricing)">
     <a class="nhsuk-header__navigation-link" asp-controller="Pricing" asp-action="Index">
       Pricing
-      <partial name="_NhsChevronRight" />
     </a>
   </li>
 }
@@ -30,7 +27,6 @@
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.MyAccount)">
     <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index">
       My account
-      <partial name="_NhsChevronRight" />
     </a>
   </li>
 }
@@ -39,13 +35,11 @@ else
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.LogIn)">
     <a class="nhsuk-header__navigation-link" asp-controller="Login" asp-action="Index">
       Log in
-      <partial name="_NhsChevronRight" />
     </a>
   </li>
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Register)">
     <a class="nhsuk-header__navigation-link" asp-controller="Register" asp-action="Start">
       Register
-      <partial name="_NhsChevronRight" />
     </a>
   </li>
 }
