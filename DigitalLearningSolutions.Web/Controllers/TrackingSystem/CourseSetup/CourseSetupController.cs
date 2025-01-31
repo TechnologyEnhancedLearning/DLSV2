@@ -744,18 +744,19 @@
         private IEnumerable<Tutorial> GetTutorialsFromSectionContentData(List<SectionContentTempData> sectionContentData, List<Tutorial> sectionTutorial)
         {
             if (sectionContentData == null || sectionTutorial == null) return new List<Tutorial>();
-            var updatedRecords = sectionContentData
-        .SelectMany(data => data.Tutorials)
-        .Join(sectionTutorial,
-            tempData => new { tempData.TutorialId, tempData.TutorialName },  // Match on both TutorialId and TutorialName
-            index => new { index.TutorialId, index.TutorialName },
-            (tempData, index) => new Tutorial
+            var updatedRecords = sectionTutorial
+        .GroupJoin(
+            sectionContentData.SelectMany(data => data.Tutorials),
+            tutorial => new { tutorial.TutorialId, tutorial.TutorialName },
+            tempData => new { tempData.TutorialId, tempData.TutorialName },
+            (tutorial, matchingTempData) => new Tutorial
             {
-                TutorialId = index.TutorialId,
-                TutorialName = index.TutorialName,
-                Status = tempData.LearningEnabled,  // Updated from sectionContentData
-                DiagStatus = tempData.DiagnosticEnabled // Updated from sectionContentData
-            })
+                TutorialId = tutorial.TutorialId,
+                TutorialName = tutorial.TutorialName,
+                Status = matchingTempData.Any() ? matchingTempData.First().LearningEnabled : tutorial.Status,
+                DiagStatus = matchingTempData.Any() ? matchingTempData.First().DiagnosticEnabled : tutorial.DiagStatus
+            }
+        )
         .ToList();
 
             return updatedRecords;
