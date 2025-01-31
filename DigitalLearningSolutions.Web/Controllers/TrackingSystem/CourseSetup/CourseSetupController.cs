@@ -674,9 +674,12 @@
                 data.SectionContentData = new List<SectionContentTempData>();
             }
 
-            var tutorialId = model.Tutorials.Select(x => x.TutorialId).FirstOrDefault();
-            var tutorialExist = data.SectionContentData!.SelectMany(x => x.Tutorials).Select(y => y.TutorialId).Contains(tutorialId);
-
+            bool tutorialExist = false;
+            if (model.Tutorials != null)
+            {
+                var tutorialId = model.Tutorials.Select(x => x.TutorialId).FirstOrDefault();
+                tutorialExist = data.SectionContentData!.SelectMany(x => x.Tutorials).Select(y => y.TutorialId).Contains(tutorialId);
+            }
 
             if (data.EditCourseContent && tutorialExist) // Edit only for existing sections else add
             {
