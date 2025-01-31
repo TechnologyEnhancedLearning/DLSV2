@@ -285,7 +285,7 @@
             fwr.ID AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
-            @",(SELECT BrandName
+            @", FW.Description, FW.FrameworkConfig AS Vocabulary, (SELECT BrandName
                                  FROM    Brands
                                  WHERE (BrandID = FW.BrandID)) AS Brand,
                                  (SELECT CategoryName

@@ -1,85 +1,85 @@
 ﻿@using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 @model IEnumerable<CompetencyAssessment>;
 <table role="table" class="nhsuk-table-responsive">
-  <caption class="nhsuk-table__caption nhsuk-u-visually-hidden">
-    Frameworks
-  </caption>
-  <thead role="rowgroup" class="nhsuk-table__head">
-    <tr role="row">
-      <th role="columnheader" class="" scope="col">
-        Competency Assessment
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Framework Links
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Created
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Status
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Owner
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Actions
-      </th>
-    </tr>
-  </thead>
-  <tbody class="nhsuk-table__body">
-    @foreach (var competencyAssessment in Model)
-    {
-      <tr role="row" class="nhsuk-table__row framework-row">
-        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">Competency Assessment </span>
-          <span class="roleprofile-brand">
-            @competencyAssessment.Brand
-          </span>
-          <span>/</span>
-          <span class="framework-name nhsuk-u-font-weight-bold">
-            @competencyAssessment.CompetencyAssessmentName
-          </span>
-        </td>
-        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">Framework links </span>
-          <span class="roleprofile-linkage">
-            @competencyAssessment.LinkedFrameworks
-          </span>
-        </td>
-        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">Created </span>
-          <span class="roleprofile-created-date">
-            @competencyAssessment.CreatedDate.ToShortDateString()
-          </span>
-        </td>
-        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">Status </span>
-          <span class="roleprofile-publish-status">
-            <partial name="~/Views/Frameworks/Shared/_StatusTag.cshtml" model="competencyAssessment.PublishStatusID" />
-          </span>
-        </td>
-        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">Owner </span>
-          <span class="roleprofile-owner">
-            @competencyAssessment.Owner
-          </span>
-        </td>
-        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">Actions </span>
-          @if (competencyAssessment.UserRole > 1)
-          {
-            <a asp-action="ManageCompetencyAssessment" asp-route-frameworkId="@competencyAssessment.ID" asp-route-tabname="Structure">
-              Manage
-            </a>
-          }
-          else
-          {
-            <a asp-action="ManageCompetencyAssessment" asp-route-frameworkId="@competencyAssessment.ID" asp-route-tabname="Structure">
-              View
-            </a>
-          }
-        </td>
-      </tr>
-    }
-  </tbody>
+    <caption class="nhsuk-table__caption nhsuk-u-visually-hidden">
+        Frameworks
+    </caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+            <th role="columnheader" class="" scope="col">
+                Competency Assessment
+            </th>
+            <th role="columnheader" class="" scope="col">
+                Framework Links
+            </th>
+            <th role="columnheader" class="" scope="col">
+                Created
+            </th>
+            <th role="columnheader" class="" scope="col">
+                Status
+            </th>
+            <th role="columnheader" class="" scope="col">
+                Owner
+            </th>
+            <th role="columnheader" class="" scope="col">
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+        @foreach (var competencyAssessment in Model)
+        {
+            <tr role="row" class="nhsuk-table__row framework-row">
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Competency Assessment </span>
+                    <span class="roleprofile-brand">
+                        @competencyAssessment.Brand
+                    </span>
+                    <span>/</span>
+                    <span class="framework-name nhsuk-u-font-weight-bold">
+                        @competencyAssessment.CompetencyAssessmentName
+                    </span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Framework links </span>
+                    <span class="roleprofile-linkage">
+                        @competencyAssessment.LinkedFrameworks
+                    </span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Created </span>
+                    <span class="roleprofile-created-date">
+                        @competencyAssessment.CreatedDate.ToShortDateString()
+                    </span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Status </span>
+                    <span class="roleprofile-publish-status">
+                        <partial name="~/Views/Frameworks/Shared/_StatusTag.cshtml" model="competencyAssessment.PublishStatusID" />
+                    </span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Owner </span>
+                    <span class="roleprofile-owner">
+                        @competencyAssessment.Owner
+                    </span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Actions </span>
+                    @if (competencyAssessment.UserRole > 1)
+                    {
+                        <a asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@competencyAssessment.ID">
+                            Manage
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@competencyAssessment.ID">
+                            View
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

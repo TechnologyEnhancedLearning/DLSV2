@@ -1,0 +1,150 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model ManageCompetencyAssessmentViewModel
+
+<h1>Manage assessment: @Model.CompetencyAssessmentName</h1>
+<div class="content-group">
+    <ul class="nhsuk-task-list nhsuk-u-margin-bottom-0">
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-frameworks-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Select competency framework sources
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="select-frameworks-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="description-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Define assessment introductory description
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="description-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="brand-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Select assessment brand and category
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="brand-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="vocabulary-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Select assessment vocabulary (@Model.Vocabulary)
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="vocabulary-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="working-group-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Define working group (contributors and reviewers)
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="working-group-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="national-profiles-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Link assessment to National Role profiles
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="national-profiles-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-competencies-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Select competencies to assess
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="select-competencies-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="optional-competencies-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Identify optional competencies
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="optional-competencies-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="role-requirements-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Set competency attainment requirements
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="role-requirements-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="supervisor-roles-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Define supervisor roles
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="supervisor-roles-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="configuration-status">
+                <a class="nhsuk-link nhsuk-task-list__link" href="/paper-transfer/learner/paper-assessment-information">
+                    Configure navigation options and labels
+                </a>
+            </div>
+            <div class="nhsuk-task-list__status" id="configuration-status">
+                <strong class="nhsuk-tag nhsuk-tag--green">
+                    Complete
+                </strong>
+            </div>
+        </li>
+        <li class="nhsuk-task-list__item">
+            <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
+                <div>
+                    Send for review
+                </div>
+            </div>
+            <div class="nhsuk-task-list__status nhsuk-task-list__status--cannot-start-yet" id="review-status">
+                Cannot start yet
+            </div>
+        </li>
+    </ul>
+</div>
