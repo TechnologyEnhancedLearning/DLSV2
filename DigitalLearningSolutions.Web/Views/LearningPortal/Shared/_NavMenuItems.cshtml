@@ -3,24 +3,20 @@
 <li class="nhsuk-header__navigation-item @Html.IsSelected("Current")">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Current">
     Current activities
-    <partial name="_NhsChevronRight" />
   </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.IsSelected("Completed")">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Completed">
     Completed activities
-    <partial name="_NhsChevronRight" />
   </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.IsSelected("Available")">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Available">
     Available activities
-    <partial name="_NhsChevronRight" />
   </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "MyAccount", action: "Index")">
   <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.LearningPortal.UrlSegment">
     My account
-    <partial name="_NhsChevronRight" />
   </a>
 </li>
