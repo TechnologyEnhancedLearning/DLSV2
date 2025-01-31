@@ -365,7 +365,8 @@
             data!.CourseOptionsData = model.ToCourseOptionsTempData();
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
-            return RedirectToAction("SetCourseContent", false);
+            bool editCourseContent = data?.EditCourseContent ?? false;
+            return RedirectToAction("SetCourseContent", editCourseContent);
         }
 
         [HttpGet("AddCourse/SetCourseContent")]
@@ -381,7 +382,7 @@
             {
                 return RedirectToAction("Summary");
             }
-            data.EditCourseContent = editCourseContent;
+            data.EditCourseContent = data.EditCourseContent || editCourseContent;
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             var model = data!.CourseContentData != null
