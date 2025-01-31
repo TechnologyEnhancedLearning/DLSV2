@@ -24,6 +24,8 @@
 
         IEnumerable<NRPProfessionalGroups> GetNRPProfessionalGroups();
 
+        CompetencyAssessmentTaskStatus GetOrInsertAndReturnAssessmentTaskStatus(int assessmentId, bool frameworkBased);
+
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
 
@@ -34,6 +36,7 @@
             int categoryId,
             int adminId
         );
+        bool UpdateCompetencyAssessmentVocabulary(int competencyAssessmentId, int adminId, string vocabulary);
         bool UpdateCompetencyAssessmentDescription(int competencyAssessmentId, int adminId, string competencyAssessmentDescription);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
@@ -49,7 +52,7 @@
                 sa.NRPProfessionalGroupID,
                  sa.NRPSubGroupID,
                  sa.NRPRoleID,
-                 sa.PublishStatusID, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
+                 sa.PublishStatusID, sa.Vocabulary, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
 
         private const string SelfAssessmentFields =
             @", sa.CreatedDate,
@@ -265,7 +268,7 @@
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    "Not updating competency assessment as db update failed. " +
+                    "Not updating competency assessment branding as db update failed. " +
                     $"frameworkId: {competencyAssessmentId}, brandId: {brandId}, categoryId: {categoryId},  AdminId: {adminId}"
                 );
                 return false;
@@ -284,8 +287,26 @@
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    "Not updating competency assessment as db update failed. " +
+                    "Not updating competency assessment Description as db update failed. " +
                     $"frameworkId: {competencyAssessmentId}, competencyAssessmentDescription: {competencyAssessmentDescription}, AdminId: {adminId}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateCompetencyAssessmentVocabulary(int competencyAssessmentId, int adminId, string vocabulary)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessments SET Vocabulary = @vocabulary, UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyAssessmentId",
+                new { adminId, competencyAssessmentId, vocabulary }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating competency assessment vocabulary as db update failed. " +
+                    $"frameworkId: {competencyAssessmentId}, vocabulary: {vocabulary}, AdminId: {adminId}"
                 );
                 return false;
             }
@@ -311,6 +332,22 @@
             }
 
             return true;
+        }
+
+        public CompetencyAssessmentTaskStatus GetOrInsertAndReturnAssessmentTaskStatus(int assessmentId, bool frameworkBased)
+        {
+            bool? frameworkItemBool = frameworkBased ? false : null;
+            connection.Execute(
+           @"INSERT INTO SelfAssessmentTaskStatus (SelfAssessmentId, IntroductoryTextTaskStatus, BrandingTaskStatus, VocabularyTaskStatus, FrameworkLinksTaskStatus)
+                    SELECT @assessmentId, @frameworkItemBool, @frameworkItemBool, @frameworkItemBool, @frameworkItemBool
+                    WHERE NOT EXISTS (SELECT 1 FROM SelfAssessmentTaskStatus WHERE SelfAssessmentId = @assessmentId)", new { assessmentId, frameworkItemBool });
+            return connection.Query<CompetencyAssessmentTaskStatus>(
+                $@"SELECT *
+                      FROM SelfAssessmentTaskStatus
+                      WHERE (SelfAssessmentId = @assessmentId)",
+                new { assessmentId }
+            ).Single();
+            
         }
     }
 }
