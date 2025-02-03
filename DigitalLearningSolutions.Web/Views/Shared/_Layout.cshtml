@@ -102,22 +102,13 @@
                         }
                     </a>
                 </div>
-
-                @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] != true)
-                {
-                    <div class="nhsuk-header__content" id="content-header">
-                        <div class="nhsuk-header__menu">
-                            <button class="nhsuk-header__menu-toggle" id="toggle-menu" aria-controls="header-navigation" aria-label="Open menu">Menu</button>
-                        </div>
-                    </div>
-                }
                 <vc:logo customisation-id="@((int?)ViewData[LayoutViewDataKeys.CustomisationIdForHeaderLogo])" />
             </div>
 
             @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] != true)
             {
                 <div class="nhsuk-navigation-container">
-                    <nav class="nhsuk-header__navigation" id="header-navigation" aria-label="Primary navigation" role="navigation">
+                    <nav class="nhsuk-navigation" id="header-navigation" aria-label="Primary navigation" role="navigation">
                         <ul class="nhsuk-header__navigation-list">
                             @if (IsSectionDefined("NavMenuItems"))
                             {
@@ -180,7 +171,6 @@
         @await RenderSectionAsync("scripts", false)
         <script src="@Url.Content("~/js/learningPortal/dlscommon.js")" asp-append-version="true"></script>
         <script src="@Url.Content("~/js/cookiesbanner.js")" asp-append-version="true"></script>
-        <script src="@Url.Content("~/js/nhsuk.js")" asp-append-version="true"></script>>
         <input type="hidden" id="keepAlivePingPath" value="@Url.Action("ping","keepSessionAlive")" />
 
     </div>
