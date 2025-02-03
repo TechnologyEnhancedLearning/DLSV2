@@ -1823,11 +1823,11 @@ WHERE (FrameworkID = @frameworkId)",
 
         public int GetAdminUserRoleForFrameworkId(int adminId, int frameworkId)
         {
-            return (int)connection.ExecuteScalar(
-                @"SELECT CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole
-                FROM Frameworks AS FW LEFT OUTER JOIN
-                FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
-                WHERE FW.ID = @frameworkId and FWC.IsDeleted=0",
+            return connection.QuerySingle<int>(
+                @"SELECT CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN COALESCE (fwc.CanModify, 0) = 1 THEN 2 WHEN COALESCE (fwc.CanModify, 0) = 0 THEN 1 ELSE 0 END AS UserRole
+                    FROM   Frameworks AS FW LEFT OUTER JOIN
+                                 FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND fwc.IsDeleted = 0
+                    WHERE (FW.ID = @frameworkId)",
                 new { adminId, frameworkId }
             );
         }
