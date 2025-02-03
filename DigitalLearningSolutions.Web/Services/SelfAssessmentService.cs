@@ -150,7 +150,17 @@
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
         public int GetSelfAssessmentCategoryId(int selfAssessmentId);
-
+        IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+           int delegateUserId,
+           int selfAssessmentId,
+           int competencyId
+       );
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(
+        int delegateUserId,
+        int selfAssessmentId,
+        int competencyId
+    );
+       void RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -574,6 +584,26 @@
         public int GetSelfAssessmentCategoryId(int selfAssessmentId)
         {
             return selfAssessmentDataService.GetSelfAssessmentCategoryId(selfAssessmentId);
+        }
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+           int delegateUserId,
+           int selfAssessmentId,
+           int competencyId
+       )
+        {
+            return selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(delegateUserId, selfAssessmentId, competencyId);
+        }
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(
+        int delegateUserId,
+        int selfAssessmentId,
+        int competencyId
+    )
+        {
+            return selfAssessmentDataService.GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(delegateUserId, selfAssessmentId, competencyId);
+        }
+        public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
+        {
+             selfAssessmentDataService.RemoveReviewCandidateAssessmentOptionalCompetencies(id);
         }
     }
 }
