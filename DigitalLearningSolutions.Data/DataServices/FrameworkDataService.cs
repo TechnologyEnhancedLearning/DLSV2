@@ -574,31 +574,13 @@
                 return existingId;
             }
 
-            var numberOfAffectedRows = connection.Execute(
+            existingId = connection.QuerySingle<int>(
                 @"INSERT INTO CompetencyGroups ([Name], [Description], UpdatedByAdminID)
+                    OUTPUT INSERTED.Id
                     VALUES (@groupName, @groupDescription, @adminId)",
                 new { groupName, groupDescription, adminId }
             );
-            if (numberOfAffectedRows < 1)
-            {
-                logger.LogWarning(
-                    "Not inserting competency group as db insert failed. " +
-                    $"Group name: {groupName}, admin id: {adminId}"
-                );
-                return -1;
-            }
-
-            existingId = connection.QuerySingle<int>(
-                @"SELECT COALESCE
-                 ((SELECT TOP (1) ID
-                  FROM    CompetencyGroups
-                  WHERE (Name = @groupName) AND EXISTS
-                                   (SELECT 1 AS Expr1
-                                   FROM    FrameworkCompetencyGroups
-                                   WHERE (CompetencyGroupID = CompetencyGroups.ID) AND (FrameworkID = @frameworkId) OR
-                                                (CompetencyGroupID = CompetencyGroups.ID) AND (@frameworkId IS NULL))), 0) AS CompetencyGroupID",
-                new { groupName, groupDescription }
-            );
+            
             return existingId;
         }
 
@@ -621,27 +603,16 @@
                 return existingId;
             }
 
-            var numberOfAffectedRows = connection.Execute(
+            existingId = connection.QuerySingle<int>(
                 @"INSERT INTO FrameworkCompetencyGroups (CompetencyGroupID, UpdatedByAdminID, Ordering, FrameworkID)
+                    OUTPUT INSERTED.Id
                     VALUES (@groupId, @adminId, COALESCE
                              ((SELECT        MAX(Ordering)
                                  FROM            [FrameworkCompetencyGroups]
                                  WHERE        ([FrameworkID] = @frameworkId)), 0)+1, @frameworkId)",
                 new { groupId, adminId, frameworkId }
             );
-            if (numberOfAffectedRows < 1)
-            {
-                logger.LogWarning(
-                    "Not inserting framework competency group as db insert failed. " +
-                    $"Group id: {groupId}, admin id: {adminId}, frameworkId: {frameworkId}"
-                );
-                return -1;
-            }
-
-            existingId = connection.QuerySingle<int>(
-                @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
-                new { groupId, frameworkId }
-            );
+           
             return existingId;
         }
 
