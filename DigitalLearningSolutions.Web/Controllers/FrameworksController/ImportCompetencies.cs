@@ -53,7 +53,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 if (!workbook.Worksheets.Contains(ImportCompetenciesFromFileService.CompetenciesSheetName))
                 {
                     ModelState.AddModelError("ImportFile", CommonValidationErrorMessages.InvalidCompetenciesUploadExcelFile);
-                    return View("Developer/Import/Index", model);
+                    var adminId = GetAdminId();
+                    var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+                    var viewModel = new ImportCompetenciesViewModel(framework, isNotBlank);
+                    return View("Developer/Import/Index", viewModel);
                 }
                 var competenciesFileName = FileHelper.UploadFile(webHostEnvironment, model.ImportFile);
                 setupBulkUploadData(frameworkId, adminUserID, competenciesFileName, tabname, isNotBlank);
@@ -63,7 +66,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             catch (DocumentFormat.OpenXml.Packaging.OpenXmlPackageException)
             {
                 ModelState.AddModelError("DelegatesFile", "The Excel file has at least one cell containing an invalid hyperlink or email address.");
-                return View("Index", model);
+                var adminId = GetAdminId();
+                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+                var viewModel = new ImportCompetenciesViewModel(framework, isNotBlank);
+                return View("Developer/Import/Index", viewModel);
             }
             catch (InvalidHeadersException)
             {
