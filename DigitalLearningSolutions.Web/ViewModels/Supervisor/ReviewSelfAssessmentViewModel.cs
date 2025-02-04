@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
-    using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Web.Helpers;
@@ -15,9 +14,9 @@
         public IEnumerable<SupervisorSignOff>? SupervisorSignOffs { get; set; }
         public bool IsSupervisorResultsReviewed { get; set; }
         public SearchSupervisorCompetencyViewModel SearchViewModel { get; set; }
-        public string VocabPlural(string vocabulary)
+        public string VocabPlural()
         {
-            return FrameworkVocabularyHelper.VocabularyPlural(vocabulary);
+            return FrameworkVocabularyHelper.VocabularyPlural(DelegateSelfAssessment.Vocabulary);
         }
         public int CandidateAssessmentId { get; set; }
         public bool ExportToExcelHide { get; set; }
