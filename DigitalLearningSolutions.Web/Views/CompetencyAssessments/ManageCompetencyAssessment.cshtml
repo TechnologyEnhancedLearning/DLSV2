@@ -13,18 +13,32 @@
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item">@Model.CompetencyAssessmentName (<a asp-action="CompetencyAssessmentName" asp-route-actionName="Edit" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">Edit name</a>)</li>
+                <li class="nhsuk-breadcrumb__item">@Model.CompetencyAssessmentName</li>
             </ol>
             <p class="nhsuk-breadcrumb__back">
                 <a class="nhsuk-breadcrumb__backlink" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
-                    Back to competency assessments
+                    <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>Competency Assessments
                 </a>
             </p>
         </div>
     </nav>
 }
+
 <h1>@ViewData["Title"]</h1>
+
+
+
 <div class="nhsuk-u-reading-width">
+
+    <p class="nhsuk-lede-text">
+        <strong class="nhsuk-u-margin-right-3 nhsuk-tag @(Model.PublishStatusID == 1 ? "nhsuk-tag--grey" : Model.PublishStatusID == 2 ? "nhsuk-tag--yellow" : "nhsuk-tag--green")">
+            @(Model.PublishStatusID == 1 ? "Draft" : Model.PublishStatusID == 2 ? "In review" : "Published")
+        </strong>
+        <strong>@Model.CompetencyAssessmentName</strong>&nbsp; <a asp-action="CompetencyAssessmentName" asp-route-actionName="Edit" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+        Edit<span class="nhsuk-u-visually-hidden"> &nbsp;name</span>
+    </a>
+    </p>
+           
     <ul class="nhsuk-task-list nhsuk-u-margin-bottom-0">
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-frameworks-status">
