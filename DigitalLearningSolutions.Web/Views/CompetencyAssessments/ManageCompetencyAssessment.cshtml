@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyAssessmentViewModel
 @{
-    ViewData["Title"] = "Manage Competency Assessment";
+    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage" : "Create" + " competency assessment";
     ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -25,8 +25,6 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
-
 
 <div class="nhsuk-u-reading-width">
 
@@ -53,7 +51,7 @@
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="description-status">
                 <a class="nhsuk-link nhsuk-task-list__link" asp-action="EditDescription" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Define assessment introductory description
+                    Provide assessment introductory description
                 </a>
             </div>
             <div class="nhsuk-task-list__status" id="description-status">
@@ -83,7 +81,7 @@
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="working-group-status">
                 <a class="nhsuk-link nhsuk-task-list__link" asp-action="AssessmentWorkingGroup" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Define working group (contributors and reviewers)
+                    Assign working group (contributors and reviewers)
                 </a>
             </div>
             <div class="nhsuk-task-list__status" id="working-group-status">
