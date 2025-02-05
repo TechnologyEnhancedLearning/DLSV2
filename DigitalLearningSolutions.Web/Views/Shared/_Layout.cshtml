@@ -159,8 +159,11 @@
                 <partial name="_UserFeedbackBarPartial" model=@(userResearchUrl) />
             </feature>
 
-            @RenderSection("NavBreadcrumbs", false)
+
         </header>
+        <div class="nhsuk-grid-row">
+            @RenderSection("NavBreadcrumbs", false)
+        </div>
         <div class="nhsuk-width-container" id="maincontentwrapper">
             <main class="nhsuk-main-wrapper" id="maincontent" tabindex="-1">
                 @RenderBody()
