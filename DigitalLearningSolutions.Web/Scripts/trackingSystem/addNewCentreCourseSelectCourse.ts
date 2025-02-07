@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import Details from 'nhsuk-frontend/packages/components/details/details';
+import Details from '@technology-enhanced-learning/nhse-tel-frontend/packages/components/details/details';
 import {
   ISearchableData,
   ISearchableElement,
