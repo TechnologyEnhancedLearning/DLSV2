@@ -17,7 +17,7 @@
         public CourseOptionsTempData? CourseOptionsData { get; set; }
         public CourseContentTempData? CourseContentData { get; set; }
         public List<SectionContentTempData>? SectionContentData { get; set; }
-
+        public bool EditCourseContent { get; set; }
         public void SetApplicationAndResetModels(ApplicationDetails application)
         {
             if (Application == application)

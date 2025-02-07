@@ -130,7 +130,7 @@
 
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
 
-        int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
+        int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
         void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
 
@@ -299,7 +299,7 @@
 
         private const string FrameworkTables =
             @"Frameworks AS FW LEFT OUTER JOIN
-             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId 
+             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(IsDeleted, 0) = 0
             LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
 
         private const string AssessmentQuestionFields =
@@ -751,7 +751,7 @@
             );
         }
 
-        public int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify)
+        public int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify, int? centreID)
         {
             if (userEmail is null || userEmail.Length == 0)
             {
@@ -774,8 +774,8 @@
             }
 
             var adminId = (int?)connection.ExecuteScalar(
-                @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1",
-                new { userEmail }
+                @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1 AND CentreID = @centreID",
+                new { userEmail, centreID }
             );
             if (adminId is null)
             {
@@ -1823,11 +1823,11 @@ WHERE (FrameworkID = @frameworkId)",
 
         public int GetAdminUserRoleForFrameworkId(int adminId, int frameworkId)
         {
-            return (int)connection.ExecuteScalar(
-                @"SELECT CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole
-                FROM Frameworks AS FW LEFT OUTER JOIN
-                FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
-                WHERE FW.ID = @frameworkId",
+            return connection.QuerySingle<int>(
+                @"SELECT CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN COALESCE (fwc.CanModify, 0) = 1 THEN 2 WHEN COALESCE (fwc.CanModify, 0) = 0 THEN 1 ELSE 0 END AS UserRole
+                    FROM   Frameworks AS FW LEFT OUTER JOIN
+                                 FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND fwc.IsDeleted = 0
+                    WHERE (FW.ID = @frameworkId)",
                 new { adminId, frameworkId }
             );
         }

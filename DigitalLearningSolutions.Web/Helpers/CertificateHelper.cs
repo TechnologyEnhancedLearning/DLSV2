@@ -46,5 +46,25 @@ namespace DigitalLearningSolutions.Web.Helpers
             };
             return model;
         }
+        public static CompetencySummary CompetencySummation(List<Competency> reviewedCompetencies)
+        {
+            var CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup);
+            var competencySummaries = CompetencyGroups.Select(g =>
+            {
+                var questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
+                var verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required));
+                return new
+                {
+                    QuestionsCount = questions.Count(),
+                    VerifiedCount = verifiedCount
+                };
+            });
+            var model = new CompetencySummary()
+            {
+                VerifiedCount = competencySummaries.Sum(item => item.VerifiedCount),
+                QuestionsCount = competencySummaries.Sum(item => item.QuestionsCount),
+            };
+            return model;
+        }
     }
 }

@@ -21,5 +21,6 @@
         [Range(1, 1, ErrorMessage = "Please tick to confirm that you have  reviewed the optional competencies included in this self assessment and they are appropriate to the learner’s role.")]
         public bool OptionalCompetenciesChecked { get; set; }
         public int NumberOfSelfAssessedOptionalCompetencies { get; set; }
+        public bool? IsSignOffverified { get; set; }
     }
 }

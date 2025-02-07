@@ -69,15 +69,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 sortDirection = GenericSortingHelper.Ascending;
             }
 
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                DelegateGroupsFilterCookieName,
-                null
-            );
-
             var centreId = User.GetCentreIdKnownNotNull();
 
             var addedByAdmins = groupsService.GetAdminsForCentreGroups(centreId);
@@ -95,37 +86,23 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var availableFilters = DelegateGroupsViewModelFilterOptions
                 .GetDelegateGroupFilterModels(addedByAdmins, registrationPrompts).ToList();
 
-            if (TempData["DelegateGroupCentreId"] != null && TempData["DelegateGroupCentreId"].ToString() != User.GetCentreId().ToString()
-                    && existingFilterString != null)
-            {
-                existingFilterString = FilterHelper.RemoveNonExistingFilterOptions(availableFilters, existingFilterString);
-            }
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                DelegateGroupsFilterCookieName,
+                null,
+                availableFilters
+            );
 
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             string filterAddedBy = "";
             string filterLinkedField = "";
 
-            if (!string.IsNullOrEmpty(existingFilterString))
+            if (!string.IsNullOrEmpty(filterString))
             {
-                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-
-                if (!string.IsNullOrEmpty(newFilterToAdd))
-                {
-                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
-                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
-                    if (dupfilters.Count() > 1)
-                    {
-                        foreach (var filter in selectedFilters)
-                        {
-                            if (filter.Contains(filterHeader))
-                            {
-                                selectedFilters.Remove(filter);
-                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
-                                break;
-                            }
-                        }
-                    }
-                }
+                var selectedFilters = filterString.Split(FilteringHelper.FilterSeparator).ToList();
 
                 if (selectedFilters.Count > 0)
                 {
@@ -174,7 +151,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 groups,
                 resultCount,
                 new PaginationOptions(page, itemsPerPage),
-                new FilterOptions(existingFilterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),
+                new FilterOptions(filterString, availableFilters, DelegateActiveStatusFilterOptions.IsActive.FilterValue),
                 searchString,
                 sortBy,
                 sortDirection
@@ -191,7 +168,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             model.TotalPages = (int)(resultCount / itemsPerPage) + ((resultCount % itemsPerPage) > 0 ? 1 : 0);
             model.MatchingSearchResults = resultCount;
             Response.UpdateFilterCookie(DelegateGroupsFilterCookieName, result.FilterString);
-            TempData["DelegateGroupCentreId"] = centreId;
 
             return View(model);
         }

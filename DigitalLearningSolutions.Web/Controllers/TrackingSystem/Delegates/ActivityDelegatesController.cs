@@ -96,34 +96,30 @@
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
 
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                filterCookieName,
-                CourseDelegateAccountStatusFilterOptions.Active.FilterValue
-            );
+            var availableFilters = isCourseDelegate
+                   ? CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId.Value).AdminFields)
+                   : SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels();
 
-            if (isCourseDelegate)
-            {
-                if (TempData["actDelCustomisationId"] != null && TempData["actDelCustomisationId"].ToString() != customisationId.ToString()
-                        && existingFilterString != null && existingFilterString.Contains("Answer"))
-                {
-                    var availableCourseFilters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId.Value).AdminFields);
-                    existingFilterString = FilterHelper.RemoveNonExistingPromptFilters(availableCourseFilters, existingFilterString);
-                }
-            }
-            else
+            var filterString = FilteringHelper.GetFilterString(
+                                    existingFilterString,
+                                    newFilterToAdd,
+                                    clearFilters,
+                                    Request,
+                                    filterCookieName,
+                                    CourseDelegateAccountStatusFilterOptions.Active.FilterValue,
+                                    availableFilters
+                                );
+
+            if (!isCourseDelegate)
             {
                 isUnsupervisedSelfAssessment = selfAssessmentService.IsUnsupervisedSelfAssessment((int)selfAssessmentId);
-                if (existingFilterString != null)
+                if (filterString != null)
                 {
                     var existingfilterList = isUnsupervisedSelfAssessment ?
-                        existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SignedOff")).ToList() :
-                        existingFilterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SubmittedDate")).ToList();
+                        filterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SignedOff")).ToList() :
+                        filterString!.Split(FilteringHelper.FilterSeparator).Where(filter => !filter.Contains("SubmittedDate")).ToList();
 
-                    existingFilterString = existingfilterList.Any() ? string.Join(FilteringHelper.FilterSeparator, existingfilterList) : null;
+                    filterString = existingfilterList.Any() ? string.Join(FilteringHelper.FilterSeparator, existingfilterList) : null;
                 }
             }
 
@@ -139,27 +135,9 @@
             string? answer1, answer2, answer3;
             answer1 = answer2 = answer3 = null;
 
-            if (!string.IsNullOrEmpty(existingFilterString))
+            if (!string.IsNullOrEmpty(filterString))
             {
-                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-
-                if (!string.IsNullOrEmpty(newFilterToAdd))
-                {
-                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
-                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
-                    if (dupfilters.Count() > 1)
-                    {
-                        foreach (var filter in selectedFilters)
-                        {
-                            if (filter.Contains(filterHeader))
-                            {
-                                selectedFilters.Remove(filter);
-                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
-                                break;
-                            }
-                        }
-                    }
-                }
+                var selectedFilters = filterString.Split(FilteringHelper.FilterSeparator).ToList();
 
                 if (selectedFilters.Count > 0)
                 {
@@ -246,7 +224,7 @@
                         page = 1; offSet = 0;
                         (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
                             selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, adminCategoryId);
-                    }                    
+                    }
 
                     var adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
 
@@ -269,10 +247,6 @@
                     }
                 }
 
-                var availableFilters = isCourseDelegate
-                   ? CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(courseDelegatesData.CourseAdminFields)
-                   : SelfAssessmentDelegateViewModelFilterOptions.GetAllSelfAssessmentDelegatesFilterViewModels();
-
                 var activityName = isCourseDelegate
                     ? courseService.GetCourseNameAndApplication((int)customisationId).CourseName
                     : selfAssessmentService.GetSelfAssessmentNameById((int)selfAssessmentId);
@@ -283,7 +257,7 @@
                     courseDelegatesData.Delegates,
                     (int)resultCount,
                     new PaginationOptions(page, itemsPerPage),
-                    new FilterOptions(existingFilterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
+                    new FilterOptions(filterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
                     searchString,
                     sortBy,
                     sortDirection);
@@ -301,7 +275,7 @@
                     selfAssessmentDelegatesData.Delegates,
                     (int)resultCount,
                     new PaginationOptions(page, itemsPerPage),
-                    new FilterOptions(existingFilterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
+                    new FilterOptions(filterString, availableFilters, CourseDelegateAccountStatusFilterOptions.Active.FilterValue),
                     searchString,
                     sortBy,
                     sortDirection);
@@ -391,7 +365,9 @@
                         fileName
             );
         }
+
         [Route("DownloadActivityDelegates/{selfAssessmentId:int}")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessSelfAssessment))]
         public IActionResult DownloadActivityDelegates(
             int selfAssessmentId,
              string? searchString = null,
@@ -403,7 +379,6 @@
             searchString = searchString == null ? string.Empty : searchString.Trim();
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
-
 
             bool? isDelegateActive, isProgressLocked, removed, hasCompleted, submitted, signedOff;
             isDelegateActive = isProgressLocked = removed = hasCompleted = submitted = signedOff = null;
@@ -472,6 +447,7 @@
                         fileName
             );
         }
+
         [Route("TrackingSystem/Delegates/ActivityDelegates/{candidateAssessmentsId}/Remove")]
         [HttpGet]
         public IActionResult RemoveDelegateSelfAssessment(int candidateAssessmentsId)
@@ -482,12 +458,21 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var selfAssessmentDelegate = selfAssessmentService.GetDelegateSelfAssessmentByCandidateAssessmentsId(candidateAssessmentsId);
-            if (selfAssessmentDelegate == null)
+            if (selfAssessmentDelegate != null)
+            {
+                var adminCategoryId = User.GetAdminCategoryId();
+                var selfAssessmentCategoryId = selfAssessmentService.GetSelfAssessmentCategoryId(selfAssessmentDelegate.SelfAssessmentID);
+                if (adminCategoryId > 0 && adminCategoryId != selfAssessmentCategoryId)
+                {
+                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+                }
+                var model = new DelegateSelfAssessmenteViewModel(selfAssessmentDelegate);
+                return View(model);
+            }
+            else
             {
                 return new NotFoundResult();
             }
-            var model = new DelegateSelfAssessmenteViewModel(selfAssessmentDelegate);
-            return View(model);
         }
 
         [Route("TrackingSystem/Delegates/ActivityDelegates/{candidateAssessmentsId}/Remove")]
@@ -518,6 +503,7 @@
 
         [HttpGet]
         [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessSelfAssessment))]
         [Route("{selfAssessmentId:int}/EditCompleteByDate")]
         public IActionResult EditCompleteByDate(
             int delegateUserId,
@@ -591,6 +577,7 @@
                 return RedirectToAction("Index", "ActivityDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
         }
+
     }
 }
 

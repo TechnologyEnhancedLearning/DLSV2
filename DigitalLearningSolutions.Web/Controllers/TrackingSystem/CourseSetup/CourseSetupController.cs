@@ -92,47 +92,33 @@
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             sortDirection ??= GenericSortingHelper.Ascending;
 
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                CourseFilterCookieName,
-                CourseStatusFilterOptions.IsActive.FilterValue
-            );
-
             var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var courseCategoryName = this.activityService.GetCourseCategoryNameForActivityFilter(categoryId);
             var Categories = courseCategoriesService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
             var Topics = courseTopicsService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
+            var availableFilters = CourseStatisticsViewModelFilterOptions
+               .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
+
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                CourseFilterCookieName,
+                CourseStatusFilterOptions.IsActive.FilterValue,
+                availableFilters
+            );
+
             int offSet = ((page - 1) * itemsPerPage) ?? 0;
             string isActive, categoryName, courseTopic, hasAdminFields;
             isActive = categoryName = courseTopic = hasAdminFields = "Any";
             bool? hideInLearnerPortal = null;
 
-            if (!string.IsNullOrEmpty(existingFilterString))
+            if (!string.IsNullOrEmpty(filterString))
             {
-                var selectedFilters = existingFilterString.Split(FilteringHelper.FilterSeparator).ToList();
-
-                if (!string.IsNullOrEmpty(newFilterToAdd))
-                {
-                    var filterHeader = newFilterToAdd.Split(FilteringHelper.Separator)[0];
-                    var dupfilters = selectedFilters.Where(x => x.Contains(filterHeader));
-                    if (dupfilters.Count() > 1)
-                    {
-                        foreach (var filter in selectedFilters)
-                        {
-                            if (filter.Contains(filterHeader))
-                            {
-                                selectedFilters.Remove(filter);
-                                existingFilterString = string.Join(FilteringHelper.FilterSeparator, selectedFilters);
-                                break;
-                            }
-                        }
-                    }
-                }
+                var selectedFilters = filterString.Split(FilteringHelper.FilterSeparator).ToList();
 
                 if (selectedFilters.Count > 0)
                 {
@@ -173,14 +159,11 @@
                                                             isActive, categoryName, courseTopic, hasAdminFields);
             }
 
-            var availableFilters = CourseStatisticsViewModelFilterOptions
-                .GetFilterOptions(categoryId.HasValue ? new string[] { } : Categories, Topics).ToList();
-
             var result = paginateService.Paginate(
                  courses,
                  resultCount,
                  new PaginationOptions(page, itemsPerPage),
-                 new FilterOptions(existingFilterString, availableFilters),
+                 new FilterOptions(filterString, availableFilters),
                  searchString,
                  sortBy,
                  sortDirection
@@ -382,7 +365,7 @@
             data!.CourseOptionsData = model.ToCourseOptionsTempData();
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
-            return RedirectToAction("SetCourseContent");
+            return RedirectToAction("SetCourseContent", false);
         }
 
         [HttpGet("AddCourse/SetCourseContent")]
@@ -390,7 +373,7 @@
             typeof(RedirectMissingMultiPageFormData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
         )]
-        public IActionResult SetCourseContent()
+        public IActionResult SetCourseContent(bool editCourseContent)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
 
@@ -398,6 +381,8 @@
             {
                 return RedirectToAction("Summary");
             }
+            data.EditCourseContent = editCourseContent;
+            multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             var model = data!.CourseContentData != null
                 ? new SetCourseContentViewModel(data.CourseContentData)
@@ -429,7 +414,10 @@
             }
             else
             {
-                data!.SectionContentData = null;
+                if (data!.SectionContentData == null)
+                {
+                    data!.SectionContentData = null;
+                }
             }
 
             if (!ModelState.IsValid)
@@ -471,9 +459,18 @@
             }
 
             var showDiagnostic = data.Application!.DiagAssess;
-            var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
+            if (data.EditCourseContent)
+            {
+                var tutorial = GetTutorialsFromSectionContentData(data.SectionContentData, tutorials);
+                var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorial);
+                return View("AddNewCentreCourse/SetSectionContent", model);
+            }
+            else
+            {
+                var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
+                return View("AddNewCentreCourse/SetSectionContent", model);
+            }
 
-            return View("AddNewCentreCourse/SetSectionContent", model);
         }
 
         [HttpPost("AddCourse/SetSectionContent")]
@@ -654,14 +651,19 @@
             {
                 data.SectionContentData = new List<SectionContentTempData>();
             }
-
+            if (data.EditCourseContent)
+            {
+                return RedirectToNextSectionOrSummary(
+               model.Index,
+               new SetCourseContentViewModel(data.CourseContentData!));
+            }
             data!.SectionContentData!.Add(
-                new SectionContentTempData(
-                    model.Tutorials != null
-                        ? model.Tutorials.Select(GetCourseTutorialData)
-                        : new List<CourseTutorialTempData>()
-                )
-            );
+            new SectionContentTempData(
+                model.Tutorials != null
+                    ? model.Tutorials.Select(GetCourseTutorialData)
+                    : new List<CourseTutorialTempData>()
+            )
+        );
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             return RedirectToNextSectionOrSummary(
@@ -726,6 +728,25 @@
             }
 
             return updatedCourses;
+        }
+        private IEnumerable<Tutorial> GetTutorialsFromSectionContentData(List<SectionContentTempData> sectionContentData, List<Tutorial> sectionTutorial)
+        {
+            if (sectionContentData == null || sectionTutorial == null) return new List<Tutorial>();
+            var updatedRecords = sectionContentData
+        .SelectMany(data => data.Tutorials)
+        .Join(sectionTutorial,
+            tempData => new { tempData.TutorialId, tempData.TutorialName },  // Match on both TutorialId and TutorialName
+            index => new { index.TutorialId, index.TutorialName },
+            (tempData, index) => new Tutorial
+            {
+                TutorialId = index.TutorialId,
+                TutorialName = index.TutorialName,
+                Status = tempData.LearningEnabled,  // Updated from sectionContentData
+                DiagStatus = tempData.DiagnosticEnabled // Updated from sectionContentData
+            })
+        .ToList();
+
+            return updatedRecords;
         }
 
     }
