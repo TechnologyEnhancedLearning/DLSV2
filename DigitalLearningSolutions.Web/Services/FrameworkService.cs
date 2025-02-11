@@ -128,6 +128,7 @@ namespace DigitalLearningSolutions.Web.Services
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
+
         int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
 
