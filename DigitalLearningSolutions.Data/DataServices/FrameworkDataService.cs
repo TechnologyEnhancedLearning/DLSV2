@@ -133,7 +133,8 @@
 
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
 
-        int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
+        int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
+
         int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
 
@@ -740,7 +741,7 @@
             );
         }
 
-        public int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify)
+        public int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify, int? centreID)
         {
             if (userEmail is null || userEmail.Length == 0)
             {
@@ -763,8 +764,8 @@
             }
 
             var adminId = (int?)connection.ExecuteScalar(
-                @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1",
-                new { userEmail }
+                @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1 AND CentreID = @centreID",
+                new { userEmail, centreID }
             );
             if (adminId is null)
             {

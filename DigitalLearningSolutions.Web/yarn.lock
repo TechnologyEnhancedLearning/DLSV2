@@ -4598,10 +4598,10 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nhsuk-frontend@^9.1.0:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/nhsuk-frontend/-/nhsuk-frontend-9.1.0.tgz#f5e4f083aaf3cafd7a19731f6a49f1caf9723cab"
-  integrity sha512-z2hcZDUDz12hjBTWLasq5lfX+sv2jwZFkUdip8qL9fBQ6qykyQFQ8PjWuBBgQN03IU0wMkV3BBLbwBjFiSxREQ==
+nhse-tel-frontend@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/nhse-tel-frontend/-/nhse-tel-frontend-0.0.2.tgz#a2788912435fabe5013f6440bee8d1816a2e299b"
+  integrity sha512-9crniTaODs3uQcRNvmBcAgpS9cwW+34scR3ezGIdCOJ2ikOa+va1t37ZH/QUXgAxk6JIWxoX+Edq+N0PcXgrgA==
 
 nice-try@^1.0.4:
   version "1.0.5"

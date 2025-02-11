@@ -173,6 +173,12 @@
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
         int GetSelfAssessmentCategoryId(int selfAssessmentId);
+        void  RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(
+        int delegateUserId,
+        int selfAssessmentId,
+        int competencyId
+    );
     }
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService
     {

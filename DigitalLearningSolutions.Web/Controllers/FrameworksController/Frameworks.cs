@@ -166,7 +166,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                     MultiPageFormDataFeature.AddNewFramework,
                     TempData
-                ).GetAwaiter().GetResult(); 
+                ).GetAwaiter().GetResult();
                 multiPageFormService.SetMultiPageFormData(sessionNewFramework, MultiPageFormDataFeature.AddNewFramework, TempData);
                 detailFramework = sessionNewFramework.DetailFramework;
             }
@@ -252,7 +252,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 return StatusCode(500);
             }
-            var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(MultiPageFormDataFeature.AddNewFramework, TempData).GetAwaiter().GetResult();  
+            var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(MultiPageFormDataFeature.AddNewFramework, TempData).GetAwaiter().GetResult();
             multiPageFormService.SetMultiPageFormData(
                 sessionNewFramework,
                 MultiPageFormDataFeature.AddNewFramework,
@@ -641,7 +641,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
         public IActionResult AddCollaborator(string actionname, string userEmail, bool canModify, int frameworkId)
         {
-            var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
+            int? centreID = GetCentreId();
+            var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify, centreID);
             if (collaboratorId > 0)
             {
                 frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminId());
