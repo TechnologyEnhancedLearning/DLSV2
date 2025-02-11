@@ -1,4 +1,4 @@
-import Details from '@technology-enhanced-learning/nhse-tel-frontend/packages/components/details/details';
+import Details from 'nhse-tel-frontend/packages/components/details/details';
 import _ from 'lodash';
 import {
   setUpFilter, filterSearchableElements, IAppliedFilterTag,

@@ -21,7 +21,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@technology-enhanced-learning/nhse-tel-frontend": "^0.0.1",
     "@types/chartist": "^0.11.1",
     "chartist": "^0.11.4",
     "core-js": "^3.39.0",
@@ -32,6 +31,7 @@
     "js-cookie": "^3.0.5",
     "js-search": "^2.0.1",
     "lodash": "^4.17.20",
+    "nhse-tel-frontend": "^0.0.2",
     "regenerator-runtime": "^0.14.1"
   },
   "devDependencies": {

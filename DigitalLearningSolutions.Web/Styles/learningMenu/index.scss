@@ -1,5 +1,5 @@
-﻿@use "@technology-enhanced-learning/nhse-tel-frontend/packages/core/all" as *;
-@import "@technology-enhanced-learning/nhse-tel-frontend/packages/components/tag/_tag";
+﻿@use "nhse-tel-frontend/packages/core/all" as *;
+@import "nhse-tel-frontend/packages/components/tag/_tag";
 
 .learning-menu-card {
   border: none;

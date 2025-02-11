@@ -1304,11 +1304,6 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@technology-enhanced-learning/nhse-tel-frontend@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@technology-enhanced-learning/nhse-tel-frontend/-/nhse-tel-frontend-0.0.1.tgz#8968bd255f11cbef25c005944b6529baa38da042"
-  integrity sha512-yls5rNnM2XjemNgY8+m2mNiO7Kq/jngN/wVpTlLb9t23lqGEKNZPkYDT24SYn+6eEZR2JWA76UPuZ6iq8D3zrg==
-
 "@tootallnate/once@2":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
@@ -4602,6 +4597,11 @@ neo-async@^2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
+
+nhse-tel-frontend@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/nhse-tel-frontend/-/nhse-tel-frontend-0.0.2.tgz#a2788912435fabe5013f6440bee8d1816a2e299b"
+  integrity sha512-9crniTaODs3uQcRNvmBcAgpS9cwW+34scR3ezGIdCOJ2ikOa+va1t37ZH/QUXgAxk6JIWxoX+Edq+N0PcXgrgA==
 
 nice-try@^1.0.4:
   version "1.0.5"
