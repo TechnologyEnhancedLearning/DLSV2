@@ -365,7 +365,8 @@
             data!.CourseOptionsData = model.ToCourseOptionsTempData();
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
-            return RedirectToAction("SetCourseContent", false);
+            bool editCourseContent = data?.EditCourseContent ?? false;
+            return RedirectToAction("SetCourseContent", editCourseContent);
         }
 
         [HttpGet("AddCourse/SetCourseContent")]
@@ -381,7 +382,7 @@
             {
                 return RedirectToAction("Summary");
             }
-            data.EditCourseContent = editCourseContent;
+            data.EditCourseContent = data.EditCourseContent || editCourseContent;
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             var model = data!.CourseContentData != null
@@ -651,11 +652,23 @@
             {
                 data.SectionContentData = new List<SectionContentTempData>();
             }
-            if (data.EditCourseContent)
+            var sectionsToRemove = new List<SectionContentTempData>();
+            foreach (var section in data.SectionContentData)
             {
-                return RedirectToNextSectionOrSummary(
-               model.Index,
-               new SetCourseContentViewModel(data.CourseContentData!));
+                section.Tutorials = section.Tutorials
+                    .Where(t => !model.Tutorials.Any(newT => newT.TutorialId == t.TutorialId))
+                    .ToList();
+                if (!section.Tutorials.Any())
+                {
+                    sectionsToRemove.Add(section);
+                }
+            }
+            if (sectionsToRemove.Count > 0)
+            { 
+            foreach (var section in sectionsToRemove)
+            {
+                data.SectionContentData.Remove(section);
+            }
             }
             data!.SectionContentData!.Add(
             new SectionContentTempData(
@@ -732,18 +745,19 @@
         private IEnumerable<Tutorial> GetTutorialsFromSectionContentData(List<SectionContentTempData> sectionContentData, List<Tutorial> sectionTutorial)
         {
             if (sectionContentData == null || sectionTutorial == null) return new List<Tutorial>();
-            var updatedRecords = sectionContentData
-        .SelectMany(data => data.Tutorials)
-        .Join(sectionTutorial,
-            tempData => new { tempData.TutorialId, tempData.TutorialName },  // Match on both TutorialId and TutorialName
-            index => new { index.TutorialId, index.TutorialName },
-            (tempData, index) => new Tutorial
+            var updatedRecords = sectionTutorial
+        .GroupJoin(
+            sectionContentData.SelectMany(data => data.Tutorials),
+            tutorial => new { tutorial.TutorialId, tutorial.TutorialName },
+            tempData => new { tempData.TutorialId, tempData.TutorialName },
+            (tutorial, matchingTempData) => new Tutorial
             {
-                TutorialId = index.TutorialId,
-                TutorialName = index.TutorialName,
-                Status = tempData.LearningEnabled,  // Updated from sectionContentData
-                DiagStatus = tempData.DiagnosticEnabled // Updated from sectionContentData
-            })
+                TutorialId = tutorial.TutorialId,
+                TutorialName = tutorial.TutorialName,
+                Status = matchingTempData.Any() ? matchingTempData.First().LearningEnabled : tutorial.Status,
+                DiagStatus = matchingTempData.Any() ? matchingTempData.First().DiagnosticEnabled : tutorial.DiagStatus
+            }
+        )
         .ToList();
 
             return updatedRecords;
