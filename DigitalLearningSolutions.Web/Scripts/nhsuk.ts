@@ -1,12 +1,12 @@
 // Components
-import Header from 'nhsuk-frontend/packages/components/header/header';
-import SkipLink from 'nhsuk-frontend/packages/components/skip-link/skip-link';
-import Details from 'nhsuk-frontend/packages/components/details/details';
-import Radios from 'nhsuk-frontend/packages/components/radios/radios';
-import Checkboxes from 'nhsuk-frontend/packages/components/checkboxes/checkboxes';
+import Header from 'nhse-tel-frontend/packages/components/header/header';
+import SkipLink from 'nhse-tel-frontend/packages/components/skip-link/skip-link';
+import Details from 'nhse-tel-frontend/packages/components/details/details';
+import Radios from 'nhse-tel-frontend/packages/components/radios/radios';
+import Checkboxes from 'nhse-tel-frontend/packages/components/checkboxes/checkboxes';
 
 // Polyfills
-import 'nhsuk-frontend/packages/polyfills';
+import 'nhse-tel-frontend/packages/polyfills';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
