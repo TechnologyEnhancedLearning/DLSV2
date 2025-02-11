@@ -27,16 +27,33 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="nhsuk-u-reading-width">
+    <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
 
-    <p class="nhsuk-lede-text">
-        <strong class="nhsuk-u-margin-right-3 nhsuk-tag @(Model.PublishStatusID == 1 ? "nhsuk-tag--grey" : Model.PublishStatusID == 2 ? "nhsuk-tag--yellow" : "nhsuk-tag--green")">
-            @(Model.PublishStatusID == 1 ? "Draft" : Model.PublishStatusID == 2 ? "In review" : "Published")
-        </strong>
-        <strong>@Model.CompetencyAssessmentName</strong>&nbsp; <a asp-action="CompetencyAssessmentName" asp-route-actionName="Edit" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-        Edit<span class="nhsuk-u-visually-hidden"> &nbsp;name</span>
-    </a>
-    </p>
-           
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Assessment name
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.CompetencyAssessmentName
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+                <a asp-action="CompetencyAssessmentName" asp-route-actionName="Edit" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                    Change<span class="nhsuk-u-visually-hidden"> assessment name</span>
+                </a>
+            </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Publish status
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                <strong class="nhsuk-u-margin-right-3 nhsuk-tag @(Model.PublishStatusID == 1 ? "nhsuk-tag--grey" : Model.PublishStatusID == 2 ? "nhsuk-tag--yellow" : "nhsuk-tag--green")">
+                    @(Model.PublishStatusID == 1 ? "Draft" : Model.PublishStatusID == 2 ? "In review" : "Published")
+                </strong>
+            </dd>
+        </div>
+    </dl>
+         
     <ul class="nhsuk-task-list nhsuk-u-margin-bottom-0">
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-frameworks-status">
