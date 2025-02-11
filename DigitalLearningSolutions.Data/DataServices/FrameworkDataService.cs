@@ -285,7 +285,7 @@
             fwr.ID AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
-            @", FW.Description, (SELECT BrandName
+            @",(SELECT BrandName
                                  FROM    Brands
                                  WHERE (BrandID = FW.BrandID)) AS Brand,
                                  (SELECT CategoryName
@@ -2175,7 +2175,7 @@ WHERE (OwnerAdminID = @adminId) OR
                  FROM    FrameworkCollaborators
                  WHERE (FrameworkID = FW.ID) AND (IsDeleted=0)))) AS MyFrameworksCount,
 
-                 (SELECT COUNT(*) FROM SelfAssessments) AS CompetencyAssessmentCount,
+                 (SELECT COUNT(*) FROM SelfAssessments) AS RoleProfileCount,
 
                  (SELECT COUNT(*) FROM SelfAssessments AS RP LEFT OUTER JOIN
              SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId
@@ -2183,7 +2183,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
                  FROM    SelfAssessmentCollaborators
-                 WHERE (SelfAssessmentID = RP.ID)))) AS MyCompetencyAssessmentCount",
+                 WHERE (SelfAssessmentID = RP.ID)))) AS MyRoleProfileCount",
                 new { adminId }
             ).FirstOrDefault();
         }
@@ -2193,7 +2193,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             return connection.Query<DashboardToDoItem>(
                 @"SELECT
                         FW.ID AS FrameworkID,
-                        0 AS CompetencyAssessmentID,
+                        0 AS RoleProfileID,
                         FW.FrameworkName AS ItemName,
                         AU.Forename + ' ' + AU.Surname + (CASE WHEN AU.Active = 1 THEN '' ELSE ' (Inactive)' END) AS RequestorName,
                         FWR.SignOffRequired,

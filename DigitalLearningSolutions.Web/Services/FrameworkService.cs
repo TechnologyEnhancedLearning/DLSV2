@@ -120,13 +120,11 @@ namespace DigitalLearningSolutions.Web.Services
         int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId = null);
 
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
 
         IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
 
         int InsertCompetency(string name, string? description, int adminId);
 
-        int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
