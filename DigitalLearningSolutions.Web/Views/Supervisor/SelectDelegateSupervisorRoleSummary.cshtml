@@ -47,7 +47,15 @@
             <partial name="Shared/_StaffDetails" model="Model.Item1.SupervisorDelegateDetail" />
         </div>
     </details>
-    <h2>Supervision Summary</h2>
+@if (string.IsNullOrWhiteSpace(Model.Item1.SupervisorRoleName))
+{
+    <p>No supervisor roles have been configured for this self assessment.</p>
+}
+else
+{
+    
+
+<h2>Supervision Summary</h2>
     <dl class="nhsuk-summary-list">
 
         <div class="nhsuk-summary-list__row">
@@ -115,3 +123,4 @@
         Cancel
     </a>
 </div>
+}
