@@ -65,11 +65,11 @@
     {
         @await Html.PartialAsync("~/Views/Shared/_GoogleTagManagerBodyTagJs.cshtml")
     }
+    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+    <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
     <div id="pagewrapper">
         <header class="nhsuk-header nhsuk-header--organisation nhsuk-header--white" role="banner">
-            <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
             <partial name="_CookieConsentPartial" />
-            <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
             @if (Configuration["ShowAlertBanner"] == "True")
             {
                 <div class="dls-alert-banner no-print">
