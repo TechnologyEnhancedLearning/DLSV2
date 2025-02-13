@@ -65,11 +65,11 @@
     {
         @await Html.PartialAsync("~/Views/Shared/_GoogleTagManagerBodyTagJs.cshtml")
     }
+    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+    <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
     <div id="pagewrapper">
         <header class="nhsuk-header nhsuk-header--organisation nhsuk-header--white" role="banner">
-            <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
             <partial name="_CookieConsentPartial" />
-            <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
             @if (Configuration["ShowAlertBanner"] == "True")
             {
                 <div class="dls-alert-banner no-print">
@@ -153,7 +153,6 @@
             @{
                 var visualSeparatorNoNavBar = (bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] == true ? "visual-separator-no-nav-bar" : string.Empty;
             }
-            <div class="visual-separator @visualSeparatorNoNavBar"></div>
 
             <feature name="@(FeatureFlags.UserFeedbackBar)">
                 <partial name="_UserFeedbackBarPartial" model=@(userResearchUrl) />
