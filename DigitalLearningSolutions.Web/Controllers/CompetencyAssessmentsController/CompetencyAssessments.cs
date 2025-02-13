@@ -114,10 +114,10 @@
                     return StatusCode(403);
                 }
             }
-            else if( frameworkId != null )
+            else if (frameworkId != null)
             {
                 var framework = frameworkService.GetBaseFrameworkByFrameworkId((int)frameworkId, adminId);
-                if ( framework != null )
+                if (framework != null)
                 {
                     competencyAssessmentBase.CompetencyAssessmentName = framework.FrameworkName;
                 }
@@ -151,11 +151,11 @@
                         ModelState.AddModelError(nameof(CompetencyAssessmentBase.CompetencyAssessmentName), "Another competency assessment exists with that name. Please choose a different name.");
                         return View("Name", competencyAssessmentBase);
                     }
-                    competencyAssessmentService.InsertCompetencyAssessment(adminId, userCentreId, competencyAssessmentBase.CompetencyAssessmentName, frameworkId);
+                    competencyAssessmentId = competencyAssessmentService.InsertCompetencyAssessment(adminId, userCentreId, competencyAssessmentBase.CompetencyAssessmentName, frameworkId);
                 }
                 else
-                { 
-                    
+                {
+
                     var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentName(competencyAssessmentBase.ID, adminId, competencyAssessmentBase.CompetencyAssessmentName);
                     if (!isUpdated)
                     {
@@ -163,8 +163,27 @@
                         return View("Name", competencyAssessmentBase);
                     }
                 }
-                return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId });
+                return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId, frameworkId });
             }
+        }
+        [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Manage")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Manage")]
+        public IActionResult ManageCompetencyAssessment(int competencyAssessmentId, int? frameworkId = null)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null)
+            {
+                logger.LogWarning($"Failed to load name page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
+            }
+            if (competencyAssessmentBase.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, frameworkId);
+            var model = new ManageCompetencyAssessmentViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus);
+            return View("ManageCompetencyAssessment", model);
         }
 
         [Route("/CompetencyAssessments/ProfessionalGroup/{actionName}/{competencyAssessmentId}")]

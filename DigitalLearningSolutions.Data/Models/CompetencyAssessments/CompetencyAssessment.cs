@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CompetencyAssessments
 {
     using System;
-    using System.ComponentModel.DataAnnotations;
     public class CompetencyAssessment : CompetencyAssessmentBase
     {
         public DateTime CreatedDate { get; set; }

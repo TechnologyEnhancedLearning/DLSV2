@@ -19,6 +19,7 @@
         public int? NRPRoleID { get; set; }
         public int PublishStatusID { get; set; }
         public int UserRole { get; set; }
+        public string? Vocabulary { get; set; }
 
     }
 }

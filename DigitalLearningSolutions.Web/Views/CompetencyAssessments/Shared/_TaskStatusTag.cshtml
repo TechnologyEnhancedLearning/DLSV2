@@ -1,0 +1,20 @@
+﻿@model bool?
+
+@if (Model == null)
+{
+    <strong class="nhsuk-tag nhsuk-tag--blue">
+        Not yet started
+    </strong>
+}
+else if (Model == false)
+{
+    <strong class="nhsuk-tag nhsuk-tag--white">
+        In progress
+    </strong>
+}
+else
+{
+    <strong class="nhsuk-tag nhsuk-tag--green">
+        Complete
+    </strong>
+}

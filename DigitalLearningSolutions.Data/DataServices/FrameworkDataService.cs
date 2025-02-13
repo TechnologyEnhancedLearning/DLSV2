@@ -285,7 +285,7 @@
             fwr.ID AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
-            @", FW.Description, (SELECT BrandName
+            @", FW.Description, FW.FrameworkConfig AS Vocabulary, (SELECT BrandName
                                  FROM    Brands
                                  WHERE (BrandID = FW.BrandID)) AS Brand,
                                  (SELECT CategoryName
@@ -2193,7 +2193,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             return connection.Query<DashboardToDoItem>(
                 @"SELECT
                         FW.ID AS FrameworkID,
-                        0 AS CompetencyAssessmentID,
+                        0 AS SelfAssessmentID,
                         FW.FrameworkName AS ItemName,
                         AU.Forename + ' ' + AU.Surname + (CASE WHEN AU.Active = 1 THEN '' ELSE ' (Inactive)' END) AS RequestorName,
                         FWR.SignOffRequired,
@@ -2205,8 +2205,8 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     WHERE (FWC.AdminID = @adminId) AND (FWR.ReviewComplete IS NULL) AND (FWR.Archived IS NULL)
                     UNION ALL
                     SELECT
-                        0 AS SelfAssessmentID,
-                        RP.ID AS SelfAssessmentID,
+                        0 AS FrameworkID,
+                        RP.ID AS CompetencyAssessmentID,
                         RP.Name AS ItemName,
                         AU.Forename + ' ' + AU.Surname + (CASE WHEN AU.Active = 1 THEN '' ELSE ' (Inactive)' END) AS RequestorName,
                         RPR.SignOffRequired,
