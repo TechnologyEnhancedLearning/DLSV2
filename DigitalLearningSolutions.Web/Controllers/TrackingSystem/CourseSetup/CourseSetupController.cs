@@ -461,14 +461,14 @@
 
             var showDiagnostic = data.Application!.DiagAssess;
             var tutorial = GetTutorialsFromSectionContentData(data.SectionContentData, tutorials);
-            if(tutorial.Count() == 0)
+            if (tutorial.Count() == 0)
             {
                 var models = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
                 return View("AddNewCentreCourse/SetSectionContent", models);
             }
-                var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorial);
-                return View("AddNewCentreCourse/SetSectionContent", model);
-           
+            var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorial);
+            return View("AddNewCentreCourse/SetSectionContent", model);
+
 
         }
 
@@ -510,7 +510,7 @@
 
                 updatedSections.AddRange(matchingSections);
             }
-            
+
             updatedSections = updatedSections.Distinct().ToList();
             data.SectionContentData = updatedSections;
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
@@ -677,11 +677,11 @@
                 }
             }
             if (sectionsToRemove.Count > 0)
-            { 
-            foreach (var section in sectionsToRemove)
             {
-                data.SectionContentData.Remove(section);
-            }
+                foreach (var section in sectionsToRemove)
+                {
+                    data.SectionContentData.Remove(section);
+                }
             }
             data!.SectionContentData!.Add(
             new SectionContentTempData(
