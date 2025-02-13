@@ -32,14 +32,32 @@ footer {
 }
 
 .nhsuk-header__navigation-item.selected {
-  @include mq($from: large-desktop) {
-    box-shadow: inset 0 -4px 0 #d8dde0;
+  a {
+    font-weight: bold;
   }
+}
 
+.nhsuk-header__logo {
   @include mq($until: large-desktop) {
-    a {
-      font-weight: bold;
+    max-width: unset;
+
+    .nhsuk-header__link--service {
+      align-items: center;
+      display: flex;
+      -ms-flex-align: center;
+      margin-bottom: 0;
+      width: auto;
     }
+
+    .nhsuk-header__service-name {
+      padding-left: nhsuk-spacing(3);
+      max-width: unset;
+    }
+  }
+}
+.nhsuk-navigation-container {
+  @include mq($until: tablet) {
+    margin-top: unset;
   }
 }
 
