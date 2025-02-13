@@ -460,17 +460,15 @@
             }
 
             var showDiagnostic = data.Application!.DiagAssess;
-            if (data.EditCourseContent)
+            var tutorial = GetTutorialsFromSectionContentData(data.SectionContentData, tutorials);
+            if (tutorial.Count() == 0)
             {
-                var tutorial = GetTutorialsFromSectionContentData(data.SectionContentData, tutorials);
-                var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorial);
-                return View("AddNewCentreCourse/SetSectionContent", model);
+                var models = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
+                return View("AddNewCentreCourse/SetSectionContent", models);
             }
-            else
-            {
-                var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
-                return View("AddNewCentreCourse/SetSectionContent", model);
-            }
+            var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorial);
+            return View("AddNewCentreCourse/SetSectionContent", model);
+
 
         }
 
@@ -501,6 +499,21 @@
         public IActionResult Summary()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
+            var updatedSections = new List<SectionContentTempData>();
+            foreach (var item in data.CourseContentData.SelectedSectionIds)
+            {
+                var tutorialsForSection = tutorialService.GetTutorialsForSection(item).ToList();
+
+                var matchingSections = data.SectionContentData
+                    .Where(section => section.Tutorials.Any(t => tutorialsForSection.Any(tf => tf.TutorialId == t.TutorialId)))
+                    .ToList();
+
+                updatedSections.AddRange(matchingSections);
+            }
+
+            updatedSections = updatedSections.Distinct().ToList();
+            data.SectionContentData = updatedSections;
+            multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             var model = new SummaryViewModel(data!);
 
@@ -664,11 +677,11 @@
                 }
             }
             if (sectionsToRemove.Count > 0)
-            { 
-            foreach (var section in sectionsToRemove)
             {
-                data.SectionContentData.Remove(section);
-            }
+                foreach (var section in sectionsToRemove)
+                {
+                    data.SectionContentData.Remove(section);
+                }
             }
             data!.SectionContentData!.Add(
             new SectionContentTempData(
