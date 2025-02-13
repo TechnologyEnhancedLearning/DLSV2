@@ -460,17 +460,15 @@
             }
 
             var showDiagnostic = data.Application!.DiagAssess;
-            if (data.EditCourseContent)
+            var tutorial = GetTutorialsFromSectionContentData(data.SectionContentData, tutorials);
+            if(tutorial.Count() == 0)
             {
-                var tutorial = GetTutorialsFromSectionContentData(data.SectionContentData, tutorials);
+                var models = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
+                return View("AddNewCentreCourse/SetSectionContent", models);
+            }
                 var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorial);
                 return View("AddNewCentreCourse/SetSectionContent", model);
-            }
-            else
-            {
-                var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
-                return View("AddNewCentreCourse/SetSectionContent", model);
-            }
+           
 
         }
 
@@ -501,6 +499,21 @@
         public IActionResult Summary()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(MultiPageFormDataFeature.AddNewCourse, TempData).GetAwaiter().GetResult();
+            var updatedSections = new List<SectionContentTempData>();
+            foreach (var item in data.CourseContentData.SelectedSectionIds)
+            {
+                var tutorialsForSection = tutorialService.GetTutorialsForSection(item).ToList();
+
+                var matchingSections = data.SectionContentData
+                    .Where(section => section.Tutorials.Any(t => tutorialsForSection.Any(tf => tf.TutorialId == t.TutorialId)))
+                    .ToList();
+
+                updatedSections.AddRange(matchingSections);
+            }
+            
+            updatedSections = updatedSections.Distinct().ToList();
+            data.SectionContentData = updatedSections;
+            multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             var model = new SummaryViewModel(data!);
 
