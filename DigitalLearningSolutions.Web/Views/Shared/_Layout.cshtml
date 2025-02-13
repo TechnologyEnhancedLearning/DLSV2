@@ -153,7 +153,6 @@
             @{
                 var visualSeparatorNoNavBar = (bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] == true ? "visual-separator-no-nav-bar" : string.Empty;
             }
-            <div class="visual-separator @visualSeparatorNoNavBar"></div>
 
             <feature name="@(FeatureFlags.UserFeedbackBar)">
                 <partial name="_UserFeedbackBarPartial" model=@(userResearchUrl) />

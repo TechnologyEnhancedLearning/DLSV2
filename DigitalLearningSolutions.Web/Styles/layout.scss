@@ -37,6 +37,30 @@ footer {
   }
 }
 
+.nhsuk-header__logo {
+  @include mq($until: large-desktop) {
+    max-width: unset;
+
+    .nhsuk-header__link--service {
+      align-items: center;
+      display: flex;
+      -ms-flex-align: center;
+      margin-bottom: 0;
+      width: auto;
+    }
+
+    .nhsuk-header__service-name {
+      padding-left: nhsuk-spacing(3);
+      max-width: unset;
+    }
+  }
+}
+.nhsuk-navigation-container {
+  @include mq($until: tablet) {
+    margin-top: unset;
+  }
+}
+
 body:not(.js-enabled) {
   .nhsuk-header__menu {
     display: none;
