@@ -5,9 +5,6 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Data.Models.SessionData.CompetencyAssessments;
-    using Microsoft.AspNetCore.Http;
-    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
@@ -15,7 +12,6 @@
 
     public partial class CompetencyAssessmentsController
     {
-        private const string CookieName = "DLSFrameworkService";
         [Route("/CompetencyAssessments/View/{tabname}/{page=1:int}")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
         public IActionResult ViewCompetencyAssessments(string tabname, string? searchString = null,
@@ -208,10 +204,7 @@
             }
             else
             {
-                SessionNewCompetencyAssessment sessionNewCompetencyAssessment = TempData.Peek<SessionNewCompetencyAssessment>();
-                TempData.Set(sessionNewCompetencyAssessment);
-                competencyAssessmentBase = sessionNewCompetencyAssessment.CompetencyAssessmentBase;
-                TempData.Set(sessionNewCompetencyAssessment);
+                competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             }
             var professionalGroups = competencyAssessmentService.GetNRPProfessionalGroups();
             var model = new ProfessionalGroupViewModel()
@@ -237,9 +230,8 @@
             }
             if (actionName == "New")
             {
-                SessionNewCompetencyAssessment sessionNewCompetencyAssessment = TempData.Peek<SessionNewCompetencyAssessment>();
-                sessionNewCompetencyAssessment.CompetencyAssessmentBase = competencyAssessmentBase;
-                TempData.Set(sessionNewCompetencyAssessment);
+                //TO DO Store to self assessment
+
                 return RedirectToAction("CompetencyAssessmentSubGroup", "CompetencyAssessments", new { actionName });
             }
             else
@@ -263,6 +255,38 @@
         public IActionResult CompetencyAssessmentSubGroup(string actionName, int competencyAssessmentId = 0)
         {
             return View("SubGroup");
+        }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Description/")]
+        public IActionResult EditDescription(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            CompetencyAssessmentBase? competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null)
+            {
+                logger.LogWarning($"Failed to load description page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
+            }
+            if (competencyAssessmentBase.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new EditDescriptionViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus.IntroductoryTextTaskStatus);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Description/")]
+        public IActionResult SaveDescription(EditDescriptionViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("EditDescription", model);
+            }
+            var adminId = GetAdminID();
+            var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentDescription(model.ID, adminId, model.Description);
+            competencyAssessmentService.UpdateIntroductoryTextTaskStatus(model.ID, model.TaskStatus ?? false);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
     }
 }

@@ -38,6 +38,7 @@
         );
         bool UpdateCompetencyAssessmentVocabulary(int competencyAssessmentId, int adminId, string vocabulary);
         bool UpdateCompetencyAssessmentDescription(int competencyAssessmentId, int adminId, string competencyAssessmentDescription);
+        bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -348,6 +349,23 @@
                 new { assessmentId }
             ).Single();
             
+        }
+        public bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentTaskStatus SET IntroductoryTextTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+                new { assessmentId, taskStatus }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating IntroductoryTextTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }
