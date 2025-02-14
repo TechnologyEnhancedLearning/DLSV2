@@ -253,7 +253,7 @@
             int adminId
         )
         {
-            if ((competencyAssessmentId < 1) | (brandId < 1) | (categoryId < 1)  | (adminId < 1))
+            if ((competencyAssessmentId < 1) | (brandId < 1) | (categoryId < 1) | (adminId < 1))
             {
                 logger.LogWarning(
                     $"Not updating competency assessment as it failed server side validation. competencyAssessmentId: {competencyAssessmentId}, brandId: {brandId}, categoryId: {categoryId},  AdminId: {adminId}"
@@ -348,7 +348,7 @@
                       WHERE (SelfAssessmentId = @assessmentId)",
                 new { assessmentId }
             ).Single();
-            
+
         }
         public bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus)
         {

@@ -65,10 +65,11 @@ namespace DigitalLearningSolutions.Web.Services
         public int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId)
         {
             var assessmentId = competencyAssessmentDataService.InsertCompetencyAssessment(adminId, centreId, competencyAssessmentName);
-            if(assessmentId > 0 && frameworkId != null)
+            if (assessmentId > 0 && frameworkId != null)
             {
                 var framework = frameworkDataService.GetBrandedFrameworkByFrameworkId((int)frameworkId, adminId);
-                if (framework != null) {
+                if (framework != null)
+                {
                     competencyAssessmentDataService.InsertSelfAssessmentFramework(adminId, assessmentId, framework.ID);
                     competencyAssessmentDataService.UpdateCompetencyAssessmentDescription(adminId, assessmentId, framework.Description);
                     competencyAssessmentDataService.UpdateCompetencyAssessmentBranding(assessmentId, (int)framework.BrandID, (int)framework.CategoryID, adminId);
