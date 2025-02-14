@@ -23,10 +23,11 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
 
         bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID);
+        bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
-
+        bool UpdateCompetencyAssessmentDescription(int iD, int adminId, string description);
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -64,10 +65,11 @@ namespace DigitalLearningSolutions.Web.Services
         public int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId)
         {
             var assessmentId = competencyAssessmentDataService.InsertCompetencyAssessment(adminId, centreId, competencyAssessmentName);
-            if(assessmentId > 0 && frameworkId != null)
+            if (assessmentId > 0 && frameworkId != null)
             {
                 var framework = frameworkDataService.GetBrandedFrameworkByFrameworkId((int)frameworkId, adminId);
-                if (framework != null) {
+                if (framework != null)
+                {
                     competencyAssessmentDataService.InsertSelfAssessmentFramework(adminId, assessmentId, framework.ID);
                     competencyAssessmentDataService.UpdateCompetencyAssessmentDescription(adminId, assessmentId, framework.Description);
                     competencyAssessmentDataService.UpdateCompetencyAssessmentBranding(assessmentId, (int)framework.BrandID, (int)framework.CategoryID, adminId);
@@ -89,6 +91,14 @@ namespace DigitalLearningSolutions.Web.Services
         public CompetencyAssessmentTaskStatus GetCompetencyAssessmentTaskStatus(int assessmentId, int? frameworkId)
         {
             return competencyAssessmentDataService.GetOrInsertAndReturnAssessmentTaskStatus(assessmentId, (frameworkId != null));
+        }
+        public bool UpdateCompetencyAssessmentDescription(int competencyAssessmentId, int adminId, string description)
+        {
+            return competencyAssessmentDataService.UpdateCompetencyAssessmentDescription(competencyAssessmentId, adminId, description);
+        }
+        public bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus)
+        {
+            return competencyAssessmentDataService.UpdateIntroductoryTextTaskStatus(assessmentId, taskStatus);
         }
     }
 }

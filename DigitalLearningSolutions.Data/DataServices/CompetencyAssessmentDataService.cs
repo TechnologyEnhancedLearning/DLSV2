@@ -38,6 +38,7 @@
         );
         bool UpdateCompetencyAssessmentVocabulary(int competencyAssessmentId, int adminId, string vocabulary);
         bool UpdateCompetencyAssessmentDescription(int competencyAssessmentId, int adminId, string competencyAssessmentDescription);
+        bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -252,7 +253,7 @@
             int adminId
         )
         {
-            if ((competencyAssessmentId < 1) | (brandId < 1) | (categoryId < 1)  | (adminId < 1))
+            if ((competencyAssessmentId < 1) | (brandId < 1) | (categoryId < 1) | (adminId < 1))
             {
                 logger.LogWarning(
                     $"Not updating competency assessment as it failed server side validation. competencyAssessmentId: {competencyAssessmentId}, brandId: {brandId}, categoryId: {categoryId},  AdminId: {adminId}"
@@ -347,7 +348,24 @@
                       WHERE (SelfAssessmentId = @assessmentId)",
                 new { assessmentId }
             ).Single();
-            
+
+        }
+        public bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentTaskStatus SET IntroductoryTextTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+                new { assessmentId, taskStatus }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating IntroductoryTextTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }
