@@ -1061,8 +1061,8 @@
 
                 var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile()
                 {
-                    SelfAssessmentID = supervisorRoles.FirstOrDefault().SelfAssessmentID,
-                    SelfAssessmentSupervisorRoleId = supervisorRoles.FirstOrDefault().ID
+                    SelfAssessmentID = supervisorRoles.FirstOrDefault() != null ? supervisorRoles.FirstOrDefault().SelfAssessmentID : selfAssessmentId,
+                    SelfAssessmentSupervisorRoleId = supervisorRoles.FirstOrDefault() != null ? supervisorRoles.FirstOrDefault().ID : 0
                 };
 
                 multiPageFormService.SetMultiPageFormData(
@@ -1070,7 +1070,7 @@
                     MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                     TempData
                 );
-                var supervisorRoleName = supervisorRoles.FirstOrDefault().RoleName;
+                var supervisorRoleName = supervisorRoles.FirstOrDefault() != null ? supervisorRoles.FirstOrDefault().RoleName : "";
                 var model = new EnrolDelegateSummaryViewModel
                 {
                     RoleProfile = roleProfile,
