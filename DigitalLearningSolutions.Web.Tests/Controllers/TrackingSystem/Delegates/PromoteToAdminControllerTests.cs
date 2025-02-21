@@ -94,7 +94,7 @@
                             A<string>._, A<string>._, A<string>._, A<string>._,
                             A<bool>._, A<bool>._, A<bool>._, A<bool>._,
                             A<bool>._, A<bool>._, A<bool>._, A<bool>._,
-                            A<string>._, A<string>._
+                            A<string>._, A<string>._, A<string>._
                 )).Returns(adminRolesEmail);
 
             // When

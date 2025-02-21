@@ -7,7 +7,7 @@ namespace DigitalLearningSolutions.Web.Services
     public interface ICourseCategoriesService
     {
         IEnumerable<Category> GetCategoriesForCentreAndCentrallyManagedCourses(int centreId);
-        string? GetCourseCategoryName(int categoryId);
+        string? GetCourseCategoryName(int? categoryId);
     }
     public class CourseCategoriesService : ICourseCategoriesService
     {
@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Web.Services
             return courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
         }
 
-        public string? GetCourseCategoryName(int categoryId)
+        public string? GetCourseCategoryName(int? categoryId)
         {
             return courseCategoriesDataService.GetCourseCategoryName(categoryId);
         }

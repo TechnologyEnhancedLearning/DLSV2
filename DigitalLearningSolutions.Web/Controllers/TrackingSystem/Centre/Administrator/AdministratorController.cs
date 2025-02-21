@@ -215,7 +215,8 @@
                     isCmsAdmin: adminRoles.IsCmsAdministrator,
                     isCmsManager: adminRoles.IsCmsManager,
                     primaryEmail: delegateUserEmailDetails.EmailAddress,
-                    centreName: centreName
+                    centreName: centreName,
+                    null
                 );
 
                 emailService.SendEmail(adminRolesEmail);
