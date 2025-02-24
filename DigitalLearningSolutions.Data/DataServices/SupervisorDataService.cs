@@ -943,18 +943,45 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 
                 if (candidateAssessmentSupervisorsId == 0)
                 {
+                    //For a candidate assessment, only one supervisor role should be active (Removed = null)
                     var numberOfAffectedRows = connection.Execute(
-                        @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
-                            VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)", new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+                        @"BEGIN TRY
+                            BEGIN TRANSACTION
+                                UPDATE CandidateAssessmentSupervisors SET Removed = getUTCDate() WHERE CandidateAssessmentID = @candidateAssessmentId
+                                        AND SupervisorDelegateId = @supervisorDelegateId
+                                        AND Removed IS NULL
+
+                                INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
+                                        VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)
+
+                            COMMIT TRANSACTION
+                        END TRY
+                        BEGIN CATCH
+                            ROLLBACK TRANSACTION
+                        END CATCH",
+                        new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
                     );
                 }
                 else
                 {
+                    //For a candidate assessment, only one supervisor role should be active (Removed = null)
                     int numberOfAffectedRows = connection.Execute(
-                                @"UPDATE CandidateAssessmentSupervisors SET Removed = NULL WHERE CandidateAssessmentID = @candidateAssessmentId
-                                AND SupervisorDelegateId = @supervisorDelegateId
-                                AND SelfAssessmentSupervisorRoleId=@selfAssessmentSupervisorRoleId",
-                                new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId });
+                        @"BEGIN TRY
+                            BEGIN TRANSACTION
+                                UPDATE CandidateAssessmentSupervisors SET Removed = getUTCDate() WHERE CandidateAssessmentID = @candidateAssessmentId
+                                        AND SupervisorDelegateId = @supervisorDelegateId
+                                        AND Removed IS NULL
+
+                                UPDATE CandidateAssessmentSupervisors SET Removed = NULL WHERE CandidateAssessmentID = @candidateAssessmentId
+                                        AND SupervisorDelegateId = @supervisorDelegateId
+                                        AND SelfAssessmentSupervisorRoleId = @selfAssessmentSupervisorRoleId
+
+                            COMMIT TRANSACTION
+                        END TRY
+                        BEGIN CATCH
+                            ROLLBACK TRANSACTION
+                        END CATCH",
+                        new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId });
                 }
             }
             return candidateAssessmentId;
@@ -967,9 +994,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     BEGIN TRANSACTION
                         UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2
                             WHERE ID = @candidateAssessmentId AND RemovedDate IS NULL
-
-                        UPDATE CandidateAssessmentSupervisors SET Removed = getUTCDate()
-                            WHERE CandidateAssessmentID = @candidateAssessmentId AND Removed IS NULL
 
                         COMMIT TRANSACTION
                 END TRY

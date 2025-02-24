@@ -173,7 +173,7 @@
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
         int GetSelfAssessmentCategoryId(int selfAssessmentId);
-        void  RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
+        void RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
         public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(
         int delegateUserId,
         int selfAssessmentId,
@@ -682,9 +682,6 @@
                     BEGIN TRANSACTION
                         UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID = 2
                             WHERE ID = @candidateAssessmentsId AND RemovedDate IS NULL
-
-                        UPDATE CandidateAssessmentSupervisors SET Removed = GETUTCDATE()
-                            WHERE CandidateAssessmentID = @candidateAssessmentsId AND Removed IS NULL
 
                         COMMIT TRANSACTION
                 END TRY
