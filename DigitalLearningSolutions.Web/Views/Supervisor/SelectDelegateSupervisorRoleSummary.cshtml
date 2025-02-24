@@ -47,7 +47,7 @@
             <partial name="Shared/_StaffDetails" model="Model.Item1.SupervisorDelegateDetail" />
         </div>
     </details>
-@if (string.IsNullOrWhiteSpace(Model.Item1.SupervisorRoleName))
+@if (!Model.Item1.HasSupervisorRoles)
 {
     <p>No supervisor roles have been configured for this self assessment.</p>
 }
