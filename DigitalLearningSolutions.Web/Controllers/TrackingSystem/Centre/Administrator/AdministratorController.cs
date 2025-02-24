@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    //using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -177,8 +178,10 @@
                 adminRoles,
                 AdminCategoryHelper.AdminCategoryToCategoryId(model.LearningCategory)
             );
+            int? learningCategory = model.LearningCategory == 0 ? null : model.LearningCategory;
+            var learningCategoryName = courseCategoriesService.GetCourseCategoryName(learningCategory);
 
-            SendNotificationEmail(adminId, adminRoles);
+            SendNotificationEmail(adminId, adminRoles, learningCategoryName);
 
             return RedirectToAction(
                 "Index",
@@ -190,7 +193,8 @@
 
         private void SendNotificationEmail(
             int adminIdToPromote,
-            AdminRoles adminRoles
+            AdminRoles adminRoles,
+            string learningCategoryName
         )
         {
             var adminId = User.GetAdminId();
@@ -216,7 +220,7 @@
                     isCmsManager: adminRoles.IsCmsManager,
                     primaryEmail: delegateUserEmailDetails.EmailAddress,
                     centreName: centreName,
-                    null
+                    learningCategoryName
                 );
 
                 emailService.SendEmail(adminRolesEmail);
