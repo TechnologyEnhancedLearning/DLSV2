@@ -1,0 +1,82 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model EditBrandingViewModel
+@{
+    ViewData["Title"] = "Assessment Branding";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+}
+
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Brand and category</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to competency assessment detail</a></p>
+        </div>
+    </nav>
+}
+
+<h1>Edit @Model.CompetencyAssessmentName provider and category</h1>
+<p>This will be visible to users when they browse assessments. It wiull help them to identify where the assessment is from and what it contains.</p>
+<form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
+    <nhs-form-group nhs-validation-for="BrandID">
+        <label class="nhsuk-label" for="brand-select">
+            Provider name
+        </label>
+        <select class="nhsuk-select" id="brand-select" name="BrandID" asp-for="BrandID" asp-items="Model.BrandSelectList">
+            <option value="0">* New provider *</option>
+        </select>
+        <div id="new-brand-field" class="non-js-only nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0">
+            <label class="nhsuk-label" for="brand-field">
+                New provider name
+            </label>
+            <input type="text" id="brand-field" name="Brand" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="Brand" />
+        </div>
+    </nhs-form-group>
+    <nhs-form-group nhs-validation-for="CategoryID">
+        <label class="nhsuk-label" for="category-select">
+            Content category
+        </label>
+        <select class="nhsuk-select" id="category-select" name="CategoryID" asp-for="CategoryID" asp-items="Model.CategorySelectList">
+            <option value="0">* New category *</option>
+        </select>
+        <div id="new-category-field" class="non-js-only nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0">
+            <label class="nhsuk-label" for="category-field">
+                New category name
+            </label>
+            <input type="text" id="category-field" name="Category" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="Category" />
+        </div>
+    </nhs-form-group>
+    <nhs-form-group>
+        <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+    </nhs-form-group>
+    <input name="ID" type="hidden" asp-for="ID" />
+    <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
+    <input name="userRole" type="hidden" asp-for="UserRole" />
+    <input name="Category" type="hidden" asp-for="Category" />
+    <input name="Brand" type="hidden" asp-for="Brand" />
+    <button class="nhsuk-button" type="submit">
+        Save
+    </button>
+</form>
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
+</div>
+@section scripts {
+    <script src="@Url.Content("~/js/frameworks/branding.js")" asp-append-version="true"></script>
+}

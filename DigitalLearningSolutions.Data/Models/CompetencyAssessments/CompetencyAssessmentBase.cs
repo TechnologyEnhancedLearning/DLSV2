@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CompetencyAssessments
 {
-    using System;
     using System.ComponentModel.DataAnnotations;
     public class CompetencyAssessmentBase
     {
@@ -10,6 +9,7 @@
         public string CompetencyAssessmentName { get; set; } = string.Empty;
         public string? Description { get; set; }
         public int BrandID { get; set; }
+        public int CategoryID { get; set; }
         public int? ParentCompetencyAssessmentID { get; set; }
         public bool National { get; set; }
         public bool Public { get; set; }
