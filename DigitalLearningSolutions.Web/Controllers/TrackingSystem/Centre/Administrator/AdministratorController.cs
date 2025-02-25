@@ -177,8 +177,10 @@
                 adminRoles,
                 AdminCategoryHelper.AdminCategoryToCategoryId(model.LearningCategory)
             );
+            int? learningCategory = model.LearningCategory == 0 ? null : model.LearningCategory;
+            var learningCategoryName = courseCategoriesService.GetCourseCategoryName(learningCategory);
 
-            SendNotificationEmail(adminId, adminRoles);
+            SendNotificationEmail(adminId, adminRoles, learningCategoryName);
 
             return RedirectToAction(
                 "Index",
@@ -190,7 +192,8 @@
 
         private void SendNotificationEmail(
             int adminIdToPromote,
-            AdminRoles adminRoles
+            AdminRoles adminRoles,
+            string learningCategoryName
         )
         {
             var adminId = User.GetAdminId();
@@ -215,7 +218,8 @@
                     isCmsAdmin: adminRoles.IsCmsAdministrator,
                     isCmsManager: adminRoles.IsCmsManager,
                     primaryEmail: delegateUserEmailDetails.EmailAddress,
-                    centreName: centreName
+                    centreName: centreName,
+                    learningCategoryName
                 );
 
                 emailService.SendEmail(adminRolesEmail);
