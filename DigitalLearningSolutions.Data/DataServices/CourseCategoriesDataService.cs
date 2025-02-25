@@ -9,7 +9,7 @@
     public interface ICourseCategoriesDataService
     {
         IEnumerable<Category> GetCategoriesForCentreAndCentrallyManagedCourses(int centreId);
-        string? GetCourseCategoryName(int categoryId);
+        string? GetCourseCategoryName(int? categoryId);
     }
 
     public class CourseCategoriesDataService : ICourseCategoriesDataService
@@ -34,7 +34,7 @@
             );
         }
 
-        public string? GetCourseCategoryName(int categoryId)
+        public string? GetCourseCategoryName(int? categoryId)
         {
             var name = connection.QueryFirstOrDefault<string?>(
                 @"SELECT CategoryName
