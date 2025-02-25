@@ -4,11 +4,16 @@
     using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using DigitalLearningSolutions.Web.Extensions;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Helpers;
+    using System.Linq;
+    using AspNetCoreGeneratedDocument;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models.Frameworks;
 
     public partial class CompetencyAssessmentsController
     {
@@ -140,7 +145,7 @@
                 var adminId = GetAdminID();
                 if (actionName == "New")
                 {
-                    var sameItems = competencyAssessmentService.GetCompetencyAssessmentByName(competencyAssessmentBase.CompetencyAssessmentName, GetAdminID());
+                    var sameItems = competencyAssessmentService.GetCompetencyAssessmentBaseByName(competencyAssessmentBase.CompetencyAssessmentName, GetAdminID());
                     if (sameItems != null)
                     {
                         ModelState.Remove(nameof(CompetencyAssessmentBase.CompetencyAssessmentName));
@@ -284,8 +289,50 @@
                 return View("EditDescription", model);
             }
             var adminId = GetAdminID();
-            var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentDescription(model.ID, adminId, model.Description);
+            var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentDescription(model.ID, adminId, SanitizerHelper.SanitizeHtmlData(model.Description));
             competencyAssessmentService.UpdateIntroductoryTextTaskStatus(model.ID, model.TaskStatus ?? false);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
+        }
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Branding/")]
+        public IActionResult EditBranding(int competencyAssessmentId)
+        {
+            var centreId = GetCentreId();
+            var adminId = GetAdminID();
+            var brandsList = commonService.GetBrandListForCentre((int)centreId).Select(b => new { b.BrandID, b.BrandName }).ToList();
+            var categoryList = commonService.GetCategoryListForCentre((int)centreId).Select(c => new { c.CourseCategoryID, c.CategoryName }).ToList();
+            var brandSelectList = new SelectList(brandsList, "BrandID", "BrandName");
+            var categorySelectList = new SelectList(categoryList, "CourseCategoryID", "CategoryName");
+            var competencyAssessment = competencyAssessmentService.GetCompetencyAssessmentById(competencyAssessmentId, adminId);
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new EditBrandingViewModel(competencyAssessment, brandSelectList, categorySelectList, competencyAssessmentTaskStatus.BrandingTaskStatus);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Branding/")]
+        public IActionResult EditBranding(EditBrandingViewModel model)
+        {
+            var adminId = GetAdminID();
+            var centreId = GetCentreId();
+            if (!ModelState.IsValid)
+            {
+                var brandsList = commonService.GetBrandListForCentre((int)centreId).Select(b => new { b.BrandID, b.BrandName }).ToList();
+                var categoryList = commonService.GetCategoryListForCentre((int)centreId).Select(c => new { c.CourseCategoryID, c.CategoryName }).ToList();
+                var brandSelectList = new SelectList(brandsList, "BrandID", "BrandName");
+                var categorySelectList = new SelectList(categoryList, "CourseCategoryID", "CategoryName");
+                model.BrandSelectList = brandSelectList;
+                model.CategorySelectList = categorySelectList;
+                return View("EditBranding", model);
+            }
+            if(model.BrandID == 0)
+            {
+                model.BrandID = commonService.InsertBrandAndReturnId(model.Brand, (int)centreId);
+            }
+            if(model.CategoryID == 0)
+            {
+                model.CategoryID = commonService.InsertCategoryAndReturnId(model.Category, (int)centreId);
+            }
+            var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentBranding(model.ID, adminId, model.BrandID, model.CategoryID);
+            competencyAssessmentService.UpdateBrandingTaskStatus(model.ID, model.TaskStatus ?? false);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
     }

@@ -13,7 +13,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         CompetencyAssessmentBase? GetCompetencyAssessmentBaseById(int competencyAssessmentId, int adminId);
 
-        CompetencyAssessmentBase? GetCompetencyAssessmentByName(string competencyAssessmentName, int adminId);
+        CompetencyAssessmentBase? GetCompetencyAssessmentBaseByName(string competencyAssessmentName, int adminId);
+        CompetencyAssessment? GetCompetencyAssessmentById(int competencyAssessmentId, int adminId);
 
         IEnumerable<NRPProfessionalGroups> GetNRPProfessionalGroups();
 
@@ -24,10 +25,13 @@ namespace DigitalLearningSolutions.Web.Services
 
         bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID);
         bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateCompetencyAssessmentDescription(int assessmentId, int adminId, string description);
+        bool UpdateCompetencyAssessmentBranding(int assessmentId, int adminId, int brandID, int categoryID);
+        bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
-        bool UpdateCompetencyAssessmentDescription(int iD, int adminId, string description);
+       
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -53,9 +57,9 @@ namespace DigitalLearningSolutions.Web.Services
             return competencyAssessmentDataService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
         }
 
-        public CompetencyAssessmentBase? GetCompetencyAssessmentByName(string competencyAssessmentName, int adminId)
+        public CompetencyAssessmentBase? GetCompetencyAssessmentBaseByName(string competencyAssessmentName, int adminId)
         {
-            return competencyAssessmentDataService.GetCompetencyAssessmentByName(competencyAssessmentName, adminId);
+            return competencyAssessmentDataService.GetCompetencyAssessmentBaseByName(competencyAssessmentName, adminId);
         }
 
         public IEnumerable<CompetencyAssessment> GetCompetencyAssessmentsForAdminId(int adminId)
@@ -99,6 +103,21 @@ namespace DigitalLearningSolutions.Web.Services
         public bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus)
         {
             return competencyAssessmentDataService.UpdateIntroductoryTextTaskStatus(assessmentId, taskStatus);
+        }
+
+        public CompetencyAssessment? GetCompetencyAssessmentById(int competencyAssessmentId, int adminId)
+        {
+            return competencyAssessmentDataService.GetCompetencyAssessmentById(competencyAssessmentId, adminId);
+        }
+
+        public bool UpdateCompetencyAssessmentBranding(int assessmentId, int adminId, int brandID, int categoryID)
+        {
+            return competencyAssessmentDataService.UpdateCompetencyAssessmentBranding(assessmentId, adminId, brandID, categoryID);
+        }
+
+        public bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus)
+        {
+            return competencyAssessmentDataService.UpdateBrandingTaskStatus(assessmentId, taskStatus);
         }
     }
 }

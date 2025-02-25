@@ -20,8 +20,8 @@
 
         CompetencyAssessmentBase? GetCompetencyAssessmentBaseById(int competencyAssessmentId, int adminId);
 
-        CompetencyAssessmentBase? GetCompetencyAssessmentByName(string competencyAssessmentName, int adminId);
-
+        CompetencyAssessmentBase? GetCompetencyAssessmentBaseByName(string competencyAssessmentName, int adminId);
+        CompetencyAssessment? GetCompetencyAssessmentById(int competencyAssessmentId, int adminId);
         IEnumerable<NRPProfessionalGroups> GetNRPProfessionalGroups();
 
         CompetencyAssessmentTaskStatus GetOrInsertAndReturnAssessmentTaskStatus(int assessmentId, bool frameworkBased);
@@ -32,13 +32,14 @@
         bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID);
         bool UpdateCompetencyAssessmentBranding(
             int competencyAssessmentId,
+            int adminId,
             int brandId,
-            int categoryId,
-            int adminId
+            int categoryId
         );
         bool UpdateCompetencyAssessmentVocabulary(int competencyAssessmentId, int adminId, string vocabulary);
         bool UpdateCompetencyAssessmentDescription(int competencyAssessmentId, int adminId, string competencyAssessmentDescription);
         bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -56,10 +57,13 @@
                  sa.PublishStatusID, sa.Vocabulary, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
 
         private const string SelfAssessmentFields =
-            @", sa.CreatedDate,
+            @", sa.CategoryID, sa.CreatedDate,
                  (SELECT BrandName
                  FROM    Brands
                  WHERE (BrandID = sa.BrandID)) AS Brand,
+                 (SELECT CategoryName
+                 FROM    CourseCategories
+                 WHERE (CourseCategoryID = sa.CategoryID)) AS Category,
                  (SELECT [Name]
                  FROM    SelfAssessments AS sa2
                  WHERE (ID = sa.ParentSelfAssessmentID)) AS ParentSelfAssessment,
@@ -210,7 +214,7 @@
             );
         }
 
-        public CompetencyAssessmentBase? GetCompetencyAssessmentByName(string competencyAssessmentName, int adminId)
+        public CompetencyAssessmentBase? GetCompetencyAssessmentBaseByName(string competencyAssessmentName, int adminId)
         {
             return connection.Query<CompetencyAssessmentBase>(
                 $@"SELECT {SelfAssessmentBaseFields}
@@ -248,9 +252,9 @@
         }
         public bool UpdateCompetencyAssessmentBranding(
             int competencyAssessmentId,
+            int adminId,
             int brandId,
-            int categoryId,
-            int adminId
+            int categoryId
         )
         {
             if ((competencyAssessmentId < 1) | (brandId < 1) | (categoryId < 1) | (adminId < 1))
@@ -361,6 +365,34 @@
             {
                 logger.LogWarning(
                     "Not updating IntroductoryTextTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public CompetencyAssessment? GetCompetencyAssessmentById(int competencyAssessmentId, int adminId)
+        {
+            return connection.Query<CompetencyAssessment>(
+                $@"SELECT {SelfAssessmentBaseFields} {SelfAssessmentFields}
+                      FROM {SelfAssessmentBaseTables} {SelfAssessmentTables}
+                      WHERE (sa.ID = @competencyAssessmentId)",
+                new { competencyAssessmentId, adminId }
+            ).FirstOrDefault();
+        }
+
+        public bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentTaskStatus SET BrandingTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+                new { assessmentId, taskStatus }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating BrandingTaskStatus as db update failed. " +
                     $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
                 );
                 return false;
