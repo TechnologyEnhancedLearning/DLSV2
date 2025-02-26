@@ -40,6 +40,7 @@
         bool UpdateCompetencyAssessmentDescription(int competencyAssessmentId, int adminId, string competencyAssessmentDescription);
         bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -393,6 +394,24 @@
             {
                 logger.LogWarning(
                     "Not updating BrandingTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentTaskStatus SET VocabularyTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+                new { assessmentId, taskStatus }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating VocabularyTaskStatus as db update failed. " +
                     $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
                 );
                 return false;

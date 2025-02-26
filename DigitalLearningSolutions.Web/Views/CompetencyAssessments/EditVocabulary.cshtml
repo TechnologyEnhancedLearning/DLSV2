@@ -1,0 +1,98 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model EditVocabularyViewModel
+@{
+    ViewData["Title"] = "Assessment Branding";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+}
+
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Brand and category</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to competency assessment detail</a></p>
+        </div>
+    </nav>
+}
+
+<h1>Edit @Model.CompetencyAssessmentName vocabulary</h1>
+<form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
+    <nhs-form-group nhs-validation-for="Vocabulary">
+        <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
+                <h2 class="nhsuk-fieldset__heading">
+                    Choose assessment vocabulary - the name given to the building blocks of your assessment.
+                </h2>
+            </legend>
+            <div class="nhsuk-radios">
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" asp-for="Vocabulary" type="radio" value="Capability" aria-describedby="vocabulary-item-1-hint">
+                    <label class="nhsuk-label nhsuk-radios__label" for="Vocabulary">
+                        Capability | Capabilities
+                    </label>
+                    <div class="nhsuk-hint nhsuk-radios__hint" id="vocabulary-item-1-hint">
+                        The attributes (skills, knowledge and behaviours) which individuals bring to the workplace.
+                    </div>
+                </div>
+
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" asp-for="Vocabulary" type="radio" value="Competence" aria-describedby="vocabulary-item-3-hint">
+                    <label class="nhsuk-label nhsuk-radios__label" for="Vocabulary">
+                        Competence | Competences
+                    </label>
+                    <div class="nhsuk-hint nhsuk-radios__hint" id="vocabulary-item-3-hint">
+                        Defined standards of performance, focused on the outputs of work and observable performance.
+                    </div>
+                </div>
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" asp-for="Vocabulary" type="radio" value="Proficiency" aria-describedby="vocabulary-item-4-hint">
+                    <label class="nhsuk-label nhsuk-radios__label" for="Vocabulary">
+                        Proficiency | Proficiencies
+                    </label>
+                    <div class="nhsuk-hint nhsuk-radios__hint" id="vocabulary-item-4-hint">
+                        The knowledge and skills that registered nurses must demonstrate when caring for people of all ages and across all care settings.
+                    </div>
+                </div>
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" asp-for="Vocabulary" type="radio" value="Competency" aria-describedby="vocabulary-item-2-hint">
+                    <label class="nhsuk-label nhsuk-radios__label" for="Vocabulary">
+                        Competency | Competencies
+                    </label>
+                    <div class="nhsuk-hint nhsuk-radios__hint" id="vocabulary-item-2-hint">
+                        The same as capability | capabilities.<br />
+                        The term capabilities is recommended to make a clear distinction from competences.
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <span nhs-validation-for="Vocabulary"></span>
+    </nhs-form-group>
+    <nhs-form-group nhs-validation-for="TaskStatus">
+        <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+    </nhs-form-group>
+    <input name="ID" type="hidden" asp-for="ID" />
+    <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
+    <input name="userRole" type="hidden" asp-for="UserRole" />
+    <button class="nhsuk-button" type="submit">
+        Save
+    </button>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    </div>
+</form>

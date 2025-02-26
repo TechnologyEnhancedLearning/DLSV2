@@ -335,5 +335,36 @@
             competencyAssessmentService.UpdateBrandingTaskStatus(model.ID, model.TaskStatus ?? false);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Vocabulary/")]
+        public IActionResult EditVocabulary(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            CompetencyAssessmentBase? competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null)
+            {
+                logger.LogWarning($"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
+            }
+            if (competencyAssessmentBase.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new EditVocabularyViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus.VocabularyTaskStatus);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Vocabulary/")]
+        public IActionResult SaveVocabulary(EditVocabularyViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("EditVocabulary", model);
+            }
+            var adminId = GetAdminID();
+            var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentVocabulary(model.ID, adminId, model.Vocabulary);
+            competencyAssessmentService.UpdateVocabularyTaskStatus(model.ID, model.TaskStatus ?? false);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
+        }
     }
 }
