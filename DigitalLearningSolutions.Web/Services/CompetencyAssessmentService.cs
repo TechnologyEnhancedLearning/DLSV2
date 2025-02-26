@@ -1,4 +1,5 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Data.Models.Common;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 using System.Collections.Generic;
 
@@ -28,10 +29,12 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateCompetencyAssessmentDescription(int assessmentId, int adminId, string description);
         bool UpdateCompetencyAssessmentBranding(int assessmentId, int adminId, int brandID, int categoryID);
         bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateCompetencyAssessmentVocabulary(int assessmentId, int adminId, string vocabulary);
+        bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
-       
+        
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -118,6 +121,16 @@ namespace DigitalLearningSolutions.Web.Services
         public bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus)
         {
             return competencyAssessmentDataService.UpdateBrandingTaskStatus(assessmentId, taskStatus);
+        }
+
+        bool ICompetencyAssessmentService.UpdateCompetencyAssessmentVocabulary(int assessmentId, int adminId, string vocabulary)
+        {
+            return competencyAssessmentDataService.UpdateCompetencyAssessmentVocabulary(assessmentId, adminId, vocabulary);
+        }
+
+        bool ICompetencyAssessmentService.UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus)
+        {
+            return competencyAssessmentDataService.UpdateVocabularyTaskStatus(assessmentId, taskStatus);
         }
     }
 }
