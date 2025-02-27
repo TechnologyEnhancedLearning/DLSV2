@@ -1565,7 +1565,18 @@
                 }
 
             }
-           
+
+            if (!selfAssessmentService.HasMinimumOptionalCompetencies(selfAssessmentId, delegateUserId))
+            {
+                var supervisorsSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, delegateUserId);
+
+                if (supervisorsSignOffs.FirstOrDefault() is { Verified: null, Removed: null })
+                {
+                    selfAssessmentService.RemoveSignoffRequestById(supervisorsSignOffs.FirstOrDefault().ID);
+                }
+            }
+
+
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
         }
 
@@ -1577,9 +1588,9 @@
             var delegateId = User.GetCandidateIdKnownNotNull();
             var recentResults = selfAssessmentService.GetMostRecentResults(selfAssessmentId, delegateId).ToList();
             var competencySummaries = CertificateHelper.CompetencySummation(recentResults);
-           
-            if (competencySummaries.QuestionsCount != competencySummaries.VerifiedCount)  return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            
+
+            if (competencySummaries.QuestionsCount != competencySummaries.VerifiedCount) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
             var supervisors =
                 selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, delegateUserId);
@@ -1591,7 +1602,7 @@
                 NumberOfSelfAssessedOptionalCompetencies = optionalCompetencies.Count(x => x.IncludedInSelfAssessment)
             };
             if (model.NumberOfSelfAssessedOptionalCompetencies < model.SelfAssessment.MinimumOptionalCompetencies) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            
+
             return View("SelfAssessments/RequestSignOff", model);
         }
 
