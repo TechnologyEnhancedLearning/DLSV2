@@ -124,12 +124,20 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         [Route("/{dlsSubApplication}/RequestSupport/SetRequestSummary")]
         public IActionResult SetRequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel requestDetailsmodel)
         {
+            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
+                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
+                TempData
+            ).GetAwaiter().GetResult(); ;
+            requestDetailsmodel.RequestType = data.RequestType;
             if (requestDetailsmodel.RequestSubject == null)
             {
                 ModelState.AddModelError("RequestSubject", "Please enter request summary");
                 return View("RequestSummary", requestDetailsmodel);
             }
-            if (requestDetailsmodel.RequestDescription == null)
+            // Check if RequestDescription is null or contains any default empty tags ("<p><br></p>").  
+            // This ensures that when a user navigates to the submit page and returns to SetRequestSummary,  
+            // removing the description completely results in an actual empty value rather than leftover HTML tags.
+            if (requestDetailsmodel.RequestDescription == null || requestDetailsmodel.RequestDescription == "<p><br></p>")
             {
                 ModelState.AddModelError("RequestDescription", "Please enter request description");
                 return View("RequestSummary", requestDetailsmodel);
@@ -138,10 +146,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             {
                 return View("RequestSummary", requestDetailsmodel);
             }
-            var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
-                MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
-                TempData
-            ).GetAwaiter().GetResult(); ;
+            
             data.setRequestSubjectDetails(requestDetailsmodel);
             setRequestSupportTicketData(data);
             return RedirectToAction("RequestAttachment", new { dlsSubApplication });
