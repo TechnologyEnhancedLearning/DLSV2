@@ -551,7 +551,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
                  {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
-                WHERE CandidateAssessmentID = @candidateAssessmentId AND SupervisorDelegateId = @supervisorDelegateId 
+                WHERE CandidateAssessmentID = @candidateAssessmentId AND SupervisorDelegateId = @supervisorDelegateId AND SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID
 
                 COMMIT TRANSACTION";
 

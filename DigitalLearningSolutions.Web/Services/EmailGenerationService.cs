@@ -19,7 +19,8 @@
             bool isCmsAdmin,
             bool isCmsManager,
             string primaryEmail,
-            string centreName
+            string centreName,
+            string categoryName
         );
     }
 
@@ -39,7 +40,8 @@
             bool isCmsAdmin,
             bool isCmsManager,
             string primaryEmail,
-            string centreName
+            string centreName,
+            string categoryName
         )
         {
             const string emailSubjectLine = "New Digital Learning Solutions permissions granted";
@@ -100,6 +102,13 @@
             }
 
             builder.HtmlBody += "</ul>";
+
+            if (!string.IsNullOrEmpty(categoryName))
+            {
+                builder.TextBody += $@"In the {categoryName} category.";
+                builder.HtmlBody += $@"<body style= 'font-family: Calibri; font-size: small;'>
+                                        <p>In the {categoryName} category.</p>";
+            }
 
             builder.TextBody += $@"You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you log in to {centreName}.";
             builder.HtmlBody += $@"You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you log in to {centreName}.</body>";

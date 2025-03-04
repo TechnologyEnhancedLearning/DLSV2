@@ -27,6 +27,7 @@
 
         void UpdateLastAccessed(int selfAssessmentId, int delegateUserId);
         void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupsId);
+        void RemoveSignoffRequestById(int candidateAssessmentSupervisorVerificationsId);
         void IncrementLaunchCount(int selfAssessmentId, int delegateUserId);
 
         void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
@@ -160,7 +161,7 @@
         int selfAssessmentId,
         int competencyId
     );
-       void RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
+        void RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -200,6 +201,10 @@
         public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupId)
         {
             selfAssessmentDataService.RemoveSignoffRequests(selfAssessmentId, delegateUserId, competencyGroupId);
+        }
+        public void RemoveSignoffRequestById(int candidateAssessmentSupervisorVerificationsId)
+        {
+            selfAssessmentDataService.RemoveSignoffRequestById(candidateAssessmentSupervisorVerificationsId);
         }
         public void IncrementLaunchCount(int selfAssessmentId, int delegateUserId)
         {
@@ -467,10 +472,10 @@
 
             var selfAssessmentCategoryId = selfAssessmentDataService.GetSelfAssessmentCategoryId((int)selfAssessmentId);
 
-            if (adminCategoryId > 0  && adminCategoryId != selfAssessmentCategoryId)
+            if (adminCategoryId > 0 && adminCategoryId != selfAssessmentCategoryId)
             {
                 // return null variants of the object when the categoryID mismatches 
-                return (new SelfAssessmentDelegatesData(), null);      
+                return (new SelfAssessmentDelegatesData(), null);
             }
 
             (var delegateselfAssessments, int resultCount) = selfAssessmentDataService.GetSelfAssessmentDelegates(searchString, offSet, itemsPerPage, sortBy, sortDirection,
@@ -603,7 +608,7 @@
         }
         public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
         {
-             selfAssessmentDataService.RemoveReviewCandidateAssessmentOptionalCompetencies(id);
+            selfAssessmentDataService.RemoveReviewCandidateAssessmentOptionalCompetencies(id);
         }
     }
 }

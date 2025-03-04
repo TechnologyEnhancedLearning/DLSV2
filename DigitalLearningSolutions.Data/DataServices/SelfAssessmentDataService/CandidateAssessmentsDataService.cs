@@ -298,6 +298,13 @@
             }
         }
 
+        public void RemoveSignoffRequestById(int candidateAssessmentSupervisorVerificationsId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+              @" DELETE FROM CandidateAssessmentSupervisorVerifications WHERE ID = @candidateAssessmentSupervisorVerificationsId ",
+            new { candidateAssessmentSupervisorVerificationsId });
+        }
+
 
         public void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate)
         {

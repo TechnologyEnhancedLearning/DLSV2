@@ -45,6 +45,7 @@
             const string supervisorFirstName = "TestAdminFirstName";
             const string supervisorLastName = "TestAdminFirstName";
             const string supervisorEmail = "admin@example.com";
+            const string categoryName = "Digital Workplace";
 
             const string centreName = "Test Centre Name";
 
@@ -65,7 +66,8 @@
                 isCmsAdministrator,
                 isCmsManager,
                 delegateEmail,
-                centreName
+                centreName,
+                categoryName
             );
 
             // Then
@@ -163,6 +165,11 @@
             {
                 returnedEmail.Body.HtmlBody.Should().NotContain("<li>CMS manager</li>");
                 returnedEmail.Body.TextBody.Should().NotContain("CMS manager");
+            }
+            if (!string.IsNullOrEmpty(categoryName))
+            {
+                returnedEmail.Body.HtmlBody.Should().Contain("In the Digital Workplace category.");
+                returnedEmail.Body.TextBody.Should().Contain("In the Digital Workplace category.");
             }
 
             returnedEmail.Body.HtmlBody.Should().Contain("the next time you log in to " + centreName + ".</body>");

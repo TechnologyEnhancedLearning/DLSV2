@@ -12,5 +12,6 @@
         public string SupervisorRoleName { get; set; }
         public int SupervisorRoleCount { get; set; }
         public bool AllowSupervisorRoleSelection { get; set; }
+        public bool HasSupervisorRoles => !string.IsNullOrWhiteSpace(SupervisorRoleName);
     }
 }
