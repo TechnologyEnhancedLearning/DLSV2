@@ -8,11 +8,9 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Data.Enums;
-    using System;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
-    using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Web.Services;
@@ -75,8 +73,9 @@
         public IActionResult DownloadSelfAssessmentReport(int selfAssessmentId)
         {
             var centreId = User.GetCentreId();
+            var selfAssessmentName = selfAssessmentService.GetSelfAssessmentNameById(selfAssessmentId);
             var dataFile = selfAssessmentReportService.GetSelfAssessmentExcelExportForCentre((int)centreId, selfAssessmentId);
-            var fileName = $"Competency Self Assessment Report - Centre {centreId} - downloaded {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var fileName = $"{((selfAssessmentName.Length > 50) ? selfAssessmentName.Substring(0, 50) : selfAssessmentName)} Report - Centre {centreId} - downloaded {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
             return File(
                 dataFile,
                 FileHelper.GetContentTypeFromFileName(fileName),

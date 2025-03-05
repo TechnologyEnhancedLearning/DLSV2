@@ -635,7 +635,7 @@
 				SelfAssessmentResultSupervisorVerifications sv ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0 
                     WHERE s.CompetencyID = @competencyId
                         AND s.SelfAssessmentID = @selfAssessmentId
-                        AND s.DelegateUserID = @delegateUserId",
+                        AND s.DelegateUserID = @delegateUserId AND sv.Verified IS NULL",
                 new { selfAssessmentId, delegateUserId, competencyId }
             );
         }
@@ -643,8 +643,6 @@
         public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
         {
            
-            connection.Execute(@"UPDATE SelfAssessmentResults SET Result = NULL WHERE ID =  @id", new { id});
-
             connection.Execute(
                      @"delete from SelfAssessmentResultSupervisorVerifications WHERE SelfAssessmentResultId = @id", new { id });
 
