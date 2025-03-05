@@ -6,7 +6,7 @@
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
-<partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
 
 @section NavBreadcrumbs {
@@ -23,9 +23,9 @@
 }
 
 <h1>Edit @Model.CompetencyAssessmentName national NHS role profile links</h1>
-@if (Model.TaskStatus != null | Model.ProfessionalGroupId != null)
+@if (Model.TaskStatus != null | Model.ActionName != "EditGroup")
 {
-    <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
+    <dl class="nhsuk-summary-list">
 
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
@@ -36,7 +36,7 @@
             </dd>
             <dd class="nhsuk-summary-list__actions">
                 <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditGroup" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Change<span class="nhsuk-u-visually-hidden"> assessment name</span>
+                    Change<span class="nhsuk-u-visually-hidden"> professional group link</span>
                 </a>
             </dd>
         </div>
@@ -51,12 +51,12 @@
                 </dd>
                 <dd class="nhsuk-summary-list__actions">
                     <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditSubGroup" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Change<span class="nhsuk-u-visually-hidden"> assessment name</span>
+                        Change<span class="nhsuk-u-visually-hidden"> sub group link</span>
                     </a>
                 </dd>
             </div>
         }
-        @if (Model.SubGroupId != null && Model.ActionName != "EditRole")
+        @if (Model.SubGroupId != null && Model.ActionName == "Summary")
         {
             <div class="nhsuk-summary-list__row">
                 <dt class="nhsuk-summary-list__key">
@@ -67,7 +67,7 @@
                 </dd>
                 <dd class="nhsuk-summary-list__actions">
                     <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditRole" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Change<span class="nhsuk-u-visually-hidden"> assessment name</span>
+                        Change<span class="nhsuk-u-visually-hidden"> role profile link</span>
                     </a>
                 </dd>
             </div>
@@ -244,7 +244,7 @@ else if (Model.ActionName == "Summary")
         <button class="nhsuk-button" type="submit">
             Save
         </button>
-      </form>
+    </form>
 }
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">

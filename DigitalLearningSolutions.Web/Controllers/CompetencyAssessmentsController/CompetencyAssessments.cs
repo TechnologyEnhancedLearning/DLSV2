@@ -247,7 +247,7 @@
             var isUpdated = competencyAssessmentService.UpdateCompetencyRoleProfileLinks(model.ID, adminId, model.ProfessionalGroupId, model.SubGroupId, model.RoleId);
             if (model.ActionName == "EditGroup")
             {
-                if(model.ProfessionalGroupId == null)
+                if (model.ProfessionalGroupId == null)
                 {
                     return RedirectToAction("EditRoleProfileLinks", new { actionName = "Summary", competencyAssessmentId });
                 }
@@ -269,7 +269,7 @@
             }
             else if (model.ActionName == "EditRole")
             {
-                    return RedirectToAction("EditRoleProfileLinks", new { actionName = "Summary", competencyAssessmentId });
+                return RedirectToAction("EditRoleProfileLinks", new { actionName = "Summary", competencyAssessmentId });
             }
             else
             {
