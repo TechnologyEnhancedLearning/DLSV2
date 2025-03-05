@@ -40,7 +40,7 @@
 }
   @if (errorHasOccurred)
 {
-  <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SessionEnrolOnRoleProfile.SelfAssessmentID) })" />
+  <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SessionEnrolOnCompetencyAssessment.SelfAssessmentID) })" />
 }
 <details class="nhsuk-details nhsuk-expander">
   <summary class="nhsuk-details__summary">
@@ -53,7 +53,7 @@
   </div>
 </details>
 <h2>Enrol on Self Assessment</h2>
-@if (Model.RoleProfiles.Any())
+@if (Model.CompetencyAssessments.Any())
 {
   <h3>Choose a self assessment</h3>
   <form method="post">
@@ -75,31 +75,31 @@
         </tr>
       </thead>
       <tbody class="nhsuk-table__body">
-        @foreach (var roleProfile in Model.RoleProfiles)
+        @foreach (var competencyAssessment in Model.CompetencyAssessments)
         {
           <tr role="row" class="nhsuk-table__row collaborator-row">
             <td role="cell" class="nhsuk-table__cell">
               <span class="nhsuk-table-responsive__heading">Self assessment </span>
               <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="role-profile-check-@roleProfile.ID" asp-for="SessionEnrolOnRoleProfile.SelfAssessmentID" name="SelfAssessmentID" type="radio" value="@roleProfile.ID">
-                <label class="nhsuk-label nhsuk-radios__label" for="role-profile-check-@roleProfile.ID">
-                  @roleProfile.RoleProfileName
+                <input class="nhsuk-radios__input" id="role-profile-check-@competencyAssessment.ID" asp-for="SessionEnrolOnCompetencyAssessment.SelfAssessmentID" name="SelfAssessmentID" type="radio" value="@competencyAssessment.ID">
+                <label class="nhsuk-label nhsuk-radios__label" for="role-profile-check-@competencyAssessment.ID">
+                  @competencyAssessment.CompetencyAssessmentName
                 </label>
               </div>
             </td>
             <td role="cell" class="nhsuk-table__cell">
               <span class="nhsuk-table-responsive__heading">Brand </span>
-              @roleProfile.Brand
+              @competencyAssessment.Brand
             </td>
             <td role="cell" class="nhsuk-table__cell">
               <span class="nhsuk-table-responsive__heading">Linked to role </span>
-              @(roleProfile.NRPProfessionalGroup != null ? @roleProfile.NRPProfessionalGroup : "None/Generic")
-              @(roleProfile.NRPSubGroupID != null ? " / " + roleProfile.NRPSubGroup : "")
-              @(roleProfile.NRPRoleID != null ? " / " + roleProfile.NRPRole : "")
+              @(competencyAssessment.NRPProfessionalGroup != null ? @competencyAssessment.NRPProfessionalGroup : "None/Generic")
+              @(competencyAssessment.NRPSubGroupID != null ? " / " + competencyAssessment.NRPSubGroup : "")
+              @(competencyAssessment.NRPRoleID != null ? " / " + competencyAssessment.NRPRole : "")
             </td>
             <td role="cell" class="nhsuk-table__cell">
               <span class="nhsuk-table-responsive__heading">Scope </span>
-              @(roleProfile.National ? "National" : "Local")
+              @(competencyAssessment.National ? "National" : "Local")
             </td>
           </tr>
         }

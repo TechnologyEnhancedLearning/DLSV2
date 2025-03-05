@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Text;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.RoleProfiles;
+    using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
     using FuzzySharp;
     using FuzzySharp.SimilarityRatio;
     using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
@@ -29,8 +29,8 @@
             "profile", "job", "role",
         };
 
-        public static IEnumerable<RoleProfile> FilterRoleProfiles(
-            IEnumerable<RoleProfile> roleProfiles,
+        public static IEnumerable<CompetencyAssessment> FilterCompetencyAssessments(
+            IEnumerable<CompetencyAssessment> competencyAssessments,
             string? searchString,
             int minMatchScore,
             bool stripStopWords
@@ -38,7 +38,7 @@
         {
             if (searchString == null)
             {
-                return roleProfiles;
+                return competencyAssessments;
             }
 
             if (stripStopWords)
@@ -46,16 +46,16 @@
                 searchString = CleanSearchedWords(searchString);
             }
 
-            var query = new RoleProfile
+            var query = new CompetencyAssessment
             {
-                RoleProfileName = searchString.ToLower(),
+                CompetencyAssessmentName = searchString.ToLower(),
             };
             if (stripStopWords)
             {
                 var results = Process.ExtractSorted(
                     query,
-                    roleProfiles,
-                    roleProfile => roleProfile.RoleProfileName.ToLower(),
+                    competencyAssessments,
+                    competencyAssessment => competencyAssessment.CompetencyAssessmentName.ToLower(),
                     ScorerCache.Get<DefaultRatioScorer>(),
                     minMatchScore
                 );
@@ -65,8 +65,8 @@
             {
                 var results = Process.ExtractSorted(
                     query,
-                    roleProfiles,
-                    roleProfile => roleProfile.RoleProfileName.ToLower(),
+                    competencyAssessments,
+                    competencyAssessment => competencyAssessment.CompetencyAssessmentName.ToLower(),
                     ScorerCache.Get<PartialRatioScorer>(),
                     minMatchScore
                 );

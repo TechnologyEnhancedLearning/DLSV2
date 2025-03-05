@@ -1,86 +1,87 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model FrameworkViewModel;
 @{
-  ViewData["Title"] = Model.DetailFramework.FrameworkName;
-  ViewData["Application"] = "Framework Service";
-  ViewData["HeaderPathName"] = "Framework Service";
+    ViewData["Title"] = Model.DetailFramework.FrameworkName;
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
+    <partial name="Shared/_NavMenuItems" />
 }
-  @section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-        <li class="nhsuk-breadcrumb__item">Framework @ViewContext.RouteData.Values["tabname"]</li>
-      </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFrameworks" asp-route-tabname="Mine">Back to My Frameworks</a></p>
-    </div>
-  </nav>
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item">Framework @ViewContext.RouteData.Values["tabname"]</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFrameworks" asp-route-tabname="Mine">Back to My Frameworks</a></p>
+        </div>
+    </nav>
 }
-  <div class="nhsuk-grid-row">
+<div class="nhsuk-grid-row">
 
     <div class="nhsuk-grid-column-full">
-      <h1>
-        @Model.DetailFramework.FrameworkName
-      </h1>
+        <h1>
+            @Model.DetailFramework.FrameworkName
+        </h1>
     </div>
-  </div>
-  <div class="nhsuk-grid-row">
+</div>
+<div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-      <ol class="hee-fwservice--framework-progress-bar">
-        <li class=@(Model.DetailFramework.PublishStatusID == 1 ? "active" : "")>
-          <div class="hee-fwservice--framework-progress-marker">1</div><div class="hee-fwservice--framework-progress-caption">In draft</div>
-        </li>
-        <li class=@(Model.DetailFramework.PublishStatusID == 2 ? "active" : "")>
-          <div class="hee-fwservice--framework-progress-marker">2</div><div class="hee-fwservice--framework-progress-caption">In review</div>
-        </li>
-        <li class=@(Model.DetailFramework.PublishStatusID == 3 ? "active" : "")>
-          <div class="hee-fwservice--framework-progress-marker">3</div><div class="hee-fwservice--framework-progress-caption">Published</div>
-        </li>
-      </ol>
+        <ol class="hee-fwservice--framework-progress-bar">
+            <li class=@(Model.DetailFramework.PublishStatusID == 1 ? "active" : "")>
+                <div class="hee-fwservice--framework-progress-marker">1</div><div class="hee-fwservice--framework-progress-caption">In draft</div>
+            </li>
+            <li class=@(Model.DetailFramework.PublishStatusID == 2 ? "active" : "")>
+                <div class="hee-fwservice--framework-progress-marker">2</div><div class="hee-fwservice--framework-progress-caption">In review</div>
+            </li>
+            <li class=@(Model.DetailFramework.PublishStatusID == 3 ? "active" : "")>
+                <div class="hee-fwservice--framework-progress-marker">3</div><div class="hee-fwservice--framework-progress-caption">Published</div>
+            </li>
+        </ol>
     </div>
     <div class="nhsuk-grid-column-one-third">
-      @*<a class="nhsuk-button nhsuk-button--secondary">Preview</a>*@
-      @if (Model.DetailFramework.UserRole > 1)
-    {
-      if (Model.DetailFramework.PublishStatusID == 2)
-      {
-        <a role="button" asp-action="ViewFrameworkReviews" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Publish</a>
-      }
-      else if (Model.DetailFramework.PublishStatusID == 3)
-      {
-        <button type="submit" class="nhsuk-button">Unpublish</button>
-      }
-      else
-      {
-        <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Send for review</a>
-      }
-    }
-    @if (Model.DetailFramework.FrameworkReviewID != null)
-    {
-      <a role="button" asp-action="LoadReview" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-reviewId="@Model.DetailFramework.FrameworkReviewID" class="nhsuk-button">Submit my review</a>
-    }
-  </div>
+        @*<a class="nhsuk-button nhsuk-button--secondary">Preview</a>*@
+        @if (Model.DetailFramework.UserRole > 1)
+        {
+            if (Model.DetailFramework.PublishStatusID == 2)
+            {
+                <a role="button" asp-action="ViewFrameworkReviews" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Publish</a>
+            }
+            else if (Model.DetailFramework.PublishStatusID == 3)
+            {
+                <button type="submit" class="nhsuk-button">Unpublish</button>
+                <a role="button" asp-controller="CompetencyAssessments" asp-action="CompetencyAssessmentName" asp-route-actionName="New" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button nhsuk-button--secondary">Create assessment</a>
+            }
+            else
+            {
+                <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Send for review</a>
+            }
+        }
+        @if (Model.DetailFramework.FrameworkReviewID != null)
+        {
+            <a role="button" asp-action="LoadReview" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-reviewId="@Model.DetailFramework.FrameworkReviewID" class="nhsuk-button">Submit my review</a>
+        }
+    </div>
 </div>
 
 <partial name="_SecondaryTabsNavMenu" model="Model.TabNavLinks" />
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    @if ((string)ViewContext.RouteData.Values["tabname"] == "Structure")
-    {
-      <partial name="_Structure.cshtml" model="Model" />
-    }
-    else if ((string)ViewContext.RouteData.Values["tabname"] == "Details")
-    {
-      <partial name="_Details.cshtml" model="Model" />
-    }
-    else if ((string)ViewContext.RouteData.Values["tabname"] == "Comments")
-    {
-      <partial name="_Comments.cshtml" model="Model" />
-    }
-  </div>
+    <div class="nhsuk-grid-column-full">
+        @if ((string)ViewContext.RouteData.Values["tabname"] == "Structure")
+        {
+            <partial name="_Structure.cshtml" model="Model" />
+        }
+        else if ((string)ViewContext.RouteData.Values["tabname"] == "Details")
+        {
+            <partial name="_Details.cshtml" model="Model" />
+        }
+        else if ((string)ViewContext.RouteData.Values["tabname"] == "Comments")
+        {
+            <partial name="_Comments.cshtml" model="Model" />
+        }
+    </div>
 </div>

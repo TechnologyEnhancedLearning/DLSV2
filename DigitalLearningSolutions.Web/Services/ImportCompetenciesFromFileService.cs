@@ -135,7 +135,7 @@ namespace DigitalLearningSolutions.Web.Services
                     var existingGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).Select(row => new { row.ID, row.Name })
                    .Distinct()
                    .ToList();
-                    var placesToMove = Math.Abs(existingGroups.FindIndex(group => group.Name == distinctCompetencyGroups[i])-i);
+                    var placesToMove = Math.Abs(existingGroups.FindIndex(group => group.Name == distinctCompetencyGroups[i]) - i);
                     if (placesToMove > 0)
                     {
                         var thisGroup = existingGroups.FirstOrDefault(group => group.Name == distinctCompetencyGroups[i]);
@@ -175,7 +175,7 @@ namespace DigitalLearningSolutions.Web.Services
             int? frameworkCompetencyGroupId = null;
             if (competencyRow.CompetencyGroup != null)
             {
-                int newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroup, competencyRow.GroupDescription, adminUserId, frameworkId);
+                var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroup, competencyRow.GroupDescription, adminUserId);
                 if (newCompetencyGroupId > 0)
                 {
                     frameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminUserId);
@@ -295,7 +295,7 @@ namespace DigitalLearningSolutions.Web.Services
                 }
             }
 
-            
+
 
             return maxFrameworkCompetencyGroupId;
         }

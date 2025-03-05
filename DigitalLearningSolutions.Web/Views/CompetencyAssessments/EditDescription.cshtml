@@ -1,0 +1,62 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model EditDescriptionViewModel;
+@{
+    ViewData["Title"] = "Edit Introductory Text";
+    ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Introductory text</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to competency assessment detail</a></p>
+        </div>
+    </nav>
+}
+
+<h1>Edit @Model.CompetencyAssessmentName introductory text</h1>
+<form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
+    <nhs-form-group nhs-validation-for="Description">
+        <vc:text-area asp-for="Description"
+                      character-count="null"
+                      label="Introductory text"
+                      rows="5"
+                      css-class="html-editor"
+                      hint-text="The learner will see this text when they launch the assessment, it should tell them what the assessment covers, how to complete it and where to get more information"
+                      populate-with-current-value="true"
+                      spell-check="false" />
+    </nhs-form-group>
+    <nhs-form-group>
+        <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+    </nhs-form-group>
+    <input name="ID" type="hidden" asp-for="ID" />
+    <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
+    <input name="userRole" type="hidden" asp-for="UserRole" />
+    <button class="nhsuk-button" type="submit">
+        Save
+    </button>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    </div>
+</form>
+@section scripts {
+    <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+}

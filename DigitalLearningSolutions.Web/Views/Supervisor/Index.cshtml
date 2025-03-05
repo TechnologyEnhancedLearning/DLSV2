@@ -55,14 +55,14 @@
       <div class="nhsuk-card">
         <div class="nhsuk-card__content">
           <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
-            @Model.DashboardData.ProfileCount Role Profiles
+            @Model.DashboardData.ProfileCount Competency Assessments
           </p>
           <ul class="nhsuk-contents-list__list">
             @if (Model.DashboardData.AwaitingReviewCount > 0)
             {
-              <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="RoleProfileReviewRequests" asp-route-tabname="Mine">Profile Assessment Sign-off Requests (@Model.DashboardData.AwaitingReviewCount)</a></li>
+              <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="CompetencyAssessmentReviewRequests" asp-route-tabname="Mine">Profile Assessment Sign-off Requests (@Model.DashboardData.AwaitingReviewCount)</a></li>
             }
-            <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewRoleProfileAssessments" asp-route-tabname="All">View Profile Assessments (@Model.DashboardData.ProfileSelfAssessmentCount)</a></li>
+            <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewCompetencyAssessmentAssessments" asp-route-tabname="All">View Profile Assessments (@Model.DashboardData.ProfileSelfAssessmentCount)</a></li>
           </ul>
         </div>
       </div>

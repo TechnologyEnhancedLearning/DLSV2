@@ -1,0 +1,109 @@
+﻿@using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+@model CompetencyAssessmentBase;
+@{
+    ViewData["Title"] = "New Competency Assessments";
+    ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+{
+    @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item">Create competency assessment</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Back to competency assessments</a></p>
+        </div>
+    </nav>
+    }
+}
+else
+{
+    @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Name</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to competency assessment detail</a></p>
+        </div>
+    </nav>
+    }
+}
+@if ((string)ViewContext.RouteData.Values["actionName"] == "New")
+{
+    <h1>Create a new competency assessment</h1>
+}
+else
+{
+    <h1>Edit competency assessment name</h1>
+}
+<form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
+    <nhs-form-group nhs-validation-for="CompetencyAssessmentName">
+        <label class="nhsuk-label" for="roleprofilename">
+            <h2>What is the name of your competency assessment?</h2>
+        </label>
+        <div class="nhsuk-hint" id="assessment-name-hint">
+            Choose a title that identifies scope of capabilities covered and/or the roles or levels the assessment targets.
+        </div>
+        <span nhs-validation-for="CompetencyAssessmentName"></span>
+        <input class="nhsuk-input" asp-for="CompetencyAssessmentName" id="roleprofilename" name="CompetencyAssessmentName" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="assessment-name-hint">
+    </nhs-form-group>
+    <input name="ID" type="hidden" asp-for="ID" />
+    <input name="Description" type="hidden" asp-for="Description" />
+    <input name="brandId" type="hidden" asp-for="BrandID" />
+    <input name="ownerAdminId" type="hidden" asp-for="OwnerAdminID" />
+    <input name="parentCompetencyAssessmentID" type="hidden" asp-for="ParentCompetencyAssessmentID" />
+    <input name="publishStatusId" type="hidden" asp-for="PublishStatusID" />
+    <input name="national" type="hidden" asp-for="National" />
+    <input name="public" type="hidden" asp-for="Public" />
+    <input name="publishStatusId" type="hidden" asp-for="PublishStatusID" />
+    <input name="nrpProfessionalGroupID" type="hidden" asp-for="NRPProfessionalGroupID" />
+    <input name="nrpSubGroupID" type="hidden" asp-for="NRPSubGroupID" />
+    <input name="nrpRoleID" type="hidden" asp-for="NRPRoleID" />
+    <input name="userRole" type="hidden" asp-for="UserRole" />
+    @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
+    {
+        <button class="nhsuk-button" type="submit">
+            Next
+        </button>
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    }
+    else
+    {
+        @if (Model.PublishStatusID == 3)
+        {
+            <partial name="Shared/_PublishedWarning" />
+        }
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-frameworkId="@Model.ID" asp-route-competencyAssessmentId="@Model.ID">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    }
+
+</form>

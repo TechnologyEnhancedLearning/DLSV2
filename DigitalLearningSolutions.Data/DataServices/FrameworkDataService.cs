@@ -285,7 +285,7 @@
             fwr.ID AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
-            @",(SELECT BrandName
+            @", FW.Description, FW.FrameworkConfig AS Vocabulary, (SELECT BrandName
                                  FROM    Brands
                                  WHERE (BrandID = FW.BrandID)) AS Brand,
                                  (SELECT CategoryName
@@ -581,7 +581,7 @@
                     VALUES (@groupName, @groupDescription, @adminId)",
                 new { groupName, groupDescription, adminId }
             );
-            
+
             return existingId;
         }
 
@@ -613,7 +613,7 @@
                                  WHERE        ([FrameworkID] = @frameworkId)), 0)+1, @frameworkId)",
                 new { groupId, adminId, frameworkId }
             );
-           
+
             return existingId;
         }
 
@@ -1047,7 +1047,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 @"UPDATE Competencies SET Name = @name, Description = @description, UpdatedByAdminID = @adminId, AlwaysShowDescription = CASE WHEN @alwaysShowDescription IS NULL THEN AlwaysShowDescription ELSE @alwaysShowDescription END
                     FROM   Competencies INNER JOIN FrameworkCompetencies AS fc ON Competencies.ID = fc.CompetencyID
                     WHERE (fc.Id = @frameworkCompetencyId)",
-                new { name, description, adminId, frameworkCompetencyId, alwaysShowDescription}
+                new { name, description, adminId, frameworkCompetencyId, alwaysShowDescription }
             );
             if (numberOfAffectedRows < 1)
             {
@@ -2175,7 +2175,7 @@ WHERE (OwnerAdminID = @adminId) OR
                  FROM    FrameworkCollaborators
                  WHERE (FrameworkID = FW.ID) AND (IsDeleted=0)))) AS MyFrameworksCount,
 
-                 (SELECT COUNT(*) FROM SelfAssessments) AS RoleProfileCount,
+                 (SELECT COUNT(*) FROM SelfAssessments) AS CompetencyAssessmentCount,
 
                  (SELECT COUNT(*) FROM SelfAssessments AS RP LEFT OUTER JOIN
              SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId
@@ -2183,7 +2183,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
                  FROM    SelfAssessmentCollaborators
-                 WHERE (SelfAssessmentID = RP.ID)))) AS MyRoleProfileCount",
+                 WHERE (SelfAssessmentID = RP.ID)))) AS MyCompetencyAssessmentCount",
                 new { adminId }
             ).FirstOrDefault();
         }
@@ -2193,7 +2193,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             return connection.Query<DashboardToDoItem>(
                 @"SELECT
                         FW.ID AS FrameworkID,
-                        0 AS RoleProfileID,
+                        0 AS SelfAssessmentID,
                         FW.FrameworkName AS ItemName,
                         AU.Forename + ' ' + AU.Surname + (CASE WHEN AU.Active = 1 THEN '' ELSE ' (Inactive)' END) AS RequestorName,
                         FWR.SignOffRequired,
@@ -2205,8 +2205,8 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     WHERE (FWC.AdminID = @adminId) AND (FWR.ReviewComplete IS NULL) AND (FWR.Archived IS NULL)
                     UNION ALL
                     SELECT
-                        0 AS SelfAssessmentID,
-                        RP.ID AS SelfAssessmentID,
+                        0 AS FrameworkID,
+                        RP.ID AS CompetencyAssessmentID,
                         RP.Name AS ItemName,
                         AU.Forename + ' ' + AU.Surname + (CASE WHEN AU.Active = 1 THEN '' ELSE ' (Inactive)' END) AS RequestorName,
                         RPR.SignOffRequired,

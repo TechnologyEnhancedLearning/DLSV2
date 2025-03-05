@@ -9,7 +9,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
   @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -38,7 +38,7 @@ else
   </nav>
   }
 }
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+@if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
   <h1>Create a new framework</h1>
 }
@@ -70,7 +70,7 @@ else
   <input name="ownerAdminId" type="hidden" asp-for="OwnerAdminID" />
   <input name="updateByAdminId" type="hidden" asp-for="UpdatedByAdminID" />
   <input name="publishStatusId" type="hidden" asp-for="PublishStatusID" />
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
   {
     <button class="nhsuk-button" type="submit">
       Next

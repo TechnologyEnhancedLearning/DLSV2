@@ -15,7 +15,7 @@
 {
   <vc:error-summary order-of-property-names="@(new string[] { "userEmail" })" />
 }
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+@if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
   @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -29,7 +29,7 @@
   </nav>
   }
 }
-else if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
+else if ((string)ViewContext.RouteData.Values["actionName"] == "Review")
 {
   @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -61,7 +61,7 @@ else
   }
 }
 <h1>Choose working group members</h1>
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+@if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
   <p class="nhsuk-lede-text">Your framework has been created. Use this page to identify individuals who will be working on it with you.</p>
 }
@@ -106,7 +106,7 @@ else
               <span class="nhsuk-table-responsive__heading">Actions </span>
               @if (collaborator.FrameworkRole != "Owner")
               {
-                <a asp-action="RemoveCollaborator" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-id="@collaborator.ID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                <a asp-action="RemoveCollaborator" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-id="@collaborator.ID" asp-route-actionName="@(ViewContext.RouteData.Values["actionName"])">
                   Remove
                 </a>
               }
@@ -148,7 +148,7 @@ else
   </button>
 </form>
 <div class=" nhsuk-u-margin-top-6">
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
+  @if ((string)ViewContext.RouteData.Values["actionName"] == "Review")
   {
     <a class="nhsuk-button" role="button" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
       Done
