@@ -139,6 +139,9 @@
 
                 var delegateUserEmailDetails = userService.GetDelegateById(delegateId);
 
+                int? learningCategory = formData.LearningCategory == 0 ? null : formData.LearningCategory;
+                var learningCategoryName = courseCategoriesService.GetCourseCategoryName(learningCategory);
+
                 if (delegateUserEmailDetails != null)
                 {
                     var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
@@ -155,7 +158,8 @@
                         isCmsAdmin: adminRoles.IsCmsAdministrator,
                         isCmsManager: adminRoles.IsCmsManager,
                         primaryEmail: delegateUserEmailDetails.EmailForCentreNotifications,
-                        centreName: centreName
+                        centreName: centreName,
+                        categoryName: learningCategoryName
                     );
 
                     emailService.SendEmail(adminRolesEmail);
