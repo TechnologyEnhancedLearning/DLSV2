@@ -1,0 +1,114 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
+@using Microsoft.Extensions.Configuration
+@model ImportSummaryViewModel
+@{
+    ViewData["Title"] = "Framework - Import Competencies";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var cancelLinkData = Html.GetRouteValues();
+    var process = Model.CompetenciesToAddCount > 0 && Model.ToUpdateOrSkipCount > 0 ? "add and update" : Model.CompetenciesToAddCount > 0 ? "add" : "update";
+    var addQsTo = Model.AddAssessmentQuestionsOption == 1 ? "new" : Model.AddAssessmentQuestionsOption == 2 ? "new and updated" : "all";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+                <li class="nhsuk-breadcrumb__item">Excel import</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
+        </div>
+    </nav>
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-xl">@Model.FrameworkVocabularyPlural import summary</h1>
+        @if (Model.PublishStatusID == 3)
+        {
+            <partial name="Shared/_PublishedWarning" />
+        }
+        <p class="nhsuk-body-l nhsuk-u-reading-width">Your @Model.FrameworkVocabularySingular.ToLower() sheet is ready to be processed. Please check the details below are correct before proceeding to @process @Model.FrameworkVocabularyPlural.ToLower() in the framework @Model.FrameworkName.</p>
+        <h2>Upload summary</h2>
+        <dl class="nhsuk-summary-list">
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    @Model.FrameworkVocabularySingular rows uploaded
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.ToProcessCount
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    @Model.FrameworkVocabularyPlural to add
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.CompetenciesToAddCount
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    @Model.FrameworkVocabularyPlural to update
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.ToUpdateOrSkipCount
+                </dd>
+            </div>
+        </dl>
+        <h2>Additional processing steps</h2>
+        <dl class="nhsuk-summary-list">
+            @if (Model.CompetenciesToReorderCount > 0)
+            {
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Changes to @Model.FrameworkVocabularySingular.ToLower() order
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @(Model.ReorderCompetenciesOption == 1 ? "Ignore" : "Apply") changes to @Model.FrameworkVocabularySingular.ToLower() order
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                        <a asp-action="ApplyCompetencyOrdering" asp-all-route-data="@cancelLinkData">
+                            Change<span class="nhsuk-u-visually-hidden"> @Model.FrameworkVocabularySingular.ToLower() order options</span>
+                        </a>
+                    </dd>
+                </div>
+            }
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Add questions to @addQsTo @Model.FrameworkVocabularyPlural.ToLower() in sheet
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.DefaultAssessmentQuestionIDs.Count() framework default questions @(Model.AddCustomAssessmentQuestion && Model.CustomAssessmentQuestionID != null ? "AND a custom question" : "")
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="AddAssessmentQuestions" asp-all-route-data="@cancelLinkData">
+                        Change<span class="nhsuk-u-visually-hidden"> assessment question options</span>
+                    </a>
+                </dd>
+            </div>
+        </dl>
+
+        <div class="nhsuk-inset-text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            <p>Once @Model.FrameworkVocabularySingular.ToLower() records are processed, changes cannot be undone.</p>
+        </div>
+        <form method="post">
+            <a asp-controller="Frameworks" asp-all-route-data="@cancelLinkData" asp-action=@(Model.CustomAssessmentQuestionID != null | Model.DefaultAssessmentQuestionIDs.Count > 0 ? "AddQuestionsToWhichCompetencies" : "AddAssessmentQuestions") role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+            <button type="submit" class="nhsuk-button">Process @Model.FrameworkVocabularyPlural.ToLower()</button>
+        </form>
+        <vc:cancel-link asp-controller="Frameworks" asp-action="CancelImport" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
+    </div>
+</div>

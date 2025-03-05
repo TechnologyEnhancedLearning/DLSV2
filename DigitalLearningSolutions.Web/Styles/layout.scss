@@ -1,4 +1,4 @@
-﻿@use "nhsuk-frontend/packages/core/all" as *;
+﻿@use "nhse-tel-frontend/packages/core/all" as *;
 @use "shared/breakpoints" as *;
 
 html {
@@ -32,14 +32,32 @@ footer {
 }
 
 .nhsuk-header__navigation-item.selected {
-  @include mq($from: large-desktop) {
-    box-shadow: inset 0 -4px 0 #d8dde0;
+  a {
+    font-weight: bold;
   }
+}
 
+.nhsuk-header__logo {
   @include mq($until: large-desktop) {
-    a {
-      font-weight: bold;
+    max-width: unset;
+
+    .nhsuk-header__link--service {
+      align-items: center;
+      display: flex;
+      -ms-flex-align: center;
+      margin-bottom: 0;
+      width: auto;
     }
+
+    .nhsuk-header__service-name {
+      padding-left: nhsuk-spacing(3);
+      max-width: unset;
+    }
+  }
+}
+.nhsuk-navigation-container {
+  @include mq($until: tablet) {
+    margin-top: unset;
   }
 }
 
@@ -329,7 +347,7 @@ nav, .nhsuk-header__navigation, #header-navigation {
   }
 }
 
-.nhsuk-width-container {
+.nhsuk-width-container, .nhsuk-header__navigation-list {
   max-width: 1144px !important;
   padding-left: $nhsuk-gutter !important;
   padding-right: $nhsuk-gutter !important;
@@ -397,4 +415,10 @@ nav, .nhsuk-header__navigation, #header-navigation {
 
 .field-validation-valid {
   display: none !important;
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
 }

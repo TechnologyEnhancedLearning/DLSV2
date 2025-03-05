@@ -2,6 +2,7 @@
 using DigitalLearningSolutions.Data.Models.Common;
 using DigitalLearningSolutions.Data.Models.Email;
 using DigitalLearningSolutions.Data.Models.Frameworks;
+using DigitalLearningSolutions.Data.Models.Frameworks.Import;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using System.Collections.Generic;
 using AssessmentQuestion = DigitalLearningSolutions.Data.Models.Frameworks.AssessmentQuestion;
@@ -55,6 +56,8 @@ namespace DigitalLearningSolutions.Web.Services
         int GetMaxFrameworkCompetencyID();
 
         int GetMaxFrameworkCompetencyGroupID();
+        IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId);
+        List<int> GetFrameworkCompetencyOrder(int frameworkId, List<int> frameworkCompetencyIds);
 
         //  Assessment questions:
         IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
@@ -114,18 +117,19 @@ namespace DigitalLearningSolutions.Web.Services
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
 
-        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId);
+        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId = null);
 
-        int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
 
         IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
 
         int InsertCompetency(string name, string? description, int adminId);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
+        int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
-        void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
+
+        int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
 
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
@@ -196,8 +200,8 @@ namespace DigitalLearningSolutions.Web.Services
             int adminId
         );
 
-        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId);
-        void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
+        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription = false);
+        int UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
 
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
 
@@ -274,9 +278,9 @@ namespace DigitalLearningSolutions.Web.Services
             frameworkDataService.AddCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionId, adminId);
         }
 
-        public void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
+        public int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
         {
-            frameworkDataService.AddCustomFlagToFramework(frameworkId, flagName, flagGroup, flagTagClass);
+            return frameworkDataService.AddCustomFlagToFramework(frameworkId, flagName, flagGroup, flagTagClass);
         }
 
         public void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting)
@@ -377,6 +381,16 @@ namespace DigitalLearningSolutions.Web.Services
         public BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId)
         {
             return frameworkDataService.GetBrandedFrameworkByFrameworkId(frameworkId, adminId);
+        }
+
+        public IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId)
+        {
+            return frameworkDataService.GetBulkCompetenciesForFramework(frameworkId);
+        }
+
+        public List<int> GetFrameworkCompetencyOrder(int frameworkId, List<int> frameworkCompetencyIds)
+        {
+            return frameworkDataService.GetFrameworkCompetencyOrder(frameworkId, frameworkCompetencyIds);
         }
 
         public CollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId)
@@ -584,14 +598,14 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.InsertCompetency(name, description, adminId);
         }
 
-        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId)
+        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId)
         {
-            return frameworkDataService.InsertCompetencyGroup(groupName, groupDescription, adminId);
+            return frameworkDataService.InsertCompetencyGroup(groupName, groupDescription, adminId, frameworkId);
         }
 
-        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId)
+        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false)
         {
-            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId);
+            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId, alwaysShowDescription);
         }
 
         public int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId)
@@ -649,9 +663,9 @@ namespace DigitalLearningSolutions.Web.Services
             frameworkDataService.UpdateAssessmentQuestion(id, question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId, commentsPrompt, commentsHint);
         }
 
-        public void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds)
+        public int UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds)
         {
-            frameworkDataService.UpdateCompetencyFlags(frameworkId, competencyId, selectedFlagIds);
+            return frameworkDataService.UpdateCompetencyFlags(frameworkId, competencyId, selectedFlagIds);
         }
 
         public BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId)
@@ -659,9 +673,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.UpdateFrameworkBranding(frameworkId, brandId, categoryId, topicId, adminId);
         }
 
-        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId)
-        {
-            frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name, description, adminId);
+        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription)
+        { 
+            frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name, description, adminId, alwaysShowDescription);
         }
 
         public void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, string? description, int adminId)

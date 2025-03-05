@@ -1,0 +1,98 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
+@using Microsoft.Extensions.Configuration
+@model ImportCompetenciesPreProcessViewModel
+@{
+    ViewData["Title"] = "Framework - Import Competencies";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var cancelLinkData = Html.GetRouteValues();
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+                <li class="nhsuk-breadcrumb__item">Excel import</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
+        </div>
+    </nav>
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-xl">@Model.FrameworkVocabularySingular file uploaded</h1>
+        <div class="nhsuk-u-reading-width">
+            <p class="nhsuk-body-l">@(Model.ErrorCount == 0 ? "Your file is error free and ready to be processed. Check the information below looks, correct before processing" : "Your file contains the following, including some errors:")</p>
+            <ul>
+                <li>@Model.ToProcessCount @(Model.ToProcessCount == 1 ? "row" : "rows") uploaded</li>
+                @if (Model.ErrorCount > 0)
+                {
+                    <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "row" : "rows") containing errors that cannot be processed</li>
+                }
+                else
+                {
+                    <li>@Model.CompetenciesToAddCount new @(Model.CompetenciesToAddCount == 1 ? Model.FrameworkVocabularySingular.ToLower() : Model.FrameworkVocabularyPlural.ToLower()) to add</li>
+                    <li>@Model.ToUpdateOrSkipCount @Model.FrameworkVocabularySingular.ToLower() @(Model.ToUpdateOrSkipCount == 1 ? "record" : "records") to update (or skip if unchanged)</li>
+                    <li>In @Model.CompetencyGroupCount @Model.FrameworkVocabularySingular.ToLower() groups</li>
+                    <li>With @Model.FlagCount flags assigned to @Model.FrameworkVocabularyPlural.ToLower() (@Model.DistinctFlagsCount distinct flags)</li>
+                    @if (Model.CompetenciesToReorderCount > 0)
+                    {
+                        <text>
+                        <li>
+                                Some existing @Model.FrameworkVocabularySingular.ToLower() @(Model.CompetenciesToReorderCount == 1 ? "record" : "records") have changed sequence in your uploaded sheet. You can choose whether to fix them in the new order next.
+                        </li></text>
+                    }
+                    <li>No errors</li>
+                }
+            </ul>
+            @if (Model.ErrorCount == 0)
+            {
+                <a asp-controller="Frameworks" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure" asp-action="ApplyCompetencyOrdering" class="nhsuk-button">Continue</a>
+            }
+            else
+            {
+                <p class="nhsuk-body-l">Check the information below. You will need to fix these errors before continuing or remove the rows with errors from your spreadsheet:</p>
+                <div class="nhsuk-form-group nhsuk-form-group--error">
+                    <span class="nhsuk-error-message" id="error-list">
+                        <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorCount @Model.FrameworkVocabularySingular.ToLower() @(Model.ErrorCount == 1 ? "row" : "rows") contain errors and cannot be processed
+                    </span>
+                    <dl class="nhsuk-summary-list">
+                        @foreach (var (rowNumber, errorMessage) in Model.Errors)
+                        {
+                            <div class="nhsuk-summary-list__row">
+                                <dt class="nhsuk-summary-list__key">
+                                    Row @rowNumber
+                                </dt>
+                                <dd class="nhsuk-summary-list__value">
+                                    @errorMessage
+                                </dd>
+
+                            </div>
+                        }
+                    </dl>
+                </div>
+                <h2>Upload corrected file</h2>
+                <p class="nhsuk-body-m">
+                    Once you have made corrections to the Excel competency workbook to address the errors above, save and restart the upload process.
+                </p>
+                <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
+
+                    <vc:file-input asp-for="@nameof(Model.ImportFile)" label="File with corrected @Model.FrameworkVocabularyPlural.ToLower() information" hint-text="" css-class="nhsuk-u-width-one-half" />
+                    <input type="hidden" asp-for="IsNotBlank" />
+                    <input type="hidden" asp-for="TabName" />
+
+                    <button class="nhsuk-button" type="submit">Upload file</button>
+                </form>
+            }
+            <vc:cancel-link asp-controller="Frameworks" asp-action="CancelImport" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
+        </div>
+    </div>
+</div>
