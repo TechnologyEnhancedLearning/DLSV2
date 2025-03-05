@@ -615,6 +615,39 @@
             );
         }
 
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(
+          int delegateUserId,
+          int selfAssessmentId,
+          int competencyId
+      )
+        {
+            return connection.Query<SelfAssessmentResult>(
+                @"SELECT
+                         s.ID,
+                        s.SelfAssessmentID,
+                        s.CompetencyID,
+                        s.AssessmentQuestionID,
+                        s.Result,
+                        s.DateTime,
+                        s.SupportingComments,
+                        s.DelegateUserId
+                    FROM SelfAssessmentResults s inner join 
+				SelfAssessmentResultSupervisorVerifications sv ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0 
+                    WHERE s.CompetencyID = @competencyId
+                        AND s.SelfAssessmentID = @selfAssessmentId
+                        AND s.DelegateUserID = @delegateUserId AND sv.Verified IS NULL",
+                new { selfAssessmentId, delegateUserId, competencyId }
+            );
+        }
+
+        public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
+        {
+           
+            connection.Execute(
+                     @"delete from SelfAssessmentResultSupervisorVerifications WHERE SelfAssessmentResultId = @id", new { id });
+
+        }
+
         private static string PrintResult(
             int competencyId,
             int selfAssessmentId,

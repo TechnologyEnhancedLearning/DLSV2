@@ -27,6 +27,7 @@
 
         void UpdateLastAccessed(int selfAssessmentId, int delegateUserId);
         void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupsId);
+        void RemoveSignoffRequestById(int candidateAssessmentSupervisorVerificationsId);
         void IncrementLaunchCount(int selfAssessmentId, int delegateUserId);
 
         void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
@@ -150,7 +151,17 @@
         bool IsCentreSelfAssessment(int selfAssessmentId, int centreId);
         bool HasMinimumOptionalCompetencies(int selfAssessmentId, int delegateUserId);
         public int GetSelfAssessmentCategoryId(int selfAssessmentId);
-
+        IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+           int delegateUserId,
+           int selfAssessmentId,
+           int competencyId
+       );
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(
+        int delegateUserId,
+        int selfAssessmentId,
+        int competencyId
+    );
+        void RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -190,6 +201,10 @@
         public void RemoveSignoffRequests(int selfAssessmentId, int delegateUserId, int competencyGroupId)
         {
             selfAssessmentDataService.RemoveSignoffRequests(selfAssessmentId, delegateUserId, competencyGroupId);
+        }
+        public void RemoveSignoffRequestById(int candidateAssessmentSupervisorVerificationsId)
+        {
+            selfAssessmentDataService.RemoveSignoffRequestById(candidateAssessmentSupervisorVerificationsId);
         }
         public void IncrementLaunchCount(int selfAssessmentId, int delegateUserId)
         {
@@ -457,10 +472,10 @@
 
             var selfAssessmentCategoryId = selfAssessmentDataService.GetSelfAssessmentCategoryId((int)selfAssessmentId);
 
-            if (adminCategoryId > 0  && adminCategoryId != selfAssessmentCategoryId)
+            if (adminCategoryId > 0 && adminCategoryId != selfAssessmentCategoryId)
             {
                 // return null variants of the object when the categoryID mismatches 
-                return (new SelfAssessmentDelegatesData(), null);      
+                return (new SelfAssessmentDelegatesData(), null);
             }
 
             (var delegateselfAssessments, int resultCount) = selfAssessmentDataService.GetSelfAssessmentDelegates(searchString, offSet, itemsPerPage, sortBy, sortDirection,
@@ -574,6 +589,26 @@
         public int GetSelfAssessmentCategoryId(int selfAssessmentId)
         {
             return selfAssessmentDataService.GetSelfAssessmentCategoryId(selfAssessmentId);
+        }
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+           int delegateUserId,
+           int selfAssessmentId,
+           int competencyId
+       )
+        {
+            return selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(delegateUserId, selfAssessmentId, competencyId);
+        }
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(
+        int delegateUserId,
+        int selfAssessmentId,
+        int competencyId
+    )
+        {
+            return selfAssessmentDataService.GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(delegateUserId, selfAssessmentId, competencyId);
+        }
+        public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
+        {
+            selfAssessmentDataService.RemoveReviewCandidateAssessmentOptionalCompetencies(id);
         }
     }
 }

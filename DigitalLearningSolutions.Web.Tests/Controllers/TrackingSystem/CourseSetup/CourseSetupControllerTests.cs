@@ -416,7 +416,7 @@
             ).Returns(new List<Section>());
 
             // When
-            var result = controller.SetCourseContent();
+            var result = controller.SetCourseContent(false);
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Summary");

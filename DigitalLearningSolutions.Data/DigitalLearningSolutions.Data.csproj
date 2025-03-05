@@ -14,7 +14,7 @@
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Dapper.FluentMap" Version="2.0.0" />
     <PackageReference Include="elfhHub.Nhs.Models" Version="3.0.8" />
-    <PackageReference Include="Freshdesk.Api" Version="0.13.6" />
+    <PackageReference Include="Freshdesk.Api" Version="0.17.2" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
     <PackageReference Include="MailKit" Version="4.3.0" />
     <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.0.0" />

@@ -48,7 +48,7 @@
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
         private IPdfService pdfService = null!;
         private SupervisorController controller = null!;
-        private  ICourseCategoriesService courseCategoriesService = null!;
+        private ICourseCategoriesService courseCategoriesService = null!;
 
         [SetUp]
         public void Setup()

@@ -297,22 +297,18 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            var adminAccounts = userService.GetUserById(loggedInUserId)!.AdminAccounts;
+            var userEntity = userService.GetUserById(loggedInUserId);
 
-            if (adminAccounts.Any())
+            if (userEntity.DelegateAccounts!.Any(account => account.CentreId == model.CentreId))
             {
-                return RedirectToAction(
-                    "AdminAccountAlreadyExists",
+                return RedirectToAction("AccountAlreadyExists",
                     new { email = model.Email, centreName = model.CentreName }
                 );
             }
 
-            var delegateAccounts = userService.GetUserById(loggedInUserId)!.DelegateAccounts;
-
-            if (delegateAccounts.Any(account => account.CentreId == model.CentreId))
+            if (userEntity.AdminAccounts!.Any(account => account.CentreId == model.CentreId))
             {
-                return RedirectToAction(
-                    "AccountAlreadyExists",
+                return RedirectToAction("AdminAccountAlreadyExists",
                     new { email = model.Email, centreName = model.CentreName }
                 );
             }

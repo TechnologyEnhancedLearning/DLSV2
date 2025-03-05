@@ -139,7 +139,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<DelegateAssessmentStatistics> GetDelegateAssessmentStatisticsAtCentre(string searchString, int centreId, string categoryName, string isActive, int? categoryId);
 
         bool IsSelfEnrollmentAllowed(int customisationId);
-        Customisation? GetCourse(int customisationId);
+        Customisation? GetCourse(int? customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -537,26 +537,26 @@ namespace DigitalLearningSolutions.Data.DataServices
             if (candidateAssessmentId > 1 && supervisorDelegateId == 0)
             {
                 connection.Execute(
-                        @"UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic
+                        @"UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic, EnrolledByAdminId = @enrolledByAdminId
                   WHERE ID = @candidateAssessmentId",
-                        new { candidateAssessmentId, enrolmentMethodId, completeByDateDynamic }
+                        new { candidateAssessmentId, enrolmentMethodId, completeByDateDynamic, enrolledByAdminId }
                     );
             }
             if (candidateAssessmentId > 1 && supervisorDelegateId != 0)
             {
                 string sqlQuery = $@"
                 BEGIN TRANSACTION
-                UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic
+                UPDATE CandidateAssessments SET RemovedDate = NULL, EnrolmentMethodId = @enrolmentMethodId, CompleteByDate = @completeByDateDynamic, EnrolledByAdminId = @enrolledByAdminId
                   WHERE ID = @candidateAssessmentId
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
                  {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
-                WHERE CandidateAssessmentID = @candidateAssessmentId AND SupervisorDelegateId = @supervisorDelegateId 
+                WHERE CandidateAssessmentID = @candidateAssessmentId AND SupervisorDelegateId = @supervisorDelegateId AND SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID
 
                 COMMIT TRANSACTION";
 
                 connection.Execute(sqlQuery
-                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic, supervisorDelegateId });
+                , new { candidateAssessmentId, selfAssessmentSupervisorRoleId, enrolmentMethodId, completeByDateDynamic, supervisorDelegateId, enrolledByAdminId });
             }
 
             if (supervisorId > 0)
@@ -2024,7 +2024,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return selfRegister > 0;
         }
 
-        public Customisation? GetCourse(int customisationId)
+        public Customisation? GetCourse(int? customisationId)
         {
             return connection.Query<Customisation>(
                 @"SELECT CustomisationID

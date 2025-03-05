@@ -61,13 +61,6 @@
                 int? itemsPerPage = null
             )
         {
-            existingFilterString = FilteringHelper.GetFilterString(
-                existingFilterString,
-                newFilterToAdd,
-                clearFilters,
-                Request,
-                AdminFilterCookieName
-            );
             searchString = searchString == null ? null : searchString.Trim();
             var centreId = User.GetCentreIdKnownNotNull();
             var adminsAtCentre = userService.GetAdminsByCentreId(centreId);
@@ -77,10 +70,20 @@
             var availableFilters =
                 AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories);
 
+            var filterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                AdminFilterCookieName,
+                null,
+                availableFilters
+            );
+
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
-                new FilterOptions(existingFilterString, availableFilters),
+                new FilterOptions(filterString, availableFilters),
                 new PaginationOptions(page, itemsPerPage)
             );
 
@@ -174,8 +177,10 @@
                 adminRoles,
                 AdminCategoryHelper.AdminCategoryToCategoryId(model.LearningCategory)
             );
+            int? learningCategory = model.LearningCategory == 0 ? null : model.LearningCategory;
+            var learningCategoryName = courseCategoriesService.GetCourseCategoryName(learningCategory);
 
-            SendNotificationEmail(adminId, adminRoles);
+            SendNotificationEmail(adminId, adminRoles, learningCategoryName);
 
             return RedirectToAction(
                 "Index",
@@ -187,7 +192,8 @@
 
         private void SendNotificationEmail(
             int adminIdToPromote,
-            AdminRoles adminRoles
+            AdminRoles adminRoles,
+            string learningCategoryName
         )
         {
             var adminId = User.GetAdminId();
@@ -212,7 +218,8 @@
                     isCmsAdmin: adminRoles.IsCmsAdministrator,
                     isCmsManager: adminRoles.IsCmsManager,
                     primaryEmail: delegateUserEmailDetails.EmailAddress,
-                    centreName: centreName
+                    centreName: centreName,
+                    learningCategoryName
                 );
 
                 emailService.SendEmail(adminRolesEmail);
