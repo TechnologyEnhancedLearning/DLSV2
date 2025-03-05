@@ -1,0 +1,256 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
+@model EditRoleProfileLinksViewModel;
+@{
+    ViewData["Title"] = "Edit National Role Profile Links";
+    ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Introductory text</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to competency assessment detail</a></p>
+        </div>
+    </nav>
+}
+
+<h1>Edit @Model.CompetencyAssessmentName national NHS role profile links</h1>
+@if (Model.TaskStatus != null | Model.ActionName != "EditGroup")
+{
+    <dl class="nhsuk-summary-list">
+
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Professional group
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.GroupName
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+                <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditGroup" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                    Change<span class="nhsuk-u-visually-hidden"> professional group link</span>
+                </a>
+            </dd>
+        </div>
+        @if (Model.ProfessionalGroupId != null && Model.ActionName != "EditSubGroup")
+        {
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Sub group
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.SubGroupName
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditSubGroup" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Change<span class="nhsuk-u-visually-hidden"> sub group link</span>
+                    </a>
+                </dd>
+            </div>
+        }
+        @if (Model.SubGroupId != null && Model.ActionName == "Summary")
+        {
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Role
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.RoleName
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditRole" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Change<span class="nhsuk-u-visually-hidden"> role profile link</span>
+                    </a>
+                </dd>
+            </div>
+        }
+    </dl>
+}
+@if (Model.ActionName == "EditGroup")
+{
+    <form method="post">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <partial name="_ErrorSummary" />
+        }
+        <nhs-form-group nhs-validation-for="ProfessionalGroupId">
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
+                    <h2 class="nhsuk-fieldset__heading">
+                        Choose the NHS national role profile professional group to associate with this assessment.
+                    </h2>
+                </legend>
+                <span nhs-validation-for="ProfessionalGroupId"></span>
+                <div class="nhsuk-radios nhsuk-u-margin-bottom-3 nhsuk-u-margin-top-3">
+                    @foreach (var professionalGroup in Model.ProfessionalGroups)
+                    {
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" name="ProfessionalGroupId" id="radio-@professionalGroup.ID" checked="@(Model.ProfessionalGroupId == professionalGroup.ID)" type="radio" value="@professionalGroup.ID">
+                            <label class="nhsuk-label nhsuk-radios__label" for="radio-@professionalGroup.ID">
+                                @professionalGroup.ProfessionalGroup
+                            </label>
+                        </div>
+                    }
+                    <hr />
+
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" name="ProfessionalGroupId" id="radio-null" checked="@(Model.ProfessionalGroupId == null)" type="radio" value="">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-null">
+                            Don't link assessment to a professional group.
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </nhs-form-group>
+        <input type="hidden" asp-for="ID" />
+        <input type="hidden" asp-for="SubGroupId" />
+        <input type="hidden" asp-for="RoleId" />
+        <input type="hidden" asp-for="ActionName" />
+        <input type="hidden" asp-for="CompetencyAssessmentName" />
+        <input type="hidden" asp-for="UserRole" />
+        <input type="hidden" asp-for="RoleName" />
+        <input type="hidden" asp-for="SubGroupName" />
+        <input type="hidden" asp-for="GroupName" />
+        <button class="nhsuk-button" type="submit">
+            Submit
+        </button>
+    </form>
+
+}
+else if (Model.ActionName == "EditSubGroup" && Model.ProfessionalGroupId != null)
+{
+    <form method="post">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <partial name="_ErrorSummary" />
+        }
+        <nhs-form-group nhs-validation-for="SubGroupId">
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
+                    <h2 class="nhsuk-fieldset__heading">
+                        Choose the role sub group to associate with this assessment.
+                    </h2>
+                </legend>
+                <span nhs-validation-for="SubGroupId"></span>
+                <div class="nhsuk-radios nhsuk-u-margin-bottom-3 nhsuk-u-margin-top-3">
+                    @foreach (var subGroup in Model.SubGroups)
+                    {
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" name="SubGroupId" id="radio-@subGroup.ID" checked="@(Model.SubGroupId == subGroup.ID)" type="radio" value="@subGroup.ID">
+                            <label class="nhsuk-label nhsuk-radios__label" for="radio-@subGroup.ID">
+                                @subGroup.SubGroup
+                            </label>
+                        </div>
+                    }
+                    <hr />
+
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" name="SubGroupId" id="radio-null" checked="@(Model.SubGroupId == null)" type="radio" value="">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-null">
+                            Don't link assessment to a sub group.
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </nhs-form-group>
+        <input type="hidden" asp-for="ID" />
+        <input type="hidden" asp-for="ProfessionalGroupId" />
+        <input type="hidden" asp-for="RoleId" />
+        <input type="hidden" asp-for="ActionName" />
+        <input type="hidden" asp-for="CompetencyAssessmentName" />
+        <input type="hidden" asp-for="UserRole" />
+        <input type="hidden" asp-for="RoleName" />
+        <input type="hidden" asp-for="SubGroupName" />
+        <input type="hidden" asp-for="GroupName" />
+        <button class="nhsuk-button" type="submit">
+            Submit
+        </button>
+    </form>
+}
+else if (Model.ActionName == "EditRole" && Model.SubGroupId != null)
+{
+    <form method="post">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <partial name="_ErrorSummary" />
+        }
+        <nhs-form-group nhs-validation-for="RoleId">
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
+                    <h2 class="nhsuk-fieldset__heading">
+                        Choose the role to associate with this assessment.
+                    </h2>
+                </legend>
+                <span nhs-validation-for="RoleId"></span>
+                <div class="nhsuk-radios nhsuk-u-margin-bottom-3 nhsuk-u-margin-top-3">
+                    @foreach (var role in Model.Roles)
+                    {
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" name="RoleId" id="radio-@role.ID" checked="@(Model.RoleId == role.ID)" type="radio" value="@role.ID">
+                            <label class="nhsuk-label nhsuk-radios__label" for="radio-@role.ID">
+                                @role.ProfileName
+                            </label>
+                        </div>
+                    }
+                    <hr />
+
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" name="RoleId" id="radio-null" checked="@(Model.RoleId == null)" type="radio" value="">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-null">
+                            Don't link assessment to a role.
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </nhs-form-group>
+        <input type="hidden" asp-for="ID" />
+        <input type="hidden" asp-for="ProfessionalGroupId" />
+        <input type="hidden" asp-for="SubGroupId" />
+        <input type="hidden" asp-for="ActionName" />
+        <input type="hidden" asp-for="CompetencyAssessmentName" />
+        <input type="hidden" asp-for="UserRole" />
+        <input type="hidden" asp-for="RoleName" />
+        <input type="hidden" asp-for="SubGroupName" />
+        <input type="hidden" asp-for="GroupName" />
+        <button class="nhsuk-button" type="submit">
+            Submit
+        </button>
+    </form>
+}
+else if (Model.ActionName == "Summary")
+{
+    <form method="post">
+        <nhs-form-group>
+            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+        </nhs-form-group>
+        <input type="hidden" asp-for="ID" />
+        <input type="hidden" asp-for="CompetencyAssessmentName" />
+        <input type="hidden" asp-for="ProfessionalGroupId" />
+        <input type="hidden" asp-for="RoleId" />
+        <input type="hidden" asp-for="SubGroupId" />
+        <input type="hidden" asp-for="UserRole" />
+        <input type="hidden" asp-for="ActionName" />
+        <input type="hidden" asp-for="RoleName" />
+        <input type="hidden" asp-for="SubGroupName" />
+        <input type="hidden" asp-for="GroupName" />
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+    </form>
+}
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
+</div>

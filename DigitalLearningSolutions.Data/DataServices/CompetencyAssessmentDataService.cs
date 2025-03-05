@@ -23,13 +23,15 @@
         CompetencyAssessmentBase? GetCompetencyAssessmentBaseByName(string competencyAssessmentName, int adminId);
         CompetencyAssessment? GetCompetencyAssessmentById(int competencyAssessmentId, int adminId);
         IEnumerable<NRPProfessionalGroups> GetNRPProfessionalGroups();
+        IEnumerable<NRPSubGroups> GetNRPSubGroups(int? nRPProfessionalGroupID);
+        IEnumerable<NRPRoles> GetNRPRoles(int? nRPSubGroupID);
 
         CompetencyAssessmentTaskStatus GetOrInsertAndReturnAssessmentTaskStatus(int assessmentId, bool frameworkBased);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
 
-        bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID);
+        bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId);
         bool UpdateCompetencyAssessmentBranding(
             int competencyAssessmentId,
             int adminId,
@@ -41,6 +43,7 @@
         bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -225,11 +228,11 @@
             ).FirstOrDefault();
         }
 
-        public bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID)
+        public bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId)
         {
             var result = connection.ExecuteScalar(
-                @"SELECT COUNT(*) FROM CompetencyAssessments WHERE ID = @competencyAssessmentId AND NRPProfessionalGroupID = @nrpProfessionalGroupID",
-                new { competencyAssessmentId, nrpProfessionalGroupID }
+                @"SELECT COUNT(*) FROM SelfAssessments WHERE ID = @competencyAssessmentId AND NRPProfessionalGroupID = @professionalGroupId AND NRPSubGroupID = @subGroupId AND NRPRoleID = @roleId",
+                new { competencyAssessmentId, professionalGroupId, subGroupId, roleId }
             );
             int sameCount = Convert.ToInt32(result);
             if (sameCount > 0)
@@ -240,9 +243,9 @@
 
             //needs updating:
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE SelfAssessments SET NRPProfessionalGroupID = @nrpProfessionalGroupID, NRPSubGroupID = NULL, NRPRoleID = NULL, UpdatedByAdminID = @adminId
+                @"UPDATE SelfAssessments SET NRPProfessionalGroupID = @professionalGroupId, NRPSubGroupID = @subGroupId, NRPRoleID = @roleId, UpdatedByAdminID = @adminId
                     WHERE ID = @competencyAssessmentId",
-                new { nrpProfessionalGroupID, adminId, competencyAssessmentId }
+                new { adminId, competencyAssessmentId, professionalGroupId, subGroupId, roleId }
             );
             if (numberOfAffectedRows > 0)
             {
@@ -412,6 +415,44 @@
             {
                 logger.LogWarning(
                     "Not updating VocabularyTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public IEnumerable<NRPSubGroups> GetNRPSubGroups(int? nRPProfessionalGroupID)
+        {
+            return connection.Query<NRPSubGroups>(
+                @"SELECT ID, SubGroup, Active
+                    FROM   NRPSubGroups
+                    WHERE (Active = 1) AND (NRPProfessionalGroupID = @nRPProfessionalGroupID)
+                    ORDER BY SubGroup", new { nRPProfessionalGroupID }
+            );
+        }
+
+        public IEnumerable<NRPRoles> GetNRPRoles(int? nRPSubGroupID)
+        {
+            return connection.Query<NRPRoles>(
+                @"SELECT ID, RoleProfile AS ProfileName, Active
+                    FROM   NRPRoles
+                    WHERE (Active = 1) AND (NRPSubGroupID = @nRPSubGroupID)
+                    ORDER BY RoleProfile", new { nRPSubGroupID }
+            );
+        }
+
+        public bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE SelfAssessmentTaskStatus SET NationalRoleProfileTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+               new { assessmentId, taskStatus }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating NationalRoleProfileTaskStatus as db update failed. " +
                     $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
                 );
                 return false;
