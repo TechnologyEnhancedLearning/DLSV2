@@ -14,6 +14,7 @@
     using Microsoft.AspNetCore.Mvc.Rendering;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     public partial class CompetencyAssessmentsController
     {
@@ -187,10 +188,9 @@
             return View("ManageCompetencyAssessment", model);
         }
 
-        [Route("/CompetencyAssessments/ProfessionalGroup/{actionName}/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/ProfessionalGroup/{actionName}")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/NationalRoleProfileLinks/{actionName}")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
-        public IActionResult CompetencyAssessmentProfessionalGroup(string actionName, int competencyAssessmentId = 0)
+        public IActionResult EditRoleProfileLinks(int competencyAssessmentId = 0, string actionName = "EditGroup")
         {
             var adminId = GetAdminID();
             CompetencyAssessmentBase? competencyAssessmentBase;
@@ -212,45 +212,68 @@
                 competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             }
             var professionalGroups = competencyAssessmentService.GetNRPProfessionalGroups();
-            var model = new ProfessionalGroupViewModel()
-            {
-                NRPProfessionalGroups = professionalGroups,
-                CompetencyAssessmentBase = competencyAssessmentBase
-            };
-            return View("ProfessionalGroup", model);
+            var subGroups = competencyAssessmentService.GetNRPSubGroups(competencyAssessmentBase.NRPProfessionalGroupID);
+            var roles = competencyAssessmentService.GetNRPRoles(competencyAssessmentBase.NRPSubGroupID);
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new EditRoleProfileLinksViewModel(competencyAssessmentBase, professionalGroups, subGroups, roles, actionName, competencyAssessmentTaskStatus.NationalRoleProfileTaskStatus);
+            return View(model);
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/ProfessionalGroup/{actionName}/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/ProfessionalGroup/{actionName}")]
-        [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
-        public IActionResult SaveProfessionalGroup(CompetencyAssessmentBase competencyAssessmentBase, string actionName, int competencyAssessmentId = 0)
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/NationalRoleProfileLinks/{actionName}")]
+        public IActionResult EditRoleProfileLinks(EditRoleProfileLinksViewModel model, string actionName, int competencyAssessmentId = 0)
         {
-            if (competencyAssessmentBase.NRPProfessionalGroupID == null)
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            competencyAssessmentService.UpdateRoleProfileLinksTaskStatus(model.ID, model.TaskStatus ?? false);
+            if (competencyAssessmentBase == null)
             {
-                ModelState.Remove(nameof(CompetencyAssessmentBase.NRPProfessionalGroupID));
-                ModelState.AddModelError(nameof(CompetencyAssessmentBase.NRPProfessionalGroupID), "Please choose a professional group" + (competencyAssessmentId == 0 ? "or Skip this step" : "") + ".");
-                // do something
-                return View("Name", competencyAssessmentBase);
+                logger.LogWarning($"Failed to submit role links page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
             }
-            if (actionName == "New")
+            if (competencyAssessmentBase.UserRole < 2)
             {
-                //TO DO Store to self assessment
-
-                return RedirectToAction("CompetencyAssessmentSubGroup", "CompetencyAssessments", new { actionName });
+                return StatusCode(403);
             }
-            else
+            if (competencyAssessmentBase.NRPProfessionalGroupID != model.ProfessionalGroupId)
             {
-                var adminId = GetAdminID();
-                var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentProfessionalGroup(competencyAssessmentBase.ID, adminId, competencyAssessmentBase.NRPProfessionalGroupID);
-                if (isUpdated)
+                model.SubGroupId = null;
+                model.RoleId = null;
+            }
+            if (competencyAssessmentBase.NRPSubGroupID != model.SubGroupId)
+            {
+                model.RoleId = null;
+            }
+            var isUpdated = competencyAssessmentService.UpdateCompetencyRoleProfileLinks(model.ID, adminId, model.ProfessionalGroupId, model.SubGroupId, model.RoleId);
+            if (model.ActionName == "EditGroup")
+            {
+                if(model.ProfessionalGroupId == null)
                 {
-                    return RedirectToAction("CompetencyAssessmentSubGroup", "CompetencyAssessments", new { actionName, competencyAssessmentId });
+                    return RedirectToAction("EditRoleProfileLinks", new { actionName = "Summary", competencyAssessmentId });
                 }
                 else
                 {
-                    return RedirectToAction("ManageCompetencyAssessment", new { tabname = "Details", competencyAssessmentId });
+                    return RedirectToAction("EditRoleProfileLinks", new { actionName = "EditSubGroup", competencyAssessmentId });
                 }
+            }
+            else if (model.ActionName == "EditSubGroup")
+            {
+                if (model.SubGroupId == null)
+                {
+                    return RedirectToAction("EditRoleProfileLinks", new { actionName = "Summary", competencyAssessmentId });
+                }
+                else
+                {
+                    return RedirectToAction("EditRoleProfileLinks", new { actionName = "EditRole", competencyAssessmentId });
+                }
+            }
+            else if (model.ActionName == "EditRole")
+            {
+                    return RedirectToAction("EditRoleProfileLinks", new { actionName = "Summary", competencyAssessmentId });
+            }
+            else
+            {
+                return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId });
             }
         }
 
@@ -323,11 +346,11 @@
                 model.CategorySelectList = categorySelectList;
                 return View("EditBranding", model);
             }
-            if(model.BrandID == 0)
+            if (model.BrandID == 0)
             {
                 model.BrandID = commonService.InsertBrandAndReturnId(model.Brand, (int)centreId);
             }
-            if(model.CategoryID == 0)
+            if (model.CategoryID == 0)
             {
                 model.CategoryID = commonService.InsertCategoryAndReturnId(model.Category, (int)centreId);
             }

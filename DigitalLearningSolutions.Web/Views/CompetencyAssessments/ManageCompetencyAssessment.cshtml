@@ -107,7 +107,7 @@
         </li>
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="national-profiles-status">
-                <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectNationalProfiles" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                <a class="nhsuk-link nhsuk-task-list__link" asp-action="EditRoleProfileLinks" asp-route-actionName="@(Model.CompetencyAssessmentTaskStatus.NationalRoleProfileTaskStatus == null ? "EditGroup" : "Summary" )" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
                     Link assessment to National Role profiles
                 </a>
             </div>

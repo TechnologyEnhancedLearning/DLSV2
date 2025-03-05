@@ -2,6 +2,7 @@
 using DigitalLearningSolutions.Data.Models.Common;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DigitalLearningSolutions.Web.Services
 {
@@ -18,23 +19,24 @@ namespace DigitalLearningSolutions.Web.Services
         CompetencyAssessment? GetCompetencyAssessmentById(int competencyAssessmentId, int adminId);
 
         IEnumerable<NRPProfessionalGroups> GetNRPProfessionalGroups();
+        IEnumerable<NRPSubGroups> GetNRPSubGroups(int? nRPProfessionalGroupID);
+        IEnumerable<NRPRoles> GetNRPRoles(int? nRPSubGroupID);
 
         CompetencyAssessmentTaskStatus GetCompetencyAssessmentTaskStatus(int assessmentId, int? frameworkId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
-
-        bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID);
+        bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId);
         bool UpdateIntroductoryTextTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateCompetencyAssessmentDescription(int assessmentId, int adminId, string description);
         bool UpdateCompetencyAssessmentBranding(int assessmentId, int adminId, int brandID, int categoryID);
         bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateCompetencyAssessmentVocabulary(int assessmentId, int adminId, string vocabulary);
         bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
-        
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -91,9 +93,9 @@ namespace DigitalLearningSolutions.Web.Services
             return competencyAssessmentDataService.UpdateCompetencyAssessmentName(competencyAssessmentId, adminId, competencyAssessmentName);
         }
 
-        public bool UpdateCompetencyAssessmentProfessionalGroup(int competencyAssessmentId, int adminId, int? nrpProfessionalGroupID)
+        public bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId)
         {
-            return competencyAssessmentDataService.UpdateCompetencyAssessmentProfessionalGroup(competencyAssessmentId, adminId, nrpProfessionalGroupID);
+            return competencyAssessmentDataService.UpdateCompetencyRoleProfileLinks(competencyAssessmentId, adminId, professionalGroupId, subGroupId, roleId);
         }
         public CompetencyAssessmentTaskStatus GetCompetencyAssessmentTaskStatus(int assessmentId, int? frameworkId)
         {
@@ -131,6 +133,21 @@ namespace DigitalLearningSolutions.Web.Services
         bool ICompetencyAssessmentService.UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus)
         {
             return competencyAssessmentDataService.UpdateVocabularyTaskStatus(assessmentId, taskStatus);
+        }
+
+        public IEnumerable<NRPSubGroups> GetNRPSubGroups(int? nRPProfessionalGroupID)
+        {
+            return competencyAssessmentDataService.GetNRPSubGroups(nRPProfessionalGroupID);
+        }
+
+        public IEnumerable<NRPRoles> GetNRPRoles(int? nRPSubGroupID)
+        {
+            return competencyAssessmentDataService.GetNRPRoles(nRPSubGroupID);
+        }
+
+        public bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus)
+        {
+            return competencyAssessmentDataService.UpdateRoleProfileLinksTaskStatus(assessmentId, taskStatus);
         }
     }
 }
