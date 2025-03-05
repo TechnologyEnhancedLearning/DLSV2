@@ -1061,8 +1061,8 @@
 
                 var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile()
                 {
-                    SelfAssessmentID = supervisorRoles.FirstOrDefault().SelfAssessmentID,
-                    SelfAssessmentSupervisorRoleId = supervisorRoles.FirstOrDefault().ID
+                    SelfAssessmentID = supervisorRoles.FirstOrDefault() != null ? supervisorRoles.FirstOrDefault().SelfAssessmentID : selfAssessmentId,
+                    SelfAssessmentSupervisorRoleId = supervisorRoles.FirstOrDefault() != null ? supervisorRoles.FirstOrDefault().ID : 0
                 };
 
                 multiPageFormService.SetMultiPageFormData(
@@ -1070,7 +1070,7 @@
                     MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                     TempData
                 );
-                var supervisorRoleName = supervisorRoles.FirstOrDefault().RoleName;
+                var supervisorRoleName = supervisorRoles.FirstOrDefault() != null ? supervisorRoles.FirstOrDefault().RoleName : "";
                 var model = new EnrolDelegateSummaryViewModel
                 {
                     RoleProfile = roleProfile,
@@ -1328,6 +1328,9 @@
                 {
                     registrationService.PromoteDelegateToAdmin(adminRoles, supervisorDelegate.SelfAssessmentCategory, (int)supervisorDelegateDetail.DelegateUserID, (int)User.GetCentreId(), true);
 
+                    int? learningCategory = supervisorDelegate.SelfAssessmentCategory == 0 ? null : supervisorDelegate.SelfAssessmentCategory;
+                    var learningCategoryName = courseCategoriesService.GetCourseCategoryName(learningCategory);
+
                     if (delegateUser != null && adminUser != null)
                     {
                         var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
@@ -1344,7 +1347,8 @@
                         isCmsAdmin: adminRoles.IsCmsAdministrator,
                         isCmsManager: adminRoles.IsCmsManager,
                         primaryEmail: delegateUser.EmailAddress,
-                        centreName: centreName
+                        centreName: centreName,
+                        learningCategoryName
                     );
 
                         emailService.SendEmail(adminRolesEmail);
