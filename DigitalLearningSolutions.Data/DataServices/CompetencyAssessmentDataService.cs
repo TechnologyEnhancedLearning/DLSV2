@@ -28,6 +28,8 @@
 
         CompetencyAssessmentTaskStatus GetOrInsertAndReturnAssessmentTaskStatus(int assessmentId, bool frameworkBased);
 
+        int[] GetLinkedFrameworkIds (int assessmentId);
+
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
 
@@ -458,6 +460,16 @@
                 return false;
             }
             return true;
+        }
+
+        public int[] GetLinkedFrameworkIds(int assessmentId)
+        {
+            return [.. connection.Query<int>(
+              @"SELECT FrameworkId
+                    FROM   SelfAssessmentFrameworks
+                    WHERE (SelfAssessmentId = @assessmentId) AND (RemovedDate IS NULL)",
+              new { assessmentId }
+          )];
         }
     }
 }

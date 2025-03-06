@@ -389,5 +389,25 @@
             competencyAssessmentService.UpdateVocabularyTaskStatus(model.ID, model.TaskStatus ?? false);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/")]
+        public IActionResult SelectFrameworkSources(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var frameworks = frameworkService.GetAllFrameworks(adminId);
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null)
+            {
+                logger.LogWarning($"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
+            }
+            if (competencyAssessmentBase.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var selectedFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, selectedFrameworks, competencyAssessmentTaskStatus.FrameworkLinksTaskStatus);
+            return View(model);
+        }
     }
 }
