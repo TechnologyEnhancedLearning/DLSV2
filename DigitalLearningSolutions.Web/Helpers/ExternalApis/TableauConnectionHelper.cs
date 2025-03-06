@@ -9,7 +9,7 @@
 
     public interface ITableauConnectionHelperService
     {
-        string GetTableauJwt(string email);
+        string GetTableauJwt();
     }
     public class TableauConnectionHelper : ITableauConnectionHelperService
     {
@@ -24,7 +24,7 @@
             connectedAppSecretKey = config.GetTableauClientSecret();
             user = config.GetTableauUser();
         }
-        public string GetTableauJwt(string email)
+        public string GetTableauJwt()
         {
             var key = Encoding.UTF8.GetBytes(connectedAppSecretKey);
             var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
@@ -41,8 +41,7 @@
                 { "aud", "tableau" },
                 { "exp", new DateTimeOffset(DateTime.UtcNow.AddMinutes(5)).ToUnixTimeSeconds() },
                 { "sub", user },
-                { "scp", new[] { "tableau:views:embed" } },
-                { "ExernalUserEmail", new [] { email } }
+                { "scp", new[] { "tableau:views:embed" } }
         };
             var token = new JwtSecurityToken(header, payload);
             var tokenHandler = new JwtSecurityTokenHandler();
