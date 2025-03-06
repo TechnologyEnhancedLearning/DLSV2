@@ -103,7 +103,7 @@
 
         public void RejectDelegate(int delegateId, int centreId)
         {
-            var delegateEntity = userDataService.GetDelegateById(delegateId);
+            var delegateEntity = userDataService.GetDelegateById(delegateId);         
 
             if (delegateEntity == null || delegateEntity.DelegateAccount.CentreId != centreId)
             {
@@ -127,6 +127,7 @@
             else
             {
                 userDataService.RemoveDelegateAccount(delegateId);
+                userDataService.DeleteUser(delegateEntity.UserAccount.Id);
             }
 
             SendRejectionEmail(delegateEntity);
