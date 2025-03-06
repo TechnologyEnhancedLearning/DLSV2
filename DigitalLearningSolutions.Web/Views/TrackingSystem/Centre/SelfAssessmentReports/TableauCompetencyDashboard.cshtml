@@ -5,6 +5,8 @@
     var viewName = ViewBag.ViewName;
     var jwtToken = ViewBag.JwtToken;
     var siteName = ViewBag.SiteName;
+    var aid = ViewBag.AdminId;
+    var email = ViewBag.Email;
     var srcUrl = $"{tableauServerUrl}/t/{siteName}/views/{workbookName}/{viewName}";
     ViewData["Title"] = "Supervised self assessments dashboard";
 }
@@ -21,6 +23,8 @@
     <tableau-viz id='tableau-viz'
                  src='@srcUrl' token='@jwtToken' toolbar='bottom'>
         If the dashboard doesn't appear after a few seconds, <a href="#">reload the page</a>
+        <viz-parameter name="aid" value="@aid"></viz-parameter>
+        <viz-parameter name="email" value="@email"></viz-parameter>
     </tableau-viz>
     @section scripts {
         @* We are not using Yarn/npm for the Tableau JS becaue of errors during installation relating to a missing dependency *@
