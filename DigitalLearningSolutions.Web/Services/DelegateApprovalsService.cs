@@ -127,7 +127,7 @@
             else
             {
                 userDataService.RemoveDelegateAccount(delegateId);
-                userDataService.DeleteUser(delegateEntity.UserAccount.Id);
+                userDataService.DeleteUserCentreDetail(delegateEntity.UserAccount.Id, centreId);
             }
 
             SendRejectionEmail(delegateEntity);
