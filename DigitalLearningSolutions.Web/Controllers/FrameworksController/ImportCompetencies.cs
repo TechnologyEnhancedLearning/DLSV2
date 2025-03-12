@@ -45,7 +45,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult StartImport(ImportCompetenciesFormData model, int frameworkId, string tabname, bool isNotBlank)
         {
             if (!ModelState.IsValid)
-                return View("Developer/Import/Index", model);
+            {
+                var adminId = GetAdminId();
+                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+                var viewModel = new ImportCompetenciesViewModel(framework, isNotBlank);
+                viewModel.ImportFile = model.ImportFile;
+                return View("Developer/Import/Index", viewModel);
+            }
             try
             {
                 var adminUserID = User.GetAdminIdKnownNotNull();
