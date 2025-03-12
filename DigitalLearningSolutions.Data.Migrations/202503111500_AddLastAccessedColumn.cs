@@ -18,7 +18,7 @@
         }
         public override void Down()
         {
-            Delete.Column("LastAccessed").FromTable("Competencies");
+            Delete.Column("LastAccessed").FromTable("Users");
             Delete.Column("LastAccessed").FromTable("DelegateAccounts");
             Delete.Column("LastAccessed").FromTable("AdminAccounts");
         }
