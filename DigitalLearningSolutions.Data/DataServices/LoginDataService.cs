@@ -21,7 +21,7 @@
         {
             connection.Execute(
                 @"UPDATE Users SET
-                        LastAccessed = GETDATE()
+                        LastAccessed = GetUtcDate()
                 WHERE ID = @Id",
                 new
                 {
