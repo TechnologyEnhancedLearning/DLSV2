@@ -267,7 +267,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var data = GetBulkUploadData();
             var frameworkId = data.FrameworkId;
-            FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
+            if (!string.IsNullOrWhiteSpace(data.CompetenciesFileName))
+            {
+                FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
+            }
             TempData.Clear();
             return RedirectToAction("ViewFramework", new { frameworkId, tabname = "Structure" });
         }
