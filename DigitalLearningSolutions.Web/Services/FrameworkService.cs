@@ -58,6 +58,7 @@ namespace DigitalLearningSolutions.Web.Services
         int GetMaxFrameworkCompetencyGroupID();
         IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId);
         List<int> GetFrameworkCompetencyOrder(int frameworkId, List<int> frameworkCompetencyIds);
+        int GetFrameworkCompetencyGroupId(int frameworkId, int competencyGroupId);
 
         //  Assessment questions:
         IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
@@ -716,6 +717,11 @@ namespace DigitalLearningSolutions.Web.Services
         public void UpdateReviewRequestedDate(int reviewId)
         {
             frameworkDataService.UpdateReviewRequestedDate(reviewId);
+        }
+
+        public int GetFrameworkCompetencyGroupId(int frameworkId, int competencyGroupId)
+        {
+            return frameworkDataService.GetFrameworkCompetencyGroupId(frameworkId, competencyGroupId);
         }
     }
 }

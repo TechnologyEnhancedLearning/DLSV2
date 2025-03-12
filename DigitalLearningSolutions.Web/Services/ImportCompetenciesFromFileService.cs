@@ -184,6 +184,17 @@ namespace DigitalLearningSolutions.Web.Services
                         maxFrameworkCompetencyGroupId = (int)frameworkCompetencyGroupId;
                         competencyRow.RowStatus = RowStatus.CompetencyGroupInserted;
                     }
+                    else
+                    {
+                        //TO DO:  Need to get frameworkCompetencyGroupId and check admin ID
+                        frameworkCompetencyGroupId = frameworkService.GetFrameworkCompetencyGroupId(frameworkId, newCompetencyGroupId);
+                        var isUpdated = frameworkService.UpdateFrameworkCompetencyGroup((int)frameworkCompetencyGroupId, newCompetencyGroupId, competencyRow.CompetencyGroup, competencyRow.GroupDescription, adminUserId);
+                        competencyRow.RowStatus = RowStatus.CompetencyGroupUpdated;
+                    }
+                }
+                else
+                {
+                   
                 }
             }
             // If FrameworkCompetency ID is supplied, update the competency
