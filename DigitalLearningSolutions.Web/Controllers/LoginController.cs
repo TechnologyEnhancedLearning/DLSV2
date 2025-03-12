@@ -82,6 +82,13 @@
 
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
 
+            if (loginResult.LoginAttemptResult == LoginAttemptResult.LogIntoSingleCentre ||
+                loginResult.LoginAttemptResult == LoginAttemptResult.ChooseACentre)
+            {
+                loginService.UpdateLastAccessedForUsersTable(loginResult.UserEntity.UserAccount.Id);
+            }
+
+
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.InvalidCredentials:

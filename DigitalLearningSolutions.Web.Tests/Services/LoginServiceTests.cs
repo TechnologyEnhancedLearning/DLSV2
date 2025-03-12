@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
@@ -32,6 +33,7 @@
         private LoginService loginService = null!;
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
+        private ILoginDataService loginDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -39,7 +41,7 @@
             userVerificationService = A.Fake<IUserVerificationService>(x => x.Strict());
             userService = A.Fake<IUserService>(x => x.Strict());
 
-            loginService = new LoginService(userService, userVerificationService);
+            loginService = new LoginService(userService, userVerificationService, loginDataService);
         }
 
         [Test]
