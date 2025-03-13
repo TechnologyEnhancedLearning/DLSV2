@@ -32,6 +32,10 @@
 
         void UpdateLastAccessedForUsersTable(int Id);
 
+        void UpdateLastAccessedForDelegatesAccountsTable(int Id);
+
+        void UpdateLastAccessedForAdminAccountsTable(int Id);
+
         Task<string> HandleLoginResult(
             LoginResult loginResult,
             TicketReceivedContext context,
@@ -57,6 +61,16 @@
         public void UpdateLastAccessedForUsersTable(int Id)
         {
            loginDataService.UpdateLastAccessedForUsersTable(Id);
+        }
+
+        public void UpdateLastAccessedForDelegatesAccountsTable(int Id)
+        {
+            loginDataService.UpdateLastAccessedForDelegatesAccountsTable(Id);
+        }
+
+        public void UpdateLastAccessedForAdminAccountsTable(int Id)
+        {
+            loginDataService.UpdateLastAccessedForAdminAccountsTable(Id);
         }
 
         public LoginResult AttemptLogin(string username, string password)
