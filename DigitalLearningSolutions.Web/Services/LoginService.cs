@@ -5,10 +5,12 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Authentication;
@@ -28,6 +30,8 @@
 
         bool CentreEmailIsVerified(int userId, int centreIdIfLoggingIntoSingleCentre);
 
+        void UpdateLastAccessedForUsersTable(int Id);
+
         Task<string> HandleLoginResult(
             LoginResult loginResult,
             TicketReceivedContext context,
@@ -41,11 +45,18 @@
     {
         private readonly IUserService userService;
         private readonly IUserVerificationService userVerificationService;
+        private readonly ILoginDataService loginDataService;
 
-        public LoginService(IUserService userService, IUserVerificationService userVerificationService)
+        public LoginService(IUserService userService, IUserVerificationService userVerificationService, ILoginDataService loginDataService)
         {
             this.userService = userService;
             this.userVerificationService = userVerificationService;
+            this.loginDataService = loginDataService;
+        }
+
+        public void UpdateLastAccessedForUsersTable(int Id)
+        {
+           loginDataService.UpdateLastAccessedForUsersTable(Id);
         }
 
         public LoginResult AttemptLogin(string username, string password)
