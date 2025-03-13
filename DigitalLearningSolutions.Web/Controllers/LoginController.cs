@@ -227,7 +227,11 @@
                 IssuedUtc = clockUtility.UtcNow,
             };
             var centreAccountSet = userEntity?.GetCentreAccountSet(centreIdToLogInto);
-            loginService.UpdateLastAccessedForDelegatesAccountsTable(centreAccountSet.DelegateAccount.Id);
+
+            if (centreAccountSet?.DelegateAccount?.Id != null)
+            {
+                loginService.UpdateLastAccessedForDelegatesAccountsTable(centreAccountSet.DelegateAccount.Id);
+            }            
 
             var adminAccount = centreAccountSet?.AdminAccount;
             if (adminAccount?.Active == true)
