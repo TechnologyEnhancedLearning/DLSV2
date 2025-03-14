@@ -675,7 +675,7 @@ namespace DigitalLearningSolutions.Web.Services
         }
 
         public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription)
-        { 
+        {
             frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name, description, adminId, alwaysShowDescription);
         }
 

@@ -24,7 +24,7 @@
         FrameworkCompetencyGroup =frameworkCompetencyGroup,
         CompetencyFlags = Model.CompetencyFlags
       }"
-         view-data='new ViewDataDictionary(ViewData)
+                 view-data='new ViewDataDictionary(ViewData)
       {
         { "VocabSingular", Model.VocabSingular() },
         { "VocabPlural", Model.VocabPlural() },
@@ -79,7 +79,7 @@ else
               FrameworkCompetency = frameworkCompetency,
               CompetencyFlags = Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)
             }"
-             view-data='new ViewDataDictionary(ViewData)
+                     view-data='new ViewDataDictionary(ViewData)
               {
                 { "VocabSingular", Model.VocabSingular() },
                 {"VocabPlural", Model.VocabPlural()  }
