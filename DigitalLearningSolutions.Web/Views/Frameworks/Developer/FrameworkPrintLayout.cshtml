@@ -50,51 +50,54 @@
             {
                 @foreach (var frameworkCompetencyGroup in Model.FrameworkCompetencyGroups)
                 {
-                    groupNum++;
-                    <h3>@frameworkCompetencyGroup.Name</h3>
-                    if (frameworkCompetencyGroup.Description != null)
+                    if (frameworkCompetencyGroup.FrameworkCompetencies.Count() > 0)
                     {
-                        <p class="nhsuk-lede-text">
-                            @frameworkCompetencyGroup.Description
-                        </p>
-                    }
+                        groupNum++;
+                        <h3>@frameworkCompetencyGroup.Name</h3>
+                        if (frameworkCompetencyGroup.Description != null)
+                        {
+                            <p class="nhsuk-lede-text">
+                                @frameworkCompetencyGroup.Description
+                            </p>
+                        }
 
-                    int compNum = 0;
-                    if (frameworkCompetencyGroup.FrameworkCompetencies[0] != null)
-                    {
-                        <table class="nhsuk-table">
-                            <thead role="rowgroup" class="nhsuk-table__head">
-                                <tr role="row">
-                                    <th role="columnheader" class="" scope="col">
-                                        @Model.VocabSingular()
-                                    </th>
-                                    <th role="columnheader" class="status-tag" scope="col">
-                                        Date and Signature
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="nhsuk-table__body">
-                                @foreach (var frameworkCompetency in frameworkCompetencyGroup.FrameworkCompetencies)
-                                {
-                                    compNum++;
-                                    <tr role="row" class="nhsuk-table__row">
-                                        <td>
-                                            <strong>@frameworkCompetency.Name</strong>
-
-                                            <partial name="_CompetencyFlags" model="Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)" />
-                                            @if (frameworkCompetency.Description != null)
-                                            {
-                                                <p class="nhsuk-lede-text--small">
-                                                    @Html.Raw(frameworkCompetency.Description)
-                                                </p>
-                                            }
-                                        </td>
-                                        <td>
-                                        </td>
+                        int compNum = 0;
+                        if (frameworkCompetencyGroup.FrameworkCompetencies[0] != null)
+                        {
+                            <table class="nhsuk-table">
+                                <thead role="rowgroup" class="nhsuk-table__head">
+                                    <tr role="row">
+                                        <th role="columnheader" class="" scope="col">
+                                            @Model.VocabSingular()
+                                        </th>
+                                        <th role="columnheader" class="status-tag" scope="col">
+                                            Date and Signature
+                                        </th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="nhsuk-table__body">
+                                    @foreach (var frameworkCompetency in frameworkCompetencyGroup.FrameworkCompetencies)
+                                    {
+                                        compNum++;
+                                        <tr role="row" class="nhsuk-table__row">
+                                            <td>
+                                                <strong>@frameworkCompetency.Name</strong>
+
+                                                <partial name="_CompetencyFlags" model="Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)" />
+                                                @if (frameworkCompetency.Description != null)
+                                                {
+                                                    <p class="nhsuk-lede-text--small">
+                                                        @Html.Raw(frameworkCompetency.Description)
+                                                    </p>
+                                                }
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
                     }
                 }
             }
