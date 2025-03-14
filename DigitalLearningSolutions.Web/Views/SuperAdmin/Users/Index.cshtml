@@ -50,8 +50,10 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="nhsuk-grid-row">
                             <div class="filter-container nhsuk-u-margin-top-5">
-                                <div class="nhsuk-grid-column-one-quarter">
+                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-3">
                                     <vc:select-list asp-for="@nameof(Model.UserStatus)"
                                                     label="User status"
                                                     value="@Model.UserStatus"
@@ -61,7 +63,7 @@
                                                     default-option=""
                                                     select-list-options="@ViewBag.UserStatus" />
                                 </div>
-                                <div class="nhsuk-grid-column-one-quarter">
+                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-3">
                                     <vc:select-list asp-for="@nameof(Model.EmailStatus)"
                                                     label="Email status"
                                                     value="@Model.EmailStatus"
