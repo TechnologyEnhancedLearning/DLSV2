@@ -106,7 +106,7 @@
             <p>Once @Model.FrameworkVocabularySingular.ToLower() records are processed, changes cannot be undone.</p>
         </div>
         <form method="post">
-            <a asp-controller="Frameworks" asp-all-route-data="@cancelLinkData" asp-action=@(Model.CustomAssessmentQuestionID != null | Model.DefaultAssessmentQuestionIDs.Count > 0 ? "AddQuestionsToWhichCompetencies" : "AddAssessmentQuestions") role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+            <a asp-controller="Frameworks" asp-all-route-data="@cancelLinkData" asp-action=@((Model.CustomAssessmentQuestionID != null | Model.DefaultAssessmentQuestionIDs.Count > 0) && Model.ToUpdateOrSkipCount > 0 ? "AddQuestionsToWhichCompetencies" : "AddAssessmentQuestions") role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
             <button type="submit" class="nhsuk-button">Process @Model.FrameworkVocabularyPlural.ToLower()</button>
         </form>
         <vc:cancel-link asp-controller="Frameworks" asp-action="CancelImport" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
