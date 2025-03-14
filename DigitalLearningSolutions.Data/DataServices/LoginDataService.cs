@@ -6,6 +6,10 @@
     public interface ILoginDataService
     {
         void UpdateLastAccessedForUsersTable(int Id);
+
+        void UpdateLastAccessedForDelegatesAccountsTable(int Id);
+
+        void UpdateLastAccessedForAdminAccountsTable(int Id);
     }
 
     public class LoginDataService : ILoginDataService
@@ -21,6 +25,32 @@
         {
             connection.Execute(
                 @"UPDATE Users SET
+                        LastAccessed = GetUtcDate()
+                WHERE ID = @Id",
+                new
+                {
+                    Id
+                }
+            );
+        }
+        
+        public void UpdateLastAccessedForDelegatesAccountsTable(int Id)
+        {
+            connection.Execute(
+                @"UPDATE DelegateAccounts SET
+                        LastAccessed = GetUtcDate()
+                WHERE ID = @Id",
+                new
+                {
+                    Id
+                }
+            );
+        }
+
+        public void UpdateLastAccessedForAdminAccountsTable(int Id)
+        {
+            connection.Execute(
+                @"UPDATE AdminAccounts SET
                         LastAccessed = GetUtcDate()
                 WHERE ID = @Id",
                 new

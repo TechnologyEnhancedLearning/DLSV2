@@ -226,11 +226,17 @@
                 IsPersistent = rememberMe,
                 IssuedUtc = clockUtility.UtcNow,
             };
+            var centreAccountSet = userEntity?.GetCentreAccountSet(centreIdToLogInto);
 
-            var adminAccount = userEntity!.GetCentreAccountSet(centreIdToLogInto)?.AdminAccount;
+            if (centreAccountSet?.DelegateAccount?.Id != null)
+            {
+                loginService.UpdateLastAccessedForDelegatesAccountsTable(centreAccountSet.DelegateAccount.Id);
+            }            
 
+            var adminAccount = centreAccountSet?.AdminAccount;
             if (adminAccount?.Active == true)
             {
+                loginService.UpdateLastAccessedForAdminAccountsTable(adminAccount.Id);
                 sessionService.StartAdminSession(adminAccount.Id);
             }
 
