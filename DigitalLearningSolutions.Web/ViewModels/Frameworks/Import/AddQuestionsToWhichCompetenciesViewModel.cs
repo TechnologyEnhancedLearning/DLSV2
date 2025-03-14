@@ -33,7 +33,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
         public string FrameworkVocabularySingular { get; set; }
         public string FrameworkVocabularyPlural { get; set; }
         public int TotalQuestions { get; set; }
-        public int AddAssessmentQuestionsOption { get; set; } = 1; //1 = only added, 2 = added and updated, 3 = all uploaded
+        public int AddAssessmentQuestionsOption { get; set; } //1 = only added, 2 = added and updated, 3 = all uploaded
         public int CompetenciesToProcessCount { get; set; }
         public int CompetenciesToAddCount { get; set; }
         public int CompetenciesToUpdateCount { get; set; }
