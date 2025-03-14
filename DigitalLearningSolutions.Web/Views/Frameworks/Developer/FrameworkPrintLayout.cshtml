@@ -28,7 +28,7 @@
         <h1>
             @Model.DetailFramework.FrameworkName
         </h1>
-        @if (!String.IsNullOrEmpty(Model.DetailFramework.Description))
+        @if (!String.IsNullOrEmpty(Model.DetailFramework.Description.Trim()))
         {
             <div class="nhsuk-card">
                 <div class="nhsuk-card__content">
