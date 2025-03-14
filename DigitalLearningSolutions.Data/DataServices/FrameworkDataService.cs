@@ -2407,7 +2407,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             else
             {
                 return connection.Query<BulkCompetency>(
-                @"SELECT fc.ID, cg.Name AS CompetencyGroup, cg.Description AS GroupDescription, c.Name AS Competency, c.Description AS CompetencyDescription, c.AlwaysShowDescription, STUFF((
+                @"SELECT fc.ID, ISNULL(cg.Name, '') AS CompetencyGroup, cg.Description AS GroupDescription, c.Name AS Competency, c.Description AS CompetencyDescription, c.AlwaysShowDescription, STUFF((
                         SELECT ', ' + f.FlagName
                         FROM Flags AS f
                         INNER JOIN CompetencyFlags AS cf ON f.ID = cf.FlagID
@@ -2415,12 +2415,12 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                         FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS FlagsCsv
                     FROM 
                          Competencies AS c INNER JOIN
-                         FrameworkCompetencies AS fc ON c.ID = fc.CompetencyID INNER JOIN
-                         FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID INNER JOIN
+                         FrameworkCompetencies AS fc ON c.ID = fc.CompetencyID LEFT JOIN
+                         FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID LEFT JOIN
                          CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID
                     WHERE (fc.FrameworkID = @frameworkId)
                     GROUP BY fc.ID, c.ID, cg.Name, cg.Description, c.Name, c.Description, c.AlwaysShowDescription, fcg.Ordering, fc.Ordering
-                    ORDER BY fcg.Ordering, fc.Ordering",
+                    ORDER BY COALESCE(fcg.Ordering,99999), fc.Ordering",
                                 new { frameworkId }
                             );
             }
@@ -2430,10 +2430,10 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
         {
             return connection.Query<int>(
                 @"SELECT fc.ID
-                    FROM   FrameworkCompetencies AS fc INNER JOIN
+                    FROM   FrameworkCompetencies AS fc LEFT JOIN
                                  FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID
                     WHERE (fc.FrameworkID = @frameworkId) AND (fc.ID IN @frameworkCompetencyIds)
-                    ORDER BY fcg.Ordering, fc.Ordering",
+                    ORDER BY COALESCE(fcg.Ordering,99999), fc.Ordering",
                                 new { frameworkId, frameworkCompetencyIds }
                             ).ToList();
         }
