@@ -105,6 +105,7 @@
                 aa.IsSupervisor,
                 aa.IsTrainer,
                 aa.CategoryID,
+                aa.LastAccessed,
                 CASE
                     WHEN aa.CategoryID IS NULL THEN 'All'
                     ELSE cc.CategoryName
