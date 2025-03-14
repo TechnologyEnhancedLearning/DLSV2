@@ -12,7 +12,7 @@
         public bool CentreActive { get; set; }
         public string CandidateNumber { get; set; } = string.Empty;
         public DateTime DateRegistered { get; set; }
-        public DateTime LastAccessed { get; set; }
+        public DateTime? LastAccessed { get; set; }
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }
         public string? Answer3 { get; set; }
