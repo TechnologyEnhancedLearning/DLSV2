@@ -308,6 +308,7 @@
                 u.ProfessionalRegistrationNumber,
                 u.ProfileImage,
                 u.Active,
+                u.LastAccessed,
                 u.ResetPasswordID,
                 u.TermsAgreed,
                 u.FailedLoginCount,
