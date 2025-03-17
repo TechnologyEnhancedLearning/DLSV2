@@ -45,7 +45,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult StartImport(ImportCompetenciesFormData model, int frameworkId, string tabname, bool isNotBlank)
         {
             if (!ModelState.IsValid)
-                return View("Developer/Import/Index", model);
+            {
+                var adminId = GetAdminId();
+                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+                var viewModel = new ImportCompetenciesViewModel(framework, isNotBlank);
+                viewModel.ImportFile = model.ImportFile;
+                return View("Developer/Import/Index", viewModel);
+            }
             try
             {
                 var adminUserID = User.GetAdminIdKnownNotNull();
@@ -73,7 +79,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             catch (InvalidHeadersException)
             {
-                return View("Developer/Import/ImportFailed");
+                return RedirectToAction("ImportFailed", "Frameworks", new { frameworkId, tabname, isNotBlank });
             }
         }
         [Route("/Framework/{frameworkId}/{tabname}/Import/Uploaded")]
@@ -97,9 +103,18 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             catch (InvalidHeadersException)
             {
                 FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
-                return View("Developer/Import/ImportFailed");
+                return RedirectToAction("ImportFailed", "Frameworks", new { data.FrameworkId, tabname = "Structure", data.IsNotBlank });
             }
         }
+        [Route("/Framework/{frameworkId}/{tabname}/Import/Failed")]
+        public IActionResult ImportFailed(int frameworkId, string tabname, bool isNotBlank)
+        {
+            var adminId = GetAdminId();
+            var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var viewModel = new ImportCompetenciesViewModel(framework, isNotBlank);
+            return View("Developer/Import/ImportFailed", viewModel);
+        }
+
         [Route("/Framework/{frameworkId}/{tabname}/Import/Ordering")]
         public IActionResult ApplyCompetencyOrdering()
         {
@@ -200,7 +215,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddQuestionsToWhichCompetencies()
         {
             var data = GetBulkUploadData();
-            if (data.DefaultQuestionIDs.Count ==0 && data.CustomAssessmentQuestionID == null)
+            if (data.DefaultQuestionIDs.Count == 0 && data.CustomAssessmentQuestionID == null)
             {
                 return RedirectToAction("ImportSummary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
             }
@@ -267,7 +282,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var data = GetBulkUploadData();
             var frameworkId = data.FrameworkId;
-            FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
+            if (!string.IsNullOrWhiteSpace(data.CompetenciesFileName))
+            {
+                FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
+            }
             TempData.Clear();
             return RedirectToAction("ViewFramework", new { frameworkId, tabname = "Structure" });
         }

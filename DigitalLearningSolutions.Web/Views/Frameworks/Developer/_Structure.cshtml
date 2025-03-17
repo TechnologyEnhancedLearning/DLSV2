@@ -8,7 +8,7 @@
         <div class="nhsuk-grid-column-full">
             <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add @Model.VocabSingular().ToLower() group</a>
             <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add ungrouped @Model.VocabSingular().ToLower()</a>
-            <a class="nhsuk-button nhsuk-button--secondary" asp-action="ImportCompetencies" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-isNotBlank="@(Model.FrameworkCompetencies.Any()|Model.FrameworkCompetencyGroups.Any())" asp-route-tabname="@(ViewContext.RouteData.Values["tabname"])">Bulk upload/update @Model.VocabPlural().ToLower()</a>
+            <a class="nhsuk-button nhsuk-button--secondary" asp-action="ImportCompetencies" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-isNotBlank="@((Model.FrameworkCompetencies?.Any() ?? false) || (Model.FrameworkCompetencyGroups?.Any(group=> group.FrameworkCompetencies.Any()) ?? false))" asp-route-tabname="@(ViewContext.RouteData.Values["tabname"])">Bulk upload/update @Model.VocabPlural().ToLower()</a>
             <a class="nhsuk-button nhsuk-button--secondary" asp-action="PrintLayout" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">View for print</a>
         </div>
     </div>
@@ -24,7 +24,7 @@
         FrameworkCompetencyGroup =frameworkCompetencyGroup,
         CompetencyFlags = Model.CompetencyFlags
       }"
-         view-data='new ViewDataDictionary(ViewData)
+                 view-data='new ViewDataDictionary(ViewData)
       {
         { "VocabSingular", Model.VocabSingular() },
         { "VocabPlural", Model.VocabPlural() },
@@ -79,7 +79,7 @@ else
               FrameworkCompetency = frameworkCompetency,
               CompetencyFlags = Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)
             }"
-             view-data='new ViewDataDictionary(ViewData)
+                     view-data='new ViewDataDictionary(ViewData)
               {
                 { "VocabSingular", Model.VocabSingular() },
                 {"VocabPlural", Model.VocabPlural()  }
