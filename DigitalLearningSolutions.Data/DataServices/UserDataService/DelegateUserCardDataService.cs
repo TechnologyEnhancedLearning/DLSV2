@@ -125,6 +125,7 @@
                 c.CentreName,
                 da.CentreID,
                 da.DateRegistered,
+                da.LastAccessed,
                 da.RegistrationConfirmationHash,
                 c.Active AS CentreActive,
                 COALESCE(ucd.Email, u.PrimaryEmail) AS EmailAddress,

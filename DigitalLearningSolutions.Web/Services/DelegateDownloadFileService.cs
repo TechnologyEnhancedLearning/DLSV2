@@ -39,6 +39,7 @@
         private const string ProfessionalRegistrationNumber = "Professional Registration Number";
         private const string JobGroup = "Job group";
         private const string RegisteredDate = "Registered";
+        private const string LastAccessed = "Last Accessed";
         private const string RegistrationComplete = "Registration complete";
         private const string Active = "Active";
         private const string Approved = "Approved";
@@ -333,6 +334,7 @@
                     new DataColumn(ProfessionalRegistrationNumber),
                     new DataColumn(JobGroup),
                     new DataColumn(RegisteredDate),
+                    new DataColumn(LastAccessed),
                 }
             );
 
@@ -374,7 +376,7 @@
             );
             row[JobGroup] = delegateRecord.JobGroupName;
             row[RegisteredDate] = delegateRecord.DateRegistered?.Date;
-
+            row[LastAccessed] = delegateRecord.LastAccessed?.Date;
             var delegateAnswers = delegateRecord.GetRegistrationFieldAnswers();
 
             foreach (var prompt in registrationPrompts.CustomPrompts)
@@ -402,7 +404,7 @@
         private static void FormatAllDelegateWorksheetColumns(IXLWorkbook workbook, DataTable dataTable)
         {
             ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, RegisteredDate, XLDataType.DateTime);
-
+            ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, LastAccessed, XLDataType.DateTime);
             var boolColumns = new[] { RegistrationComplete, Active, Approved, IsAdmin };
             foreach (var columnName in boolColumns)
             {
