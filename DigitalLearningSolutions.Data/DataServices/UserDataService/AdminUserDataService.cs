@@ -370,7 +370,7 @@
             }
 
             string BaseSelectQuery = $@"SELECT aa.ID, aa.UserID, aa.CentreID, aa.Active, aa.IsCentreAdmin, aa.IsReportsViewer, aa.IsSuperAdmin, aa.IsCentreManager, 
-		                                aa.IsContentManager, aa.IsContentCreator, aa.IsSupervisor, aa.IsTrainer, aa.CategoryID, aa.IsFrameworkDeveloper, aa.IsFrameworkContributor,aa.ImportOnly,
+		                                aa.LastAccessed, aa.IsContentManager, aa.IsContentCreator, aa.IsSupervisor, aa.IsTrainer, aa.CategoryID, aa.IsFrameworkDeveloper, aa.IsFrameworkContributor,aa.ImportOnly,
 		                                aa.IsWorkforceManager, aa.IsWorkforceContributor, aa.IsLocalWorkforceManager, aa.IsNominatedSupervisor,
 		                                u.ID, u.PrimaryEmail, u.FirstName, u.LastName, u.Active, u.FailedLoginCount,
 		                                c.CentreID, c.CentreName,
