@@ -10,20 +10,16 @@
 <link rel="stylesheet" href="@Url.Content("~/css/userFeedback/userFeedback.css")" asp-append-version="true">
 
 @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-        <div class="nhsuk-width-container">
-            <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item">
-                    <a class="nhsuk-breadcrumb__link trigger-loader" href="@Model.SourceUrl">
-                        <div><partial name="_NhsChevronLeft" />Go back</div>
-                    </a>
-                </li>
-            </ol>
-            <p class="nhsuk-breadcrumb__back">
-                <a class="nhsuk-breadcrumb__link" href="@Model.SourceUrl">Go back</a>
-            </p>
+    <div class="nhsuk-width-container">
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" href="@Model.SourceUrl">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
+                    <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+                </svg>
+                Go back
+            </a>
         </div>
-    </nav>
+    </div>
 }
 
 <div class="nhsuk-grid-row">
