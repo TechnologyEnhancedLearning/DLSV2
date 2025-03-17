@@ -36,7 +36,7 @@
             {
                 <partial name="Shared/_PublishedWarning" />
             }
-            
+
             <div class="nhsuk-form-group">
                 @if (Model.IsNotBlank)
                 {
@@ -45,13 +45,14 @@
                         <p>
                             Bulk upload <strong>cannot</strong> be used to:
                         </p>
-                            <ul>
+                        <ul>
                             <li>Delete @Model.FrameworkVocabularyPlural.ToLower() or @Model.FrameworkVocabularySingular.ToLower() groups</li>
                             <li>Remove assessment questions from existing @Model.FrameworkVocabularyPlural.ToLower()</li>
                             <li>Add more than one custom assessment question to uploaded @Model.FrameworkVocabularyPlural.ToLower()</li>
                             <li>Remove flags from @Model.FrameworkVocabularyPlural.ToLower()</li>
-                            </ul>
-                        
+                            <li>Add or edit empty @Model.FrameworkVocabularyPlural.ToLower() groups</li>
+                        </ul>
+
                     </div>
                     <p class="nhsuk-body-m">
                         To bulk add and/or update @Model.FrameworkVocabularyPlural.ToLower() in the framework, <strong>@Model.FrameworkName</strong>, download an Excel workbook using one of the options below.

@@ -2,13 +2,14 @@
 @using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
 @using Microsoft.Extensions.Configuration
-@model ImportCompetenciesResultsViewModel
+@model ImportCompetenciesViewModel
 @{
     ViewData["Title"] = "Framework - Import Failed";
     ViewData["Application"] = "Framework Service";
     ViewData["HeaderPathName"] = "Framework Service";
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     var cancelLinkData = Html.GetRouteValues();
+    cancelLinkData.Add("IsNotBlank", Model.IsNotBlank.ToString());
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -35,7 +36,7 @@
                 The file that you uploaded either does not have the correct column headers on the first row or is not formatted as a table.
             </p>
 
-            <p class="nhsuk-body-m">Refer to the instructions on the Import Competencies page to make sure your Excel file has the correct column headers.</p>
+            <p class="nhsuk-body-m">Refer to the instructions on the Import @Model.FrameworkVocabularyPlural page to make sure your Excel file has the correct column headers.</p>
 
             <vc:action-link asp-controller="Frameworks" asp-action="ViewFramework" asp-all-route-data="@cancelLinkData" link-text="Back to framework structure" />
 

@@ -58,6 +58,7 @@ namespace DigitalLearningSolutions.Web.Services
         int GetMaxFrameworkCompetencyGroupID();
         IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId);
         List<int> GetFrameworkCompetencyOrder(int frameworkId, List<int> frameworkCompetencyIds);
+        int GetFrameworkCompetencyGroupId(int frameworkId, int competencyGroupId);
 
         //  Assessment questions:
         IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
@@ -192,7 +193,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         void UpdateFrameworkConfig(int frameworkId, int adminId, string? frameworkConfig);
 
-        void UpdateFrameworkCompetencyGroup(
+        bool UpdateFrameworkCompetencyGroup(
             int frameworkCompetencyGroupId,
             int competencyGroupId,
             string name,
@@ -674,13 +675,13 @@ namespace DigitalLearningSolutions.Web.Services
         }
 
         public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription)
-        { 
+        {
             frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name, description, adminId, alwaysShowDescription);
         }
 
-        public void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, string? description, int adminId)
+        public bool UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, string? description, int adminId)
         {
-            frameworkDataService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, name, description, adminId);
+            return frameworkDataService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, name, description, adminId);
         }
 
         public void UpdateFrameworkConfig(int frameworkId, int adminId, string? frameworkConfig)
@@ -716,6 +717,11 @@ namespace DigitalLearningSolutions.Web.Services
         public void UpdateReviewRequestedDate(int reviewId)
         {
             frameworkDataService.UpdateReviewRequestedDate(reviewId);
+        }
+
+        public int GetFrameworkCompetencyGroupId(int frameworkId, int competencyGroupId)
+        {
+            return frameworkDataService.GetFrameworkCompetencyGroupId(frameworkId, competencyGroupId);
         }
     }
 }
