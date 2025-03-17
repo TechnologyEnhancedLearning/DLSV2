@@ -7,7 +7,7 @@
     public class ImportCompetenciesFormData
     {
         [Required(ErrorMessage = "Import competencies file is required")]
-        [AllowedExtensions(new[] { ".xlsx" }, "Import competencies file must be in xlsx format")]
+        [AllowedExtensions([".xlsx"], "Import competencies file must be in xlsx format")]
         [MaxFileSize(5 * 1024 * 1024, "Maximum allowed file size is 5MB")]
         public IFormFile? ImportFile { get; set; }
     }
