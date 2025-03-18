@@ -620,6 +620,7 @@
                 ce.CentreName,
                 ce.Active AS CentreActive,
                 da.DateRegistered,
+                da.LastAccessed,
                 da.CandidateNumber,
                 da.Approved,
                 da.SelfReg,

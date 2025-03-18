@@ -19,6 +19,7 @@ namespace DigitalLearningSolutions.Data.Models.SuperAdmin
             LearningHubAuthId = delegateEntity.UserAccount.LearningHubAuthId;
             RegistrationConfirmationHash = delegateEntity.DelegateAccount.RegistrationConfirmationHash;
             DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
+            LastAccessed = delegateEntity.DelegateAccount.LastAccessed;
             SelfReg = delegateEntity.DelegateAccount.SelfReg;
             Active = delegateEntity.DelegateAccount.Active;
             EmailVerified = delegateEntity.UserAccount.EmailVerified;
