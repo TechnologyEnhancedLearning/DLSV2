@@ -718,7 +718,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Framework/{frameworkId}/Structure/PrintLayout")]
-        public IActionResult PrintLayout(int frameworkId) {
+        public IActionResult PrintLayout(int frameworkId)
+        {
             var adminId = GetAdminId();
             var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
             var routeData = new Dictionary<string, string> { { "frameworkId", detailFramework?.ID.ToString() } };

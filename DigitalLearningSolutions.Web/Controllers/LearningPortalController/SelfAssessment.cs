@@ -1566,7 +1566,13 @@
 
             }
 
-            if (!selfAssessmentService.HasMinimumOptionalCompetencies(selfAssessmentId, delegateUserId))
+            var recentResults = selfAssessmentService.GetMostRecentResults(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList();
+
+            bool isVerificationPending = recentResults?.SelectMany(comp => comp.AssessmentQuestions).Where(quest => quest.Required)
+                    .Where(quest => quest.Required)
+                    .All(quest => !((quest.Result == null || quest.Verified == null || quest.SignedOff != true) && quest.Required)) != true;
+
+            if (!selfAssessmentService.HasMinimumOptionalCompetencies(selfAssessmentId, delegateUserId) || isVerificationPending)
             {
                 var supervisorsSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, delegateUserId);
 

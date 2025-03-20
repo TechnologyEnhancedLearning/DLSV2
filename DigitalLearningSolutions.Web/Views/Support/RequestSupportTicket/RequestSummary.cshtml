@@ -4,11 +4,7 @@
 @using DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket;
 @model RequestSummaryViewModel;
 @{
-    bool errorHasOccurred = false;
-    @if (Model.RequestSubject == null && !ViewData.ModelState.IsValid)
-    {
-        errorHasOccurred = true;
-    }
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Request details";
     var cancelLinkData = Html.GetRouteValues();
 }
