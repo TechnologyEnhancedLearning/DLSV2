@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
-    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+<partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
 
 @section NavBreadcrumbs {
@@ -24,3 +24,61 @@
 }
 
 <h1>Select framework sources for @Model.CompetencyAssessmentName</h1>
+@if (Model.SelectedFrameworks.Count() > 0)
+{
+    <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Primary framework
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.SelectedFrameworks.First().FrameworkName
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+                <a asp-action="RemoveFramework" asp-route-Id="@Model.SelectedFrameworks.First().ID">
+                    Remove<span class="nhsuk-u-visually-hidden"> @Model.SelectedFrameworks.First().FrameworkName</span>
+                </a>
+            </dd>
+        </div>
+        @if (Model.SelectedFrameworks.Count() > 1)
+        {
+            for (int i = 1; i < Model.SelectedFrameworks.Count(); i++)
+            {
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Additional framework @i
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @Model.SelectedFrameworks.ElementAt(i).FrameworkName
+                    </dd>
+                    <dd class="nhsuk-summary-list__actions">
+                        <a asp-action="RemoveFramework" asp-route-Id="@Model.SelectedFrameworks.ElementAt(i).ID">
+                            Remove<span class="nhsuk-u-visually-hidden"> @Model.SelectedFrameworks.ElementAt(i).FrameworkName</span>
+                        </a>
+                    </dd>
+                </div>
+            }
+        }
+    </dl>
+}
+<form method="post">
+    <div class="nhsuk-form-group">
+        <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                <h1 class="nhsuk-fieldset__heading">Add a framework source</h1>
+            </legend>
+            <div class="nhsuk-radios">
+                @foreach(var framework in Model.Frameworks)
+                {
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" type="radio" id="framework-@framework.ID" asp-for="SelectedFrameworkIds" value="@framework.ID" />
+                        <label class="nhsuk-label nhsuk-radios__label" for="framework-@framework.ID">
+                            @framework.FrameworkName
+                        </label>
+                    </div>
+                }
+            </div>
+        </fieldset>
+    </div>
+    <button class="nhsuk-button" type="submit">Add</button>
+</form>

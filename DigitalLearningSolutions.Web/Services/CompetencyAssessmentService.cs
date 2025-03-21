@@ -37,6 +37,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
+        bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
         int[] GetLinkedFrameworkIds(int assessmentId);
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
@@ -154,6 +155,11 @@ namespace DigitalLearningSolutions.Web.Services
         public int[] GetLinkedFrameworkIds(int assessmentId)
         {
             return competencyAssessmentDataService.GetLinkedFrameworkIds(assessmentId);
+        }
+
+        public bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId)
+        {
+            return competencyAssessmentDataService.InsertSelfAssessmentFramework(adminId, assessmentId, frameworkId);
         }
     }
 }

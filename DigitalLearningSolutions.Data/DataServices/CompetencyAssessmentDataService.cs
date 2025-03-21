@@ -335,6 +335,16 @@
             );
             if (numberOfAffectedRows < 1)
             {
+                numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentFrameworks
+                    SET @selfAssessmentId, @frameworkId, @adminId
+                    WHERE SelfAssessmentId = @selfAssessmentId AND FrameworkId = @frameworkId"
+            ,
+                new { adminId, selfAssessmentId, frameworkId }
+            );
+            }
+                if (numberOfAffectedRows < 1)
+            {
                 logger.LogWarning(
                 "Not inserting SelfAssessmentFrameworks record as db insert failed. " +
                     $"selfAssessmentId: {selfAssessmentId}, frameworkId: {frameworkId}, AdminId: {adminId}"

@@ -1,26 +1,24 @@
-﻿using AngleSharp.Css;
-using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+﻿using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 using DigitalLearningSolutions.Data.Models.Frameworks;
-using DocumentFormat.OpenXml.Office2010.Excel;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 {
-    public class SelectFrameworkSourcesViewModel
+    public class SelectFrameworkSourcesViewModel : SelectFrameworkSourcesFormData
     {
         public SelectFrameworkSourcesViewModel() { }
-        public SelectFrameworkSourcesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<BrandedFramework> frameworks, int[] selectedFrameworks, bool? taskStatus)
+        public SelectFrameworkSourcesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<BrandedFramework> frameworks, int[] selectedFrameworksIds, bool? taskStatus)
         {
             ID = competencyAssessmentBase.ID;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             UserRole = competencyAssessmentBase.UserRole;
             TaskStatus = taskStatus;
-            Frameworks = frameworks;
-            SelectedFrameworks = selectedFrameworks;
+            Frameworks = frameworks.OrderBy(f => f.FrameworkName);
+            SelectedFrameworks = [.. frameworks.Where(f => selectedFrameworksIds.Contains(f.ID))];
         }
         public IEnumerable<BrandedFramework> Frameworks { get; set; }
-        public int[] SelectedFrameworks { get; set; }
+        public IEnumerable<BrandedFramework> SelectedFrameworks { get; set; }
         public IEnumerable<NRPRoles> Roles { get; set; }
         public int ID { get; set; }
         public string CompetencyAssessmentName { get; set; }
