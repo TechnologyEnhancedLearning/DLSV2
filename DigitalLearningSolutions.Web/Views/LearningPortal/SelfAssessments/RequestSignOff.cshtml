@@ -12,7 +12,7 @@
     <li class="nhsuk-breadcrumb__item">Request Sign Off</li>
 }
 @section mobilebacklink
-  {
+{
     <p class="nhsuk-breadcrumb__back">
         <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
            asp-route-vocabulary="@Model.VocabPlural()"
@@ -66,10 +66,10 @@
                     <div class="nhsuk-checkboxes__item">
                         <input class="nhsuk-checkboxes__input" id="optional-ompetencies" name="OptionalCompetenciesChecked" asp-for="OptionalCompetenciesChecked" type="checkbox">
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="optional-competencies">
-                        I have reviewed the optional competencies available for this self assessment and included those that are appropriate to my role.
-                    </label>
-                </div>
-            </nhs-form-group>
+                            I have reviewed the optional competencies available for this self assessment and included those that are appropriate to my role.
+                        </label>
+                    </div>
+                </nhs-form-group>
             }
         </fieldset>
 
@@ -78,7 +78,6 @@
         </button>
     </form>
 
-    <p>Can't see the supervisor you need? <a asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Click here</a> to manage supervisors.</p>
     <div class="nhsuk-back-link">
         <a class="nhsuk-back-link__link"
            asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"
@@ -93,7 +92,6 @@
 else
 {
     <p>No supervisors are identified who can sign-off the activity <strong>@Model.SelfAssessment.Name</strong> who don't have an outstanding sign-off request.</p>
-    <p><a asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Click here</a> to manage supervisors.</p>
     <div class="nhsuk-action-link">
         <a class="nhsuk-back-link__link"
            asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"
