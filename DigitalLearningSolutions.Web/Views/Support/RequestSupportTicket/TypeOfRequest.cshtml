@@ -29,6 +29,7 @@
     <div id="form-group">
         <form method="post" asp-route-ResponseTypes="@Model.RequestTypes" asp-action="setRequestType" asp-all-route-data="@cancelLinkData">
             <div>
+                <nhs-form-group nhs-validation-for="Id">
                 <fieldset class="nhsuk-fieldset">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                         <h1 class="nhsuk-fieldset__heading">
@@ -54,7 +55,8 @@
                             seperator = seperator + 1;
                         }
                     </div>
-                </fieldset>
+                        </fieldset>
+                    </nhs-form-group>
                 <button class="nhsuk-button nhsuk-u-margin-top-6" id="save-button" type="submit">
                     Next
                 </button>

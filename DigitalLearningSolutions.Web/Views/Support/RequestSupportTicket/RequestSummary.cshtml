@@ -29,7 +29,7 @@
         <div class="nhsuk-u-reading-width">
             <h1 class="nhsuk-heading-xl">@Model.RequestType</h1>
             <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="SetRequestSummary" asp-all-route-data="@cancelLinkData">
-                <vc:text-input asp-for="RequestSubject"
+              <vc:text-input asp-for="RequestSubject"
                                label="Enter a summary of your problem or request"
                                populate-with-current-value="true"
                                type="text"
@@ -38,15 +38,17 @@
                                autocomplete="given-name"
                                css-class=""
                                required="true" />
+                <nhs-form-group nhs-validation-for="RequestDescription">
                 <vc:text-area asp-for="RequestDescription"
                               label="Describe your problem or request"
                               populate-with-current-value="true"
                               rows="5"
                               spell-check="false"
                               hint-text="If you are reporting a problem, please tell us exactly where it occurs and steps to recreate it. If you need to add screenshots, you will be able to do this in the next step."
-                              css-class="html-editor"
-                              character-count="null" />
-
+                              css-class=""
+                              character-count="null">
+                            </vc:text-area>
+                </nhs-form-group>
                 <button class="nhsuk-button" type="submit">Next</button>
             </form>
 
