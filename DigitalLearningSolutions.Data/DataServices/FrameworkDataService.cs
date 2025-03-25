@@ -2108,7 +2108,7 @@ WHERE (ID = @commentId)",
                         AU1.Email AS OwnerEmail,
                         FW.FrameworkName
                     FROM FrameworkReviews AS FR
-                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID  AND FWC.IsDeleted = 0
+                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID  AND FC.IsDeleted = 0
                     INNER JOIN AdminUsers AS AU ON FC.AdminID = AU.AdminID
                     INNER JOIN Frameworks AS FW ON FR.FrameworkID = FW.ID
                     INNER JOIN AdminUsers AS AU1 ON FW.OwnerAdminID = AU1.AdminID
