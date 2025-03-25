@@ -164,6 +164,14 @@
                 </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
+                        Last Accessed
+                    </dt>
+                    <partial name="_SummaryFieldValue" model="@Model.LastAccessed" />
+                    <dd class="nhsuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key">
                         Self registered
                     </dt>
                     <partial name="_SummaryFieldValue" model="@(Model.SelRegistered==true?"Yes" : "No")" />
