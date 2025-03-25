@@ -582,14 +582,33 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (ModelState.IsValid)
             {
+                var flags = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, null)
+                    .Where(fn => fn.FlagName == model.FlagName).ToList();
+
+                bool nameExists = flags.Any(x => x.FlagName == model.FlagName);
+                bool idExists = flags.Any(x => x.FlagId == flagId);
+
                 if (actionname == "Edit")
                 {
-                    frameworkService.UpdateFrameworkCustomFlag(frameworkId, model.Id, model.FlagName, model.FlagGroup, model.FlagTagClass);
+                    if (nameExists && !idExists)
+                    {
+                        ModelState.AddModelError(nameof(model.FlagName), "A custom flag already exists.");
+                        return View("Developer/EditCustomFlag", model);
+                    }
+                    else
+                        frameworkService.UpdateFrameworkCustomFlag(frameworkId, model.Id, model.FlagName, model.FlagGroup, model.FlagTagClass);
                 }
                 else
                 {
-                    frameworkService.AddCustomFlagToFramework(frameworkId, model.FlagName, model.FlagGroup, model.FlagTagClass);
+                    if (nameExists)
+                    {
+                        ModelState.AddModelError(nameof(model.FlagName), "A custom flag already exists.");
+                        return View("Developer/EditCustomFlag", model);
+                    }
+                    else
+                        frameworkService.AddCustomFlagToFramework(frameworkId, model.FlagName, model.FlagGroup, model.FlagTagClass);
                 }
+
                 return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId });
             }
             return View("Developer/EditCustomFlag", model);
