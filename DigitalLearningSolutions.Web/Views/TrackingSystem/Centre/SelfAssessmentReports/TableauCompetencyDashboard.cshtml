@@ -23,12 +23,13 @@
     <tableau-viz id='tableau-viz'
                  src='@srcUrl' token='@jwtToken' toolbar='bottom'>
         If the dashboard doesn't appear after a few seconds, <a href="#">reload the page</a>
-        <viz-parameter name="aid" value="@aid"></viz-parameter>
-        <viz-parameter name="email" value="@email"></viz-parameter>
     </tableau-viz>
+    <input type="hidden" id="hf-email" value="@email" />
+    <input type="hidden" id="hf-adminid" value="@aid" />
     @section scripts {
         @* We are not using Yarn/npm for the Tableau JS becaue of errors during installation relating to a missing dependency *@
         <script type="module" src="@tableauServerUrl/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+        <script src="@Url.Content("~/js/trackingSystem/tableaureports.js")" asp-append-version="true"></script>
     }
 </feature>
 <feature name="@(FeatureFlags.TableauSelfAssessmentDashboards)" negate="true">
