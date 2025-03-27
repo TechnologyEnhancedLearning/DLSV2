@@ -12,6 +12,7 @@
   ViewData["Title"] = "My Current Activities";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
   ViewData["HeaderPathName"] = "Learning Portal";
+    ViewData["BannerText"] = Model.BannerText;
 }
 
 @section NavMenuItems {
@@ -25,11 +26,7 @@
 <div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">My Current Activities</h1>
-    @if (Model.BannerText != null)
-    {
-      <h2 class="page-subheading word-break">@Model.BannerText</h2>
-    }
-
+    
     @if (!Model.ApiIsAccessible)
     {
       <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4 nhsuk-u-margin-top-4"

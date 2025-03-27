@@ -6,10 +6,11 @@
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/courses.css")" asp-append-version="true">
 
 @{
-  ViewData["Application"] = "Learning Portal";
-  ViewData["Title"] = "Available Activities";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Available";
-  ViewData["HeaderPathName"] = "Learning Portal";
+    ViewData["Application"] = "Learning Portal";
+    ViewData["Title"] = "Available Activities";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Available";
+    ViewData["HeaderPathName"] = "Learning Portal";
+    ViewData["BannerText"] = Model.BannerText;
 }
 
 @section NavMenuItems {
@@ -24,10 +25,6 @@
 
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">Available Activities</h1>
-    @if (Model.BannerText != null)
-    {
-      <h2 class="page-subheading">@Model.BannerText</h2>
-    }
 
     <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
 
