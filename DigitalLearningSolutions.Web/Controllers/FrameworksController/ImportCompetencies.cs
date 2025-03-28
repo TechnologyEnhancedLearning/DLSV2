@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -278,15 +279,25 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/Import/UploadResults", model);
         }
         [Route("CancelImport")]
-        public IActionResult CancelImport()
+        public IActionResult CancelImport(int? frameworkId)
         {
-            var data = GetBulkUploadData();
-            var frameworkId = data.FrameworkId;
-            if (!string.IsNullOrWhiteSpace(data.CompetenciesFileName))
+            try
             {
-                FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
+                var data = GetBulkUploadData();
+                frameworkId = data.FrameworkId;
+                if (!string.IsNullOrWhiteSpace(data.CompetenciesFileName))
+                {
+                    FileHelper.DeleteFile(webHostEnvironment, data.CompetenciesFileName);
+                }
             }
-            TempData.Clear();
+            catch
+            {
+
+            }
+            finally
+            {
+                TempData.Clear();
+            }
             return RedirectToAction("ViewFramework", new { frameworkId, tabname = "Structure" });
         }
         private void setupBulkUploadData(int frameworkId, int adminUserID, string competenciessFileName, string tabName, bool isNotBlank)
