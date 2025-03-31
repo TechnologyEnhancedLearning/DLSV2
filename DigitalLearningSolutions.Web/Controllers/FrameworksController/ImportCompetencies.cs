@@ -199,9 +199,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 data.CustomAssessmentQuestionID = null;
             }
-            if (data.CompetenciesToUpdateCount > 0 && data.DefaultQuestionIDs.Count + (data.CustomAssessmentQuestionID != null ? 1 : 0) > 0)
+            if (data.CompetenciesToUpdateCount > 0 && (data.DefaultQuestionIDs.Count + (data.CustomAssessmentQuestionID != null ? 1 : 0) > 0))
             {
-                data.AddAssessmentQuestionsOption = 2;
                 setBulkUploadData(data);
                 return RedirectToAction("AddQuestionsToWhichCompetencies", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
             }
@@ -216,7 +215,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddQuestionsToWhichCompetencies()
         {
             var data = GetBulkUploadData();
-            if (data.DefaultQuestionIDs != null && data.CustomAssessmentQuestionID == null)
+            if (data.DefaultQuestionIDs.Count == 0 && data.CustomAssessmentQuestionID == null)
             {
                 return RedirectToAction("ImportSummary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
             }
