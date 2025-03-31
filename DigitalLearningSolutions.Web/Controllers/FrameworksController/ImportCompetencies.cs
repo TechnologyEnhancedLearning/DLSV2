@@ -180,15 +180,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddAssessmentQuestions(AddAssessmentQuestionsFormData model)
         {
             var data = GetBulkUploadData();
-            data.AddDefaultAssessmentQuestions = model.AddDefaultAssessmentQuestions;
+
             if (model.AddDefaultAssessmentQuestions)
             {
-                data.DefaultQuestionIDs = model.DefaultAssessmentQuestionIDs;
+                data.DefaultQuestionIDs = model.DefaultAssessmentQuestionIDs ?? [];
             }
             else
             {
                 data.DefaultQuestionIDs = [];
             }
+            data.AddDefaultAssessmentQuestions = (data.DefaultQuestionIDs.Count > 0 && model.AddDefaultAssessmentQuestions);
             data.AddCustomAssessmentQuestion = model.AddCustomAssessmentQuestion;
             if (model.AddCustomAssessmentQuestion)
             {
@@ -198,7 +199,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 data.CustomAssessmentQuestionID = null;
             }
-            if (data.CompetenciesToUpdateCount > 0)
+            if (data.CompetenciesToUpdateCount > 0 && data.DefaultQuestionIDs.Count + (data.CustomAssessmentQuestionID != null ? 1 : 0) > 0)
             {
                 data.AddAssessmentQuestionsOption = 2;
                 setBulkUploadData(data);
@@ -215,7 +216,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddQuestionsToWhichCompetencies()
         {
             var data = GetBulkUploadData();
-            if (data.DefaultQuestionIDs.Count == 0 && data.CustomAssessmentQuestionID == null)
+            if (data.DefaultQuestionIDs != null && data.CustomAssessmentQuestionID == null)
             {
                 return RedirectToAction("ImportSummary", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
             }
