@@ -132,7 +132,7 @@
 
         int InsertCompetency(string name, string? description, int adminId);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false, bool addDefaultQuestions = true);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
 
@@ -644,7 +644,8 @@
             int? frameworkCompetencyGroupID,
             int adminId,
             int frameworkId,
-            bool alwaysShowDescription = false
+            bool alwaysShowDescription = false,
+            bool addDefaultQuestions = true
         )
         {
             if ((competencyId < 1) | (adminId < 1) | (frameworkId < 1))
@@ -706,8 +707,10 @@
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
-
-            AddDefaultQuestionsToCompetency(competencyId, frameworkId);
+            if(addDefaultQuestions)
+            {
+                AddDefaultQuestionsToCompetency(competencyId, frameworkId);
+            }
             return existingId;
         }
 

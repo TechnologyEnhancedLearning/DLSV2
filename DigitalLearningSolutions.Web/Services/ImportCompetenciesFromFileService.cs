@@ -214,7 +214,7 @@ namespace DigitalLearningSolutions.Web.Services
                 newCompetencyId = frameworkService.InsertCompetency(competencyRow.Competency, competencyRow.CompetencyDescription, adminId);
                 if (newCompetencyId > 0)
                 {
-                    newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminId, frameworkId, competencyRow.AlwaysShowDescription ?? false); //including always show desc flag
+                    newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminId, frameworkId, competencyRow.AlwaysShowDescription ?? false, false); //including always show desc flag
                     if (newFrameworkCompetencyId > maxFrameworkCompetencyId)
                     {
                         competencyRow.RowStatus = (competencyRow.RowStatus == RowStatus.CompetencyGroupInserted ? RowStatus.CompetencyGroupAndCompetencyInserted : RowStatus.CompetencyInserted);

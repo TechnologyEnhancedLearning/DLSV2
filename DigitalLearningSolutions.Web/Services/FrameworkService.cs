@@ -120,7 +120,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId = null);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false, bool addDefaultQuestions = true);
 
         IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
 
@@ -604,9 +604,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.InsertCompetencyGroup(groupName, groupDescription, adminId, frameworkId);
         }
 
-        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false)
+        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false, bool addDefaultQuestions = true)
         {
-            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId, alwaysShowDescription);
+            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId, alwaysShowDescription, addDefaultQuestions);
         }
 
         public int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId)
