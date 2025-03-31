@@ -211,10 +211,10 @@ namespace DigitalLearningSolutions.Web.Services
             else
             {
                 //Check if competency already exists in framework competency group and add if not
-                newCompetencyId = frameworkService.InsertCompetency(competencyRow.Competency, competencyRow.CompetencyDescription, adminId);
+                newCompetencyId = frameworkService.InsertCompetency(competencyRow.Competency, competencyRow.CompetencyDescription, adminId, competencyRow.AlwaysShowDescription ?? false);
                 if (newCompetencyId > 0)
                 {
-                    newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminId, frameworkId, competencyRow.AlwaysShowDescription ?? false, false); //including always show desc flag
+                    newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminId, frameworkId, false);
                     if (newFrameworkCompetencyId > maxFrameworkCompetencyId)
                     {
                         competencyRow.RowStatus = (competencyRow.RowStatus == RowStatus.CompetencyGroupInserted ? RowStatus.CompetencyGroupAndCompetencyInserted : RowStatus.CompetencyInserted);
