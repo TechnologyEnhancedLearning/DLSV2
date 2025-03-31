@@ -5,6 +5,7 @@ using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Data.Models.Frameworks.Import;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using System.Collections.Generic;
+using DigitalLearningSolutions.Web.Helpers;
 using AssessmentQuestion = DigitalLearningSolutions.Data.Models.Frameworks.AssessmentQuestion;
 using CompetencyResourceAssessmentQuestionParameter =
     DigitalLearningSolutions.Data.Models.Frameworks.CompetencyResourceAssessmentQuestionParameter;
@@ -516,7 +517,12 @@ namespace DigitalLearningSolutions.Web.Services
 
         public DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId)
         {
-            return frameworkDataService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var detailFramework = frameworkDataService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            if (StringHelper.StripHtmlTags(detailFramework.Description) == string.Empty)
+            {
+                detailFramework.Description = string.Empty;
+            }
+            return detailFramework;
         }
 
         public FrameworkReview? GetFrameworkReview(int frameworkId, int adminId, int reviewId)
