@@ -181,15 +181,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddAssessmentQuestions(AddAssessmentQuestionsFormData model)
         {
             var data = GetBulkUploadData();
-            data.AddDefaultAssessmentQuestions = model.AddDefaultAssessmentQuestions;
+
             if (model.AddDefaultAssessmentQuestions)
             {
-                data.DefaultQuestionIDs = model.DefaultAssessmentQuestionIDs;
+                data.DefaultQuestionIDs = model.DefaultAssessmentQuestionIDs ?? [];
             }
             else
             {
                 data.DefaultQuestionIDs = [];
             }
+            data.AddDefaultAssessmentQuestions = (data.DefaultQuestionIDs.Count > 0 && model.AddDefaultAssessmentQuestions);
             data.AddCustomAssessmentQuestion = model.AddCustomAssessmentQuestion;
             if (model.AddCustomAssessmentQuestion)
             {
@@ -199,9 +200,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 data.CustomAssessmentQuestionID = null;
             }
-            if (data.CompetenciesToUpdateCount > 0)
+            if (data.CompetenciesToUpdateCount > 0 && (data.DefaultQuestionIDs.Count + (data.CustomAssessmentQuestionID != null ? 1 : 0) > 0))
             {
-                data.AddAssessmentQuestionsOption = 2;
                 setBulkUploadData(data);
                 return RedirectToAction("AddQuestionsToWhichCompetencies", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
             }
@@ -261,11 +261,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var workbook = new XLWorkbook(filePath);
             var results = importCompetenciesFromFileService.ProcessCompetenciesFromFile(workbook, adminId, data.FrameworkId, data.FrameworkVocubulary, data.ReorderCompetenciesOption, data.AddAssessmentQuestionsOption, data.AddCustomAssessmentQuestion ? (int)data.CustomAssessmentQuestionID : 0, data.AddDefaultAssessmentQuestions ? data.DefaultQuestionIDs : []);
             data.ImportCompetenciesResult = results;
-            //TO DO apply ordering changes if required:
-            if (data.ReorderCompetenciesOption == 2 && data.CompetenciesToReorderCount > 0)
-            {
-
-            }
             setBulkUploadData(data);
             return RedirectToAction("UploadResults", "Frameworks", new { frameworkId = data.FrameworkId, tabname = data.TabName });
         }
