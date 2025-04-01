@@ -7,11 +7,11 @@
             @{
                 if (currentPath.Contains("/LearningPortal/Current") || currentPath.Contains("/LearningPortal/Completed") || currentPath.Contains("/LearningPortal/Available"))
                 {
-                    <h2 class="nhsuk-u-visually-hidden">Centre Information</h2>
+                    <h2 class="nhsuk-heading-xs nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color">Need help?</h2>
                     <div class="nhsuk-footer">
                         <ul class="nhsuk-footer__list">
                             <li class="nhsuk-footer__list-item">
-                                <span>Centre contact information:</span> <span>@ViewData["BannerText"]</span>
+                                <span class="nhsuk-u-font-size-16 nhsuk-u-secondary-text-color">Centre contact information:</span> <span>@ViewData["BannerText"]</span>
                             </li>
                         </ul>
                     </div>
