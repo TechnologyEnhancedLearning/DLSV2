@@ -130,9 +130,9 @@
 
         IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
 
-        int InsertCompetency(string name, string? description, int adminId);
+        int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool addDefaultQuestions = true);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
 
@@ -618,7 +618,7 @@
             return existingId;
         }
 
-        public int InsertCompetency(string name, string? description, int adminId)
+        public int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false)
         {
             if ((name.Length == 0) | (adminId < 1))
             {
@@ -630,10 +630,10 @@
             description = (description?.Trim() == "" ? null : description);
 
             var existingId = connection.QuerySingle<int>(
-                @"INSERT INTO Competencies ([Name], [Description], UpdatedByAdminID)
+                @"INSERT INTO Competencies ([Name], [Description], UpdatedByAdminID, AlwaysShowDescription)
                     OUTPUT INSERTED.Id
-                    VALUES (@name, @description, @adminId)",
-                new { name, description, adminId }
+                    VALUES (@name, @description, @adminId, @alwaysShowDescription)",
+                new { name, description, adminId, alwaysShowDescription }
             );
 
             return existingId;
@@ -644,7 +644,7 @@
             int? frameworkCompetencyGroupID,
             int adminId,
             int frameworkId,
-            bool alwaysShowDescription = false
+            bool addDefaultQuestions = true
         )
         {
             if ((competencyId < 1) | (adminId < 1) | (frameworkId < 1))
@@ -706,8 +706,10 @@
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
-
-            AddDefaultQuestionsToCompetency(competencyId, frameworkId);
+            if(addDefaultQuestions)
+            {
+                AddDefaultQuestionsToCompetency(competencyId, frameworkId);
+            }
             return existingId;
         }
 

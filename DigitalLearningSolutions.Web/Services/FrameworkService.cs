@@ -5,6 +5,7 @@ using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Data.Models.Frameworks.Import;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using System.Collections.Generic;
+using DigitalLearningSolutions.Web.Helpers;
 using AssessmentQuestion = DigitalLearningSolutions.Data.Models.Frameworks.AssessmentQuestion;
 using CompetencyResourceAssessmentQuestionParameter =
     DigitalLearningSolutions.Data.Models.Frameworks.CompetencyResourceAssessmentQuestionParameter;
@@ -120,11 +121,11 @@ namespace DigitalLearningSolutions.Web.Services
 
         int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId = null);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool addDefaultQuestions = true);
 
         IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
 
-        int InsertCompetency(string name, string? description, int adminId);
+        int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false);
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
@@ -516,7 +517,12 @@ namespace DigitalLearningSolutions.Web.Services
 
         public DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId)
         {
-            return frameworkDataService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var detailFramework = frameworkDataService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            if (StringHelper.StripHtmlTags(detailFramework.Description) == string.Empty)
+            {
+                detailFramework.Description = string.Empty;
+            }
+            return detailFramework;
         }
 
         public FrameworkReview? GetFrameworkReview(int frameworkId, int adminId, int reviewId)
@@ -594,9 +600,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.InsertComment(frameworkId, adminId, comment, replyToCommentId);
         }
 
-        public int InsertCompetency(string name, string? description, int adminId)
+        public int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false)
         {
-            return frameworkDataService.InsertCompetency(name, description, adminId);
+            return frameworkDataService.InsertCompetency(name, description, adminId, alwaysShowDescription);
         }
 
         public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId)
@@ -604,9 +610,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.InsertCompetencyGroup(groupName, groupDescription, adminId, frameworkId);
         }
 
-        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false)
+        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool addDefaultQuestions = true)
         {
-            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId, alwaysShowDescription);
+            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId, addDefaultQuestions);
         }
 
         public int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId)
