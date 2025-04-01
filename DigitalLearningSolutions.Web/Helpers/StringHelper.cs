@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System;
+    using System.Text.RegularExpressions;
     using DigitalLearningSolutions.Data.Extensions;
     using Microsoft.Extensions.Configuration;
 
@@ -15,6 +16,18 @@
         {
             var applicationPath = new Uri(config.GetAppRootPath()).AbsolutePath.TrimEnd('/');
             return applicationPath + basicUrl;
+        }
+        public static string StripHtmlTags(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return string.Empty;
+            }
+
+            // Remove HTML tags
+            string result = Regex.Replace(input, "<.*?>", string.Empty).Trim();
+
+            return string.IsNullOrEmpty(result) ? string.Empty : result;
         }
     }
 }
