@@ -16,14 +16,14 @@
 
                 <div class="nhsuk-grid-column-three-quarters">
                     <div class="nhsuk-grid-row">
-                      <div class="nhsuk-grid-column-one-half">
-                        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
-                      </div>
-                      <div class="nhsuk-grid-column-one-half">
-                      </div>
+                        <div class="nhsuk-grid-column-one-half">
+                            <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+                        </div>
+                        <div class="nhsuk-grid-column-one-half">
+                        </div>
                     </div>
                     <form class="nhsuk-u-margin-bottom-3" method="get" role="search" asp-controller="Delegates" asp-action="Index" asp-route-page="@Model.Page">
-                      <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
+                        <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
                         <div class="nhsuk-grid-row">
                             <div id="search">
                                 <div class="nhsuk-grid-column-one-quarter">
@@ -55,24 +55,26 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="nhsuk-grid-row">
                             <div class="filter-container nhsuk-u-margin-top-5">
-                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-3">
+                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-4">
                                     <vc:select-list asp-for="@nameof(Model.AccountStatus)"
                                                     label="Account status"
                                                     value="@Model.AccountStatus"
                                                     required="true"
                                                     hint-text=""
-                                                    css-class="nhsuk-grid-column-full nhsuk-u-width-full"
+                                                    css-class=""
                                                     default-option=""
                                                     select-list-options="@ViewBag.AccountStatus" />
                                 </div>
-                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-3">
+                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-4">
                                     <vc:select-list asp-for="@nameof(Model.LHLinkStatus)"
                                                     label="LH link status"
                                                     value="@Model.LHLinkStatus"
                                                     required="true"
                                                     hint-text=""
-                                                    css-class="nhsuk-grid-column-full nhsuk-u-width-full"
+                                                    css-class=""
                                                     default-option=""
                                                     select-list-options="@ViewBag.LHLinkStatus" />
                                 </div>
@@ -82,7 +84,7 @@
                                                     value="@Model.CentreID.ToString()"
                                                     hint-text=""
                                                     required="true"
-                                                    css-class="nhsuk-grid-column-full  nhsuk-u-width-full"
+                                                    css-class=""
                                                     default-option=""
                                                     select-list-options="@ViewBag.Centres" />
                                 </div>
@@ -91,26 +93,26 @@
                     </form>
                     @if (Model.NoDataFound)
                     {
-                            <p class="nhsuk-u-margin-top-4" role="alert">
-                                <b>No delegate found.</b>
-                            </p>
+                        <p class="nhsuk-u-margin-top-4" role="alert">
+                            <b>No delegate found.</b>
+                        </p>
                     }
                     else
                     {
-                            <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
-                            <partial name="SearchablePage/_TopPagination" model="Model" />
-                            <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
-                            <div id="searchable-elements">
+                        <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+                        <partial name="SearchablePage/_TopPagination" model="Model" />
+                        <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
+                        <div id="searchable-elements">
                             @foreach (var delegates in Model.Delegates)
                             {
                                 <partial name="_SearchableDelegatesCard" model="delegates" />
                             }
-                            </div>
-                            <partial name="SearchablePage/_BottomPagination" model="Model" />                        
+                        </div>
+                        <partial name="SearchablePage/_BottomPagination" model="Model" />
                     }
                 </div>
                 <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
-                    <partial name="~/Views/SuperAdmin/Shared/_UserAccountsSideNavMenu.cshtml"model="Model.CurrentPage" />
+                    <partial name="~/Views/SuperAdmin/Shared/_UserAccountsSideNavMenu.cshtml" model="Model.CurrentPage" />
                 </nav>
             </div>
         </div>
