@@ -285,20 +285,23 @@ namespace DigitalLearningSolutions.Web.Services
             // Reorder competencies if required:
             if (reorderCompetenciesOption == 2)
             {
-                var frameworkCompetencyId = (int)competencyRow.ID;
-                var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
-                var placesToMove = Math.Abs(frameworkCompetency.Ordering - competencyRow.CompetencyOrderNumber);
-
-                if (placesToMove > 0)
+                var frameworkCompetencyId = competencyRow.ID ?? 0;
+                if (frameworkCompetencyId > 0)
                 {
-                    var direction = frameworkCompetency.Ordering > competencyRow.CompetencyOrderNumber ? "UP" : "DOWN";
+                    var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
+                    var placesToMove = Math.Abs(frameworkCompetency.Ordering - competencyRow.CompetencyOrderNumber);
 
-                    for (int i = 0; i < placesToMove; i++)
+                    if (placesToMove > 0)
                     {
-                        frameworkService.MoveFrameworkCompetency(frameworkCompetencyId, true, direction);
-                    }
+                        var direction = frameworkCompetency.Ordering > competencyRow.CompetencyOrderNumber ? "UP" : "DOWN";
 
-                    competencyRow.Reordered = true;
+                        for (int i = 0; i < placesToMove; i++)
+                        {
+                            frameworkService.MoveFrameworkCompetency(frameworkCompetencyId, true, direction);
+                        }
+
+                        competencyRow.Reordered = true;
+                    }
                 }
             }
 
