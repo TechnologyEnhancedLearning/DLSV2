@@ -36,14 +36,21 @@ namespace DigitalLearningSolutions.Web.Services
             var competencyRows = table.Rows().Skip(1).Select(row => new CompetencyTableRow(table, row)).ToList();
             var newCompetencyIds = competencyRows.Select(row => row.ID ?? 0).ToList();
             var existingIds = frameworkService.GetFrameworkCompetencyOrder(frameworkId, newCompetencyIds);
+            var existingGroups = frameworkService
+                .GetFrameworkCompetencyGroups(frameworkId)
+                .Select(row => row.Name)
+                .Distinct()
+                .ToList();
+            var newGroups = competencyRows.Select(row => row.CompetencyGroup ?? "").ToList();
             foreach (var competencyRow in competencyRows)
             {
-                PreProcessCompetencyRow(competencyRow, newCompetencyIds, existingIds);
+                PreProcessCompetencyRow(competencyRow, newCompetencyIds, existingIds, existingGroups, newGroups);
             }
             return new ImportCompetenciesResult(competencyRows);
         }
-        private void PreProcessCompetencyRow(CompetencyTableRow competencyRow, List<int> newIds, List<int> existingIds)
+        private void PreProcessCompetencyRow(CompetencyTableRow competencyRow, List<int> newIds, List<int> existingIds, List<string> existingGroups, List<string> newGroups)
         {
+
             if (competencyRow.ID == null)
             {
                 competencyRow.RowStatus = RowStatus.CompetencyInserted;
@@ -63,6 +70,16 @@ namespace DigitalLearningSolutions.Web.Services
                     if (originalIndex != newIndex)
                     {
                         competencyRow.Reordered = true;
+                    }
+                    else
+                    {
+                        var groupName = (string)(competencyRow?.CompetencyGroup);
+                        originalIndex = existingGroups.IndexOf(groupName);
+                        newIndex = newGroups.IndexOf(groupName);
+                        if (originalIndex != newIndex)
+                        {
+                            competencyRow.Reordered = true;
+                        }
                     }
                 }
             }
@@ -124,10 +141,10 @@ namespace DigitalLearningSolutions.Web.Services
             if (reorderCompetenciesOption == 2)
             {
                 var distinctCompetencyGroups = competenciesRows
-                    .Where(row => !string.IsNullOrWhiteSpace(row.CompetencyGroup))
-                    .Select(row => row.CompetencyGroup)
-                    .Distinct()
-                    .ToList();
+                .Where(row => !string.IsNullOrWhiteSpace(row.CompetencyGroup))
+                .Select(row => row.CompetencyGroup)
+                .Distinct()
+                .ToList();
                 for (int i = 0; i < competencyGroupCount; i++)
                 {
                     var existingGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).Select(row => new { row.ID, row.Name })
@@ -177,6 +194,7 @@ namespace DigitalLearningSolutions.Web.Services
                 if (newCompetencyGroupId > 0)
                 {
                     frameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);
+                    frameworkService.UpdateFrameworkCompetencyFrameworkCompetencyGroup(competencyRow.ID, (int)frameworkCompetencyGroupId, adminId);
                     if (frameworkCompetencyGroupId > maxFrameworkCompetencyGroupId)
                     {
                         maxFrameworkCompetencyGroupId = (int)frameworkCompetencyGroupId;
@@ -185,6 +203,7 @@ namespace DigitalLearningSolutions.Web.Services
                     else
                     {
                         frameworkCompetencyGroupId = frameworkService.GetFrameworkCompetencyGroupId(frameworkId, newCompetencyGroupId);
+
                         var isUpdated = frameworkService.UpdateFrameworkCompetencyGroup((int)frameworkCompetencyGroupId, newCompetencyGroupId, competencyRow.CompetencyGroup, competencyRow.GroupDescription, adminId);
                         competencyRow.RowStatus = RowStatus.CompetencyGroupUpdated;
                     }

@@ -261,6 +261,7 @@ namespace DigitalLearningSolutions.Web.Services
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
 
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
+        void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -728,6 +729,11 @@ namespace DigitalLearningSolutions.Web.Services
         public int GetFrameworkCompetencyGroupId(int frameworkId, int competencyGroupId)
         {
             return frameworkDataService.GetFrameworkCompetencyGroupId(frameworkId, competencyGroupId);
+        }
+
+        public void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId)
+        {
+            frameworkDataService.UpdateFrameworkCompetencyFrameworkCompetencyGroup(competencyGroupId, frameworkCompetencyGroupId, adminId);
         }
     }
 }
