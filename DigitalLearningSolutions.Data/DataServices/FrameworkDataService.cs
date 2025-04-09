@@ -266,6 +266,7 @@
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
 
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
+        void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
     }
 
     public class FrameworkDataService : IFrameworkDataService
@@ -2459,6 +2460,23 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                  WHERE FrameworkID = @frameworkId AND CompetencyGroupID = @competencyGroupId",
                                 new { frameworkId, competencyGroupId }
                                 ).Single();
+        }
+
+        public void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE FrameworkCompetencies
+                    SET FrameworkCompetencyGroupId = @frameworkCompetencyGroupId, UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyGroupId AND FrameworkCompetencyGroupId <> @frameworkCompetencyGroupId",
+                new { frameworkCompetencyGroupId, competencyGroupId, adminId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating framework competencies framework competency group id as db update failed. " +
+                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}."
+                );
+            }
         }
     }
 }
