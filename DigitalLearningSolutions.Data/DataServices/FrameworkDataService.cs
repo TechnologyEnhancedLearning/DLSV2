@@ -277,13 +277,22 @@
             OwnerAdminID,
             (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers WHERE (AdminID = FW.OwnerAdminID)) AS Owner,
             BrandID,
-            CategoryID,
+            FW.CategoryID,
             TopicID,
             CreatedDate,
             PublishStatusID,
             UpdatedByAdminID,
             (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers AS AdminUsers_1 WHERE (AdminID = FW.UpdatedByAdminID)) AS UpdatedBy,
-            CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
+            CASE
+                WHEN (aa.UserID = (SELECT UserID FROM AdminAccounts WHERE ID = @adminId)) THEN 3
+                WHEN (fwc.CanModify = 1) OR
+                    (SELECT COUNT(*) 
+				        FROM FrameworkCollaborators fc
+				        JOIN AdminAccounts aa1 ON fc.AdminID = aa1.ID
+				        WHERE fc.FrameworkID = fw.ID
+				        AND fc.CanModify = 1 AND fc.IsDeleted = 0
+				        AND aa1.UserID = (SELECT aa2.UserID FROM AdminAccounts aa2 WHERE aa2.ID = 12842)) > 0 THEN 2
+                WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
             fwr.ID AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
@@ -304,9 +313,9 @@
         private const string FlagFields = @"fl.ID AS FlagId, fl.FrameworkId, fl.FlagName, fl.FlagGroup, fl.FlagTagClass";
 
         private const string FrameworkTables =
-            @"Frameworks AS FW LEFT OUTER JOIN
-             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(IsDeleted, 0) = 0
-            LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
+            @"Frameworks AS FW INNER JOIN AdminAccounts AS aa ON aa.ID = fw.OwnerAdminID
+                LEFT OUTER JOIN FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(IsDeleted, 0) = 0
+                LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
 
         private const string AssessmentQuestionFields =
             @"SELECT AQ.ID, AQ.Question, AQ.MinValue, AQ.MaxValue, AQ.AssessmentQuestionInputTypeID, AQI.InputTypeName, AQ.AddedByAdminId, CASE WHEN AQ.AddedByAdminId = @adminId THEN 1 ELSE 0 END AS UserIsOwner, AQ.CommentsPrompt, AQ.CommentsHint";
@@ -707,7 +716,7 @@
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
-            if(addDefaultQuestions)
+            if (addDefaultQuestions)
             {
                 AddDefaultQuestionsToCompetency(competencyId, frameworkId);
             }
