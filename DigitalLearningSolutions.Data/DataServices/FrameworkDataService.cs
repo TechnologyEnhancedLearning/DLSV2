@@ -130,9 +130,9 @@
 
         IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
 
-        int InsertCompetency(string name, string? description, int adminId);
+        int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool addDefaultQuestions = true);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
 
@@ -266,6 +266,7 @@
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
 
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
+        void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
     }
 
     public class FrameworkDataService : IFrameworkDataService
@@ -618,7 +619,7 @@
             return existingId;
         }
 
-        public int InsertCompetency(string name, string? description, int adminId)
+        public int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false)
         {
             if ((name.Length == 0) | (adminId < 1))
             {
@@ -630,10 +631,10 @@
             description = (description?.Trim() == "" ? null : description);
 
             var existingId = connection.QuerySingle<int>(
-                @"INSERT INTO Competencies ([Name], [Description], UpdatedByAdminID)
+                @"INSERT INTO Competencies ([Name], [Description], UpdatedByAdminID, AlwaysShowDescription)
                     OUTPUT INSERTED.Id
-                    VALUES (@name, @description, @adminId)",
-                new { name, description, adminId }
+                    VALUES (@name, @description, @adminId, @alwaysShowDescription)",
+                new { name, description, adminId, alwaysShowDescription }
             );
 
             return existingId;
@@ -644,7 +645,7 @@
             int? frameworkCompetencyGroupID,
             int adminId,
             int frameworkId,
-            bool alwaysShowDescription = false
+            bool addDefaultQuestions = true
         )
         {
             if ((competencyId < 1) | (adminId < 1) | (frameworkId < 1))
@@ -706,8 +707,10 @@
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
-
-            AddDefaultQuestionsToCompetency(competencyId, frameworkId);
+            if(addDefaultQuestions)
+            {
+                AddDefaultQuestionsToCompetency(competencyId, frameworkId);
+            }
             return existingId;
         }
 
@@ -2108,7 +2111,7 @@ WHERE (ID = @commentId)",
                         AU1.Email AS OwnerEmail,
                         FW.FrameworkName
                     FROM FrameworkReviews AS FR
-                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID  AND FWC.IsDeleted = 0
+                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID  AND FC.IsDeleted = 0
                     INNER JOIN AdminUsers AS AU ON FC.AdminID = AU.AdminID
                     INNER JOIN Frameworks AS FW ON FR.FrameworkID = FW.ID
                     INNER JOIN AdminUsers AS AU1 ON FW.OwnerAdminID = AU1.AdminID
@@ -2457,6 +2460,23 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                  WHERE FrameworkID = @frameworkId AND CompetencyGroupID = @competencyGroupId",
                                 new { frameworkId, competencyGroupId }
                                 ).Single();
+        }
+
+        public void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE FrameworkCompetencies
+                    SET FrameworkCompetencyGroupId = @frameworkCompetencyGroupId, UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyGroupId AND FrameworkCompetencyGroupId <> @frameworkCompetencyGroupId",
+                new { frameworkCompetencyGroupId, competencyGroupId, adminId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating framework competencies framework competency group id as db update failed. " +
+                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}."
+                );
+            }
         }
     }
 }
