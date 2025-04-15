@@ -4,7 +4,7 @@
     public class SelectFrameworkSourcesFormData
     {
         [Required]
-        public int[] SelectedFrameworkIds { get; set; }
+        public int FrameworkId { get; set; }
         public int CompetencyAssessmentId { get; set; }
     }
 }
