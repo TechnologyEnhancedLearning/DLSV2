@@ -37,7 +37,7 @@
                 <li>@Model.CompetencyGroupsInsertedCount new @(Model.CompetencyGroupsInsertedCount == 1 ? $"{Model.FrameworkVocabularySingular.ToLower()} group" : $"{Model.FrameworkVocabularySingular.ToLower()} groups") inserted</li>
                 <li>@Model.CompetenciesInsertedCount new @(Model.CompetenciesInsertedCount == 1 ? Model.FrameworkVocabularySingular.ToLower() : Model.FrameworkVocabularyPlural.ToLower()) inserted</li>
                 <li>@Model.CompetenciesUpdatedCount existing @(Model.CompetenciesUpdatedCount == 1 ? Model.FrameworkVocabularySingular.ToLower() : Model.FrameworkVocabularyPlural.ToLower()) updated</li>
-                <li>@(Model.CompetenciesReorderedCount == 0 ? "No existing " + Model.FrameworkVocabularyPlural.ToLower() : Model.CompetenciesReorderedCount == 1 ? "An existing " + Model.FrameworkVocabularySingular.ToLower() : "Some existing " + Model.FrameworkVocabularyPlural.ToLower())) reordered</li>
+                <li>@(Model.CompetenciesReorderedCount == 0 ? "No existing " + Model.FrameworkVocabularyPlural.ToLower() : Model.CompetenciesReorderedCount == 1 ? "An existing " + Model.FrameworkVocabularySingular.ToLower() : "Some existing " + Model.FrameworkVocabularyPlural.ToLower()) reordered</li>
                 <li>@Model.SkippedCount rows @(Model.SkippedCount == 1 ? "line" : "lines") skipped (nothing inserted or updated but no errors)</li>
                 <li>@Model.ErrorCount @(Model.ErrorCount == 1 ? "line" : "lines") skipped due to errors</li>
             </ul>
