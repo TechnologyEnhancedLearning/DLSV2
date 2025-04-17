@@ -41,7 +41,7 @@ namespace DigitalLearningSolutions.Web.Services
                 .Select(row => row.Name)
                 .Distinct()
                 .ToList();
-            var newGroups = competencyRows.Select(row => row.CompetencyGroup ?? "").ToList();
+            var newGroups = competencyRows.Select(row => row.CompetencyGroup ?? "").Distinct().ToList();
             foreach (var competencyRow in competencyRows)
             {
                 PreProcessCompetencyRow(competencyRow, newCompetencyIds, existingIds, existingGroups, newGroups);
