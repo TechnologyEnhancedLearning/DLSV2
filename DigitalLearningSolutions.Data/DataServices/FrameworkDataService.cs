@@ -2444,7 +2444,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                          CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID
                     WHERE (fc.FrameworkID = @frameworkId)
                     GROUP BY fc.ID, c.ID, cg.Name, cg.Description, c.Name, c.Description, c.AlwaysShowDescription, fcg.Ordering, fc.Ordering
-                    ORDER BY COALESCE(fcg.Ordering,99999), fc.Ordering",
+                    ORDER BY COALESCE(fcg.Ordering,99999), fc.Ordering, fc.ID",
                                 new { frameworkId }
                             );
             }
@@ -2457,7 +2457,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     FROM   FrameworkCompetencies AS fc LEFT JOIN
                                  FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID
                     WHERE (fc.FrameworkID = @frameworkId) AND (fc.ID IN @frameworkCompetencyIds)
-                    ORDER BY COALESCE(fcg.Ordering,99999), fc.Ordering",
+                    ORDER BY COALESCE(fcg.Ordering,99999), fc.Ordering, fc.ID",
                                 new { frameworkId, frameworkCompetencyIds }
                             ).ToList();
         }
