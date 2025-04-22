@@ -74,11 +74,14 @@ namespace DigitalLearningSolutions.Web.Services
                     else
                     {
                         var groupName = (string)(competencyRow?.CompetencyGroup);
-                        originalIndex = existingGroups.IndexOf(groupName);
-                        newIndex = newGroups.IndexOf(groupName);
-                        if (originalIndex != newIndex)
+                        if (!string.IsNullOrWhiteSpace(groupName))
                         {
-                            competencyRow.Reordered = true;
+                            originalIndex = existingGroups.IndexOf(groupName);
+                            newIndex = newGroups.IndexOf(groupName);
+                            if (originalIndex != newIndex)
+                            {
+                                competencyRow.Reordered = true;
+                            }
                         }
                     }
                 }

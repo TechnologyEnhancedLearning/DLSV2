@@ -26,8 +26,8 @@
 
             // Remove HTML tags
             string result = Regex.Replace(input, "<.*?>", string.Empty).Trim();
-
-            return string.IsNullOrEmpty(result) ? string.Empty : result;
+            result = System.Net.WebUtility.HtmlDecode(result);
+            return string.IsNullOrEmpty(result.Trim()) ? string.Empty : result;
         }
     }
 }
