@@ -81,6 +81,8 @@
         public IActionResult SubmitFrameworkReview(int frameworkId, int reviewId, string? comment, bool signedOff)
         {
             var adminId = GetAdminId();
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if (framework.FrameworkReviewID == 0 || framework.FrameworkReviewID == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             int? commentId = null;
             if (!string.IsNullOrWhiteSpace(comment)) commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             frameworkService.SubmitFrameworkReview(frameworkId, reviewId, signedOff, commentId);
