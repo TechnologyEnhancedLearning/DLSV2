@@ -41,7 +41,7 @@ namespace DigitalLearningSolutions.Web.Services
                 .Select(row => row.Name)
                 .Distinct()
                 .ToList();
-            var newGroups = competencyRows.Select(row => row.CompetencyGroup ?? "").ToList();
+            var newGroups = competencyRows.Select(row => row.CompetencyGroup ?? "").Distinct().ToList();
             foreach (var competencyRow in competencyRows)
             {
                 PreProcessCompetencyRow(competencyRow, newCompetencyIds, existingIds, existingGroups, newGroups);
@@ -74,11 +74,14 @@ namespace DigitalLearningSolutions.Web.Services
                     else
                     {
                         var groupName = (string)(competencyRow?.CompetencyGroup);
-                        originalIndex = existingGroups.IndexOf(groupName);
-                        newIndex = newGroups.IndexOf(groupName);
-                        if (originalIndex != newIndex)
+                        if (!string.IsNullOrWhiteSpace(groupName))
                         {
-                            competencyRow.Reordered = true;
+                            originalIndex = existingGroups.IndexOf(groupName);
+                            newIndex = newGroups.IndexOf(groupName);
+                            if (originalIndex != newIndex)
+                            {
+                                competencyRow.Reordered = true;
+                            }
                         }
                     }
                 }
