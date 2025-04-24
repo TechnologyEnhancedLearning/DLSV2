@@ -680,9 +680,11 @@
             var numberOfAffectedRows = connection.Execute(
                 @"INSERT INTO FrameworkCompetencies ([CompetencyID], FrameworkCompetencyGroupID, UpdatedByAdminID, Ordering, FrameworkID)
                     VALUES (@competencyId, @frameworkCompetencyGroupID, @adminId, COALESCE
-                             ((SELECT        MAX(Ordering) AS OrderNum
-                                 FROM            [FrameworkCompetencies]
-                                 WHERE        ([FrameworkCompetencyGroupID] = @frameworkCompetencyGroupID)), 0)+1, @frameworkId)",
+                             ((SELECT MAX(Ordering) AS OrderNum
+                                 FROM [FrameworkCompetencies]
+                                 WHERE ((@frameworkCompetencyGroupID IS NULL AND FrameworkCompetencyGroupID IS NULL) OR
+                                         (@frameworkCompetencyGroupID IS NOT NULL AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID)) AND
+	                                       FrameworkID = @frameworkId ), 0)+1, @frameworkId)",
                 new { competencyId, frameworkCompetencyGroupID, adminId, frameworkId }
             );
             if (numberOfAffectedRows < 1)
@@ -707,7 +709,7 @@
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
-            if(addDefaultQuestions)
+            if (addDefaultQuestions)
             {
                 AddDefaultQuestionsToCompetency(competencyId, frameworkId);
             }
