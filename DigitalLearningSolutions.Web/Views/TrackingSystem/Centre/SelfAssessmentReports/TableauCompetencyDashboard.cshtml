@@ -19,6 +19,7 @@
     </a>
 </div>
 <h1>@ViewData["Title"]</h1>
+<vc:inset-text css-class="" text="Use the full screen button below the Tableau dashboard (next to 'Share') for the best experience." />
 <feature name="@(FeatureFlags.TableauSelfAssessmentDashboards)">
     <tableau-viz id='tableau-viz'
                  src='@srcUrl' token='@jwtToken' toolbar='bottom'>
