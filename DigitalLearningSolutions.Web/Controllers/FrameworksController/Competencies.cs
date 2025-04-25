@@ -148,7 +148,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 ModelState.AddModelError(nameof(FrameworkCompetency.Name), "Please enter a valid competency statement (between 3 and 500 characters)");
                 var competencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, frameworkCompetency?.CompetencyID).ToList();
                 if (competencyFlags != null)
-                    competencyFlags.ForEach(f => f.Selected = selectedFlagIds.Contains(f.FlagId));
+                    competencyFlags.ForEach(f => f.Selected = selectedFlagIds != null ? selectedFlagIds.Contains(f.FlagId) : false);
                 if (detailFramework == null)
                     return StatusCode((int)HttpStatusCode.NotFound);
                 var model = new FrameworkCompetencyViewModel()
