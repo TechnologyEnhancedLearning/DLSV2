@@ -84,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
 
         [HttpPost]
-        [Route("/{dlsSubApplication}/RequestSupport/setRequestType")]
+        [Route("/{dlsSubApplication}/RequestSupport/TypeofRequest")]
         public IActionResult setRequestType(DlsSubApplication dlsSubApplication, RequestTypeViewModel RequestTypemodel, int requestType)
         {
             var requestTypes = requestSupportTicketService.GetRequestTypes();
@@ -125,7 +125,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
 
         [HttpPost]
-        [Route("/{dlsSubApplication}/RequestSupport/SetRequestSummary")]
+        [Route("/{dlsSubApplication}/RequestSupport/RequestSummary")]
         public IActionResult SetRequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel requestDetailsmodel)
         {
             var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
@@ -137,7 +137,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             // Check if RequestDescription is null or contains any default empty tags ("<p><br></p>").  
             // This ensures that when a user navigates to the submit page and returns to SetRequestSummary,  
             // removing the description completely results in an actual empty value rather than leftover HTML tags.
-            if (requestDetailsmodel.RequestDescription == "<p><br></p>")
+            if (string.IsNullOrEmpty(StringHelper.StripHtmlTags(requestDetailsmodel.RequestDescription)))
             {
                 ModelState.AddModelError("RequestDescription", "Please enter request description");
             }
@@ -246,7 +246,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
                 MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
                 TempData
-            ).GetAwaiter().GetResult(); 
+            ).GetAwaiter().GetResult();
             var model = new SupportSummaryViewModel(data);
             return View("SupportTicketSummaryPage", model);
         }
@@ -262,7 +262,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(
                 MultiPageFormDataFeature.AddCustomWebForm("RequestSupportTicketCWF"),
                 TempData
-            ).GetAwaiter().GetResult(); 
+            ).GetAwaiter().GetResult();
             data.GroupId = configuration.GetFreshdeskCreateTicketGroupId();
             data.ProductId = configuration.GetFreshdeskCreateTicketProductId();
             List<RequestAttachment> RequestAttachmentList = new List<RequestAttachment>();
@@ -354,7 +354,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
             {
                 foreach (var item in requestAttachmentmodel.RequestAttachment)
                 {
-                    totalFileSize = totalFileSize + item.SizeMb??0;
+                    totalFileSize = totalFileSize + item.SizeMb ?? 0;
                 }
             }
             foreach (var item in requestAttachmentmodel.ImageFiles)

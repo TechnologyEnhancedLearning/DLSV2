@@ -21,7 +21,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Support.RequestSupportTicket
         [Required(ErrorMessage = "Please enter request summary")]
         public string? RequestSubject { get; set; }
 
-        [Required(ErrorMessage = "Please enter request description")]
         public string? RequestDescription { get; set; }
 
         public int? RequestTypeId { get; set; }
