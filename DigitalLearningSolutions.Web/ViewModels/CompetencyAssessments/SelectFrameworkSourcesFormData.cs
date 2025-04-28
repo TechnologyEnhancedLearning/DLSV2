@@ -6,5 +6,7 @@
         [Required]
         public int FrameworkId { get; set; }
         public int CompetencyAssessmentId { get; set; }
+        public bool? TaskStatus { get; set; }
+        public string? ActionName { get; set; }
     }
 }

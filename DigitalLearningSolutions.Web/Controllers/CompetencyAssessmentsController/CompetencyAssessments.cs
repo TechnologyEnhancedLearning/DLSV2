@@ -389,8 +389,8 @@
             competencyAssessmentService.UpdateVocabularyTaskStatus(model.ID, model.TaskStatus ?? false);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/")]
-        public IActionResult SelectFrameworkSources(int competencyAssessmentId)
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{actionName}")]
+        public IActionResult SelectFrameworkSources(int competencyAssessmentId, string actionName)
         {
             var adminId = GetAdminID();
             var frameworks = frameworkService.GetAllFrameworks(adminId);
@@ -406,12 +406,12 @@
             }
             var selectedFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
-            var model = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, selectedFrameworks, competencyAssessmentTaskStatus.FrameworkLinksTaskStatus);
+            var model = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, selectedFrameworks, competencyAssessmentTaskStatus.FrameworkLinksTaskStatus, actionName);
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/")]
-        public IActionResult SelectFrameworkSources(SelectFrameworkSourcesFormData model)
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{actionName}")]
+        public IActionResult SelectFrameworkSources(SelectFrameworkSourcesFormData model, string actionName)
         {
             var adminId = GetAdminID();
             var competencyAssessmentId = model.CompetencyAssessmentId;
@@ -430,12 +430,19 @@
                     return StatusCode(403);
                 }
                 var selectedFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
-                var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
-                var viewModel = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, selectedFrameworks, competencyAssessmentTaskStatus.FrameworkLinksTaskStatus);
+                var viewModel = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, selectedFrameworks, model.TaskStatus, model.ActionName);
                 return View("SelectFrameworkSources", viewModel);
             }
-            competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId);
-            return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId });
+            if(actionName == "AddFramework")
+            {
+                competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId);
+                return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "Summary" });
+            }
+            else
+            {
+                competencyAssessmentService.UpdateFrameworkLinksTaskStatus(model.CompetencyAssessmentId, model.TaskStatus ?? false);
+                return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
+            }
         }
     }
 }

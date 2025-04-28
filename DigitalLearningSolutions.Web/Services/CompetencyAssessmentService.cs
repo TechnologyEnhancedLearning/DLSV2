@@ -34,11 +34,13 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateCompetencyAssessmentVocabulary(int assessmentId, int adminId, string vocabulary);
         bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
         int[] GetLinkedFrameworkIds(int assessmentId);
+        
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -83,7 +85,7 @@ namespace DigitalLearningSolutions.Web.Services
                 {
                     competencyAssessmentDataService.InsertSelfAssessmentFramework(adminId, assessmentId, framework.ID);
                     competencyAssessmentDataService.UpdateCompetencyAssessmentDescription(adminId, assessmentId, framework.Description);
-                    competencyAssessmentDataService.UpdateCompetencyAssessmentBranding(assessmentId, (int)framework.BrandID, (int)framework.CategoryID, adminId);
+                    competencyAssessmentDataService.UpdateCompetencyAssessmentBranding(assessmentId, adminId, (int)framework.BrandID, (int)framework.CategoryID);
                     competencyAssessmentDataService.UpdateCompetencyAssessmentVocabulary(assessmentId, adminId, framework.Vocabulary);
                 }
             }
@@ -160,6 +162,11 @@ namespace DigitalLearningSolutions.Web.Services
         public bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId)
         {
             return competencyAssessmentDataService.InsertSelfAssessmentFramework(adminId, assessmentId, frameworkId);
+        }
+
+        public bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus)
+        {
+            return competencyAssessmentDataService.UpdateFrameworkLinksTaskStatus(assessmentId, taskStatus);
         }
     }
 }

@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
-<partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
 
 @section NavBreadcrumbs {
@@ -61,24 +61,54 @@
         }
     </dl>
 }
-<form method="post">
-    <div class="nhsuk-form-group">
-        <fieldset class="nhsuk-fieldset">
-            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                <h1 class="nhsuk-fieldset__heading">Add a framework source</h1>
-            </legend>
-            <div class="nhsuk-radios">
-                @foreach(var framework in Model.Frameworks)
-                {
-                    <div class="nhsuk-radios__item">
-                        <input class="nhsuk-radios__input" type="radio" id="framework-@framework.ID" asp-for="FrameworkId" value="@framework.ID" />
-                        <label class="nhsuk-label nhsuk-radios__label" for="framework-@framework.ID">
-                            @framework.FrameworkName
-                        </label>
-                    </div>
-                }
-            </div>
-        </fieldset>
-    </div>
-    <button class="nhsuk-button" type="submit">Add</button>
-</form>
+@if (Model.ActionName == "AddFramework")
+{
+    <form method="post">
+        <div class="nhsuk-form-group">
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">Add a framework source</h1>
+                </legend>
+                <div class="nhsuk-radios">
+                    @foreach (var framework in Model.Frameworks)
+                    {
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input" type="radio" id="framework-@framework.ID" asp-for="FrameworkId" value="@framework.ID" />
+                            <label class="nhsuk-label nhsuk-radios__label" for="framework-@framework.ID">
+                                @framework.FrameworkName
+                            </label>
+                        </div>
+                    }
+                </div>
+            </fieldset>
+        </div>
+        <input type="hidden" asp-for="ActionName" />
+        <input type="hidden" asp-for="TaskStatus" />
+        <button class="nhsuk-button" type="submit">Add</button>
+    </form>
+}
+@if (Model.ActionName == "Summary")
+{
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SelectFrameworkSources" asp-route-actionName="AddFramework" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+        Add framework
+    </a>
+    <form method="post">
+        <nhs-form-group>
+            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+        </nhs-form-group>
+        <input type="hidden" asp-for="FrameworkId" value="0" />
+        <input type="hidden" asp-for="ActionName" />
+        <input type="hidden" asp-for="ID" />
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+    </form>
+}
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
+</div>

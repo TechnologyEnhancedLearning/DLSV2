@@ -8,14 +8,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
     public class SelectFrameworkSourcesViewModel : SelectFrameworkSourcesFormData
     {
         public SelectFrameworkSourcesViewModel() { }
-        public SelectFrameworkSourcesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<BrandedFramework> frameworks, int[] selectedFrameworksIds, bool? taskStatus)
+        public SelectFrameworkSourcesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<BrandedFramework> frameworks, int[] selectedFrameworksIds, bool? taskStatus, string actionName)
         {
             ID = competencyAssessmentBase.ID;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             UserRole = competencyAssessmentBase.UserRole;
             TaskStatus = taskStatus;
             Frameworks = frameworks.OrderBy(f => f.FrameworkName);
-            SelectedFrameworks = [.. frameworks.Where(f => selectedFrameworksIds.Contains(f.ID))];
+            SelectedFrameworks = [.. selectedFrameworksIds.Select(id => frameworks.First(f => f.ID == id))];
+            ActionName = actionName;
         }
         public IEnumerable<BrandedFramework> Frameworks { get; set; }
         public IEnumerable<BrandedFramework> SelectedFrameworks { get; set; }
@@ -23,7 +24,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public int ID { get; set; }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
-        public bool? TaskStatus { get; set; }
         public string? GroupName { get; set; }
         public string? SubGroupName { get; set; }
         public string? RoleName { get; set; }

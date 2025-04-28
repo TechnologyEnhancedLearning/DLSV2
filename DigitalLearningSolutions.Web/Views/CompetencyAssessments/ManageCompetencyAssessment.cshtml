@@ -57,7 +57,7 @@
     <ul class="nhsuk-task-list nhsuk-u-margin-bottom-0">
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-frameworks-status">
-                <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectFrameworkSources" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectFrameworkSources" asp-route-actionName="@(Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus == null ? "AddFramework" : "Summary" )" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
                     Select competency framework sources
                 </a>
             </div>

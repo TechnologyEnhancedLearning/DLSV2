@@ -46,6 +46,7 @@
         bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -326,12 +327,16 @@
 
         public bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId)
         {
+            bool isPrimary = Convert.ToInt32(connection.ExecuteScalar(
+                @"SELECT Count(1) FROM SelfAssessmentFrameworks
+                    WHERE SelfAssessmentId = @selfAssessmentId AND IsPrimary = 1", new { selfAssessmentId })) == 0;
+
             var numberOfAffectedRows = connection.Execute(
-                @"INSERT INTO SelfAssessmentFrameworks (SelfAssessmentId, FrameworkId, CreatedByAdminId)
-                    SELECT @selfAssessmentId, @frameworkId, @adminId
+                @"INSERT INTO SelfAssessmentFrameworks (SelfAssessmentId, FrameworkId, CreatedByAdminId, IsPrimary)
+                    SELECT @selfAssessmentId, @frameworkId, @adminId, @isPrimary
                     WHERE NOT EXISTS (SELECT 1 FROM SelfAssessmentFrameworks WHERE SelfAssessmentId = @selfAssessmentId AND FrameworkId = @frameworkId)"
             ,
-                new { adminId, selfAssessmentId, frameworkId }
+                new { adminId, selfAssessmentId, frameworkId, isPrimary }
             );
             if (numberOfAffectedRows < 1)
             {
@@ -477,9 +482,28 @@
             return [.. connection.Query<int>(
               @"SELECT FrameworkId
                     FROM   SelfAssessmentFrameworks
-                    WHERE (SelfAssessmentId = @assessmentId) AND (RemovedDate IS NULL)",
+                    WHERE (SelfAssessmentId = @assessmentId) AND (RemovedDate IS NULL)
+                    ORDER BY CAST(IsPrimary AS Int) DESC, ID",
               new { assessmentId }
           )];
+        }
+
+        public bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE SelfAssessmentTaskStatus SET FrameworkLinksTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+               new { assessmentId, taskStatus }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating FrameworkLinksTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }
