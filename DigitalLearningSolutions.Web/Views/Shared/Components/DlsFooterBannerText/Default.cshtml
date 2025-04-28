@@ -1,10 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model DlsFooterBannerTextViewModel
 @{
-    var currentApplication = ViewData["Application"]?.ToString();
-}
-@{
-    if (!String.IsNullOrEmpty(currentApplication) && (currentApplication.Contains("Learning Portal") || currentApplication.Contains("Supervisor")))
+    if (!String.IsNullOrEmpty(Model.CentreName))
     {
         <h2 class="nhsuk-heading-xs nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color">Need help?</h2>
         <div class="nhsuk-footer nhsuk-u-font-size-16 nhsuk-u-secondary-text-color">

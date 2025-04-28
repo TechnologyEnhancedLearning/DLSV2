@@ -12,6 +12,7 @@
   ViewData["CustomisationId"] = Model.Id;
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.Id}";
   ViewData["HeaderPathName"] = Model.Title;
+  ViewData["BannerText"] = Model.BannerText;
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -42,7 +43,6 @@
     }
 
     <p class="nhsuk-u-margin-bottom-0 nhsuk-heading-m">@Model.CentreName</p>
-    <p class="nhsuk-u-secondary-text-color nhsuk-heading-s">@Model.BannerText</p>
   </div>
 </div>
 
