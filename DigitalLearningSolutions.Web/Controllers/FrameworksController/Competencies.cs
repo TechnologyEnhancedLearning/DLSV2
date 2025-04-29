@@ -158,6 +158,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     FrameworkCompetency = frameworkCompetency,
                     CompetencyFlags = competencyFlags
                 };
+                ModelState.Remove("SearchableName");
                 return View("Developer/Competency", model);
             }
             var adminId = GetAdminId();
