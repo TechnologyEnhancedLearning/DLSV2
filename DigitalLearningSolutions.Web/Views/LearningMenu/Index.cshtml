@@ -12,7 +12,6 @@
   ViewData["CustomisationId"] = Model.Id;
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.Id}";
   ViewData["HeaderPathName"] = Model.Title;
-  ViewData["BannerText"] = Model.BannerText;
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />

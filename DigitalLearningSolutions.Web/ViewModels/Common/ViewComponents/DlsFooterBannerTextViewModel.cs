@@ -2,11 +2,11 @@
 {
     public class DlsFooterBannerTextViewModel
     {
-        public  readonly string? CentreName;
+        public  readonly string? BannerText;
 
-        public DlsFooterBannerTextViewModel(string centreName)
+        public DlsFooterBannerTextViewModel(string bannerText)
         {
-            CentreName = centreName;
+            BannerText = bannerText;
         }
 
     }
