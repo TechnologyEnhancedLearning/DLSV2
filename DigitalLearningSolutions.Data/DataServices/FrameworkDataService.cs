@@ -1042,7 +1042,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             {
                 var numberOfAffectedRows = connection.Execute(
                     @"UPDATE CompetencyGroups SET Name = @name, UpdatedByAdminID = @adminId, Description = @description
-                    WHERE ID = @competencyGroupId AND (Name <> @name OR Description <> @description)",
+                    WHERE ID = @competencyGroupId AND (Name <> @name OR ISNULL(Description, '') <> ISNULL(@description, ''))",
                     new { name, adminId, competencyGroupId, description }
                 );
                 if (numberOfAffectedRows < 1)
