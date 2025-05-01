@@ -49,7 +49,7 @@
                                      model="competency.CompetencyFlags" />
                         </div>
                         <div class="nhsuk-grid-column-full">
-                            @if (competency.Description != null && !competency.AlwaysShowDescription)
+                            @if (!string.IsNullOrWhiteSpace(competency.Description) && !competency.AlwaysShowDescription)
                             {
                                 <details class="nhsuk-details">
                                     <summary class="nhsuk-details__summary nhsuk-u-padding-0">
@@ -64,10 +64,10 @@
                             }
                             else
                             {
-                                <p class="@(competency.Description != null ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
+                                <p class="@(!string.IsNullOrWhiteSpace(competency.Description) ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
                                     @competency.Name
                                 </p>
-                                @if (competency.Description != null)
+                                @if (!string.IsNullOrWhiteSpace(competency.Description))
                                 {
                                     <p class="nhsuk-u-margin-top-2">
                                         @(Html.Raw(competency.Description))

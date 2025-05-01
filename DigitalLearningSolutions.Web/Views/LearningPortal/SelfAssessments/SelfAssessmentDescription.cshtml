@@ -29,23 +29,6 @@
 {
     <partial name="_NonReportableSelfAssessment" />
 }
-@if (Model.IsSupervised)
-{
-    <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-two-thirds">
-            @(Html.Raw(Model.Description))
-        </div>
-        <div class="nhsuk-grid-column-one-third">
-            <partial name="Shared/_SupervisorsCard"
-                     model="@Model.Supervisors" />
-        </div>
-    </div>
-}
-else
-{
-    <div class="nhsuk-u-reading-width">@(Html.Raw(Model.Description))</div>
-}
-
 @if (Model.LinearNavigation)
 {
     <a role="button" class="nhsuk-button @(Model.UserBookmark != null || bookmarkIsRelevant ? "nhsuk-button--secondary" : "") trigger-loader" asp-action="AddOptionalCompetencies" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
@@ -72,6 +55,19 @@ else
         <a role="button" class="nhsuk-button nhsuk-button--secondary trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">Continue where I left off</a>
     }
 }
-
-
-
+@if (Model.IsSupervised)
+{
+    <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-two-thirds">
+            @(Html.Raw(Model.Description))
+        </div>
+        <div class="nhsuk-grid-column-one-third">
+            <partial name="Shared/_SupervisorsCard"
+                     model="@Model.Supervisors" />
+        </div>
+    </div>
+}
+else
+{
+    <div class="nhsuk-u-reading-width">@(Html.Raw(Model.Description))</div>
+}

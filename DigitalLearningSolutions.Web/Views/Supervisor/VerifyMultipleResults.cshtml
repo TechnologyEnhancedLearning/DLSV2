@@ -130,9 +130,25 @@
                                     <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
                                     <div class="nhsuk-checkboxes__item">
                                         <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input select-all-checkbox" id="result-check-@question.SelfAssessmentResultSupervisorVerificationId" name="resultChecked" type="checkbox" value="@question.SelfAssessmentResultSupervisorVerificationId">
-                                        <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.SelfAssessmentResultSupervisorVerificationId">
-                                            @competency.Name
+                                        <label aria-label="Competency.Name" class="@(string.IsNullOrEmpty(competency.Description) ? "nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" : "nhsuk-label nhsuk-checkboxes__label nhsuk-u-padding-0 nhsuk-u-display-block")" for="result-check-@question.SelfAssessmentResultSupervisorVerificationId">
+                                            @if (competency.Description == null)
+                                            {
+                                                @competency.Name
+                                            }
                                         </label>
+                                        @if (!string.IsNullOrEmpty(competency.Description))
+                                        {
+                                            <details class="nhsuk-details nhsuk-u-padding-left-2 ">
+                                                <summary class="nhsuk-details__summary nhsuk-u-padding-left-2">
+                                                    <span class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16 " for="result-check-@question.SelfAssessmentResultSupervisorVerificationId">
+                                                        @competency.Name
+                                                    </span>
+                                                </summary>
+                                                <div class="nhsuk-details__text nhsuk-u-margin-left-6 nhsuk-u-margin-top-2">
+                                                    @(Html.Raw(@competency.Description))
+                                                </div>
+                                            </details>
+                                        }
                                     </div>
                                 </td>
                                 <partial name="Shared/_AssessmentQuestionCells" model="question" />
